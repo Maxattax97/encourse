@@ -1,0 +1,32 @@
+version: '3.1'
+
+services:
+    
+    pgdb:
+        container_name: pgdb
+        image: postgres:latest
+        restart: always
+        environment:
+            POSTGRES_USER_FILE: /run/secrets/pgdb_user
+            POSTGRES_PASSWORD_FILE: /run/secrets/pgdb_password
+            POSTGRES_DB: spring
+        volumes:
+          - "postgres:/var/lib/postgresql/data"
+        ports:
+            - "5433:5432"
+        healthcheck:
+          test: ["CMD", "curl", "-f", "pgdb:5432"]
+          interval: 30s
+          timeout: 30s
+          retries: 5
+        secrets:
+            - pgdb_user
+            - pgdb_password      
+secrets:
+    pgdb_user:
+        file: pgdb_user.txt
+    pgdb_password:
+        file: pgdb_password.txt
+
+volumes:
+  postgres:
