@@ -9,4 +9,5 @@ public class Professor extends Account {
                         String middleInit) {
         super(UID, userName, firstName, lastName, middleInit);
     }
+    
 }
