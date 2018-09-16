@@ -5,14 +5,6 @@ import java.util.*;
 
 @Getter
 public class Student extends Account {
-    /** Courses that the Student is taking **/
-    private List<String> studentSectionCRNs;
-
-    /** Active projects for the student and testall grade**/
-    private Map<String, String> currentProjects;
-
-    /** Projects that are no longer active **/
-    private Map<String, String> oldProjects;
 
     public Student(@NonNull String UID, @NonNull String userName,
                      @NonNull String firstName, @NonNull String lastName,

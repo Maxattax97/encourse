@@ -26,12 +26,6 @@ public class Section {
     /** UID of head TA or professor for the section **/
     private String headInstructorUID;
 
-    /** UIDs of other TAs or professors for the section **/
-    private List<String> instructorUIDs;
-
-    /** UIDs of students taking the section **/
-    private List<String> studentUIDs;
-
     /** Path to the directory that contains repositories **/
     @Setter
     private String courseHub;

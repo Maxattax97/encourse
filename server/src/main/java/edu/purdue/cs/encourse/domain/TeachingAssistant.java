@@ -5,11 +5,6 @@ import java.util.List;
 
 @Getter
 public class TeachingAssistant extends Student {
-    /** Course sections that TA oversees **/
-    private List<String> teachAssistSectionCRNs;
-
-    /** Students that the TA monitors the progress of **/
-    private List<String> assignedStudentUIDs;
 
     public TeachingAssistant(@NonNull String UID, @NonNull String userName,
                         @NonNull String firstName, @NonNull String lastName,

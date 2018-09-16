@@ -35,7 +35,7 @@ public class Account {
 
     public Account(@NonNull String UID, @NonNull String userName,
                    @NonNull String firstName, @NonNull String lastName,
-                   @NonNull int role, String middleInit, String eduEmail) {
+                   int role, String middleInit, String eduEmail) {
         this.UID = UID;
         this.userName = userName;
         this.firstName = firstName;
