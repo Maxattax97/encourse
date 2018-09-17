@@ -10,8 +10,8 @@ class Navbar extends Component {
         return (
             <div className="Navbar">
                 <div className="EnCourse-Title">
-                    <div>En</div>
-                    <div>Course</div>
+                    <span className="En">En</span>
+                    <span className="Course">Course</span>
                 </div>
                 <div className="Options">
                     <div className="Settings">
