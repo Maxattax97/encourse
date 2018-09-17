@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { Route, Redirect, Switch } from 'react-router'
 import { connect } from 'react-redux'
 
-import '../App.css';
+import '../css/App.css';
+import Login from './Login'
+import Main from './Main'
 
 class App extends Component {
 
@@ -12,9 +14,20 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-     
-      </div>
+        <div className="App">
+            <Switch>
+                <Route path="/login" render={(navProps) => 
+                    !this.loggedIn()
+                    ? <Login {...navProps} />
+                    : <Redirect to="/panel"/>
+                }/>
+                <Route path="/" render={(navProps) =>
+                    this.loggedIn()
+                    ? <Main />
+                    : <Redirect to="/login" />
+                }/>
+            </Switch>
+        </div>
     );
   }
 }
