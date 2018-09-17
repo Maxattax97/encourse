@@ -1,4 +1,4 @@
-.Navbar { cursor: context-menu; position: fixed; top: 0; left: 0; width: 100%; height: 2em; padding: .33em 0; z-index: 0; background: #1f1e1c; box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.3); }
+.Navbar { cursor: default; position: fixed; top: 0; left: 0; width: 100%; height: 2em; padding: .33em 0; z-index: 0; background: #1f1e1c; box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.3); }
 
 .Navbar .NavList { position: fixed; top: 0; left: 0; width: 100%; height: 2em; padding: .33em 0; font-family: "Rhodium Libre", serif; margin: 0; overflow: hidden; z-index: 10; }
 

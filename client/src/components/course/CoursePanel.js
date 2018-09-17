@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 import '../../css/CoursePanel.css'
+import settingsIcon from '../../img/settings.svg'
 import Card from '../Card'
 import CourseSettings from './CourseSettings'
 import StudentPreview from './StudentPreview'
@@ -10,46 +11,41 @@ class CoursePanel extends Component {
         return (
                 <div className="Course-Panel">
                     <div className="Course-Settings">
+                        <div className="Settings-Title">
+                            <div className="Project-Title">
+                                Projects
+                            </div>
+                            <div className="Project-Settings">
+                                <img src={settingsIcon} />
+                            </div>
+                        </div>
                         <div className="Break-Line" />
-                        <table className="Projects">
-                            <thead>
-                            <tr>
-                                <th>Project Name</th>
-                                <th>Source Name</th>
-                                <th>Created</th>
-                                <th>Due</th>
-                            </tr>
-                            <tr>
-                                <th colSpan="4" className="Break-Line"/>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr className="Project">
-                                <td>MyMalloc</td>
-                                <td>lab1-src</td>
-                                <td>9/05/18</td>
-                                <td>9/15/18</td>
-                            </tr>
-                            <tr className="Project">
-                                <td>MyMalloc</td>
-                                <td>lab1-src</td>
-                                <td>9/05/18</td>
-                                <td>9/15/18</td>
-                            </tr>
-                            <tr className="Project">
-                                <td>MyMalloc</td>
-                                <td>lab1-src</td>
-                                <td>9/05/18</td>
-                                <td>9/15/18</td>
-                            </tr>
-                            <tr className="Project">
-                                <td>MyMalloc</td>
-                                <td>lab1-src</td>
-                                <td>9/05/18</td>
-                                <td>9/15/18</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <div className="Project">
+                            MyMalloc1
+                        </div>
+                        <div className="Project">
+                            MyMalloc2
+                        </div>
+                        <div className="Project">
+                            MyMalloc2
+                        </div>
+                        <div className="Project">
+                            MyMalloc2
+                        </div>
+                        <div className="Project">
+                            MyMalloc2
+                        </div>
+                        <div className="Project">
+                            MyMalloc2
+                        </div>
+                        <div className="Project">
+                            MyMalloc2
+                        </div>
+                        <div className="Project">
+                            MyMalloc2
+                        </div>
+                    </div>
+                    <div className="Course-Content">
                     </div>
                 </div>
         )
