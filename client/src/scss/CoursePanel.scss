@@ -21,6 +21,7 @@
   .Projects {
     width: calc(100% - 40px);
     margin: 20px;
+    cursor: context-menu;
 
     tr.Project:hover {
       margin: 10px 2em;
@@ -31,6 +32,7 @@
               #E8E8E8FF 97.5%,
               #E8E8E800 100%
       );
+      cursor:pointer;
     }
   }
 }

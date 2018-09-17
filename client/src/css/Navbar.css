@@ -1,12 +1,14 @@
-.Navbar .NavList { position: absolute; top: 0; left: 0; width: 100%; height: 2em; padding: .33em 0; font-family: "Rhodium Libre", serif; margin: 0; background: #1f1e1c; box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.3); overflow: hidden; }
+.Navbar { cursor: context-menu; position: fixed; top: 0; left: 0; width: 100%; height: 2em; padding: .33em 0; z-index: 0; background: #1f1e1c; box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.3); }
 
-.Navbar .EnCourse-Title { position: absolute; top: 0; left: 0; width: 100%; font-size: 1.75em; text-align: center; margin: auto; font-family: "Rhodium Libre", serif; }
+.Navbar .NavList { position: fixed; top: 0; left: 0; width: 100%; height: 2em; padding: .33em 0; font-family: "Rhodium Libre", serif; margin: 0; overflow: hidden; z-index: 10; }
+
+.Navbar .EnCourse-Title { position: fixed; top: 0; left: 0; width: 100%; font-size: 1.75em; text-align: center; margin: auto; font-family: "Rhodium Libre", serif; z-index: 1; }
 
 .Navbar .EnCourse-Title .En { color: white; }
 
 .Navbar .EnCourse-Title .Course { color: #0057A7; }
 
-.Navbar .Options { float: right; display: flex; width: 5.6em; margin-right: .5em; }
+.Navbar .Options { float: right; display: flex; position: relative; width: 5.6em; margin-right: .5em; cursor: pointer; z-index: 10; }
 
 .Navbar .Options .Settings { float: right; width: 2em; height: 2em; margin: 0 .5em; }
 
