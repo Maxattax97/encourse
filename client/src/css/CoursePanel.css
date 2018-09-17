@@ -4,6 +4,6 @@
 
 .Course-Settings { background: #F8F8F8; border: 1px solid #E8E8E8; border-radius: 4px; min-height: 20px; font-size: 1em; }
 
-.Course-Settings .Projects { width: calc(100% - 40px); margin: 20px; }
+.Course-Settings .Projects { width: calc(100% - 40px); margin: 20px; cursor: context-menu; }
 
-.Course-Settings .Projects tr.Project:hover { margin: 10px 2em; width: calc(100% - 4em); background-image: linear-gradient(to right, #e8e8e800, #E8E8E8FF 2.5%, #E8E8E8FF 97.5%, #E8E8E800 100%); }
+.Course-Settings .Projects tr.Project:hover { margin: 10px 2em; width: calc(100% - 4em); background-image: linear-gradient(to right, #e8e8e800, #E8E8E8FF 2.5%, #E8E8E8FF 97.5%, #E8E8E800 100%); cursor: pointer; }
