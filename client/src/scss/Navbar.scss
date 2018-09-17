@@ -1,0 +1,61 @@
+.Navbar {
+  position: absolute;
+  top:0;
+  left: 0;
+  width:100%;
+  height:2.8rem;
+  display: flex;
+  padding: .25rem;
+  font-family: "Rhodium Libre", serif;
+  margin: 0;
+  background: #1f1e1c;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, .3);
+
+  overflow: hidden;
+
+  .EnCourse-Title {
+    font-size: 1.5rem;
+    display: inline-block;
+    text-align: center;
+    margin: auto;
+
+    .En {
+      color: white;
+    }
+
+    .Course {
+      color: #0057A7;
+    }
+  }
+
+  .Options {
+    display: inline-block;
+
+    width: 5.6em;
+    margin-right: .5em;
+
+    .Settings {
+      float:left;
+      width: 1.8em;
+      height: 1.8em;
+      margin: .5em;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .Logout {
+      float:left;
+      width: 1.8em;
+      height: 1.8em;
+      margin: .5em;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
