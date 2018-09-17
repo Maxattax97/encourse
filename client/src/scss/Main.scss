@@ -18,11 +18,19 @@
 
   margin: 10px 2em;
   width: calc(100% - 4em);
-  height: 3px;
   background-image: linear-gradient(to right,
           #e8e8e800,
-          #E8E8E8FF 5%,
-          #E8E8E8FF 95%,
+          #E8E8E8FF 2.5%,
+          #E8E8E8FF 97.5%,
           #E8E8E800 100%
   );
+}
+
+div.Break-Line {
+  height: 3px;
+}
+
+table {
+  overflow: hidden;
+  border-collapse: collapse;
 }

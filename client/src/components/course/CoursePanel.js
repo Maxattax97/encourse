@@ -9,30 +9,41 @@ class CoursePanel extends Component {
     render() {
         return (
                 <div className="Course-Panel">
-                    <div className="Grouping">
-                        Settings
-                    </div>
                     <div className="Course-Settings">
                         <div className="Break-Line" />
-                        <table>
+                        <table className="Projects">
                             <tr>
                                 <th>Project Name</th>
-                                <th></th>
+                                <th>Source Name</th>
+                                <th>Created</th>
+                                <th>Due</th>
+                            </tr>
+                            <tr><th colspan="4" className="Break-Line" /></tr>
+                            <tr className="Project">
+                                <td>MyMalloc</td>
+                                <td>lab1-src</td>
+                                <td>9/05/18</td>
+                                <td>9/15/18</td>
+                            </tr>
+                            <tr className="Project">
+                                <td>MyMalloc</td>
+                                <td>lab1-src</td>
+                                <td>9/05/18</td>
+                                <td>9/15/18</td>
+                            </tr>
+                            <tr className="Project">
+                                <td>MyMalloc</td>
+                                <td>lab1-src</td>
+                                <td>9/05/18</td>
+                                <td>9/15/18</td>
+                            </tr>
+                            <tr className="Project">
+                                <td>MyMalloc</td>
+                                <td>lab1-src</td>
+                                <td>9/05/18</td>
+                                <td>9/15/18</td>
                             </tr>
                         </table>
-                        <div className="Projects-List">
-                            <div className="List">
-                                <div className="Project">
-                                    <div className=
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="Grouping">
-                        Statistics
-                    </div>
-                    <div className="Grouping">
-                        Students
                     </div>
                 </div>
         )
