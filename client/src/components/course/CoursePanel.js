@@ -12,13 +12,18 @@ class CoursePanel extends Component {
                     <div className="Course-Settings">
                         <div className="Break-Line" />
                         <table className="Projects">
+                            <thead>
                             <tr>
                                 <th>Project Name</th>
                                 <th>Source Name</th>
                                 <th>Created</th>
                                 <th>Due</th>
                             </tr>
-                            <tr><th colspan="4" className="Break-Line" /></tr>
+                            <tr>
+                                <th colSpan="4" className="Break-Line"/>
+                            </tr>
+                            </thead>
+                            <tbody>
                             <tr className="Project">
                                 <td>MyMalloc</td>
                                 <td>lab1-src</td>
@@ -43,6 +48,7 @@ class CoursePanel extends Component {
                                 <td>9/05/18</td>
                                 <td>9/15/18</td>
                             </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
