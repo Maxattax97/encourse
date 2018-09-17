@@ -1,19 +1,30 @@
 package edu.purdue.cs.encourse.domain;
 
 import lombok.*;
+import java.util.*;
+import javax.persistence.*;
 
 @Getter
+@Entity
+@Table(name = "SECTIONS")
 public class Section {
-    /** CRN + semester form the primary key **/
-    private final String CRN;
-    private final String semester;
+    /** courseID + semester + sectionType form the primary key **/
+    @Id
+    private final String sectionIdentifier;
 
-    /** Use courseName to group together sections of the same course **/
+    /** Each piece of the section identifier **/
     private String courseID;
+    private final String semester;
+    private final String sectionType;
+
+    /** May be useful to track for registration purposes **/
+    private final String CRN;
+
+    /** Use courseID or courseTitle to group together sections of the same course **/
     private String courseTitle;
 
-    /** Can parse section type from sectionID, ie LE, Lab, PSO **/
-    private final String sectionID;
+    /** UID of head TA or professor for the section **/
+    private String headInstructorUID;
 
     /** Path to the directory that contains repositories **/
     @Setter
@@ -24,12 +35,17 @@ public class Section {
 
     public Section(@NonNull String CRN, @NonNull String semester,
                    @NonNull String courseID, @NonNull String courseTitle,
-                   @NonNull String sectionID) {
+                   @NonNull String sectionType) {
         this.CRN = CRN;
         this.semester = semester;
         this.courseID = courseID;
         this.courseTitle = courseTitle;
-        this.sectionID = sectionID;
+        this.sectionType = sectionType;
+        this.sectionIdentifier = createSectionID(courseID, semester, sectionType);
+    }
+
+    public String createSectionID(@NonNull String courseID, @NonNull String semester, @NonNull String sectionType) {
+        return (courseID + " "  + semester + ": " + sectionType);
     }
 
 
