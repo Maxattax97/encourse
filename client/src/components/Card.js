@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import logo from '../../img/encourse-logo-large.png';
-import "../../css/Login.css";
+import logo from '../img/encourse-logo-large.png';
+import "../css/Login.css";
 
 class Card extends Component {
     render() {
