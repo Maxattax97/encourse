@@ -13,7 +13,7 @@ public class Section {
     private final String sectionIdentifier;
 
     /** Each piece of the section identifier **/
-    private String courseID;
+    private final String courseID;
     private final String semester;
     private final String sectionType;
 
