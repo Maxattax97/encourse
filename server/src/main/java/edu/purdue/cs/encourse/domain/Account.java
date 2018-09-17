@@ -7,16 +7,19 @@ import javax.persistence.*;
 @Entity
 @Table(name = "ACCOUNTS")
 public class Account {
-    /** Primary key for all account types, stands for University ID**/
+    /** Primary key for all account types, meant to be university ID**/
     @Id
-    private final String UID;
+    private final String userID;
 
     /** More identifiable key for all account types **/
     private final String userName;
 
     /** Name for display purposes **/
+    @Setter
     private String firstName;
+    @Setter
     private String middleInit;
+    @Setter
     private String lastName;
 
     /** Email settings **/
@@ -33,10 +36,10 @@ public class Account {
         public static final int ADMIN = 3;
     }
 
-    public Account(@NonNull String UID, @NonNull String userName,
+    public Account(@NonNull String userID, @NonNull String userName,
                    @NonNull String firstName, @NonNull String lastName,
                    int role, String middleInit, String eduEmail) {
-        this.UID = UID;
+        this.userID = userID;
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
