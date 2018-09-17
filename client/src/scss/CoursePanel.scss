@@ -1,0 +1,29 @@
+.Course-Panel {
+  font-family: "Rhodium Libre", serif;
+  color: #1f1e1caa;
+  text-align:left;
+  font-weight: bold;
+
+  br {
+    width: 100%;
+    height: 3px;
+    background: #E8E8E8;
+  }
+}
+
+.Course-Settings {
+  background: #F8F8F8;
+  border: 1px solid #E8E8E8;
+  border-radius: 4px;
+  min-height: 20px;
+
+  .Projects {
+    .Title {
+
+    }
+
+    .List {
+
+    }
+  }
+}
