@@ -2,8 +2,11 @@ package edu.purdue.cs.encourse.domain;
 
 import lombok.*;
 import java.util.List;
+import javax.persistence.*;
 
 @Getter
+@Entity
+@Table(name = "TEACHING_ASSISTANTS")
 public class TeachingAssistant extends Student {
 
     public TeachingAssistant(@NonNull String UID, @NonNull String userName,
@@ -12,8 +15,8 @@ public class TeachingAssistant extends Student {
         super(UID, userName, firstName, lastName, middleInit, eduEmail);
     }
 
-    public TeachingAssistant(@NonNull Student student) {
-        super(student.getUID(), student.getUserName(), student.getFirstName(), student.getLastName(),
-                student.getMiddleInit(), student.getEduEmail());
+    public TeachingAssistant(@NonNull Account account) {
+        super(account.getUserID(), account.getUserName(), account.getFirstName(),
+                account.getLastName(), account.getMiddleInit(), account.getEduEmail());
     }
 }
