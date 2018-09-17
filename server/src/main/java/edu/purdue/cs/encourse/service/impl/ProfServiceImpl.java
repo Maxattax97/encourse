@@ -86,7 +86,28 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
-    public int addProject(String courseID, String semester, String projectName, String repoName) {
+    public int addProject(String courseID, String semester, String projectName, String repoName, String dueDate, String dueTime) {
+        Project project = new Project(courseID, semester, projectName, repoName, dueDate, dueTime);
+        if(projectRepository.existsByProjectIdentifier(project.getProjectIdentifier())) {
+            return -1;
+        }
+        if(projectRepository.save(project) == null) {
+            return -2;
+        }
+        return 0;
+    }
+
+    public int modifyProject(String projectID, String field, String value) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -1;
+        }
+        switch(field) {
+            case "dueDate": project.setDueDate(value); break;
+            case "dueTime": project.setDueTime(value); break;
+            case "repoName": project.setRepoName(value); break;
+            default: return -2;
+        }
         return 0;
     }
 }
