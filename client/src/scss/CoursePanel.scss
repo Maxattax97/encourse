@@ -1,0 +1,66 @@
+.Course-Panel {
+  font-family: "Rhodium Libre", serif;
+  color: #1f1e1caa;
+  text-align:left;
+  font-weight: bold;
+}
+
+.Course-Settings {
+  border-radius: 4px;
+  font-size: 1em;
+  position: relative;
+  width: calc(15% - 20px);
+  max-width: 200px;
+  min-width: 140px;
+  padding: 10px;
+  text-align: center;
+
+  .Settings-Title {
+    position: relative;
+    height: 1.5em;
+    cursor: pointer;
+  }
+
+  .Project-Title {
+    position:absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index:1;
+  }
+
+  .Project-Settings {
+    position:relative;
+    float:right;
+    z-index: 2;
+    filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
+
+    img {
+      width: 1em;
+      height: 1em;
+    }
+  }
+
+  .Settings-Title:hover {
+
+    .Project-Title {
+      color: #1f1e1ccc;
+    }
+    .Project-Settings {
+      filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(80%);
+    }
+  }
+
+  .Project {
+    cursor: pointer;
+  }
+
+  .Project:hover {
+    background-image: linear-gradient(to right,
+            #e8e8e800,
+            #E8E8E8FF 2.5%,
+            #E8E8E8FF 97.5%,
+            #E8E8E800 100%
+    );
+  }
+}
