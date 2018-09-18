@@ -1,28 +1,7 @@
-.App {
-  text-align: center;
-}
+.Login { width: 600px; margin: 100px auto auto; }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-}
+.Login .EnCourse-logo { width: 100%; }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
+.Login .credentials-container { height: 200px; background: #1f1e1c; border-radius: 50px; }
 
-.App-title {
-  font-size: 1.5em;
-}
-
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+.Login .credentials-container p { color: white; margin-top: 30px; margin-left: 25px; font-family: 'Rhodium Libre', sans-serif; }
