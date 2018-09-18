@@ -5,9 +5,10 @@ import '../../css/CoursePanel.css'
 import Card from '../Card'
 import CourseSettings from './CourseSettings'
 import StudentPreview from './StudentPreview'
-
+import settingsIcon from '../../img/settings.svg'
 
 class CoursePanel extends Component {
+
     render() {
         let lineData = [
             { 
@@ -27,7 +28,44 @@ class CoursePanel extends Component {
           ]
           
         return (
-            <div className="CoursePanel">
+            <div className="Course-Panel">
+                <div className="Course-Settings">
+                    <div className="Settings-Title" onClick={() => this.props.history.push("/project-settings")}>
+                        <div className="Project-Title">
+                            Projects
+                        </div>
+                        <div className="Project-Settings">
+                            <img src={settingsIcon} />
+                        </div>
+                    </div>
+                    <div className="Break-Line" />
+                    <div className="Project">
+                        MyMalloc1
+                    </div>
+                    <div className="Project">
+                        MyMalloc2
+                    </div>
+                    <div className="Project">
+                        MyMalloc2
+                    </div>
+                    <div className="Project">
+                        MyMalloc2
+                    </div>
+                    <div className="Project">
+                        MyMalloc2
+                    </div>
+                    <div className="Project">
+                        MyMalloc2
+                    </div>
+                    <div className="Project">
+                        MyMalloc2
+                    </div>
+                    <div className="Project">
+                        MyMalloc2
+                    </div>
+                </div>
+                <div className="Course-Content">
+                </div>
                 <Card component={
                     <LineChart      
                         legend={true}
@@ -47,8 +85,6 @@ class CoursePanel extends Component {
                         gridHorizontal={true}
                     />}
                 />
-                <Card />
-                <Card />
             </div>
         )
     }
