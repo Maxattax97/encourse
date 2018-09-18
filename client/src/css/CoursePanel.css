@@ -1,6 +1,6 @@
 .Course-Panel { font-family: "Rhodium Libre", serif; color: #1f1e1caa; text-align: left; font-weight: bold; }
 
-.Course-Settings { background: #F8F8F8; border: 1px solid #E8E8E8; border-radius: 4px; font-size: 1em; position: relative; width: calc(15% - 20px); max-width: 200px; min-width: 140px; padding: 10px; text-align: center; }
+.Course-Settings { border-radius: 4px; font-size: 1em; position: relative; width: calc(15% - 20px); max-width: 200px; min-width: 140px; padding: 10px; text-align: center; }
 
 .Course-Settings .Settings-Title { position: relative; height: 1.5em; cursor: pointer; }
 

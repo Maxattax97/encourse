@@ -1,5 +1,5 @@
 /* rhodium-libre-regular - latin */
-.Panel { position: fixed; left: 0; top: 2.7em; width: 100%; }
+.Panel { position: absolute; left: 0; top: 2.7em; width: 100%; }
 
 .Panel-Container { position: relative; max-width: 1254px; width: 100%; height: 100%; margin: 2em auto; }
 
@@ -8,3 +8,5 @@
 div.Break-Line { height: 3px; }
 
 table { border-collapse: collapse; }
+
+.Modal .Background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; -webkit-filter: blur(4px); -moz-filter: blur(4px); -ms-filter: blur(4px); -o-filter: blur(4px); filter: blur(4px); }

@@ -5,9 +5,11 @@ import { connect } from 'react-redux'
 import '../css/Main.css';
 import Navbar from './Navbar'
 import CoursePanel from './course/CoursePanel'
+import ProjectSettings from "./course/ProjectSettings"
 import StudentPanel from './StudentPanel'
 import AdminPanel from './AdminPanel'
 import UserSettings from './UserSettings'
+import Login from "./Login";
 
 class Main extends Component {
 
@@ -23,8 +25,11 @@ class Main extends Component {
                             return <Redirect to="/course"/>
                         }}/>
                         <Route path="/course" render={(navProps) =>
-                            <CoursePanel />
+                            <CoursePanel {...navProps} />
                         }/>
+                        <Route path="/project-settings" render={(navProps) =>
+                            <ProjectSettings {...navProps} />
+                        } />
                         <Route path="/student" render={(navProps) =>
                             <StudentPanel />
                         }/>
