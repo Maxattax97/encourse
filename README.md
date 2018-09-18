@@ -9,8 +9,8 @@
   3. Top right click the + sign
 
   4. Name : SCSS
-     Program : node-sass
-     Arguments : $FileName$ $ProjectFileDir$/client/src/css/$FileNameWithoutExtension$.css -r --output-style compact
+  5. Program : node-sass
+  6. Arguments : $FileName$ $ProjectFileDir$/client/src/css/$FileNameWithoutExtension$.css -r --output-style compact
 
 ## Backend
 
