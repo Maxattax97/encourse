@@ -9,7 +9,6 @@ import ProjectOptions from "./course/ProjectOptions"
 import StudentPanel from './StudentPanel'
 import AdminPanel from './AdminPanel'
 import Preferences from './Preferences'
-import Login from "./Login";
 
 class Main extends Component {
 

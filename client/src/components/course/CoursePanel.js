@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-import '../../css/CoursePanel.css'
 import settingsIcon from '../../img/settings.svg'
 
 class CoursePanel extends Component {

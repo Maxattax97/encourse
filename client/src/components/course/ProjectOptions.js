@@ -11,21 +11,27 @@ class ProjectOptions extends Component {
                         <input type="text" />
                     </div>
                     <div className="Project-Settings">
+                        Name
                         <div className="Project-Name">
                             <input type="text" />
                         </div>
+                        Source Name
                         <div className="Project-Source-Name">
                             <input type="text" />
                         </div>
+                        Created Date
                         <div className="Project-Created-Date">
                             <input type="text" />
                         </div>
+                        Due Date
                         <div className="Project-Due-Date">
                             <input type="text" />
                         </div>
+                        Test Script
                         <div className="Project-Test-Script">
                             <input type="file" />
                         </div>
+                        Hidden Test Script
                         <div className="Project-Hidden-Test-Script">
                             <input type="file" />
                         </div>
