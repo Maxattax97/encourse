@@ -4,6 +4,8 @@
 
 ### Postgres
  Create files `pgdb_user.txt` and `pgdb_password.txt` that contain the admin credentials for the PostgreSQL database.
+ 
+ Once Docker is installed (it expects Linux containers), you can run `> docker-compose up` to start the database
 
 ### Spring
 
