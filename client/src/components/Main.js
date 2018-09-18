@@ -5,10 +5,10 @@ import { connect } from 'react-redux'
 import '../css/Main.css';
 import Navbar from './Navbar'
 import CoursePanel from './course/CoursePanel'
-import ProjectSettings from "./course/ProjectSettings"
+import ProjectOptions from "./course/ProjectOptions"
 import StudentPanel from './StudentPanel'
 import AdminPanel from './AdminPanel'
-import UserSettings from './UserSettings'
+import Preferences from './Preferences'
 import Login from "./Login";
 
 class Main extends Component {
@@ -24,12 +24,12 @@ class Main extends Component {
                             //determine logic for course panel, student panel, or admin panel. For now, use course panel
                             return <Redirect to="/course"/>
                         }}/>
+                        <Route path="/project-settings" render={(navProps) =>
+                            <ProjectOptions {...navProps} />
+                        } />
                         <Route path="/course" render={(navProps) =>
                             <CoursePanel {...navProps} />
                         }/>
-                        <Route path="/project-settings" render={(navProps) =>
-                            <ProjectSettings {...navProps} />
-                        } />
                         <Route path="/student" render={(navProps) =>
                             <StudentPanel />
                         }/>
@@ -37,7 +37,7 @@ class Main extends Component {
                             <AdminPanel />
                         }/>
                         <Route path="/settings" render={(navProps) =>
-                            <UserSettings />
+                            <Preferences />
                         }/>
                         <Route path='/' render={(navProps) => <Redirect to="/panel" />}/>
                     </Switch>
