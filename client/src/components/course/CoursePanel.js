@@ -2,16 +2,14 @@ import React, { Component } from 'react'
 
 import '../../css/CoursePanel.css'
 import settingsIcon from '../../img/settings.svg'
-import Card from '../Card'
-import CourseSettings from './CourseSettings'
-import StudentPreview from './StudentPreview'
 
 class CoursePanel extends Component {
+
     render() {
         return (
                 <div className="Course-Panel">
                     <div className="Course-Settings">
-                        <div className="Settings-Title">
+                        <div className="Settings-Title" onClick={() => this.props.history.push("/project-settings")}>
                             <div className="Project-Title">
                                 Projects
                             </div>
