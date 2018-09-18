@@ -1,5 +1,17 @@
 # encourse
 
+## Frontend
+ Setup File Watcher :
+  1. npm install -g node-sass
+
+  2. In Webstorm by clicking File -> Settings -> Tools -> File Watchers
+
+  3. Top right click the + sign
+
+  4. Name : SCSS
+     Program : node-sass
+     Arguments : $FileName$ $ProjectFileDir$/client/src/css/$FileNameWithoutExtension$.css -r --output-style compact
+
 ## Backend
 
 ### Postgres
