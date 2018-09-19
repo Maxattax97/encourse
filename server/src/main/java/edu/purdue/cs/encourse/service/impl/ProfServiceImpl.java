@@ -86,8 +86,8 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
-    public int addProject(String courseID, String semester, String projectName, String repoName, String dueDate, String dueTime) {
-        Project project = new Project(courseID, semester, projectName, repoName, dueDate, dueTime);
+    public int addProject(String courseID, String semester, String projectName, String repoName, String startDate, String dueDate) {
+        Project project = new Project(courseID, semester, projectName, repoName, startDate, dueDate);
         if(projectRepository.existsByProjectIdentifier(project.getProjectIdentifier())) {
             return -1;
         }
@@ -103,11 +103,23 @@ public class ProfServiceImpl implements ProfService {
             return -1;
         }
         switch(field) {
+            case "startDate": project.setStartDate(value); break;
             case "dueDate": project.setDueDate(value); break;
-            case "dueTime": project.setDueTime(value); break;
             case "repoName": project.setRepoName(value); break;
             default: return -2;
         }
+        return 0;
+    }
+
+    public int countAllCommits(String projectID) {
+        return 0;
+    }
+
+    public int countAllCommitsByDay(String projectID) {
+        return 0;
+    }
+
+    public int countStudentCommitsByDay(String projectID, String studentID) {
         return 0;
     }
 }
