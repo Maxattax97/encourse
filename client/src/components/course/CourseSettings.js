@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import logo from '../../img/encourse-logo-large.png';
-import "../../css/Login.css";
 
 class CourseSettings extends Component {
     render() {

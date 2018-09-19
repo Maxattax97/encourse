@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-import '../css/StudentPanel.css'
 
 class StudentPanel extends Component {
   render() {
