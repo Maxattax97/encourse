@@ -13,12 +13,13 @@ class CoursePanel extends Component {
 
     showProjectOptions() {
         this.props.history.push("/project-settings");
+        console.log("here");
     }
 
     render() {
         return (
             <div className="panel-course">
-                <ProjectNavigation titleClick={this.showProjectOptions}/>
+                <ProjectNavigation titleClick={this.showProjectOptions} />
 
             </div>
         )
