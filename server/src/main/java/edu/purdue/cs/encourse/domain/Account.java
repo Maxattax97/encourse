@@ -1,18 +1,21 @@
 package edu.purdue.cs.encourse.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
+
 import javax.persistence.*;
 
 @Getter
 @Entity
 @Table(name = "ACCOUNT")
+@JsonDeserialize(using = AccountDeserializer.class)
 public class Account {
     /** Primary key for all account types, meant to be university ID**/
     @Id
-    private final String userID;
+    private String userID;
 
     /** More identifiable key for all account types **/
-    private final String userName;
+    private String userName;
 
     /** Name for display purposes **/
     @Setter
@@ -36,8 +39,11 @@ public class Account {
         public static final int ADMIN = 3;
     }
 
-    public Account(@NonNull String userID, @NonNull String userName,
-                   @NonNull String firstName, @NonNull String lastName,
+    public Account() {
+    }
+
+    public Account(String userID, String userName,
+                   String firstName, String lastName,
                    int role, String middleInit, String eduEmail) {
         this.userID = userID;
         this.userName = userName;
@@ -47,4 +53,5 @@ public class Account {
         this.middleInit = middleInit;
         this.eduEmail = eduEmail;
     }
+
 }

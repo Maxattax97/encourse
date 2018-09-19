@@ -19,4 +19,7 @@ public class TeachingAssistant extends Student {
         super(account.getUserID(), account.getUserName(), account.getFirstName(),
                 account.getLastName(), account.getMiddleInit(), account.getEduEmail());
     }
+
+    public TeachingAssistant() {
+    }
 }

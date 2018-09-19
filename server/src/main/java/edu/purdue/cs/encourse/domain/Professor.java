@@ -17,4 +17,7 @@ public class Professor extends Account {
         super(account.getUserID(), account.getUserName(), account.getFirstName(),
                 account.getLastName(), Roles.PROFESSOR, account.getMiddleInit(), account.getEduEmail());
     }
+
+    public Professor(){
+    }
 }

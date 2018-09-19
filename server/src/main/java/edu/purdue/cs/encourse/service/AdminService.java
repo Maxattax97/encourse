@@ -7,7 +7,7 @@ import java.util.*;
 
 public interface AdminService {
     int addAccount(String userID, String userName, String firstName, String lastName,
-                   String type, String middleInit, String eduEmail);
+                   int type, String middleInit, String eduEmail);
 
     int addStudent(String userID, String userName, String firstName, String lastName, String middleInit, String eduEmail);
     int addTA(String userID, String userName, String firstName, String lastName, String middleInit, String eduEmail);

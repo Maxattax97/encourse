@@ -11,4 +11,5 @@ public interface AccountService {
     TeachingAssistant retrieveTA(String userName);
     Professor retrieveProfessor(String userName);
     CollegeAdmin retrieveAdmin(String userName);
+    List<Account> retrieveAllAccounts();
 }

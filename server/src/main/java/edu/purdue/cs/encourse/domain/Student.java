@@ -25,4 +25,8 @@ public class Student extends Account {
             this.setRole(Roles.TA);
         }
     }
+
+    public Student() {
+    }
+
 }

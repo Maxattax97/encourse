@@ -4,7 +4,11 @@ import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@Service("accountService")
 public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountRepository accountRepository;
@@ -40,4 +44,6 @@ public class AccountServiceImpl implements AccountService {
     public CollegeAdmin retrieveAdmin(String userName) {
         return adminRepository.findByUserName(userName);
     }
+
+    public List<Account> retrieveAllAccounts() { return accountRepository.findAll(); }
 }

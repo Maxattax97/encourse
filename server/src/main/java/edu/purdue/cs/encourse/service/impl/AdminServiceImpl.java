@@ -5,10 +5,9 @@ import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.util.List;
-
+@Service("adminService")
 public class AdminServiceImpl implements AdminService {
 
     @Autowired
@@ -27,16 +26,20 @@ public class AdminServiceImpl implements AdminService {
     private AdminRepository adminRepository;
 
     public int addAccount(String userID, String userName, String firstName, String lastName,
-                          String type, String middleInit, String eduEmail) {
+                          int type, String middleInit, String eduEmail) {
         int result;
         switch(type) {
-            case "Student": result = addStudent(userID, userName, firstName, lastName, middleInit, eduEmail); break;
-            case "TA": result = addTA(userID, userName, firstName, lastName, middleInit, eduEmail); break;
-            case "Professor": result = addProfessor(userID, userName, firstName, lastName, middleInit, eduEmail); break;
-            case "Admin": result = addAdmin(userID, userName, firstName, lastName, middleInit, eduEmail); break;
+            case Account.Roles.STUDENT: result = addStudent(userID, userName, firstName, lastName, middleInit, eduEmail); break;
+            case Account.Roles.TA: result = addTA(userID, userName, firstName, lastName, middleInit, eduEmail); break;
+            case Account.Roles.PROFESSOR: result = addProfessor(userID, userName, firstName, lastName, middleInit, eduEmail); break;
+            case Account.Roles.ADMIN: result = addAdmin(userID, userName, firstName, lastName, middleInit, eduEmail); break;
             default: result = -1;
         }
         return result;
+    }
+
+    public int addAccount(Account a) {
+        return addAccount(a.getUserID(), a.getUserName(), a.getFirstName(), a.getLastName(), a.getRole(), a.getMiddleInit(), a.getEduEmail());
     }
 
     public int addStudent(String userID, String userName, String firstName, String lastName, String middleInit, String eduEmail) {
@@ -44,12 +47,8 @@ public class AdminServiceImpl implements AdminService {
         if(accountRepository.existsByUserID(student.getUserID())) {
             return -2;
         }
-        if(accountRepository.save(student) == null) {
-            return -3;
-        }
-        if(studentRepository.save(student) == null) {
-            return -4;
-        }
+        accountRepository.save(student);
+        studentRepository.save(student);
         return 0;
     }
 
@@ -58,15 +57,9 @@ public class AdminServiceImpl implements AdminService {
         if(accountRepository.existsByUserID(teachingAssistant.getUserID())) {
             return -5;
         }
-        if(accountRepository.save(teachingAssistant) == null) {
-            return -6;
-        }
-        if(studentRepository.save(teachingAssistant) == null) {
-            return -7;
-        }
-        if(teachingAssistantRepository.save(teachingAssistant) == null) {
-            return -8;
-        }
+        accountRepository.save(teachingAssistant);
+        studentRepository.save(teachingAssistant);
+        teachingAssistantRepository.save(teachingAssistant);
         return 0;
     }
 
@@ -75,12 +68,8 @@ public class AdminServiceImpl implements AdminService {
         if(accountRepository.existsByUserID(professor.getUserID())) {
             return -9;
         }
-        if(accountRepository.save(professor) == null) {
-            return -10;
-        }
-        if(professorRepository.save(professor) == null) {
-            return -11;
-        }
+        accountRepository.save(professor);
+        professorRepository.save(professor);
         return 0;
     }
 
@@ -89,12 +78,8 @@ public class AdminServiceImpl implements AdminService {
         if(accountRepository.existsByUserID(admin.getUserID())) {
             return -12;
         }
-        if(accountRepository.save(admin) == null) {
-            return -13;
-        }
-        if(adminRepository.save(admin) == null) {
-            return -14;
-        }
+        accountRepository.save(admin);
+        adminRepository.save(admin);
         return 0;
     }
 
@@ -109,9 +94,8 @@ public class AdminServiceImpl implements AdminService {
             case "lastName": account.setLastName(value); break;
             default: break;
         }
-        if(accountRepository.save(account) == null) {
-            return -2;
-        }
+        accountRepository.save(account);
+
         int result;
         switch(account.getRole()) {
             case Account.Roles.STUDENT: result = modifyStudent(account, field, value); break;
@@ -125,33 +109,25 @@ public class AdminServiceImpl implements AdminService {
 
     public int modifyStudent(Account account, String field, String value){
         Student student = new Student(account);
-        if(studentRepository.save(student) == null) {
-            return -4;
-        }
+        studentRepository.save(student);
         return 0;
     }
 
     public int modifyTA(Account account, String field, String value) {
         TeachingAssistant teachingAssistant = new TeachingAssistant(account);
-        if(studentRepository.save(teachingAssistant) == null) {
-            return -5;
-        }
+        studentRepository.save(teachingAssistant);
         return 0;
     }
 
     public int modifyProfessor(Account account, String field, String value) {
         Professor professor = new Professor(account);
-        if(professorRepository.save(professor) == null) {
-            return -6;
-        }
+        professorRepository.save(professor);
         return 0;
     }
 
     public int modifyAdmin(Account account, String field, String value) {
         CollegeAdmin admin = new CollegeAdmin(account);
-        if(adminRepository.save(admin) == null) {
-            return -7;
-        }
+        adminRepository.save(admin);
         return 0;
     }
 

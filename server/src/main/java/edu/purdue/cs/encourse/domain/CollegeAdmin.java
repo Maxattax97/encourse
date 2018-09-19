@@ -15,6 +15,9 @@ public class CollegeAdmin extends Account {
 
     public CollegeAdmin(@NonNull Account account) {
         super(account.getUserID(), account.getUserName(), account.getFirstName(),
-                account.getLastName(), Roles.PROFESSOR, account.getMiddleInit(), account.getEduEmail());
+                account.getLastName(), Roles.ADMIN, account.getMiddleInit(), account.getEduEmail());
+    }
+
+    public CollegeAdmin() {
     }
 }
