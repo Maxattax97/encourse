@@ -5,10 +5,20 @@ import Exit from "../Exit";
 
 class ProjectOptions extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.exitProjectOptions = this.exitProjectOptions.bind(this);
+    }
+
+    exitProjectOptions() {
+        this.props.history.push("/course");
+    }
+
     render() {
         return (
             <div className="panel-project-settings">
-                <ProjectNavigation />
+                <ProjectNavigation titleClick={this.exitProjectOptions} mode={1}/>
                 <div className="panel-center-content">
                     <h3 className="header">
                         Course Projects Directory
@@ -40,7 +50,7 @@ class ProjectOptions extends Component {
                     </h4>
                     <input type="file" />
                 </div>
-                <Exit />
+                <Exit onClick={this.exitProjectOptions}/>
             </div>
         );
     }
