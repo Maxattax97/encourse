@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Redirect, Switch } from 'react-router'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
 import '../css/Main.css';
 import Navbar from './Navbar'
@@ -56,4 +57,4 @@ const mapDispatchToProps = (dispatch) => {
 	return { }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main))
