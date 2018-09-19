@@ -6,9 +6,20 @@ import '../../css/CoursePanel.css'
 import Card from '../Card'
 import CourseSettings from './CourseSettings'
 import StudentPreview from './StudentPreview'
+import ProjectNavigation from '../project/ProjectNavigation';
 import settingsIcon from '../../img/settings.svg'
 
 class CoursePanel extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.showProjectOptions = this.showProjectOptions.bind(this);
+    }
+
+    showProjectOptions() {
+        this.props.history.push("/project-settings");
+    }
 
     render() {
         const data = [
@@ -22,44 +33,8 @@ class CoursePanel extends Component {
          ];
           
         return (
-            <div className="Course-Panel">
-                <div className="Course-Settings">
-                    <div className="Settings-Title" onClick={() => this.props.history.push("/project-settings")}>
-                        <div className="Project-Title">
-                            Projects
-                        </div>
-                        <div className="Project-Settings">
-                            <img src={settingsIcon} />
-                        </div>
-                    </div>
-                    <div className="Break-Line" />
-                    <div className="Project">
-                        MyMalloc1
-                    </div>
-                    <div className="Project">
-                        MyMalloc2
-                    </div>
-                    <div className="Project">
-                        MyMalloc2
-                    </div>
-                    <div className="Project">
-                        MyMalloc2
-                    </div>
-                    <div className="Project">
-                        MyMalloc2
-                    </div>
-                    <div className="Project">
-                        MyMalloc2
-                    </div>
-                    <div className="Project">
-                        MyMalloc2
-                    </div>
-                    <div className="Project">
-                        MyMalloc2
-                    </div>
-                </div>
-                <div className="Course-Content">
-                </div>
+            <div className="panel-course">
+                <ProjectNavigation titleClick={this.showProjectOptions} mode={0} />
                 <Card component={
                    <LineChart width={730} height={250} data={data}
                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>

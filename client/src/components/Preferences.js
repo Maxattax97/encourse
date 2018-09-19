@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-import '../css/Preferences.css'
 
 class Preferences extends Component {
   render() {
