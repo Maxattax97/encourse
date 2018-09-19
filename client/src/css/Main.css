@@ -18,7 +18,24 @@
 
 .Navbar .Options .Logout img { width: 100%; height: 100%; }
 
-.Course-Panel { font-family: "Rhodium Libre", serif; color: #1f1e1caa; text-align: left; font-weight: bold; }
+/* rhodium-libre-regular - latin */
+.panel { position: absolute; left: 0; top: 2.7em; width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; color: #1f1f1f; }
+
+.panel-container { position: relative; max-width: 1254px; width: 100%; height: 100%; margin: 2em auto; }
+
+.panel-left-nav { position: relative; width: calc(15% - 20px); max-width: 200px; min-width: 140px; height: 100%; padding: 10px; }
+
+.break-line { width: 100%; height: 1px; background-color: #1f1f1f33; }
+
+h3.break-line { margin: 20px 0; }
+
+h3.break-line.title { margin-top: 5px; margin-bottom: 20px; }
+
+table { border-collapse: collapse; }
+
+.Modal .Background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; -webkit-filter: blur(4px); -moz-filter: blur(4px); -ms-filter: blur(4px); -o-filter: blur(4px); filter: blur(4px); }
+
+.panel-course { text-align: left; font-weight: bold; }
 
 .Course-Settings { border-radius: 4px; font-size: 1em; position: relative; width: calc(15% - 20px); max-width: 200px; min-width: 140px; padding: 10px; text-align: center; }
 
@@ -37,16 +54,3 @@
 .Course-Settings .Project { cursor: pointer; }
 
 .Course-Settings .Project:hover { background-image: linear-gradient(to right, #e8e8e800, #E8E8E8FF 2.5%, #E8E8E8FF 97.5%, #E8E8E800 100%); }
-
-/* rhodium-libre-regular - latin */
-.Panel { position: absolute; left: 0; top: 2.7em; width: 100%; }
-
-.Panel-Container { position: relative; max-width: 1254px; width: 100%; height: 100%; margin: 2em auto; }
-
-.Break-Line { margin: 10px 2em; width: calc(100% - 4em); background-image: linear-gradient(to right, #e8e8e800, #E8E8E8FF 2.5%, #E8E8E8FF 97.5%, #E8E8E800 100%); }
-
-div.Break-Line { height: 3px; }
-
-table { border-collapse: collapse; }
-
-.Modal .Background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; -webkit-filter: blur(4px); -moz-filter: blur(4px); -ms-filter: blur(4px); -o-filter: blur(4px); filter: blur(4px); }

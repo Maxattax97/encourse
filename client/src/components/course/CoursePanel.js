@@ -1,50 +1,26 @@
 import React, { Component } from 'react'
 
+import ProjectNavigation from '../project/ProjectNavigation';
 import settingsIcon from '../../img/settings.svg'
 
 class CoursePanel extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.showProjectOptions = this.showProjectOptions.bind(this);
+    }
+
+    showProjectOptions() {
+        this.props.history.push("/project-settings");
+    }
+
     render() {
         return (
-                <div className="Course-Panel">
-                    <div className="Course-Settings">
-                        <div className="Settings-Title" onClick={() => this.props.history.push("/project-settings")}>
-                            <div className="Project-Title">
-                                Projects
-                            </div>
-                            <div className="Project-Settings">
-                                <img src={settingsIcon} />
-                            </div>
-                        </div>
-                        <div className="Break-Line" />
-                        <div className="Project">
-                            MyMalloc1
-                        </div>
-                        <div className="Project">
-                            MyMalloc2
-                        </div>
-                        <div className="Project">
-                            MyMalloc2
-                        </div>
-                        <div className="Project">
-                            MyMalloc2
-                        </div>
-                        <div className="Project">
-                            MyMalloc2
-                        </div>
-                        <div className="Project">
-                            MyMalloc2
-                        </div>
-                        <div className="Project">
-                            MyMalloc2
-                        </div>
-                        <div className="Project">
-                            MyMalloc2
-                        </div>
-                    </div>
-                    <div className="Course-Content">
-                    </div>
-                </div>
+            <div className="panel-course">
+                <ProjectNavigation titleClick={this.showProjectOptions}/>
+
+            </div>
         )
     }
 }

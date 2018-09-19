@@ -14,10 +14,10 @@ class Main extends Component {
 
   render() {
     return (
-        <div className="Main">
+        <div className="main">
             <Navbar />
-            <div className="Panel">
-                <div className="Panel-Container">
+            <div className="panel">
+                <div className="panel-container">
                     <Switch>
                         <Route path="/panel" render={(navProps) => {
                             //determine logic for course panel, student panel, or admin panel. For now, use course panel
