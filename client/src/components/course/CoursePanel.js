@@ -18,7 +18,7 @@ class CoursePanel extends Component {
     render() {
         return (
             <div className="panel-course">
-                <ProjectNavigation titleClick={this.showProjectOptions} />
+                <ProjectNavigation titleClick={this.showProjectOptions} mode={0} />
 
             </div>
         )
