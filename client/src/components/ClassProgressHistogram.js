@@ -22,7 +22,7 @@ const students = [
 
 const data = [];
 
-const binCount = 6;
+const binCount = 10;
 const binSize = 100 / binCount;
 
 for (let i = 0; i < binCount; i++) {
@@ -40,12 +40,11 @@ for (let student of students) {
 class ClassProgressHistogram extends Component {
     render() {
         return (
-            <ComposedChart layout="vertical" width={600} height={400} data={data}>
+            <ComposedChart layout="vertical" width={600} height={300} data={data} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
                 <CartesianGrid/>
                 <XAxis type="number"/>
                 <YAxis dataKey="progressBin" type="category"/>
                 <Tooltip/>
-                <Legend/>
                 <Bar dataKey="count" fill="#8884d8"/>
             </ComposedChart>
         );
