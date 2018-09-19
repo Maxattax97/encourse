@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "SECTIONS")
+@Table(name = "SECTION")
 public class Section {
     /** courseID + semester + sectionType form the primary key **/
     @Id
@@ -22,9 +22,6 @@ public class Section {
 
     /** Use courseID or courseTitle to group together sections of the same course **/
     private String courseTitle;
-
-    /** UID of head TA or professor for the section **/
-    private String headInstructorUID;
 
     /** Path to the directory that contains repositories **/
     @Setter
