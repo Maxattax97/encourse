@@ -23,14 +23,16 @@ for (let item of data) {
 class CodeChangesChart extends Component {
     render() {
         return (
-            <AreaChart width={600} height={300} data={data} margin={{top: 10, right: 30, left: 0, bottom: 0}}>
-                <CartesianGrid strokeDasharray="3 3"/>
-                <XAxis dataKey="dateStr"/>
-                <YAxis/>
-                <Tooltip/>
-                <Area type="monotone" dataKey="additions" stroke="none" fill="green" />
-                <Area type="monotone" dataKey="deletions" stroke="none" fill="red" />
-            </AreaChart>
+            <div classname="chart-container">
+                <AreaChart width={600} height={300} data={data} margin={{top: 10, right: 30, left: 0, bottom: 0}}>
+                    <CartesianGrid strokeDasharray="3 3"/>
+                    <XAxis dataKey="dateStr"/>
+                    <YAxis/>
+                    <Tooltip/>
+                    <Area type="monotone" dataKey="additions" stroke="none" fill="green" />
+                    <Area type="monotone" dataKey="deletions" stroke="none" fill="red" />
+                </AreaChart>
+            </div>
         );
     }
 }
