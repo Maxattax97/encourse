@@ -5,41 +5,25 @@ import settingsIcon from '../../img/settings.svg'
 class ProjectNavigation extends Component {
 
     render() {
-        return (<div className="panel-left-nav">
+        return (
+            <div className="panel-left-nav">
                 <div className="projects-nav">
-                    <div className="projects-title" onClick={ this.props["titleClick"]() }>
+                    <div className="projects-title">
                         <h3>
                             Projects
                         </h3>
                         <img src={settingsIcon} />
                     </div>
                     <h3 className="break-line title" />
-                    <div className="Project">
+                    <h4>
                         MyMalloc1
-                    </div>
-                    <div className="Project">
+                    </h4>
+                    <h4>
                         MyMalloc2
-                    </div>
-                    <div className="Project">
-                        MyMalloc2
-                    </div>
-                    <div className="Project">
-                        MyMalloc2
-                    </div>
-                    <div className="Project">
-                        MyMalloc2
-                    </div>
-                    <div className="Project">
-                        MyMalloc2
-                    </div>
-                    <div className="Project">
-                        MyMalloc2
-                    </div>
-                    <div className="Project">
-                        MyMalloc2
-                    </div>
-                </div>
-                <div className="Course-Content">
+                    </h4>
+                    <h4>
+                        MyMalloc3
+                    </h4>
                 </div>
             </div>
         )
