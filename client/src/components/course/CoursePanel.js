@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { LineChart } from 'rd3'
+import { LineChart, CartesianGrid, XAxis, YAxis, 
+         Tooltip, Legend, Line } from 'recharts'
 
 import '../../css/CoursePanel.css'
 import Card from '../Card'
@@ -10,22 +11,15 @@ import settingsIcon from '../../img/settings.svg'
 class CoursePanel extends Component {
 
     render() {
-        let lineData = [
-            { 
-              name: 'series1',
-              values: [ { x: 0, y: 20 }, { x: 1, y: 30 }, { x: 2, y: 10 }, { x: 3, y: 5 }, { x: 4, y: 8 }, { x: 5, y: 15 }, { x: 6, y: 10 } ],
-              strokeWidth: 3,
-              strokeDashArray: "5,5",
-            },
-            {
-              name: 'series2',
-              values : [ { x: 0, y: 8 }, { x: 1, y: 5 }, { x: 2, y: 20 }, { x: 3, y: 12 }, { x: 4, y: 4 }, { x: 5, y: 6 }, { x: 6, y: 2 } ]
-            },
-            {
-              name: 'series3',
-              values: [ { x: 0, y: 0 }, { x: 1, y: 5 }, { x: 2, y: 8 }, { x: 3, y: 2 }, { x: 4, y: 6 }, { x: 5, y: 4 }, { x: 6, y: 2 } ]
-            } 
-          ]
+        const data = [
+            {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
+            {name: 'Page B', uv: 3000, pv: 1398, amt: 2210},
+            {name: 'Page C', uv: 2000, pv: 9800, amt: 2290},
+            {name: 'Page D', uv: 2780, pv: 3908, amt: 2000},
+            {name: 'Page E', uv: 1890, pv: 4800, amt: 2181},
+            {name: 'Page F', uv: 2390, pv: 3800, amt: 2500},
+            {name: 'Page G', uv: 3490, pv: 4300, amt: 2100},
+         ];
           
         return (
             <div className="Course-Panel">
@@ -67,23 +61,16 @@ class CoursePanel extends Component {
                 <div className="Course-Content">
                 </div>
                 <Card component={
-                    <LineChart      
-                        legend={true}
-                        data={lineData}
-                        width='100%'
-                        height={400}
-                        viewBoxObject={{
-                        x: 0,
-                        y: 0,
-                        width: 500,
-                        height: 400
-                        }}
-                        title="Line Chart"
-                        yAxisLabel="Altitude"
-                        xAxisLabel="Elapsed Time (sec)"
-                        domain={{x: [,6], y: [-10,]}}
-                        gridHorizontal={true}
-                    />}
+                   <LineChart width={730} height={250} data={data}
+                   margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                   <CartesianGrid strokeDasharray="3 3" />
+                   <XAxis dataKey="name" />
+                   <YAxis />
+                   <Tooltip />
+                   <Legend />
+                   <Line type="monotone" dataKey="pv" stroke="#8884d8" />
+                   <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+                 </LineChart>}
                 />
             </div>
         )

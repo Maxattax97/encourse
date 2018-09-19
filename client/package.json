@@ -4,16 +4,14 @@
   "private": true,
   "dependencies": {
     "connected-react-router": "^4.4.1",
-    "create-react-class": "^15.6.3",
-    "d3": "^3.5.17",
     "history": "^4.7.2",
-    "rd3": "^0.8.1",
     "react": "^16.5.1",
     "react-dom": "^16.5.1",
     "react-redux": "^5.0.7",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.5",
+    "recharts": "^1.2.0",
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0"
   },
