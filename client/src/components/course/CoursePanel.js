@@ -1,18 +1,13 @@
 import React, { Component } from 'react'
 
-import ProjectNavigation from '../project/ProjectNavigation';
+import ProjectNavigation from '../project/ProjectNavigation'
 import settingsIcon from '../../img/settings.svg'
+import { history } from '../../redux/store'
 
 class CoursePanel extends Component {
 
-    constructor(props) {
-        super(props);
-
-        this.showProjectOptions = this.showProjectOptions.bind(this);
-    }
-
-    showProjectOptions() {
-        this.props.history.push("/project-settings");
+    showProjectOptions = () => {
+        history.push("/project-settings")
     }
 
     render() {

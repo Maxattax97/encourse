@@ -1,18 +1,13 @@
 import React, { Component } from "react"
 
-import ProjectNavigation from "./ProjectNavigation";
+import ProjectNavigation from "./ProjectNavigation"
 import Exit from "../Exit";
+import { history } from '../../redux/store'
 
 class ProjectOptions extends Component {
 
-    constructor(props) {
-        super(props);
-
-        this.exitProjectOptions = this.exitProjectOptions.bind(this);
-    }
-
-    exitProjectOptions() {
-        this.props.history.push("/course");
+    exitProjectOptions = () => {
+        history.push("/course")
     }
 
     render() {
