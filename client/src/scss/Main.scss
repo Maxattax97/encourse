@@ -1,51 +1,7 @@
-/* rhodium-libre-regular - latin */
-.Panel {
-  position:absolute;
-  left: 0;
-  top: 2.7em;
-  width: 100%;
-}
+@import "default/Default";
 
-.Panel-Container {
-  position:relative;
-  max-width: 1254px;
-  width: 100%;
-  height: 100%;
-  margin: 2em auto;
-}
+@import "course/CoursePanel";
+@import "student/StudentPanel";
 
-.Break-Line {
+@import "project/ProjectPanel";
 
-  margin: 10px 2em;
-  width: calc(100% - 4em);
-  background-image: linear-gradient(to right,
-          #e8e8e800,
-          #E8E8E8FF 2.5%,
-          #E8E8E8FF 97.5%,
-          #E8E8E800 100%
-  );
-}
-
-div.Break-Line {
-  height: 3px;
-}
-
-table {
-  border-collapse: collapse;
-}
-
-.Modal {
-  .Background {
-    position:fixed;
-    top: 0;
-    left: 0;
-    width:100%;
-    height:100%;
-    background-size:cover;
-    -webkit-filter: blur(4px);
-    -moz-filter: blur(4px);
-    -ms-filter: blur(4px);
-    -o-filter: blur(4px);
-    filter: blur(4px);
-  }
-}

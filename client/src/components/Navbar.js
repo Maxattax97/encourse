@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-import '../css/Navbar.css'
 import settingsIcon from '../img/settings.svg'
 import logoutIcon from '../img/logout.svg'
 import { history } from '../redux/store'
