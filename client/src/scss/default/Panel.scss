@@ -30,8 +30,19 @@
 .panel-center-content {
   position:relative;
   float:left;
-  width:calc(60% - 120px);
+  width:calc(70% - 120px);
   height: 100%;
   margin: 0;
   padding: 20px;
+}
+
+.panel-right-nav {
+  position: relative;
+  float: right;
+  width: 15%;
+  max-width: 200px;
+  min-width: 140px;
+  height: 100%;
+  padding: 0 20px;
+  margin: 0;
 }

@@ -1,6 +1,7 @@
 import React, { Component } from "react"
-import settingsIcon from "../../img/settings.svg";
+
 import ProjectNavigation from "./ProjectNavigation";
+import Exit from "../Exit";
 
 class ProjectOptions extends Component {
 
@@ -39,6 +40,7 @@ class ProjectOptions extends Component {
                     </h4>
                     <input type="file" />
                 </div>
+                <Exit />
             </div>
         );
     }
