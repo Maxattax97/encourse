@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
-<<<<<<< HEAD
 import '../css/Card.css'
-=======
-import logo from '../img/encourse-logo-large.png';
->>>>>>> master
 
 class Card extends Component {
     render() {
