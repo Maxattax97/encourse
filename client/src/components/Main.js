@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import '../css/Main.css';
 import Navbar from './Navbar'
 import CoursePanel from './course/CoursePanel'
-import ProjectOptions from "./course/ProjectOptions"
+import ProjectOptions from "./project/ProjectOptions"
 import StudentPanel from './StudentPanel'
 import AdminPanel from './AdminPanel'
 import Preferences from './Preferences'

@@ -13,7 +13,6 @@ class CoursePanel extends Component {
 
     showProjectOptions() {
         this.props.history.push("/project-settings");
-        console.log("here");
     }
 
     render() {
