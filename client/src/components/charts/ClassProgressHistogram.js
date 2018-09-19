@@ -40,13 +40,14 @@ for (let student of students) {
 class ClassProgressHistogram extends Component {
     render() {
         return (
-            <ComposedChart layout="vertical" width={600} height={300} data={data} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
-                <CartesianGrid/>
-                <XAxis type="number"/>
-                <YAxis dataKey="progressBin" type="category"/>
-                <Tooltip/>
-                <Bar dataKey="count" fill="#8884d8"/>
-            </ComposedChart>
+            <div classname="chart-container">
+                <ComposedChart layout="vertical" width={600} height={300} data={data} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+                    <CartesianGrid/>
+                    <XAxis type="number"/>
+                    <YAxis dataKey="progressBin" type="category"/>
+                    <Bar dataKey="count" fill="#8884d8"/>
+                </ComposedChart>
+            </div>
         );
     }
 }
