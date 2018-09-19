@@ -1,0 +1,23 @@
+.exit-nav {
+  position: relative;
+  height: 1.5em;
+  width: 1.5em;
+  padding: .5em;
+
+  cursor: pointer;
+
+  img {
+    position:absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
+    width: 1.5em;
+    height: 1.5em;
+  }
+
+  img:hover {
+    filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+  }
+
+}
