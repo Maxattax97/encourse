@@ -1,6 +1,8 @@
 package edu.purdue.cs.encourse.domain;
 
 import lombok.*;
+import org.aspectj.weaver.Iterators;
+
 import javax.persistence.*;
 
 @Getter
