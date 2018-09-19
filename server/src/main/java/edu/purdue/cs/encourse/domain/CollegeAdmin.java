@@ -5,7 +5,7 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "ADMINISTRATORS")
+@Table(name = "ADMINISTRATOR")
 public class CollegeAdmin extends Account {
     public CollegeAdmin(@NonNull String UID, @NonNull String userName,
                      @NonNull String firstName, @NonNull String lastName,

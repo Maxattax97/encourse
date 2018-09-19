@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 
 public interface StudentRepository extends CrudRepository<Student, Long> {
     Student findByUserID(@NonNull String UID);
+    Student findByUserName(@NonNull String userName);
     boolean existsByUserID(@NonNull String UID);
 }
