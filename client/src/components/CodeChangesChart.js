@@ -16,7 +16,8 @@ const data = [
 ];
 
 for (let item of data) {
-    item.dateStr = item.date.toDateString();
+    let m = item.date;
+    item.dateStr = (m.getUTCMonth()+1) + '/' + m.getUTCDate();
 }
 
 class CodeChangesChart extends Component {
@@ -27,8 +28,8 @@ class CodeChangesChart extends Component {
                 <XAxis dataKey="dateStr"/>
                 <YAxis/>
                 <Tooltip/>
-                <Area type="monotone" dataKey="additions" stroke="black" fill="green" />
-                <Area type="monotone" dataKey="deletions" stroke="black" fill="red" />
+                <Area type="monotone" dataKey="additions" stroke="none" fill="green" />
+                <Area type="monotone" dataKey="deletions" stroke="none" fill="red" />
             </AreaChart>
         );
     }
