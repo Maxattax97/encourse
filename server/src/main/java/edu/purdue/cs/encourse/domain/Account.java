@@ -5,7 +5,7 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "ACCOUNTS")
+@Table(name = "ACCOUNT")
 public class Account {
     /** Primary key for all account types, meant to be university ID**/
     @Id
