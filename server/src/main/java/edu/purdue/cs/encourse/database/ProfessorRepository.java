@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 public interface ProfessorRepository extends CrudRepository<Professor, Long> {
-    Professor findByUserID(@NonNull String UID);
+    Professor findByUserID(@NonNull String userID);
     Professor findByUserName(@NonNull String userName);
-    boolean existsByUserID(@NonNull String UID);
+    boolean existsByUserID(@NonNull String userID);
 }

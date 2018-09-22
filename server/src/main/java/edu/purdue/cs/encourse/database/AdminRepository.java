@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 public interface AdminRepository extends CrudRepository<CollegeAdmin, Long> {
-    CollegeAdmin findByUserID(@NonNull String UID);
+    CollegeAdmin findByUserID(@NonNull String userID);
     CollegeAdmin findByUserName(@NonNull String userName);
-    boolean existsByUserID(@NonNull String UID);
+    boolean existsByUserID(@NonNull String userID);
 }
