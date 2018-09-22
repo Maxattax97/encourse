@@ -1,6 +1,15 @@
 @import "Navbar";
 @import "Panel";
+@import "Exit";
 @import "Card";
+
+.h2-size {
+  font-size: 1.5em;
+}
+
+.h3-size {
+  font-size: 1.33em;
+}
 
 .break-line {
   width: 100%;
@@ -15,6 +24,15 @@ h3.break-line {
 h3.break-line.title {
   margin-top: 5px;
   margin-bottom: 20px;
+}
+
+.header {
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  font-family: "Raleway", "Rhodium Libre", sans-serif;
 }
 
 table {
