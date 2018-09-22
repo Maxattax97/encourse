@@ -9,12 +9,12 @@ import javax.persistence.*;
 public class Project {
     /** courseID + semester + projectName, forms the primary key **/
     @Id
-    private final String projectIdentifier;
+    private String projectIdentifier;
 
     /** Each piece of the project identifier **/
-    private final String courseID;
-    private final String semester;
-    private final String projectName;
+    private String courseID;
+    private String semester;
+    private String projectName;
 
     /** Date that project is opened to students **/
     @Setter
@@ -27,7 +27,7 @@ public class Project {
     /** The name of the directory that will store the project. Remove .git if this is included **/
     private String repoName;
 
-    public Project(@NonNull String courseID, @NonNull String semester, @NonNull String projectName,
+    public Project(String courseID, String semester, String projectName,
                    String repoName, String startDate, String dueDate) {
         this.courseID = courseID;
         this.semester = semester;
@@ -38,7 +38,11 @@ public class Project {
         this.dueDate = dueDate;
     }
 
-    public String createSectionID(@NonNull String courseID, @NonNull String semester, @NonNull String projectName) {
+    public Project() {
+
+    }
+
+    public String createSectionID(String courseID, String semester, String projectName) {
         return (courseID + " " + semester + ": " + projectName);
     }
 

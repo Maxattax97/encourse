@@ -7,14 +7,17 @@ import javax.persistence.*;
 @Entity
 @Table(name = "PROFESSOR")
 public class Professor extends Account {
-    public Professor(@NonNull String UID, @NonNull String userName,
-                        @NonNull String firstName, @NonNull String lastName,
+    public Professor(String userID, String userName, String saltPass, String firstName, String lastName,
                         String middleInit, String eduEmail) {
-        super(UID, userName, firstName, lastName, Roles.PROFESSOR, middleInit, eduEmail);
+        super(userID, userName, saltPass, firstName, lastName, Roles.PROFESSOR, middleInit, eduEmail);
     }
 
-    public Professor(@NonNull Account account) {
-        super(account.getUserID(), account.getUserName(), account.getFirstName(),
+    public Professor(Account account) {
+        super(account.getUserID(), account.getUserName(), account.getSaltPass(), account.getFirstName(),
                 account.getLastName(), Roles.PROFESSOR, account.getMiddleInit(), account.getEduEmail());
+    }
+
+    public Professor() {
+        super();
     }
 }

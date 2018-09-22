@@ -6,9 +6,10 @@ import lombok.*;
 import java.util.*;
 
 public interface AccountService {
-    Account retrieveAccount(String userName);
-    Student retrieveStudent(String userName);
-    TeachingAssistant retrieveTA(String userName);
-    Professor retrieveProfessor(String userName);
-    CollegeAdmin retrieveAdmin(String userName);
+    /** Services for retrieving account with specified type from database **/
+    Account retrieveAccount(String userName, String saltPass);
+    Student retrieveStudent(String userName, String saltPass);
+    TeachingAssistant retrieveTA(String userName, String saltPass);
+    Professor retrieveProfessor(String userName, String saltPass);
+    CollegeAdmin retrieveAdmin(String userName, String saltPass);
 }

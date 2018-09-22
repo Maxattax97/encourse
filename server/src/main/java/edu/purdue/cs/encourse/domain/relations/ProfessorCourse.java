@@ -10,8 +10,12 @@ import java.io.Serializable;
 public class ProfessorCourse {
     @EmbeddedId ProfessorCourseId id;
 
-    public ProfessorCourse(@NonNull String userID, @NonNull String courseID, @NonNull String semester) {
+    public ProfessorCourse(String userID, String courseID, String semester) {
         this.id = new ProfessorCourseId(userID, courseID, semester);
+    }
+
+    public ProfessorCourse() {
+
     }
 }
 
@@ -25,9 +29,13 @@ class ProfessorCourseId implements Serializable {
     private String courseID;
     private String semester;
 
-    public ProfessorCourseId(@NonNull String userID, @NonNull String courseID, @NonNull String semester) {
+    public ProfessorCourseId(String userID, String courseID, String semester) {
         this.userID = userID;
         this.courseID = courseID;
         this.semester = semester;
+    }
+
+    public ProfessorCourseId() {
+
     }
 }
