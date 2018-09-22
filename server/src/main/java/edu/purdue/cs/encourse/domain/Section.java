@@ -10,15 +10,15 @@ import javax.persistence.*;
 public class Section {
     /** courseID + semester + sectionType form the primary key **/
     @Id
-    private final String sectionIdentifier;
+    private String sectionIdentifier;
 
     /** Each piece of the section identifier **/
-    private final String courseID;
-    private final String semester;
-    private final String sectionType;
+    private String courseID;
+    private String semester;
+    private String sectionType;
 
     /** May be useful to track for registration purposes **/
-    private final String CRN;
+    private String CRN;
 
     /** Use courseID or courseTitle to group together sections of the same course **/
     private String courseTitle;
@@ -30,15 +30,17 @@ public class Section {
     /** The path to the remote repositories on data.cs **/
     private String remotePath;
 
-    public Section(@NonNull String CRN, @NonNull String semester,
-                   @NonNull String courseID, @NonNull String courseTitle,
-                   @NonNull String sectionType) {
+    public Section(String CRN, String semester, String courseID, String courseTitle, String sectionType) {
         this.CRN = CRN;
         this.semester = semester;
         this.courseID = courseID;
         this.courseTitle = courseTitle;
         this.sectionType = sectionType;
         this.sectionIdentifier = createSectionID(courseID, semester, sectionType);
+    }
+
+    public Section() {
+
     }
 
     public String createSectionID(@NonNull String courseID, @NonNull String semester, @NonNull String sectionType) {

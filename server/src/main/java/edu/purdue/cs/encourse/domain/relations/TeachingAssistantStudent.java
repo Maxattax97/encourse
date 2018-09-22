@@ -10,8 +10,12 @@ import java.io.Serializable;
 public class TeachingAssistantStudent {
     @EmbeddedId TeachingAssistantStudentId id;
 
-    public TeachingAssistantStudent(@NonNull String teachingAssistantID, @NonNull String studentID, @NonNull String sectionIdentifier) {
+    public TeachingAssistantStudent(String teachingAssistantID, String studentID, String sectionIdentifier) {
         this.id = new TeachingAssistantStudentId(teachingAssistantID,studentID,sectionIdentifier);
+    }
+
+    public TeachingAssistantStudent() {
+
     }
 }
 
@@ -27,9 +31,13 @@ class TeachingAssistantStudentId implements Serializable {
     /** Key used to identify section that student is in **/
     private String sectionIdentifier;
 
-    public TeachingAssistantStudentId(@NonNull String teachingAssistantID, @NonNull String studentID, @NonNull String sectionIdentifier) {
+    public TeachingAssistantStudentId(String teachingAssistantID, String studentID, String sectionIdentifier) {
         this.teachingAssistantID = teachingAssistantID;
         this.studentID = studentID;
         this.sectionIdentifier = sectionIdentifier;
+    }
+
+    public TeachingAssistantStudentId() {
+
     }
 }

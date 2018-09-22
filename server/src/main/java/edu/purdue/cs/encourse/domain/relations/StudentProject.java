@@ -13,9 +13,13 @@ public class StudentProject {
     /** Current grade output by testall for the project **/
     private String currentGrade;
 
-    public StudentProject(@NonNull String userID, @NonNull String projectIdentifier, String currentGrade) {
+    public StudentProject(String userID, String projectIdentifier, String currentGrade) {
         this.id = new StudentProjectId(userID, projectIdentifier);
         this.currentGrade = currentGrade;
+    }
+
+    public StudentProject() {
+
     }
 }
 
@@ -28,8 +32,12 @@ class StudentProjectId implements Serializable {
     /** Key used to identify the project student is working on **/
     private String projectIdentifier;
 
-    public StudentProjectId(@NonNull String userID, @NonNull String projectIdentifier) {
+    public StudentProjectId(String userID, String projectIdentifier) {
         this.userID = userID;
         this.projectIdentifier = projectIdentifier;
+    }
+
+    public StudentProjectId() {
+
     }
 }

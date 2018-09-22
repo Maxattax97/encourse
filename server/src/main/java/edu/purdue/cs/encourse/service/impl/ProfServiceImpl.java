@@ -3,13 +3,16 @@ package edu.purdue.cs.encourse.service.impl;
 import edu.purdue.cs.encourse.service.ProfService;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
 
+@Service(value = ProfServiceImpl.NAME)
 public class ProfServiceImpl implements ProfService {
+
+    public final static String NAME = "ProfService";
 
     @Autowired
     private ProjectRepository projectRepository;
