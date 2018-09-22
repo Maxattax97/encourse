@@ -1,5 +1,6 @@
 package edu.purdue.cs.encourse.service.impl;
 
+import edu.purdue.cs.encourse.domain.relations.StudentAssignment;
 import edu.purdue.cs.encourse.service.ProfService;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service(value = ProfServiceImpl.NAME)
@@ -15,77 +17,102 @@ public class ProfServiceImpl implements ProfService {
     public final static String NAME = "ProfService";
 
     @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
     private ProjectRepository projectRepository;
 
     @Autowired
     private SectionRepository sectionRepository;
 
-    public int createHub(String sectionID, List<Student> students){
-        Section section = sectionRepository.findBySectionIdentifier(sectionID);
-        if(section == null) {
+    @Autowired
+    private StudentAssignmentRepository studentAssignmentRepository;
+
+    public int createHub(String courseID){
+        List<Section> sections = sectionRepository.findByCourseID(courseID);
+        if(sections.isEmpty()) {
             return -1;
         }
-        if(!(new File("/sourcecontrol/" + section.getCourseID() + "/" + section.getSemester()).mkdirs())) {
-            return -3;
+        if(!(new File("/sourcecontrol/" + sections.get(0).getCourseID() + "/" + sections.get(0).getSemester()).mkdirs())) {
+            return -2;
         }
-        section.setCourseHub("/sourcecontrol/" + section.getCourseID() + "/" + section.getSemester());
-        for(Student s : students){
-            if(!(new File(section.getCourseHub() + "/" + s.getUserName()).mkdir())) {
-                return -4;
+        for(Section s : sections) {
+            s.setCourseHub("/sourcecontrol/" + sections.get(0).getCourseID() + "/" + sections.get(0).getSemester());
+            List<StudentAssignment> assignments =
+                    studentAssignmentRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            for(StudentAssignment a : assignments){
+                Student student = studentRepository.findByUserID(a.getStudentID());
+                new File(sections.get(0).getCourseHub() + "/" + student.getUserName()).mkdir();
             }
         }
         return 0;
     }
 
-    public int cloneProjects(String sectionID, String projectID, List<Student> students){
-        Section section = sectionRepository.findBySectionIdentifier(sectionID);
-        if(section == null) {
+    public int cloneProjects(String courseID, String projectID){
+        List<Section> sections = sectionRepository.findByCourseID(courseID);
+        if(sections.isEmpty()) {
             return -1;
         }
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return -2;
         }
-        if(section.getCourseHub() == null) {
+        if(sections.get(0).getCourseHub() == null) {
             return -3;
         }
         if(project.getRepoName() == null) {
             return -4;
         }
-        if(section.getRemotePath() == null) {
+        if(sections.get(0).getRemotePath() == null) {
             return -5;
         }
         ProcessBuilder builder = new ProcessBuilder();
-        for(Student s : students){
-            String destPath = (section.getCourseHub() + "/" + s.getUserName());
-            String repoPath = (section.getRemotePath() + "/" + s.getUserName() + "/" + project.getRepoName() + ".git");
-            builder.command("cloneProject.sh", destPath, repoPath);
+        for(Section s : sections){
+            List<StudentAssignment> assignments =
+                    studentAssignmentRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            for(StudentAssignment a : assignments){
+                Student student = studentRepository.findByUserID(a.getStudentID());
+                if(!(new File(s.getCourseHub() + "/" + student.getUserName()).exists())) {
+                    String destPath = (s.getCourseHub() + "/" + student.getUserName());
+                    String repoPath = (s.getRemotePath() + "/" + student.getUserName() + "/" + project.getRepoName() + ".git");
+                    builder.command("cloneProject.sh", destPath, repoPath);
+                }
+            }
         }
-        builder.command("setPermissions.sh", section.getCourseID());
+        builder.command("setPermissions.sh", sections.get(0).getCourseID());
         return 0;
     }
 
-    public int pullProjects(String sectionID, String projectID, List<Student> students){
-        Section section = sectionRepository.findBySectionIdentifier(sectionID);
-        if(section == null) {
+    public int pullProjects(String courseID, String projectID){
+        List<Section> sections = sectionRepository.findByCourseID(courseID);
+        if(sections.isEmpty()) {
             return -1;
         }
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return -2;
         }
-        if(section.getCourseHub() == null) {
+        if(sections.get(0).getCourseHub() == null) {
             return -3;
         }
         if(project.getRepoName() == null) {
             return -4;
         }
         ProcessBuilder builder = new ProcessBuilder();
-        for(Student s : students){
-            String destPath = (section.getCourseHub() + "/" + s.getUserName() + "/" + project.getRepoName());
-            builder.command("pullProject.sh", destPath);
+        List<String> completedStudents = new ArrayList<>();
+        for(Section s : sections){
+            List<StudentAssignment> assignments =
+                    studentAssignmentRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            for(StudentAssignment a : assignments) {
+                Student student = studentRepository.findByUserID(a.getStudentID());
+                if(!(completedStudents.contains(student.getUserName()))) {
+                    String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
+                    builder.command("pullProject.sh", destPath);
+                    completedStudents.add(student.getUserName());
+                }
+            }
         }
-        builder.command("setPermissions.sh", section.getCourseID());
+        builder.command("setPermissions.sh", sections.get(0).getCourseID());
         return 0;
     }
 

@@ -87,7 +87,7 @@ public class AdminServicesTests {
         assertEquals("Daniel", teachingAssistant.getFirstName());
         student = accountService.retrieveStudent("dkrolopp", "d");
         assertEquals("Daniel", student.getFirstName());
-        assertEquals(false, studentRepository.existsByUserID("grr"));
+        assertFalse(studentRepository.existsByUserID("grr"));
     }
 
 }
