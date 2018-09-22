@@ -18,9 +18,31 @@
 
 .panel-left-nav {
   position: relative;
-  width: calc(15% - 20px);
+  float:left;
+  width: 15%;
   max-width: 200px;
   min-width: 140px;
   height: 100%;
-  padding: 10px;
+  padding: 40px 20px;
+  margin: 0;
+}
+
+.panel-center-content {
+  position:relative;
+  float:left;
+  width:calc(70% - 120px);
+  height: 100%;
+  margin: 0;
+  padding: 20px;
+}
+
+.panel-right-nav {
+  position: relative;
+  float: right;
+  width: 15%;
+  max-width: 200px;
+  min-width: 140px;
+  height: 100%;
+  padding: 0 20px;
+  margin: 0;
 }

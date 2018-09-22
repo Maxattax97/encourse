@@ -1,25 +1,24 @@
 import React, { Component } from 'react'
 
-import ProjectNavigation from '../project/ProjectNavigation';
+import ProjectNavigation from '../project/ProjectNavigation'
+import Card from '../Card'
+import CourseSettings from './CourseSettings'
+import StudentPreview from './StudentPreview'
 import settingsIcon from '../../img/settings.svg'
+import { history } from '../../redux/store'
+import ClassProgressHistogram from '../charts/ClassProgressHistogram'
 
 class CoursePanel extends Component {
 
-    constructor(props) {
-        super(props);
-
-        this.showProjectOptions = this.showProjectOptions.bind(this);
-    }
-
-    showProjectOptions() {
-        this.props.history.push("/project-settings");
+    showProjectOptions = () => {
+        history.push("/project-settings")
     }
 
     render() {
         return (
             <div className="panel-course">
-                <ProjectNavigation titleClick={this.showProjectOptions}/>
-
+                <ProjectNavigation titleClick={this.showProjectOptions} mode={0} />
+                <Card component={<ClassProgressHistogram/>}/>
             </div>
         )
     }

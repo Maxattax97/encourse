@@ -23,7 +23,21 @@
 
 .panel-container { position: relative; max-width: 1254px; width: 100%; height: 100%; margin: 2em auto; }
 
-.panel-left-nav { position: relative; width: calc(15% - 20px); max-width: 200px; min-width: 140px; height: 100%; padding: 10px; }
+.panel-left-nav { position: relative; float: left; width: 15%; max-width: 200px; min-width: 140px; height: 100%; padding: 40px 20px; margin: 0; }
+
+.panel-center-content { position: relative; float: left; width: calc(70% - 120px); height: 100%; margin: 0; padding: 20px; }
+
+.panel-right-nav { position: relative; float: right; width: 15%; max-width: 200px; min-width: 140px; height: 100%; padding: 0 20px; margin: 0; }
+
+.exit-nav { position: relative; height: 1.5em; width: 1.5em; padding: .5em; cursor: pointer; }
+
+.exit-nav img { position: absolute; top: .5em; left: .5em; z-index: 2; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); width: 1.5em; height: 1.5em; }
+
+.exit-nav:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.h2-size { font-size: 1.5em; }
+
+.h3-size { font-size: 1.33em; }
 
 .break-line { width: 100%; height: 1px; background-color: #1f1f1f33; }
 
@@ -31,26 +45,30 @@ h3.break-line { margin: 20px 0; }
 
 h3.break-line.title { margin-top: 5px; margin-bottom: 20px; }
 
+.header { margin-bottom: 5px; }
+
+input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
+
 table { border-collapse: collapse; }
 
 .Modal .Background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; -webkit-filter: blur(4px); -moz-filter: blur(4px); -ms-filter: blur(4px); -o-filter: blur(4px); filter: blur(4px); }
 
 .panel-course { text-align: left; font-weight: bold; }
 
-.Course-Settings { border-radius: 4px; font-size: 1em; position: relative; width: calc(15% - 20px); max-width: 200px; min-width: 140px; padding: 10px; text-align: center; }
+.projects-nav { padding-top: 35px; }
 
-.Course-Settings .Settings-Title { position: relative; height: 1.5em; cursor: pointer; }
+.projects-nav .projects-title { position: relative; padding-top: 1em; height: 1.5em; cursor: pointer; }
 
-.Course-Settings .Project-Title { position: absolute; top: 0; left: 0; width: 100%; z-index: 1; }
+.projects-nav .projects-title h3 { position: relative; width: 100%; z-index: 1; margin: 0; }
 
-.Course-Settings .Project-Settings { position: relative; float: right; z-index: 2; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+.projects-nav .projects-title img { position: absolute; top: 0; right: 0; z-index: 2; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); width: 1em; height: 1em; }
 
-.Course-Settings .Project-Settings img { width: 1em; height: 1em; }
+.projects-nav .projects-title:hover { background-image: linear-gradient(to right, #e8e8e800, #0057A755 100%); }
 
-.Course-Settings .Settings-Title:hover .Project-Title { color: #1f1e1ccc; }
+.projects-nav .projects-title:hover h3 { color: #1f1e1ccc; }
 
-.Course-Settings .Settings-Title:hover .Project-Settings { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(80%); }
+.projects-nav .projects-title:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
 
-.Course-Settings .Project { cursor: pointer; }
+.projects-nav h4 { margin: 0; padding: .75em 0 .75em .75em; width: calc(100% - .75em); cursor: pointer; }
 
-.Course-Settings .Project:hover { background-image: linear-gradient(to right, #e8e8e800, #E8E8E8FF 2.5%, #E8E8E8FF 97.5%, #E8E8E800 100%); }
+.projects-nav h4:hover { color: #1f1e1ccc; background-image: linear-gradient(to right, #e8e8e800, #0057A755 100%); }
