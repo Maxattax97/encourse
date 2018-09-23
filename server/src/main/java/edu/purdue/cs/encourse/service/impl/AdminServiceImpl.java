@@ -1,10 +1,13 @@
 package edu.purdue.cs.encourse.service.impl;
 
+import edu.purdue.cs.encourse.domain.relations.ProfessorCourse;
 import edu.purdue.cs.encourse.service.AdminService;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service(value = AdminServiceImpl.NAME)
 public class AdminServiceImpl implements AdminService {
@@ -25,6 +28,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private AdminRepository adminRepository;
+
+    @Autowired
+    private SectionRepository sectionRepository;
 
     public int addAccount(String userID, String userName, String saltPass, String firstName, String lastName,
                           String type, String middleInit, String eduEmail) {
@@ -98,8 +104,8 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int modifyAccount(String userID, String field, String value) {
-        Account account = accountRepository.findByUserID(userID);
+    public int modifyAccount(String userName, String field, String value) {
+        Account account = accountRepository.findByUserName(userName);
         if(account == null) {
             return -1;
         }
@@ -155,6 +161,29 @@ public class AdminServiceImpl implements AdminService {
         if(adminRepository.save(admin) == null) {
             return -8;
         }
+        return 0;
+    }
+
+    public int addSection(String CRN, String semester, String courseID, String courseTitle, String sectionType) {
+        Section section = new Section(CRN, semester, courseID, courseTitle, sectionType);
+        if(sectionRepository.existsBySectionIdentifier(section.getSectionIdentifier())) {
+            return -1;
+        }
+        if(sectionRepository.save(section) == null) {
+            return -2;
+        }
+        return 0;
+    }
+
+    public int assignProfessorToCourse(String userName, String courseID, String semester) {
+        Professor professor = professorRepository.findByUserName(userName);
+        if(professor == null) {
+            return -1;
+        }
+        if(sectionRepository.findByCourseID(courseID).isEmpty()) {
+            return -2;
+        }
+        ProfessorCourse assignment = new ProfessorCourse(professor.getUserID(), courseID, semester);
         return 0;
     }
 
