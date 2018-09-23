@@ -9,4 +9,5 @@ public interface ProfessorRepository extends CrudRepository<Professor, Long> {
     Professor findByUserID(@NonNull String userID);
     Professor findByUserName(@NonNull String userName);
     boolean existsByUserID(@NonNull String userID);
+    boolean existsByUserName(@NonNull String userName);
 }

@@ -15,9 +15,13 @@ public interface AdminService {
     int addAdmin(String userID, String userName, String saltPass, String firstName, String lastName, String middleInit, String eduEmail);
 
     /** Services for modifying any type of account in all relevant tables **/
-    int modifyAccount(String userID, String field, String value);
+    int modifyAccount(String userName, String field, String value);
     int modifyStudent(Account account, String field, String value);
     int modifyTA(Account account, String field, String value);
     int modifyProfessor(Account account, String field, String value);
     int modifyAdmin(Account account, String field, String value);
+
+    /** Services for manipulating courses and sections **/
+    int addSection(String CRN, String semester, String courseID, String courseTitle, String sectionType);
+    int assignProfessorToCourse(String userName, String courseID, String semester);
 }

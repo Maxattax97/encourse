@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Argument 1 is path to student directory, argument 2 is path to the .git file to clone
+
 DIRECTORY="$(pwd)"
 cd "$1"
 git clone "ssh://reed226@data.cs.purdue.edu$2"

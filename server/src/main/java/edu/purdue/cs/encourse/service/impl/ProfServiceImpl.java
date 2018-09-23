@@ -1,6 +1,7 @@
 package edu.purdue.cs.encourse.service.impl;
 
 import edu.purdue.cs.encourse.domain.relations.StudentAssignment;
+import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.service.ProfService;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
@@ -27,6 +28,9 @@ public class ProfServiceImpl implements ProfService {
 
     @Autowired
     private StudentAssignmentRepository studentAssignmentRepository;
+
+    @Autowired
+    private StudentProjectRepository studentProjectRepository;
 
     public int createHub(String courseID){
         List<Section> sections = sectionRepository.findByCourseID(courseID);
@@ -75,11 +79,11 @@ public class ProfServiceImpl implements ProfService {
                 if(!(new File(s.getCourseHub() + "/" + student.getUserName()).exists())) {
                     String destPath = (s.getCourseHub() + "/" + student.getUserName());
                     String repoPath = (s.getRemotePath() + "/" + student.getUserName() + "/" + project.getRepoName() + ".git");
-                    builder.command("cloneProject.sh", destPath, repoPath);
+                    builder.command("bash/cloneProject.sh", destPath, repoPath);
                 }
             }
         }
-        builder.command("setPermissions.sh", sections.get(0).getCourseID());
+        builder.command("bash/setPermissions.sh", sections.get(0).getCourseID());
         return 0;
     }
 
@@ -107,12 +111,12 @@ public class ProfServiceImpl implements ProfService {
                 Student student = studentRepository.findByUserID(a.getStudentID());
                 if(!(completedStudents.contains(student.getUserName()))) {
                     String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-                    builder.command("pullProject.sh", destPath);
+                    builder.command("bash/pullProject.sh", destPath);
                     completedStudents.add(student.getUserName());
                 }
             }
         }
-        builder.command("setPermissions.sh", sections.get(0).getCourseID());
+        builder.command("bash/setPermissions.sh", sections.get(0).getCourseID());
         return 0;
     }
 
@@ -141,15 +145,95 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
-    public int countAllCommits(String projectID) {
+    public int countAllCommits(String courseID, String projectID) {
+        List<Section> sections = sectionRepository.findByCourseID(courseID);
+        if(sections.isEmpty()) {
+            return -1;
+        }
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -2;
+        }
+        ProcessBuilder builder = new ProcessBuilder();
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        String fileName = Long.toString(Math.round(Math.random() * 1000000));
+        for(StudentProject p : projects) {
+            Student student = studentRepository.findByUserID(p.getStudentID());
+            String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
+            builder.command("bash/countCommits.sh", destPath, fileName);
+        }
+
+        // TODO: Call and receive input from python script
+
         return 0;
     }
 
-    public int countAllCommitsByDay(String projectID) {
+    public int countAllCommitsByDay(String courseID, String projectID) {
+        List<Section> sections = sectionRepository.findByCourseID(courseID);
+        if(sections.isEmpty()) {
+            return -1;
+        }
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -2;
+        }
+        ProcessBuilder builder = new ProcessBuilder();
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        String fileName = Long.toString(Math.round(Math.random() * 1000000));
+        for(StudentProject p : projects) {
+            Student student = studentRepository.findByUserID(p.getStudentID());
+            String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
+            builder.command("bash/countCommitsByDay.sh", destPath, fileName);
+        }
+
+        // TODO: Call and receive input from python script
+
         return 0;
     }
 
-    public int countStudentCommitsByDay(String projectID, String studentID) {
+    public int countStudentCommitsByDay(String courseID, String projectID, String userName) {
+        List<Section> sections = sectionRepository.findByCourseID(courseID);
+        if(sections.isEmpty()) {
+            return -1;
+        }
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -2;
+        }
+        Student student = studentRepository.findByUserID(userName);
+        if(student == null) {
+            return -3;
+        }
+        ProcessBuilder builder = new ProcessBuilder();
+        String fileName = Long.toString(Math.round(Math.random() * 1000000));
+        String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
+        builder.command("bash/countCommitsByDay.sh", destPath, fileName);
+
+        // TODO: Call and receive input from python script
+
+        return 0;
+    }
+
+    public int listStudentCommitsByTime(String courseID, String projectID, String userName) {
+        List<Section> sections = sectionRepository.findByCourseID(courseID);
+        if(sections.isEmpty()) {
+            return -1;
+        }
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -2;
+        }
+        Student student = studentRepository.findByUserID(userName);
+        if(student == null) {
+            return -3;
+        }
+        ProcessBuilder builder = new ProcessBuilder();
+        String fileName = Long.toString(Math.round(Math.random() * 1000000));
+        String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
+        builder.command("bash/listCommitsByTime.sh", destPath, fileName);
+
+        // TODO: Call and receive input from python script
+
         return 0;
     }
 }
