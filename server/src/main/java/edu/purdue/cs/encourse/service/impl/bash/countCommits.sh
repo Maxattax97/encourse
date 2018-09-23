@@ -4,5 +4,5 @@
 
 DIRECTORY="$(pwd)"
 cd "$1"
-git log --pretty-format:%ad | wc -l >> "${DIRECTORY}/$2"
+git log --pretty=format:%ad | wc -l >> "${DIRECTORY}/$2"
 cd "${DIRECTORY}"
