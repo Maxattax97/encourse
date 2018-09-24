@@ -21,6 +21,9 @@ public class ProfServiceImpl implements ProfService {
     private StudentRepository studentRepository;
 
     @Autowired
+    private TeachingAssistantRepository teachingAssistantRepository;
+
+    @Autowired
     private ProjectRepository projectRepository;
 
     @Autowired
@@ -235,5 +238,31 @@ public class ProfServiceImpl implements ProfService {
         // TODO: Call and receive input from python script
 
         return 0;
+    }
+
+    public int assignTeachingAssistantToStudent(String teachAssistUserName, String studentUserName, String courseID, String semester, String sectionType) {
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
+        if(teachingAssistant == null) {
+            return -1;
+        }
+        Student student = studentRepository.findByUserName(studentUserName);
+        if(student == null) {
+            return -2;
+        }
+        Section section = sectionRepository.findBySectionIdentifier(Section.createSectionID(courseID, semester, sectionType));
+        if(section == null) {
+            return -3;
+        }
+        List<StudentAssignment> assignments = studentAssignmentRepository.findByIdStudentID(student.getUserID());
+        for(StudentAssignment a : assignments) {
+            if(a.getSectionIdentifier().equals(section.getSectionIdentifier())) {
+                a.setTeachingAssistantID(teachingAssistant.getUserID());
+                if(studentAssignmentRepository.save(a) == null) {
+                    return -4;
+                }
+                return 0;
+            }
+        }
+        return -5;
     }
 }
