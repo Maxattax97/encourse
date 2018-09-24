@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 
-import '../css/AdminPanel.css'
-
 class AdminPanel extends Component {
   render() {
     return (

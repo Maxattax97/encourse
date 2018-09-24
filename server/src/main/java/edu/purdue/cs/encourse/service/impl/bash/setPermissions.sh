@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Argument 1 is the courseID to modify the permissions for
+
 DIRECTORY="$(pwd)"
 cd "/sourcecontrol"
 chmod -R 770 "$1"

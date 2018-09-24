@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 
-import '../css/UserSettings.css'
 
-class UserSettings extends Component {
+class Preferences extends Component {
   render() {
     return (
       <div className="UserSettings">
@@ -12,4 +11,4 @@ class UserSettings extends Component {
   }
 }
 
-export default UserSettings
+export default Preferences

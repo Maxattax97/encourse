@@ -5,14 +5,18 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "ACCOUNTS")
+@Table(name = "ACCOUNT")
 public class Account {
     /** Primary key for all account types, meant to be university ID**/
     @Id
-    private final String userID;
+    private String userID;
 
     /** More identifiable key for all account types **/
-    private final String userName;
+    private String userName;
+
+    /** Salted password for the account **/
+    @Setter
+    private String saltPass;
 
     /** Name for display purposes **/
     @Setter
@@ -36,15 +40,19 @@ public class Account {
         public static final int ADMIN = 3;
     }
 
-    public Account(@NonNull String userID, @NonNull String userName,
-                   @NonNull String firstName, @NonNull String lastName,
+    public Account(String userID, String userName, String saltPass, String firstName, String lastName,
                    int role, String middleInit, String eduEmail) {
         this.userID = userID;
         this.userName = userName;
+        this.saltPass = saltPass;
         this.firstName = firstName;
         this.lastName = lastName;
         this.role = role;
         this.middleInit = middleInit;
         this.eduEmail = eduEmail;
+    }
+
+    public Account() {
+
     }
 }

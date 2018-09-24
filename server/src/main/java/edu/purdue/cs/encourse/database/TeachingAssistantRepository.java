@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 public interface TeachingAssistantRepository extends CrudRepository<TeachingAssistant, Long> {
-    TeachingAssistant findByUserID(@NonNull String UID);
-    boolean existsByUserID(@NonNull String UID);
+    TeachingAssistant findByUserID(@NonNull String userID);
+    TeachingAssistant findByUserName(@NonNull String userName);
+    boolean existsByUserID(@NonNull String userID);
 }

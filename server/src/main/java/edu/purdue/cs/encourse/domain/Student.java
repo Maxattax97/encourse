@@ -6,23 +6,26 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "STUDENTS")
+@Table(name = "STUDENT")
 public class Student extends Account {
 
-    public Student(@NonNull String UID, @NonNull String userName,
-                     @NonNull String firstName, @NonNull String lastName,
+    public Student(String userID, String userName, String saltPass, String firstName, String lastName,
                      String middleInit, String eduEmail) {
-        super(UID, userName, firstName, lastName, Roles.STUDENT, middleInit, eduEmail);
+        super(userID, userName, saltPass, firstName, lastName, Roles.STUDENT, middleInit, eduEmail);
         if(this.getClass().toString().equals("TeachingAssistant")) {
             this.setRole(Roles.TA);
         }
     }
 
-    public Student(@NonNull Account account) {
-        super(account.getUserID(), account.getUserName(), account.getFirstName(),
+    public Student(Account account) {
+        super(account.getUserID(), account.getUserName(), account.getSaltPass(), account.getFirstName(),
                 account.getLastName(), Roles.STUDENT, account.getMiddleInit(), account.getEduEmail());
         if(this.getClass().toString().equals("TeachingAssistant")) {
             this.setRole(Roles.TA);
         }
+    }
+
+    public Student() {
+        super();
     }
 }

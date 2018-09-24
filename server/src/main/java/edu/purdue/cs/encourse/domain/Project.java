@@ -7,38 +7,44 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "PROJECTS")
+@Table(name = "PROJECT")
 public class Project {
     /** courseID + semester + projectName, forms the primary key **/
     @Id
-    private final String projectIdentifier;
+    private String projectIdentifier;
 
     /** Each piece of the project identifier **/
-    private final String courseID;
-    private final String semester;
-    private final String projectName;
+    private String courseID;
+    private String semester;
+    private String projectName;
+
+    /** Date that project is opened to students **/
+    @Setter
+    private String startDate;
 
     /** Deadline mainly stored for display purposes, hence it is two Strings and not a LocalDateTime **/
     @Setter
     private String dueDate;
-    @Setter
-    private String dueTime;
 
     /** The name of the directory that will store the project. Remove .git if this is included **/
     private String repoName;
 
-    public Project(@NonNull String courseID, @NonNull String semester, @NonNull String projectName,
-                   String repoName, String dueDate, String dueTime) {
+    public Project(String courseID, String semester, String projectName,
+                   String repoName, String startDate, String dueDate) {
         this.courseID = courseID;
         this.semester = semester;
         this.projectName = projectName;
         this.setRepoName(repoName);
         this.projectIdentifier = createSectionID(courseID, semester, projectName);
+        this.startDate = startDate;
         this.dueDate = dueDate;
-        this.dueTime = dueTime;
     }
 
-    public String createSectionID(@NonNull String courseID, @NonNull String semester, @NonNull String projectName) {
+    public Project() {
+
+    }
+
+    public String createSectionID(String courseID, String semester, String projectName) {
         return (courseID + " " + semester + ": " + projectName);
     }
 

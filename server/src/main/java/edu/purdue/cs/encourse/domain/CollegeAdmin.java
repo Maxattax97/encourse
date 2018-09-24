@@ -5,16 +5,19 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "ADMINISTRATORS")
+@Table(name = "ADMINISTRATOR")
 public class CollegeAdmin extends Account {
-    public CollegeAdmin(@NonNull String UID, @NonNull String userName,
-                     @NonNull String firstName, @NonNull String lastName,
+    public CollegeAdmin(String userID, String userName, String saltPass, String firstName, String lastName,
                      String middleInit, String eduEmail) {
-        super(UID, userName, firstName, lastName, Roles.ADMIN, middleInit, eduEmail);
+        super(userID, userName, saltPass, firstName, lastName, Roles.ADMIN, middleInit, eduEmail);
     }
 
-    public CollegeAdmin(@NonNull Account account) {
-        super(account.getUserID(), account.getUserName(), account.getFirstName(),
+    public CollegeAdmin(Account account) {
+        super(account.getUserID(), account.getUserName(), account.getSaltPass(), account.getFirstName(),
                 account.getLastName(), Roles.PROFESSOR, account.getMiddleInit(), account.getEduEmail());
+    }
+
+    public CollegeAdmin() {
+        super();
     }
 }

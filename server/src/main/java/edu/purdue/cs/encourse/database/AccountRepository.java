@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 public interface AccountRepository extends CrudRepository<Account, Long> {
-    Account findByUserID(@NonNull String UID);
-    boolean existsByUserID(@NonNull String UID);
+    Account findByUserID(@NonNull String userID);
+    Account findByUserName(@NonNull String userName);
+    boolean existsByUserID(@NonNull String userID);
 }
