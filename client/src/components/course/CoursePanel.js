@@ -18,7 +18,10 @@ class CoursePanel extends Component {
         return (
             <div className="panel-course">
                 <ProjectNavigation titleClick={this.showProjectOptions} mode={0} />
-                <Card component={<ClassProgressHistogram/>}/>
+                <div className="panel-center-content">
+                    <h3>Class Statistics</h3>
+	                <ClassProgressHistogram/>
+                </div>
             </div>
         )
     }
