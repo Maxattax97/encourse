@@ -40,7 +40,7 @@ for (let student of students) {
 class ClassProgressHistogram extends Component {
     render() {
         return (
-            <div classname="chart-container">
+            <div className="chart-container">
                 <ComposedChart layout="vertical" width={600} height={300} data={data} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
                     <CartesianGrid/>
                     <XAxis type="number"/>
