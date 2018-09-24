@@ -148,6 +148,20 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
+    public int setSectionRemotePaths(String courseID, String remotePath) {
+        List<Section> sections = sectionRepository.findByCourseID(courseID);
+        if(sections.isEmpty()) {
+            return -1;
+        }
+        for(Section s : sections) {
+            s.setRemotePath(remotePath);
+            if(sectionRepository.save(s) == null) {
+                return -2;
+            }
+        }
+        return 0;
+    }
+
     public int countAllCommits(String courseID, String projectID) {
         List<Section> sections = sectionRepository.findByCourseID(courseID);
         if(sections.isEmpty()) {
@@ -253,16 +267,10 @@ public class ProfServiceImpl implements ProfService {
         if(section == null) {
             return -3;
         }
-        List<StudentAssignment> assignments = studentAssignmentRepository.findByIdStudentID(student.getUserID());
-        for(StudentAssignment a : assignments) {
-            if(a.getSectionIdentifier().equals(section.getSectionIdentifier())) {
-                a.setTeachingAssistantID(teachingAssistant.getUserID());
-                if(studentAssignmentRepository.save(a) == null) {
-                    return -4;
-                }
-                return 0;
-            }
+        StudentAssignment assignment = new StudentAssignment(teachingAssistant.getUserID(), student.getUserID(), section.getSectionIdentifier());
+        if(studentAssignmentRepository.save(assignment) == null) {
+            return -4;
         }
-        return -5;
+        return 0;
     }
 }
