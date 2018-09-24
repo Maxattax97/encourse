@@ -13,7 +13,7 @@ class ProjectOptions extends Component {
     render() {
         return (
             <div className="panel-project-settings">
-                <ProjectNavigation titleClick={this.exitProjectOptions} mode={1}/>
+                <ProjectNavigation titleClick={this.exitProjectOptions} mode={0}/>
                 <div className="panel-center-content">
                     <h3 className="header">
                         Course Projects Directory
