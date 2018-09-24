@@ -163,7 +163,7 @@ public class ProfServiceImpl implements ProfService {
         for(StudentProject p : projects) {
             Student student = studentRepository.findByUserID(p.getStudentID());
             String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-            builder.command("bash/countCommits.sh", destPath, fileName);
+            builder.command("bash/countCommits.sh", destPath, fileName, student.getUserName());
         }
 
         // TODO: Call and receive input from python script
@@ -186,7 +186,7 @@ public class ProfServiceImpl implements ProfService {
         for(StudentProject p : projects) {
             Student student = studentRepository.findByUserID(p.getStudentID());
             String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-            builder.command("bash/countCommitsByDay.sh", destPath, fileName);
+            builder.command("bash/countCommitsByDay.sh", destPath, fileName, student.getUserName());
         }
 
         // TODO: Call and receive input from python script
@@ -210,7 +210,7 @@ public class ProfServiceImpl implements ProfService {
         ProcessBuilder builder = new ProcessBuilder();
         String fileName = Long.toString(Math.round(Math.random() * 1000000));
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-        builder.command("bash/countCommitsByDay.sh", destPath, fileName);
+        builder.command("bash/countCommitsByDay.sh", destPath, fileName, student.getUserName());
 
         // TODO: Call and receive input from python script
 
@@ -233,7 +233,7 @@ public class ProfServiceImpl implements ProfService {
         ProcessBuilder builder = new ProcessBuilder();
         String fileName = Long.toString(Math.round(Math.random() * 1000000));
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-        builder.command("bash/listCommitsByTime.sh", destPath, fileName);
+        builder.command("bash/listCommitsByTime.sh", destPath, fileName, student.getUserName());
 
         // TODO: Call and receive input from python script
 
