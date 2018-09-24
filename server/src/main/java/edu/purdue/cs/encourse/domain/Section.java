@@ -30,6 +30,7 @@ public class Section {
     private String courseHub;
 
     /** The path to the remote repositories on data.cs **/
+    @Setter
     private String remotePath;
 
     public Section(String CRN, String semester, String courseID, String courseTitle, String sectionType) {
