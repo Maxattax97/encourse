@@ -24,4 +24,6 @@ public interface AdminService {
     /** Services for manipulating courses and sections **/
     int addSection(String CRN, String semester, String courseID, String courseTitle, String sectionType);
     int assignProfessorToCourse(String userName, String courseID, String semester);
+    int registerStudentToSection(String userName, String courseID, String semester, String sectionType);
+    int hireStudentAsTeachingAssistant(String userName);
 }

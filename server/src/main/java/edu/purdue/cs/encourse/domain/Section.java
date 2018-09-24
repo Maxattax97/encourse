@@ -14,7 +14,9 @@ public class Section {
 
     /** Each piece of the section identifier **/
     private String courseID;
+    /** Format: FallYYYY, SpringYYYY, or SummerYYYY **/
     private String semester;
+    /** Examples: LE1, LE2, Lab6, PSO9 **/
     private String sectionType;
 
     /** May be useful to track for registration purposes **/
@@ -43,7 +45,7 @@ public class Section {
 
     }
 
-    public String createSectionID(@NonNull String courseID, @NonNull String semester, @NonNull String sectionType) {
+    public static String createSectionID(@NonNull String courseID, @NonNull String semester, @NonNull String sectionType) {
         return (courseID + " "  + semester + ": " + sectionType);
     }
 

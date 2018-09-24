@@ -30,12 +30,17 @@ public class StudentAssignment {
     public String getSectionIdentifier() {
         return id.getSectionIdentifier();
     }
+
+    public void setTeachingAssistantID(String teachingAssistantID) {
+        id.setTeachingAssistantID(teachingAssistantID);
+    }
 }
 
 @Getter
 @Embeddable
 class StudentAssignmentID implements Serializable {
     /** Key used to identify the TA **/
+    @Setter
     private String teachingAssistantID;
 
     /** Key used to identify the student **/

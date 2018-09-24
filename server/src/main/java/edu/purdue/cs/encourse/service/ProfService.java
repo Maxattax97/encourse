@@ -17,4 +17,6 @@ public interface ProfService {
     int countAllCommitsByDay(String courseID, String projectID);
     int countStudentCommitsByDay(String courseID, String projectID, String userName);
     int listStudentCommitsByTime(String courseID, String projectID, String userName);
+
+    int assignTeachingAssistantToStudent(String teachAssistUserName, String studentUserName, String courseID, String semester, String sectionType);
 }

@@ -1,6 +1,7 @@
 package edu.purdue.cs.encourse.service.impl;
 
 import edu.purdue.cs.encourse.domain.relations.ProfessorCourse;
+import edu.purdue.cs.encourse.domain.relations.StudentAssignment;
 import edu.purdue.cs.encourse.service.AdminService;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
@@ -31,6 +32,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private SectionRepository sectionRepository;
+
+    @Autowired
+    private ProfessorCourseRepository professorCourseRepository;
+
+    @Autowired
+    private StudentAssignmentRepository studentAssignmentRepository;
 
     public int addAccount(String userID, String userName, String saltPass, String firstName, String lastName,
                           String type, String middleInit, String eduEmail) {
@@ -184,6 +191,49 @@ public class AdminServiceImpl implements AdminService {
             return -2;
         }
         ProfessorCourse assignment = new ProfessorCourse(professor.getUserID(), courseID, semester);
+        if(professorCourseRepository.save(assignment) == null) {
+            return -3;
+        }
+        return 0;
+    }
+
+    public int registerStudentToSection(String userName, String courseID, String semester, String sectionType) {
+        Student student = studentRepository.findByUserName(userName);
+        if(student == null) {
+            return -1;
+        }
+        Section section = sectionRepository.findBySectionIdentifier(Section.createSectionID(courseID, semester, sectionType));
+        if(section == null) {
+            return -2;
+        }
+        StudentAssignment assignment = new StudentAssignment(null, student.getUserID(), section.getSectionIdentifier());
+        if(studentAssignmentRepository.save(assignment) == null) {
+            return -3;
+        }
+        return 0;
+    }
+
+    public int hireStudentAsTeachingAssistant(String userName) {
+        Account account = accountRepository.findByUserName(userName);
+        if(account == null) {
+            return -1;
+        }
+        Student student = studentRepository.findByUserName(userName);
+        if(student == null) {
+            return -2;
+        }
+        account.setRole(Account.Roles.TA);
+        student.setRole(Account.Roles.TA);
+        TeachingAssistant teachingAssistant = new TeachingAssistant(account);
+        if(accountRepository.save(account) == null) {
+            return -3;
+        }
+        if(studentRepository.save(student) == null) {
+            return -4;
+        }
+        if(teachingAssistantRepository.save(teachingAssistant) == null) {
+            return -5;
+        }
         return 0;
     }
 
