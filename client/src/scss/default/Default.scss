@@ -1,6 +1,6 @@
 @import "Navbar";
 @import "Panel";
-@import "Exit";
+@import "Modal";
 @import "Card";
 @import "ProgressBar";
 
@@ -54,6 +54,10 @@ h4.break-line.title {
 
 .header {
   margin-bottom: 5px;
+}
+
+.blur {
+  filter: brightness(80%) blur(3px);
 }
 
 input {

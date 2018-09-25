@@ -56,8 +56,9 @@ public class AuthController {
     @RequestMapping(value = "/account", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getAccount() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
-        /* Change line here to retrieve Account instead of User */
-        return new ResponseEntity<>(((User)securityContext.getAuthentication().getPrincipal()), HttpStatus.FOUND);
+        User user = ((User)securityContext.getAuthentication().getPrincipal());
+        Account a = accountService.retrieveAccount(user.getUsername(), user.getPassword());
+        return new ResponseEntity<>(a, HttpStatus.FOUND);
     }
 
 }
