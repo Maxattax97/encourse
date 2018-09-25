@@ -93,6 +93,13 @@ public class ProfServiceImpl implements ProfService {
                     try {
                         Process p = Runtime.getRuntime().exec("./bash/cloneRepositories.sh " + destPath + " " + repoPath);
                         p.waitFor();
+                        StringBuffer output = new StringBuffer();
+                        String line;
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                        while ((line = reader.readLine())!= null) {
+                            output.append(line);
+                        }
+
                     }
                     catch(Exception e) {
                         return -6;
@@ -103,6 +110,12 @@ public class ProfServiceImpl implements ProfService {
         try {
             Process p = Runtime.getRuntime().exec("./bash/setPermission.sh " + sections.get(0).getCourseID());
             p.waitFor();
+            StringBuffer output = new StringBuffer();
+            String line;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((line = reader.readLine())!= null) {
+                output.append(line);
+            }
         }
         catch(Exception e) {
             return -7;
@@ -136,6 +149,12 @@ public class ProfServiceImpl implements ProfService {
                     try {
                         Process p = Runtime.getRuntime().exec("./bash/pullRepositories.sh " + destPath);
                         p.waitFor();
+                        StringBuffer output = new StringBuffer();
+                        String line;
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                        while ((line = reader.readLine())!= null) {
+                            output.append(line);
+                        }
                     }
                     catch(Exception e) {
                         return -5;
@@ -147,6 +166,12 @@ public class ProfServiceImpl implements ProfService {
         try {
             Process p = Runtime.getRuntime().exec("./bash/setPermission.sh " + sections.get(0).getCourseID());
             p.waitFor();
+            StringBuffer output = new StringBuffer();
+            String line;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((line = reader.readLine())!= null) {
+                output.append(line);
+            }
         }
         catch(Exception e) {
             return -6;
