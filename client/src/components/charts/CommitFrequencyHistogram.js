@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label } from 'recharts';
 
-const data = [
+const defaultData = [
     {date: new Date('2018-09-16T00:00:00'), count: 8},
     {date: new Date('2018-09-17T00:00:00'), count: 13},
     {date: new Date('2018-09-18T00:00:00'), count: 14},
@@ -17,17 +17,23 @@ const data = [
     {date: new Date('2018-09-27T00:00:00'), count: 0},
 ];
 
-for (let item of data) {
+for (let item of defaultData) {
     let m = item.date;
     item.dateStr = (m.getUTCMonth()+1) + '/' + m.getUTCDate();
 }
 
 class CommitHistoryHistogram extends Component {
     render() {
+        const {
+            width = 600,
+            height = 300,
+            data = defaultData
+        } = this.props;
+
         return (
             <div classname="chart-container">
                 <h3 className="chart-title">Commit Frequency</h3>
-                <BarChart width={600} height={300} data={data} margin={{top: 5, right: 30, left: 20, bottom: 30}}>
+                <BarChart width={width} height={height} data={data} margin={{top: 5, right: 30, left: 20, bottom: 30}}>
                     <CartesianGrid/>
                     <XAxis dataKey="dateStr">
                         <Label offset={-15} position="insideBottom">
