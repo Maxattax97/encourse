@@ -1,6 +1,14 @@
 .panel-course {
   text-align:left;
   font-weight: bold;
+
+  .panel-course-content {
+    -webkit-transition: filter .15s ease-in;
+    -moz-transition: filter .15s ease-in;
+    -ms-transition: filter .15s ease-in;
+    -o-transition: filter .15s ease-in;
+    transition: filter .15s ease-in;
+  }
 }
 
 .panel-course-students {
@@ -22,6 +30,13 @@
     margin: 0;
   }
 
+}
+
+.panel-course-students:after {
+  content: "";
+  display: block;
+  height: 0;
+  clear: both;
 }
 
 @import "StudentPreview";

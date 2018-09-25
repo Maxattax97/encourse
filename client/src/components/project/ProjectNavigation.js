@@ -20,7 +20,7 @@ class ProjectNavigation extends Component {
                     </div>
                     <h3 className="break-line title" />
                     {
-                        this.props.info.map((project, index) => <h4 key={project.id} onClick={() => this.props.projectClick(index)}>{project.name}</h4>)
+                        this.props.info.map((project, index) => <h4 className={this.props.currentProject === index ? "projects-highlight" : ""} key={project.id} onClick={() => this.props.projectClick(index)}>{project.name}</h4>)
                     }
                 </div>
             </div>
