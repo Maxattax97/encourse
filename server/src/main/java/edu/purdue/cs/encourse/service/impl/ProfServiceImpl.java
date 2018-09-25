@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,6 +168,11 @@ public class ProfServiceImpl implements ProfService {
         }
 
         // TODO: Call and receive input from python script
+        try {
+            Process p = Runtime.getRuntime().exec(" python python/hello.py");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return 0;
     }
