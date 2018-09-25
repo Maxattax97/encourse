@@ -15,11 +15,6 @@ class ProjectOptions extends Component {
             <div className="panel-project-settings">
                 <ProjectNavigation titleClick={this.exitProjectOptions} mode={0}/>
                 <div className="panel-center-content">
-                    <h3 className="header">
-                        Course Projects Directory
-                    </h3>
-                    <input type="text" className="h2-size" />
-                    <h2 className="break-line" />
                     <h4 className="header">
                         Name
                     </h4>

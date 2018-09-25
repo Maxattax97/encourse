@@ -3,8 +3,10 @@ import React, { Component } from 'react';
 class Card extends Component {
     render() {
         return (
-            <div className="Card">
-                {this.props.component}
+            <div className="card">
+                <div className="component">
+                    {this.props.component}
+                </div>
             </div>
         );
     }

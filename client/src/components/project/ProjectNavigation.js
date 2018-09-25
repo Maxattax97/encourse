@@ -9,7 +9,7 @@ class ProjectNavigation extends Component {
         return (
             <div className="panel-left-nav">
                 <div className="projects-nav">
-                    <div className="projects-title" onClick={this.props["titleClick"]}>
+                    <div className="title" onClick={this.props["titleClick"]}>
                         <h3>
                             Projects
                         </h3>

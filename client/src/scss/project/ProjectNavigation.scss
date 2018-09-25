@@ -1,32 +1,23 @@
 .projects-nav {
 
-  padding-top: 35px;
+  padding-top: 20px;
 
-  .projects-title {
-    position: relative;
+  div.title {
     padding-top: 1em;
-    height: 1.5em;
+    height: 2.5em;
     cursor: pointer;
-
-    h3 {
-      position:relative;
-      width: 100%;
-      z-index:1;
-      margin: 0;
-    }
 
     img {
       position:absolute;
       top: 0;
       right: 0;
-      z-index: 2;
       filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
       width: 1em;
       height: 1em;
     }
   }
 
-  .projects-title:hover {
+  div.title:hover {
     background-image: linear-gradient(to right,
             #e8e8e800,
             #0057A755 100%);

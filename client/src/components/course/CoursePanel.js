@@ -10,6 +10,50 @@ import ClassProgressHistogram from '../charts/ClassProgressHistogram'
 
 class CoursePanel extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            student_data : [
+                {
+                    first_name: "Ryan",
+                    last_name: "Sullivan",
+                    progress: 30,
+                    commitCount: 12,
+                    timeSpent: "12 hours"
+                },
+                {
+                    first_name: "Ryan",
+                    last_name: "Sullivan",
+                    progress: 30,
+                    commitCount: 12,
+                    timeSpent: "12 hours"
+                },
+                {
+                    first_name: "Ryan",
+                    last_name: "Sullivan",
+                    progress: 30,
+                    commitCount: 12,
+                    timeSpent: "12 hours"
+                },
+                {
+                    first_name: "Ryan",
+                    last_name: "Sullivan",
+                    progress: 30,
+                    commitCount: 12,
+                    timeSpent: "12 hours"
+                },
+                {
+                    first_name: "Ryan",
+                    last_name: "Sullivan",
+                    progress: 30,
+                    commitCount: 12,
+                    timeSpent: "12 hours"
+                }
+            ]
+        }
+    }
+
     showProjectOptions = () => {
         history.push("/project-settings")
     }
@@ -21,6 +65,12 @@ class CoursePanel extends Component {
                 <div className="panel-center-content">
                     <h3>Class Statistics</h3>
 	                <ClassProgressHistogram/>
+                    <h2 className="break-line title" />
+                    <div className="panel-course-students">
+                        {
+                            this.state.student_data.map((student) => <Card component={<StudentPreview info={student} />} />)
+                        }
+                    </div>
                 </div>
             </div>
         )
