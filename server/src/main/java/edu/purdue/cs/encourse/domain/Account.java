@@ -1,6 +1,7 @@
 package edu.purdue.cs.encourse.domain;
 
 import lombok.*;
+
 import javax.persistence.*;
 
 @Getter
@@ -55,4 +56,5 @@ public class Account {
     public Account() {
 
     }
+
 }

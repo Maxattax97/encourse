@@ -6,6 +6,8 @@ import edu.purdue.cs.encourse.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service(value = AccountServiceImpl.NAME)
 public class AccountServiceImpl implements AccountService {
 
@@ -36,11 +38,13 @@ public class AccountServiceImpl implements AccountService {
 
     public Student retrieveStudent(String userName, String saltPass) {
         Student student = studentRepository.findByUserName(userName);
-        if(!(student.getSaltPass().equals(saltPass)))
+        if (!(student.getSaltPass().equals(saltPass)))
             return null;
         student.setSaltPass(null);
         return student;
     }
+
+    public Account retrieveAccountByID(String userID) { return accountRepository.findByUserID(userID); }
 
     public TeachingAssistant retrieveTA(String userName, String saltPass) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userName);
@@ -65,4 +69,6 @@ public class AccountServiceImpl implements AccountService {
         collegeAdmin.setSaltPass(null);
         return collegeAdmin;
     }
+
+    public List<Account> retrieveAllAccounts() { return accountRepository.findAll(); }
 }
