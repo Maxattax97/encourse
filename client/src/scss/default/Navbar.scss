@@ -1,22 +1,20 @@
-.Navbar {
+.nav {
   cursor: default;
   position: fixed;
   top:0;
   left: 0;
   width:100%;
-  height:2em;
-  padding: .33em 0;
+  height: 3em;
+  padding: .5em 0;
   z-index: 0;
   background: #1f1e1c;
-  box-shadow: 0 0 3px 3px rgba(0, 0, 0, .3);
 
-  .NavList {
+  .nav-list {
     position: fixed;
     top:0;
     left: 0;
     width:100%;
-    height:2em;
-    padding: .33em 0;
+    height:3em;
     font-family: "Rhodium Libre", serif;
     margin: 0;
 
@@ -24,41 +22,40 @@
     z-index: 10;
   }
 
-  .EnCourse-Title {
+  .nav-title {
     position: fixed;
     top:0;
     left: 0;
     width:100%;
-    font-size: 1.75em;
+    font-size: 2em;
     text-align: center;
     margin: auto;
     font-family: "Rhodium Libre", serif;
     z-index: 1;
 
-    .En {
+    .nav-en {
       color: white;
     }
 
-    .Course {
+    .nav-course {
       color: #0057A7;
     }
   }
 
-  .Options {
+  .nav-options {
     float: right;
     display: flex;
     position:relative;
 
-    width: 5.6em;
-    margin-right: .5em;
+    width: 6em;
     cursor: pointer;
     z-index: 10;
 
-    .Settings {
+    .nav-settings {
       float:right;
-      width: 2em;
-      height: 2em;
-      margin: 0 .5em;
+      width: 3em;
+      height: 3em;
+      padding: .5em .5em;
 
       img {
         width: 100%;
@@ -66,11 +63,11 @@
       }
     }
 
-    .Logout {
+    .nav-logout {
       float:right;
-      width: 2em;
-      height: 2em;
-      margin: 0 .5em;
+      width: 3em;
+      height: 3em;
+      padding: .5em .5em;
 
       img {
         width: 100%;

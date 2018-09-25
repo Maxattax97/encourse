@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { LineChart, CartesianGrid, XAxis, YAxis, 
     Tooltip, Legend, Line, Label } from 'recharts'
-import '../../css/StudentProgressLineGraph.css'
 
 class StudentProgressLineGraph extends Component {
     render() {
