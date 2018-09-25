@@ -26,6 +26,7 @@ public class Section {
     private String courseTitle;
 
     /** Path to the directory that contains repositories **/
+    /** Format of course hub : "/sourcecontrol/{COURSEID}/{SEMESTER} **/
     @Setter
     private String courseHub;
 
