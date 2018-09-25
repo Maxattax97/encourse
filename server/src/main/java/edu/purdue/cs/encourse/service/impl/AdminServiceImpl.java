@@ -1,14 +1,11 @@
 package edu.purdue.cs.encourse.service.impl;
 
-import edu.purdue.cs.encourse.domain.relations.ProfessorCourse;
-import edu.purdue.cs.encourse.domain.relations.StudentAssignment;
+import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.AdminService;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service(value = AdminServiceImpl.NAME)
 public class AdminServiceImpl implements AdminService {
@@ -37,7 +34,7 @@ public class AdminServiceImpl implements AdminService {
     private ProfessorCourseRepository professorCourseRepository;
 
     @Autowired
-    private StudentAssignmentRepository studentAssignmentRepository;
+    private StudentSectionRepository studentSectionRepository;
 
     public int addAccount(String userID, String userName, String saltPass, String firstName, String lastName,
                           String type, String middleInit, String eduEmail) {
@@ -206,8 +203,8 @@ public class AdminServiceImpl implements AdminService {
         if(section == null) {
             return -2;
         }
-        StudentAssignment assignment = new StudentAssignment(null, student.getUserID(), section.getSectionIdentifier());
-        if(studentAssignmentRepository.save(assignment) == null) {
+        StudentSection assignment = new StudentSection(student.getUserID(), section.getSectionIdentifier());
+        if(studentSectionRepository.save(assignment) == null) {
             return -3;
         }
         return 0;

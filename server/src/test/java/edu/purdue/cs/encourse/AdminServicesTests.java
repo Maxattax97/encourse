@@ -45,14 +45,14 @@ public class AdminServicesTests {
 
     @Before
     public void populateDatabase() {
-        assertEquals(adminService.addAccount("1", "reed226", "a","William", "Reed",
-                "Admin", "J", "reed226@purdue.edu"), 0);
-        assertEquals(adminService.addAccount("2", "grr", "b", "Gustavo", "Rodriguez-Rivera",
-                "Professor", null, "grr@purdue.edu"), 0);
-        assertEquals(adminService.addAccount("3", "kleclain", "c", "Killian", "LeClainche",
-                "Student", "A", "kleclain@purdue.edu"), 0);
-        assertEquals(adminService.addAccount("4", "dkrolopp", "d", "Daniel", "Krolopp",
-                "TA", "J", "dkrolopp@purdue.edu"), 0);
+        assertEquals(0, adminService.addAccount("1", "reed226", "a","William", "Reed",
+                "Admin", "J", "reed226@purdue.edu"));
+        assertEquals(0, adminService.addAccount("2", "grr", "b", "Gustavo", "Rodriguez-Rivera",
+                "Professor", null, "grr@purdue.edu"));
+        assertEquals(0, adminService.addAccount("3", "kleclain", "c", "Killian", "LeClainche",
+                "Student", "A", "kleclain@purdue.edu"));
+        assertEquals(0, adminService.addAccount("4", "dkrolopp", "d", "Daniel", "Krolopp",
+                "TA", "J", "dkrolopp@purdue.edu"));
     }
 
     @After

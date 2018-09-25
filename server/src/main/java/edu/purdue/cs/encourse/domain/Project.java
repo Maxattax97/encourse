@@ -35,7 +35,7 @@ public class Project {
         this.semester = semester;
         this.projectName = projectName;
         this.setRepoName(repoName);
-        this.projectIdentifier = createSectionID(courseID, semester, projectName);
+        this.projectIdentifier = createProjectID(courseID, semester, projectName);
         this.startDate = startDate;
         this.dueDate = dueDate;
     }
@@ -44,7 +44,7 @@ public class Project {
 
     }
 
-    public String createSectionID(String courseID, String semester, String projectName) {
+    public static String createProjectID(String courseID, String semester, String projectName) {
         return (courseID + " " + semester + ": " + projectName);
     }
 

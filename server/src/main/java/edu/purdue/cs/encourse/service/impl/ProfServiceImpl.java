@@ -1,7 +1,6 @@
 package edu.purdue.cs.encourse.service.impl;
 
-import edu.purdue.cs.encourse.domain.relations.StudentAssignment;
-import edu.purdue.cs.encourse.domain.relations.StudentProject;
+import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.ProfService;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
@@ -31,10 +30,13 @@ public class ProfServiceImpl implements ProfService {
     private SectionRepository sectionRepository;
 
     @Autowired
-    private StudentAssignmentRepository studentAssignmentRepository;
+    private StudentSectionRepository studentSectionRepository;
 
     @Autowired
     private StudentProjectRepository studentProjectRepository;
+
+    @Autowired
+    private TeachingAssistantStudentRepository teachingAssistantStudentRepository;
 
     public int createHub(String courseID){
         List<Section> sections = sectionRepository.findByCourseID(courseID);
@@ -46,9 +48,12 @@ public class ProfServiceImpl implements ProfService {
         }
         for(Section s : sections) {
             s.setCourseHub("/sourcecontrol/" + sections.get(0).getCourseID() + "/" + sections.get(0).getSemester());
-            List<StudentAssignment> assignments =
-                    studentAssignmentRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
-            for(StudentAssignment a : assignments){
+            if(sectionRepository.save(s) == null) {
+                return -3;
+            }
+            List<StudentSection> assignments =
+                    studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            for(StudentSection a : assignments){
                 Student student = studentRepository.findByUserID(a.getStudentID());
                 new File(sections.get(0).getCourseHub() + "/" + student.getUserName()).mkdir();
             }
@@ -76,9 +81,9 @@ public class ProfServiceImpl implements ProfService {
         }
         ProcessBuilder builder = new ProcessBuilder();
         for(Section s : sections){
-            List<StudentAssignment> assignments =
-                    studentAssignmentRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
-            for(StudentAssignment a : assignments){
+            List<StudentSection> assignments =
+                    studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            for(StudentSection a : assignments){
                 Student student = studentRepository.findByUserID(a.getStudentID());
                 if(!(new File(s.getCourseHub() + "/" + student.getUserName()).exists())) {
                     String destPath = (s.getCourseHub() + "/" + student.getUserName());
@@ -109,9 +114,9 @@ public class ProfServiceImpl implements ProfService {
         ProcessBuilder builder = new ProcessBuilder();
         List<String> completedStudents = new ArrayList<>();
         for(Section s : sections){
-            List<StudentAssignment> assignments =
-                    studentAssignmentRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
-            for(StudentAssignment a : assignments) {
+            List<StudentSection> assignments =
+                    studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            for(StudentSection a : assignments) {
                 Student student = studentRepository.findByUserID(a.getStudentID());
                 if(!(completedStudents.contains(student.getUserName()))) {
                     String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
@@ -145,6 +150,20 @@ public class ProfServiceImpl implements ProfService {
             case "dueDate": project.setDueDate(value); break;
             case "repoName": project.setRepoName(value); break;
             default: return -2;
+        }
+        return 0;
+    }
+
+    public int setSectionRemotePaths(String courseID, String remotePath) {
+        List<Section> sections = sectionRepository.findByCourseID(courseID);
+        if(sections.isEmpty()) {
+            return -1;
+        }
+        for(Section s : sections) {
+            s.setRemotePath(remotePath);
+            if(sectionRepository.save(s) == null) {
+                return -2;
+            }
         }
         return 0;
     }
@@ -246,7 +265,7 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
-    public int assignTeachingAssistantToStudent(String teachAssistUserName, String studentUserName, String courseID, String semester, String sectionType) {
+    public int assignTeachingAssistantToStudent(String teachAssistUserName, String studentUserName) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
         if(teachingAssistant == null) {
             return -1;
@@ -255,20 +274,10 @@ public class ProfServiceImpl implements ProfService {
         if(student == null) {
             return -2;
         }
-        Section section = sectionRepository.findBySectionIdentifier(Section.createSectionID(courseID, semester, sectionType));
-        if(section == null) {
+        TeachingAssistantStudent assignment = new TeachingAssistantStudent(teachingAssistant.getUserID(), student.getUserID());
+        if(teachingAssistantStudentRepository.save(assignment) == null) {
             return -3;
         }
-        List<StudentAssignment> assignments = studentAssignmentRepository.findByIdStudentID(student.getUserID());
-        for(StudentAssignment a : assignments) {
-            if(a.getSectionIdentifier().equals(section.getSectionIdentifier())) {
-                a.setTeachingAssistantID(teachingAssistant.getUserID());
-                if(studentAssignmentRepository.save(a) == null) {
-                    return -4;
-                }
-                return 0;
-            }
-        }
-        return -5;
+        return 0;
     }
 }
