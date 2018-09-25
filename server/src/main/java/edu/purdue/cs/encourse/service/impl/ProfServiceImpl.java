@@ -7,8 +7,7 @@ import edu.purdue.cs.encourse.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +15,7 @@ import java.util.List;
 public class ProfServiceImpl implements ProfService {
 
     public final static String NAME = "ProfService";
+    private final static String pythonPath = "./src/main/java/edu/purdue/cs/encourse/service/impl/python/";
 
     @Autowired
     private StudentRepository studentRepository;
@@ -187,11 +187,7 @@ public class ProfServiceImpl implements ProfService {
         }
 
         // TODO: Call and receive input from python script
-        try {
-            Process p = Runtime.getRuntime().exec(" python python/hello.py");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
 
         return 0;
     }
@@ -262,6 +258,39 @@ public class ProfServiceImpl implements ProfService {
 
         // TODO: Call and receive input from python script
 
+        return 0;
+    }
+
+    public int testPythonDirectory() {
+        try {
+            // This hardcoded path will undoubtedly cause us difficulty in the future.
+            String filePath = pythonPath + "hello.py";
+            String dataFilePath = pythonPath + "testData.txt";
+            //BufferedWriter stdOutput = new BufferedWriter(new OutputStreamWriter());
+
+            // Run `python hello.py testData.txt` at correct directory
+            Process p = Runtime.getRuntime().exec("python " + filePath + " " + dataFilePath);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader((p.getInputStream())));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            String s = null;
+            String o = null;
+            while ((o = stdError.readLine()) != null) {
+                System.out.println(o);
+            }
+            while ((s = stdInput.readLine()) != null) {
+                System.out.println(s);
+                if (s.equals("Hello World")) {
+                    return 1;
+                }
+            }
+            return -1;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -2;
+        }
+    }
+
+    public int getCommitData() {
         return 0;
     }
 

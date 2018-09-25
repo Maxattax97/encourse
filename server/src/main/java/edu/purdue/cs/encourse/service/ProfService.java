@@ -20,4 +20,6 @@ public interface ProfService {
     int listStudentCommitsByTime(String courseID, String projectID, String userName);
 
     int assignTeachingAssistantToStudent(String teachAssistUserName, String studentUserName);
+
+    int testPythonDirectory();
 }
