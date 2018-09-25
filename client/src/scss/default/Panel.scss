@@ -23,6 +23,13 @@
   max-width: 105.000em; //1680px
   width: 100%;
   margin: 2em auto;
+
+  > div:after {
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+  }
 }
 
 .panel-left-nav {
