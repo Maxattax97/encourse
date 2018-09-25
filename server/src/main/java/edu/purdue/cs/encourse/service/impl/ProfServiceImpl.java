@@ -264,7 +264,7 @@ public class ProfServiceImpl implements ProfService {
     public int testPythonDirectory() {
         try {
             // This hardcoded path will undoubtedly cause us difficulty in the future.
-            String filePath = pythonPath + "hello.py";
+            String filePath = pythonPath + "";
             String dataFilePath = pythonPath + "testData.txt";
             //BufferedWriter stdOutput = new BufferedWriter(new OutputStreamWriter());
 
@@ -291,6 +291,8 @@ public class ProfServiceImpl implements ProfService {
     }
 
     public int getCommitData() {
+        String filePath = pythonPath + "hello.py";
+        String dataFilePath = pythonPath + "testData.txt";
         return 0;
     }
 

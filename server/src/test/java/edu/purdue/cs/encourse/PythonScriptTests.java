@@ -82,9 +82,11 @@ public class PythonScriptTests {
             Professor professor = accountService.retrieveProfessor("grr", "b");
             assertEquals("Gustavo", professor.getFirstName());
             assertFalse(studentRepository.existsByUserID("grr"));*/
+
             System.out.println("\n==============================    Python Directory Test    ==============================");
             assertEquals("Hello.py failed to execute", 1, profService.testPythonDirectory());
             System.out.println("=============================   End Python Directory Test    ============================\n");
+
             int returnValue = profService.countAllCommits("CS200", "Encourse");
         }
 }
