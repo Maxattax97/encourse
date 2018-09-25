@@ -3,5 +3,26 @@
   font-weight: bold;
 }
 
+.panel-course-students {
+
+  .card {
+    width: 192px;
+    cursor:pointer;
+  }
+
+  .card:hover .component {
+    background-color: #F0F0F0;
+  }
+
+  .card:not(:nth-child(5)) {
+    margin-right: calc((100% - 5 * (10em + 32px)) / 4); // note that the em does not carry because large shrinks the amount of space you have. So you could have less children on a row
+  }
+
+  .card:nth-child(5) {
+    margin: 0;
+  }
+
+}
+
 @import "StudentPreview";
 @import "CourseSettings";

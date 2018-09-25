@@ -1,5 +1,30 @@
 # encourse
-
+ 
+## Server
+ 
+### Installations on Ubuntu Server Edition
+ 
+ Ensure that the following packages are installed and up to date:
+ 
+ 1. Java -    `apt-get install default-jdk`
+ 2. Maven -   `apt-get install maven`
+ 3. Node.js - `apt-get install nodejs`
+ 4. NPM -     `apt-get install npm`
+ 
+### Commands to Serve Client Files
+ 
+ In directory encourse/client, run the following commands:
+ 
+ 1. Create production build -    `npm run-script build`
+ 2. Begin serving on port 5000 - `serve -s build`
+ 
+### Commands to Run Spring Server
+ 
+ In directory encourse/server, run the following commands:
+ 
+ 1. Build and test maven project - `mvn clean package install`
+ 2. Run server on port 40797 -     `mvn spring-boot:run`
+ 
 ## Frontend
  Setup File Watcher :
   1. npm install -g node-sass
