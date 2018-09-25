@@ -12,4 +12,5 @@ public interface AccountService {
     Professor retrieveProfessor(String userName);
     CollegeAdmin retrieveAdmin(String userName);
     List<Account> retrieveAllAccounts();
+    Account retrieveAccountByID(String userID);
 }

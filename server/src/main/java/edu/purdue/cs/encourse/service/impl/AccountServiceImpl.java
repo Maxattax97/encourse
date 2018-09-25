@@ -29,6 +29,8 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findByUserName(userName);
     }
 
+    public Account retrieveAccountByID(String userID) { return accountRepository.findByUserID(userID); }
+
     public Student retrieveStudent(String userName) {
         return studentRepository.findByUserName(userName);
     }

@@ -16,10 +16,11 @@ import java.util.Collection;
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
+@SequenceGenerator(name = "user_id_gen", sequenceName = "user_id_gen",  initialValue = 10)
 public class User implements UserDetails, Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "user_id_gen")
     @Column(name = "ID")
     private Long id;
 

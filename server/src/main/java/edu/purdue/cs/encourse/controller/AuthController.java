@@ -2,6 +2,7 @@ package edu.purdue.cs.encourse.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.purdue.cs.encourse.domain.Account;
+import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.service.AdminService;
 import edu.purdue.cs.encourse.service.impl.AccountServiceImpl;
 import edu.purdue.cs.encourse.service.impl.AdminServiceImpl;
@@ -9,11 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @RestController
+@RequestMapping(value="/secured")
 public class AuthController {
 
     private final AccountServiceImpl accountService;
@@ -44,6 +50,11 @@ public class AuthController {
     @RequestMapping(value = "/accounts", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getAccounts() {
         return new ResponseEntity<>(accountService.retrieveAllAccounts(), HttpStatus.FOUND);
+    }
+
+    @RequestMapping(value = "/account", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getAccount(Principal principal) {
+        return new ResponseEntity<>(accountService.retrieveAccount(principal.getName()), HttpStatus.FOUND);
     }
 
 }
