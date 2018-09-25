@@ -1,4 +1,4 @@
-package edu.purdue.cs.encourse.security;
+package edu.purdue.cs.encourse.config;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
