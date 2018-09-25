@@ -7,13 +7,11 @@ import edu.purdue.cs.encourse.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 @Service(value = ProfServiceImpl.NAME)
 public class ProfServiceImpl implements ProfService {
@@ -87,18 +85,14 @@ public class ProfServiceImpl implements ProfService {
                     studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
             for(StudentSection a : assignments){
                 Student student = studentRepository.findByUserID(a.getStudentID());
-                if(!(new File(s.getCourseHub() + "/" + student.getUserName()).exists())) {
+                if(!(new File(s.getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName()).exists())) {
                     String destPath = (s.getCourseHub() + "/" + student.getUserName());
                     String repoPath = (s.getRemotePath() + "/" + student.getUserName() + "/" + project.getRepoName() + ".git");
                     try {
                         Process p = Runtime.getRuntime().exec("./bash/cloneRepositories.sh " + destPath + " " + repoPath);
+                        StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
+                        Executors.newSingleThreadExecutor().submit(streamGobbler);
                         p.waitFor();
-                        StringBuffer output = new StringBuffer();
-                        String line;
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                        while ((line = reader.readLine())!= null) {
-                            output.append(line);
-                        }
 
                     }
                     catch(Exception e) {
@@ -109,13 +103,9 @@ public class ProfServiceImpl implements ProfService {
         }
         try {
             Process p = Runtime.getRuntime().exec("./bash/setPermissions.sh " + sections.get(0).getCourseID());
+            StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
+            Executors.newSingleThreadExecutor().submit(streamGobbler);
             p.waitFor();
-            StringBuffer output = new StringBuffer();
-            String line;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((line = reader.readLine())!= null) {
-                output.append(line);
-            }
         }
         catch(Exception e) {
             return -7;
@@ -148,13 +138,9 @@ public class ProfServiceImpl implements ProfService {
                     String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
                     try {
                         Process p = Runtime.getRuntime().exec("./bash/pullRepositories.sh " + destPath);
+                        StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
+                        Executors.newSingleThreadExecutor().submit(streamGobbler);
                         p.waitFor();
-                        StringBuffer output = new StringBuffer();
-                        String line;
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                        while ((line = reader.readLine())!= null) {
-                            output.append(line);
-                        }
                     }
                     catch(Exception e) {
                         return -5;
@@ -165,13 +151,9 @@ public class ProfServiceImpl implements ProfService {
         }
         try {
             Process p = Runtime.getRuntime().exec("./bash/setPermissions.sh " + sections.get(0).getCourseID());
+            StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
+            Executors.newSingleThreadExecutor().submit(streamGobbler);
             p.waitFor();
-            StringBuffer output = new StringBuffer();
-            String line;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((line = reader.readLine())!= null) {
-                output.append(line);
-            }
         }
         catch(Exception e) {
             return -6;
@@ -324,5 +306,20 @@ public class ProfServiceImpl implements ProfService {
             return -3;
         }
         return 0;
+    }
+}
+
+class StreamGobbler implements Runnable {
+    private InputStream inputStream;
+    private Consumer<String> consumer;
+
+    public StreamGobbler(InputStream inputStream, Consumer<String> consumer) {
+        this.inputStream = inputStream;
+        this.consumer = consumer;
+    }
+
+    @Override
+    public void run() {
+        new BufferedReader(new InputStreamReader(inputStream)).lines().forEach(consumer);
     }
 }
