@@ -69,7 +69,11 @@ class CoursePanel extends Component {
 
     showProjectOptions = () => {
         history.push("/project-settings")
-    }
+    };
+
+    showStudentPanel = () => {
+        history.push("/student");
+    };
 
     render() {
         return (
@@ -79,9 +83,10 @@ class CoursePanel extends Component {
                     <h3>Class Statistics</h3>
 	                <ClassProgressHistogram/>
                     <h2 className="break-line" />
+                    <h3>Students</h3>
                     <div className="panel-course-students">
                         {
-                            this.state.student_data.map((student) => <Card key={student.id} component={<StudentPreview info={student} />} />)
+                            this.state.student_data.map((student) => <Card key={student.id} component={<StudentPreview info={student} />} onClick={this.showStudentPanel}/>)
                         }
                     </div>
                 </div>

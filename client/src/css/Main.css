@@ -83,7 +83,7 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .student-preview { position: relative; width: 10em; height: 7.5em; }
 
-.student-preview-commits { margin-bottom: 10px; font-family: "Roboto", "Raleway", Arial, sans-serif; }
+.student-preview-commits { margin-bottom: 10px; }
 
 .student-preview-commits h5 { margin-top: 0; margin-bottom: 5px; }
 
