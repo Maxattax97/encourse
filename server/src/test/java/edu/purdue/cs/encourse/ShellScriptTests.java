@@ -4,8 +4,6 @@ import edu.purdue.cs.encourse.database.AccountRepository;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.service.*;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +48,7 @@ public class ShellScriptTests {
     public ProfService profService;
 
     @Autowired
-    public StudentAssignmentRepository studentAssignmentRepository;
+    public StudentSectionRepository studentSectionRepository;
 
     //@Before
     public void populateDatabase() {
@@ -77,7 +75,7 @@ public class ShellScriptTests {
         teachingAssistantRepository.deleteAll();
         projectRepository.deleteAll();
         sectionRepository.deleteAll();
-        studentAssignmentRepository.deleteAll();
+        studentSectionRepository.deleteAll();
     }
 
     /** Empty test prevents error from being thrown over no @Test annotations **/
