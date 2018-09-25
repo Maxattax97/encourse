@@ -9,4 +9,5 @@ public interface TeachingAssistantRepository extends CrudRepository<TeachingAssi
     TeachingAssistant findByUserID(@NonNull String userID);
     TeachingAssistant findByUserName(@NonNull String userName);
     boolean existsByUserID(@NonNull String userID);
+    boolean existsByUserName(@NonNull String userName);
 }

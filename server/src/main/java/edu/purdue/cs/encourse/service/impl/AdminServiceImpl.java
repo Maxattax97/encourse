@@ -187,6 +187,7 @@ public class AdminServiceImpl implements AdminService {
         if(sectionRepository.findByCourseID(courseID).isEmpty()) {
             return -2;
         }
+        System.out.println("\n\n\n" + professor.getUserID() + " " + courseID + " " + semester + "\n\n\n");
         ProfessorCourse assignment = new ProfessorCourse(professor.getUserID(), courseID, semester);
         if(professorCourseRepository.save(assignment) == null) {
             return -3;
@@ -219,17 +220,20 @@ public class AdminServiceImpl implements AdminService {
         if(student == null) {
             return -2;
         }
-        account.setRole(Account.Roles.TA);
-        student.setRole(Account.Roles.TA);
-        TeachingAssistant teachingAssistant = new TeachingAssistant(account);
-        if(accountRepository.save(account) == null) {
+        if(teachingAssistantRepository.existsByUserName(userName)) {
             return -3;
         }
-        if(studentRepository.save(student) == null) {
+        TeachingAssistant teachingAssistant = new TeachingAssistant(account);
+        accountRepository.delete(account);
+        studentRepository.delete(student);
+        if(accountRepository.save(teachingAssistant) == null) {
             return -4;
         }
-        if(teachingAssistantRepository.save(teachingAssistant) == null) {
+        if(studentRepository.save(teachingAssistant) == null) {
             return -5;
+        }
+        if(teachingAssistantRepository.save(teachingAssistant) == null) {
+            return -6;
         }
         return 0;
     }

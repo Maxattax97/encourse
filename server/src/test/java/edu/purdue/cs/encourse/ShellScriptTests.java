@@ -20,6 +20,9 @@ public class ShellScriptTests {
     /** These tests are meant to be specifically run on reed226@vm2.cs.purdue.edu. Please do not run
         these tests since they attempt to ssh into reed226@data.cs.purdue.edu **/
 
+    /** In general, since these tests use bash scripts, they are specific to the Ubuntu server and will not
+        run correctly on Windows, and may have some issues on other OSs **/
+
     @Autowired
     public AccountRepository accountRepository;
 
@@ -52,6 +55,13 @@ public class ShellScriptTests {
 
     //@Before
     public void populateDatabase() {
+        adminRepository.deleteAll();
+        professorRepository.deleteAll();
+        studentRepository.deleteAll();
+        teachingAssistantRepository.deleteAll();
+        projectRepository.deleteAll();
+        sectionRepository.deleteAll();
+        studentSectionRepository.deleteAll();
         assertEquals(0, adminService.addAccount("1", "rravind", "a","William", "Reed",
                 "Student", "J", "reed226@purdue.edu"));
         assertEquals(0, adminService.addAccount("2", "grr", "b", "Gustavo", "Rodriguez-Rivera",
@@ -85,11 +95,15 @@ public class ShellScriptTests {
     }
 
     //@Test
-    public void testShellScripts(){
+    public void testShellScripts() {
         assertEquals(0, profService.setSectionRemotePaths("cs250", "/homes/cs252/sourcecontrol/work"));
         assertEquals(0, profService.createHub("cs250"));
         assertEquals(0, profService.cloneProjects("cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
         assertEquals(0, profService.pullProjects("cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
+        assertEquals(0, profService.countAllCommits("cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
+        assertEquals(0, profService.countAllCommitsByDay("cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
+        assertEquals(0, profService.countStudentCommitsByDay("cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc"), "dwyork"));
+        assertEquals(0, profService.listStudentCommitsByTime("cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc"), "rravind"));
     }
 
 

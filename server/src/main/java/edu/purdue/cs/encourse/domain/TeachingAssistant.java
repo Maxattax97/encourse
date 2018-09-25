@@ -11,12 +11,11 @@ public class TeachingAssistant extends Student {
 
     public TeachingAssistant(String userID, String userName, String saltPass, String firstName, String lastName,
                         String middleInit, String eduEmail) {
-        super(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail);
+        super(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail, true);
     }
 
     public TeachingAssistant(Account account) {
-        super(account.getUserID(), account.getUserName(), account.getSaltPass(), account.getFirstName(),
-                account.getLastName(), account.getMiddleInit(), account.getEduEmail());
+        super(account, true);
     }
 
     public TeachingAssistant() {

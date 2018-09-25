@@ -38,13 +38,28 @@ public class AdminServicesTests {
     public AdminRepository adminRepository;
 
     @Autowired
+    public SectionRepository sectionRepository;
+
+    @Autowired
+    public StudentSectionRepository studentSectionRepository;
+
+    @Autowired
     public AdminService adminService;
 
     @Autowired
     public AccountService accountService;
 
+
+
     @Before
     public void populateDatabase() {
+        accountRepository.deleteAll();
+        adminRepository.deleteAll();
+        professorRepository.deleteAll();
+        studentRepository.deleteAll();
+        teachingAssistantRepository.deleteAll();
+        sectionRepository.deleteAll();
+        studentSectionRepository.deleteAll();
         assertEquals(0, adminService.addAccount("1", "reed226", "a","William", "Reed",
                 "Admin", "J", "reed226@purdue.edu"));
         assertEquals(0, adminService.addAccount("2", "grr", "b", "Gustavo", "Rodriguez-Rivera",
@@ -53,14 +68,21 @@ public class AdminServicesTests {
                 "Student", "A", "kleclain@purdue.edu"));
         assertEquals(0, adminService.addAccount("4", "dkrolopp", "d", "Daniel", "Krolopp",
                 "TA", "J", "dkrolopp@purdue.edu"));
+        assertEquals(0, adminService.addAccount("5", "buckmast", "e", "Jordan", "Buckmaster",
+                "Student", "M", "buckmast@purdue.edu"));
+        assertEquals(0, adminService.addSection("1234", "Fall2018", "cs250", "Hardware", "Lab1"));
+        assertEquals(0, adminService.addSection("1235", "Fall2018", "cs250", "Hardware", "Lab2"));
     }
 
     @After
     public void clearDatabase() {
+        accountRepository.deleteAll();
         adminRepository.deleteAll();
         professorRepository.deleteAll();
         studentRepository.deleteAll();
         teachingAssistantRepository.deleteAll();
+        sectionRepository.deleteAll();
+        studentSectionRepository.deleteAll();
     }
 
     @Test
@@ -88,6 +110,27 @@ public class AdminServicesTests {
         student = accountService.retrieveStudent("dkrolopp", "d");
         assertEquals("Daniel", student.getFirstName());
         assertFalse(studentRepository.existsByUserID("grr"));
+    }
+
+    @Test
+    public void testAssignments() {
+        assertEquals(0, adminService.registerStudentToSection("kleclain", "cs250", "Fall2018", "Lab1"));
+        assertEquals(0, adminService.registerStudentToSection("buckmast", "cs250", "Fall2018", "Lab2"));
+        assertEquals(-2, adminService.registerStudentToSection("buckmast", "cs250", "Fall2018", "Lab3"));
+        assertEquals(-1, adminService.registerStudentToSection("grr", "cs250", "Fall2018", "Lab1"));
+        assertEquals(2, studentSectionRepository.count());
+        assertEquals(0, adminService.assignProfessorToCourse("grr", "cs250", "Fall2018"));
+        assertEquals(-2, adminService.assignProfessorToCourse("grr", "cs251", "Fall2018"));
+        assertEquals(-1, adminService.assignProfessorToCourse("reed226", "cs250", "Fall2018"));
+        assertEquals(0, adminService.hireStudentAsTeachingAssistant("buckmast"));
+        Account account = accountRepository.findByUserName("buckmast");
+        Student student = studentRepository.findByUserName("buckmast");
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName("buckmast");
+        assertEquals(Account.Roles.TA, account.getRole());
+        assertEquals(Account.Roles.TA, student.getRole());
+        assertEquals(Account.Roles.TA, teachingAssistant.getRole());
+        assertEquals(-2, adminService.hireStudentAsTeachingAssistant("grr"));
+        assertEquals(-3, adminService.hireStudentAsTeachingAssistant("dkrolopp"));
     }
 
 }
