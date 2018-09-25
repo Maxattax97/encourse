@@ -33,7 +33,7 @@
 
 .panel-right-nav { position: relative; float: right; width: 15%; max-width: 240px; min-width: 180px; height: 100%; padding: 0 20px; margin: 0; }
 
-.exit-nav { position: relative; height: 1.5em; width: 1.5em; padding: .5em; cursor: pointer; }
+.exit-nav { position: relative; height: 2.5em; width: 2.5em; padding: .5em; cursor: pointer; }
 
 .exit-nav img { position: absolute; top: .5em; left: .5em; z-index: 2; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); width: 1.5em; height: 1.5em; }
 

@@ -15,8 +15,6 @@ class CoursePanel extends Component {
         super(props);
 
         this.state = {
-            current_project: props.project || 2,
-            project_options: false,
             student_data : [
                 {
                     first_name: "Ryan", //first name of student
@@ -95,7 +93,9 @@ class CoursePanel extends Component {
                     hidden_test_script: true,
                     id: 3
                 }
-            ]
+            ],
+            current_project: props.project || 2,
+            project_options: false
         }
     }
 
