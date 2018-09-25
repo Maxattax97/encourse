@@ -1,0 +1,19 @@
+.progress-bar {
+  border: 1px solid #a4a4a4;
+  width: 100%;
+  height: 1em;
+  position: relative;
+
+  div {
+    padding: 1px;
+    width: 0;
+    height: 100%;
+    background: #4caf50;
+
+    -webkit-transition: width .25s;
+    -moz-transition: width .25s;
+    -ms-transition: width .25s;
+    -o-transition: width .25s;
+    transition: width .25s;
+  }
+}

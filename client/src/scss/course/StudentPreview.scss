@@ -1,4 +1,28 @@
 .student-preview {
+  position: relative;
   width:10em;
   height:7.5em;
+}
+
+.student-preview-commits {
+  margin-bottom: 10px;
+  font-family: "Roboto", "Raleway", Arial, sans-serif;
+
+  h5 {
+    margin-top: 0;
+    margin-bottom: 5px;
+  }
+}
+
+.student-preview-progress {
+  position: relative;
+
+  .progress-text {
+    position:absolute;
+    top: -1.25em;
+    right: 0;
+
+    color: #1f1f1f;
+    font-size: .75em;
+  }
 }

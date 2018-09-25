@@ -2,6 +2,7 @@
 @import "Panel";
 @import "Exit";
 @import "Card";
+@import "ProgressBar";
 
 * {
   box-sizing: border-box;
@@ -28,16 +29,27 @@ div.title {
 .break-line {
   width: 100%;
   height: 1px;
-  background-color: #1f1f1f33;
+  background-color: #a4a4a4;
+}
+
+h2.break-line {
+  margin: 25px 0;
 }
 
 h3.break-line {
   margin: 20px 0;
 }
 
-h3.break-line.title {
+h4.break-line {
+  margin: 15px 0;
+}
+
+.break-line.title {
   margin-top: 5px;
-  margin-bottom: 20px;
+}
+
+h4.break-line.title {
+  //margin:
 }
 
 .header {

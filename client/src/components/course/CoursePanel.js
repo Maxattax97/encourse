@@ -20,35 +20,48 @@ class CoursePanel extends Component {
                     last_name: "Sullivan",
                     progress: 30,
                     commitCount: 12,
-                    timeSpent: "12 hours"
+                    timeSpent: "12 hours",
+                    id: 100
                 },
                 {
-                    first_name: "Ryan",
-                    last_name: "Sullivan",
-                    progress: 30,
-                    commitCount: 12,
-                    timeSpent: "12 hours"
+                    first_name: "Jordan",
+                    last_name: "Reed",
+                    progress: 100,
+                    commitCount: 280,
+                    timeSpent: "3 hours",
+                    id: 101
                 },
                 {
-                    first_name: "Ryan",
-                    last_name: "Sullivan",
-                    progress: 30,
-                    commitCount: 12,
-                    timeSpent: "12 hours"
+                    first_name: "Killian",
+                    last_name: "Le Clainche",
+                    progress: 6.9,
+                    commitCount: 69,
+                    timeSpent: "6 hr 9 min",
+                    id: 102
                 },
                 {
-                    first_name: "Ryan",
-                    last_name: "Sullivan",
+                    first_name: "Shawn",
+                    last_name: "Montgomery",
                     progress: 30,
                     commitCount: 12,
-                    timeSpent: "12 hours"
+                    timeSpent: "12 hours",
+                    id: 103
                 },
                 {
-                    first_name: "Ryan",
-                    last_name: "Sullivan",
+                    first_name: "Jordan",
+                    last_name: "Buckmaster",
                     progress: 30,
                     commitCount: 12,
-                    timeSpent: "12 hours"
+                    timeSpent: "12 hours",
+                    id: 104
+                },
+                {
+                    first_name: "Jarett",
+                    last_name: "Lee",
+                    progress: 30,
+                    commitCount: 12,
+                    timeSpent: "12 hours",
+                    id: 105
                 }
             ]
         }
@@ -65,10 +78,10 @@ class CoursePanel extends Component {
                 <div className="panel-center-content">
                     <h3>Class Statistics</h3>
 	                <ClassProgressHistogram/>
-                    <h2 className="break-line title" />
+                    <h2 className="break-line" />
                     <div className="panel-course-students">
                         {
-                            this.state.student_data.map((student) => <Card component={<StudentPreview info={student} />} />)
+                            this.state.student_data.map((student) => <Card key={student.id} component={<StudentPreview info={student} />} />)
                         }
                     </div>
                 </div>

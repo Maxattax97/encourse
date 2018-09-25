@@ -39,9 +39,13 @@
 
 .exit-nav:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
 
-.card { width: auto; margin-right: 32px; margin-bottom: 32px; padding: 1em; background-color: #F8F8F8; border-radius: 4px; box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25); float: left; }
+.card { position: relative; height: auto; margin-right: 32px; margin-bottom: 32px; float: left; }
 
-.component { width: auto; }
+.component { display: table-row; float: left; height: auto; padding: 16px; background-color: #F8F8F8; border-radius: 4px; box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25); }
+
+.progress-bar { border: 1px solid #a4a4a4; width: 100%; height: 1em; position: relative; }
+
+.progress-bar div { padding: 1px; width: 0; height: 100%; background: #4caf50; -webkit-transition: width .25s; -moz-transition: width .25s; -ms-transition: width .25s; -o-transition: width .25s; transition: width .25s; }
 
 * { box-sizing: border-box; }
 
@@ -53,11 +57,15 @@ div.title h1, div.title h2, div.title h3, div.title h4, div.title h5, div.title 
 
 .h3-size { font-size: 1.33em; }
 
-.break-line { width: 100%; height: 1px; background-color: #1f1f1f33; }
+.break-line { width: 100%; height: 1px; background-color: #a4a4a4; }
+
+h2.break-line { margin: 25px 0; }
 
 h3.break-line { margin: 20px 0; }
 
-h3.break-line.title { margin-top: 5px; margin-bottom: 20px; }
+h4.break-line { margin: 15px 0; }
+
+.break-line.title { margin-top: 5px; }
 
 .header { margin-bottom: 5px; }
 
@@ -65,7 +73,23 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-course { text-align: left; font-weight: bold; }
 
-.student-preview { width: 10em; height: 7.5em; }
+.panel-course-students .card { width: 192px; cursor: pointer; }
+
+.panel-course-students .card:hover .component { background-color: #F0F0F0; }
+
+.panel-course-students .card:not(:nth-child(5)) { margin-right: calc((100% - 5 * (10em + 32px)) / 4); }
+
+.panel-course-students .card:nth-child(5) { margin: 0; }
+
+.student-preview { position: relative; width: 10em; height: 7.5em; }
+
+.student-preview-commits { margin-bottom: 10px; font-family: "Roboto", "Raleway", Arial, sans-serif; }
+
+.student-preview-commits h5 { margin-top: 0; margin-bottom: 5px; }
+
+.student-preview-progress { position: relative; }
+
+.student-preview-progress .progress-text { position: absolute; top: -1.25em; right: 0; color: #1f1f1f; font-size: .75em; }
 
 .projects-nav { padding-top: 20px; }
 
