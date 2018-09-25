@@ -22,4 +22,5 @@ public interface ProfService {
     int assignTeachingAssistantToStudent(String teachAssistUserName, String studentUserName);
 
     int testPythonDirectory();
+    int getCommitData();
 }

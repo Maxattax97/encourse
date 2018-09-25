@@ -87,6 +87,14 @@ public class PythonScriptTests {
             assertEquals("Hello.py failed to execute", 1, profService.testPythonDirectory());
             System.out.println("=============================   End Python Directory Test    ============================\n");
 
-            int returnValue = profService.countAllCommits("CS200", "Encourse");
+            System.out.println("\n==============================    Python Start/End Test    ==============================");
+            int returnValue = profService.getCommitData();
+            assertNotEquals("STDIN is empty", -1, returnValue);
+            assertNotEquals("getStartEnd.py failed to execute", -2, returnValue);
+            assertNotEquals("Failed to parse STDOUT into json", -3, returnValue);
+            assertEquals("Unknown Error", 1, returnValue);
+            System.out.println("=============================   End Python Start/End Test    ============================\n");
+
+            //int returnValue = profService.countAllCommits("CS200", "Encourse");
         }
 }

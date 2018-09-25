@@ -4,6 +4,9 @@ import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.ProfService;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -262,24 +265,25 @@ public class ProfServiceImpl implements ProfService {
     }
 
     public int testPythonDirectory() {
-        try {
+
             // This hardcoded path will undoubtedly cause us difficulty in the future.
-            String filePath = pythonPath + "";
+            String filePath = pythonPath + "hello.py";
             String dataFilePath = pythonPath + "testData.txt";
             //BufferedWriter stdOutput = new BufferedWriter(new OutputStreamWriter());
 
+        try {
             // Run `python hello.py testData.txt` at correct directory
-            Process p = Runtime.getRuntime().exec("python " + filePath + " " + dataFilePath);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader((p.getInputStream())));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-            String s = null;
-            String o = null;
-            while ((o = stdError.readLine()) != null) {
-                System.out.println(o);
+            Process process = Runtime.getRuntime().exec("python " + filePath + " " + dataFilePath);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String input = null;
+            String error = null;
+            while ((error = stdError.readLine()) != null) {
+                System.out.println(error);
             }
-            while ((s = stdInput.readLine()) != null) {
-                System.out.println(s);
-                if (s.equals("Hello World")) {
+            while ((input = stdInput.readLine()) != null) {
+                System.out.println(input);
+                if (input.equals("Hello World")) {
                     return 1;
                 }
             }
@@ -291,9 +295,38 @@ public class ProfServiceImpl implements ProfService {
     }
 
     public int getCommitData() {
-        String filePath = pythonPath + "hello.py";
-        String dataFilePath = pythonPath + "testData.txt";
-        return 0;
+        String filePath = pythonPath + "getStartEnd.py";
+        String dataFilePath = pythonPath + "sampleCountsDay.txt";
+        try {
+            Process process = Runtime.getRuntime().exec("python " + filePath + " " + dataFilePath);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String input = null;
+            String error = null;
+            while ((error = stdError.readLine()) != null) {
+                System.out.println(error);
+            }
+            while ((input = stdInput.readLine()) != null) {
+                JSONParser jsonParser = new JSONParser();
+                Object obj = null;
+                try {
+                    obj = jsonParser.parse(input);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return -3;
+                }
+                if (obj != null) {
+                    System.out.println(obj);
+                    JSONObject jsonObject = (JSONObject)obj;
+                    System.out.println(jsonObject.toString());
+                    return 1;
+                }
+            }
+            return -1;
+        } catch (IOException e) {
+                e.printStackTrace();
+                return -2;
+        }
     }
 
     public int assignTeachingAssistantToStudent(String teachAssistUserName, String studentUserName) {
