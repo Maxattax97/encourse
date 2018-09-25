@@ -1,16 +1,19 @@
 package edu.purdue.cs.encourse.service.impl;
 
-import edu.purdue.cs.encourse.domain.relations.StudentAssignment;
-import edu.purdue.cs.encourse.domain.relations.StudentProject;
+import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.ProfService;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 @Service(value = ProfServiceImpl.NAME)
 public class ProfServiceImpl implements ProfService {
@@ -30,10 +33,13 @@ public class ProfServiceImpl implements ProfService {
     private SectionRepository sectionRepository;
 
     @Autowired
-    private StudentAssignmentRepository studentAssignmentRepository;
+    private StudentSectionRepository studentSectionRepository;
 
     @Autowired
     private StudentProjectRepository studentProjectRepository;
+
+    @Autowired
+    private TeachingAssistantStudentRepository teachingAssistantStudentRepository;
 
     public int createHub(String courseID){
         List<Section> sections = sectionRepository.findByCourseID(courseID);
@@ -45,9 +51,12 @@ public class ProfServiceImpl implements ProfService {
         }
         for(Section s : sections) {
             s.setCourseHub("/sourcecontrol/" + sections.get(0).getCourseID() + "/" + sections.get(0).getSemester());
-            List<StudentAssignment> assignments =
-                    studentAssignmentRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
-            for(StudentAssignment a : assignments){
+            if(sectionRepository.save(s) == null) {
+                return -3;
+            }
+            List<StudentSection> assignments =
+                    studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            for(StudentSection a : assignments){
                 Student student = studentRepository.findByUserID(a.getStudentID());
                 new File(sections.get(0).getCourseHub() + "/" + student.getUserName()).mkdir();
             }
@@ -73,20 +82,44 @@ public class ProfServiceImpl implements ProfService {
         if(sections.get(0).getRemotePath() == null) {
             return -5;
         }
-        ProcessBuilder builder = new ProcessBuilder();
         for(Section s : sections){
-            List<StudentAssignment> assignments =
-                    studentAssignmentRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
-            for(StudentAssignment a : assignments){
+            List<StudentSection> assignments =
+                    studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            for(StudentSection a : assignments){
                 Student student = studentRepository.findByUserID(a.getStudentID());
                 if(!(new File(s.getCourseHub() + "/" + student.getUserName()).exists())) {
                     String destPath = (s.getCourseHub() + "/" + student.getUserName());
                     String repoPath = (s.getRemotePath() + "/" + student.getUserName() + "/" + project.getRepoName() + ".git");
-                    builder.command("bash/cloneProject.sh", destPath, repoPath);
+                    try {
+                        Process p = Runtime.getRuntime().exec("./bash/cloneRepositories.sh " + destPath + " " + repoPath);
+                        p.waitFor();
+                        StringBuffer output = new StringBuffer();
+                        String line;
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                        while ((line = reader.readLine())!= null) {
+                            output.append(line);
+                        }
+
+                    }
+                    catch(Exception e) {
+                        return -6;
+                    }
                 }
             }
         }
-        builder.command("bash/setPermissions.sh", sections.get(0).getCourseID());
+        try {
+            Process p = Runtime.getRuntime().exec("./bash/setPermissions.sh " + sections.get(0).getCourseID());
+            p.waitFor();
+            StringBuffer output = new StringBuffer();
+            String line;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((line = reader.readLine())!= null) {
+                output.append(line);
+            }
+        }
+        catch(Exception e) {
+            return -7;
+        }
         return 0;
     }
 
@@ -105,21 +138,44 @@ public class ProfServiceImpl implements ProfService {
         if(project.getRepoName() == null) {
             return -4;
         }
-        ProcessBuilder builder = new ProcessBuilder();
         List<String> completedStudents = new ArrayList<>();
         for(Section s : sections){
-            List<StudentAssignment> assignments =
-                    studentAssignmentRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
-            for(StudentAssignment a : assignments) {
+            List<StudentSection> assignments =
+                    studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            for(StudentSection a : assignments) {
                 Student student = studentRepository.findByUserID(a.getStudentID());
                 if(!(completedStudents.contains(student.getUserName()))) {
                     String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-                    builder.command("bash/pullProject.sh", destPath);
+                    try {
+                        Process p = Runtime.getRuntime().exec("./bash/pullRepositories.sh " + destPath);
+                        p.waitFor();
+                        StringBuffer output = new StringBuffer();
+                        String line;
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                        while ((line = reader.readLine())!= null) {
+                            output.append(line);
+                        }
+                    }
+                    catch(Exception e) {
+                        return -5;
+                    }
                     completedStudents.add(student.getUserName());
                 }
             }
         }
-        builder.command("bash/setPermissions.sh", sections.get(0).getCourseID());
+        try {
+            Process p = Runtime.getRuntime().exec("./bash/setPermissions.sh " + sections.get(0).getCourseID());
+            p.waitFor();
+            StringBuffer output = new StringBuffer();
+            String line;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((line = reader.readLine())!= null) {
+                output.append(line);
+            }
+        }
+        catch(Exception e) {
+            return -6;
+        }
         return 0;
     }
 
@@ -144,6 +200,20 @@ public class ProfServiceImpl implements ProfService {
             case "dueDate": project.setDueDate(value); break;
             case "repoName": project.setRepoName(value); break;
             default: return -2;
+        }
+        return 0;
+    }
+
+    public int setSectionRemotePaths(String courseID, String remotePath) {
+        List<Section> sections = sectionRepository.findByCourseID(courseID);
+        if(sections.isEmpty()) {
+            return -1;
+        }
+        for(Section s : sections) {
+            s.setRemotePath(remotePath);
+            if(sectionRepository.save(s) == null) {
+                return -2;
+            }
         }
         return 0;
     }
@@ -240,7 +310,7 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
-    public int assignTeachingAssistantToStudent(String teachAssistUserName, String studentUserName, String courseID, String semester, String sectionType) {
+    public int assignTeachingAssistantToStudent(String teachAssistUserName, String studentUserName) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
         if(teachingAssistant == null) {
             return -1;
@@ -249,20 +319,10 @@ public class ProfServiceImpl implements ProfService {
         if(student == null) {
             return -2;
         }
-        Section section = sectionRepository.findBySectionIdentifier(Section.createSectionID(courseID, semester, sectionType));
-        if(section == null) {
+        TeachingAssistantStudent assignment = new TeachingAssistantStudent(teachingAssistant.getUserID(), student.getUserID());
+        if(teachingAssistantStudentRepository.save(assignment) == null) {
             return -3;
         }
-        List<StudentAssignment> assignments = studentAssignmentRepository.findByIdStudentID(student.getUserID());
-        for(StudentAssignment a : assignments) {
-            if(a.getSectionIdentifier().equals(section.getSectionIdentifier())) {
-                a.setTeachingAssistantID(teachingAssistant.getUserID());
-                if(studentAssignmentRepository.save(a) == null) {
-                    return -4;
-                }
-                return 0;
-            }
-        }
-        return -5;
+        return 0;
     }
 }

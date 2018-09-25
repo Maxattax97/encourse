@@ -26,10 +26,12 @@ public class Section {
     private String courseTitle;
 
     /** Path to the directory that contains repositories **/
+    /** Format of course hub : "/sourcecontrol/{COURSEID}/{SEMESTER} **/
     @Setter
     private String courseHub;
 
     /** The path to the remote repositories on data.cs **/
+    @Setter
     private String remotePath;
 
     public Section(String CRN, String semester, String courseID, String courseTitle, String sectionType) {
