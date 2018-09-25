@@ -7,10 +7,7 @@ import edu.purdue.cs.encourse.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -87,18 +84,14 @@ public class ProfServiceImpl implements ProfService {
                     studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
             for(StudentSection a : assignments){
                 Student student = studentRepository.findByUserID(a.getStudentID());
-                if(!(new File(s.getCourseHub() + "/" + student.getUserName()).exists())) {
+                if(!(new File(s.getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName()).exists())) {
                     String destPath = (s.getCourseHub() + "/" + student.getUserName());
                     String repoPath = (s.getRemotePath() + "/" + student.getUserName() + "/" + project.getRepoName() + ".git");
                     try {
-                        Process p = Runtime.getRuntime().exec("./bash/cloneRepositories.sh " + destPath + " " + repoPath);
+                        Process p = Runtime.getRuntime().exec("./src/main/bash/cloneRepositories.sh " + destPath + " " + repoPath);
+                        StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
+                        Executors.newSingleThreadExecutor().submit(streamGobbler);
                         p.waitFor();
-                        StringBuffer output = new StringBuffer();
-                        String line;
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                        while ((line = reader.readLine())!= null) {
-                            output.append(line);
-                        }
 
                     }
                     catch(Exception e) {
@@ -108,14 +101,10 @@ public class ProfServiceImpl implements ProfService {
             }
         }
         try {
-            Process p = Runtime.getRuntime().exec("./bash/setPermissions.sh " + sections.get(0).getCourseID());
+            Process p = Runtime.getRuntime().exec("./src/main/bash/setPermissions.sh " + sections.get(0).getCourseID());
+            StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
+            Executors.newSingleThreadExecutor().submit(streamGobbler);
             p.waitFor();
-            StringBuffer output = new StringBuffer();
-            String line;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((line = reader.readLine())!= null) {
-                output.append(line);
-            }
         }
         catch(Exception e) {
             return -7;
@@ -147,14 +136,10 @@ public class ProfServiceImpl implements ProfService {
                 if(!(completedStudents.contains(student.getUserName()))) {
                     String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
                     try {
-                        Process p = Runtime.getRuntime().exec("./bash/pullRepositories.sh " + destPath);
+                        Process p = Runtime.getRuntime().exec("./src/main/bash/pullRepositories.sh " + destPath);
+                        StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
+                        Executors.newSingleThreadExecutor().submit(streamGobbler);
                         p.waitFor();
-                        StringBuffer output = new StringBuffer();
-                        String line;
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                        while ((line = reader.readLine())!= null) {
-                            output.append(line);
-                        }
                     }
                     catch(Exception e) {
                         return -5;
@@ -164,14 +149,10 @@ public class ProfServiceImpl implements ProfService {
             }
         }
         try {
-            Process p = Runtime.getRuntime().exec("./bash/setPermissions.sh " + sections.get(0).getCourseID());
+            Process p = Runtime.getRuntime().exec("./src/main/bash/setPermissions.sh " + sections.get(0).getCourseID());
+            StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
+            Executors.newSingleThreadExecutor().submit(streamGobbler);
             p.waitFor();
-            StringBuffer output = new StringBuffer();
-            String line;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((line = reader.readLine())!= null) {
-                output.append(line);
-            }
         }
         catch(Exception e) {
             return -6;
@@ -227,13 +208,21 @@ public class ProfServiceImpl implements ProfService {
         if(project == null) {
             return -2;
         }
-        ProcessBuilder builder = new ProcessBuilder();
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
         String fileName = Long.toString(Math.round(Math.random() * 1000000));
-        for(StudentProject p : projects) {
-            Student student = studentRepository.findByUserID(p.getStudentID());
+        for(StudentProject s : projects) {
+            Student student = studentRepository.findByUserID(s.getStudentID());
             String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-            builder.command("bash/countCommits.sh", destPath, fileName, student.getUserName());
+            try {
+                Process p = Runtime.getRuntime().exec("./src/main/bash/countCommits.sh " + destPath + " " + fileName + " " + student.getUserName());
+                StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
+                Executors.newSingleThreadExecutor().submit(streamGobbler);
+                p.waitFor();
+
+            }
+            catch(Exception e) {
+                return -3;
+            }
         }
 
         // TODO: Call and receive input from python script
@@ -250,13 +239,21 @@ public class ProfServiceImpl implements ProfService {
         if(project == null) {
             return -2;
         }
-        ProcessBuilder builder = new ProcessBuilder();
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
         String fileName = Long.toString(Math.round(Math.random() * 1000000));
-        for(StudentProject p : projects) {
-            Student student = studentRepository.findByUserID(p.getStudentID());
+        for(StudentProject s : projects) {
+            Student student = studentRepository.findByUserID(s.getStudentID());
             String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-            builder.command("bash/countCommitsByDay.sh", destPath, fileName, student.getUserName());
+            try {
+                Process p = Runtime.getRuntime().exec("./src/main/bash/countCommitsByDay.sh " + destPath + " " + fileName + " " + student.getUserName());
+                StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
+                Executors.newSingleThreadExecutor().submit(streamGobbler);
+                p.waitFor();
+
+            }
+            catch(Exception e) {
+                return -3;
+            }
         }
 
         // TODO: Call and receive input from python script
@@ -277,10 +274,18 @@ public class ProfServiceImpl implements ProfService {
         if(student == null) {
             return -3;
         }
-        ProcessBuilder builder = new ProcessBuilder();
         String fileName = Long.toString(Math.round(Math.random() * 1000000));
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-        builder.command("bash/countCommitsByDay.sh", destPath, fileName, student.getUserName());
+        try {
+            Process p = Runtime.getRuntime().exec("./src/main/bash/countCommitsByDay.sh " + destPath + " " + fileName + " " + student.getUserName());
+            StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
+            Executors.newSingleThreadExecutor().submit(streamGobbler);
+            p.waitFor();
+
+        }
+        catch(Exception e) {
+            return -4;
+        }
 
         // TODO: Call and receive input from python script
 
@@ -300,10 +305,18 @@ public class ProfServiceImpl implements ProfService {
         if(student == null) {
             return -3;
         }
-        ProcessBuilder builder = new ProcessBuilder();
         String fileName = Long.toString(Math.round(Math.random() * 1000000));
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-        builder.command("bash/listCommitsByTime.sh", destPath, fileName, student.getUserName());
+        try {
+            Process p = Runtime.getRuntime().exec("./src/main/bash/listCommitsByTime.sh " + destPath + " " + fileName + " " + student.getUserName());
+            StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
+            Executors.newSingleThreadExecutor().submit(streamGobbler);
+            p.waitFor();
+
+        }
+        catch(Exception e) {
+            return -4;
+        }
 
         // TODO: Call and receive input from python script
 
@@ -326,3 +339,4 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 }
+
