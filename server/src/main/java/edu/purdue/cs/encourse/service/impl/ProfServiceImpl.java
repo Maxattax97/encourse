@@ -89,7 +89,7 @@ public class ProfServiceImpl implements ProfService {
                     String destPath = (s.getCourseHub() + "/" + student.getUserName());
                     String repoPath = (s.getRemotePath() + "/" + student.getUserName() + "/" + project.getRepoName() + ".git");
                     try {
-                        Process p = Runtime.getRuntime().exec("./bash/cloneRepositories.sh " + destPath + " " + repoPath);
+                        Process p = Runtime.getRuntime().exec("./src/bash/cloneRepositories.sh " + destPath + " " + repoPath);
                         StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
                         Executors.newSingleThreadExecutor().submit(streamGobbler);
                         p.waitFor();
@@ -102,7 +102,7 @@ public class ProfServiceImpl implements ProfService {
             }
         }
         try {
-            Process p = Runtime.getRuntime().exec("./bash/setPermissions.sh " + sections.get(0).getCourseID());
+            Process p = Runtime.getRuntime().exec("./src/bash/setPermissions.sh " + sections.get(0).getCourseID());
             StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
             Executors.newSingleThreadExecutor().submit(streamGobbler);
             p.waitFor();
@@ -137,7 +137,7 @@ public class ProfServiceImpl implements ProfService {
                 if(!(completedStudents.contains(student.getUserName()))) {
                     String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
                     try {
-                        Process p = Runtime.getRuntime().exec("./bash/pullRepositories.sh " + destPath);
+                        Process p = Runtime.getRuntime().exec("./src/bash/pullRepositories.sh " + destPath);
                         StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
                         Executors.newSingleThreadExecutor().submit(streamGobbler);
                         p.waitFor();
@@ -150,7 +150,7 @@ public class ProfServiceImpl implements ProfService {
             }
         }
         try {
-            Process p = Runtime.getRuntime().exec("./bash/setPermissions.sh " + sections.get(0).getCourseID());
+            Process p = Runtime.getRuntime().exec("./src/bash/setPermissions.sh " + sections.get(0).getCourseID());
             StreamGobbler streamGobbler = new StreamGobbler(p.getInputStream(), System.out::println);
             Executors.newSingleThreadExecutor().submit(streamGobbler);
             p.waitFor();
