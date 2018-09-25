@@ -12,8 +12,7 @@ class ProjectOptions extends Component {
 
     render() {
         return (
-            <div className="panel-project-settings">
-                <ProjectNavigation titleClick={this.exitProjectOptions} mode={0}/>
+            <div className="panel-project-options">
                 <div className="panel-center-content">
                     <h4 className="header">
                         Name
@@ -40,7 +39,7 @@ class ProjectOptions extends Component {
                     </h4>
                     <input type="file" />
                 </div>
-                <Exit onClick={this.exitProjectOptions}/>
+                <Exit onClick={this.props.onExit}/>
             </div>
         );
     }
