@@ -28,6 +28,7 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AdminRepository adminRepository;
 
+
     public Account retrieveAccount(String userName, String saltPass) {
         Account account = accountRepository.findByUserName(userName);
         if(!(account.getSaltPass().equals(saltPass)))

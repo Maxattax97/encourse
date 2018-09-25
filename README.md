@@ -82,3 +82,8 @@
         <version>1.1.1</version>
     </dependency>
     
+ ### Authentication
+ 
+ 1. Hash a new password here: [BCrypt](https://www.dailycred.com/article/bcrypt-calculator)  
+ 2. Change the password to your account in `StartupFeed.java` 
+    

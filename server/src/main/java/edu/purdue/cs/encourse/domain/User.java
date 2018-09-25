@@ -62,4 +62,6 @@ public class User implements UserDetails, Serializable {
     public boolean isCredentialsNonExpired() {
         return !isCredentialsExpired();
     }
+
+    public String getIDString() { return Long.toString(id); }
 }

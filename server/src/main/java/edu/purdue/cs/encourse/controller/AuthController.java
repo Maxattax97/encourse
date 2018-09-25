@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -38,8 +39,8 @@ public class AuthController {
         int result;
         System.out.println(json);
         try {
-            Account account = new ObjectMapper().readValue(json, Account.class);
-            result = adminService.addAccount(account);
+            Account a = new ObjectMapper().readValue(json, Account.class);
+            result = adminService.addAccount(a.getUserID(), a.getUserName(), a.getSaltPass(), a.getFirstName(), a.getLastName(), " ", a.getMiddleInit(), a.getEduEmail());
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -53,8 +54,10 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/account", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getAccount(Principal principal) {
-        return new ResponseEntity<>(accountService.retrieveAccount(principal.getName()), HttpStatus.FOUND);
+    public @ResponseBody ResponseEntity<?> getAccount() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        /* Change line here to retrieve Account instead of User */
+        return new ResponseEntity<>(((User)securityContext.getAuthentication().getPrincipal()), HttpStatus.FOUND);
     }
 
 }
