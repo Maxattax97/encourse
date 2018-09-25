@@ -30,6 +30,7 @@ class CodeChangesChart extends Component {
 
         return (
             <div classname="chart-container">
+                <h3 className="chart-title">Code Frequency</h3>
                 <AreaChart width={width} height={height} data={data} margin={{top: 10, right: 30, left: 0, bottom: 0}}>
                     <CartesianGrid strokeDasharray="3 3"/>
                     <XAxis dataKey="dateStr"/>
