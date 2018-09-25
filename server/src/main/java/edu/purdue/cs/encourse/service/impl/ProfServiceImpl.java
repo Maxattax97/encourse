@@ -7,9 +7,13 @@ import edu.purdue.cs.encourse.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 @Service(value = ProfServiceImpl.NAME)
 public class ProfServiceImpl implements ProfService {
@@ -78,7 +82,6 @@ public class ProfServiceImpl implements ProfService {
         if(sections.get(0).getRemotePath() == null) {
             return -5;
         }
-        ProcessBuilder builder = new ProcessBuilder();
         for(Section s : sections){
             List<StudentSection> assignments =
                     studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
@@ -87,11 +90,23 @@ public class ProfServiceImpl implements ProfService {
                 if(!(new File(s.getCourseHub() + "/" + student.getUserName()).exists())) {
                     String destPath = (s.getCourseHub() + "/" + student.getUserName());
                     String repoPath = (s.getRemotePath() + "/" + student.getUserName() + "/" + project.getRepoName() + ".git");
-                    builder.command("bash/cloneProject.sh", destPath, repoPath);
+                    try {
+                        Process p = Runtime.getRuntime().exec("./bash/cloneRepositories.sh " + destPath + " " + repoPath);
+                        p.waitFor();
+                    }
+                    catch(Exception e) {
+                        return -6;
+                    }
                 }
             }
         }
-        builder.command("bash/setPermissions.sh", sections.get(0).getCourseID());
+        try {
+            Process p = Runtime.getRuntime().exec("./bash/setPermission.sh " + sections.get(0).getCourseID());
+            p.waitFor();
+        }
+        catch(Exception e) {
+            return -7;
+        }
         return 0;
     }
 
@@ -110,7 +125,6 @@ public class ProfServiceImpl implements ProfService {
         if(project.getRepoName() == null) {
             return -4;
         }
-        ProcessBuilder builder = new ProcessBuilder();
         List<String> completedStudents = new ArrayList<>();
         for(Section s : sections){
             List<StudentSection> assignments =
@@ -119,12 +133,24 @@ public class ProfServiceImpl implements ProfService {
                 Student student = studentRepository.findByUserID(a.getStudentID());
                 if(!(completedStudents.contains(student.getUserName()))) {
                     String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-                    builder.command("bash/pullProject.sh", destPath);
+                    try {
+                        Process p = Runtime.getRuntime().exec("./bash/pullRepositories.sh " + destPath);
+                        p.waitFor();
+                    }
+                    catch(Exception e) {
+                        return -5;
+                    }
                     completedStudents.add(student.getUserName());
                 }
             }
         }
-        builder.command("bash/setPermissions.sh", sections.get(0).getCourseID());
+        try {
+            Process p = Runtime.getRuntime().exec("./bash/setPermission.sh " + sections.get(0).getCourseID());
+            p.waitFor();
+        }
+        catch(Exception e) {
+            return -6;
+        }
         return 0;
     }
 
