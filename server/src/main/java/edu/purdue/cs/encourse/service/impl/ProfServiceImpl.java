@@ -47,6 +47,9 @@ public class ProfServiceImpl implements ProfService {
         }
         for(Section s : sections) {
             s.setCourseHub("/sourcecontrol/" + sections.get(0).getCourseID() + "/" + sections.get(0).getSemester());
+            if(sectionRepository.save(s) == null) {
+                return -3;
+            }
             List<StudentSection> assignments =
                     studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
             for(StudentSection a : assignments){
