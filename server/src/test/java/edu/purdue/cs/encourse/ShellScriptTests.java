@@ -87,6 +87,7 @@ public class ShellScriptTests {
     //@Test
     public void testShellScripts(){
         assertEquals(0, profService.setSectionRemotePaths("cs250", "/homes/cs252/sourcecontrol/work"));
+        assertEquals(0, profService.createHub("cs252"));
         assertEquals(0, profService.cloneProjects("cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
         assertEquals(0, profService.pullProjects("cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
     }
