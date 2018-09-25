@@ -67,7 +67,7 @@ class CoursePanel extends Component {
             projects : [
                 {
                     name: "My Malloc",
-                    src_name: "lab1-src",
+                    source_name: "lab1-src",
                     created_date: "09-01-18",
                     due_date: "09-08-18",
                     test_script: true,
@@ -76,7 +76,7 @@ class CoursePanel extends Component {
                 },
                 {
                     name: "Lab 2",
-                    src_name: "lab2-src",
+                    source_name: "lab2-src",
                     created_date: "09-01-18",
                     due_date: "09-08-18",
                     test_script: true,
@@ -85,7 +85,7 @@ class CoursePanel extends Component {
                 },
                 {
                     name: "Shell Project",
-                    src_name: "lab3-src",
+                    source_name: "lab3-src",
                     created_date: "09-01-18",
                     due_date: "09-08-18",
                     test_script: true,
@@ -114,11 +114,10 @@ class CoursePanel extends Component {
         return (
             <div className="panel-course">
                 <ProjectNavigation titleClick={this.showProjectOptions} projectClick={this.updateProjectState} currentProject={this.state.current_project} info={this.state.projects} />
-                <div className={"panel-center-content"}>
-                    {
-                        this.state.project_options ?
-                            <Modal left onClose={() => this.setState({project_options: false})} component={<ProjectOptions />}/> : <div />
-                    }
+                <div className="panel-center-content">
+                    <Modal left show={this.state.project_options} onClose={() => this.setState({project_options: false})}
+                           component={<ProjectOptions project={this.state.projects[this.state.current_project]}/>}/>
+
                     <div className={"panel-course-content " + (this.state.project_options ? "blur" : "")}>
                         <h3>Class Statistics</h3>
                         <ClassProgressHistogram/>
