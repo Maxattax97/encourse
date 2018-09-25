@@ -108,7 +108,7 @@ public class ProfServiceImpl implements ProfService {
             }
         }
         try {
-            Process p = Runtime.getRuntime().exec("./bash/setPermission.sh " + sections.get(0).getCourseID());
+            Process p = Runtime.getRuntime().exec("./bash/setPermissions.sh " + sections.get(0).getCourseID());
             p.waitFor();
             StringBuffer output = new StringBuffer();
             String line;
@@ -164,7 +164,7 @@ public class ProfServiceImpl implements ProfService {
             }
         }
         try {
-            Process p = Runtime.getRuntime().exec("./bash/setPermission.sh " + sections.get(0).getCourseID());
+            Process p = Runtime.getRuntime().exec("./bash/setPermissions.sh " + sections.get(0).getCourseID());
             p.waitFor();
             StringBuffer output = new StringBuffer();
             String line;
