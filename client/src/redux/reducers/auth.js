@@ -9,12 +9,18 @@ function auth(state = {}, action) {
                 logInIsLoading: action.isLoading,
             })
         case 'LOG_IN_DATA_SUCCESS':
+            localStorage.setItem('token', JSON.stringify(action.data))
             return Object.assign({}, state, {
                 logInData: action.data,
             })
         case 'LOG_OUT':
+            localStorage.removeItem('token')
             return Object.assign({}, state, {
                 logInData: null,
+            })
+        case 'SET_TOKEN':
+            return Object.assign({}, state, {
+                logInData: action.token,
             })
         default:
             return state

@@ -6,6 +6,13 @@ export function logOut() {
     }
 }
 
+export function setToken(token) {
+    return {
+        type: 'SET_TOKEN',
+        token
+    }
+}
+
 export function logInHasError(hasError) {
     return {
         type: 'LOG_IN_HAS_ERROR',
