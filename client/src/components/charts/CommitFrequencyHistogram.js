@@ -25,7 +25,7 @@ for (let item of defaultData) {
 class CommitHistoryHistogram extends Component {
     render() {
         return (
-            <div classname="chart-container">
+            <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={this.props.data || defaultData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
                         <text x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Commit Frequency</text>
