@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label } from 'recharts';
+import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
 
 const students = [
     {name: 'Student A', progress: 50},
@@ -60,34 +60,32 @@ const AxisLabel = ({ axisType, x, y, width, height, stroke, children }) => {
 class ClassProgressHistogram extends Component {
     render() {
         const {
-            width = 600,
-            height = 300,
             data = defaultData
         } = this.props;
 
         return (
             <div classname="chart-container">
-                <ComposedChart
-                    width={width}
-                    height={height}
-                    data={data}
-                    margin={{top: 5, right: 30, left: 30, bottom: 35}}
-                    barCategoryGap={0}
-                >
-                    <CartesianGrid/>
-                    <XAxis dataKey="progressBin" type="category">
-                        <Label offset={-10} position="insideBottom">
-                            % Completion
-                        </Label>
-                    </XAxis>
-                    <YAxis tickFormatter={toPercent}>
-                        <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
-                            % of Class
-                        </Label>
-                    </YAxis>
-                    <Tooltip/>
-                    <Bar dataKey="percent" fill="#8884d8"/>
-                </ComposedChart>
+                <ResponsiveContainer width="100%" height="100%">
+                    <ComposedChart
+                        data={data}
+                        margin={{top: 5, right: 30, left: 30, bottom: 35}}
+                        barCategoryGap={0}
+                    >
+                        <CartesianGrid/>
+                        <XAxis dataKey="progressBin" type="category">
+                            <Label offset={-10} position="insideBottom">
+                                % Completion
+                            </Label>
+                        </XAxis>
+                        <YAxis tickFormatter={toPercent}>
+                            <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+                                % of Class
+                            </Label>
+                        </YAxis>
+                        <Tooltip/>
+                        <Bar dataKey="percent" fill="#8884d8"/>
+                    </ComposedChart>
+                </ResponsiveContainer>
             </div>
         );
     }
