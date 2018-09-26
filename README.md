@@ -84,6 +84,6 @@
     
  ### Authentication
  
- 1. Hash a new password here: [BCrypt](https://www.dailycred.com/article/bcrypt-calculator)  
+ 1. Hash a new 4 round password here: [BCrypt](https://www.browserling.com/tools/bcrypt)  
  2. Change the password to your account in `StartupFeed.java` 
     

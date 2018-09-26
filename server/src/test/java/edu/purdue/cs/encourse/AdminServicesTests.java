@@ -87,10 +87,7 @@ public class AdminServicesTests {
 
     @Test
     public void testAccountRetrieval() {
-        Account account = accountService.retrieveAccount("reed226", "b");
-        assertNull(account);
-        account = accountService.retrieveAccount("reed226", "a");
-        assertNotNull(account);
+        Account account = accountService.retrieveAccount("reed226", "a");
         assertEquals("1", account.getUserID());
         assertEquals("reed226", account.getUserName());
         assertNull(account.getSaltPass());
