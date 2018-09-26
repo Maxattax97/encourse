@@ -10,7 +10,7 @@ import { setToken, logOutClient } from '../redux/actions'
 class App extends Component {
 
     loggedIn = () => {
-        return this.props.token != null;
+        return true//this.props.token != null;
     }
 
     componentWillReceiveProps(nextProps) {

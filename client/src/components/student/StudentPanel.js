@@ -74,16 +74,45 @@ class StudentPanel extends Component {
                            component={<ProjectOptions project={this.state.projects[this.state.current_project]}/>}/>
 
                     <div className={"panel-student-content " + (this.state.project_options ? "blur" : "")}>
+                        <h1>Jordan Reed</h1>
+                        <h1 className="break-line title" />
                         <h3>Statistics</h3>
                         <div className="charts float-height">
                             <Card component={<StudentProgressLineGraph/>} />
                             <Card component={<CodeChangesChart/>} />
                             <Card component={<CommitFrequencyHistogram/>}/>
                         </div>
+                        <h2 className="break-line" />
+                        <div className="student-commits-feedback">
+                            <div className="student-commits">
+                            </div>
+                            <div className="student-feedback">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="panel-right-nav">
-                    <div className={"panel-course-side-content" + (this.state.project_options ? "blur" : "")}>
+                    <div className={"panel-student-side-content " + (this.state.project_options ? "blur" : "")}>
+                        <Card component={
+                            <div className="student-actions-container">
+                                <div className="title">
+                                    <h3>Actions</h3>
+                                </div>
+                                <h3 className="break-line title" />
+                                <h4 className="student-action-test">
+                                    Run Tests
+                                </h4>
+                                <h4 className="student-action-hidden-test">
+                                    Run Hidden Tests
+                                </h4>
+                                <h4 className="student-action-pull-repo">
+                                    Pull Repository
+                                </h4>
+                                <h4 className="student-action-view-report">
+                                    View Plagiarism Report
+                                </h4>
+                            </div>
+                        } />
                     </div>
                 </div>
             </div>
