@@ -4,6 +4,7 @@ import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.ProfService;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
+import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -295,10 +296,11 @@ public class ProfServiceImpl implements ProfService {
     }
 
     public int getCommitData() {
-        String filePath = pythonPath + "getStartEnd.py";
-        String dataFilePath = pythonPath + "sampleCountsDay.txt";
+        String filePath = pythonPath + "getStatistics.py";
+        String timeFilePath = pythonPath + "sampleCountsDay.txt";
+        String countFilePath = pythonPath + "sampleCounts.txt";
         try {
-            Process process = Runtime.getRuntime().exec("python " + filePath + " " + dataFilePath);
+            Process process = Runtime.getRuntime().exec("python " + filePath + " " + timeFilePath + " " + countFilePath);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String input = null;
@@ -318,7 +320,7 @@ public class ProfServiceImpl implements ProfService {
                 if (obj != null) {
                     System.out.println(obj);
                     JSONObject jsonObject = (JSONObject)obj;
-                    System.out.println(jsonObject.toString());
+                    //System.out.println(jsonObject.toString());
                     return 1;
                 }
             }
@@ -328,6 +330,13 @@ public class ProfServiceImpl implements ProfService {
                 return -2;
         }
     }
+
+    public int getProgressHistorgram(String studentID) {
+
+
+
+    }
+
 
     public int assignTeachingAssistantToStudent(String teachAssistUserName, String studentUserName) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
