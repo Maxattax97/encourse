@@ -25,6 +25,18 @@ function course(state = {}, action) {
             return Object.assign({}, state, {
                 getClassProjectsData: action.data,
             })
+        case 'GET_CLASS_PROGRESS_HAS_ERROR':
+            return Object.assign({}, state, {
+                getClassProgressHasError: action.hasError,
+            })
+        case 'GET_CLASS_PROGRESS_IS_LOADING':
+            return Object.assign({}, state, {
+                getClassProgressIsLoading: action.isLoading,
+            })
+        case 'GET_CLASS_PROGRESS_DATA_SUCCESS':
+            return Object.assign({}, state, {
+                getClassProgressData: action.data,
+            })
         default:
             return state
     }
