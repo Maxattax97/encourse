@@ -116,8 +116,10 @@ class CoursePanel extends Component {
             <div className="panel-course">
                 <ProjectNavigation titleClick={this.showProjectOptions} projectClick={this.updateProjectState} currentProject={this.props.currentProject} info={this.state.projects} />
                 <div className="panel-center-content">
-                    <Modal left show={this.state.project_options} onClose={() => this.setState({project_options: false})}
-                           component={<ProjectOptions project={this.state.projects[this.props.currentProject]}/>}/>
+                    <div className="project-options">
+                        <Modal left show={this.state.project_options} onClose={() => this.setState({project_options: false})}
+                                component={<ProjectOptions project={this.state.projects[this.props.currentProject]}/>}/>
+                    </div>
 
                     <div className={"panel-course-content " + (this.state.project_options ? "blur" : "")}>
                         <h1>CS252</h1>

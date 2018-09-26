@@ -113,7 +113,7 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .student-preview-progress .progress-text { position: absolute; top: -1.25em; right: 0; color: #1f1f1f; font-size: .75em; }
 
-.panel-student-content { -webkit-transition: filter .15s ease-in; -moz-transition: filter .15s ease-in; -ms-transition: filter .15s ease-in; -o-transition: filter .15s ease-in; transition: filter .15s ease-in; }
+.panel-student-content, .panel-student-side-content { -webkit-transition: filter .15s ease-in; -moz-transition: filter .15s ease-in; -ms-transition: filter .15s ease-in; -o-transition: filter .15s ease-in; transition: filter .15s ease-in; }
 
 .panel-student-side-content { position: fixed; padding-top: calc(20px + 1.17em + 40px); width: calc(.15 * 105em - 40px); min-width: 180px; max-width: 240px; }
 
