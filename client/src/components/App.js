@@ -9,7 +9,7 @@ import Main from './Main'
 class App extends Component {
 
   loggedIn = () => {
-    return true;
+    return this.props.token != null;
   }
 
   render() {
@@ -33,11 +33,15 @@ class App extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return { }
+  return { 
+      token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
-	return { }
+	return {
+
+    }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

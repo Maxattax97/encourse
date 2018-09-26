@@ -147,7 +147,7 @@ const mapStateToProps = (state) => {
     return {
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : null,
         projects: state.course && state.course.getClassProjectsData ? state.course.getClassProjectsData : null,
-        currentProject: state.projects && state.projects.currentProject != undefined ? state.projects.currentProject : 2,
+        currentProject: state.projects && state.projects.currentProject !== undefined ? state.projects.currentProject : 2,
     }
 }
   
