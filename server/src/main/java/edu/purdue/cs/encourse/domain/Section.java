@@ -1,8 +1,12 @@
 package edu.purdue.cs.encourse.domain;
 
-import lombok.*;
-import java.util.*;
-import javax.persistence.*;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Getter
 @Entity

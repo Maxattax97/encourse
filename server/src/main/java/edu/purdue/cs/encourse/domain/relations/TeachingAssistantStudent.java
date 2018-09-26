@@ -1,7 +1,11 @@
 package edu.purdue.cs.encourse.domain.relations;
 
-import lombok.*;
-import javax.persistence.*;
+import lombok.Getter;
+
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 @Getter

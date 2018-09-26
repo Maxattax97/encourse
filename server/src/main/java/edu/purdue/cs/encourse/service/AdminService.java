@@ -1,9 +1,6 @@
 package edu.purdue.cs.encourse.service;
 
-import edu.purdue.cs.encourse.domain.*;
-import lombok.*;
-
-import java.util.*;
+import edu.purdue.cs.encourse.domain.Account;
 
 public interface AdminService {
 
