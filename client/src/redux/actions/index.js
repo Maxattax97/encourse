@@ -9,5 +9,6 @@ export {
 
 export {
     logInHasError, logInIsLoading, logInDataSuccess, logIn,
-    logOut, setToken
+    logOutHasError, logOutIsLoading, logOutDataSuccess, logOut,
+    setToken, logOutClient
 } from './auth'

@@ -5,8 +5,16 @@ import settingsIcon from '../img/settings.svg'
 import logoutIcon from '../img/logout.svg'
 import { history } from '../redux/store'
 import { logOut } from '../redux/actions'
+import url from '../server'
 
 class Navbar extends Component {
+
+    logOut = () => {
+        this.props.logOut(`${url}/secured/logout`, {
+            'Authorization': `Bearer ${this.props.token}`
+        })
+    }
+
     render() {
         return (
             <div className="nav">
@@ -15,7 +23,7 @@ class Navbar extends Component {
                         <div className="nav-settings" onClick={() => history.push('/settings')}>
                             <img src={settingsIcon} alt="options" />
                         </div>
-                        <div className="nav-logout" onClick={() => this.props.logOut()}>
+                        <div className="nav-logout" onClick={() => this.logOut()}>
                             <img src={logoutIcon} alt="logout" />
                         </div>
                     </div>
@@ -28,11 +36,17 @@ class Navbar extends Component {
         )
     }
 }
-  
-const mapDispatchToProps = (dispatch) => {
-    return {
-        logOut: () => dispatch(logOut())
+
+const mapStateToProps = (state) => {
+    return { 
+        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
     }
 }
   
-export default connect(null, mapDispatchToProps)(Navbar)
+const mapDispatchToProps = (dispatch) => {
+    return {
+        logOut: (url, headers) => dispatch(logOut(url, headers))
+    }
+}
+  
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar)
