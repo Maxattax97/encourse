@@ -64,7 +64,7 @@ public class Controller {
         User loggedIn = getUserFromAuth();
         // loggedIn.getUsername()
         // profService.getCommitData(loggedIn.getUsername());
-        // json = JSONObject.toString();
+        // json = JSONObject.toString();r
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 

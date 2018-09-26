@@ -13,7 +13,7 @@ from getStudentProgress import get_cumulative_progress_for_student as get_progre
 #       }
 #       progress: p in [0,100]
 #   }
-def format_data(data):
+def format_data(data, total_progress):
     new_data = []
     for point in data:
         date = point[0]
@@ -25,8 +25,7 @@ def format_data(data):
         formatted_date["month"] = date_data.month
         formatted_date["year"] = date_data.year
         new_data_point = {}
-        new_data_point["additions"] = additions
-        new_data_point["deletions"] = deletions
+        new_data_point["progress"] = int((additions-deletions) / total_progress * 100)
         new_data_point["date"] = formatted_date
         new_data.append(new_data_point)
     return new_data
@@ -39,7 +38,7 @@ studentID = sys.argv[1]
 commit_data_path = sys.argv[2]
 commit_data_file = open(commit_data_path, "r")
 data, add_total, del_total = get_progress(studentID, commit_data_file)
-formatted_data = format_data(data)
+formatted_data = format_data(data, add_total-del_total)
 json = json.dumps(formatted_data)
 print(json)
 
