@@ -93,6 +93,8 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-course-students .card:nth-child(5) { margin: 0; }
 
+.panel-course-charts .card:nth-child(2) { margin: 0; }
+
 .student-preview { position: relative; width: 10em; height: 7.5em; }
 
 .student-preview-commits { margin-bottom: 10px; }

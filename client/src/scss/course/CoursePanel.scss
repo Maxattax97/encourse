@@ -32,5 +32,13 @@
 
 }
 
+.panel-course-charts {
+
+  .card:nth-child(2) {
+    margin: 0;
+  }
+
+}
+
 @import "StudentPreview";
 @import "CourseSettings";

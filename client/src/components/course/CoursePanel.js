@@ -97,7 +97,7 @@ class CoursePanel extends Component {
             ],
             current_project: props.project || 2,
             project_options: false
-        }
+        };
     }
 
     showProjectOptions = () => {
@@ -123,6 +123,7 @@ class CoursePanel extends Component {
                     <div className={"panel-course-content " + (this.state.project_options ? "blur" : "")}>
                         <h3>Class Statistics</h3>
                         <div className="panel-course-charts float-height">
+                            <Card component={<ClassProgressHistogram width={this.state.chart_width} height={this.state.chart_height}/>} />
                             <Card component={<ClassProgressHistogram/>} />
                         </div>
                         <h2 className="break-line" />

@@ -59,18 +59,13 @@ const AxisLabel = ({ axisType, x, y, width, height, stroke, children }) => {
 
 class ClassProgressHistogram extends Component {
     render() {
-        const {
-            width = 600,
-            height = 300,
-            data = defaultData
-        } = this.props;
 
         return (
-            <div classname="chart-container">
+            <div className="chart-container">
                 <ComposedChart
-                    width={width}
-                    height={height}
-                    data={data}
+                    width={this.props.width || 600}
+                    height={this.props.height || 300}
+                    data={this.props.data || defaultData}
                     margin={{top: 5, right: 30, left: 30, bottom: 35}}
                     barCategoryGap={0}
                 >
