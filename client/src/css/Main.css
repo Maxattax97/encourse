@@ -29,11 +29,11 @@
 
 .panel-container > div:after { content: ""; display: block; height: 0; clear: both; }
 
-.panel-left-nav { position: relative; float: left; width: 15%; max-width: 240px; min-width: 180px; height: 100%; padding: 0 20px; margin: 0; }
+.panel-left-nav { position: relative; float: left; width: 15%; max-width: 240px; min-width: 180px; height: 100%; padding: 0 20px; margin: 0; min-height: 1px; }
 
-.panel-center-content { position: relative; float: left; width: 70%; height: 100%; margin: 0; padding: 20px; }
+.panel-center-content { position: relative; float: left; width: 70%; height: 100%; margin: 0; padding: 20px; min-height: 1px; }
 
-.panel-right-nav { position: relative; float: right; width: 15%; max-width: 240px; min-width: 180px; height: 100%; padding: 0 20px; margin: 0; }
+.panel-right-nav { position: relative; float: right; width: 15%; max-width: 240px; min-width: 180px; height: 100%; padding: 0 20px; margin: 0; min-height: 1px; }
 
 .exit-nav { position: relative; float: right; height: 2.5em; width: 2.5em; padding: .5em; cursor: pointer; }
 
@@ -77,6 +77,8 @@ h4.break-line { margin: 15px 0; }
 
 .blur { filter: brightness(80%) blur(3px); }
 
+.float-height:after { content: ""; display: block; height: 0; clear: both; }
+
 input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-course { text-align: left; font-weight: bold; }
@@ -91,8 +93,6 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-course-students .card:nth-child(5) { margin: 0; }
 
-.panel-course-students:after { content: ""; display: block; height: 0; clear: both; }
-
 .student-preview { position: relative; width: 10em; height: 7.5em; }
 
 .student-preview-commits { margin-bottom: 10px; }
@@ -103,7 +103,7 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .student-preview-progress .progress-text { position: absolute; top: -1.25em; right: 0; color: #1f1f1f; font-size: .75em; }
 
-.projects-nav { padding-top: 20px; }
+.projects-nav { position: fixed; padding-top: 20px; width: calc(.15 * 105em - 40px); min-width: 180px; max-width: 240px; }
 
 .projects-nav div.title { padding-top: 1em; height: 2.5em; cursor: pointer; }
 

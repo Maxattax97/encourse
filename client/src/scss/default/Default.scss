@@ -60,6 +60,13 @@ h4.break-line.title {
   filter: brightness(80%) blur(3px);
 }
 
+.float-height:after {
+  content: "";
+  display: block;
+  height: 0;
+  clear: both;
+}
+
 input {
   width: 100%;
   font-family: "Raleway", "Rhodium Libre", sans-serif;

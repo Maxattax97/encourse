@@ -32,12 +32,5 @@
 
 }
 
-.panel-course-students:after {
-  content: "";
-  display: block;
-  height: 0;
-  clear: both;
-}
-
 @import "StudentPreview";
 @import "CourseSettings";

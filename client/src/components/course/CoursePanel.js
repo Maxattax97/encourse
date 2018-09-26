@@ -120,10 +120,12 @@ class CoursePanel extends Component {
 
                     <div className={"panel-course-content " + (this.state.project_options ? "blur" : "")}>
                         <h3>Class Statistics</h3>
-                        <ClassProgressHistogram/>
+                        <div className="panel-course-charts float-height">
+                            <Card component={<ClassProgressHistogram/>} />
+                        </div>
                         <h2 className="break-line" />
                         <h3>Students</h3>
-                        <div className="panel-course-students">
+                        <div className="panel-course-students float-height">
                             {
                                 this.state.student_data.map((student) => <Card key={student.id} component={<StudentPreview info={student} project={this.state.current_project} />} onClick={this.showStudentPanel}/>)
                             }
