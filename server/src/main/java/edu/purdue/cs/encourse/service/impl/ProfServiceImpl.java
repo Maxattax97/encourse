@@ -433,13 +433,13 @@ public class ProfServiceImpl implements ProfService {
                     } else if (obj.getClass() == JSONArray.class) {
                         jsonObject = new JSONObject();
                         JSONArray jsonArray = (JSONArray)obj;
-                        jsonObject.put("histogram", jsonArray);
+                        jsonObject.put(studentID, jsonArray);
                     } else {
                         return new JSONReturnable(-4, null);
                     }
                     JSONReturnable jsonReturn = new JSONReturnable(1, jsonObject);
                     //System.out.println(jsonObject.toString());
-                    System.out.println(jsonReturn);
+                    System.out.println(jsonReturn.jsonObject.toJSONString());
                     return jsonReturn;
                 }
             }

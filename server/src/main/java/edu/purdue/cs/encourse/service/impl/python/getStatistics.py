@@ -1,5 +1,6 @@
 import sys
 import json
+from datetime import datetime
 from getStartEnd import import_commit_data as import_commit_times
 from getCommitCounts import import_commit_counts
 
@@ -12,11 +13,19 @@ def format_commit_data(dates, commits):
             count = commits[user]
         user_data = {}
         if len(user_dates) == 2:
-            user_data["start"] = user_dates[0]
-            user_data["end"] = user_dates[1]
+            user_data["start"] = format_date(user_dates[0])
+            user_data["end"] = format_date(user_dates[1])
             user_data["count"] = count
         data[user] = user_data
     return data
+
+def format_date(date):
+    date_data = datetime.strptime(date, "%Y-%m-%d")
+    formatted_date = {}
+    formatted_date["day"] = date_data.day
+    formatted_date["month"] = date_data.month
+    formatted_date["year"] = date_data.year
+    return formatted_date
 
 # Runs on file call
 if len(sys.argv) != 3:
