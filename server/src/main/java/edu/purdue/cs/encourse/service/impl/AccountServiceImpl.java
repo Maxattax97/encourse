@@ -31,16 +31,12 @@ public class AccountServiceImpl implements AccountService {
 
     public Account retrieveAccount(String userName, String saltPass) {
         Account account = accountRepository.findByUserName(userName);
-        if(!(account.getSaltPass().equals(saltPass)))
-            return null;
         account.setSaltPass(null);
         return account;
     }
 
     public Student retrieveStudent(String userName, String saltPass) {
         Student student = studentRepository.findByUserName(userName);
-        if (!(student.getSaltPass().equals(saltPass)))
-            return null;
         student.setSaltPass(null);
         return student;
     }
@@ -49,24 +45,18 @@ public class AccountServiceImpl implements AccountService {
 
     public TeachingAssistant retrieveTA(String userName, String saltPass) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userName);
-        if(!(teachingAssistant.getSaltPass().equals(saltPass)))
-            return null;
         teachingAssistant.setSaltPass(null);
         return teachingAssistant;
     }
 
     public Professor retrieveProfessor(String userName, String saltPass) {
         Professor professor = professorRepository.findByUserName(userName);
-        if(!(professor.getSaltPass().equals(saltPass)))
-            return null;
         professor.setSaltPass(null);
         return professor;
     }
 
     public CollegeAdmin retrieveAdmin(String userName, String saltPass) {
         CollegeAdmin collegeAdmin = adminRepository.findByUserName(userName);
-        if(!(collegeAdmin.getSaltPass().equals(saltPass)))
-            return null;
         collegeAdmin.setSaltPass(null);
         return collegeAdmin;
     }

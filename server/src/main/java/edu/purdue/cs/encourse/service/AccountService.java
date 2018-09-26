@@ -2,6 +2,8 @@ package edu.purdue.cs.encourse.service;
 
 import edu.purdue.cs.encourse.domain.*;
 
+import java.util.List;
+
 public interface AccountService {
 
     /** Services for retrieving account with specified type from database **/
@@ -11,5 +13,6 @@ public interface AccountService {
     Professor retrieveProfessor(String userName, String saltPass);
     CollegeAdmin retrieveAdmin(String userName, String saltPass);
     Account retrieveAccountByID(String userID);
+    List<Account> retrieveAllAccounts();
 
 }

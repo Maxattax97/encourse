@@ -1,6 +1,7 @@
 package edu.purdue.cs.encourse.service;
 
 import edu.purdue.cs.encourse.domain.Account;
+import edu.purdue.cs.encourse.domain.User;
 
 public interface AdminService {
 
@@ -24,4 +25,7 @@ public interface AdminService {
     int assignProfessorToCourse(String userName, String courseID, String semester);
     int registerStudentToSection(String userName, String courseID, String semester, String sectionType);
     int hireStudentAsTeachingAssistant(String userName);
+
+    /** Services for authentication **/
+    User addUser(String userName, String password, String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled);
 }

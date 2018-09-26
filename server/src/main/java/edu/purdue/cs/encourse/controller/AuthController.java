@@ -3,6 +3,8 @@ package edu.purdue.cs.encourse.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.User;
+import edu.purdue.cs.encourse.service.AccountService;
+import edu.purdue.cs.encourse.service.AdminService;
 import edu.purdue.cs.encourse.service.impl.AccountServiceImpl;
 import edu.purdue.cs.encourse.service.impl.AdminServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +28,11 @@ import java.util.stream.Collectors;
 @RequestMapping(value="/secured")
 public class AuthController {
 
-    private final AccountServiceImpl accountService;
+    @Autowired
+    private AccountService accountService;
 
-    private final AdminServiceImpl adminService;
+    @Autowired
+    private AdminService adminService;
 
     @Autowired
     private TokenStore tokenStore;
@@ -36,11 +40,6 @@ public class AuthController {
     @Autowired
     private SessionRegistry sessionRegistry;
 
-    @Autowired
-    public AuthController(AccountServiceImpl accountService, AdminServiceImpl adminService) {
-        this.accountService = accountService;
-        this.adminService = adminService;
-    }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/modify/account", method = RequestMethod.POST)
@@ -60,23 +59,28 @@ public class AuthController {
         User user;
         try {
             Account a = new ObjectMapper().readValue(json, Account.class);
-            String type;
+            String userType;
+            String accountType;
             switch (a.getRole()) {
                 case Account.Roles.ADMIN:
-                    type = "ADMIN";
+                    userType = "ADMIN";
+                    accountType = "Admin";
                     break;
                 case Account.Roles.PROFESSOR:
-                    type = "PROFESSOR";
+                    userType = "PROFESSOR";
+                    accountType = "Professor";
                     break;
                 case Account.Roles.TA:
-                    type = "TA";
+                    userType = "TA";
+                    accountType = "TA";
                     break;
                 case Account.Roles.STUDENT:
                 default:
-                    type = "STUDENT";
+                    userType = "STUDENT";
+                    accountType = "Student";
             }
-            result = adminService.addAccount(a.getUserID(), a.getUserName(), a.getSaltPass(), a.getFirstName(), a.getLastName(), type, a.getMiddleInit(), a.getEduEmail());
-            user = adminService.addUser(a.getUserName(), a.getSaltPass(), type, false, false, false, true);
+            result = adminService.addAccount(a.getUserID(), a.getUserName(), a.getSaltPass(), a.getFirstName(), a.getLastName(), accountType, a.getMiddleInit(), a.getEduEmail());
+            user = adminService.addUser(a.getUserName(), a.getSaltPass(), userType, false, false, false, true);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -116,6 +120,8 @@ public class AuthController {
     private Account getAccountFromAuth() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         User user = ((User)securityContext.getAuthentication().getPrincipal());
+        System.out.println(user.getUsername());
+        System.out.println(user.getPassword());
         return accountService.retrieveAccount(user.getUsername(), user.getPassword());
     }
 
