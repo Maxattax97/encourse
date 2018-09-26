@@ -1,9 +1,6 @@
 package edu.purdue.cs.encourse.service;
 
-import edu.purdue.cs.encourse.domain.*;
-import lombok.*;
-
-import java.util.*;
+import edu.purdue.cs.encourse.util.JSONReturnable;
 
 public interface ProfService {
     int createHub(String courseID);
@@ -22,6 +19,6 @@ public interface ProfService {
     int assignTeachingAssistantToStudent(String teachAssistUserName, String studentUserName);
 
     int testPythonDirectory();
-    int getCommitData();
-    int getProgressHistogram(String studentID);
+    JSONReturnable getCommitData();
+    JSONReturnable getProgressHistogram(String studentID);
 }

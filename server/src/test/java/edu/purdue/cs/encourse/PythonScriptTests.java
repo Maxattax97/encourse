@@ -5,6 +5,7 @@ import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.service.*;
 import edu.purdue.cs.encourse.service.impl.*;
+import edu.purdue.cs.encourse.util.JSONReturnable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,17 +90,16 @@ public class PythonScriptTests {
             assertEquals("Hello.py failed to execute", 1, profService.testPythonDirectory());
 
             System.out.println("\n==============================    Python Start/End Test    ==============================");
-            int returnValue = profService.getCommitData();
-            assertNotEquals("STDIN is empty", -1, returnValue);
-            assertNotEquals("getStartEnd.py failed to execute", -2, returnValue);
-            assertNotEquals("Failed to parse STDOUT into json", -3, returnValue);
-            assertEquals("Unknown Error", 1, returnValue);
+            JSONReturnable jsonReturn = profService.getCommitData();
+            assertNotEquals("STDIN is empty", -1, jsonReturn.errorCode);
+            assertNotEquals("getStartEnd.py failed to execute", -2, jsonReturn.errorCode);
+            assertNotEquals("Failed to parse STDOUT into json", -3, jsonReturn.errorCode);
+            assertEquals("Unknown Error", 1, jsonReturn.errorCode);
 
             System.out.println("=============================   Python Progress Histogram Test    ============================\n");
             String studentID = "cutz";
-            returnValue = profService.getProgressHistogram(studentID);
-            assertEquals("Failed to generate progress histogram data", 1, returnValue);
-
+            jsonReturn = profService.getProgressHistogram(studentID);
+            assertEquals("Failed to generate progress histogram data", 1, jsonReturn.errorCode);
             System.out.println("=============================   End Python Tests    ============================\n");
 
             //int returnValue = profService.countAllCommits("CS200", "Encourse");

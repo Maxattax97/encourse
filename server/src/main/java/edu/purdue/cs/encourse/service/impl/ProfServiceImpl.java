@@ -4,7 +4,8 @@ import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.ProfService;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
-import org.json.simple.JSONAware;
+import edu.purdue.cs.encourse.util.JSONReturnable;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -295,7 +296,7 @@ public class ProfServiceImpl implements ProfService {
         }
     }
 
-    public int getCommitData() {
+    public JSONReturnable getCommitData() {
         String filePath = pythonPath + "getStatistics.py";
         String timeFilePath = pythonPath + "sampleCountsDay.txt";
         String countFilePath = pythonPath + "sampleCounts.txt";
@@ -315,45 +316,65 @@ public class ProfServiceImpl implements ProfService {
                     obj = jsonParser.parse(input);
                 } catch (ParseException e) {
                     e.printStackTrace();
-                    return -3;
+                    return new JSONReturnable(-3, null);
                 }
                 if (obj != null) {
                     System.out.println(obj);
                     JSONObject jsonObject = (JSONObject)obj;
+                    JSONReturnable jsonReturn = new JSONReturnable(1, jsonObject);
                     //System.out.println(jsonObject.toString());
-                    return 1;
+                    return jsonReturn;
                 }
             }
-            return -1;
+            return new JSONReturnable(-1, null);
         } catch (IOException e) {
                 e.printStackTrace();
-                return -2;
+                return new JSONReturnable(-2, null);
         }
     }
 
-    public int getProgressHistogram(String studentID) {
-        String filePath = pythonPath + "getProgressHistogram.py";
+    public JSONReturnable getProgressHistogram(String studentID) { String filePath = pythonPath + "getProgressHistogram.py";
         String changeListFile = pythonPath + "sampleCommitList.txt";
-        System.out.println("Hello");
         try {
-                Process process = Runtime.getRuntime().exec("python " +  filePath + " " + studentID + " " + changeListFile);
+            Process process = Runtime.getRuntime().exec("python " +  filePath + " " + studentID + " " + changeListFile);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String input = null;
             String error = null;
-            System.out.println("1");
             /*while ((error = stdError.readLine()) != null) {
                 System.out.println(error);
             }*/
-            System.out.println("2");
             while ((input = stdInput.readLine()) != null) {
                 System.out.println(input);
+                JSONParser jsonParser = new JSONParser();
+                Object obj = null;
+                try {
+                    obj = jsonParser.parse(input);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return new JSONReturnable(-3, null);
+                }
+                if (obj != null) {
+                    JSONObject jsonObject = null;
+                    if (obj.getClass() == JSONObject.class) {
+                        jsonObject = (JSONObject)obj;
+                    } else if (obj.getClass() == JSONArray.class) {
+                        jsonObject = new JSONObject();
+                        JSONArray jsonArray = (JSONArray)obj;
+                        jsonObject.put("histogram", jsonArray);
+                    } else {
+                        return new JSONReturnable(-4, null);
+                    }
+                    JSONReturnable jsonReturn = new JSONReturnable(1, jsonObject);
+                    //System.out.println(jsonObject.toString());
+                    System.out.println(jsonReturn);
+                    return jsonReturn;
+                }
             }
-            System.out.println("3");
-            return 1;
+            return new JSONReturnable(-1, null);
         } catch (IOException e){
             e.printStackTrace();
-            return -2;
+            return new JSONReturnable(-2, null);
         }
     }
 
