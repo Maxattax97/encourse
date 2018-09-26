@@ -21,6 +21,10 @@ public class Section {
 
     /** Format: FallYYYY, SpringYYYY, or SummerYYYY **/
     private String semester;
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     /** Examples: LE1, LE2, Lab6, PSO9 **/
 
     private String sectionType;

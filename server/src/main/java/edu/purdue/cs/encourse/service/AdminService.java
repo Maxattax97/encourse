@@ -4,6 +4,8 @@ import edu.purdue.cs.encourse.domain.*;
 import java.util.List;
 
 
+import java.util.List;
+
 public interface AdminService {
 
     /** Services for adding any type of account to all relevant tables **/
@@ -27,8 +29,7 @@ public interface AdminService {
     int registerStudentToSection(String userName, String courseID, String semester, String sectionType);
     int hireStudentAsTeachingAssistant(String userName);
 
-    List<User> findAllUsers();
-
     /** Services for authentication **/
     User addUser(String userName, String password, String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled);
+    List<User> findAllUsers();
 }

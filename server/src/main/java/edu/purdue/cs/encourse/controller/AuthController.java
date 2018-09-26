@@ -120,8 +120,6 @@ public class AuthController {
     private Account getAccountFromAuth() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         User user = ((User)securityContext.getAuthentication().getPrincipal());
-        System.out.println(user.getUsername());
-        System.out.println(user.getPassword());
         return accountService.retrieveAccount(user.getUsername(), user.getPassword());
     }
 
