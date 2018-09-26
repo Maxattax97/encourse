@@ -66,7 +66,7 @@ class ClassProgressHistogram extends Component {
         } = this.props;
 
         return (
-            <div classname="chart-container">
+            <div className="chart-container">
                 <ComposedChart
                     width={width}
                     height={height}
