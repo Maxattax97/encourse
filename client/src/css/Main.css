@@ -87,6 +87,8 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-course .panel-course-content { -webkit-transition: filter .15s ease-in; -moz-transition: filter .15s ease-in; -ms-transition: filter .15s ease-in; -o-transition: filter .15s ease-in; transition: filter .15s ease-in; }
 
+.panel-course .panel-course-content > h3 { cursor: default; }
+
 .panel-course-students .card { width: 192px; cursor: pointer; }
 
 .panel-course-students .card:hover .component { background-color: #F0F0F0; }
@@ -149,7 +151,7 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-project-options .header { cursor: default; }
 
-.charts .card { width: calc((100% - 32px) / 2); padding-top: calc((100% - 32px) / 2 / (4 / 3)); }
+.charts .card { width: calc((100% - 32px) / 2); padding-top: calc((100% - 32px) / 2 / (2)); }
 
 .charts .card > .component { position: absolute; float: none; top: 0; left: 0; bottom: 0; right: 0; }
 

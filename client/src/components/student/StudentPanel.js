@@ -74,7 +74,7 @@ class StudentPanel extends Component {
                            component={<ProjectOptions project={this.state.projects[this.state.current_project]}/>}/>
 
                     <div className={"panel-student-content " + (this.state.project_options ? "blur" : "")}>
-                        <h3>Class Statistics</h3>
+                        <h3>Statistics</h3>
                         <div className="charts float-height">
                             <Card component={<StudentProgressLineGraph/>} />
                             <Card component={<CodeChangesChart/>} />

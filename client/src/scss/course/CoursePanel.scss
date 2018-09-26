@@ -8,6 +8,10 @@
     -ms-transition: filter .15s ease-in;
     -o-transition: filter .15s ease-in;
     transition: filter .15s ease-in;
+
+    > h3 {
+      cursor: default;
+    }
   }
 }
 
