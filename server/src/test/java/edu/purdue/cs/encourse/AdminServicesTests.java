@@ -113,6 +113,33 @@ public class AdminServicesTests {
     }
 
     @Test
+    public void testAccountModification() {
+        assertEquals(0, adminService.modifyAccount("reed226", "firstName", "Jordan"));
+        Account account = accountRepository.findByUserName("reed226");
+        CollegeAdmin admin = adminRepository.findByUserName("reed226");
+        assertEquals("Jordan", account.getFirstName());
+        assertEquals("Jordan", admin.getFirstName());
+        assertEquals(0, adminService.modifyAccount("reed226", "saltPass", "f"));
+        assertEquals(0, adminService.modifyAccount("grr", "middleInitial", "J"));
+        account = accountRepository.findByUserName("grr");
+        Professor professor = professorRepository.findByUserName("grr");
+        assertEquals("J", account.getMiddleInit());
+        assertEquals("J", professor.getMiddleInit());
+        assertEquals(0, adminService.modifyAccount("kleclain", "lastName", "Le Clainche"));
+        account = accountRepository.findByUserName("kleclain");
+        Student student = studentRepository.findByUserName("kleclain");
+        assertEquals("Le Clainche", account.getLastName());
+        assertEquals("Le Clainche", student.getLastName());
+        assertEquals(0, adminService.modifyAccount("dkrolopp", "middleInitial", "A"));
+        account = accountRepository.findByUserName("dkrolopp");
+        student = studentRepository.findByUserName("dkrolopp");
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName("dkrolopp");
+        assertEquals("A", account.getMiddleInit());
+        assertEquals("A", student.getMiddleInit());
+        assertEquals("A", teachingAssistant.getMiddleInit());
+    }
+
+    @Test
     public void testAssignments() {
         assertEquals(0, adminService.registerStudentToSection("kleclain", "cs250", "Fall2018", "Lab1"));
         assertEquals(0, adminService.registerStudentToSection("buckmast", "cs250", "Fall2018", "Lab2"));
@@ -126,6 +153,7 @@ public class AdminServicesTests {
         Account account = accountRepository.findByUserName("buckmast");
         Student student = studentRepository.findByUserName("buckmast");
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName("buckmast");
+        assertTrue(studentSectionRepository.existsByIdStudentID(account.getUserID()));
         assertEquals(Account.Roles.TA, account.getRole());
         assertEquals(Account.Roles.TA, student.getRole());
         assertEquals(Account.Roles.TA, teachingAssistant.getRole());

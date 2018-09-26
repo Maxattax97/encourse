@@ -32,11 +32,12 @@
 
 }
 
-.panel-course-students:after {
-  content: "";
-  display: block;
-  height: 0;
-  clear: both;
+.panel-course-charts {
+
+  .card:nth-child(2) {
+    margin: 0;
+  }
+
 }
 
 @import "StudentPreview";

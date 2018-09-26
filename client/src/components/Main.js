@@ -7,7 +7,7 @@ import '../css/Main.css';
 import Navbar from './Navbar'
 import CoursePanel from './course/CoursePanel'
 import ProjectOptions from "./project/ProjectOptions"
-import StudentPanel from './StudentPanel'
+import StudentPanel from './student/StudentPanel'
 import AdminPanel from './AdminPanel'
 import Preferences from './Preferences'
 

@@ -1,13 +1,13 @@
-import React, { Component } from 'react'
-
-import exitIcon from '../img/x.svg'
+import {Component} from "react";
+import React from "react";
 import Card from "./Card";
+import exitIcon from "../img/x.svg";
 
-class Modal extends Component {
+class StudentPanel extends Component {
 
     render() {
         return (
-            <div className={"modal"} style={this.props.show ? {} : {display: "none"}} onClick={this.props.onClose}>
+            <div className="carousel">
                 <div className={this.props.left ? "modal-left" : this.props.right ? "modal-right" : "modal-center"} onClick={(e) => e.stopPropagation()}>
                     <Card component={<div className={"modal-container"}>
                         {this.props.component}
@@ -21,4 +21,4 @@ class Modal extends Component {
     }
 }
 
-export default Modal
+export default StudentPanel
