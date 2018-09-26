@@ -57,9 +57,6 @@ public class AdminServiceImpl implements AdminService {
         if(accountRepository.save(student) == null) {
             return -3;
         }
-        if(studentRepository.save(student) == null) {
-            return -4;
-        }
         return 0;
     }
 
@@ -70,12 +67,6 @@ public class AdminServiceImpl implements AdminService {
         }
         if(accountRepository.save(teachingAssistant) == null) {
             return -6;
-        }
-        if(studentRepository.save(teachingAssistant) == null) {
-            return -7;
-        }
-        if(teachingAssistantRepository.save(teachingAssistant) == null) {
-            return -8;
         }
         return 0;
     }
@@ -88,9 +79,6 @@ public class AdminServiceImpl implements AdminService {
         if(accountRepository.save(professor) == null) {
             return -10;
         }
-        if(professorRepository.save(professor) == null) {
-            return -11;
-        }
         return 0;
     }
 
@@ -101,9 +89,6 @@ public class AdminServiceImpl implements AdminService {
         }
         if(accountRepository.save(admin) == null) {
             return -13;
-        }
-        if(adminRepository.save(admin) == null) {
-            return -14;
         }
         return 0;
     }
@@ -119,51 +104,49 @@ public class AdminServiceImpl implements AdminService {
             case "lastName": account.setLastName(value); break;
             default: break;
         }
-        if(accountRepository.save(account) == null) {
-            return -2;
-        }
         int result;
         switch(account.getRole()) {
             case Account.Roles.STUDENT: result = modifyStudent(account, field, value); break;
-            case Account.Roles.TA: result = modifyStudent(account, field, value); break;
-            case Account.Roles.PROFESSOR: result = modifyStudent(account, field, value); break;
-            case Account.Roles.ADMIN: result = modifyStudent(account, field, value); break;
-            default: result = -3;
+            case Account.Roles.TA: result = modifyTA(account, field, value); break;
+            case Account.Roles.PROFESSOR: result = modifyProfessor(account, field, value); break;
+            case Account.Roles.ADMIN: result = modifyAdmin(account, field, value); break;
+            default: result = -2;
         }
         return result;
     }
 
     public int modifyStudent(Account account, String field, String value){
-        Student student = new Student(account);
-        if(studentRepository.save(student) == null) {
+        Student student = studentRepository.findByUserID(account.getUserID());
+        student.copyAccount(account);
+        if(accountRepository.save(student) == null) {
             return -4;
         }
         return 0;
     }
 
     public int modifyTA(Account account, String field, String value) {
-        TeachingAssistant teachingAssistant = new TeachingAssistant(account);
-        if(studentRepository.save(teachingAssistant) == null) {
-            return -5;
-        }
-        if(teachingAssistantRepository.save(teachingAssistant) == null) {
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(account.getUserID());
+        teachingAssistant.copyAccount(account);
+        if(accountRepository.save(teachingAssistant) == null) {
             return -6;
         }
         return 0;
     }
 
     public int modifyProfessor(Account account, String field, String value) {
-        Professor professor = new Professor(account);
-        if(professorRepository.save(professor) == null) {
-            return -7;
+        Professor professor = professorRepository.findByUserID(account.getUserID());
+        professor.copyAccount(account);
+        if(accountRepository.save(professor) == null) {
+            return -9;
         }
         return 0;
     }
 
     public int modifyAdmin(Account account, String field, String value) {
-        CollegeAdmin admin = new CollegeAdmin(account);
-        if(adminRepository.save(admin) == null) {
-            return -8;
+        CollegeAdmin admin = adminRepository.findByUserID(account.getUserID());
+        admin.copyAccount(account);
+        if(accountRepository.save(admin) == null) {
+            return -11;
         }
         return 0;
     }
@@ -223,17 +206,13 @@ public class AdminServiceImpl implements AdminService {
         if(teachingAssistantRepository.existsByUserName(userName)) {
             return -3;
         }
-        TeachingAssistant teachingAssistant = new TeachingAssistant(account);
+        TeachingAssistant teachingAssistant =
+                new TeachingAssistant(account.getUserID(), account.getUserName(), account.getSaltPass(), account.getFirstName(),
+                                        account.getLastName(), account.getMiddleInit(), account.getEduEmail());
         accountRepository.delete(account);
         studentRepository.delete(student);
         if(accountRepository.save(teachingAssistant) == null) {
             return -4;
-        }
-        if(studentRepository.save(teachingAssistant) == null) {
-            return -5;
-        }
-        if(teachingAssistantRepository.save(teachingAssistant) == null) {
-            return -6;
         }
         return 0;
     }
