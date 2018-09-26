@@ -1,12 +1,12 @@
 package edu.purdue.cs.encourse.database;
 
-import lombok.*;
-import edu.purdue.cs.encourse.domain.*;
+import edu.purdue.cs.encourse.domain.TeachingAssistant;
+import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 
-public interface TeachingAssistantRepository extends CrudRepository<TeachingAssistant, Long> {
+public interface TeachingAssistantRepository extends CrudRepository<TeachingAssistant, String> {
     TeachingAssistant findByUserID(@NonNull String userID);
     TeachingAssistant findByUserName(@NonNull String userName);
     boolean existsByUserID(@NonNull String userID);
+    boolean existsByUserName(@NonNull String userName);
 }

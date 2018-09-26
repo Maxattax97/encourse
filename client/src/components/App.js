@@ -5,39 +5,59 @@ import { connect } from 'react-redux'
 import '../css/App.css';
 import Login from './Login'
 import Main from './Main'
+import { setToken, logOutClient } from '../redux/actions'
 
 class App extends Component {
 
-  loggedIn = () => {
-    return true;
-  }
+    loggedIn = () => {
+        return true//this.props.token != null;
+    }
 
-  render() {
-    return (
-        <div className="App">
-            <Switch>
-                <Route path="/login" render={(navProps) => 
-                    !this.loggedIn()
-                    ? <Login {...navProps} />
-                    : <Redirect to="/course"/>
-                }/>
-                <Route path="/" render={(navProps) =>
-                    this.loggedIn()
-                    ? <Main />
-                    : <Redirect to="/login" />
-                }/>
-            </Switch>
-        </div>
-    );
-  }
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.logOutHasError) {
+            nextProps.logOut()
+        }
+    }
+
+    componentDidMount = () => {
+        if(localStorage.getItem('token') != null) {
+            let token = JSON.parse(localStorage.getItem('token'))
+            this.props.setToken(token)
+        }   
+    }
+
+    render() {
+        return (
+            <div className="App">
+                <Switch>
+                    <Route path="/login" render={(navProps) => 
+                        !this.loggedIn()
+                        ? <Login {...navProps} />
+                        : <Redirect to="/course"/>
+                    }/>
+                    <Route path="/" render={(navProps) =>
+                        this.loggedIn()
+                        ? <Main />
+                        : <Redirect to="/login" />
+                    }/>
+                </Switch>
+            </div>
+        );
+    }
 }
 
 const mapStateToProps = (state) => {
-  return { }
+  return { 
+      token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+      logOutHasError: state.auth ? state.auth.logOutHasError : false,
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
-	return { }
+	return {
+        setToken: (token) => dispatch(setToken(token)),
+        logOut: () => dispatch(logOutClient())
+    }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

@@ -1,0 +1,38 @@
+
+.panel-student-content {
+  -webkit-transition: filter .15s ease-in;
+  -moz-transition: filter .15s ease-in;
+  -ms-transition: filter .15s ease-in;
+  -o-transition: filter .15s ease-in;
+  transition: filter .15s ease-in;
+}
+
+.panel-student-side-content {
+  position:fixed;
+  padding-top: calc(20px + 1.17em + 40px);
+  width: calc(.15 * 105em - 40px);
+  min-width: 180px;
+  max-width: 240px;
+
+  .card {
+    margin: 0;
+  }
+
+  div.title {
+    padding-top: 1em;
+    height: 2.5em;
+    cursor: default;
+  }
+
+  h4 {
+    margin: 0;
+    padding: .75em 0 .75em .75em;
+    width: calc(100% - .75em);
+    cursor: pointer;
+  }
+
+  h4:hover {
+    color: #1f1e1c99;
+    padding: .75em 0 .75em calc(.75em + 3px);
+  }
+}

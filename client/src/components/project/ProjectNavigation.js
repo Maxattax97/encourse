@@ -1,30 +1,41 @@
 import React, { Component } from 'react'
 
 import settingsIcon from '../../img/settings.svg'
-import exitIcon from '../../img/x.svg'
+import backIcon from "../../img/back.svg"
+import Card from "../Card";
 
 class ProjectNavigation extends Component {
+
+    constructor(props) {
+        super(props);
+    }
 
     render() {
         return (
             <div className="panel-left-nav">
                 <div className="projects-nav">
-                    <div className="projects-title" onClick={this.props["titleClick"]}>
+                    <div className={"back-nav float-height " + (this.props.backClick ? "back-nav-color" : "")} onClick={this.props.backClick}>
                         <h3>
-                            Projects
+                            {this.props.back}
                         </h3>
-                        {this.props.mode === 0 ? <img src={settingsIcon} /> : <img src={exitIcon} />}
+                        <img src={backIcon} alt={"back"} />
                     </div>
-                    <h3 className="break-line title" />
-                    <h4>
-                        MyMalloc1
-                    </h4>
-                    <h4>
-                        Shell Project - Part 1
-                    </h4>
-                    <h4>
-                        Shell Project - Part 2
-                    </h4>
+                    <Card component={
+                        <div className="projects-container">
+                            <div className="title" onClick={this.props["titleClick"]}>
+                                <h3>
+                                    Projects
+                                </h3>
+                                <img src={settingsIcon}/>
+                            </div>
+                            <h3 className="break-line title"/>
+                            {
+                                this.props.info.map((project, index) => <h4
+                                    className={this.props.currentProject === index ? "projects-highlight" : ""}
+                                    key={project.id} onClick={() => this.props.projectClick(index)}>{project.name}</h4>)
+                            }
+                        </div>
+                    } />
                 </div>
             </div>
         )

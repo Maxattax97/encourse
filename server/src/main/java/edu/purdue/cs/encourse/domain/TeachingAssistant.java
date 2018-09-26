@@ -1,8 +1,9 @@
 package edu.purdue.cs.encourse.domain;
 
-import lombok.*;
-import java.util.List;
-import javax.persistence.*;
+import lombok.Getter;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Getter
 @Entity
@@ -11,15 +12,11 @@ public class TeachingAssistant extends Student {
 
     public TeachingAssistant(String userID, String userName, String saltPass, String firstName, String lastName,
                         String middleInit, String eduEmail) {
-        super(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail);
-    }
-
-    public TeachingAssistant(Account account) {
-        super(account.getUserID(), account.getUserName(), account.getSaltPass(), account.getFirstName(),
-                account.getLastName(), account.getMiddleInit(), account.getEduEmail());
+        super(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail, true);
     }
 
     public TeachingAssistant() {
-
+        super();
     }
+
 }

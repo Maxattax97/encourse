@@ -1,8 +1,8 @@
 
 import React, { Component } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
 
-const data = [
+const defaultData = [
     {date: new Date('2018-09-16T00:00:00'), count: 8},
     {date: new Date('2018-09-17T00:00:00'), count: 13},
     {date: new Date('2018-09-18T00:00:00'), count: 14},
@@ -17,7 +17,7 @@ const data = [
     {date: new Date('2018-09-27T00:00:00'), count: 0},
 ];
 
-for (let item of data) {
+for (let item of defaultData) {
     let m = item.date;
     item.dateStr = (m.getUTCMonth()+1) + '/' + m.getUTCDate();
 }
@@ -25,14 +25,25 @@ for (let item of data) {
 class CommitHistoryHistogram extends Component {
     render() {
         return (
-            <div classname="chart-container">
-                <BarChart width={600} height={300} data={data} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
-                    <CartesianGrid/>
-                    <XAxis dataKey="dateStr"/>
-                    <YAxis/>
-                    <Tooltip/>
-                    <Bar dataKey="count" fill="#8884d8"/>
-                </BarChart>
+            <div className="chart-container">
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={this.props.data || defaultData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
+                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Commit Frequency</text>
+                        <CartesianGrid/>
+                        <XAxis dataKey="dateStr">
+                            <Label offset={-15} position="insideBottom">
+                                Commits
+                            </Label>
+                        </XAxis>
+                        <YAxis>
+                            <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+                                Date
+                            </Label>
+                        </YAxis>
+                        <Tooltip/>
+                        <Bar dataKey="count" fill="#8884d8"/>
+                    </BarChart>
+                </ResponsiveContainer>
             </div>
         );
     }

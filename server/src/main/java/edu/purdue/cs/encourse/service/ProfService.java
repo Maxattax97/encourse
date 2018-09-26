@@ -3,6 +3,7 @@ package edu.purdue.cs.encourse.service;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 
 public interface ProfService {
+    int setHub(String courseID);
     int createHub(String courseID);
     int cloneProjects(String courseID, String projectID);
     int pullProjects(String courseID, String projectID);

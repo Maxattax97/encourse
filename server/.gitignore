@@ -2,9 +2,7 @@
 src/main/resources/application-secret.properties
 pgdb_password.txt
 pgdb_user.txt
-*/sampleCommitList.txt
-*/sampleCountsDay.txt
-*/sampleCountDay.txt
+src/main/java/edu/purdue/cs/encourse/security/StartupFeed.java
 
 ### Default ###
 /target/

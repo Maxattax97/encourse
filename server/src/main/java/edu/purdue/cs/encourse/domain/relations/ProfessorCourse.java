@@ -1,7 +1,11 @@
 package edu.purdue.cs.encourse.domain.relations;
 
-import lombok.*;
-import javax.persistence.*;
+import lombok.Getter;
+
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 @Getter
@@ -11,8 +15,8 @@ public class ProfessorCourse {
     @EmbeddedId
     ProfessorCourseID id;
 
-    public ProfessorCourse(String userID, String courseID, String semester) {
-        this.id = new ProfessorCourseID(userID, courseID, semester);
+    public ProfessorCourse(String professorID, String courseID, String semester) {
+        this.id = new ProfessorCourseID(professorID, courseID, semester);
     }
 
     public ProfessorCourse() {
@@ -42,8 +46,8 @@ class ProfessorCourseID implements Serializable {
     private String courseID;
     private String semester;
 
-    public ProfessorCourseID(String userID, String courseID, String semester) {
-        this.professorID = userID;
+    public ProfessorCourseID(String professorID, String courseID, String semester) {
+        this.professorID = professorID;
         this.courseID = courseID;
         this.semester = semester;
     }

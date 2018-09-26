@@ -1,11 +1,10 @@
 package edu.purdue.cs.encourse.database;
 
-import lombok.*;
-import edu.purdue.cs.encourse.domain.*;
+import edu.purdue.cs.encourse.domain.CollegeAdmin;
+import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 
-public interface AdminRepository extends CrudRepository<CollegeAdmin, Long> {
+public interface AdminRepository extends CrudRepository<CollegeAdmin, String> {
     CollegeAdmin findByUserID(@NonNull String userID);
     CollegeAdmin findByUserName(@NonNull String userName);
     boolean existsByUserID(@NonNull String userID);

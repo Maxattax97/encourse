@@ -1,9 +1,11 @@
 package edu.purdue.cs.encourse.domain;
 
-import lombok.*;
-import org.aspectj.weaver.Iterators;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Getter
 @Entity
