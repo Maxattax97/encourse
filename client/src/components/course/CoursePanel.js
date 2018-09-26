@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
+import { history } from '../../redux/store'
+import { getStudentPreviews, getClassProjects } from '../../redux/actions'
 import ProjectNavigation from '../project/ProjectNavigation'
 import Card from '../Card'
 import StudentPreview from './StudentPreview'
-import { history } from '../../redux/store'
 import ClassProgressHistogram from '../charts/ClassProgressHistogram'
 import ProjectOptions from "../project/ProjectOptions"
 import Modal from "../Modal"
@@ -135,4 +137,18 @@ class CoursePanel extends Component {
     }
 }
 
-export default CoursePanel
+const mapStateToProps = (state) => {
+    return {
+        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : null,
+        projects: state.course && state.course.getClassProjectsData ? state.course.getClassProjectsData : null,
+    }
+  }
+  
+  const mapDispatchToProps = (dispatch) => {
+    return {
+        getStudentPreviews: (url, headers) => dispatch(getStudentPreviews(url, headers)),
+        getClassProjects: (url, headers) => dispatch(getClassProjects(url, headers)),
+    }
+  }
+
+export default connect(mapStateToProps, mapDispatchToProps)(CoursePanel)
