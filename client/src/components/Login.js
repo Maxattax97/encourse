@@ -7,24 +7,19 @@ import url from '../server'
 
 class Login extends Component {
 
-    getBasicAuth = () => {
-        let tok = 'encourse-client: encourse-password'
-        let hash = btoa(tok);
-        return 'Basic ' + hash;
-    }
-
     handleSubmit = (ev) => {
         ev.preventDefault()
+        let form = new FormData()
+        form.append('grant_type', 'password')
+        form.append('username', ev.target.username.value)
+        form.append('password', ev.target.password.value)
+        form.append('client_id', 'encourse-client')
+
         let username = ev.target.username.value
         let password = ev.target.password.value
         this.props.logIn(`${url}/oauth/token`, {
-            'Authorization': this.getBasicAuth()
-        }, JSON.stringify({
-            grant_type: 'password',
-            username,
-            password,
-            client_id: 'encourse-client'
-        }))
+            'Authorization': `Basic ${btoa('encourse-client:encourse-password')}`,
+        }, form)
     }
 
     render() {

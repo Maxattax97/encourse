@@ -5,7 +5,7 @@ export default function genericDispatch(hasError, isLoading, success, method) {
             fetch(url, { headers, method, body, mode: 'cors'})
                 .then((response) => {
                     if (!response.ok) {
-                        throw Error(response.statusText)
+                        throw Error(response.status + ' ' + response.statusText)
                     }
                     dispatch(isLoading(false))
                     return response
