@@ -5,12 +5,18 @@ import { connect } from 'react-redux'
 import '../css/App.css';
 import Login from './Login'
 import Main from './Main'
-import { setToken } from '../redux/actions'
+import { setToken, logOutClient } from '../redux/actions'
 
 class App extends Component {
 
     loggedIn = () => {
         return this.props.token != null;
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.logOutHasError) {
+            nextProps.logOut()
+        }
     }
 
     componentDidMount = () => {
@@ -20,35 +26,37 @@ class App extends Component {
         }   
     }
 
-  render() {
-    return (
-        <div className="App">
-            <Switch>
-                <Route path="/login" render={(navProps) => 
-                    !this.loggedIn()
-                    ? <Login {...navProps} />
-                    : <Redirect to="/course"/>
-                }/>
-                <Route path="/" render={(navProps) =>
-                    this.loggedIn()
-                    ? <Main />
-                    : <Redirect to="/login" />
-                }/>
-            </Switch>
-        </div>
-    );
-  }
+    render() {
+        return (
+            <div className="App">
+                <Switch>
+                    <Route path="/login" render={(navProps) => 
+                        !this.loggedIn()
+                        ? <Login {...navProps} />
+                        : <Redirect to="/course"/>
+                    }/>
+                    <Route path="/" render={(navProps) =>
+                        this.loggedIn()
+                        ? <Main />
+                        : <Redirect to="/login" />
+                    }/>
+                </Switch>
+            </div>
+        );
+    }
 }
 
 const mapStateToProps = (state) => {
   return { 
       token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+      logOutHasError: state.auth ? state.auth.logOutHasError : false,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
 	return {
         setToken: (token) => dispatch(setToken(token)),
+        logOut: () => dispatch(logOutClient())
     }
 }
 

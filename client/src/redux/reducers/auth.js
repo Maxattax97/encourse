@@ -13,14 +13,28 @@ function auth(state = {}, action) {
             return Object.assign({}, state, {
                 logInData: action.data,
             })
-        case 'LOG_OUT':
-            localStorage.removeItem('token')
+        case 'LOG_OUT_HAS_ERROR':
+            return Object.assign({}, state, {
+                logOutHasError: action.hasError,
+            })
+        case 'LOG_OUT_IS_LOADING':
+            return Object.assign({}, state, {
+                logOutIsLoading: action.isLoading,
+            })
+        case 'LOG_OUT_DATA_SUCCESS':
+            if(localStorage.getItem('token') != null) localStorage.removeItem('token')
             return Object.assign({}, state, {
                 logInData: null,
             })
         case 'SET_TOKEN':
             return Object.assign({}, state, {
                 logInData: action.token,
+            })
+        case 'LOG_OUT':
+            if(localStorage.getItem('token') != null) localStorage.removeItem('token')
+            return Object.assign({}, state, {
+                logInData: null,
+                logOutHasError: false,
             })
         default:
             return state
