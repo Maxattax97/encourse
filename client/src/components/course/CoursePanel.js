@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
-import { getStudentPreviews, getClassProjects, setCurrentProject } from '../../redux/actions'
+import { getStudentPreviews, getClassProjects, setCurrentProject, setCurrentStudent } from '../../redux/actions'
 import ProjectNavigation from '../project/ProjectNavigation'
 import Card from '../Card'
 import StudentPreview from './StudentPreview'
@@ -103,8 +103,9 @@ class CoursePanel extends Component {
         this.setState({project_options: !this.state.project_options})
     };
 
-    showStudentPanel = () => {
-        history.push("/student")
+    showStudentPanel = (student) => {
+        this.props.setCurrentStudent(student)
+        history.push(`/student/${student.id}`)
     };
 
     updateProjectState = (project_index) => {
@@ -137,11 +138,11 @@ class CoursePanel extends Component {
                         <h3>Students</h3>
                         <div className="panel-course-students float-height">
                             {
-                                this.state.student_data.map((student) => <Card key={student.id} component={<StudentPreview info={student} project={this.props.currentProject} setCurrentProject={this.props.setCurrentProject} />} onClick={this.showStudentPanel}/>)
+                                this.state.student_data.map((student) => <Card key={student.id} component={<StudentPreview info={student} project={this.props.currentProject} setCurrentProject={this.props.setCurrentProject} />} onClick={() => this.showStudentPanel(student)}/>)
                             }
                         </div>
                     </div>
-                </div>
+                </div>)
             </div>
         )
     }
@@ -160,6 +161,7 @@ const mapDispatchToProps = (dispatch) => {
         getStudentPreviews: (url, headers) => dispatch(getStudentPreviews(url, headers)),
         getClassProjects: (url, headers) => dispatch(getClassProjects(url, headers)),
         setCurrentProject: (project) => dispatch(setCurrentProject(project)),
+        setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
     }
 }
 
