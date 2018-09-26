@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.*;
 
 public interface AdminService {
+
     /** Services for adding any type of account to all relevant tables **/
     int addAccount(String userID, String userName, String saltPass, String firstName, String lastName,
                    String type, String middleInit, String eduEmail);

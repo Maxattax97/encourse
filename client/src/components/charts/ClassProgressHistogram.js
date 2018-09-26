@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label } from 'recharts';
 
 const students = [
     {name: 'Student A', progress: 50},
@@ -20,13 +20,13 @@ const students = [
     {name: 'Student P', progress: 0},
 ];
 
-const data = [];
+const defaultData = [];
 
-const binCount = 10;
+const binCount = 5;
 const binSize = 100 / binCount;
 
 for (let i = 0; i < binCount; i++) {
-    data[i] = {
+    defaultData[i] = {
         progressBin: `${parseInt(i * binSize)}-${parseInt((i + 1) * binSize)}%`,
         count: 0,
     }
@@ -34,18 +34,59 @@ for (let i = 0; i < binCount; i++) {
 
 for (let student of students) {
     const progressBin = Math.min(parseInt(student.progress / binSize), binCount-1);
-    data[progressBin].count += 1;
+    defaultData[progressBin].count += 1;
 }
+
+for (let i = 0; i < binCount; i++) {
+    defaultData[i].percent = defaultData[i].count / students.length;
+}
+
+const toPercent = (decimal, fixed = 0) => {
+    return `${(decimal * 100).toFixed(fixed)}%`;
+};
+
+const AxisLabel = ({ axisType, x, y, width, height, stroke, children }) => {
+    const isVert = axisType === 'yAxis';
+    const cx = isVert ? x : x + (width / 2);
+    const cy = isVert ? (height / 2) + y : y + height + 10;
+    const rot = isVert ? `270 ${cx} ${cy}` : 0;
+    return (
+        <text x={cx} y={cy} transform={`rotate(${rot})`} textAnchor="middle" stroke={stroke}>
+            {children}
+        </text>
+    );
+};
 
 class ClassProgressHistogram extends Component {
     render() {
+        const {
+            width = 600,
+            height = 300,
+            data = defaultData
+        } = this.props;
+
         return (
-            <div className="chart-container">
-                <ComposedChart layout="vertical" width={600} height={300} data={data} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
+            <div classname="chart-container">
+                <ComposedChart
+                    width={width}
+                    height={height}
+                    data={data}
+                    margin={{top: 5, right: 30, left: 30, bottom: 35}}
+                    barCategoryGap={0}
+                >
                     <CartesianGrid/>
-                    <XAxis type="number"/>
-                    <YAxis dataKey="progressBin" type="category"/>
-                    <Bar dataKey="count" fill="#8884d8"/>
+                    <XAxis dataKey="progressBin" type="category">
+                        <Label offset={-10} position="insideBottom">
+                            % Completion
+                        </Label>
+                    </XAxis>
+                    <YAxis tickFormatter={toPercent}>
+                        <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+                            % of Class
+                        </Label>
+                    </YAxis>
+                    <Tooltip/>
+                    <Bar dataKey="percent" fill="#8884d8"/>
                 </ComposedChart>
             </div>
         );

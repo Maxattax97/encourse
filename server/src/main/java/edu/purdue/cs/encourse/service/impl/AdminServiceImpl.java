@@ -7,6 +7,8 @@ import edu.purdue.cs.encourse.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service(value = AdminServiceImpl.NAME)
 public class AdminServiceImpl implements AdminService {
 
@@ -35,6 +37,24 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private StudentSectionRepository studentSectionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AuthorityRepository authorityRepository;
+
+    public void addUser(String userName, String password, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled) {
+        User user = new User();
+        user.setUsername(userName);
+        user.setPassword(password);
+        user.setAccountExpired(acc_expired);
+        user.setAccountLocked(locked);
+        user.setCredentialsExpired(cred_expired);
+        user.setEnabled(enabled);
+        user.setAuthorities(authorityRepository.findAll());
+        userRepository.save(user);
+    }
 
     public int addAccount(String userID, String userName, String saltPass, String firstName, String lastName,
                           String type, String middleInit, String eduEmail) {
@@ -215,6 +235,10 @@ public class AdminServiceImpl implements AdminService {
             return -4;
         }
         return 0;
+    }
+
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 
 }

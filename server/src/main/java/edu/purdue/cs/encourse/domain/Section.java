@@ -14,9 +14,11 @@ public class Section {
 
     /** Each piece of the section identifier **/
     private String courseID;
+
     /** Format: FallYYYY, SpringYYYY, or SummerYYYY **/
     private String semester;
     /** Examples: LE1, LE2, Lab6, PSO9 **/
+
     private String sectionType;
 
     /** May be useful to track for registration purposes **/

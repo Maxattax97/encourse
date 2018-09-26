@@ -2,12 +2,11 @@ import React, { Component } from 'react'
 
 import ProjectNavigation from '../project/ProjectNavigation'
 import Card from '../Card'
-import CourseSettings from './CourseSettings'
 import StudentPreview from './StudentPreview'
-import settingsIcon from '../../img/settings.svg'
 import { history } from '../../redux/store'
 import ClassProgressHistogram from '../charts/ClassProgressHistogram'
-import ProjectOptions from "../project/ProjectOptions";
+import ProjectOptions from "../project/ProjectOptions"
+import Modal from "../Modal"
 
 class CoursePanel extends Component {
 
@@ -68,7 +67,7 @@ class CoursePanel extends Component {
             projects : [
                 {
                     name: "My Malloc",
-                    src_name: "lab1-src",
+                    source_name: "lab1-src",
                     created_date: "09-01-18",
                     due_date: "09-08-18",
                     test_script: true,
@@ -77,7 +76,7 @@ class CoursePanel extends Component {
                 },
                 {
                     name: "Lab 2",
-                    src_name: "lab2-src",
+                    source_name: "lab2-src",
                     created_date: "09-01-18",
                     due_date: "09-08-18",
                     test_script: true,
@@ -86,7 +85,7 @@ class CoursePanel extends Component {
                 },
                 {
                     name: "Shell Project",
-                    src_name: "lab3-src",
+                    source_name: "lab3-src",
                     created_date: "09-01-18",
                     due_date: "09-08-18",
                     test_script: true,
@@ -107,26 +106,30 @@ class CoursePanel extends Component {
         history.push("/student");
     };
 
+    updateProjectState = (project_index) => {
+        this.setState({current_project: project_index})
+    };
+
     render() {
         return (
             <div className="panel-course">
-                <ProjectNavigation titleClick={this.showProjectOptions} projectClick={(project) => this.setState({current_project: project})} info={this.state.projects} />
-                {
-                    this.state.project_options ?
-                        <ProjectOptions onExit={() => this.setState({project_options: false})}/> :
-                        <div className="panel-center-content">
-                            <h3>Class Statistics</h3>
-                            <ClassProgressHistogram/>
-                            <h2 className="break-line" />
-                            <h3>Students</h3>
-                            <div className="panel-course-students">
-                                {
-                                    this.state.student_data.map((student) => <Card key={student.id} component={<StudentPreview info={student} project={this.state.current_project} />} onClick={this.showStudentPanel}/>)
-                                }
-                            </div>
-                        </div>
-                }
+                <ProjectNavigation titleClick={this.showProjectOptions} projectClick={this.updateProjectState} currentProject={this.state.current_project} info={this.state.projects} />
+                <div className="panel-center-content">
+                    <Modal left show={this.state.project_options} onClose={() => this.setState({project_options: false})}
+                           component={<ProjectOptions project={this.state.projects[this.state.current_project]}/>}/>
 
+                    <div className={"panel-course-content " + (this.state.project_options ? "blur" : "")}>
+                        <h3>Class Statistics</h3>
+                        <ClassProgressHistogram/>
+                        <h2 className="break-line" />
+                        <h3>Students</h3>
+                        <div className="panel-course-students">
+                            {
+                                this.state.student_data.map((student) => <Card key={student.id} component={<StudentPreview info={student} project={this.state.current_project} />} onClick={this.showStudentPanel}/>)
+                            }
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }
