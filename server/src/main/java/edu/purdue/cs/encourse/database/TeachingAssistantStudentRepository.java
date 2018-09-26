@@ -1,7 +1,7 @@
 package edu.purdue.cs.encourse.database;
 
 import edu.purdue.cs.encourse.domain.relations.TeachingAssistantStudent;
-import lombok.*;
+import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

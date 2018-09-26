@@ -8,6 +8,10 @@
     -ms-transition: filter .15s ease-in;
     -o-transition: filter .15s ease-in;
     transition: filter .15s ease-in;
+
+    > h3 {
+      cursor: default;
+    }
   }
 }
 
@@ -22,19 +26,11 @@
     background-color: #F0F0F0;
   }
 
-  .card:not(:nth-child(5)) {
+  .card:not(:nth-child(5n)) {
     margin-right: calc((100% - 5 * (10em + 32px)) / 4); // note that the em does not carry because large shrinks the amount of space you have. So you could have less children on a row
   }
 
-  .card:nth-child(5) {
-    margin: 0;
-  }
-
-}
-
-.panel-course-charts {
-
-  .card:nth-child(2) {
+  .card:nth-child(5n) {
     margin: 0;
   }
 

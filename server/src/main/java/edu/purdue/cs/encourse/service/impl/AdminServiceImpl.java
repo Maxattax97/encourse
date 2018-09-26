@@ -1,12 +1,14 @@
 package edu.purdue.cs.encourse.service.impl;
 
-import edu.purdue.cs.encourse.domain.relations.*;
-import edu.purdue.cs.encourse.service.AdminService;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
+import edu.purdue.cs.encourse.domain.relations.ProfessorCourse;
+import edu.purdue.cs.encourse.domain.relations.StudentSection;
+import edu.purdue.cs.encourse.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service(value = AdminServiceImpl.NAME)
@@ -44,7 +46,12 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private AuthorityRepository authorityRepository;
 
-    public void addUser(String userName, String password, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled) {
+    public User addUser(String userName, String password, String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled) {
+        Authority auth = authorityRepository.findDistinctByName(authority);
+        if (auth == null) {
+            auth = authorityRepository.findDistinctByName("STUDENT");
+        }
+
         User user = new User();
         user.setUsername(userName);
         user.setPassword(password);
@@ -52,8 +59,10 @@ public class AdminServiceImpl implements AdminService {
         user.setAccountLocked(locked);
         user.setCredentialsExpired(cred_expired);
         user.setEnabled(enabled);
-        user.setAuthorities(authorityRepository.findAll());
+        user.setAuthorities(Arrays.asList(auth));
         userRepository.save(user);
+        user.setPassword(null);
+        return user;
     }
 
     public int addAccount(String userID, String userName, String saltPass, String firstName, String lastName,
@@ -124,6 +133,7 @@ public class AdminServiceImpl implements AdminService {
             case "lastName": account.setLastName(value); break;
             default: break;
         }
+
         int result;
         switch(account.getRole()) {
             case Account.Roles.STUDENT: result = modifyStudent(account, field, value); break;
@@ -131,6 +141,7 @@ public class AdminServiceImpl implements AdminService {
             case Account.Roles.PROFESSOR: result = modifyProfessor(account, field, value); break;
             case Account.Roles.ADMIN: result = modifyAdmin(account, field, value); break;
             default: result = -2;
+
         }
         return result;
     }

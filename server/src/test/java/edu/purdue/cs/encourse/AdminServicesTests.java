@@ -1,19 +1,19 @@
 package edu.purdue.cs.encourse;
 
-import edu.purdue.cs.encourse.database.AccountRepository;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
-import edu.purdue.cs.encourse.service.*;
-import edu.purdue.cs.encourse.service.impl.*;
+import edu.purdue.cs.encourse.service.AccountService;
+import edu.purdue.cs.encourse.service.AdminService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.junit.Assert.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

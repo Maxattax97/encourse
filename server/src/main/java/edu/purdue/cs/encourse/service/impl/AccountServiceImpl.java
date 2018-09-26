@@ -71,5 +71,11 @@ public class AccountServiceImpl implements AccountService {
         return collegeAdmin;
     }
 
-    public List<Account> retrieveAllAccounts() { return accountRepository.findAll(); }
+    public List<Account> retrieveAllAccounts() {
+        List<Account> accounts = accountRepository.findAll();
+        for (Account a: accounts) {
+            a.setSaltPass(null);
+        }
+        return accounts;
+    }
 }

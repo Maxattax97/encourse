@@ -9,6 +9,7 @@ import Modal from "../Modal";
 import ProjectOptions from "../project/ProjectOptions";
 import ClassProgressHistogram from "../charts/ClassProgressHistogram";
 import StudentPreview from "../course/StudentPreview";
+import {history} from "../../redux/store";
 
 
 class StudentPanel extends Component {
@@ -51,6 +52,14 @@ class StudentPanel extends Component {
         }
     }
 
+    back = () => {
+        history.push("/course");
+    };
+
+    showProjectOptions = () => {
+        this.setState({project_options: !this.state.project_options})
+    };
+
     updateProjectState = (project_index) => {
         this.setState({current_project: project_index})
     };
@@ -58,18 +67,25 @@ class StudentPanel extends Component {
     render() {
         return (
             <div className="panel-student">
-                <ProjectNavigation titleClick={this.showProjectOptions} projectClick={this.updateProjectState} currentProject={this.state.current_project} info={this.state.projects} />
+                <ProjectNavigation titleClick={this.showProjectOptions} projectClick={this.updateProjectState} backClick={this.back}
+                                   currentProject={this.state.current_project} info={this.state.projects} back="Course" />
                 <div className="panel-center-content">
                     <Modal left show={this.state.project_options} onClose={() => this.setState({project_options: false})}
                            component={<ProjectOptions project={this.state.projects[this.state.current_project]}/>}/>
 
                     <div className={"panel-student-content " + (this.state.project_options ? "blur" : "")}>
-                        <Card component={<StudentProgressLineGraph />}/>
-                        <Card component={<CodeChangesChart/>}/>
-                        <Card component={<CommitFrequencyHistogram/>}/>
+                        <h3>Statistics</h3>
+                        <div className="charts float-height">
+                            <Card component={<StudentProgressLineGraph/>} />
+                            <Card component={<CodeChangesChart/>} />
+                            <Card component={<CommitFrequencyHistogram/>}/>
+                        </div>
                     </div>
                 </div>
-
+                <div className="panel-right-nav">
+                    <div className={"panel-course-side-content" + (this.state.project_options ? "blur" : "")}>
+                    </div>
+                </div>
             </div>
         )
     }
