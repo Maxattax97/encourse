@@ -15,13 +15,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestPropertySource(locations="classpath:application-dev.properties")
-public class ShellScriptTests {
-
-    /** These tests are meant to be specifically run on reed226@vm2.cs.purdue.edu. Please do not run
-        these tests since they attempt to ssh into reed226@data.cs.purdue.edu **/
-
-    /** In general, since these tests use bash scripts, they are specific to the Ubuntu server and will not
-        run correctly on Windows, and may have some issues on other OSs **/
+public class ProfessorServicesTests {
 
     @Autowired
     public AccountRepository accountRepository;
@@ -53,7 +47,7 @@ public class ShellScriptTests {
     @Autowired
     public StudentSectionRepository studentSectionRepository;
 
-    //@Before
+    @Before
     public void populateDatabase() {
         adminRepository.deleteAll();
         professorRepository.deleteAll();
@@ -77,7 +71,7 @@ public class ShellScriptTests {
         assertEquals(0, adminService.registerStudentToSection("rravind", "cs250", "Fall2018", "Lab1"));
     }
 
-    //@After
+    @After
     public void clearDatabase() {
         adminRepository.deleteAll();
         professorRepository.deleteAll();
@@ -94,6 +88,9 @@ public class ShellScriptTests {
 
     }
 
+    /** This test is meant to be specifically run on reed226@vm2.cs.purdue.edu. Please do not run
+     this test since it attempts to ssh into reed226@data.cs.purdue.edu **/
+
     //@Test
     public void testShellScripts() {
         assertEquals(0, profService.setSectionRemotePaths("cs250", "/homes/cs252/sourcecontrol/work"));
@@ -104,6 +101,13 @@ public class ShellScriptTests {
         assertEquals(0, profService.countAllCommitsByDay("cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
         assertEquals(0, profService.countStudentCommitsByDay("cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc"), "dwyork"));
         assertEquals(0, profService.listStudentCommitsByTime("cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc"), "rravind"));
+    }
+
+    @Test
+    public void testProjectModification() {
+        assertEquals(0, profService.modifyProject(Project.createProjectID("cs250", "Fall2018", "MyMalloc"), "dueDate", "9/26/2018"));
+        Project project = projectRepository.findByProjectIdentifier(Project.createProjectID("cs250", "Fall2018", "MyMalloc"));
+        assertEquals("9/26/2018", project.getDueDate());
     }
 
 
