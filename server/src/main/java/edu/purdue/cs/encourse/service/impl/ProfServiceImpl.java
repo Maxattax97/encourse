@@ -38,6 +38,24 @@ public class ProfServiceImpl implements ProfService {
     @Autowired
     private TeachingAssistantStudentRepository teachingAssistantStudentRepository;
 
+    /** Mainly needed to populate the database when course hub already exists **/
+    public int setHub(String courseID){
+        List<Section> sections = sectionRepository.findByCourseID(courseID);
+        if(sections.isEmpty()) {
+            return -1;
+        }
+        for(Section s : sections) {
+            s.setCourseHub("/sourcecontrol/" + sections.get(0).getCourseID() + "/" + sections.get(0).getSemester());
+            if(sectionRepository.save(s) == null) {
+                return -2;
+            }
+        }
+        return 0;
+    }
+
+    /** Creates a directory containing a directory for every student in the course. Each of those student directories
+        will contain all of the cloned repositories that is being used to track git information **/
+    // TODO: Add Semester as a parameter
     public int createHub(String courseID){
         List<Section> sections = sectionRepository.findByCourseID(courseID);
         if(sections.isEmpty()) {
@@ -61,6 +79,9 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
+    /** Runs a bash script to initially clone every student's git repository. Each university should supply its own
+        bash script, since repo locations will vary **/
+    // TODO: Add Semester as a parameter
     public int cloneProjects(String courseID, String projectID){
         List<Section> sections = sectionRepository.findByCourseID(courseID);
         if(sections.isEmpty()) {
@@ -112,6 +133,8 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
+    /** Pulls the designated project within every students directory under the course hub **/
+    // TODO: Add Semester as a parameter
     public int pullProjects(String courseID, String projectID){
         List<Section> sections = sectionRepository.findByCourseID(courseID);
         if(sections.isEmpty()) {
@@ -160,6 +183,7 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
+    /** Adds a new project to the database, which needs to be done before cloning the project in the course hub **/
     public int addProject(String courseID, String semester, String projectName, String repoName, String startDate, String dueDate) {
         Project project = new Project(courseID, semester, projectName, repoName, startDate, dueDate);
         if(projectRepository.existsByProjectIdentifier(project.getProjectIdentifier())) {
@@ -171,6 +195,7 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
+    /** Modifies project information like start and end dates **/
     public int modifyProject(String projectID, String field, String value) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
@@ -188,6 +213,7 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
+    /** Sets the location of the git repositories for every section under a particular courseID **/
     public int setSectionRemotePaths(String courseID, String remotePath) {
         List<Section> sections = sectionRepository.findByCourseID(courseID);
         if(sections.isEmpty()) {
@@ -202,6 +228,7 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
+    /** Counts the number of commits that every student in the class has made for a project **/
     public int countAllCommits(String courseID, String projectID) {
         List<Section> sections = sectionRepository.findByCourseID(courseID);
         if(sections.isEmpty()) {
@@ -233,6 +260,7 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
+    /** Counts the total number of commits made each day that the project was active **/
     public int countAllCommitsByDay(String courseID, String projectID) {
         List<Section> sections = sectionRepository.findByCourseID(courseID);
         if(sections.isEmpty()) {
@@ -264,6 +292,7 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
+    /** Counts the number of commits that a single student has made for each day that the project is active **/
     public int countStudentCommitsByDay(String courseID, String projectID, String userName) {
         List<Section> sections = sectionRepository.findByCourseID(courseID);
         if(sections.isEmpty()) {
@@ -295,6 +324,7 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
+    /** Lists various information about git history, including commit time and dates, and files modified in each commit **/
     public int listStudentCommitsByTime(String courseID, String projectID, String userName) {
         List<Section> sections = sectionRepository.findByCourseID(courseID);
         if(sections.isEmpty()) {
@@ -326,6 +356,8 @@ public class ProfServiceImpl implements ProfService {
         return 0;
     }
 
+    /** Makes a new assignment between teaching assistant and student. Can have multiple students assigned to same TA
+        or multiple TAs assigned to the same student **/
     public int assignTeachingAssistantToStudent(String teachAssistUserName, String studentUserName) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
         if(teachingAssistant == null) {

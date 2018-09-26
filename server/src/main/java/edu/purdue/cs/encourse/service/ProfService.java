@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.*;
 
 public interface ProfService {
+    int setHub(String courseID);
     int createHub(String courseID);
     int cloneProjects(String courseID, String projectID);
     int pullProjects(String courseID, String projectID);

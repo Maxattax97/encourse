@@ -1,7 +1,6 @@
 package edu.purdue.cs.encourse.config;
 
-import edu.purdue.cs.encourse.service.impl.AccountServiceImpl;
-import edu.purdue.cs.encourse.service.impl.AdminServiceImpl;
+import edu.purdue.cs.encourse.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -11,7 +10,10 @@ import org.springframework.stereotype.Component;
 public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
 
     @Autowired
-    private AdminServiceImpl adminService;
+    private AdminService adminService;
+
+    @Autowired
+    private ProfService profService;
     
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
@@ -36,5 +38,36 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             adminService.addUser("reed226", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", false, false, false, true);
             adminService.addUser("sullil96", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", false, false, false, true);
         }
+        adminService.addAccount("101", "apolcyn", "a", "Student", "One", "Student", null, "purdue.edu");
+        adminService.addAccount("102", "brookea", "b", "Student", "Two", "Student", null, "purdue.edu");
+        adminService.addAccount("103", "hayc", "c", "Student", "Three", "Student", null, "purdue.edu");
+        adminService.addAccount("104", "jdsheple", "d", "Student", "Four", "Student", null, "purdue.edu");
+        adminService.addAccount("105", "ko76", "e", "Student", "Five", "Student", null, "purdue.edu");
+        adminService.addAccount("106", "mbounab", "f", "Student", "Six", "Student", null, "purdue.edu");
+        adminService.addAccount("107", "oneil4", "g", "Student", "Seven", "Student", null, "purdue.edu");
+        adminService.addAccount("108", "riggs4", "h", "Student", "Eight", "Student", null, "purdue.edu");
+        adminService.addAccount("109", "son35", "i", "Student", "Nine", "Student", null, "purdue.edu");
+        adminService.addAccount("110", "varleyj", "j", "Student", "Ten", "Student", null, "purdue.edu");
+
+        adminService.addSection("1001", "Fall2018", "cs252", "Systems Programming", "Lab1");
+        adminService.addSection("1002", "Fall2018", "cs252", "Systems Programming", "Lab2");
+        adminService.addSection("1003", "Fall2018", "cs252", "Systems Programming", "Lab3");
+
+        adminService.registerStudentToSection("apolcyn", "cs252", "Fall2018", "Lab1");
+        adminService.registerStudentToSection("brookea", "cs252", "Fall2018", "Lab2");
+        adminService.registerStudentToSection("hayc", "cs252", "Fall2018", "Lab3");
+        adminService.registerStudentToSection("jdsheple", "cs252", "Fall2018", "Lab1");
+        adminService.registerStudentToSection("ko76", "cs252", "Fall2018", "Lab2");
+        adminService.registerStudentToSection("mbounab", "cs252", "Fall2018", "Lab3");
+        adminService.registerStudentToSection("oneil4", "cs252", "Fall2018", "Lab1");
+        adminService.registerStudentToSection("riggs4", "cs252", "Fall2018", "Lab2");
+        adminService.registerStudentToSection("son35", "cs252", "Fall2018", "Lab3");
+        adminService.registerStudentToSection("varleyj", "cs252", "Fall2018", "Lab1");
+
+        adminService.assignProfessorToCourse("grr", "cs252", "Fall2018");
+
+        profService.setSectionRemotePaths("cs252", "/homes/cs252/sourcecontrol/work");
+        profService.setHub("cs252");
+        profService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/25/2018", "9/06/2018");
     }
 }

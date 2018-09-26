@@ -8,6 +8,7 @@ import java.util.*;
 public interface AdminService {
 
     /** Services for adding any type of account to all relevant tables **/
+    void addUser(String userName, String password, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled);
     int addAccount(String userID, String userName, String saltPass, String firstName, String lastName,
                    String type, String middleInit, String eduEmail);
     int addStudent(String userID, String userName, String saltPass, String firstName, String lastName, String middleInit, String eduEmail);
@@ -27,4 +28,6 @@ public interface AdminService {
     int assignProfessorToCourse(String userName, String courseID, String semester);
     int registerStudentToSection(String userName, String courseID, String semester, String sectionType);
     int hireStudentAsTeachingAssistant(String userName);
+
+    List<User> findAllUsers();
 }
