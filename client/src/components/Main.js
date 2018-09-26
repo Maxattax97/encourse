@@ -30,8 +30,8 @@ class Main extends Component {
                         <Route path="/course" render={(navProps) =>
                             <CoursePanel {...navProps} />
                         }/>
-                        <Route path="/student" render={(navProps) =>
-                            <StudentPanel />
+                        <Route path="/student/:id" render={(navProps) =>
+                            <StudentPanel {...navProps}/>
                         }/>
                         <Route path="/admin" render={(navProps) =>
                             <AdminPanel />

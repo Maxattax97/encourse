@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
 import Card from '../Card'
 import StudentProgressLineGraph from '../charts/StudentProgressLineGraph'
@@ -74,7 +75,7 @@ class StudentPanel extends Component {
                            component={<ProjectOptions project={this.state.projects[this.state.current_project]}/>}/>
 
                     <div className={"panel-student-content " + (this.state.project_options ? "blur" : "")}>
-                        <h1>Jordan Reed</h1>
+                        <h1>{this.props.currentStudent ? this.props.currentStudent.first_name + ' ' + this.props.currentStudent.last_name : ''}</h1>
                         <h1 className="break-line title" />
                         <h3>Statistics</h3>
                         <div className="charts float-height">
@@ -120,4 +121,16 @@ class StudentPanel extends Component {
     }
 }
 
-export default StudentPanel
+const mapStateToProps = (state) => {
+    return {
+        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
+    }
+}
+  
+const mapDispatchToProps = (dispatch) => {
+    return {
+
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(StudentPanel)

@@ -13,3 +13,7 @@ export {
     logOutHasError, logOutIsLoading, logOutDataSuccess, logOut,
     setToken, logOutClient
 } from './auth'
+
+export {
+    setCurrentStudent
+} from './student'
