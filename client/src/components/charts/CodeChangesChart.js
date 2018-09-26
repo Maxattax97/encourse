@@ -23,10 +23,10 @@ for (let item of defaultData) {
 class CodeChangesChart extends Component {
     render() {
         return (
-            <div className="chart-container" style={{"height": "500px"}}>
+            <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={this.props.data || defaultData} margin={{top: 40, right: 30, left: 0, bottom: 25}}>
-                        <text x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Code Frequency</text>
+                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Code Frequency</text>
                         <CartesianGrid strokeDasharray="3 3"/>
                         <XAxis dataKey="dateStr">
                             <Label position="insideBottom" offset={-15} value="Date"/>

@@ -6,3 +6,8 @@ export {
 export {
     setCurrentProject
 } from './projects'
+
+export {
+    logInHasError, logInIsLoading, logInDataSuccess, logIn,
+    logOut, setToken
+} from './auth'
