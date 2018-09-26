@@ -15,12 +15,8 @@ public class TeachingAssistant extends Student {
         super(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail, true);
     }
 
-    public TeachingAssistant(Account account) {
-        super(account, true);
-    }
-
     public TeachingAssistant() {
-
+        super();
     }
 
 }

@@ -187,6 +187,9 @@ public class ProfServiceImpl implements ProfService {
             case "repoName": project.setRepoName(value); break;
             default: return -2;
         }
+        if(projectRepository.save(project) == null) {
+            return -3;
+        }
         return 0;
     }
 

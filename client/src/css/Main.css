@@ -29,11 +29,11 @@
 
 .panel-container > div:after { content: ""; display: block; height: 0; clear: both; }
 
-.panel-left-nav { position: relative; float: left; width: 15%; max-width: 240px; min-width: 180px; height: 100%; padding: 0 20px; margin: 0; }
+.panel-left-nav { position: relative; float: left; width: 15%; max-width: 240px; min-width: 180px; height: 100%; padding: 0 20px; margin: 0; min-height: 1px; }
 
-.panel-center-content { position: relative; float: left; width: 70%; height: 100%; margin: 0; padding: 20px; }
+.panel-center-content { position: relative; float: left; width: 70%; height: 100%; margin: 0; padding: 20px; min-height: 1px; }
 
-.panel-right-nav { position: relative; float: right; width: 15%; max-width: 240px; min-width: 180px; height: 100%; padding: 0 20px; margin: 0; }
+.panel-right-nav { position: relative; float: right; width: 15%; max-width: 240px; min-width: 180px; height: 100%; padding: 0 20px; margin: 0; min-height: 1px; }
 
 .exit-nav { position: relative; float: right; height: 2.5em; width: 2.5em; padding: .5em; cursor: pointer; }
 
@@ -45,9 +45,9 @@
 
 .modal-left { position: relative; float: left; }
 
-.card { position: relative; height: auto; margin-right: 32px; margin-bottom: 32px; float: left; }
+.card { position: relative; height: auto; margin-right: 32px; margin-bottom: 32px; float: left; box-sizing: border-box; }
 
-.component { display: table-row; float: left; height: auto; padding: 16px; background-color: #F8F8F8; border-radius: 4px; box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25); }
+.component { float: left; height: auto; padding: 16px; background-color: #F8F8F8; border-radius: 4px; box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25); }
 
 .progress-bar { border: 1px solid #a4a4a4; width: 100%; height: 1em; position: relative; }
 
@@ -58,6 +58,8 @@
 div.title { position: relative; }
 
 div.title h1, div.title h2, div.title h3, div.title h4, div.title h5, div.title h6 { margin: 0; width: 100%; }
+
+h3 { margin: 20px 0; line-height: 1.17em; height: 1.17em; }
 
 .h2-size { font-size: 1.5em; }
 
@@ -77,21 +79,23 @@ h4.break-line { margin: 15px 0; }
 
 .blur { filter: brightness(80%) blur(3px); }
 
+.float-height:after { content: ""; display: block; height: 0; clear: both; }
+
 input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-course { text-align: left; font-weight: bold; }
 
 .panel-course .panel-course-content { -webkit-transition: filter .15s ease-in; -moz-transition: filter .15s ease-in; -ms-transition: filter .15s ease-in; -o-transition: filter .15s ease-in; transition: filter .15s ease-in; }
 
+.panel-course .panel-course-content > h3 { cursor: default; }
+
 .panel-course-students .card { width: 192px; cursor: pointer; }
 
 .panel-course-students .card:hover .component { background-color: #F0F0F0; }
 
-.panel-course-students .card:not(:nth-child(5)) { margin-right: calc((100% - 5 * (10em + 32px)) / 4); }
+.panel-course-students .card:not(:nth-child(5n)) { margin-right: calc((100% - 5 * (10em + 32px)) / 4); }
 
-.panel-course-students .card:nth-child(5) { margin: 0; }
-
-.panel-course-students:after { content: ""; display: block; height: 0; clear: both; }
+.panel-course-students .card:nth-child(5n) { margin: 0; }
 
 .student-preview { position: relative; width: 10em; height: 7.5em; }
 
@@ -103,21 +107,43 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .student-preview-progress .progress-text { position: absolute; top: -1.25em; right: 0; color: #1f1f1f; font-size: .75em; }
 
-.projects-nav { padding-top: 20px; }
+.panel-student-content { -webkit-transition: filter .15s ease-in; -moz-transition: filter .15s ease-in; -ms-transition: filter .15s ease-in; -o-transition: filter .15s ease-in; transition: filter .15s ease-in; }
+
+.projects-nav { position: fixed; padding-top: 20px; width: calc(.15 * 105em - 40px); min-width: 180px; max-width: 240px; }
 
 .projects-nav div.title { padding-top: 1em; height: 2.5em; cursor: pointer; }
 
 .projects-nav div.title img { position: absolute; top: 0; right: 0; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); width: 1em; height: 1em; }
 
+.projects-nav .back-nav { color: white; cursor: default; }
+
+.projects-nav .back-nav img { width: 1.3em; height: 1.3em; margin: 20px 0; float: right; }
+
+.projects-nav .back-nav h3 { float: right; }
+
+.projects-nav .back-nav.back-nav-color { color: #1f1f1f; cursor: pointer; }
+
+.projects-nav .back-nav.back-nav-color img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.projects-nav .back-nav.back-nav-color:hover { color: #1f1e1c99; }
+
+.projects-nav .back-nav.back-nav-color:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.projects-nav .back-nav.back-nav-color:hover h3 { margin-right: 3px; }
+
+.projects-nav .card { width: 100%; }
+
+.projects-nav .card .component { width: 100%; }
+
 .projects-nav div.title:hover { background-image: linear-gradient(to right, #e8e8e800, #0057A755 100%); }
 
-.projects-nav div.title:hover h3 { color: #1f1e1ccc; }
+.projects-nav div.title:hover h3 { color: #1f1e1c99; margin-left: 3px; }
 
 .projects-nav div.title:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
 
 .projects-nav h4 { margin: 0; padding: .75em 0 .75em .75em; width: calc(100% - .75em); cursor: pointer; }
 
-.projects-nav h4:hover { color: #1f1e1c99; }
+.projects-nav h4:hover { color: #1f1e1c99; padding: 0.75em 0 0.75em calc(.75em + 3px); }
 
 .projects-nav .projects-highlight { color: #1f1e1ccc; background-image: linear-gradient(to right, #e8e8e800, #0057A755 100%); }
 
@@ -125,6 +151,10 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-project-options .header { cursor: default; }
 
-.chart-container { display: flex; flex-direction: column; }
+.charts .card { width: calc((100% - 32px) / 2); padding-top: calc((100% - 32px) / 2 / (2)); }
 
-.chart-container .chart { margin: 0; }
+.charts .card > .component { position: absolute; float: none; top: 0; left: 0; bottom: 0; right: 0; }
+
+.charts .chart-container { width: 100%; height: 100%; }
+
+.charts .card:nth-child(2n) { margin: 0; }

@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface SectionRepository extends CrudRepository<Section, Long> {
+public interface SectionRepository extends CrudRepository<Section, String> {
     Section findBySectionIdentifier(@NonNull String sectionID);
     List<Section> findByCourseID(@NonNull String courseID);
     boolean existsBySectionIdentifier(@NonNull String sectionID);

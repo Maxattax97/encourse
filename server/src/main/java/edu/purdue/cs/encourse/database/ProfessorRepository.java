@@ -4,7 +4,7 @@ import edu.purdue.cs.encourse.domain.Professor;
 import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
 
-public interface ProfessorRepository extends CrudRepository<Professor, Long> {
+public interface ProfessorRepository extends CrudRepository<Professor, String> {
     Professor findByUserID(@NonNull String userID);
     Professor findByUserName(@NonNull String userName);
     boolean existsByUserID(@NonNull String userID);

@@ -14,12 +14,8 @@ public class CollegeAdmin extends Account {
         super(userID, userName, saltPass, firstName, lastName, Roles.ADMIN, middleInit, eduEmail);
     }
 
-    public CollegeAdmin(Account account) {
-        super(account.getUserID(), account.getUserName(), account.getSaltPass(), account.getFirstName(),
-                account.getLastName(), Roles.PROFESSOR, account.getMiddleInit(), account.getEduEmail());
-    }
-
     public CollegeAdmin() {
         super();
     }
+
 }

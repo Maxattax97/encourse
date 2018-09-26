@@ -7,7 +7,7 @@ class Modal extends Component {
 
     render() {
         return (
-            <div className={"modal"} onClick={this.props.onClose}>
+            <div className={"modal"} style={this.props.show ? {} : {display: "none"}} onClick={this.props.onClose}>
                 <div className={this.props.left ? "modal-left" : this.props.right ? "modal-right" : "modal-center"} onClick={(e) => e.stopPropagation()}>
                     <Card component={<div className={"modal-container"}>
                         {this.props.component}

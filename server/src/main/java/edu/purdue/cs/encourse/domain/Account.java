@@ -31,6 +31,7 @@ public class Account {
     private String lastName;
 
     /** Email settings **/
+    @Setter
     private String eduEmail;
 
     /** Whether account is student, TA, professor, or college admin **/
@@ -60,4 +61,11 @@ public class Account {
 
     }
 
+    public void copyAccount(Account account) {
+        setSaltPass(account.getSaltPass());
+        setFirstName(account.getFirstName());
+        setLastName(account.getLastName());
+        setMiddleInit(account.getMiddleInit());
+        setEduEmail(account.getEduEmail());
+    }
 }

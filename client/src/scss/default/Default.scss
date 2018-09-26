@@ -18,6 +18,12 @@ div.title {
 
 }
 
+h3 {
+  margin: 20px 0;
+  line-height: 1.17em;
+  height: 1.17em;
+}
+
 .h2-size {
   font-size: 1.5em;
 }
@@ -58,6 +64,13 @@ h4.break-line.title {
 
 .blur {
   filter: brightness(80%) blur(3px);
+}
+
+.float-height:after {
+  content: "";
+  display: block;
+  height: 0;
+  clear: both;
 }
 
 input {
