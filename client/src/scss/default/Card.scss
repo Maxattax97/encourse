@@ -4,10 +4,10 @@
   margin-right: 32px;
   margin-bottom: 32px;
   float: left;
+  box-sizing: border-box;
 }
 
 .component {
-  display: table-row;
   float:left;
   height: auto;
   padding: 16px;

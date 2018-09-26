@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
 
 const defaultData = [
     {date: new Date('2018-09-16T00:00:00'), count: 8},
@@ -24,30 +24,26 @@ for (let item of defaultData) {
 
 class CommitHistoryHistogram extends Component {
     render() {
-        const {
-            width = 600,
-            height = 300,
-            data = defaultData
-        } = this.props;
-
         return (
-            <div classname="chart-container">
-                <h3 className="chart-title">Commit Frequency</h3>
-                <BarChart width={width} height={height} data={data} margin={{top: 5, right: 30, left: 20, bottom: 30}}>
-                    <CartesianGrid/>
-                    <XAxis dataKey="dateStr">
-                        <Label offset={-15} position="insideBottom">
-                            Commits
-                        </Label>
-                    </XAxis>
-                    <YAxis>
-                        <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
-                            Date
-                        </Label>
-                    </YAxis>
-                    <Tooltip/>
-                    <Bar dataKey="count" fill="#8884d8"/>
-                </BarChart>
+            <div className="chart-container">
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={this.props.data || defaultData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
+                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Commit Frequency</text>
+                        <CartesianGrid/>
+                        <XAxis dataKey="dateStr">
+                            <Label offset={-15} position="insideBottom">
+                                Commits
+                            </Label>
+                        </XAxis>
+                        <YAxis>
+                            <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+                                Date
+                            </Label>
+                        </YAxis>
+                        <Tooltip/>
+                        <Bar dataKey="count" fill="#8884d8"/>
+                    </BarChart>
+                </ResponsiveContainer>
             </div>
         );
     }

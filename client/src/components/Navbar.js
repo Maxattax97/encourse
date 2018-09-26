@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
 import settingsIcon from '../img/settings.svg'
 import logoutIcon from '../img/logout.svg'
 import { history } from '../redux/store'
+import { logOut } from '../redux/actions'
 
 class Navbar extends Component {
     render() {
@@ -13,7 +15,7 @@ class Navbar extends Component {
                         <div className="nav-settings" onClick={() => history.push('/settings')}>
                             <img src={settingsIcon} alt="options" />
                         </div>
-                        <div className="nav-logout">
+                        <div className="nav-logout" onClick={() => this.props.logOut()}>
                             <img src={logoutIcon} alt="logout" />
                         </div>
                     </div>
@@ -26,5 +28,11 @@ class Navbar extends Component {
         )
     }
 }
-
-export default Navbar
+  
+const mapDispatchToProps = (dispatch) => {
+    return {
+        logOut: () => dispatch(logOut())
+    }
+}
+  
+export default connect(null, mapDispatchToProps)(Navbar)

@@ -1,14 +1,12 @@
 package edu.purdue.cs.encourse.service;
 
 import edu.purdue.cs.encourse.domain.*;
-import lombok.*;
-
-import java.util.*;
+import java.util.List;
 
 public interface AdminService {
 
     /** Services for adding any type of account to all relevant tables **/
-    void addUser(String userName, String password, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled);
+    User addUser(String userName, String password, String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled);
     int addAccount(String userID, String userName, String saltPass, String firstName, String lastName,
                    String type, String middleInit, String eduEmail);
     int addStudent(String userID, String userName, String saltPass, String firstName, String lastName, String middleInit, String eduEmail);

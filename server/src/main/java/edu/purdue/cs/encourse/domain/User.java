@@ -1,7 +1,6 @@
 package edu.purdue.cs.encourse.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import edu.purdue.cs.encourse.domain.Authority;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

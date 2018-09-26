@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Label, Legend, ResponsiveContainer } from 'recharts';
 
 
 const defaultData = [
@@ -22,23 +22,21 @@ for (let item of defaultData) {
 
 class CodeChangesChart extends Component {
     render() {
-        const {
-            width = 600,
-            height = 300,
-            data = defaultData
-        } = this.props;
-
         return (
-            <div classname="chart-container">
-                <h3 className="chart-title">Code Frequency</h3>
-                <AreaChart width={width} height={height} data={data} margin={{top: 10, right: 30, left: 0, bottom: 0}}>
-                    <CartesianGrid strokeDasharray="3 3"/>
-                    <XAxis dataKey="dateStr"/>
-                    <YAxis/>
-                    <Tooltip/>
-                    <Area type="monotone" dataKey="additions" stroke="none" fill="green" />
-                    <Area type="monotone" dataKey="deletions" stroke="none" fill="red" />
-                </AreaChart>
+            <div className="chart-container">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={this.props.data || defaultData} margin={{top: 40, right: 30, left: 0, bottom: 25}}>
+                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Code Frequency</text>
+                        <CartesianGrid strokeDasharray="3 3"/>
+                        <XAxis dataKey="dateStr">
+                            <Label position="insideBottom" offset={-15} value="Date"/>
+                        </XAxis>
+                        <YAxis/>
+                        <Tooltip/>
+                        <Area type="monotone" dataKey="additions" stroke="none" fill="green" />
+                        <Area type="monotone" dataKey="deletions" stroke="none" fill="red" />
+                    </AreaChart>
+                </ResponsiveContainer>
             </div>
         );
     }

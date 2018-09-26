@@ -1,10 +1,5 @@
 package edu.purdue.cs.encourse.service;
 
-import edu.purdue.cs.encourse.domain.*;
-import lombok.*;
-
-import java.util.*;
-
 public interface ProfService {
     int setHub(String courseID);
     int createHub(String courseID);

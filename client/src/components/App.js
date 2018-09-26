@@ -5,12 +5,20 @@ import { connect } from 'react-redux'
 import '../css/App.css';
 import Login from './Login'
 import Main from './Main'
+import { setToken } from '../redux/actions'
 
 class App extends Component {
 
-  loggedIn = () => {
-    return true;
-  }
+    loggedIn = () => {
+        return this.props.token != null;
+    }
+
+    componentDidMount = () => {
+        if(localStorage.getItem('token') != null) {
+            let token = JSON.parse(localStorage.getItem('token'))
+            this.props.setToken(token)
+        }   
+    }
 
   render() {
     return (
@@ -33,11 +41,15 @@ class App extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return { }
+  return { 
+      token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
-	return { }
+	return {
+        setToken: (token) => dispatch(setToken(token)),
+    }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

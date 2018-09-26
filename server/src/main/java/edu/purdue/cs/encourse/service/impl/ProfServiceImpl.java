@@ -1,13 +1,18 @@
 package edu.purdue.cs.encourse.service.impl;
 
-import edu.purdue.cs.encourse.domain.relations.*;
-import edu.purdue.cs.encourse.service.ProfService;
 import edu.purdue.cs.encourse.database.*;
-import edu.purdue.cs.encourse.domain.*;
+import edu.purdue.cs.encourse.domain.Project;
+import edu.purdue.cs.encourse.domain.Section;
+import edu.purdue.cs.encourse.domain.Student;
+import edu.purdue.cs.encourse.domain.TeachingAssistant;
+import edu.purdue.cs.encourse.domain.relations.StudentProject;
+import edu.purdue.cs.encourse.domain.relations.StudentSection;
+import edu.purdue.cs.encourse.domain.relations.TeachingAssistantStudent;
+import edu.purdue.cs.encourse.service.ProfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
