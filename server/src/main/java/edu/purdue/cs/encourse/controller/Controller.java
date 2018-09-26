@@ -5,6 +5,7 @@ import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.service.AdminService;
 import edu.purdue.cs.encourse.service.ProfService;
+import edu.purdue.cs.encourse.util.JSONReturnable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,8 +59,8 @@ public class Controller {
     @RequestMapping(value = "/commitData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getCommitData() {
         // TODO: RYAN PUT YOUR SHIT HERE
-
-        String json = null;
+        JSONReturnable returnJson = profService.getCommitData();
+        String json = returnJson.jsonObject.toJSONString();
         User loggedIn = getUserFromAuth();
         // loggedIn.getUsername()
         // profService.getCommitData(loggedIn.getUsername());
