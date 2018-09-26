@@ -331,10 +331,30 @@ public class ProfServiceImpl implements ProfService {
         }
     }
 
-    public int getProgressHistorgram(String studentID) {
-
-
-
+    public int getProgressHistogram(String studentID) {
+        String filePath = pythonPath + "getProgressHistogram.py";
+        String changeListFile = pythonPath + "sampleCommitList.txt";
+        System.out.println("Hello");
+        try {
+                Process process = Runtime.getRuntime().exec("python " +  filePath + " " + studentID + " " + changeListFile);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String input = null;
+            String error = null;
+            System.out.println("1");
+            /*while ((error = stdError.readLine()) != null) {
+                System.out.println(error);
+            }*/
+            System.out.println("2");
+            while ((input = stdInput.readLine()) != null) {
+                System.out.println(input);
+            }
+            System.out.println("3");
+            return 1;
+        } catch (IOException e){
+            e.printStackTrace();
+            return -2;
+        }
     }
 
 

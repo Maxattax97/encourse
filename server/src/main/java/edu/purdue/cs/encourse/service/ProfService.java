@@ -23,4 +23,5 @@ public interface ProfService {
 
     int testPythonDirectory();
     int getCommitData();
+    int getProgressHistogram(String studentID);
 }

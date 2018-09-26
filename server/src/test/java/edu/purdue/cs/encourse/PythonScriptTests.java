@@ -83,9 +83,10 @@ public class PythonScriptTests {
             assertEquals("Gustavo", professor.getFirstName());
             assertFalse(studentRepository.existsByUserID("grr"));*/
 
+            System.out.println("=============================   Python Tests    ============================\n");
+
             System.out.println("\n==============================    Python Directory Test    ==============================");
             assertEquals("Hello.py failed to execute", 1, profService.testPythonDirectory());
-            System.out.println("=============================   End Python Directory Test    ============================\n");
 
             System.out.println("\n==============================    Python Start/End Test    ==============================");
             int returnValue = profService.getCommitData();
@@ -93,7 +94,13 @@ public class PythonScriptTests {
             assertNotEquals("getStartEnd.py failed to execute", -2, returnValue);
             assertNotEquals("Failed to parse STDOUT into json", -3, returnValue);
             assertEquals("Unknown Error", 1, returnValue);
-            System.out.println("=============================   End Python Start/End Test    ============================\n");
+
+            System.out.println("=============================   Python Progress Histogram Test    ============================\n");
+            String studentID = "cutz";
+            returnValue = profService.getProgressHistogram(studentID);
+            assertEquals("Failed to generate progress histogram data", 1, returnValue);
+
+            System.out.println("=============================   End Python Tests    ============================\n");
 
             //int returnValue = profService.countAllCommits("CS200", "Encourse");
         }
