@@ -30,42 +30,28 @@ public class AccountServiceImpl implements AccountService {
 
 
     public Account retrieveAccount(String userName, String saltPass) {
-        Account account = accountRepository.findByUserName(userName);
-        account.setSaltPass(null);
-        return account;
+        return accountRepository.findByUserName(userName);
     }
 
     public Student retrieveStudent(String userName, String saltPass) {
-        Student student = studentRepository.findByUserName(userName);
-        student.setSaltPass(null);
-        return student;
+        return studentRepository.findByUserName(userName);
     }
 
     public Account retrieveAccountByID(String userID) { return accountRepository.findByUserID(userID); }
 
     public TeachingAssistant retrieveTA(String userName, String saltPass) {
-        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userName);
-        teachingAssistant.setSaltPass(null);
-        return teachingAssistant;
+        return teachingAssistantRepository.findByUserName(userName);
     }
 
     public Professor retrieveProfessor(String userName, String saltPass) {
-        Professor professor = professorRepository.findByUserName(userName);
-        professor.setSaltPass(null);
-        return professor;
+        return professorRepository.findByUserName(userName);
     }
 
     public CollegeAdmin retrieveAdmin(String userName, String saltPass) {
-        CollegeAdmin collegeAdmin = adminRepository.findByUserName(userName);
-        collegeAdmin.setSaltPass(null);
-        return collegeAdmin;
+        return adminRepository.findByUserName(userName);
     }
 
     public List<Account> retrieveAllAccounts() {
-        List<Account> accounts = accountRepository.findAll();
-        for (Account a: accounts) {
-            a.setSaltPass(null);
-        }
-        return accounts;
+        return accountRepository.findAll();
     }
 }
