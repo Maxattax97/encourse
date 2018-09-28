@@ -1,8 +1,12 @@
 package edu.purdue.cs.encourse.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.Section;
+import edu.purdue.cs.encourse.domain.Student;
 import edu.purdue.cs.encourse.domain.User;
+import edu.purdue.cs.encourse.domain.relations.StudentSection;
+import edu.purdue.cs.encourse.service.AccountService;
 import edu.purdue.cs.encourse.service.AdminService;
 import edu.purdue.cs.encourse.service.ProfessorService;
 import edu.purdue.cs.encourse.util.JSONReturnable;
@@ -15,6 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping(value="/secured")
@@ -25,6 +31,9 @@ public class Controller {
 
     @Autowired
     private AdminService adminService;
+
+    @Autowired
+    private AccountService accountService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/create/section", method = RequestMethod.POST, consumes = "application/json")
@@ -66,6 +75,40 @@ public class Controller {
         // professorService.getCommitData(loggedIn.getUsername());
         // json = JSONObject.toString();r
         return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/progressHistogram", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getProgressHistogram() {
+        // TODO: RYAN PUT YOUR SHIT HERE
+        User loggedIn = getUserFromAuth();
+        Account account = accountService.retrieveAccount(loggedIn.getUsername(), loggedIn.getPassword());
+        System.out.println(account);
+        JSONReturnable returnJson = profService.getProgressHistogram(account.getUserID());
+        String json = returnJson.jsonObject.toJSONString();
+        System.out.println(json);
+        // loggedIn.getUsername()
+        // profService.getCommitData(loggedIn.getUsername());
+        // json = JSONObject.toString();
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/section/students", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getSectionStudents(@RequestParam(name = "courseID") String courseID,
+                                                              @RequestParam(name = "semester") String semester,
+                                                              @RequestParam(name = "type") String type) {
+        List<StudentSection> sections = adminService.getAllStudentsInSection(courseID, semester, type);
+        List<Student> students = new ArrayList<>();
+        for (StudentSection s: sections) {
+           // students.add(accountService.retrieveStudent());
+        }
+
+        System.out.println(sections);
+        // loggedIn.getUsername()
+        // profService.getCommitData(loggedIn.getUsername());
+        // json = JSONObject.toString();
+        return new ResponseEntity<>(sections, HttpStatus.OK);
     }
 
     private User getUserFromAuth() {
