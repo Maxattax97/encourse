@@ -5,6 +5,7 @@ import lombok.NonNull;
 
 public interface ProfessorService {
     int addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate);
+    int assignProjectToStudent(@NonNull String projectID, @NonNull String userName);
     int modifyProject(@NonNull String projectID, @NonNull String field, String value);
 
     JSONReturnable countAllCommits(@NonNull String semester, @NonNull String courseID, @NonNull String projectID);

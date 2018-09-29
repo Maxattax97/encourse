@@ -90,6 +90,48 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(projectRepository.save(project) == null) {
             return -2;
         }
+        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
+        List<String> completedStudents = new ArrayList<>();
+        for(Section s : sections) {
+            List<StudentSection> assignments = studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            for(StudentSection a : assignments) {
+                if(!(completedStudents.contains(a.getStudentID()))) {
+                    studentProjectRepository.save(new StudentProject(a.getStudentID(), project.getProjectIdentifier()));
+                    completedStudents.add(a.getStudentID());
+                }
+            }
+        }
+        return 0;
+    }
+
+    /** Assigns a project to a single student, to account for students adding course after a project was assigned **/
+    public int assignProjectToStudent(@NonNull String projectID, @NonNull String userName) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -1;
+        }
+        Student student = studentRepository.findByUserName(userName);
+        if(student == null) {
+            return -2;
+        }
+        List<StudentProject> projects = studentProjectRepository.findByIdStudentID(student.getUserID());
+        for(StudentProject p : projects) {
+            if(p.getProjectIdentifier().equals(projectID)) {
+                return -3;
+            }
+        }
+        List<StudentSection> sections = studentSectionRepository.findByIdStudentID(student.getUserID());
+        boolean isTaking = false;
+        for(StudentSection s : sections) {
+            Section section = sectionRepository.findBySectionIdentifier(s.getSectionIdentifier());
+            if(section.getCourseID().equals(project.getCourseID()) && section.getSemester().equals(project.getSemester())) {
+                isTaking = true;
+            }
+        }
+        if(!isTaking) {
+            return -4;
+        }
+        studentProjectRepository.save(new StudentProject(student.getUserID(), project.getProjectIdentifier()));
         return 0;
     }
 
