@@ -2,9 +2,7 @@ package edu.purdue.cs.encourse;
 
 import edu.purdue.cs.encourse.database.AccountRepository;
 import edu.purdue.cs.encourse.database.*;
-import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.service.*;
-import edu.purdue.cs.encourse.service.impl.*;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import org.junit.After;
 import org.junit.Before;
@@ -45,14 +43,14 @@ public class PythonScriptTests {
         public AccountService accountService;
 
         @Autowired
-        public ProfService profService;
+        public ProfessorService professorService;
 
 
         @Before
         public void populateDatabase() {
-            assertEquals(0, adminService.addAccount("1", "reed226", "a","William", "Reed",
+            assertEquals(0, adminService.addAccount("1", "reed226","William", "Reed",
                     "Admin", "J", "reed226@purdue.edu"));
-            assertEquals(0, adminService.addAccount("2", "grr", "b", "Gustavo", "Rodriguez-Rivera",
+            assertEquals(0, adminService.addAccount("2", "grr", "Gustavo", "Rodriguez-Rivera",
                     "Professor", null, "grr@purdue.edu"));
         }
 
@@ -87,10 +85,10 @@ public class PythonScriptTests {
             System.out.println("=============================   Python Tests    ============================\n");
 
             System.out.println("\n==============================    Python Directory Test    ==============================");
-            assertEquals("Hello.py failed to execute", 1, profService.testPythonDirectory());
+            assertEquals("Hello.py failed to execute", 1, professorService.testPythonDirectory());
 
             System.out.println("\n==============================    Python Start/End Test    ==============================");
-            JSONReturnable jsonReturn = profService.getCommitData();
+            JSONReturnable jsonReturn = professorService.getCommitData();
             assertNotEquals("STDIN is empty", -1, jsonReturn.errorCode);
             assertNotEquals("getStartEnd.py failed to execute", -2, jsonReturn.errorCode);
             assertNotEquals("Failed to parse STDOUT into json", -3, jsonReturn.errorCode);
@@ -98,10 +96,10 @@ public class PythonScriptTests {
 
             System.out.println("=============================   Python Progress Histogram Test    ============================\n");
             String studentID = "cutz";
-            jsonReturn = profService.getProgressHistogram(studentID);
+            jsonReturn = professorService.getProgressHistogram(studentID);
             assertEquals("Failed to generate progress histogram data", 1, jsonReturn.errorCode);
             System.out.println("=============================   End Python Tests    ============================\n");
 
-            //int returnValue = profService.countAllCommits("CS200", "Encourse");
+            //int returnValue = professorService.countAllCommits("CS200", "Encourse");
         }
 }

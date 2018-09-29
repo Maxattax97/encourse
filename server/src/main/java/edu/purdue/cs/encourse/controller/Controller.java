@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.service.AdminService;
-import edu.purdue.cs.encourse.service.ProfService;
+import edu.purdue.cs.encourse.service.ProfessorService;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ import java.io.IOException;
 public class Controller {
 
     @Autowired
-    private ProfService profService;
+    private ProfessorService professorService;
 
     @Autowired
     private AdminService adminService;
@@ -59,11 +59,11 @@ public class Controller {
     @RequestMapping(value = "/commitData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getCommitData() {
         // TODO: RYAN PUT YOUR SHIT HERE
-        JSONReturnable returnJson = profService.getCommitData();
+        JSONReturnable returnJson = professorService.getCommitData();
         String json = returnJson.jsonObject.toJSONString();
         User loggedIn = getUserFromAuth();
         // loggedIn.getUsername()
-        // profService.getCommitData(loggedIn.getUsername());
+        // professorService.getCommitData(loggedIn.getUsername());
         // json = JSONObject.toString();r
         return new ResponseEntity<>(json, HttpStatus.OK);
     }

@@ -13,7 +13,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
     private AdminService adminService;
 
     @Autowired
-    private ProfService profService;
+    private ProfessorService professorService;
     
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
@@ -66,8 +66,8 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
 
         adminService.assignProfessorToCourse("grr", "cs252", "Fall2018");
 
-        profService.setSectionRemotePaths("cs252", "/homes/cs252/sourcecontrol/work");
-        profService.setHub("cs252");
-        profService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/25/2018", "9/06/2018");
+        professorService.setSectionRemotePaths("cs252", "/homes/cs252/sourcecontrol/work");
+        professorService.setHub("cs252");
+        professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/25/2018", "9/06/2018");
     }
 }

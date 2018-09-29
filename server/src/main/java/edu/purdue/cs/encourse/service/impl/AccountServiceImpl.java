@@ -3,6 +3,7 @@ package edu.purdue.cs.encourse.service.impl;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.service.AccountService;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,42 +30,36 @@ public class AccountServiceImpl implements AccountService {
     private AdminRepository adminRepository;
 
 
-    public Account retrieveAccount(String userName, String saltPass) {
-        Account account = accountRepository.findByUserName(userName);
-        account.setSaltPass(null);
-        return account;
+    public Account retrieveAccount(@NonNull String userName) {
+        return accountRepository.findByUserName(userName);
     }
 
-    public Student retrieveStudent(String userName, String saltPass) {
-        Student student = studentRepository.findByUserName(userName);
-        student.setSaltPass(null);
-        return student;
+    public Account retrieveAccountByID(@NonNull String userID) {
+        return accountRepository.findByUserID(userID);
     }
 
-    public Account retrieveAccountByID(String userID) { return accountRepository.findByUserID(userID); }
-
-    public TeachingAssistant retrieveTA(String userName, String saltPass) {
-        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userName);
-        teachingAssistant.setSaltPass(null);
-        return teachingAssistant;
+    public Student retrieveStudent(@NonNull String userName) {
+        return studentRepository.findByUserName(userName);
     }
 
-    public Professor retrieveProfessor(String userName, String saltPass) {
+    public TeachingAssistant retrieveTA(@NonNull String userName) {
+        return teachingAssistantRepository.findByUserName(userName);
+    }
+
+    public Professor retrieveProfessor(@NonNull String userName) {
         Professor professor = professorRepository.findByUserName(userName);
-        professor.setSaltPass(null);
         return professor;
     }
 
-    public CollegeAdmin retrieveAdmin(String userName, String saltPass) {
+    public CollegeAdmin retrieveAdmin(@NonNull String userName) {
         CollegeAdmin collegeAdmin = adminRepository.findByUserName(userName);
-        collegeAdmin.setSaltPass(null);
         return collegeAdmin;
     }
 
     public List<Account> retrieveAllAccounts() {
         List<Account> accounts = accountRepository.findAll();
-        for (Account a: accounts) {
-            a.setSaltPass(null);
+        if(accounts.isEmpty()) {
+            return null;
         }
         return accounts;
     }
