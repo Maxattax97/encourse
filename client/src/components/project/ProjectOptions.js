@@ -52,11 +52,11 @@ class ProjectOptions extends Component {
                 <h4 className="header">
                     Test Script
                 </h4>
-                <input type="file" />
+                <input type="file" name="test_script" ref="test_script" />
                 <h4 className="header">
                     Hidden Test Script
                 </h4>
-                <input type="file" />
+                <input type="file" name="test_script" ref="test_script" />
             </div>
         );
     }
