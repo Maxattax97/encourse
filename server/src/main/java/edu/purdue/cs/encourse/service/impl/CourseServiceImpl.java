@@ -59,9 +59,6 @@ public class CourseServiceImpl implements CourseService {
     public List<Section> getSectionsBySemesterAndCourseID(@NonNull String semester, @NonNull String courseID) {
         List<Section> sections = sectionRepository.findByCourseID(courseID);
         List<Section> filteredSections = new ArrayList<>();
-        if(sections.isEmpty()) {
-            return null;
-        }
         for(Section s : sections) {
             if(s.getSemester().equals(semester)) {
                 filteredSections.add(s);

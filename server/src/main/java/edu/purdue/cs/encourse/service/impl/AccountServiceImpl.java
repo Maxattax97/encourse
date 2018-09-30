@@ -47,13 +47,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public Professor retrieveProfessor(@NonNull String userName) {
-        Professor professor = professorRepository.findByUserName(userName);
-        return professor;
+        return professorRepository.findByUserName(userName);
     }
 
     public CollegeAdmin retrieveAdmin(@NonNull String userName) {
-        CollegeAdmin collegeAdmin = adminRepository.findByUserName(userName);
-        return collegeAdmin;
+        return adminRepository.findByUserName(userName);
     }
 
     public List<Account> retrieveAllAccounts() {
