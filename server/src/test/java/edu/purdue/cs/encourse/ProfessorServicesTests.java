@@ -101,8 +101,8 @@ public class ProfessorServicesTests {
     public void testShellScripts() {
         assertEquals(0, courseService.setSectionRemotePaths("Fall2018", "cs250", "/homes/cs252/sourcecontrol/work"));
         assertEquals(0, courseService.createDirectory("Fall2018", "cs250"));
-        assertEquals(0, courseService.cloneProjects("Fall2018", "cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
-        assertEquals(0, courseService.pullProjects("Fall2018", "cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
+        assertEquals(0, professorService.cloneProjects(Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
+        assertEquals(0, professorService.pullProjects(Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
         assertNotNull(professorService.countAllCommits("Fall2018", "cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
         assertNotNull(professorService.countAllCommitsByDay("Fall2018", "cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
         assertNotNull(professorService.countStudentCommitsByDay("Fall2018", "cs250", Project.createProjectID("cs250", "Fall2018", "MyMalloc"), "dwyork"));

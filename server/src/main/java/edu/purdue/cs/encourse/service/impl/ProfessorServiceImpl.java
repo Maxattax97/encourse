@@ -15,6 +15,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -27,7 +28,8 @@ import lombok.NonNull;
 public class ProfessorServiceImpl implements ProfessorService {
 
     public final static String NAME = "ProfessorService";
-    final static String pythonPath = "src/main/java/edu/purdue/cs/encourse/service/impl/python/";
+    private final static String pythonPath = "src/main/java/edu/purdue/cs/encourse/service/impl/python/";
+    private final static int RATE = 3600000;
 
     /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
     final static String testDir = "test-shell";
@@ -163,6 +165,85 @@ public class ProfessorServiceImpl implements ProfessorService {
         return projectRepository.findByProjectIdentifier(projectID);
     }
 
+    /** Runs a bash script to initially clone every student's git repository. Each university should supply its own
+     bash script, since repo locations will vary **/
+    public int cloneProjects(@NonNull String projectID){
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -1;
+        }
+        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
+            return -2;
+        }
+        if(sections.get(0).getCourseHub() == null) {
+            return -3;
+        }
+        if(project.getRepoName() == null) {
+            return -4;
+        }
+        if(sections.get(0).getRemotePath() == null) {
+            return -5;
+        }
+        int code = 0;
+        for(Section s : sections){
+            List<StudentSection> assignments =
+                    studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            for(StudentSection a : assignments){
+                Student student = studentRepository.findByUserID(a.getStudentID());
+                if(!(new File(s.getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName()).exists())) {
+                    String destPath = (s.getCourseHub() + "/" + student.getUserName());
+                    String repoPath = (s.getRemotePath() + "/" + student.getUserName() + "/" + project.getRepoName() + ".git");
+                    if(executeBashScript("cloneRepositories.sh " + destPath + " " + repoPath) == -1) {
+                        code = -6;
+                    }
+                }
+            }
+        }
+        if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
+            return -7;
+        }
+        return code;
+    }
+
+    /** Pulls the designated project within every students directory under the course hub **/
+    public int pullProjects(@NonNull String projectID){
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -1;
+        }
+        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
+            return -2;
+        }
+        if(sections.get(0).getCourseHub() == null) {
+            return -3;
+        }
+        if(project.getRepoName() == null) {
+            return -4;
+        }
+        int code = 0;
+        List<String> completedStudents = new ArrayList<>();
+        for(Section s : sections){
+            List<StudentSection> assignments =
+                    studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            for(StudentSection a : assignments) {
+                Student student = studentRepository.findByUserID(a.getStudentID());
+                if(!(completedStudents.contains(student.getUserName()))) {
+                    String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
+                    if(executeBashScript("pullRepositories.sh " + destPath) == -1) {
+                        code = -5;
+                    }
+                    completedStudents.add(student.getUserName());
+                }
+            }
+        }
+        if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
+            return -6;
+        }
+        return code;
+    }
+
     /** Counts the number of commits that every student in the class has made for a project **/
     public JSONReturnable countAllCommits(@NonNull String semester, @NonNull String courseID, @NonNull String projectID) {
         List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
@@ -260,13 +341,13 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Uploads a testing script to testcases directory in the course hub **/
-    public int uploadTestScript(@NonNull String semester, @NonNull String courseID, @NonNull String projectID, @NonNull String testName, @NonNull String testContents) {
-        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
-        if(sections.isEmpty()) {
-            return -1;
-        }
+    public int uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
+            return -1;
+        }
+        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
             return -2;
         }
         String filePath = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName() + "/" + testName;
@@ -282,21 +363,25 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     /** Runs a generic testall script, which simply checks if nothing is output, which usually means test was passed,
         and assigns a pass or fail to each test case based on if there was no output from test script **/
-    public int runTestall(@NonNull String semester, @NonNull String courseID, @NonNull String projectID) {
-        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
-        if(sections.isEmpty()) {
-            return -1;
-        }
+    public int runTestall(@NonNull String projectID) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
+            return -1;
+        }
+        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
             return -2;
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
+        File directory = new File(testCaseDirectory);
+        if(!directory.isDirectory() || directory.listFiles().length == 0) {
+            return -3;
+        }
         int code = 0;
         for(StudentProject p : projects) {
             Student student = studentRepository.findByUserID(p.getStudentID());
             String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName() + "/" + testDir;
-            String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
             try {
                 Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + " " + testCaseDirectory);
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -305,20 +390,20 @@ public class ProfessorServiceImpl implements ProfessorService {
                 studentProjectRepository.save(p);
             }
             catch(Exception e) {
-                code = -3;
+                code = -4;
             }
         }
         return code;
     }
 
     /** Runs testall for a single student, which is quicker if the professor or TA wants to manually run testall for a student **/
-    public int runTestallForStudent(@NonNull String semester, @NonNull String courseID, @NonNull String projectID, @NonNull String userName) {
-        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
-        if(sections.isEmpty()) {
-            return -1;
-        }
+    public int runTestallForStudent(@NonNull String projectID, @NonNull String userName) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
+            return -1;
+        }
+        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
             return -2;
         }
         Student student = studentRepository.findByUserName(userName);
@@ -349,6 +434,21 @@ public class ProfessorServiceImpl implements ProfessorService {
             return -5;
         }
         return 0;
+    }
+
+    /** Pulls and tests every project in the database on one hour intervals **/
+    @Scheduled(fixedRate = RATE)
+    public int pullAndTestAllProjects() {
+        int code = 0;
+        for(Project project : projectRepository.findAll()) {
+            if(pullProjects(project.getProjectIdentifier()) < 0) {
+                code -= 1;
+            }
+            if(runTestall(project.getProjectIdentifier()) < 0) {
+                code -= 1;
+            }
+        }
+        return code;
     }
 
     public int testPythonDirectory() {

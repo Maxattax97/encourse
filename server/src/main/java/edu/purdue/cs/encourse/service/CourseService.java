@@ -13,8 +13,6 @@ public interface CourseService {
     int createDirectory(@NonNull String semester, @NonNull String courseID);
 
     int setSectionRemotePaths(@NonNull String semester, @NonNull String courseID, @NonNull String remotePath);
-    int cloneProjects(@NonNull String semester, @NonNull String courseID, @NonNull String projectID);
-    int pullProjects(@NonNull String semester, @NonNull String courseID, @NonNull String projectID);
 
     JSONObject getCourseInfoByCourseID(@NonNull String semester, @NonNull String courseID);
 }

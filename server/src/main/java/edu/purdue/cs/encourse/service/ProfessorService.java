@@ -10,15 +10,19 @@ public interface ProfessorService {
     int assignProject(@NonNull String projectID);
     int assignProjectToStudent(@NonNull String projectID, @NonNull String userName);
     int modifyProject(@NonNull String projectID, @NonNull String field, String value);
+    int cloneProjects(@NonNull String projectID);
+    int pullProjects(@NonNull String projectID);
 
     JSONReturnable countAllCommits(@NonNull String semester, @NonNull String courseID, @NonNull String projectID);
     JSONReturnable countAllCommitsByDay(@NonNull String semester, @NonNull String courseID, @NonNull String projectID);
     JSONReturnable countStudentCommitsByDay(@NonNull String semester, @NonNull String courseID, @NonNull String projectID, @NonNull String userName);
     JSONReturnable listStudentCommitsByTime(@NonNull String semester, @NonNull String courseID, @NonNull String projectID, @NonNull String userName);
 
-    int uploadTestScript(@NonNull String semester, @NonNull String courseID, @NonNull String projectID, @NonNull String testName, @NonNull String testContents);
-    int runTestall(@NonNull String semester, @NonNull String courseID, @NonNull String projectID);
-    int runTestallForStudent(@NonNull String semester, @NonNull String courseID, @NonNull String projectID, @NonNull String userName);
+    int uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents);
+    int runTestall(@NonNull String projectID);
+    int runTestallForStudent(@NonNull String projectID, @NonNull String userName);
+
+    int pullAndTestAllProjects();
 
     int assignTeachingAssistantToStudent(@NonNull String teachAssistUserName, @NonNull String studentUserName);
 

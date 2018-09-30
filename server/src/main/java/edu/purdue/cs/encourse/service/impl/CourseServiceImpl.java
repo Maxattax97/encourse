@@ -11,6 +11,7 @@ import lombok.NonNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -91,7 +92,7 @@ public class CourseServiceImpl implements CourseService {
         if(sections.isEmpty()) {
             return -1;
         }
-        if(!(new File("/sourcecontrol/" + sections.get(0).getCourseID() + "/" + sections.get(0).getSemester()).mkdirs())) {
+        if(!(new File("/sourcecontrol/" + sections.get(0).getCourseID() + "/" + sections.get(0).getSemester() + "/testcases").mkdirs())) {
             return -2;
         }
         int code = 0;
@@ -122,85 +123,6 @@ public class CourseServiceImpl implements CourseService {
             if(sectionRepository.save(s) == null) {
                 code = -2;
             }
-        }
-        return code;
-    }
-
-    /** Runs a bash script to initially clone every student's git repository. Each university should supply its own
-     bash script, since repo locations will vary **/
-    public int cloneProjects(@NonNull String semester, @NonNull String courseID, @NonNull String projectID){
-        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
-        if(sections.isEmpty()) {
-            return -1;
-        }
-        Project project = projectRepository.findByProjectIdentifier(projectID);
-        if(project == null) {
-            return -2;
-        }
-        if(sections.get(0).getCourseHub() == null) {
-            return -3;
-        }
-        if(project.getRepoName() == null) {
-            return -4;
-        }
-        if(sections.get(0).getRemotePath() == null) {
-            return -5;
-        }
-        int code = 0;
-        for(Section s : sections){
-            List<StudentSection> assignments =
-                    studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
-            for(StudentSection a : assignments){
-                Student student = studentRepository.findByUserID(a.getStudentID());
-                if(!(new File(s.getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName()).exists())) {
-                    String destPath = (s.getCourseHub() + "/" + student.getUserName());
-                    String repoPath = (s.getRemotePath() + "/" + student.getUserName() + "/" + project.getRepoName() + ".git");
-                    if(executeBashScript("cloneRepositories.sh " + destPath + " " + repoPath) == -1) {
-                        code = -6;
-                    }
-                }
-            }
-        }
-        if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
-            return -7;
-        }
-        return code;
-    }
-
-    /** Pulls the designated project within every students directory under the course hub **/
-    public int pullProjects(@NonNull String semester, @NonNull String courseID, @NonNull String projectID){
-        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
-        if(sections.isEmpty()) {
-            return -1;
-        }
-        Project project = projectRepository.findByProjectIdentifier(projectID);
-        if(project == null) {
-            return -2;
-        }
-        if(sections.get(0).getCourseHub() == null) {
-            return -3;
-        }
-        if(project.getRepoName() == null) {
-            return -4;
-        }
-        int code = 0;
-        List<String> completedStudents = new ArrayList<>();
-        for(Section s : sections){
-            List<StudentSection> assignments =
-                    studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
-            for(StudentSection a : assignments) {
-                Student student = studentRepository.findByUserID(a.getStudentID());
-                if(!(completedStudents.contains(student.getUserName()))) {
-                    String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-                    if(executeBashScript("pullRepositories.sh " + destPath) == -1) {
-                        code = -5;
-                    }
-                    completedStudents.add(student.getUserName());
-                }
-            }
-        }
-        if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
-            return -6;
         }
         return code;
     }

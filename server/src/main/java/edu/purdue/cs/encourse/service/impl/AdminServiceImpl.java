@@ -202,7 +202,6 @@ public class AdminServiceImpl implements AdminService {
         if(sectionRepository.findByCourseID(courseID).isEmpty()) {
             return -2;
         }
-        System.out.println("\n\n\n" + professor.getUserID() + " " + courseID + " " + semester + "\n\n\n");
         ProfessorCourse assignment = new ProfessorCourse(professor.getUserID(), courseID, semester);
         if(professorCourseRepository.save(assignment) == null) {
             return -3;
