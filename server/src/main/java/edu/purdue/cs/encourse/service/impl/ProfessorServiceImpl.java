@@ -245,13 +245,13 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Counts the number of commits that every student in the class has made for a project **/
-    public JSONReturnable countAllCommits(@NonNull String semester, @NonNull String courseID, @NonNull String projectID) {
-        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
-        if(sections.isEmpty()) {
-            return null;
-        }
+    public JSONReturnable countAllCommits(@NonNull String projectID) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
+            return null;
+        }
+        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
             return null;
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
@@ -268,13 +268,13 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Counts the total number of commits made each day that the project was active **/
-    public JSONReturnable countAllCommitsByDay(@NonNull String semester, @NonNull String courseID, @NonNull String projectID) {
-        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
-        if(sections.isEmpty()) {
-            return null;
-        }
+    public JSONReturnable countAllCommitsByDay(@NonNull String projectID) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
+            return null;
+        }
+        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
             return null;
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
@@ -291,13 +291,13 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Counts the number of commits that a single student has made for each day that the project is active **/
-    public JSONReturnable countStudentCommitsByDay(@NonNull String semester, @NonNull String courseID, @NonNull String projectID, @NonNull String userName) {
-        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
-        if(sections.isEmpty()) {
-            return null;
-        }
+    public JSONReturnable countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
+            return null;
+        }
+        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
             return null;
         }
         Student student = studentRepository.findByUserID(userName);
@@ -316,13 +316,13 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Lists various information about git history, including commit time and dates, and files modified in each commit **/
-    public JSONReturnable listStudentCommitsByTime(@NonNull String semester, @NonNull String courseID, @NonNull String projectID, @NonNull String userName) {
-        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
-        if(sections.isEmpty()) {
-            return null;
-        }
+    public JSONReturnable listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
+            return null;
+        }
+        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
             return null;
         }
         Student student = studentRepository.findByUserID(userName);
@@ -357,6 +357,9 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
         catch(IOException e) {
             return -3;
+        }
+        if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
+            return -4;
         }
         return 0;
     }
