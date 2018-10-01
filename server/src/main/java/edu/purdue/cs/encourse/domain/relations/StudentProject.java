@@ -1,6 +1,7 @@
 package edu.purdue.cs.encourse.domain.relations;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
@@ -16,11 +17,37 @@ public class StudentProject {
     StudentProjectID id;
 
     /** Current grade output by testall for the project **/
+    @Setter
     private String currentGrade;
 
-    public StudentProject(String userID, String projectIdentifier, String currentGrade) {
+    /** Git commit count for the project **/
+    @Setter
+    private int commitCount;
+
+    /** Total lines added in commits across all files **/
+    @Setter
+    private int totalLinesAdded;
+
+    /** Total lines removed in commits across all files **/
+    @Setter
+    private int totalLinesRemoved;
+
+    /** Date that student made first commit for the project **/
+    @Setter
+    private String firstCommitDate;
+
+    /** Date that student most recently committed for the project **/
+    @Setter
+    private String mostRecentCommitDate;
+
+    public StudentProject(String userID, String projectIdentifier) {
         this.id = new StudentProjectID(userID, projectIdentifier);
-        this.currentGrade = currentGrade;
+        this.currentGrade = null;
+        this.commitCount = 0;
+        this.totalLinesAdded = 0;
+        this.totalLinesRemoved = 0;
+        this.firstCommitDate = null;
+        this.mostRecentCommitDate = null;
     }
 
     public StudentProject() {
@@ -33,6 +60,13 @@ public class StudentProject {
 
     public String getProjectIdentifier() {
         return id.getProjectIdentifier();
+    }
+
+    public void updateCommitInformation(int commitCount, int totalLinesAdded, int totalLinesRemoved, String mostRecentCommitDate) {
+        setCommitCount(commitCount);
+        setTotalLinesAdded(totalLinesAdded);
+        setTotalLinesRemoved(totalLinesRemoved);
+        setMostRecentCommitDate(mostRecentCommitDate);
     }
 }
 

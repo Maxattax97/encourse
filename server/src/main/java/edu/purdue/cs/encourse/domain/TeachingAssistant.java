@@ -10,9 +10,9 @@ import javax.persistence.Table;
 @Table(name = "TEACHING_ASSISTANT")
 public class TeachingAssistant extends Student {
 
-    public TeachingAssistant(String userID, String userName, String saltPass, String firstName, String lastName,
+    public TeachingAssistant(String userID, String userName, String firstName, String lastName,
                         String middleInit, String eduEmail) {
-        super(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail, true);
+        super(userID, userName, firstName, lastName, middleInit, eduEmail, true);
     }
 
     public TeachingAssistant() {

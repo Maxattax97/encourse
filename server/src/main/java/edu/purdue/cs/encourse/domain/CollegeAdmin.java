@@ -9,9 +9,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "ADMINISTRATOR")
 public class CollegeAdmin extends Account {
-    public CollegeAdmin(String userID, String userName, String saltPass, String firstName, String lastName,
+    public CollegeAdmin(String userID, String userName, String firstName, String lastName,
                      String middleInit, String eduEmail) {
-        super(userID, userName, saltPass, firstName, lastName, Roles.ADMIN, middleInit, eduEmail);
+        super(userID, userName, firstName, lastName, Roles.ADMIN, middleInit, eduEmail);
     }
 
     public CollegeAdmin() {

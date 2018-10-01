@@ -60,15 +60,15 @@ public class AdminServicesTests {
         teachingAssistantRepository.deleteAll();
         sectionRepository.deleteAll();
         studentSectionRepository.deleteAll();
-        assertEquals(0, adminService.addAccount("1", "reed226", "a","William", "Reed",
+        assertEquals(0, adminService.addAccount("1", "reed226","William", "Reed",
                 "Admin", "J", "reed226@purdue.edu"));
-        assertEquals(0, adminService.addAccount("2", "grr", "b", "Gustavo", "Rodriguez-Rivera",
+        assertEquals(0, adminService.addAccount("2", "grr", "Gustavo", "Rodriguez-Rivera",
                 "Professor", null, "grr@purdue.edu"));
-        assertEquals(0, adminService.addAccount("3", "kleclain", "c", "Killian", "LeClainche",
+        assertEquals(0, adminService.addAccount("3", "kleclain", "Killian", "LeClainche",
                 "Student", "A", "kleclain@purdue.edu"));
-        assertEquals(0, adminService.addAccount("4", "dkrolopp", "d", "Daniel", "Krolopp",
+        assertEquals(0, adminService.addAccount("4", "dkrolopp", "Daniel", "Krolopp",
                 "TA", "J", "dkrolopp@purdue.edu"));
-        assertEquals(0, adminService.addAccount("5", "buckmast", "e", "Jordan", "Buckmaster",
+        assertEquals(0, adminService.addAccount("5", "buckmast", "Jordan", "Buckmaster",
                 "Student", "M", "buckmast@purdue.edu"));
         assertEquals(0, adminService.addSection("1234", "Fall2018", "cs250", "Hardware", "Lab1"));
         assertEquals(0, adminService.addSection("1235", "Fall2018", "cs250", "Hardware", "Lab2"));
@@ -87,24 +87,23 @@ public class AdminServicesTests {
 
     @Test
     public void testAccountRetrieval() {
-        Account account = accountService.retrieveAccount("reed226", "a");
+        Account account = accountService.retrieveAccount("reed226");
         assertEquals("1", account.getUserID());
         assertEquals("reed226", account.getUserName());
-        assertNull(account.getSaltPass());
         assertEquals("William", account.getFirstName());
         assertEquals("Reed", account.getLastName());
         assertEquals(Account.Roles.ADMIN, account.getRole());
         assertEquals("J", account.getMiddleInit());
         assertEquals("reed226@purdue.edu", account.getEduEmail());
-        CollegeAdmin admin = accountService.retrieveAdmin("reed226", "a");
+        CollegeAdmin admin = accountService.retrieveAdmin("reed226");
         assertEquals("William", admin.getFirstName());
-        Professor professor = accountService.retrieveProfessor("grr", "b");
+        Professor professor = accountService.retrieveProfessor("grr");
         assertEquals("Gustavo", professor.getFirstName());
-        Student student = accountService.retrieveStudent("kleclain", "c");
+        Student student = accountService.retrieveStudent("kleclain");
         assertEquals("Killian", student.getFirstName());
-        TeachingAssistant teachingAssistant = accountService.retrieveTA("dkrolopp", "d");
+        TeachingAssistant teachingAssistant = accountService.retrieveTA("dkrolopp");
         assertEquals("Daniel", teachingAssistant.getFirstName());
-        student = accountService.retrieveStudent("dkrolopp", "d");
+        student = accountService.retrieveStudent("dkrolopp");
         assertEquals("Daniel", student.getFirstName());
         assertFalse(studentRepository.existsByUserID("grr"));
     }
