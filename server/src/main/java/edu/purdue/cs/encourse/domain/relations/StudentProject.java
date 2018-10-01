@@ -40,6 +40,10 @@ public class StudentProject {
     @Setter
     private String mostRecentCommitDate;
 
+    /** Time spend in hours on the project **/
+    @Setter
+    private double totalTimeSpent;
+
     public StudentProject(String userID, String projectIdentifier) {
         this.id = new StudentProjectID(userID, projectIdentifier);
         this.currentGrade = null;
@@ -48,6 +52,8 @@ public class StudentProject {
         this.totalLinesRemoved = 0;
         this.firstCommitDate = null;
         this.mostRecentCommitDate = null;
+        this.mostRecentCommitDate = null;
+        this.totalTimeSpent = 0.0;
     }
 
     public StudentProject() {
@@ -62,11 +68,12 @@ public class StudentProject {
         return id.getProjectIdentifier();
     }
 
-    public void updateCommitInformation(int commitCount, int totalLinesAdded, int totalLinesRemoved, String mostRecentCommitDate) {
+    public void updateCommitInformation(int commitCount, int totalLinesAdded, int totalLinesRemoved, String mostRecentCommitDate, double totalTimeSpent) {
         setCommitCount(commitCount);
         setTotalLinesAdded(totalLinesAdded);
         setTotalLinesRemoved(totalLinesRemoved);
         setMostRecentCommitDate(mostRecentCommitDate);
+        setTotalTimeSpent(totalTimeSpent);
     }
 }
 

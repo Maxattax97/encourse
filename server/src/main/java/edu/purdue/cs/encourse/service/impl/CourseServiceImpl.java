@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.Executors;
 
 @Service(value = CourseServiceImpl.NAME)
@@ -58,20 +60,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     public List<Section> getSectionsBySemesterAndCourseID(@NonNull String semester, @NonNull String courseID) {
-        List<Section> sections = sectionRepository.findByCourseID(courseID);
-        List<Section> filteredSections = new ArrayList<>();
-        for(Section s : sections) {
-            if(s.getSemester().equals(semester)) {
-                filteredSections.add(s);
-            }
-        }
-        return filteredSections;
+        return sectionRepository.findBySemesterAndCourseID(semester, courseID);
 
     }
 
     /** Mainly needed to populate the database when course hub already exists **/
     public int setDirectory(@NonNull String semester, @NonNull String courseID){
-        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
         if(sections.isEmpty()) {
             return -1;
         }
@@ -88,7 +83,7 @@ public class CourseServiceImpl implements CourseService {
     /** Creates a directory containing a directory for every student in the course. Each of those student directories
      will contain all of the cloned repositories that is being used to track git information **/
     public int createDirectory(@NonNull String semester, @NonNull String courseID){
-        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
         if(sections.isEmpty()) {
             return -1;
         }
@@ -113,7 +108,7 @@ public class CourseServiceImpl implements CourseService {
 
     /** Sets the location of the git repositories for every section under a particular courseID **/
     public int setSectionRemotePaths(@NonNull String semester, @NonNull String courseID, @NonNull String remotePath) {
-        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
         if(sections.isEmpty()) {
             return -1;
         }
@@ -127,10 +122,13 @@ public class CourseServiceImpl implements CourseService {
         return code;
     }
 
-    public JSONObject getCourseInfoByCourseID(@NonNull String semester, @NonNull String courseID) {
-        List<Section> sections = getSectionsBySemesterAndCourseID(semester, courseID);
+    /** Retrieves basic data for all students in course, including name, userName, and simple project info **/
+    public JSONArray getStudentData(@NonNull String semester, @NonNull String courseID) {
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
+        if(sections.isEmpty()) {
+            return null;
+        }
         List<String> completedStudents = new ArrayList<>();
-        JSONObject courseInfoJSON = new JSONObject();
         JSONArray studentsJSON = new JSONArray();
         for(Section section : sections) {
             List<StudentSection> studentSections = studentSectionRepository.findByIdSectionIdentifier(section.getSectionIdentifier());
@@ -139,18 +137,65 @@ public class CourseServiceImpl implements CourseService {
                 if(!(completedStudents.contains(student.getUserID()))) {
                     completedStudents.add(student.getUserID());
                     List<StudentProject> studentProjects = studentProjectRepository.findByIdStudentID(student.getUserID());
-
-                    // TODO: Do something with student projects
-
+                    Map<String, Double> grades = parseProgressForProjects(studentProjects);
+                    Map<String, Integer> commitCounts = new TreeMap<>();
+                    Map<String, Double> timeSpent = new TreeMap<>();
+                    for(StudentProject p : studentProjects) {
+                        commitCounts.put(p.getProjectIdentifier(), p.getCommitCount());
+                        timeSpent.put(p.getProjectIdentifier(), p.getTotalTimeSpent());
+                    }
                     JSONObject studentJSON = new JSONObject();
                     studentJSON.put("first_name", student.getFirstName());
                     studentJSON.put("last_name", student.getLastName());
-                    studentJSON.put("id", student.getUserID());
+                    studentJSON.put("id", student.getUserName());
+                    studentJSON.put("grades", grades);
+                    studentJSON.put("commitCounts", commitCounts);
+                    studentJSON.put("timeSpend", timeSpent);
                     studentsJSON.add(studentJSON);
                 }
             }
         }
-        courseInfoJSON.put("students", studentsJSON);
-        return courseInfoJSON;
+        return studentsJSON;
+    }
+
+    /** Retrieves basic data for all projects in the course **/
+    public JSONArray getProjectData(@NonNull String semester, @NonNull String courseID) {
+        List<Project> projects = projectRepository.findBySemesterAndCourseID(semester, courseID);
+        if(projects.isEmpty()) {
+            return null;
+        }
+        JSONArray projectsJSON = new JSONArray();
+        for(Project p : projects) {
+            JSONObject projectJSON = new JSONObject();
+            projectJSON.put("project_name", p.getProjectName());
+            projectJSON.put("source_name", p.getRepoName());
+            projectJSON.put("start_date", p.getStartDate());
+            projectJSON.put("due_date", p.getDueDate());
+            projectJSON.put("id", p.getProjectIdentifier());
+            projectsJSON.add(projectJSON);
+        }
+        return projectsJSON;
+    }
+
+
+    private Map<String, Double> parseProgressForProjects(List<StudentProject> projects) {
+        Map<String, Double> grades = new TreeMap<>();
+        int code = 0;
+        for(StudentProject p : projects) {
+            if(p.getCurrentGrade() == null) {
+                code--;
+                grades.put(p.getProjectIdentifier(), 0.0);
+                continue;
+            }
+            String[] testResults = p.getCurrentGrade().split(" ");
+            double passedCount = 0.0;
+            for(String r : testResults) {
+                if(r.endsWith("P")) {
+                    passedCount++;
+                }
+            }
+            grades.put(p.getProjectIdentifier(), passedCount / testResults.length);
+        }
+        return grades;
     }
 }

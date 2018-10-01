@@ -68,18 +68,6 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    private List<Section> getSectionsBySemesterAndCourseID(@NonNull String semester, @NonNull String courseID) {
-        List<Section> sections = sectionRepository.findByCourseID(courseID);
-        List<Section> filteredSections = new ArrayList<>();
-        for(Section s : sections) {
-            if(s.getSemester().equals(semester)) {
-                filteredSections.add(s);
-            }
-        }
-        return filteredSections;
-
-    }
-
     /** Adds a new project to the database, which needs to be done before cloning the project in the course hub **/
     public int addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate) {
         Project project = new Project(courseID, semester, projectName, repoName, startDate, dueDate);
@@ -98,7 +86,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(project == null) {
             return -1;
         }
-        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         List<String> completedStudents = new ArrayList<>();
         for(Section s : sections) {
             List<StudentSection> assignments = studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
@@ -172,7 +160,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(project == null) {
             return -1;
         }
-        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         if(sections.isEmpty()) {
             return -2;
         }
@@ -212,7 +200,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(project == null) {
             return -1;
         }
-        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         if(sections.isEmpty()) {
             return -2;
         }
@@ -250,7 +238,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(project == null) {
             return null;
         }
-        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         if(sections.isEmpty()) {
             return null;
         }
@@ -272,7 +260,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(project == null) {
             return null;
         }
-        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         if(sections.isEmpty()) {
             return null;
         }
@@ -294,7 +282,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(project == null) {
             return null;
         }
-        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         if(sections.isEmpty()) {
             return null;
         }
@@ -318,7 +306,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(project == null) {
             return null;
         }
-        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         if(sections.isEmpty()) {
             return null;
         }
@@ -342,7 +330,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(project == null) {
             return -1;
         }
-        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         if(sections.isEmpty()) {
             return -2;
         }
@@ -369,7 +357,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(project == null) {
             return -1;
         }
-        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         if(sections.isEmpty()) {
             return -2;
         }
@@ -403,7 +391,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(project == null) {
             return -1;
         }
-        List<Section> sections = getSectionsBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         if(sections.isEmpty()) {
             return -2;
         }
