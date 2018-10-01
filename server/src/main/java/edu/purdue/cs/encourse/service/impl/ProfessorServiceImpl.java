@@ -296,7 +296,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(sections.isEmpty()) {
             return null;
         }
-        Student student = studentRepository.findByUserID(userName);
+        Student student = studentRepository.findByUserName(userName);
         if(student == null) {
             return null;
         }
@@ -319,7 +319,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(sections.isEmpty()) {
             return null;
         }
-        Student student = studentRepository.findByUserID(userName);
+        Student student = studentRepository.findByUserName(userName);
         if(student == null) {
             return null;
         }
