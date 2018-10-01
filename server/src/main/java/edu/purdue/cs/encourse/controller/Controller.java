@@ -57,9 +57,9 @@ public class Controller {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/commitData", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getCommitData() {
+    public @ResponseBody ResponseEntity<?> getCommitData(@RequestParam(name = "projectID") String projectID) {
         // TODO: RYAN PUT YOUR SHIT HERE
-        JSONReturnable returnJson = professorService.getCommitData();
+        JSONReturnable returnJson = professorService.countAllCommitsByDay(projectID);
         String json = returnJson.jsonObject.toJSONString();
         User loggedIn = getUserFromAuth();
         // loggedIn.getUsername()

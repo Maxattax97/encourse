@@ -27,6 +27,6 @@ public interface ProfessorService {
     int assignTeachingAssistantToStudent(@NonNull String teachAssistUserName, @NonNull String studentUserName);
 
     int testPythonDirectory();
-    JSONReturnable getCommitData();
-    JSONReturnable getProgressHistogram(@NonNull String studentID);
+    JSONReturnable getCommitData(@NonNull String filePath);
+    JSONReturnable getProgressHistogram(@NonNull String filePath, @NonNull String studentID);
 }

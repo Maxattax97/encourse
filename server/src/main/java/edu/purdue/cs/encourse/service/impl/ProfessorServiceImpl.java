@@ -261,10 +261,8 @@ public class ProfessorServiceImpl implements ProfessorService {
             String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
             executeBashScript("countCommits.sh " + destPath + " " + fileName + " " + student.getUserName());
         }
-
-        // TODO: Call and receive input from python script
-
-        return null;
+        JSONReturnable json = getCommitData(fileName);
+        return json;
     }
 
     /** Counts the total number of commits made each day that the project was active **/
@@ -284,10 +282,8 @@ public class ProfessorServiceImpl implements ProfessorService {
             String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
             executeBashScript("countCommitsByDay.sh " + destPath + " " + fileName + " " + student.getUserName());
         }
-
-        // TODO: Call and receive input from python script
-
-        return null;
+        JSONReturnable json = getCommitData(fileName);
+        return json;
     }
 
     /** Counts the number of commits that a single student has made for each day that the project is active **/
@@ -309,10 +305,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(executeBashScript("countCommitsByDay.sh " + destPath + " " + fileName + " " + student.getUserName()) == -1) {
             return null;
         }
-
-        // TODO: Call and receive input from python script
-
-        return null;
+        JSONReturnable json = getCommitData(fileName);
+        return json;
     }
 
     /** Lists various information about git history, including commit time and dates, and files modified in each commit **/
@@ -334,10 +328,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(executeBashScript("listCommitsByTime.sh " + destPath + " " + fileName + " " + student.getUserName()) == -1) {
             return null;
         }
-
-        // TODO: Call and receive input from python script
-
-        return null;
+        JSONReturnable json = getProgressHistogram(fileName, userName);
+        return json;
     }
 
     /** Uploads a testing script to testcases directory in the course hub **/
@@ -484,12 +476,10 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
     }
 
-    public JSONReturnable getCommitData() {
-        String filePath = pythonPath + "getStatistics.py";
-        String timeFilePath = pythonPath + "sampleCountsDay.txt";
-        String countFilePath = pythonPath + "sampleCounts.txt";
+    public JSONReturnable getCommitData(@NonNull String filePath) {
+        String pyPath = pythonPath + "getStatistics.py";
         try {
-            Process process = Runtime.getRuntime().exec("python " + filePath + " " + timeFilePath + " " + countFilePath);
+            Process process = Runtime.getRuntime().exec("python " + pyPath + " " + filePath + " " + filePath);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String input = null;
@@ -521,11 +511,10 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
     }
 
-    public JSONReturnable getProgressHistogram(@NonNull String studentID) {
-        String filePath = pythonPath + "getProgressHistogram.py";
-        String changeListFile = pythonPath + "sampleCommitList.txt";
+    public JSONReturnable getProgressHistogram(@NonNull String filePath, @NonNull String userName) {
+        String pyPath = pythonPath + "getProgressHistogram.py";
         try {
-            Process process = Runtime.getRuntime().exec("python " +  filePath + " " + studentID + " " + changeListFile);
+            Process process = Runtime.getRuntime().exec("python " +  pyPath + " " + userName + " " + filePath);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String input = null;
@@ -550,7 +539,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     } else if (obj.getClass() == JSONArray.class) {
                         jsonObject = new JSONObject();
                         JSONArray jsonArray = (JSONArray)obj;
-                        jsonObject.put(studentID, jsonArray);
+                        jsonObject.put(userName, jsonArray);
                     } else {
                         return new JSONReturnable(-4, null);
                     }
