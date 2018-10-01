@@ -255,13 +255,14 @@ public class ProfessorServiceImpl implements ProfessorService {
             return null;
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String fileName = "./src/main/temp/" + Long.toString(Math.round(Math.random() * 1000000));
+        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
         for(StudentProject s : projects) {
             Student student = studentRepository.findByUserID(s.getStudentID());
             String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
             executeBashScript("countCommits.sh " + destPath + " " + fileName + " " + student.getUserName());
         }
         JSONReturnable json = getCommitData(fileName);
+        executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
@@ -276,13 +277,14 @@ public class ProfessorServiceImpl implements ProfessorService {
             return null;
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String fileName = "./src/main/temp/" + Long.toString(Math.round(Math.random() * 1000000));
+        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
         for(StudentProject s : projects) {
             Student student = studentRepository.findByUserID(s.getStudentID());
             String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
             executeBashScript("countCommitsByDay.sh " + destPath + " " + fileName + " " + student.getUserName());
         }
         JSONReturnable json = getCommitData(fileName);
+        executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
@@ -300,12 +302,13 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(student == null) {
             return null;
         }
-        String fileName = "./src/main/temp/" + Long.toString(Math.round(Math.random() * 1000000));
+        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
         if(executeBashScript("countCommitsByDay.sh " + destPath + " " + fileName + " " + student.getUserName()) == -1) {
             return null;
         }
         JSONReturnable json = getCommitData(fileName);
+        executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
@@ -323,12 +326,13 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(student == null) {
             return null;
         }
-        String fileName = "./src/main/temp/" + Long.toString(Math.round(Math.random() * 1000000));
+        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
         if(executeBashScript("listCommitsByTime.sh " + destPath + " " + fileName + " " + student.getUserName()) == -1) {
             return null;
         }
         JSONReturnable json = getProgressHistogram(fileName, userName);
+        executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
@@ -342,10 +346,12 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(sections.isEmpty()) {
             return -2;
         }
+        new File(sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName()).mkdirs();
         String filePath = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName() + "/" + testName;
         try {
-            FileWriter testScript = new FileWriter(filePath);
-            testScript.write(testContents);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+            writer.write(testContents);
+            writer.close();
         }
         catch(IOException e) {
             return -3;
