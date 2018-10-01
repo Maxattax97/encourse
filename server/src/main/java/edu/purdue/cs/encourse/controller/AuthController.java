@@ -51,9 +51,10 @@ public class AuthController {
         return new ResponseEntity<>("{ \"result\": " + result + ",\"response\": " + response + " }", status);
     }
 
+    // TODO: Adjust how frontend calls this endpoint
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/create/account", method = RequestMethod.POST, consumes = "application/json")
-    public @ResponseBody ResponseEntity<?> createAccount(@RequestBody String json) {
+    public @ResponseBody ResponseEntity<?> createAccount(@RequestParam(name = "password") String password, @RequestBody String json) {
 
         int result;
         User user;
@@ -79,8 +80,8 @@ public class AuthController {
                     userType = "STUDENT";
                     accountType = "Student";
             }
-            result = adminService.addAccount(a.getUserID(), a.getUserName(), a.getSaltPass(), a.getFirstName(), a.getLastName(), accountType, a.getMiddleInit(), a.getEduEmail());
-            user = adminService.addUser(a.getUserName(), a.getSaltPass(), userType, false, false, false, true);
+            result = adminService.addAccount(a.getUserID(), a.getUserName(), a.getFirstName(), a.getLastName(), accountType, a.getMiddleInit(), a.getEduEmail());
+            user = adminService.addUser(a.getUserName(), password, userType, false, false, false, true);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -120,7 +121,7 @@ public class AuthController {
     private Account getAccountFromAuth() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         User user = ((User)securityContext.getAuthentication().getPrincipal());
-        return accountService.retrieveAccount(user.getUsername(), user.getPassword());
+        return accountService.retrieveAccount(user.getUsername());
     }
 
     private User getUserFromAuth() {

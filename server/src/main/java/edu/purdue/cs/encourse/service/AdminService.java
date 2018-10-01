@@ -1,6 +1,8 @@
 package edu.purdue.cs.encourse.service;
 
 import edu.purdue.cs.encourse.domain.*;
+import lombok.NonNull;
+
 import java.util.List;
 
 
@@ -9,27 +11,27 @@ import java.util.List;
 public interface AdminService {
 
     /** Services for adding any type of account to all relevant tables **/
-    int addAccount(String userID, String userName, String saltPass, String firstName, String lastName,
-                   String type, String middleInit, String eduEmail);
-    int addStudent(String userID, String userName, String saltPass, String firstName, String lastName, String middleInit, String eduEmail);
-    int addTA(String userID, String userName, String saltPass, String firstName, String lastName, String middleInit, String eduEmail);
-    int addProfessor(String userID, String userName, String saltPass, String firstName, String lastName, String middleInit, String eduEmail);
-    int addAdmin(String userID, String userName, String saltPass, String firstName, String lastName, String middleInit, String eduEmail);
+    int addAccount(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName,
+                   @NonNull String type, String middleInit, String eduEmail);
+    int addStudent(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail);
+    int addTA(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail);
+    int addProfessor(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail);
+    int addAdmin(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail);
 
     /** Services for modifying any type of account in all relevant tables **/
-    int modifyAccount(String userName, String field, String value);
-    int modifyStudent(Account account, String field, String value);
-    int modifyTA(Account account, String field, String value);
-    int modifyProfessor(Account account, String field, String value);
-    int modifyAdmin(Account account, String field, String value);
+    int modifyAccount(@NonNull String userName, @NonNull String field, String value);
+    int modifyStudent(@NonNull Account account, @NonNull String field, String value);
+    int modifyTA(@NonNull Account account, @NonNull String field, String value);
+    int modifyProfessor(@NonNull Account account, @NonNull String field, String value);
+    int modifyAdmin(@NonNull Account account, @NonNull String field, String value);
 
     /** Services for manipulating courses and sections **/
-    int addSection(String CRN, String semester, String courseID, String courseTitle, String sectionType);
-    int assignProfessorToCourse(String userName, String courseID, String semester);
-    int registerStudentToSection(String userName, String courseID, String semester, String sectionType);
-    int hireStudentAsTeachingAssistant(String userName);
+    int addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType);
+    int assignProfessorToCourse(@NonNull String userName, @NonNull String courseID, @NonNull String semester);
+    int registerStudentToSection(@NonNull String userName, @NonNull String courseID, @NonNull String semester, @NonNull String sectionType);
+    int hireStudentAsTeachingAssistant(@NonNull String userName);
 
     /** Services for authentication **/
-    User addUser(String userName, String password, String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled);
+    User addUser(@NonNull String userName, @NonNull String password, @NonNull String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled);
     List<User> findAllUsers();
 }

@@ -5,6 +5,7 @@ import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.ProfessorCourse;
 import edu.purdue.cs.encourse.domain.relations.StudentSection;
 import edu.purdue.cs.encourse.service.AdminService;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +47,7 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private AuthorityRepository authorityRepository;
 
-    public User addUser(String userName, String password, String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled) {
+    public User addUser(@NonNull String userName, @NonNull String password, @NonNull String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled) {
         Authority auth = authorityRepository.findDistinctByName(authority);
         if (auth == null) {
             auth = authorityRepository.findDistinctByName("STUDENT");
@@ -65,21 +66,21 @@ public class AdminServiceImpl implements AdminService {
         return user;
     }
 
-    public int addAccount(String userID, String userName, String saltPass, String firstName, String lastName,
-                          String type, String middleInit, String eduEmail) {
+    public int addAccount(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName,
+                          @NonNull String type, String middleInit, String eduEmail) {
         int result;
         switch(type) {
-            case "Student": result = addStudent(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail); break;
-            case "TA": result = addTA(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail); break;
-            case "Professor": result = addProfessor(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail); break;
-            case "Admin": result = addAdmin(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail); break;
+            case "Student": result = addStudent(userID, userName, firstName, lastName, middleInit, eduEmail); break;
+            case "TA": result = addTA(userID, userName, firstName, lastName, middleInit, eduEmail); break;
+            case "Professor": result = addProfessor(userID, userName, firstName, lastName, middleInit, eduEmail); break;
+            case "Admin": result = addAdmin(userID, userName, firstName, lastName, middleInit, eduEmail); break;
             default: result = -1;
         }
         return result;
     }
 
-    public int addStudent(String userID, String userName, String saltPass, String firstName, String lastName, String middleInit, String eduEmail) {
-        Student student = new Student(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail);
+    public int addStudent(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
+        Student student = new Student(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(student.getUserID())) {
             return -2;
         }
@@ -89,8 +90,8 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int addTA(String userID, String userName, String saltPass, String firstName, String lastName, String middleInit, String eduEmail) {
-        TeachingAssistant teachingAssistant = new TeachingAssistant(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail);
+    public int addTA(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
+        TeachingAssistant teachingAssistant = new TeachingAssistant(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(teachingAssistant.getUserID())) {
             return -5;
         }
@@ -100,8 +101,8 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int addProfessor(String userID, String userName, String saltPass, String firstName, String lastName, String middleInit, String eduEmail) {
-        Professor professor = new Professor(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail);
+    public int addProfessor(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
+        Professor professor = new Professor(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(professor.getUserID())) {
             return -9;
         }
@@ -111,8 +112,8 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int addAdmin(String userID, String userName, String saltPass, String firstName, String lastName, String middleInit, String eduEmail) {
-        CollegeAdmin admin = new CollegeAdmin(userID, userName, saltPass, firstName, lastName, middleInit, eduEmail);
+    public int addAdmin(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
+        CollegeAdmin admin = new CollegeAdmin(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(admin.getUserID())) {
             return -12;
         }
@@ -122,7 +123,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int modifyAccount(String userName, String field, String value) {
+    public int modifyAccount(@NonNull String userName, @NonNull String field, String value) {
         Account account = accountRepository.findByUserName(userName);
         if(account == null) {
             return -1;
@@ -146,7 +147,7 @@ public class AdminServiceImpl implements AdminService {
         return result;
     }
 
-    public int modifyStudent(Account account, String field, String value){
+    public int modifyStudent(@NonNull Account account, @NonNull String field, String value){
         Student student = studentRepository.findByUserID(account.getUserID());
         student.copyAccount(account);
         if(accountRepository.save(student) == null) {
@@ -155,7 +156,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int modifyTA(Account account, String field, String value) {
+    public int modifyTA(@NonNull Account account, @NonNull String field, String value) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(account.getUserID());
         teachingAssistant.copyAccount(account);
         if(accountRepository.save(teachingAssistant) == null) {
@@ -164,7 +165,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int modifyProfessor(Account account, String field, String value) {
+    public int modifyProfessor(@NonNull Account account, @NonNull String field, String value) {
         Professor professor = professorRepository.findByUserID(account.getUserID());
         professor.copyAccount(account);
         if(accountRepository.save(professor) == null) {
@@ -173,7 +174,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int modifyAdmin(Account account, String field, String value) {
+    public int modifyAdmin(@NonNull Account account, @NonNull String field, String value) {
         CollegeAdmin admin = adminRepository.findByUserID(account.getUserID());
         admin.copyAccount(account);
         if(accountRepository.save(admin) == null) {
@@ -182,7 +183,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int addSection(String CRN, String semester, String courseID, String courseTitle, String sectionType) {
+    public int addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType) {
         Section section = new Section(CRN, semester, courseID, courseTitle, sectionType);
         if(sectionRepository.existsBySectionIdentifier(section.getSectionIdentifier())) {
             return -1;
@@ -193,7 +194,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int assignProfessorToCourse(String userName, String courseID, String semester) {
+    public int assignProfessorToCourse(@NonNull String userName, @NonNull String courseID, @NonNull String semester) {
         Professor professor = professorRepository.findByUserName(userName);
         if(professor == null) {
             return -1;
@@ -201,7 +202,6 @@ public class AdminServiceImpl implements AdminService {
         if(sectionRepository.findByCourseID(courseID).isEmpty()) {
             return -2;
         }
-        System.out.println("\n\n\n" + professor.getUserID() + " " + courseID + " " + semester + "\n\n\n");
         ProfessorCourse assignment = new ProfessorCourse(professor.getUserID(), courseID, semester);
         if(professorCourseRepository.save(assignment) == null) {
             return -3;
@@ -209,7 +209,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int registerStudentToSection(String userName, String courseID, String semester, String sectionType) {
+    public int registerStudentToSection(@NonNull String userName, @NonNull String courseID, @NonNull String semester, @NonNull String sectionType) {
         Student student = studentRepository.findByUserName(userName);
         if(student == null) {
             return -1;
@@ -225,7 +225,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int hireStudentAsTeachingAssistant(String userName) {
+    public int hireStudentAsTeachingAssistant(@NonNull String userName) {
         Account account = accountRepository.findByUserName(userName);
         if(account == null) {
             return -1;
@@ -238,7 +238,7 @@ public class AdminServiceImpl implements AdminService {
             return -3;
         }
         TeachingAssistant teachingAssistant =
-                new TeachingAssistant(account.getUserID(), account.getUserName(), account.getSaltPass(), account.getFirstName(),
+                new TeachingAssistant(account.getUserID(), account.getUserName(), account.getFirstName(),
                                         account.getLastName(), account.getMiddleInit(), account.getEduEmail());
         accountRepository.delete(account);
         studentRepository.delete(student);

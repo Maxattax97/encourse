@@ -18,10 +18,6 @@ public class Account {
     /** More identifiable key for all account types **/
     private String userName;
 
-    /** Salted password for the account **/
-    @Setter
-    private String saltPass;
-
     /** Name for display purposes **/
     @Setter
     private String firstName;
@@ -45,11 +41,10 @@ public class Account {
         public static final int ADMIN = 3;
     }
 
-    public Account(String userID, String userName, String saltPass, String firstName, String lastName,
+    public Account(String userID, String userName, String firstName, String lastName,
                    int role, String middleInit, String eduEmail) {
         this.userID = userID;
         this.userName = userName;
-        this.saltPass = saltPass;
         this.firstName = firstName;
         this.lastName = lastName;
         this.role = role;
@@ -62,7 +57,6 @@ public class Account {
     }
 
     public void copyAccount(Account account) {
-        setSaltPass(account.getSaltPass());
         setFirstName(account.getFirstName());
         setLastName(account.getLastName());
         setMiddleInit(account.getMiddleInit());
