@@ -30,3 +30,6 @@ src/main/java/edu/purdue/cs/encourse/security/StartupFeed.java
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### Python ###
+/src/main/python/test_datasets/
