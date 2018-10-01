@@ -129,13 +129,6 @@ public class AuthController {
         return ((User)securityContext.getAuthentication().getPrincipal());
     }
 
-    private List<String> getUsersFromSessionRegistry() {
-        return sessionRegistry.getAllPrincipals().stream()
-                .filter(u -> !sessionRegistry.getAllSessions(u, false).isEmpty())
-                .map(Object::toString)
-                .collect(Collectors.toList());
-    }
-
     private int logout(User user) {
         List<Object> objs = sessionRegistry.getAllPrincipals();
         List<User> users = new ArrayList<>();

@@ -517,7 +517,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 System.out.println(error);
             }*/
             while ((input = stdInput.readLine()) != null) {
-                System.out.println(input);
+                System.out.println("INPUT: " + input);
                 JSONParser jsonParser = new JSONParser();
                 Object obj = null;
                 try {
@@ -539,7 +539,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     }
                     JSONReturnable jsonReturn = new JSONReturnable(1, jsonObject);
                     //System.out.println(jsonObject.toString());
-                    System.out.println(jsonReturn.jsonObject.toJSONString());
+                    System.out.println("JSONRETURN OBJECT: " + jsonReturn.jsonObject.toJSONString());
                     return jsonReturn;
                 }
             }
