@@ -4,6 +4,7 @@
 # Argument 2 is the directory that contains all uploaded testing scripts for the assignment
 
 DIRECTORY="$(pwd)"
+mkdir -p $1
 cd $1
 ls $2 | while read t; do
     printf "${t}:"
@@ -13,4 +14,3 @@ ls $2 | while read t; do
     fi
 done
 cd "${DIRECTORY}"
-printf "\n"
