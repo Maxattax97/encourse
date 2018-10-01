@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import settingsIcon from '../../img/settings.svg'
 import backIcon from "../../img/back.svg"
+import plusIcon from "../../img/plus.svg"
 import Card from "../Card";
 
 class ProjectNavigation extends Component {
@@ -34,6 +35,9 @@ class ProjectNavigation extends Component {
                                     className={this.props.currentProject === index ? "projects-highlight" : ""}
                                     key={project.id} onClick={() => this.props.projectClick(index)}>{project.name}</h4>)
                             }
+                            <div className="projects-new">
+                                <img src={plusIcon} />
+                            </div>
                         </div>
                     } />
                 </div>
