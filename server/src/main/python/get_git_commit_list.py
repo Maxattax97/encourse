@@ -3,7 +3,7 @@ import json
 import copy
 from datetime import datetime
 from helper import time_string
-from add_del import get_daily_commit_data as get_progress
+from daily_git_data import get_daily_commit_data as get_progress
 
 def date_string(date):
     #print(date)
