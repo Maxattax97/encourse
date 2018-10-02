@@ -73,15 +73,15 @@ class ProjectOptions extends Component {
                 <h4 className="header">
                     Source Name
                 </h4>
-                <input type="text" className="h3-size" value={this.state.source_name} onChange={this.onChange} name="source_name" ref="source_name"/>
+                <input type="text" className="h3-size" value={this.state.source_name} placeholder="Ex. lab1-src, lab2, ..." onChange={this.onChange} name="source_name" ref="source_name"/>
                 <h4 className="header">
                     Created Date
                 </h4>
-                <input type="text" className="h3-size" value={this.state.created_date} onChange={this.onChange} name="created_date" ref="created_date"/>
+                <input type="text" className="h3-size" value={this.state.created_date} placeholder="MM-DD-YYYY" onChange={this.onChange} name="created_date" ref="created_date"/>
                 <h4 className="header">
                     Due Date
                 </h4>
-                <input type="text" className="h3-size" value={this.state.due_date} onChange={this.onChange} name="due_date" ref="due_date"/>
+                <input type="text" className="h3-size" value={this.state.due_date} placeholder="MM-DD-YYYY" onChange={this.onChange} name="due_date" ref="due_date"/>
                 <h4 className="header">
                     Test Script
                 </h4>

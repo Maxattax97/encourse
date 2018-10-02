@@ -164,7 +164,7 @@ class StudentPanel extends Component {
                             <Card component={<CommitFrequencyHistogram/>}/>
                         </div>
                         <h2 className="break-line" />
-                        <div className="student-stats-comments">
+                        <div className="student-stats-comments float-height">
                             <Card component={
                                 <div className="student-stats-container">
                                     <div className="title">
@@ -184,6 +184,14 @@ class StudentPanel extends Component {
                                                 }
                                             </div>)
                                     }
+                                </div>
+                            } />
+                            <Card component={
+                                <div className="student-feedback-container">
+                                    <div className="title">
+                                        <h3>Feedback</h3>
+                                    </div>
+                                    <h3 className="break-line title" />
                                 </div>
                             } />
                         </div>
@@ -222,12 +230,12 @@ const mapStateToProps = (state) => {
     return {
         currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
     }
-}
+};
   
 const mapDispatchToProps = (dispatch) => {
     return {
 
     }
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(StudentPanel)

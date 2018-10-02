@@ -9,17 +9,20 @@
 
 .panel-student-content .student-stats-comments {
 
+  position:relative;
+
   .card {
     margin: 0;
   }
 
   .card:first-child {
-    width: 33%;
+    width: 33.5%;
     padding-right: 32px;
   }
 
   .card:nth-child(2) {
-    width:66%;
+    width:66.5%;
+    height: 100%;
   }
 
   .component {
