@@ -11,6 +11,7 @@ import edu.purdue.cs.encourse.service.AdminService;
 import edu.purdue.cs.encourse.service.CourseService;
 import edu.purdue.cs.encourse.service.ProfessorService;
 import edu.purdue.cs.encourse.util.JSONReturnable;
+import org.json.simple.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,34 +69,64 @@ public class Controller {
         return new ResponseEntity<>(result, status);
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/commitData", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getCommitData(@RequestParam(name = "projectID") String projectID) {
-        // TODO: RYAN PUT YOUR SHIT HERE
-        JSONReturnable returnJson = professorService.countAllCommitsByDay(projectID);
-        String json = returnJson.jsonObject.toJSONString();
-        User loggedIn = getUserFromAuth();
-        // loggedIn.getUsername()
-        // professorService.getCommitData(loggedIn.getUsername());
-        // json = JSONObject.toString();r
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/studentsData", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getStudentData(@RequestParam(name = "courseID") String courseID,
+                                                          @RequestParam(name = "semester") String semester) {
+        JSONArray json = courseService.getStudentData(semester, courseID);
+        if (json == null) {
+            return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/section/students", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getSectionStudents(@RequestParam(name = "courseID") String courseID,
-                                                              @RequestParam(name = "semester") String semester) {
-        List<StudentSection> sections = courseService.getStudentData(courseID, semester);
-        List<Student> students = new ArrayList<>();
-        for (StudentSection ss: sections) {
-            Account a = accountService.retrieveAccountByID(ss.getStudentID());
-            if (a != null) {
-                Student s = accountService.retrieveStudent(a.getUserName());
-                students.add(s);
-            }
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/projectsData", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getProjectData(@RequestParam(name = "courseID") String courseID,
+                                                          @RequestParam(name = "semester") String semester) {
+        JSONArray json = courseService.getProjectData(semester, courseID);
+        if (json == null) {
+            return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(students, HttpStatus.OK);
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/studentCommitTime", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
+                                                                  @RequestParam(name = "userName") String userName) {
+        JSONReturnable returnJson = professorService.listStudentCommitsByTime(projectID, userName);
+        if (returnJson == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NOT_FOUND);
+        }
+        String json = returnJson.jsonObject.toJSONString();
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/commitCount", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getStudentCommitCountByDay(@RequestParam(name = "projectID") String projectID,
+                                                                      @RequestParam(name = "userName", required = false) String userName,
+                                                                      @RequestParam(name = "all", required = false, defaultValue = "false") boolean all) {
+        JSONReturnable returnJson;
+        if (userName != null) {
+            returnJson = professorService.countStudentCommitsByDay(projectID, userName);
+        } else if (all) {
+            returnJson = professorService.countAllCommits(projectID);
+        } else {
+            returnJson = professorService.countAllCommitsByDay(projectID);
+        }
+        if (returnJson == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NOT_FOUND);
+        }
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NOT_FOUND);
+        }
+        String json = returnJson.jsonObject.toJSONString();
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+
 
     private User getUserFromAuth() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
