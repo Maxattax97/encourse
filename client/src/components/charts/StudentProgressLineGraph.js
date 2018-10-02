@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
 import { LineChart, CartesianGrid, XAxis, YAxis,
     Tooltip, Legend, Line, Label, ResponsiveContainer } from 'recharts'
+import { connect } from 'react-redux'
+
+import { getProgressLine } from '../../redux/actions'
 
 class StudentProgressLineGraph extends Component {
+
+    componentDidMount = () => {
+        this.props.getData(/*TODO: add endpoint*/)
+    }
+
     render() {
         const data = [
             {name: '9/10', progress: 0},
@@ -39,4 +47,18 @@ class StudentProgressLineGraph extends Component {
     }
 }
 
-export default StudentProgressLineGraph;
+const mapStateToProps = (state) => {
+  return { 
+      token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+      data: state.student && state.student.getProgressLineData ? state.student.getProgressLineData : null,
+      isLoading: state.student ? state.student.getProgressLineIsLoading : false,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+        getData: (url, headers, body) => dispatch(getProgressLine(url, headers, body))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(StudentProgressLineGraph)

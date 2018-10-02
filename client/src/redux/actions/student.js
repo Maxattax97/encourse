@@ -81,3 +81,28 @@ export function getCommitFrequencyDataSuccess(data) {
 export const getCommitFrequency = genericDispatch(
     getCommitFrequencyHasError, getCommitFrequencyIsLoading, getCommitFrequencyDataSuccess, 'GET'
 )
+
+export function getStatisticsHasError(hasError) {
+    return {
+        type: 'GET_STATISTICS_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getStatisticsIsLoading(isLoading) {
+    return {
+        type: 'GET_STATISTICS_IS_LOADING',
+        isLoading
+    }
+}
+
+export function getStatisticsDataSuccess(data) {
+    return {
+        type: 'GET_STATISTICS_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getStatistics = genericDispatch(
+    getStatisticsHasError, getStatisticsIsLoading, getStatisticsDataSuccess, 'GET'
+)
