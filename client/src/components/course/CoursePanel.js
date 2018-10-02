@@ -101,7 +101,7 @@ class CoursePanel extends Component {
     }
 
     showProjectOptions = () => {
-        this.setState({project_options: !this.state.project_options})
+        this.setState({project_options: !this.state.project_options, new_project: false})
     };
 
     showStudentPanel = (student) => {
@@ -112,6 +112,10 @@ class CoursePanel extends Component {
     updateProjectState = (project_index) => {
         this.setState({ new_project: false });
         this.props.setCurrentProject(project_index)
+    };
+
+    newProject = () => {
+        this.setState({ project_options: true, new_project: true });
     };
 
     createNewProject = () => {
@@ -133,12 +137,15 @@ class CoursePanel extends Component {
     render() {
         return (
             <div className="panel-course">
-                <ProjectNavigation titleClick={this.showProjectOptions} projectClick={this.updateProjectState} currentProject={this.props.currentProject} info={this.state.projects} />
+                <ProjectNavigation titleClick={this.showProjectOptions} projectClick={this.updateProjectState}
+                                   currentProject={this.props.currentProject} info={this.state.projects}
+                                   newProjectClick={this.newProject} />
                 <div className="panel-center-content">
                     <div className="project-options">
                         <Modal left show={this.state.project_options} onClose={() => this.setState({project_options: false})}
-                                component={<ProjectOptions projects={this.state.projects} current_project={this.props.currentProject} new_project={this.state.new_project}
-                                updateProject={{create: this.createProject, delete: this.deleteProject, change: this.changeProject}}/>}/>
+                               component={<ProjectOptions projects={this.state.projects} current_project={this.props.currentProject} new_project={this.state.new_project}
+                                                          updateProject={{create: this.createProject, delete: this.deleteProject, change: this.changeProject}}
+                                                          visible={this.state.project_options}/>}/>
                     </div>
 
                     <div className={"panel-course-content " + (this.state.project_options ? "blur" : "")}>
@@ -157,11 +164,15 @@ class CoursePanel extends Component {
                         <h3>Students</h3>
                         <div className="panel-course-students float-height">
                             {
-                                this.state.student_data.map((student) => <Card key={student.id} component={<StudentPreview info={student} project={this.props.currentProject} setCurrentProject={this.props.setCurrentProject} />} onClick={() => this.showStudentPanel(student)}/>)
+                                this.state.student_data.map((student) =>
+                                    <Card key={student.id}
+                                          component={<StudentPreview info={student} project={this.props.currentProject}
+                                                                     setCurrentProject={this.props.setCurrentProject} />}
+                                          onClick={() => this.showStudentPanel(student)}/>)
                             }
                         </div>
                     </div>
-                </div>)
+                </div>
             </div>
         )
     }
@@ -173,7 +184,7 @@ const mapStateToProps = (state) => {
         projects: state.course && state.course.getClassProjectsData ? state.course.getClassProjectsData : null,
         currentProject: state.projects && state.projects.currentProject !== undefined ? state.projects.currentProject : 2,
     }
-}
+};
   
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -182,6 +193,6 @@ const mapDispatchToProps = (dispatch) => {
         setCurrentProject: (project) => dispatch(setCurrentProject(project)),
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
     }
-}
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(CoursePanel)
+export default connect(mapStateToProps, mapDispatchToProps)(CoursePanel);

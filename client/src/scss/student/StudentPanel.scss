@@ -7,6 +7,56 @@
   transition: filter .15s ease-in;
 }
 
+.panel-student-content .student-stats-comments {
+
+  position:relative;
+
+  .card {
+    margin: 0;
+  }
+
+  .card:first-child {
+    width: 33.5%;
+    padding-right: 32px;
+  }
+
+  .card:nth-child(2) {
+    width:66.5%;
+    height: 100%;
+  }
+
+  .component {
+    width:100%;
+  }
+}
+
+.student-stats-container {
+  .student-stat {
+    float:left;
+    width:100%;
+
+    .student-stat-content {
+      float:left;
+      width: 100%;
+      padding: .5em;
+    }
+
+    h5 {
+      margin: 0;
+    }
+
+    h5:first-child {
+      width:auto;
+      float:left;
+    }
+
+    h5:nth-child(2) {
+      width: auto;
+      float:right;
+    }
+  }
+}
+
 .panel-student-side-content {
   position:fixed;
   padding-top: calc(20px + 1.17em + 40px);
@@ -15,7 +65,7 @@
   max-width: 240px;
 
   .card {
-    margin: 0;
+    margin: 0 0 30px;
   }
 
   div.title {
