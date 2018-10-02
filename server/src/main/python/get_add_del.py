@@ -24,14 +24,18 @@ def api_format_data(data):
         new_data[student] = daily_data
     return new_data
 
-if len(sys.argv) != 2:
+if len(sys.argv) != 3:
     print("USAGE: \t`python getProgressHistogram.py file1`")
     print("\tfile1 is a properly formatted commit data file")
+    print("\tname is the student for which git data is being requested")
     sys.exit()
+
 commit_data_path = sys.argv[1]
+student_id = sys.argv[2]
 commit_data_file = open(commit_data_path, "r")
 data = get_progress(commit_data_file)
 
+
 api_formatted_data = api_format_data(data)
-api_json = json.dumps(api_formatted_data)
+api_json = json.dumps(api_formatted_data[student_id])
 print(api_json)

@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 from helper import time_string
 from start_end import commit_data as commit_times
-from add_del import get_daily_commit_data as commit_list
+from daily_git_data import get_daily_commit_data as commit_list
 from test_completion import get_test_completion as test_completion
 
 def format_commit_data(dates, stats, tests):
@@ -26,14 +26,20 @@ def format_commit_data(dates, stats, tests):
             test_score = info["total"]
         user_data = {}
         if len(user_dates) == 2:
-            user_data["start"] = format_date(user_dates[0])
-            user_data["end"] = format_date(user_dates[1])
-        user_data["additions"] = additions
-        user_data["deletions"] = deletions
-        user_data["commit_count"] = count
-        user_data["time_spent"] = time_string(time)
-        user_data["current_progress"] = test_score
-        data[user] = user_data
+            user_data["Start Date"] = format_date(user_dates[0])
+            user_data["End Date"] = format_date(user_dates[1])
+        user_data["Additions"] = "{} lines".format(additions)
+        user_data["Deletions"] = "{} lines".format(deletions)
+        user_data["Commit Count"] = "{} commits".format(count)
+        user_data["Estimated Time Spent"] = time_string(time)
+        user_data["Current Test Score"] = "{}%".format(int(test_score))
+        
+        array_data = []
+        for stat_name in user_data:
+            stat_value = user_data[stat_name]
+            array_data.append({"stat_name": stat_name, "stat_value": stat_value})
+        data[user] = array_data
+
     return data
 
 def format_date(date):
@@ -66,17 +72,19 @@ def sum_statistics(data):
     return new_data
 
 # Runs on file call
-if len(sys.argv) != 4:
-    print("USAGE: python getStatistics.py file_1 file_2")
+if len(sys.argv) != 5:
+    print("USAGE: python getStatistics.py name file_1 file_2")
+    print("name is the name of the student for which statistics are being requested")
     print("file_1 should be a properly formatted commit times file")
     print("file_2 should be a properly formatted commit list file")
     print("file_3 should be a properly formatted test case file")
 
     sys.exit("Incorrect usage")
 
-commit_date_file = open(sys.argv[1], "r")
-commit_data_file = open(sys.argv[2], "r")
-test_case_file = open(sys.argv[3], "r")
+student_id = sys.argv[1]
+commit_date_file = open(sys.argv[2], "r")
+commit_data_file = open(sys.argv[3], "r")
+test_case_file = open(sys.argv[4], "r")
 
 dates_dict = commit_times(commit_date_file)
 #for user in dates_dict.keys():
@@ -94,7 +102,7 @@ test_data = test_completion(test_case_file)
 
 data = format_commit_data(dates_dict, formatted_student_data, test_data)
 #print(data)
-json = json.dumps(data)
+json = json.dumps(data[student_id])
 # Outputs json to stdout
 print(json)
 
