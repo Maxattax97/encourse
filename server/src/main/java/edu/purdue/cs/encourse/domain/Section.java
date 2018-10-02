@@ -21,8 +21,8 @@ public class Section {
 
     /** Format: FallYYYY, SpringYYYY, or SummerYYYY **/
     private String semester;
-    /** Examples: LE1, LE2, Lab6, PSO9 **/
 
+    /** Examples: LE1, LE2, Lab6, PSO9 **/
     private String sectionType;
 
     /** May be useful to track for registration purposes **/

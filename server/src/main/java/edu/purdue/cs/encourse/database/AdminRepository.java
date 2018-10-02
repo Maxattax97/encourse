@@ -8,4 +8,5 @@ public interface AdminRepository extends CrudRepository<CollegeAdmin, String> {
     CollegeAdmin findByUserID(@NonNull String userID);
     CollegeAdmin findByUserName(@NonNull String userName);
     boolean existsByUserID(@NonNull String userID);
+    boolean existsByUserName(@NonNull String userName);
 }

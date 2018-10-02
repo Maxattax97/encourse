@@ -84,8 +84,11 @@ public class AdminServiceImpl implements AdminService {
         if(accountRepository.existsByUserID(student.getUserID())) {
             return -2;
         }
-        if(accountRepository.save(student) == null) {
+        if(accountRepository.existsByUserName(student.getUserID())) {
             return -3;
+        }
+        if(accountRepository.save(student) == null) {
+            return -4;
         }
         return 0;
     }
@@ -95,8 +98,11 @@ public class AdminServiceImpl implements AdminService {
         if(accountRepository.existsByUserID(teachingAssistant.getUserID())) {
             return -5;
         }
-        if(accountRepository.save(teachingAssistant) == null) {
+        if(accountRepository.existsByUserName(teachingAssistant.getUserID())) {
             return -6;
+        }
+        if(accountRepository.save(teachingAssistant) == null) {
+            return -7;
         }
         return 0;
     }
@@ -104,6 +110,9 @@ public class AdminServiceImpl implements AdminService {
     public int addProfessor(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
         Professor professor = new Professor(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(professor.getUserID())) {
+            return -8;
+        }
+        if(accountRepository.existsByUserName(professor.getUserID())) {
             return -9;
         }
         if(accountRepository.save(professor) == null) {
@@ -115,6 +124,9 @@ public class AdminServiceImpl implements AdminService {
     public int addAdmin(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
         CollegeAdmin admin = new CollegeAdmin(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(admin.getUserID())) {
+            return -11;
+        }
+        if(accountRepository.existsByUserName(admin.getUserID())) {
             return -12;
         }
         if(accountRepository.save(admin) == null) {

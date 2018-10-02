@@ -72,8 +72,8 @@ class CoursePanel extends Component {
                     source_name: "lab1-src",
                     created_date: "09-01-18",
                     due_date: "09-08-18",
-                    test_script: true,
-                    hidden_test_script: true,
+                    test_script: [],
+                    hidden_test_script: [],
                     id: 1 //id would be preferable for unique identification
                 },
                 {
@@ -81,8 +81,8 @@ class CoursePanel extends Component {
                     source_name: "lab2-src",
                     created_date: "09-01-18",
                     due_date: "09-08-18",
-                    test_script: true,
-                    hidden_test_script: true,
+                    test_script: ["test1"],
+                    hidden_test_script: ["test2"],
                     id: 2
                 },
                 {
@@ -90,12 +90,13 @@ class CoursePanel extends Component {
                     source_name: "lab3-src",
                     created_date: "09-01-18",
                     due_date: "09-08-18",
-                    test_script: true,
-                    hidden_test_script: true,
+                    test_script: [],
+                    hidden_test_script: [],
                     id: 3
                 }
             ],
-            project_options: false
+            project_options: false,
+            new_project: false
         };
     }
 
@@ -104,12 +105,29 @@ class CoursePanel extends Component {
     };
 
     showStudentPanel = (student) => {
-        this.props.setCurrentStudent(student)
+        this.props.setCurrentStudent(student);
         history.push(`/student/${student.id}`)
     };
 
     updateProjectState = (project_index) => {
+        this.setState({ new_project: false });
         this.props.setCurrentProject(project_index)
+    };
+
+    createNewProject = () => {
+        this.setState({ new_project: true });
+    };
+
+    createProject = () => {
+
+    };
+
+    deleteProject = () => {
+
+    };
+
+    changeProject = () => {
+
     };
 
     render() {
@@ -119,7 +137,8 @@ class CoursePanel extends Component {
                 <div className="panel-center-content">
                     <div className="project-options">
                         <Modal left show={this.state.project_options} onClose={() => this.setState({project_options: false})}
-                                component={<ProjectOptions project={this.state.projects[this.props.currentProject]}/>}/>
+                                component={<ProjectOptions projects={this.state.projects} current_project={this.props.currentProject} new_project={this.state.new_project}
+                                updateProject={{create: this.createProject, delete: this.deleteProject, change: this.changeProject}}/>}/>
                     </div>
 
                     <div className={"panel-course-content " + (this.state.project_options ? "blur" : "")}>
