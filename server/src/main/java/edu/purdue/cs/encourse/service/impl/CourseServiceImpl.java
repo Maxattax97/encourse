@@ -59,6 +59,27 @@ public class CourseServiceImpl implements CourseService {
         return 0;
     }
 
+    private Map<String, Double> parseProgressForProjects(List<StudentProject> projects) {
+        Map<String, Double> grades = new TreeMap<>();
+        int code = 0;
+        for(StudentProject p : projects) {
+            if(p.getBestGrade() == null) {
+                code--;
+                grades.put(p.getProjectIdentifier(), 0.0);
+                continue;
+            }
+            String[] testResults = p.getBestGrade().split(" ");
+            double passedCount = 0.0;
+            for(String r : testResults) {
+                if(r.endsWith("P")) {
+                    passedCount++;
+                }
+            }
+            grades.put(p.getProjectIdentifier(), passedCount / testResults.length);
+        }
+        return grades;
+    }
+
     public List<Section> getSectionsBySemesterAndCourseID(@NonNull String semester, @NonNull String courseID) {
         return sectionRepository.findBySemesterAndCourseID(semester, courseID);
 
@@ -175,27 +196,5 @@ public class CourseServiceImpl implements CourseService {
             projectsJSON.add(projectJSON);
         }
         return projectsJSON;
-    }
-
-
-    private Map<String, Double> parseProgressForProjects(List<StudentProject> projects) {
-        Map<String, Double> grades = new TreeMap<>();
-        int code = 0;
-        for(StudentProject p : projects) {
-            if(p.getCurrentGrade() == null) {
-                code--;
-                grades.put(p.getProjectIdentifier(), 0.0);
-                continue;
-            }
-            String[] testResults = p.getCurrentGrade().split(" ");
-            double passedCount = 0.0;
-            for(String r : testResults) {
-                if(r.endsWith("P")) {
-                    passedCount++;
-                }
-            }
-            grades.put(p.getProjectIdentifier(), passedCount / testResults.length);
-        }
-        return grades;
     }
 }

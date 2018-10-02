@@ -16,9 +16,9 @@ public class StudentProject {
     @EmbeddedId
     StudentProjectID id;
 
-    /** Current grade output by testall for the project **/
+    /** Best grade output by testall for the project **/
     @Setter
-    private String currentGrade;
+    private String bestGrade;
 
     /** Git commit count for the project **/
     @Setter
@@ -46,7 +46,7 @@ public class StudentProject {
 
     public StudentProject(String userID, String projectIdentifier) {
         this.id = new StudentProjectID(userID, projectIdentifier);
-        this.currentGrade = null;
+        this.bestGrade = null;
         this.commitCount = 0;
         this.totalLinesAdded = 0;
         this.totalLinesRemoved = 0;

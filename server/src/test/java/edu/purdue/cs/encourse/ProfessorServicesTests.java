@@ -125,7 +125,7 @@ public class ProfessorServicesTests {
         assertEquals(0, professorService.uploadTestScript(Project.createProjectID("cs250", "Fall2018", "MyMalloc"), "echo_test.sh", "echo \"\""));
         assertEquals(0, professorService.runTestall(Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
         List<StudentProject> projects = studentProjectRepository.findByIdStudentID("1");
-        assertEquals("echo_test.sh:P ls_test.sh:F ", projects.get(0).getCurrentGrade());
+        assertEquals("echo_test.sh:P ls_test.sh:F ", projects.get(0).getBestGrade());
     }
 
     @Test
