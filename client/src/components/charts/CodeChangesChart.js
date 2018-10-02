@@ -2,6 +2,19 @@ import React, { Component } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Label, Legend, ResponsiveContainer } from 'recharts';
 import moment from 'moment'
 
+const defaultData = [
+    {date: moment('9/9/2018').valueOf(), additions: 200, deletions: -0},
+    {date: moment('9/10/2018').valueOf(), additions: 32, deletions: -0},
+    {date: moment('9/11/2018').valueOf(), additions: 100, deletions: -0},
+    {date: moment('9/12/2018').valueOf(), additions: 765, deletions: -0},
+    {date: moment('9/13/2018').valueOf(), additions: 20, deletions: -50},
+    {date: moment('9/14/2018').valueOf(), additions: 0, deletions: -10},
+    {date: moment('9/15/2018').valueOf(), additions: 10, deletions: -100},
+    {date: moment('9/16/2018').valueOf(), additions: 84, deletions: -327},
+    {date: moment('9/17/2018').valueOf(), additions: 284, deletions: -400},
+    {date: moment('9/18/2018').valueOf(), additions: 102, deletions: -90},
+];
+
 function formatApiData(data) {
     for (let entry of data) {
         entry.date = moment(entry.date).valueOf();
@@ -43,8 +56,7 @@ class CodeChangesChart extends Component {
     constructor(props) {
         super(props);
 
-        let data = props.data;
-        data = formatApiData(data);
+        let data = props.data ? formatApiData(props.data) : defaultData;
 
         this.state = {
             data,
