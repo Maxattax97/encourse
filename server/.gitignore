@@ -33,3 +33,4 @@ src/main/java/edu/purdue/cs/encourse/security/StartupFeed.java
 
 ### Python ###
 /src/main/python/test_datasets/
+*.swp
