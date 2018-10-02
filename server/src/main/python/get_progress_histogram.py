@@ -1,5 +1,6 @@
 import sys
 import json
+import copy
 from datetime import datetime
 
 from add_del import get_daily_commit_data as get_progress
@@ -40,12 +41,21 @@ def  time_string(seconds):
     days, hours = divmod(hours, 24)
     return "{} days".format(int(days))
 
-def format_data(data):
+def api_format_data(data):
+    data = copy.deepcopy(data)
     for student in data:
         student_data = data[student]
         for day in student_data:
             day["date"] = date_string(day["date"])
             day["time_spent"] = time_string(day["time_spent"])
+    return data
+
+def format_data(data):
+    data = copy.deepcopy(data)
+    for student in data:
+        student_data = data[student]
+        for day in student_data:
+            day["date"] = date_string(day["date"])
     return data
 
 if len(sys.argv) != 2:
@@ -54,9 +64,11 @@ if len(sys.argv) != 2:
 commit_data_path = sys.argv[1]
 commit_data_file = open(commit_data_path, "r")
 data = get_progress(commit_data_file)
+
+api_formatted_data = api_format_data(data)
+api_json = json.dumps(api_formatted_data)
+#print(api_json)
 #print(data)
 formatted_data = format_data(data)
-#print(formatted_data)
 json = json.dumps(formatted_data)
 print(json)
-

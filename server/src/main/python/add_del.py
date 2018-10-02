@@ -12,7 +12,21 @@ def create_day_dict(date, files, time_spent, additions, deletions, commit_count)
     daily_data["commit_count"] = commit_count
     return daily_data
     
-
+def select_best(files):
+    """
+    Selects 3 best files from a list based on the quantity (additions-deletions) for each file
+    :param file_list is a list of dictionaries, each with a filename and net_changes property
+        net_changes = additions - deletions
+    :return a list of the top 3 files
+    """
+    file_list = list(files.keys())
+    file_changes = list(files.values())
+    #print(file_changes)
+    if len(file_list) < 3:
+        return file_list
+    top_files, progress = zip(*sorted(zip(file_list, file_changes), key=lambda k: k[1], reverse=True))
+    #print(top_files)
+    return top_files[:3]
 
 def get_daily_commit_data(progress_file):
     expect_time = False
@@ -20,7 +34,7 @@ def get_daily_commit_data(progress_file):
     current_date = datetime(1,1,1).date()
     daily_time_spent = 0
     previous_time = datetime.strptime("00:00:00", "%H:%M:%S").time()
-    daily_top_files = [{"filename": "", "net_changes": 0}]  # Top 3 files per commit
+    daily_files = {}  # Top 3 files per commit
     daily_additions = 0
     daily_deletions = 0
     daily_commit_count = 0
@@ -41,14 +55,14 @@ def get_daily_commit_data(progress_file):
             daily_time_spent = 0
             current_date = datetime(1,1,1).date()
             previous_time = datetime.strptime("00:00:00", "%H:%M:%S").time()
-            daily_top_files = []
+            daily_files = {}
             daily_additions = 0
             daily_deletions = 0
             daily_commit_count = 0
             name = words[1]
         elif words[0] == "End":         # End of user
             # Add the last day to student's data
-            student_data.append(create_day_dict(current_date, [], daily_time_spent, daily_additions, daily_deletions, daily_commit_count))
+            student_data.append(create_day_dict(current_date, select_best(daily_files), daily_time_spent, daily_additions, daily_deletions, daily_commit_count))
 
             # Set the student's data
             students[name] = student_data
@@ -74,14 +88,14 @@ def get_daily_commit_data(progress_file):
                 #print("total seconds: {}".format(daily_time_spent))
                 #print("New Date: {}".format(date))
                 # Create dictionary of daily data
-                student_data.append(create_day_dict(current_date, [], daily_time_spent, daily_additions, daily_deletions, daily_commit_count))
+                student_data.append(create_day_dict(current_date, select_best(daily_files), daily_time_spent, daily_additions, daily_deletions, daily_commit_count))
                 current_date = date
                 previous_time = time
                 daily_commit_count = 1
                 daily_time_spent = 0
                 daily_additions = 0
                 daily_deletions = 0
-                daily_top_files = []
+                daily_files = {}
                 continue
             #print(time_delta.total_seconds())
             daily_time_spent += time_delta.total_seconds()
@@ -95,6 +109,10 @@ def get_daily_commit_data(progress_file):
             additions = int(words[0]) if is_number(words[0]) else 0
             deletions = int(words[1]) if is_number(words[1]) else 0
             file_path = words[2]        # Unused
+            if file_path in daily_files:
+                daily_files[file_path] += (additions - deletions)
+            else:
+                daily_files[file_path] = (additions - deletions)
             daily_additions += additions
             daily_deletions += deletions
     return students
