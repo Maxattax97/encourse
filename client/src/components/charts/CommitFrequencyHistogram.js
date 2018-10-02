@@ -1,6 +1,9 @@
 
 import React, { Component } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
+import { connect } from 'react-redux'
+
+import { getCommitFrequency } from '../../redux/actions'
 
 const defaultData = [
     {date: new Date('2018-09-16T00:00:00'), count: 8},
@@ -23,6 +26,11 @@ for (let item of defaultData) {
 }
 
 class CommitHistoryHistogram extends Component {
+
+    componentDidMount = () => {
+        this.props.getData(/*TODO: add endpoint */)
+    }
+
     render() {
         return (
             <div className="chart-container">
@@ -49,4 +57,18 @@ class CommitHistoryHistogram extends Component {
     }
 }
 
-export default CommitHistoryHistogram;
+const mapStateToProps = (state) => {
+    return { 
+        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+        data: state.student && state.student.getCommitFrequencyData ? state.student.getCommitFrequencyData : null,
+        isLoading: state.student ? state.student.getCommitFrequencyIsLoading : false,
+    }
+  }
+  
+  const mapDispatchToProps = (dispatch) => {
+      return {
+          getData: (url, headers, body) => dispatch(getCommitFrequency(url, headers, body))
+      }
+  }
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(CommitHistoryHistogram)
