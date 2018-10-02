@@ -1,6 +1,6 @@
 import sys
 
-def import_commit_data(commit_times_file):
+def commit_data(commit_times_file):
     line = commit_times_file.readline()
     line = line.lstrip(" ").rstrip("\n")
     users = {}
