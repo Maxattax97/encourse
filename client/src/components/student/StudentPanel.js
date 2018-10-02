@@ -51,64 +51,64 @@ class StudentPanel extends Component {
             ],
             stats: [
                 {
-                    statname: "Estimated Time Spent",
-                    statvalue: "5 hours"
+                    stat_name: "Estimated Time Spent",
+                    stat_value: "5 hours"
                 },
                 {
-                    statname: "Additions",
-                    statvalue: "103"
+                    stat_name: "Additions",
+                    stat_value: "103"
                 },
                 {
-                    statname: "Deletions",
-                    statvalue: "3415"
+                    stat_name: "Deletions",
+                    stat_value: "3415"
                 },
                 {
-                    statname: "Additions",
-                    statvalue: "`35"
+                    stat_name: "Additions",
+                    stat_value: "`35"
                 },
                 {
-                    statname: "Deletions",
-                    statvalue: "1234"
+                    stat_name: "Deletions",
+                    stat_value: "1234"
                 },
                 {
-                    statname: "Additions",
-                    statvalue: "123"
+                    stat_name: "Additions",
+                    stat_value: "123"
                 },
                 {
-                    statname: "Deletions",
-                    statvalue: "5342"
+                    stat_name: "Deletions",
+                    stat_value: "5342"
                 },
                 {
-                    statname: "Additions",
-                    statvalue: "213"
+                    stat_name: "Additions",
+                    stat_value: "213"
                 },
                 {
-                    statname: "Deletions",
-                    statvalue: "76"
+                    stat_name: "Deletions",
+                    stat_value: "76"
                 },
                 {
-                    statname: "Additions",
-                    statvalue: "123"
+                    stat_name: "Additions",
+                    stat_value: "123"
                 },
                 {
-                    statname: "Deletions",
-                    statvalue: "567"
+                    stat_name: "Deletions",
+                    stat_value: "567"
                 },
                 {
-                    statname: "Additions",
-                    statvalue: "43"
+                    stat_name: "Additions",
+                    stat_value: "43"
                 },
                 {
-                    statname: "Deletions",
-                    statvalue: "123"
+                    stat_name: "Deletions",
+                    stat_value: "123"
                 },
                 {
-                    statname: "Additions",
-                    statvalue: "45"
+                    stat_name: "Additions",
+                    stat_value: "45"
                 },
                 {
-                    statname: "Deletions",
-                    statvalue: "36"
+                    stat_name: "Deletions",
+                    stat_value: "36"
                 }
             ]
         }
@@ -175,8 +175,8 @@ class StudentPanel extends Component {
                                         this.state.stats.map((stat, index) =>
                                             <div className="student-stat">
                                                 <div className="student-stat-content">
-                                                    <h5>{stat.statname}</h5>
-                                                    <h5>{stat.statvalue}</h5>
+                                                    <h5>{stat.stat_name}</h5>
+                                                    <h5>{stat.stat_value}</h5>
                                                 </div>
                                                 {
                                                     index % 2 === 1 && index !== this.state.stats.length - 1 ?
