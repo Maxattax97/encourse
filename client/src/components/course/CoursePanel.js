@@ -111,7 +111,7 @@ class CoursePanel extends Component {
                 <ProjectNavigation info={this.state.projects} onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})} {...this.props}/>
                 <div className="panel-center-content">
 
-                    <div className={`panel-course-content${this.state.modal_blur}`}>
+                    <div className={ `panel-course-content${this.state.modal_blur}` }>
                         <h1>CS252</h1>
                         <h1 className="break-line title" />
                         <h3>Class Statistics</h3>

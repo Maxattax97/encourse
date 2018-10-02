@@ -110,7 +110,8 @@ class StudentPanel extends Component {
                     stat_name: "Deletions",
                     stat_value: "36"
                 }
-            ]
+            ],
+            modal_blur: ""
         }
     }
 
@@ -145,16 +146,9 @@ class StudentPanel extends Component {
     render() {
         return (
             <div className="panel-student">
-                <ProjectNavigation titleClick={this.showProjectOptions} projectClick={this.updateProjectState} backClick={this.back}
-                                   currentProject={this.state.current_project} info={this.state.projects} back="Course"
-                                   newProjectClick={this.newProject} />
+                <ProjectNavigation info={this.state.projects} onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})} {...this.props}/>
                 <div className="panel-center-content">
-                    <Modal left show={this.state.project_options} onClose={() => this.setState({project_options: false})}
-                           component={<ProjectOptions projects={this.state.projects} current_project={this.state.current_project} new_project={this.state.new_project}
-                                                      updateProject={{create: this.createProject, delete: this.deleteProject, change: this.changeProject}}
-                                                      visible={this.state.project_options}/>}/>
-
-                    <div className={"panel-student-content " + (this.state.project_options ? "blur" : "")}>
+                    <div className={ `panel-student-content${this.state.modal_blur}` }>
                         <h1>{this.props.currentStudent ? this.props.currentStudent.first_name + ' ' + this.props.currentStudent.last_name : ''}</h1>
                         <h1 className="break-line title" />
                         <h3>Charts</h3>
@@ -198,7 +192,7 @@ class StudentPanel extends Component {
                     </div>
                 </div>
                 <div className="panel-right-nav">
-                    <div className={"panel-student-side-content " + (this.state.project_options ? "blur" : "")}>
+                    <div className={ `panel-student-side-content${this.state.modal_blur}` }>
                         <Card component={
                             <div className="student-actions-container">
                                 <div className="title">
