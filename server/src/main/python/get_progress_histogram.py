@@ -2,19 +2,7 @@ import sys
 import json
 import copy
 from datetime import datetime
-
 from add_del import get_daily_commit_data as get_progress
-
-# Returns an json array of datapoints
-#   datapoint: {
-#       date: {
-#           month: "MM"
-#           day: "DD"
-#           year: "YYYY"
-#       }
-#       progress: p in [0,100]
-#   }
-
 
 def date_string(date):
     #print(date)
@@ -59,8 +47,9 @@ def format_data(data):
     return data
 
 if len(sys.argv) != 2:
-    print("USAGE: python getProgressHistogram.py file1\n")
-    print("file1 is the properly formatted commit data file")
+    print("USAGE: \t`python getProgressHistogram.py file1`")
+    print("\tfile1 is a properly formatted commit data file")
+    sys.exit()
 commit_data_path = sys.argv[1]
 commit_data_file = open(commit_data_path, "r")
 data = get_progress(commit_data_file)
