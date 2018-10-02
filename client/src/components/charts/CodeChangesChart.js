@@ -49,7 +49,7 @@ function formatApiData(data) {
 
 function dateFormatter(dateUnix) {
     const m = moment(dateUnix);
-    return m.format('MM-DD')
+    return m.format('M-D')
 }
 
 class CodeChangesChart extends Component {
@@ -74,7 +74,7 @@ class CodeChangesChart extends Component {
                             <Label position="insideBottom" offset={-15} value="Date"/>
                         </XAxis>
                         <YAxis/>
-                        <Tooltip/>
+                        <Tooltip labelFormatter={dateFormatter}/>
                         <Area type="monotone" dataKey="additions" stroke="none" fill="green" />
                         <Area type="monotone" dataKey="deletions" stroke="none" fill="red" />
                     </AreaChart>
