@@ -15,5 +15,9 @@ export {
 } from './auth'
 
 export {
-    setCurrentStudent
+    setCurrentStudent,
+    getProgressLineHasError, getProgressLineIsLoading, getProgressLineDataSuccess, getProgressLine,
+    getCodeFrequencyHasError, getCodeFrequencyIsLoading, getCodeFrequencyDataSuccess, getCodeFrequency,
+    getCommitFrequencyHasError, getCommitFrequencyIsLoading, getCommitFrequencyDataSuccess, getCommitFrequency,
+    getStatisticsHasError, getStatisticsIsLoading, getStatisticsDataSuccess, getStatistics
 } from './student'
