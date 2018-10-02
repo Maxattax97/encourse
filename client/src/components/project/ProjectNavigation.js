@@ -35,7 +35,7 @@ class ProjectNavigation extends Component {
                                     className={this.props.currentProject === index ? "projects-highlight" : ""}
                                     key={project.id} onClick={() => this.props.projectClick(index)}>{project.name}</h4>)
                             }
-                            <div className="projects-new">
+                            <div className="projects-new" onClick={this.props.newProjectClick}>
                                 <img src={plusIcon} />
                             </div>
                         </div>

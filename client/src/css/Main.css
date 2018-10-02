@@ -45,6 +45,14 @@
 
 .modal-left { position: fixed; float: left; margin-top: calc(20px + 40px + 1.17em); }
 
+.modal-buttons { margin-top: 20px; position: relative; bottom: 0; right: -2.5em; width: 100%; }
+
+.modal-buttons img { width: 1.5em; height: 1.5em; margin: 0 auto; display: block; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.modal-buttons div { cursor: pointer; float: right; padding: 10px 10px; margin-left: 10px; }
+
+.modal-buttons div:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
 .card { position: relative; height: auto; margin-right: 32px; margin-bottom: 32px; float: left; box-sizing: border-box; }
 
 .component { float: left; height: auto; padding: 16px; background-color: #F8F8F8; border-radius: 4px; box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25); }
@@ -115,9 +123,27 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-student-content, .panel-student-side-content { -webkit-transition: filter .15s ease-in; -moz-transition: filter .15s ease-in; -ms-transition: filter .15s ease-in; -o-transition: filter .15s ease-in; transition: filter .15s ease-in; }
 
+.panel-student-content .student-stats-comments .card { margin: 0; }
+
+.panel-student-content .student-stats-comments .card:first-child { width: 33%; padding-right: 32px; }
+
+.panel-student-content .student-stats-comments .card:nth-child(2) { width: 66%; }
+
+.panel-student-content .student-stats-comments .component { width: 100%; }
+
+.student-stats-container .student-stat { float: left; width: 100%; }
+
+.student-stats-container .student-stat .student-stat-content { float: left; width: 100%; padding: .5em; }
+
+.student-stats-container .student-stat h5 { margin: 0; }
+
+.student-stats-container .student-stat h5:first-child { width: auto; float: left; }
+
+.student-stats-container .student-stat h5:nth-child(2) { width: auto; float: right; }
+
 .panel-student-side-content { position: fixed; padding-top: calc(20px + 1.17em + 40px); width: calc(.15 * 105em - 40px); min-width: 180px; max-width: 240px; }
 
-.panel-student-side-content .card { margin: 0; }
+.panel-student-side-content .card { margin: 0 0 30px; }
 
 .panel-student-side-content div.title { padding-top: 1em; height: 2.5em; cursor: default; }
 

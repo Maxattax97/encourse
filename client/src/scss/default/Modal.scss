@@ -37,3 +37,32 @@
 
   margin-top: calc(20px + 40px + 1.17em);
 }
+
+.modal-buttons {
+  margin-top:20px;
+  position: relative;
+  bottom: 0;
+  right: -2.5em;
+  width: 100%;
+
+  img {
+    width: 1.5em;
+    height: 1.5em;
+    margin: 0 auto;
+    display:block;
+    filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
+  }
+
+  div {
+    cursor:pointer;
+    float:right;
+    padding: 10px 10px;
+    margin-left:10px;
+  }
+
+  div:hover {
+    img {
+      filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+    }
+  }
+}
