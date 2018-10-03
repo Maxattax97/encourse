@@ -275,6 +275,11 @@ public class ProfessorServiceImpl implements ProfessorService {
     public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
+
+        //Testing
+        //dailyCountsFile = pythonPath + "test_datasets/sampleCountsDay.txt";
+        //commitLogFile = pythonPath + "test_datasets/sampleCommitList.txt";
+
         if(dailyCountsFile == null) {
             return new JSONReturnable(-1, null);
         }
@@ -286,7 +291,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         JSONReturnable json = null;
         String pyPath = pythonPath + "get_individual_progress.py";
         try {
-            Process process = Runtime.getRuntime().exec("python " + pyPath + " " + dailyCountsFile + " " + commitLogFile + " " + userName);
+            Process process = Runtime.getRuntime().exec("python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String input = null;
@@ -318,7 +323,6 @@ public class ProfessorServiceImpl implements ProfessorService {
                     json = new JSONReturnable(1, jsonObject);
                 }
             }
-            json =  new JSONReturnable(-1, null);
         } catch (IOException e) {
             e.printStackTrace();
             json =  new JSONReturnable(-2, null);
@@ -331,6 +335,11 @@ public class ProfessorServiceImpl implements ProfessorService {
     public JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
+
+        //Testing
+        //dailyCountsFile = pythonPath + "test_datasets/sampleCountsDay.txt";
+        //commitLogFile = pythonPath + "test_datasets/sampleCommitList.txt";
+
         if(dailyCountsFile == null) {
             return new JSONReturnable(-1, null);
         }
@@ -374,7 +383,6 @@ public class ProfessorServiceImpl implements ProfessorService {
                     json = new JSONReturnable(1, jsonObject);
                 }
             }
-            json =  new JSONReturnable(-1, null);
         } catch (IOException e) {
             e.printStackTrace();
             json =  new JSONReturnable(-2, null);

@@ -2,6 +2,7 @@ package edu.purdue.cs.encourse;
 
 import edu.purdue.cs.encourse.database.AccountRepository;
 import edu.purdue.cs.encourse.database.*;
+import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.service.*;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import org.junit.After;
@@ -69,7 +70,7 @@ public class PythonScriptTests {
         }
 
         /** No longer necessary since scripts incorporated into Java services **/
-        //@Test
+        @Test
         public void testPythonDirectory() {
          /*   Account account = accountService.retrieveAccount("reed226", "b");
             assertNull(account);
@@ -91,7 +92,7 @@ public class PythonScriptTests {
 
             System.out.println("=============================   Python Tests    ============================\n");
 
-            System.out.println("\n==============================    Python Directory Test    ==============================");
+            /*System.out.println("\n==============================    Python Directory Test    ==============================");
             assertEquals("Hello.py failed to execute", 1, professorService.testPythonDirectory());
 
             System.out.println("\n==============================    Python Start/End Test    ==============================");
@@ -104,8 +105,21 @@ public class PythonScriptTests {
             System.out.println("=============================   Python Progress Histogram Test    ============================\n");
             String studentID = "cutz";
             jsonReturn = professorService.getProgressHistogram(studentID, "temp");
-            assertEquals("Failed to generate progress histogram data", 1, jsonReturn.errorCode);
+            assertEquals("Failed to ogenerate progress histogram data", 1, jsonReturn.errorCode);
+            */
+            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
+            String studentID = "cutz";
+            JSONReturnable jsonReturn = null;
+            System.out.println("=============================   Addition Deletion Test    ============================\n");
+            jsonReturn = professorService.getAdditionsAndDeletions(projectID, studentID);
+            assertEquals("Failed to generate addition/deletion data", 1, jsonReturn.errorCode);
+
+            System.out.println("=============================   Individual Progress Test    ============================\n");
+            jsonReturn = professorService.getStudentProgress(projectID, studentID);
+            assertEquals("Failed to generate individual data", 1, jsonReturn.errorCode);
+
             System.out.println("=============================   End Python Tests    ============================\n");
+
 
             //int returnValue = professorService.countAllCommits("CS200", "Encourse");
         }
