@@ -337,8 +337,11 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userName) {
+        System.out.println("RUN GET STATISTICS: (" + projectID + ") (" + userName + ")");
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
+        System.out.println("DAILY COUNTS FILE: " + dailyCountsFile);
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
+        System.out.println("DAILY COUNTS FILE: " + commitLogFile);
 
         if(dailyCountsFile == null) {
             return new JSONReturnable(-1, null);
@@ -360,6 +363,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         String pyPath = pythonPath + "get_statistics.py";
         String command = "python " + pyPath + " " + userName + " " + dailyCountsFile + " " + commitLogFile + " " + testResult;
         JSONReturnable json = runPython(command);
+        System.out.println("RUN PYTHON RETURN: " + json);
 
         if (DEBUG == true) {
             executeBashScript("cleanDirectory.sh src/main/temp");
@@ -390,6 +394,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString()));
             }
         }
+        System.out.println("JSON ARRAY: " + array);
         executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
