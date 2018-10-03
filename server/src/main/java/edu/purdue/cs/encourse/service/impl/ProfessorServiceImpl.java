@@ -286,12 +286,14 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
 
+		System.out.println("\n\n\n" + dailyCountsFile + "\n" + commitLogFile);
+
         /** python executable.py dailyCountsFile commitLogFile userName **/
         String pyPath = pythonPath + "get_individual_progress.py";
         String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
 
-        executeBashScript("cleanDirectory.sh src/main/temp");
+        //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
@@ -308,7 +310,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         String command = "python " + pyPath + " " + testResult;
         JSONReturnable json = runPython(command);
 
-        executeBashScript("cleanDirectory.sh src/main/temp");
+        //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
@@ -319,6 +321,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         //Testing
         //dailyCountsFile = pythonPath + "test_datasets/sampleCountsDay.txt";
         //commitLogFile = pythonPath + "test_datasets/sampleCommitList.txt";
+
+		System.out.println("\n\n\n" + dailyCountsFile + "\n" + commitLogFile);
 
         if(dailyCountsFile == null) {
             return new JSONReturnable(-1, null);
@@ -332,7 +336,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
 
-        executeBashScript("cleanDirectory.sh src/main/temp");
+        //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
@@ -346,6 +350,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
+
+		System.out.println("\n\n\n" + dailyCountsFile + "\n" + commitLogFile);
 
         String testResult = null;
         if (DEBUG == true) {
@@ -390,7 +396,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString()));
             }
         }
-        executeBashScript("cleanDirectory.sh src/main/temp");
+        //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
@@ -406,7 +412,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         String command = "python " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
 
-        executeBashScript("cleanDirectory.sh src/main/temp");
+        //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
@@ -420,12 +426,14 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-1, null);
         }
 
+		System.out.println("\n\n\n" + commitLogFile);
+
         /** python executable.py commitLogFile userName **/
         String pyPath = pythonPath + "get_git_commit_list.py";
         String command = "python " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
 
-        executeBashScript("cleanDirectory.sh src/main/temp");
+        //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 

@@ -9,5 +9,6 @@ cd "$1"
 echo "Start $3" >> "${DIRECTORY}/$2"
 git log --date=short --pretty=format:%ad | sort | uniq -c >> "${DIRECTORY}/$2"
 echo "End $3" >> "${DIRECTORY}/$2"
+chmod 770 "${DIRECTORY}/$2"
 cd "${DIRECTORY}"
 

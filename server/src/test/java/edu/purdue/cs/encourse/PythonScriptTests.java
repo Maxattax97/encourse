@@ -15,9 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@TestPropertySource(locations="classpath:application-dev.properties")
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
+//@TestPropertySource(locations="classpath:application-dev.properties")
 
 public class PythonScriptTests {
         /** Mainly tests that accounts are properly handled in all relevant databases**/
@@ -47,7 +47,7 @@ public class PythonScriptTests {
         public ProfessorService professorService;
 
 
-        @Before
+        //@Before
         public void populateDatabase() {
             assertEquals(0, adminService.addAccount("1", "reed226","William", "Reed",
                     "Admin", "J", "reed226@purdue.edu"));
@@ -55,7 +55,7 @@ public class PythonScriptTests {
                     "Professor", null, "grr@purdue.edu"));
         }
 
-        @After
+        //@After
         public void clearDatabase() {
             adminRepository.deleteAll();
             professorRepository.deleteAll();
@@ -64,13 +64,13 @@ public class PythonScriptTests {
         }
 
         /** Empty test prevents error from being thrown over no @Test annotations **/
-        @Test
+       // @Test
         public void emptyTest() {
 
         }
 
         /** No longer necessary since scripts incorporated into Java services **/
-        @Test
+        //@Test
         public void testPythonDirectory() {
          /*   Account account = accountService.retrieveAccount("reed226", "b");
             assertNull(account);

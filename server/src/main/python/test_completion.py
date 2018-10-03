@@ -23,6 +23,8 @@ def get_test_completion(test_case_file):
             if score == "P":
                 test_score += 1
             total_score += 1
+        if total_score == 0:
+		    return {"tests":tests, "total":0}
         students[name] = {"tests":tests, "total":(test_score / total_score * 100)}
     return students
     
@@ -42,4 +44,7 @@ def get_test_completion_string(test_case_string):
         if score == "P":
             test_score += 1
         total_score += 1
+
+    if total_score == 0:
+	    return {"tests":tests, "total":0} 
     return {"tests":tests, "total":(test_score / total_score * 100)}
