@@ -20,7 +20,7 @@ public class OptionFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if (true) {
+        if (false) {
             System.out.println("----------------------------------");
             System.out.println("Method: " + request.getMethod());
             Enumeration<String> headers = request.getHeaderNames();

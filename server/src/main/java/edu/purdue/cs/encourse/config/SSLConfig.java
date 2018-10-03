@@ -8,11 +8,13 @@ import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.springframework.context.annotation.Profile;
 
-//@Configuration
+@Configuration
+@Profile("prod")
 public class SSLConfig {
 
-    //@Bean
+    @Bean
     public ServletWebServerFactory servletContainer() {
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {
 
@@ -35,7 +37,7 @@ public class SSLConfig {
     private Connector getHttpConnector() {
         Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
         connector.setScheme("http");
-        connector.setPort(40796);
+        connector.setPort(80);
         connector.setSecure(false);
         connector.setRedirectPort(40797);
         return connector;
