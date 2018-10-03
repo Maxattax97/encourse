@@ -279,10 +279,6 @@ public class ProfessorServiceImpl implements ProfessorService {
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
 
-        //Testing
-        //dailyCountsFile = pythonPath + "test_datasets/sampleCountsDay.txt";
-        //commitLogFile = pythonPath + "test_datasets/sampleCommitList.txt";
-
         if(dailyCountsFile == null) {
             return new JSONReturnable(-1, null);
         }

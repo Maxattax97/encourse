@@ -85,6 +85,22 @@ public class ReadController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
+    // Made by Ryan. Might not work
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/commitCount", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
+                                                       @RequestParam(name = "userName") String userName) {
+        JSONReturnable returnJson = professorService.getCommitCounts(projectID, userName);
+        if (returnJson == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        String json = returnJson.jsonObject.toJSONString();
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStatistics(@RequestParam(name = "projectID") String projectID,
@@ -120,6 +136,21 @@ public class ReadController {
     public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
                                                        @RequestParam(name = "userName") String userName) {
         JSONReturnable returnJson = professorService.getStudentProgress(projectID, userName);
+        if (returnJson == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        String json = returnJson.jsonObject.toJSONString();
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    // Made by Ryan. Might not work
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/classProgress", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID) {
+        JSONReturnable returnJson = professorService.getClassProgress(projectID);
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
