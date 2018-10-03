@@ -35,6 +35,8 @@
 
 .panel-right-nav { position: relative; float: left; width: 15%; max-width: 240px; min-width: 180px; height: 100%; padding: 0 10px; margin: 0; min-height: 1px; }
 
+.panel-right-nav h1, .panel-right-nav h2, .panel-right-nav h3, .panel-right-nav h4, .panel-right-nav h5, .panel-right-nav h6 { margin: 0; }
+
 .exit-nav { position: relative; float: right; height: 2.5em; width: 2.5em; padding: .5em; cursor: pointer; }
 
 .exit-nav img { position: absolute; top: .5em; left: .5em; z-index: 2; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); width: 1.5em; height: 1.5em; }
@@ -43,7 +45,7 @@
 
 .modal { position: absolute; z-index: 101; top: 0; left: 0; width: 100%; height: 100%; }
 
-.modal-left { position: relative; float: left; margin-top: calc(20px + 40px + 1.17em); }
+.modal-left { position: relative; float: left; margin-left: 15%; margin-top: calc(20px + 40px + 1.17em); }
 
 .modal-center { position: relative; margin-left: 15%; margin-top: calc(20px + 40px + 1.17em); }
 
@@ -62,6 +64,12 @@
 .card { position: relative; height: auto; margin-right: 32px; margin-bottom: 32px; float: left; box-sizing: border-box; }
 
 .component { float: left; height: auto; padding: 16px; background-color: #F8F8F8; border-radius: 4px; box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25); }
+
+.card-overflow { overflow-y: scroll; overflow-x: hidden; }
+
+.card-overflow::-webkit-scrollbar { width: .5em; }
+
+.card-overflow::-webkit-scrollbar-thumb { background: #666; }
 
 .progress-bar { border: 1px solid #a4a4a4; width: 100%; height: 1em; position: relative; }
 
@@ -151,7 +159,15 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-student-side-content { position: fixed; padding-top: calc(20px + 1.17em + 40px); width: calc(.15 * 105em - 40px); min-width: 180px; max-width: 240px; }
 
-.panel-student-side-content .card { margin: 0 0 30px; }
+.panel-student-side-content .card { margin: 0 0 30px; width: 100%; }
+
+.panel-student-side-content .component { width: 100%; }
+
+.panel-student-side-content .student-commits { max-height: 340px; }
+
+.panel-student-side-content .student-commits .card { padding: 3px; }
+
+.panel-student-side-content .student-commits .component { background: white; }
 
 .panel-student-side-content div.title { padding-top: 1em; height: 2.5em; cursor: default; }
 

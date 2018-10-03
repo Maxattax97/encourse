@@ -72,7 +72,7 @@ class ProjectOptions extends Component {
     render() {
         return (
             <div className="project-options">
-                <Modal center
+                <Modal left
                        show={ this.props.show && !this.state.show_test_scripts && !this.state.show_hidden_scripts }
                        onExit={ this.props.close }
                        component={
@@ -119,7 +119,7 @@ class ProjectOptions extends Component {
                            </div>
                        } />
 
-                <Modal center
+                <Modal left
                        show={ this.props.show && this.state.show_test_scripts && !this.state.show_hidden_scripts }
                        onExit={ this.props.close }
                        onClose={ () => this.setState({ show_test_scripts: false }) }
@@ -134,7 +134,7 @@ class ProjectOptions extends Component {
                            </div>
                        } />
 
-                <Modal center
+                <Modal left
                        show={ this.props.show && !this.state.show_test_scripts && this.state.show_hidden_scripts }
                        onExit={ this.props.close }
                        onClose={ () => this.setState({ show_hidden_scripts: false }) }
