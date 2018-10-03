@@ -1,9 +1,11 @@
 package edu.purdue.cs.encourse.service.impl;
 
 import edu.purdue.cs.encourse.database.*;
+import edu.purdue.cs.encourse.domain.Professor;
 import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.Student;
+import edu.purdue.cs.encourse.domain.relations.ProfessorCourse;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentSection;
 import edu.purdue.cs.encourse.service.CourseService;
@@ -30,6 +32,12 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private TeachingAssistantRepository teachingAssistantRepository;
+
+    @Autowired
+    private ProfessorRepository professorRepository;
+
+    @Autowired
+    private ProfessorCourseRepository professorCourseRepository;
 
     @Autowired
     private ProjectRepository projectRepository;
@@ -141,6 +149,29 @@ public class CourseServiceImpl implements CourseService {
             }
         }
         return code;
+    }
+
+    /** Gets all courses that a professor supervises **/
+    public JSONArray getCourseData(@NonNull String userName) {
+        Professor professor = professorRepository.findByUserName(userName);
+        if(professor == null) {
+            return null;
+        }
+        List<ProfessorCourse> courses = professorCourseRepository.findByIdProfessorID(professor.getUserID());
+        if(courses.isEmpty()) {
+            return null;
+        }
+        JSONArray coursesJSON = new JSONArray();
+        for(ProfessorCourse c : courses) {
+            JSONObject courseJSON = new JSONObject();
+            List<Section> sections = sectionRepository.findByCourseID(c.getCourseID());
+            courseJSON.put("course_number", c.getCourseID());
+            courseJSON.put("course_name", sections.get(0).getCourseID());
+            courseJSON.put("semester", c.getSemester());
+            courseJSON.put("id", professor.getUserName());
+            coursesJSON.add(courseJSON);
+        }
+        return coursesJSON;
     }
 
     /** Retrieves basic data for all students in course, including name, userName, and simple project info **/

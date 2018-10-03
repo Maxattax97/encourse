@@ -2,6 +2,7 @@ package edu.purdue.cs.encourse.service;
 
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import lombok.NonNull;
+import org.json.simple.JSONArray;
 
 import java.io.File;
 
@@ -13,10 +14,16 @@ public interface ProfessorService {
     int cloneProjects(@NonNull String projectID);
     int pullProjects(@NonNull String projectID);
 
-    JSONReturnable countAllCommits(@NonNull String projectID);
-    JSONReturnable countAllCommitsByDay(@NonNull String projectID);
-    JSONReturnable countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userName);
+
+    String countAllCommits(@NonNull String projectID);
+    String countAllCommitsByDay(@NonNull String projectID);
+    String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName);
+    String listAllCommitsByTime(@NonNull String projectID);
+    String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName);
 
     int uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents);
     int runTestall(@NonNull String projectID);
