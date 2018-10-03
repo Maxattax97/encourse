@@ -37,8 +37,8 @@ class CodeChangesChart extends Component {
         this.props.getData(/*TODO: add endpoint*/)
     }
 
-    dateFormatter = (dateUnix) => {
-        return moment(dateUnix).format('MM-DD')
+    dateFormatter = (date) => {
+        return moment(date).format('M-D')
     }
 
     formatApiData = (data) => {

@@ -7,8 +7,7 @@ import ProjectNavigation from '../project/ProjectNavigation'
 import Card from '../Card'
 import StudentPreview from './StudentPreview'
 import ClassProgressHistogram from '../charts/ClassProgressHistogram'
-import ProjectOptions from "../project/ProjectOptions"
-import Modal from "../Modal"
+import settingsIcon from "../../img/settings.svg";
 
 class CoursePanel extends Component {
 
@@ -114,9 +113,12 @@ class CoursePanel extends Component {
                 <div className="panel-center-content">
 
                     <div className={ `panel-course-content${this.state.modal_blur}` }>
-                        <h1>CS252</h1>
+                        <div className="title">
+                            <h1>CS252</h1>
+                            <img src={ settingsIcon }/>
+                        </div>
                         <h1 className="break-line title" />
-                        <h3>Class Statistics</h3>
+                        <h3>Course Charts</h3>
                         <div className="charts float-height">
                             <Card component={<ClassProgressHistogram/>} />
                         </div>
