@@ -6,8 +6,8 @@ import deleteIcon from "../../img/delete.svg"
 import Modal from "../Modal";
 
 function getStateFromProjectsProp(props) {
-    const project = props.projects[props.current_project];
-    return {
+   /* const project = props.projects ? props.projects[props.current_project] : null;
+    return project ? {
         visible: props.visible,
         name: project.name,
         source_name: project.source_name,
@@ -19,7 +19,7 @@ function getStateFromProjectsProp(props) {
         new_project: props.new_project,
         show_test_scripts: false,
         show_hidden_scripts: false
-    };
+    };*/
 }
 
 class ProjectOptions extends Component {

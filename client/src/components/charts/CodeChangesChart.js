@@ -4,6 +4,7 @@ import moment from 'moment'
 import { connect } from 'react-redux'
 
 import { getCodeFrequency } from '../../redux/actions'
+import url from '../../server'
 
 const defaultData = [
     {date: moment('9/9/2018').valueOf(), additions: 200, deletions: -0},
@@ -34,7 +35,8 @@ class CodeChangesChart extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getData(/*TODO: add endpoint*/)
+        this.props.getData(`${url}/secured/diffs?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.id}`, 
+        {'Authorization': `Bearer ${this.props.token}`})
     }
 
     dateFormatter = (date) => {

@@ -58,12 +58,13 @@ class ProjectNavigation extends Component {
                                 </div>
                                 <h3 className="break-line title"/>
                                 {
+                                    this.props.info &&
                                     this.props.info.map((project, index) =>
                                         <h4 className={ this.props.currentProject === index ? "projects-highlight" : "" }
                                             key={ project.id }
                                             onClick={ () => this.changeProject(index) }>
 
-                                            { project.name }
+                                            { project.project_name }
                                         </h4>)
                                 }
                                 <div className="projects-new" onClick={ this.handleNewProject }>
