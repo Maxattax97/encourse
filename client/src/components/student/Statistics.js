@@ -90,6 +90,12 @@ class Statistics extends Component {
         {'Authorization': `Bearer ${props.token}`})
     }
 
+    formatApiData = (data) => {
+        const formattedData = data.slice();
+
+        return formattedData;
+    }
+
     render() {
         return (
             <div className="student-stats-container">
