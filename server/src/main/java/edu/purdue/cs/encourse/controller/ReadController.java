@@ -12,6 +12,7 @@ import edu.purdue.cs.encourse.service.CourseService;
 import edu.purdue.cs.encourse.service.ProfessorService;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,8 +23,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value="/secured")
@@ -57,10 +58,16 @@ public class ReadController {
     public @ResponseBody ResponseEntity<?> getProjectData(@RequestParam(name = "courseID") String courseID,
                                                           @RequestParam(name = "semester") String semester) {
         JSONArray json = courseService.getProjectData(semester, courseID);
+
         if (json == null) {
             return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        Map<String, JSONObject> map = new HashMap<>();
+        for (Object j: json) {
+            JSONObject jsonObject = (JSONObject)j;
+            map.put(jsonObject.get("id").toString(), jsonObject);
+        }
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
