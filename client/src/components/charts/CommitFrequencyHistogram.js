@@ -46,7 +46,8 @@ class CommitHistoryHistogram extends Component {
     }
 
     fetch = (props) => {
-        props.getData(/*TODO: add endpoint */)
+        props.getData(`${url}/secured/commitCount?projectID=${props.projectID}&userName=${props.id}`, 
+        {'Authorization': `Bearer ${props.token}`})
     }
 
     dateFormatter = (date) => {
