@@ -20,7 +20,7 @@ class ProjectNavigation extends Component {
     }
 
     toggleProjectOptions = (mode) => {
-        this.setState({ show_project_options: mode, new_project: false });
+        this.setState({ show_project_options: mode, new_project: this.props.projects.length === 0 });
 
         this.props.onModalBlur(mode);
     };
@@ -33,8 +33,10 @@ class ProjectNavigation extends Component {
         if(this.state.show_project_options && this.state.new_project) {
 
         }
-        else
+        else {
             this.setState({ show_project_options: true, new_project: true });
+            this.props.onModalBlur(true);
+        }
     };
 
     render() {
@@ -90,7 +92,7 @@ class ProjectNavigation extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        projects: state.course && state.course.getClassProjectsData ? state.course.getClassProjectsData : null,
+        projects: state.course && state.course.getClassProjectsData ? state.course.getClassProjectsData : [],
         currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0
     }
 };
