@@ -394,6 +394,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
             }
         }
+        studentProjectRepository.save(project);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
