@@ -197,12 +197,10 @@ public class CourseServiceImpl implements CourseService {
                     Map<String, Integer> commitCounts = new TreeMap<>();
                     Map<String, Double> timeSpent = new TreeMap<>();
                     for(StudentProject p : studentProjects) {
-                        System.out.println("STUDENT PROJECT: (" + p.getProjectIdentifier() + ") (" + p.getCommitCount() + ") (" + p.getTotalTimeSpent() + ")");
                         commitCounts.put(p.getProjectIdentifier(), p.getCommitCount());
                         timeSpent.put(p.getProjectIdentifier(), p.getTotalTimeSpent());
                     }
                     JSONObject studentJSON = new JSONObject();
-                    System.out.println("STUDENT: (" + student.getFirstName() + ") (" + student.getLastName() + ") (" + student.getUserName() + ") (" + grades.size() + ") (" + commitCounts.size() + ") (" + timeSpent.size() + ")");
                     studentJSON.put("first_name", student.getFirstName());
                     studentJSON.put("last_name", student.getLastName());
                     studentJSON.put("id", student.getUserName());
