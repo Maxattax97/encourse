@@ -6,6 +6,7 @@ import deleteIcon from "../../img/delete.svg"
 import backIcon from "../../img/back.svg"
 import searchIcon from "../../img/search.svg"
 import Modal from "../Modal";
+import TestScriptList from "./TestScriptList";
 
 function getEmptyState(props) {
     return {
@@ -58,11 +59,13 @@ class ProjectOptions extends Component {
             hidden_test_script: [],
             show_test_scripts: false,
             show_hidden_scripts: false
-        }
+        };
+
+        this.test_script_ref = React.createRef();
+        this.hidden_script_ref = React.createRef();
     }
 
     static getDerivedStateFromProps(props, state) {
-        console.log(props, state);
         if (props.new_project !== state.new_project) {
             if (state.new_project)
                 return getStateFromProjectsProp(props);
@@ -80,12 +83,16 @@ class ProjectOptions extends Component {
         this.setState({ [event.target.name]: event.target.value });
     };
 
-    addTestScript = () => {
-        if(this.state.test_script)
-            this.state.test_script.push({ filename: "", pointvalue: 0 });
-        else
-            this.state.test_script = [{ filename: "", pointvalue: 0 }];
-        this.setState({ test_script : this.state.test_script });
+    addProject = () => {
+
+    };
+
+    updateProject = () => {
+
+    };
+
+    deleteProject = () => {
+
     };
 
     render() {
@@ -121,16 +128,16 @@ class ProjectOptions extends Component {
                                    </h4>
                                </div>
                                <div className="modal-buttons float-height">
-                                   <div>
+                                   <div onClick={ this.deleteProject }>
                                        <img src={deleteIcon} />
                                    </div>
                                    {
                                        this.state.new_project ?
-                                           <div className="project-options-add">
+                                           <div className="project-options-add" onClick={ this.addProject }>
                                                <img src={plusIcon} />
                                            </div>
                                            :
-                                           <div className="project-options-sync">
+                                           <div className="project-options-sync" onClick={ this.updateProject }>
                                                <img src={syncIcon} />
                                            </div>
                                    }
@@ -148,25 +155,10 @@ class ProjectOptions extends Component {
                                    Test Scripts
                                </h4>
                                <h4 className="break-line title" />
-                               <div className="project-options-script-list">
-                                   {
-                                       this.state.test_script &&
-                                       this.state.test_script.map((script) =>
-                                            <div className="project-options-script" key={`${ script.filename }-${ script.pointvalue }`}>
-                                                <div className="script-filename">
-                                                    <img src={ searchIcon } />
-                                                    <h4>
-                                                        { script.filename }
-                                                    </h4>
-                                                </div>
-                                                <input type="number" placeholder="5" step="1" />
-                                            </div>
-                                       )
-                                   }
-                                   <div className="project-options-new-script" onClick={ this.addTestScript }>
-                                       <img src={ plusIcon } />
-                                   </div>
-                               </div>
+
+                               <TestScriptList script_list={ this.state.test_script }
+                                               ref={this.test_script_ref}/>
+
                                <div className="modal-buttons float-height">
                                    <div onClick={ () => this.setState({ show_test_scripts: false }) }>
                                        <img src={ backIcon } />
@@ -185,22 +177,10 @@ class ProjectOptions extends Component {
                                    Hidden Test Scripts
                                </h4>
                                <h4 className="break-line title" />
-                               <div className="project-options-script-list">
-                                   {
-                                       this.state.test_script &&
-                                       this.state.test_script.map((script) =>
-                                           <div className="project-options-script" key={`${ script.filename }-${ script.pointvalue }`}>
-                                               <h4>
-                                                   { script.filename }
-                                               </h4>
-                                               <input type="number" placeholder="5" step="1" />
-                                           </div>
-                                       )
-                                   }
-                                   <div className="project-options-new-script" onClick={ this.addTestScript }>
-                                       <img src={ plusIcon } />
-                                   </div>
-                               </div>
+
+                               <TestScriptList script_list={ this.state.hidden_test_script }
+                                               ref={this.hidden_script_ref}/>
+
                                <div className="modal-buttons float-height">
                                    <div onClick={ () => this.setState({ show_hidden_scripts: false }) }>
                                        <img src={ backIcon } />
