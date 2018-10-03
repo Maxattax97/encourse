@@ -1,10 +1,15 @@
 package edu.purdue.cs.encourse.config;
 
+import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 @Component
 public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
@@ -41,37 +46,33 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             adminService.addUser("reed226", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
             adminService.addUser("sullil96", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
 
-            adminService.addAccount("101", "apolcyn", "Student", "One", "Student", null, "purdue.edu");
-            adminService.addAccount("102", "brookea", "Student", "Two", "Student", null, "purdue.edu");
-            adminService.addAccount("103", "hayc", "Student", "Three", "Student", null, "purdue.edu");
-            adminService.addAccount("104", "jdsheple", "Student", "Four", "Student", null, "purdue.edu");
-            adminService.addAccount("105", "ko76", "Student", "Five", "Student", null, "purdue.edu");
-            adminService.addAccount("106", "mbounab", "Student", "Six", "Student", null, "purdue.edu");
-            adminService.addAccount("107", "oneil4", "Student", "Seven", "Student", null, "purdue.edu");
-            adminService.addAccount("108", "riggs4", "Student", "Eight", "Student", null, "purdue.edu");
-            adminService.addAccount("109", "son35", "Student", "Nine", "Student", null, "purdue.edu");
-            adminService.addAccount("110", "varleyj", "Student", "Ten", "Student", null, "purdue.edu");
+            adminService.assignProfessorToCourse("grr", "cs252", "Fall2018");
+            adminService.addSection("1001", "Fall2018", "cs252", "Systems Programming", "LE1");
 
-
-            adminService.addSection("1001", "Fall2018", "cs252", "Systems Programming", "Lab1");
-            adminService.addSection("1002", "Fall2018", "cs252", "Systems Programming", "Lab2");
-            adminService.addSection("1003", "Fall2018", "cs252", "Systems Programming", "Lab3");
-
-            adminService.registerStudentToSection("apolcyn", "cs252", "Fall2018", "Lab1");
-            adminService.registerStudentToSection("brookea", "cs252", "Fall2018", "Lab2");
-            adminService.registerStudentToSection("hayc", "cs252", "Fall2018", "Lab3");
-            adminService.registerStudentToSection("jdsheple", "cs252", "Fall2018", "Lab1");
-            adminService.registerStudentToSection("ko76", "cs252", "Fall2018", "Lab2");
-            adminService.registerStudentToSection("mbounab", "cs252", "Fall2018", "Lab3");
-            adminService.registerStudentToSection("oneil4", "cs252", "Fall2018", "Lab1");
-            adminService.registerStudentToSection("riggs4", "cs252", "Fall2018", "Lab2");
-            adminService.registerStudentToSection("son35", "cs252", "Fall2018", "Lab3");
-            adminService.registerStudentToSection("varleyj", "cs252", "Fall2018", "Lab1");
+            try {
+                BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/students.txt"));
+                String student = null;
+                int count = 1;
+                while((student = fileReader.readLine()) != null) {
+                    if(student.equals("grr")) {
+                        continue;
+                    }
+                    adminService.addAccount(Integer.toString(100 + count), student, "Student", Integer.toString(count),
+                            "Student", null, student + "@purdue.edu");
+                    adminService.registerStudentToSection(student, "cs252", "Fall2018", "LE1");
+                    count++;
+                }
+            }
+            catch(IOException e) {
+                e.printStackTrace();
+            }
 
             courseService.setSectionRemotePaths("Fall2018", "cs252", "/homes/cs252/sourcecontrol/work");
             courseService.setDirectory("Fall2018", "cs252");
-            professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/25/2018", "9/06/2018");
-
+            professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/27/2018", "9/10/2018");
+            professorService.addProject("cs252", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018");
+            professorService.assignProject(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
+            professorService.assignProject(Project.createProjectID("cs252", "Fall2018", "Shell"));
         }
     }
 }
