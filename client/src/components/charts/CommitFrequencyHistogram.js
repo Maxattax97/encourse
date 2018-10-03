@@ -5,6 +5,7 @@ import moment from 'moment';
 import { connect } from 'react-redux'
 
 import { getCommitFrequency } from '../../redux/actions'
+import url from '../../server'
 
 const defaultData = [
     {date: moment('2018-09-16').valueOf(), count: 8},

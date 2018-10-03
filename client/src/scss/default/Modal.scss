@@ -32,15 +32,15 @@
 }
 
 .modal-left {
-  position: relative;
+  position: fixed;
   float: left;
-  margin-left: 15%;
+  margin-left: 13.5%;
 
   margin-top: calc(20px + 40px + 1.17em);
 }
 
 .modal-center {
-  position: relative;
+  position: fixed;
   margin-left: 15%;
 
   margin-top: calc(20px + 40px + 1.17em);

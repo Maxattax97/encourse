@@ -8,7 +8,7 @@ import Modal from "../Modal";
 function getStateFromProjectsProp(props) {
     const project = props.projects[props.current_project];
     return {
-        visible: props.visible,
+        show: props.show,
         name: project.name,
         source_name: project.source_name,
         created_date: project.created_date,
@@ -28,7 +28,7 @@ class ProjectOptions extends Component {
         super(props);
 
         this.state = {
-            visible: false,
+            show: false,
             name : false,
             source_name: "",
             created_date: "",
@@ -59,7 +59,7 @@ class ProjectOptions extends Component {
                 };
         }
 
-        if(state.visible !== props.visible || props.current_project !== state.current_project)
+        if(state.show !== props.show || props.current_project !== state.current_project)
             return getStateFromProjectsProp(props);
         else
             return state;
@@ -67,6 +67,10 @@ class ProjectOptions extends Component {
 
     onChange = (event) => {
         this.setState({ [event.target.name]: event.target.value });
+    };
+
+    addTestScript = () => {
+        this.setState({ test_script : this.state.test_script.push({filename: "", pointvalue: 0}) });
     };
 
     render() {
@@ -128,8 +132,21 @@ class ProjectOptions extends Component {
                                <h4 className="header">
                                    Test Scripts
                                </h4>
+                               <h4 className="break-line title" />
                                <div className="project-options-script-list">
-
+                                   {
+                                       this.state.test_script.map((script) =>
+                                            <div className="project-options-script" key={`${ script.filename }-${ script.pointvalue }`}>
+                                                <h4>
+                                                    { script.filename }
+                                                </h4>
+                                                <input type="number" placeholder="5" step="1" />
+                                            </div>
+                                       )
+                                   }
+                                   <div className="project-options-new-script" onClick={ this.addTestScript }>
+                                       <img src={ plusIcon } />
+                                   </div>
                                </div>
                            </div>
                        } />

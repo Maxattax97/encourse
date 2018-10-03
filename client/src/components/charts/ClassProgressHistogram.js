@@ -3,6 +3,7 @@ import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label
 import { connect } from 'react-redux'
 
 import { getClassProgress } from '../../redux/actions'
+import url from '../../server'
 
 const toPercent = (decimal, fixed = 0) => {
     return `${(decimal * 100).toFixed(fixed)}%`;

@@ -89,6 +89,14 @@ public class ProfessorServiceImpl implements ProfessorService {
         return isTaking;
     }
 
+    public boolean hasPermissionForStudent(Account loggedIn, String userName) {
+
+
+
+        //teachingAssistantStudentRepository.findByIdTeachingAssistantID()
+        return false;
+    }
+
     private double parseProgressForProject(String testOutput) {
         String[] testResults = testOutput.split(" ");
         double passedCount = 0.0;
