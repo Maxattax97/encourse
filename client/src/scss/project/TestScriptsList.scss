@@ -1,0 +1,23 @@
+.test-scripts-list {
+  width: 100%;
+  height: 331px; //TODO calc()
+
+  .scripts-new {
+    padding: .75em;
+    cursor:pointer;
+
+    img {
+      width: 1.5em;
+      height: 1.5em;
+      margin: 0 auto;
+      display: block;
+      filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
+    }
+  }
+
+  .scripts-new:hover {
+    img {
+      filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+    }
+  }
+}
