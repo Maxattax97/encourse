@@ -30,12 +30,13 @@ class CommitHistory extends Component {
     }
 
     fetch = (props) => {
-        props.getCommitHistory(`${url}/secured/commitList?projectID=${props.projectID}&userName=${props.id}`, 
+        props.getCommitHistory(`${url}/secured/commitList?projectID=${props.projectID}&userName=${props.id}`,
         {'Authorization': `Bearer ${props.token}`})
     }
 
     formatApiData = (udata) => {
         const data = udata.data;
+        console.log('format api data', data)
         const formattedData = data.slice();
 
         return formattedData;
@@ -50,7 +51,7 @@ class CommitHistory extends Component {
                 <h3 className="break-line title" />
                 <div className="student-commits float-height card-overflow">
                     {
-                        this.props.commits && 
+                        this.props.commits &&
                         this.props.commits.map((commit) =>
                             <Card component={
                                 <div className="student-commit-container">

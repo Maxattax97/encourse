@@ -40,7 +40,7 @@ class StudentProgressLineGraph extends Component {
     }
 
     fetch = (props) => {
-        props.getData(`${url}/secured/progress?projectID=${props.projectID}&userName=${props.id}`, 
+        props.getData(`${url}/secured/progress?projectID=${props.projectID}&userName=${props.id}`,
         {'Authorization': `Bearer ${props.token}`})
     }
 
@@ -50,8 +50,13 @@ class StudentProgressLineGraph extends Component {
             return defaultData
         }
         const data = udata.data;
+        console.log('format api data', data)
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf();
+        }
+
+        if (!data || data.length === 0) {
+            return defaultData;
         }
 
         const minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date);

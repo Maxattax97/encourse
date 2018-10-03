@@ -21,42 +21,43 @@ const AxisLabel = ({ axisType, x, y, width, height, stroke, children }) => {
     );
 };
 
+const defaultData = [
+    {
+        "progressBin": "0-20%",
+        "order": 0,
+        "count": 10,
+        "percent": 0.625
+    },
+    {
+        "progressBin": "20-40%",
+        "order": 20,
+        "count": 3,
+        "percent": 0.1875
+    },
+    {
+        "progressBin": "40-60%",
+        "order": 40,
+        "count": 2,
+        "percent": 0.125
+    },
+    {
+        "progressBin": "60-80%",
+        "order": 60,
+        "count": 0,
+        "percent": 0
+    },
+    {
+        "progressBin": "80-100%",
+        "order": 80,
+        "count": 1,
+        "percent": 0.0625
+    }
+]
+
 class ClassProgressHistogram extends Component {
     constructor(props) {
         super(props);
 
-        const defaultData = [
-            {
-                "progressBin": "0-20%",
-                "order": 0,
-                "count": 10,
-                "percent": 0.625
-            },
-            {
-                "progressBin": "20-40%",
-                "order": 20,
-                "count": 3,
-                "percent": 0.1875
-            },
-            {
-                "progressBin": "40-60%",
-                "order": 40,
-                "count": 2,
-                "percent": 0.125
-            },
-            {
-                "progressBin": "60-80%",
-                "order": 60,
-                "count": 0,
-                "percent": 0
-            },
-            {
-                "progressBin": "80-100%",
-                "order": 80,
-                "count": 1,
-                "percent": 0.0625
-            }
-        ]
 
         this.state = {
             formattedData: defaultData,
@@ -77,12 +78,18 @@ class ClassProgressHistogram extends Component {
     }
 
     fetch = (props) => {
-        props.getData(`${url}/secured/classProgress?projectID=${props.projectID}`, 
+        props.getData(`${url}/secured/classProgress?projectID=${props.projectID}`,
         {'Authorization': `Bearer ${props.token}`})
     }
 
     formatApiData = (udata) => {
         const data = udata.data;
+
+        if (!data || data.length === 0) {
+            return defaultData;
+        }
+
+        console.log('format api data', data)
         const formattedData = []
         const data2 = Object.entries(data);
         const total = data2.reduce((sum, p) => sum + p[1], 0);
@@ -133,7 +140,7 @@ class ClassProgressHistogram extends Component {
 }
 
 const mapStateToProps = (state) => {
-    return { 
+    return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
         isLoading: state.course ? state.course.getClassProgressData : false,

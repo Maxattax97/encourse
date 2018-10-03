@@ -153,7 +153,7 @@ class Statistics extends Component {
     }
 
     fetch = (props) => {
-        props.getStatistics(`${url}/secured/statistics?projectID=${props.projectID}&userName=${props.id}`, 
+        props.getStatistics(`${url}/secured/statistics?projectID=${props.projectID}&userName=${props.id}`,
         {'Authorization': `Bearer ${props.token}`})
     }
 
@@ -162,6 +162,7 @@ class Statistics extends Component {
             return defaultData
         }
         const data = udata.data;
+        console.log('format api data', data)
         const formattedData = data.slice();
 
         return formattedData;
@@ -195,17 +196,17 @@ class Statistics extends Component {
 }
 
 const mapStateToProps = (state) => {
-    return { 
+    return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : [],
         isLoading: state.student ? state.student.getStatisticsIsLoading : true
     }
   }
-  
+
   const mapDispatchToProps = (dispatch) => {
       return {
          getStatistics: (url, headers, body) => dispatch(getStatistics(url, headers, body))
       }
   }
-  
+
   export default connect(mapStateToProps, mapDispatchToProps)(Statistics)
