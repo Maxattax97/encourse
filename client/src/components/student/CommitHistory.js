@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Card from "../Card";
 
+import { getCommitHistory } from '../../redux/actions'
+import url from '../../server'
+
 class CommitHistory extends Component {
 
     constructor(props) {
@@ -13,8 +16,9 @@ class CommitHistory extends Component {
     }
 
     componentDidMount = () => {
-
-    };
+        this.props.getCommitHistory(`${url}/secured/commitList?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.id}`, 
+        {'Authorization': `Bearer ${this.props.token}`})
+    }
 
     render() {
         return (
@@ -25,7 +29,7 @@ class CommitHistory extends Component {
                 <h3 className="break-line title" />
                 <div className="student-commits float-height card-overflow">
                     {
-                        this.state.commits.map((commit) =>
+                        this.props.commits.map((commit) =>
                             <Card component={
                                 <div className="student-commit-container">
                                     <h5>
@@ -55,13 +59,16 @@ class CommitHistory extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null
+        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+        commits: state.student && state.student.getCommitHistoryData ? state.student.getCommitHistoryData : [],
+        isLoading: state.student ? state.student.getCommitHistoryIsLoading : true
     }
-};
+}
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        getCommitHistory: (url, headers, body) => dispatch(getCommitHistory(url, headers, body))
     }
-};
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(CommitHistory)
