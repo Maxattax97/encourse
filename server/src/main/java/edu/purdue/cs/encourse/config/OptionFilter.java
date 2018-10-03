@@ -9,6 +9,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Enumeration;
 
@@ -31,6 +32,13 @@ public class OptionFilter extends OncePerRequestFilter {
             System.out.println("Path: " + request.getContextPath());
             System.out.println("Auth type: " + request.getAuthType());
             System.out.println("Path Info" + request.getPathInfo());
+            HttpSession session = request.getSession();
+            Enumeration<String> attrs = session.getAttributeNames();
+            while (attrs.hasMoreElements()) {
+                String key = attrs.nextElement();
+                String val = session.getAttribute(key).toString();
+                System.out.println("Attributes: [" + key + "] " + val);
+            }
             System.out.println("----------------------------------");
         }
 

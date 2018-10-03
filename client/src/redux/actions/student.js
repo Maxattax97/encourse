@@ -7,6 +7,12 @@ export function setCurrentStudent(student) {
     }
 }
 
+export function clearStudent() {
+    return {
+        type: 'CLEAR_STUDENT'
+    }
+}
+
 export function getProgressLineHasError(hasError) {
     return {
         type: 'GET_PROGRESS_LINE_HAS_ERROR',

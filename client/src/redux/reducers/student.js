@@ -5,6 +5,14 @@ function student(state = {}, action) {
             return Object.assign({}, state, {
                 currentStudent: action.student,
             })
+        case 'CLEAR_STUDENT':
+            return Object.assign({}, state, {
+                currentStudent: null,
+                getProgressLineData: null,
+                getCommitFrequencyData: null,
+                getCodeFrequencyData: null,
+                getStatistics: null,
+            })
         case 'GET_PROGRESS_LINE_HAS_ERROR':
             return Object.assign({}, state, {
                 getProgressLineHasError: action.hasError,

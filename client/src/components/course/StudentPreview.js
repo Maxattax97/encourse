@@ -11,14 +11,16 @@ class StudentPreview extends Component {
                 <h4 className="break-line title" />
                 <div className="student-preview-commits">
                     <h5>Time: {this.props.info.timeSpent[this.props.project]}</h5>
-                    <h5>Commits: {this.props.info.commitCount[this.props.project]}</h5>
+                    <h5>Commits: {this.props.info.commitCounts[this.props.project]}</h5>
                 </div>
                 <div className="student-preview-progress">
                     <div className="progress-bar">
-                        <div style={{width: this.props.info.progress[this.props.project] + "%"}} />
+                        {/*TODO: <div style={{width: this.props.info.progress[this.props.project] + "%"}} /> */}
+                        <div style={{width: 30 + "%"}} />
                     </div>
                     <div className="progress-text">
-                        {this.props.info.progress[this.props.project]}%
+                    {/*TODO: {this.props.info.progress[this.props.project]}%*/}
+                        30%
                     </div>
                 </div>
             </div>

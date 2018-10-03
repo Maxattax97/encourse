@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { getStatistics } from '../../redux/actions'
+import url from '../../server'
 
 class Statistics extends Component {
 
@@ -75,7 +76,9 @@ class Statistics extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getStatistics(/*TODO: add endpoint for statistics*/)
+        console.log(this.props.student)
+        this.props.getStatistics(`${url}/secured/statistics?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.student.id}`, 
+        {'Authorization': `Bearer ${this.props.token}`})
     }
 
     render() {
