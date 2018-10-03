@@ -84,7 +84,7 @@ class CodeChangesChart extends Component {
                             <Label position="insideBottom" offset={-15} value="Date"/>
                         </XAxis>
                         <YAxis/>
-                        <Tooltip labelFormatter={dateFormatter}/>
+                        <Tooltip labelFormatter={this.dateFormatter}/>
                         <Area type="monotone" dataKey="additions" stroke="none" fill="green" />
                         <Area type="monotone" dataKey="deletions" stroke="none" fill="red" />
                     </AreaChart>
