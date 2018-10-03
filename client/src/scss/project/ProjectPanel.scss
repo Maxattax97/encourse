@@ -2,28 +2,28 @@
 
 .panel-project-options {
   float:left;
+  height: 440px; //TODO Calc() instead
+  width: 245px; //TODO Calc() instead
 
   .header {
     cursor: default;
   }
 
-  .modal-buttons {
-    div:first-child {
+  .project-options-scripts {
+    margin-top: 5px;
+    h4 {
+      margin: 0;
+      padding: .75em 0;
+      cursor: pointer;
     }
 
-    div.project-options-sync {
+    h4:hover {
+      color: #1f1e1c99;
+      padding: .75em 0 .75em calc(3px);
     }
+  }
 
-    div.project-options-add {
-    }
-
-    div:first-child:hover {
-    }
-
-    div.project-options-sync:hover {
-    }
-
-    div.project-options-add:hover {
-    }
+  .project-options-script-list {
+    width: 100%;
   }
 }

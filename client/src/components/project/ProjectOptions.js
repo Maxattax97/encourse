@@ -16,7 +16,9 @@ function getStateFromProjectsProp(props) {
         test_script: project.test_script,
         hidden_test_script: project.hidden_test_script,
         current_project: props.current_project,
-        new_project: props.new_project
+        new_project: props.new_project,
+        show_test_scripts: false,
+        show_hidden_scripts: false
     };
 }
 
@@ -32,7 +34,9 @@ class ProjectOptions extends Component {
             created_date: "",
             due_date: "",
             test_script: false,
-            hidden_test_script: false
+            hidden_test_script: false,
+            show_test_scripts: false,
+            show_hidden_scripts: false
         }
     }
 
@@ -49,9 +53,12 @@ class ProjectOptions extends Component {
                     test_script: [],
                     hidden_test_script: [],
                     current_project: props.current_project,
-                    new_project: true
+                    new_project: true,
+                    show_test_scripts: false,
+                    show_hidden_scripts: false
                 };
         }
+
         if(state.visible !== props.visible || props.current_project !== state.current_project)
             return getStateFromProjectsProp(props);
         else
@@ -59,15 +66,15 @@ class ProjectOptions extends Component {
     }
 
     onChange = (event) => {
-        this.setState({[event.target.name]: event.target.value});
+        this.setState({ [event.target.name]: event.target.value });
     };
 
     render() {
         return (
             <div className="project-options">
-                <Modal left
-                       show={this.state.project_options}
-                       onClose={() => this.setState({project_options: false})}
+                <Modal center
+                       show={ this.props.show && !this.state.show_test_scripts && !this.state.show_hidden_scripts }
+                       onExit={ this.props.close }
                        component={
                            <div className="panel-project-options">
                                <h4 className="header">
@@ -86,14 +93,14 @@ class ProjectOptions extends Component {
                                    Due Date
                                </h4>
                                <input type="text" className="h3-size" value={this.state.due_date} placeholder="MM-DD-YYYY" onChange={this.onChange} name="due_date" ref="due_date"/>
-                               <h4 className="header">
-                                   Test Script
-                               </h4>
-                               <input type="file" name="test_script" ref="test_script" />
-                               <h4 className="header">
-                                   Hidden Test Script
-                               </h4>
-                               <input type="file" name="test_script" ref="test_script" />
+                               <div className="project-options-scripts">
+                                   <h4 onClick={ () => this.setState({ show_test_scripts: true }) }>
+                                       Test Scripts
+                                   </h4>
+                                   <h4 onClick={ () => this.setState({ show_hidden_scripts: true }) }>
+                                       Hidden Test Scripts
+                                   </h4>
+                               </div>
                                <div className="modal-buttons float-height">
                                    <div>
                                        <img src={deleteIcon} />
@@ -109,6 +116,31 @@ class ProjectOptions extends Component {
                                            </div>
                                    }
                                </div>
+                           </div>
+                       } />
+
+                <Modal center
+                       show={ this.props.show && this.state.show_test_scripts && !this.state.show_hidden_scripts }
+                       onExit={ this.props.close }
+                       onClose={ () => this.setState({ show_test_scripts: false }) }
+                       component={
+                           <div className="panel-project-options">
+                               <h4 className="header">
+                                   Test Scripts
+                               </h4>
+                               <div className="project-options-script-list">
+
+                               </div>
+                           </div>
+                       } />
+
+                <Modal center
+                       show={ this.props.show && !this.state.show_test_scripts && this.state.show_hidden_scripts }
+                       onExit={ this.props.close }
+                       onClose={ () => this.setState({ show_hidden_scripts: false }) }
+                       component={
+                           <div className="panel-project-options">
+
                            </div>
                        } />
             </div>

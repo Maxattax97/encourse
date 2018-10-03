@@ -105,10 +105,12 @@ class CoursePanel extends Component {
     };
 
     render() {
-        console.log(this.props);
         return (
             <div className="panel-course">
-                <ProjectNavigation info={this.state.projects} onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})} {...this.props}/>
+                <ProjectNavigation info={this.state.projects}
+                                   onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})}
+                                   {...this.props}/>
+
                 <div className="panel-center-content">
 
                     <div className={ `panel-course-content${this.state.modal_blur}` }>
@@ -116,11 +118,6 @@ class CoursePanel extends Component {
                         <h1 className="break-line title" />
                         <h3>Class Statistics</h3>
                         <div className="charts float-height">
-                            <Card component={<ClassProgressHistogram/>} />
-                            <Card component={<ClassProgressHistogram/>} />
-                            <Card component={<ClassProgressHistogram/>} />
-                            <Card component={<ClassProgressHistogram/>} />
-                            <Card component={<ClassProgressHistogram/>} />
                             <Card component={<ClassProgressHistogram/>} />
                         </div>
                         <h2 className="break-line" />
@@ -145,7 +142,7 @@ const mapStateToProps = (state) => {
     return {
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : null,
         projects: state.course && state.course.getClassProjectsData ? state.course.getClassProjectsData : null,
-        currentProject: state.projects && state.projects.currentProject ? state.projects.currentProject : 2
+        currentProject: state.projects && state.projects.currentProject ? state.projects.currentProject : 0
     }
 };
   
