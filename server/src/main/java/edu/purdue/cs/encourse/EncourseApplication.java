@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServic
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class, JmxAutoConfiguration.class })
-@EnableScheduling
+/** Leave this commented until we begin running the server continuously **/
+//@EnableScheduling
 public class EncourseApplication {
     public static void main(String[] args) {
         SpringApplication.run(EncourseApplication.class, args);

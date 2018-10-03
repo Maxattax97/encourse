@@ -8,5 +8,7 @@ import java.util.List;
 
 public interface ProjectTestScriptRepository extends CrudRepository<ProjectTestScript, String> {
     List<ProjectTestScript> findByIdProjectIdentifier(@NonNull String projectID);
+    List<ProjectTestScript> findByIdProjectIdentifierAndIsHidden(@NonNull String projectID, boolean isHidden);
     List<ProjectTestScript> findByIdTestScriptName(@NonNull String testScriptName);
+    ProjectTestScript findByIdProjectIdentifierAndIdTestScriptName(@NonNull String projectID, @NonNull String testScriptName);
 }

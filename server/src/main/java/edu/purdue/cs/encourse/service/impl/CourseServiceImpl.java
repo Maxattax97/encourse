@@ -6,6 +6,7 @@ import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.Student;
 import edu.purdue.cs.encourse.domain.relations.ProfessorCourse;
+import edu.purdue.cs.encourse.domain.relations.ProjectTestScript;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentSection;
 import edu.purdue.cs.encourse.service.CourseService;
@@ -41,6 +42,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private ProjectTestScriptRepository projectTestScriptRepository;
 
     @Autowired
     private SectionRepository sectionRepository;
@@ -219,10 +223,14 @@ public class CourseServiceImpl implements CourseService {
         JSONArray projectsJSON = new JSONArray();
         for(Project p : projects) {
             JSONObject projectJSON = new JSONObject();
+            List<ProjectTestScript> visibleTestScripts = projectTestScriptRepository.findByIdProjectIdentifierAndIsHidden(p.getProjectIdentifier(), false);
+            List<ProjectTestScript> hiddenTestScripts = projectTestScriptRepository.findByIdProjectIdentifierAndIsHidden(p.getProjectIdentifier(), true);
             projectJSON.put("project_name", p.getProjectName());
             projectJSON.put("source_name", p.getRepoName());
             projectJSON.put("start_date", p.getStartDate());
             projectJSON.put("due_date", p.getDueDate());
+            projectJSON.put("test_script", visibleTestScripts);
+            projectJSON.put("hidden_test_script", hiddenTestScripts);
             projectJSON.put("id", p.getProjectIdentifier());
             projectsJSON.add(projectJSON);
         }
