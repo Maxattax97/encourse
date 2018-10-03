@@ -1,9 +1,14 @@
+from datetime import date, timedelta
 def is_number(string):
     try:
         int(string)
         return True
     except ValueError:
         return False
+
+def date_string(date):
+    #print(date)
+    return date.isoformat()
 
 def time_string(seconds):
     """
@@ -25,3 +30,7 @@ def time_string(seconds):
         return "{} hours".format(int(hours))
     days, hours = divmod(hours, 24)
     return "{} days".format(int(days))
+
+def daterange(start_date, end_date):
+    for n in range(int ((end_date - start_date).days)):
+        yield start_date + timedelta(n)

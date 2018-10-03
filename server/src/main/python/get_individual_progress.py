@@ -26,18 +26,17 @@ def api_format_data(data, times):
     date1 = datetime.strptime(times[0], "%Y-%m-%d").date()
     date2 = datetime.strptime(times[1], "%Y-%m-%d").date()
     dates = daterange(date1, date2)
+    progress = 0
     for day in dates:
         day = date_string(day)
         new_entry = {}
         new_entry["date"] = day
         if day in data:
-            new_entry["additions"] = data[day]["additions"]
-            new_entry["deletions"] = data[day]["deletions"]
-        else:
-            new_entry["additions"] = 0
-            new_entry["deletions"] = 0
-            
+            progress += (data[day]["additions"] - data[day]["deletions"])
+        new_entry["progress"] = progress    
         daily_data.append(new_entry)
+    for item in daily_data:
+        item["progress"] = round(item["progress"] / progress * 100)
     return daily_data
 
 if len(sys.argv) != 4:

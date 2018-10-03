@@ -27,18 +27,21 @@ def format_data(data):
             day["date"] = date_string(day["date"])
     return data
 
-if len(sys.argv) != 2:
-    print("USAGE: \t`python getProgressHistogram.py file1`")
+if len(sys.argv) != 3:
+    print("USAGE: \t`python getProgressHistogram.py file1 name`")
     print("\tfile1 is a properly formatted commit data file")
+    print("\tname is the name of the student whose git log is being requested")
     sys.exit()
+
 commit_data_path = sys.argv[1]
+student_id = sys.argv[2]
 commit_data_file = open(commit_data_path, "r")
 data = get_progress(commit_data_file)
 
-api_formatted_data = api_format_data(data)
+api_formatted_data = api_format_data(data)[student_id]
 api_json = json.dumps(api_formatted_data)
 print(api_json)
 #print(data)
-formatted_data = format_data(data)
+formatted_data = format_data(data)[student_id]
 json = json.dumps(formatted_data)
 #print(json)
