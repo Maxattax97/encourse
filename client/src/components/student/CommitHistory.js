@@ -16,8 +16,18 @@ class CommitHistory extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getCommitHistory(`${url}/secured/commitList?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.id}`, 
-        {'Authorization': `Bearer ${this.props.token}`})
+        this.fetch(this.props)
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.projectID !== this.props.projectID) {
+            this.fetch(nextProps)
+        }
+    }
+
+    fetch = (props) => {
+        props.getCommitHistory(`${url}/secured/commitList?projectID=${props.projectID}&userName=${props.id}`, 
+        {'Authorization': `Bearer ${props.token}`})
     }
 
     render() {

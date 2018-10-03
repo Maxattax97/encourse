@@ -33,7 +33,20 @@ class CommitHistoryHistogram extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getData(/*TODO: add endpoint */)
+        this.fetch(this.props)
+    }
+
+    componentWillReceiveProps = (nextProps) => {
+        if(!this.props.data && nextProps.data) {
+            this.setState({ formattedData: this.formatApiData(nextProps.data) })
+        }
+        if (nextProps.projectID !== this.props.projectID) {
+            this.fetch(nextProps)
+        }
+    }
+
+    fetch = (props) => {
+        props.getData(/*TODO: add endpoint */)
     }
 
     dateFormatter = (date) => {

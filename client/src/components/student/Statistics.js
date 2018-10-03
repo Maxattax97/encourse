@@ -76,8 +76,18 @@ class Statistics extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getStatistics(`${url}/secured/statistics?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.id}`, 
-        {'Authorization': `Bearer ${this.props.token}`})
+        this.fetch(this.props)
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.projectID !== this.props.projectID) {
+            this.fetch(nextProps)
+        }
+    }
+
+    fetch = (props) => {
+        props.getStatistics(`${url}/secured/statistics?projectID=${props.projectID}&userName=${props.id}`, 
+        {'Authorization': `Bearer ${props.token}`})
     }
 
     render() {

@@ -27,16 +27,23 @@ class CodeChangesChart extends Component {
             formattedData: defaultData,
         }
     }
+  
+    componentDidMount = () => {
+        this.fetch(this.props)
+    }
 
     componentWillReceiveProps = (nextProps) => {
         if(!this.props.data && nextProps.data) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
+        if (nextProps.projectID !== this.props.projectID) {
+            this.fetch(nextProps)
+        }
     }
 
-    componentDidMount = () => {
-        this.props.getData(`${url}/secured/diffs?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.id}`, 
-        {'Authorization': `Bearer ${this.props.token}`})
+    fetch = (props) => {
+        props.getData(`${url}/secured/diffs?projectID=${props.projectID}&userName=${props.id}`, 
+        {'Authorization': `Bearer ${props.token}`})
     }
 
     dateFormatter = (date) => {

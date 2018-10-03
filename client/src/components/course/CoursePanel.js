@@ -52,7 +52,7 @@ class CoursePanel extends Component {
                         <h1 className="break-line title" />
                         <h3>Course Charts</h3>
                         <div className="charts float-height">
-                            <Card component={<ClassProgressHistogram/>} />
+                            <Card component={<ClassProgressHistogram projectID={this.props.currentProjectId}/>} />
                         </div>
                         <h2 className="break-line" />
                         <h3>Students</h3>

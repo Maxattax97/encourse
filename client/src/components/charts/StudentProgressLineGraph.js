@@ -27,9 +27,23 @@ class StudentProgressLineGraph extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getData(`${url}/secured/progress?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.id}`, 
-        {'Authorization': `Bearer ${this.props.token}`})
+        this.fetch(this.props)
     }
+
+    componentWillReceiveProps(nextProps) {
+        if(!this.props.data && nextProps.data) {
+            this.setState({ formattedData: this.formatApiData(nextProps.data) })
+        }
+        if (nextProps.projectID !== this.props.projectID) {
+            this.fetch(nextProps)
+        }
+    }
+
+    fetch = (props) => {
+        props.getData(`${url}/secured/progress?projectID=${props.projectID}&userName=${props.id}`, 
+        {'Authorization': `Bearer ${props.token}`})
+    }
+
 
     formatApiData = (data) => {
         for (let entry of data) {
