@@ -10,6 +10,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -410,6 +411,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                         jsonObject = new JSONObject();
                         JSONArray jsonArray = (JSONArray)obj;
                         jsonObject.put("data", jsonArray);
+                        jsonObject.get("");
                     } else {
                         json = new JSONReturnable(-4, null);
                     }
@@ -421,7 +423,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             e.printStackTrace();
             json =  new JSONReturnable(-2, null);
         }
-
+        // TODO: JARDON
         executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
