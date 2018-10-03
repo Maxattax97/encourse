@@ -26,7 +26,7 @@ import lombok.NonNull;
 public class ProfessorServiceImpl implements ProfessorService {
 
     public final static String NAME = "ProfessorService";
-    private final static String pythonPath = "src/main/java/edu/purdue/cs/encourse/service/impl/python/";
+    private final static String pythonPath = "src/main/python/";
     private final static int RATE = 3600000;
 
     /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
@@ -265,9 +265,47 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
 
-        // TODO: RYAN PUT YOUR SHIT HERE
         /** python executable.py dailyCountsFile commitLogFile userName **/
         JSONReturnable json = null;
+        String pyPath = pythonPath + "get_individual_progress.py";
+        try {
+            Process process = Runtime.getRuntime().exec("python " + pyPath + " " + dailyCountsFile + " " + commitLogFile + " " + userName);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String input = null;
+            String error = null;
+            while ((error = stdError.readLine()) != null) {
+                System.out.println(error);
+            }
+            while ((input = stdInput.readLine()) != null) {
+                JSONParser jsonParser = new JSONParser();
+                Object obj = null;
+                try {
+                    obj = jsonParser.parse(input);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    json =  new JSONReturnable(-3, null);
+                }
+                if (obj != null) {
+                    System.out.println(obj);
+                    JSONObject jsonObject = null;
+                    if (obj.getClass() == JSONObject.class) {
+                        jsonObject = (JSONObject)obj;
+                    } else if (obj.getClass() == JSONArray.class) {
+                        jsonObject = new JSONObject();
+                        JSONArray jsonArray = (JSONArray)obj;
+                        jsonObject.put("data", jsonArray);
+                    } else {
+                        json = new JSONReturnable(-4, null);
+                    }
+                    json = new JSONReturnable(1, jsonObject);
+                }
+            }
+            json =  new JSONReturnable(-1, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+            json =  new JSONReturnable(-2, null);
+        }
 
         executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -283,9 +321,47 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
 
-        // TODO: RYAN PUT YOUR SHIT HERE
         /** python executable.py commitLogFile dailyCountsFile userName **/
         JSONReturnable json = null;
+        String pyPath = pythonPath + "get_add_del.py";
+        try {
+            Process process = Runtime.getRuntime().exec("python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String input = null;
+            String error = null;
+            while ((error = stdError.readLine()) != null) {
+                System.out.println(error);
+            }
+            while ((input = stdInput.readLine()) != null) {
+                JSONParser jsonParser = new JSONParser();
+                Object obj = null;
+                try {
+                    obj = jsonParser.parse(input);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    json =  new JSONReturnable(-3, null);
+                }
+                if (obj != null) {
+                    System.out.println(obj);
+                    JSONObject jsonObject = null;
+                    if (obj.getClass() == JSONObject.class) {
+                        jsonObject = (JSONObject)obj;
+                    } else if (obj.getClass() == JSONArray.class) {
+                        jsonObject = new JSONObject();
+                        JSONArray jsonArray = (JSONArray)obj;
+                        jsonObject.put("data", jsonArray);
+                    } else {
+                        json = new JSONReturnable(-4, null);
+                    }
+                    json = new JSONReturnable(1, jsonObject);
+                }
+            }
+            json =  new JSONReturnable(-1, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+            json =  new JSONReturnable(-2, null);
+        }
 
         executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -302,10 +378,49 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
         Student student = studentRepository.findByUserName(userName);
         StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+        String testResult = project.getBestGrade();
 
-        // TODO: RYAN PUT YOUR SHIT HERE
         /** python executable.py commitLogFile dailyCountsFile project.getBestGrade() userName **/
         JSONReturnable json = null;
+        String pyPath = pythonPath + "get_statistics.py";
+        try {
+            Process process = Runtime.getRuntime().exec("python " + pyPath + " " + dailyCountsFile + " " + commitLogFile + " " + userName);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String input = null;
+            String error = null;
+            while ((error = stdError.readLine()) != null) {
+                System.out.println(error);
+            }
+            while ((input = stdInput.readLine()) != null) {
+                JSONParser jsonParser = new JSONParser();
+                Object obj = null;
+                try {
+                    obj = jsonParser.parse(input);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    json =  new JSONReturnable(-3, null);
+                }
+                if (obj != null) {
+                    System.out.println(obj);
+                    JSONObject jsonObject = null;
+                    if (obj.getClass() == JSONObject.class) {
+                        jsonObject = (JSONObject)obj;
+                    } else if (obj.getClass() == JSONArray.class) {
+                        jsonObject = new JSONObject();
+                        JSONArray jsonArray = (JSONArray)obj;
+                        jsonObject.put("data", jsonArray);
+                    } else {
+                        json = new JSONReturnable(-4, null);
+                    }
+                    json = new JSONReturnable(1, jsonObject);
+                }
+            }
+            json =  new JSONReturnable(-1, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+            json =  new JSONReturnable(-2, null);
+        }
 
         executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -317,9 +432,47 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-1, null);
         }
 
-        // TODO: RYAN PUT YOUR SHIT HERE
         /** python executable.py commitLogFile userName **/
         JSONReturnable json = null;
+        String pyPath = pythonPath + "get_get_commit_list.py";
+        try {
+            Process process = Runtime.getRuntime().exec("python " + pyPath + " " + commitLogFile + " " + userName);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String input = null;
+            String error = null;
+            while ((error = stdError.readLine()) != null) {
+                System.out.println(error);
+            }
+            while ((input = stdInput.readLine()) != null) {
+                JSONParser jsonParser = new JSONParser();
+                Object obj = null;
+                try {
+                    obj = jsonParser.parse(input);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    json =  new JSONReturnable(-3, null);
+                }
+                if (obj != null) {
+                    System.out.println(obj);
+                    JSONObject jsonObject = null;
+                    if (obj.getClass() == JSONObject.class) {
+                        jsonObject = (JSONObject)obj;
+                    } else if (obj.getClass() == JSONArray.class) {
+                        jsonObject = new JSONObject();
+                        JSONArray jsonArray = (JSONArray)obj;
+                        jsonObject.put("data", jsonArray);
+                    } else {
+                        json = new JSONReturnable(-4, null);
+                    }
+                    json = new JSONReturnable(1, jsonObject);
+                }
+            }
+            json =  new JSONReturnable(-1, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+            json =  new JSONReturnable(-2, null);
+        }
 
         executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
