@@ -102,7 +102,7 @@ class StudentPanel extends Component {
                         </div>
                         <h2 className="break-line" />
                         <div className="student-stats-comments float-height">
-                            <Card component={<Statistics student={this.props.currentStudent}/>}/>
+                            <Card component={<Statistics id={this.props.currentStudent.id}/>}/>
                             <Card component={
                                 <div className="student-feedback-container">
                                     <div className="title">
@@ -136,7 +136,7 @@ class StudentPanel extends Component {
                                 </h4>
                             </div>
                         } />
-                        <Card component={ <CommitHistory /> } />
+                        <Card component={ <CommitHistory id={this.props.currentStudent.id} /> } />
                     </div>
                 </div>
             </div>

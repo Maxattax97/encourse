@@ -11,7 +11,8 @@ function student(state = {}, action) {
                 getProgressLineData: null,
                 getCommitFrequencyData: null,
                 getCodeFrequencyData: null,
-                getStatistics: null,
+                getStatisticsData: null,
+                getCommitHistoryData: null,
             })
         case 'GET_PROGRESS_LINE_HAS_ERROR':
             return Object.assign({}, state, {
@@ -60,6 +61,18 @@ function student(state = {}, action) {
         case 'GET_STATISTICS_DATA_SUCCESS':
             return Object.assign({}, state, {
                 getStatisticsData: action.data,
+            })
+        case 'GET_COMMIT_HISTORY_HAS_ERROR':
+            return Object.assign({}, state, {
+                getCommitHistoryHasError: action.hasError,
+            })
+        case 'GET_COMMIT_HISTORY_IS_LOADING':
+            return Object.assign({}, state, {
+                getCommitHistoryIsLoading: action.isLoading,
+            })
+        case 'GET_COMMIT_HISTORY_DATA_SUCCESS':
+            return Object.assign({}, state, {
+                getCommitHistoryData: action.data,
             })
         default:
             return state

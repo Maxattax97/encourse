@@ -76,8 +76,7 @@ class Statistics extends Component {
     }
 
     componentDidMount = () => {
-        console.log(this.props.student)
-        this.props.getStatistics(`${url}/secured/statistics?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.student.id}`, 
+        this.props.getStatistics(`${url}/secured/statistics?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.id}`, 
         {'Authorization': `Bearer ${this.props.token}`})
     }
 
