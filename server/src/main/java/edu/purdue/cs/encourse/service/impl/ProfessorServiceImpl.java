@@ -5,6 +5,7 @@ import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.ProfessorService;
 import edu.purdue.cs.encourse.util.JSONReturnable;
+import org.codehaus.jackson.map.util.JSONPObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -100,7 +101,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         //teachingAssistantStudentRepository.findByIdTeachingAssistantID()
         return false;
     }
-    
+
     private double parseProgressForProject(@NonNull String projectID, @NonNull String testOutput) {
         String[] testResults = testOutput.split(" ");
         double earnedPoints = 0.0;
@@ -439,7 +440,25 @@ public class ProfessorServiceImpl implements ProfessorService {
             e.printStackTrace();
             json =  new JSONReturnable(-2, null);
         }
-        // TODO: JARDON
+        JSONArray array = (JSONArray)json.getJsonObject().get("data");
+        for(int i = 0; i < array.size(); i++) {
+            JSONObject data = (JSONObject)array.get(i);
+            if(data.get("stat_name").equals("End Date")) {
+                project.setMostRecentCommitDate(data.get("stat_value").toString());
+            }
+            if(data.get("stat_name").equals("Additions")) {
+                project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString()));
+            }
+            else if(data.get("stat_name").equals("Deletions")) {
+                project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString()));
+            }
+            else if(data.get("stat_name").equals("Commit Count")) {
+                project.setCommitCount(Integer.parseInt(data.get("stat_value").toString()));
+            }
+            else if(data.get("stat_name").equals("Estimated Time Spent")) {
+                project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString()));
+            }
+        }
         executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }

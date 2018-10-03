@@ -1,6 +1,9 @@
 package edu.purdue.cs.encourse.config;
 
+import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.Project;
+import edu.purdue.cs.encourse.domain.Student;
+import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
@@ -22,6 +26,12 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
 
     @Autowired
     private CourseService courseService;
+
+    @Autowired
+    private StudentProjectRepository studentProjectRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
     
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
@@ -73,6 +83,17 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             professorService.addProject("cs252", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018");
             professorService.assignProject(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
             professorService.assignProject(Project.createProjectID("cs252", "Fall2018", "Shell"));
+
+            List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
+            for(StudentProject p : projects) {
+                Student student = studentRepository.findByUserID(p.getStudentID());
+                professorService.getStatistics(p.getProjectIdentifier(), student.getUserName());
+            }
+            projects = studentProjectRepository.findByIdProjectIdentifier(Project.createProjectID("cs252", "Fall2018", "Shell"));
+            for(StudentProject p : projects) {
+                Student student = studentRepository.findByUserID(p.getStudentID());
+                professorService.getStatistics(p.getProjectIdentifier(), student.getUserName());
+            }
         }
     }
 }
