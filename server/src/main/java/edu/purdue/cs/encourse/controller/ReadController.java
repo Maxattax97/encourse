@@ -13,6 +13,7 @@ import edu.purdue.cs.encourse.service.ProfessorService;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import org.json.simple.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -63,34 +64,82 @@ public class ReadController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    @RequestMapping(value = "/studentCommitTime", method = RequestMethod.GET)
+    @RequestMapping(value = "/commitList", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
                                                                   @RequestParam(name = "userName") String userName) {
         JSONReturnable returnJson = professorService.getCommitList(projectID, userName);
         if (returnJson == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
         if (returnJson.jsonObject == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
         String json = returnJson.jsonObject.toJSONString();
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    @RequestMapping(value = "/commitCount", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getStudentCommitCountByDay(@RequestParam(name = "projectID") String projectID,
-                                                                      @RequestParam(name = "userName", required = false) String userName,
-                                                                      @RequestParam(name = "all", required = false, defaultValue = "false") boolean all) {
-        JSONReturnable returnJson = professorService.getCommitList(projectID, userName);
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/statistics", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getStatistics(@RequestParam(name = "projectID") String projectID,
+                                                         @RequestParam(name = "userName") String userName) {
+        JSONReturnable returnJson = professorService.getStatistics(projectID, userName);
         if (returnJson == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
         if (returnJson.jsonObject == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
         String json = returnJson.jsonObject.toJSONString();
         return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/diffs", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getDiffs(@RequestParam(name = "projectID") String projectID,
+                                                    @RequestParam(name = "userName") String userName) {
+        JSONReturnable returnJson = professorService.getAdditionsAndDeletions(projectID, userName);
+        if (returnJson == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        String json = returnJson.jsonObject.toJSONString();
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/progress", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
+                                                       @RequestParam(name = "userName") String userName) {
+        JSONReturnable returnJson = professorService.getStudentProgress(projectID, userName);
+        if (returnJson == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        String json = returnJson.jsonObject.toJSONString();
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    private Account getAccountFromAuth() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        User user = ((User)securityContext.getAuthentication().getPrincipal());
+        return accountService.retrieveAccount(user.getUsername());
+    }
+
+    private User getUserFromAuth() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        return ((User)securityContext.getAuthentication().getPrincipal());
+    }
+
+    private boolean hasPermissionForStudent(String userName) {
+        boolean hasPermission = false;
+
+
+
+        return hasPermission;
     }
 
 }
