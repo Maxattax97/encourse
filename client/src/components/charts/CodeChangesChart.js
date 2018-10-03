@@ -47,8 +47,8 @@ function formatApiData(data) {
     return formattedData;
 }
 
-function dateFormatter(dateUnix) {
-    const m = moment(dateUnix);
+function dateFormatter(date) {
+    const m = moment(date);
     return m.format('M-D')
 }
 
