@@ -195,7 +195,7 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .projects-nav .back-nav img { width: 1.3em; height: 1.3em; margin: 20px 0; float: right; }
 
-.projects-nav .back-nav h3 { float: right; }
+.projects-nav .back-nav h3 { margin-top: 20px; float: right; }
 
 .projects-nav .back-nav.back-nav-color { color: #1f1f1f; cursor: pointer; }
 

@@ -3,15 +3,36 @@ import React, { Component } from "react"
 import plusIcon from "../../img/plus.svg"
 import syncIcon from "../../img/sync.svg"
 import deleteIcon from "../../img/delete.svg"
+import backIcon from "../../img/back.svg"
+import searchIcon from "../../img/search.svg"
 import Modal from "../Modal";
 
+function getEmptyState(props) {
+    return {
+        show: props.show,
+        name: "",
+        source_name: "",
+        created_date: "",
+        due_date: "",
+        test_script: [],
+        hidden_test_script: [],
+        current_project: props.current_project,
+        new_project: props.new_project,
+        show_test_scripts: false,
+        show_hidden_scripts: false
+    };
+}
+
 function getStateFromProjectsProp(props) {
+    if(!props.projects || props.projects.length === 0)
+        return getEmptyState(props);
+
     const project = props.projects[props.current_project];
     return {
         show: props.show,
-        name: project.name,
+        name: project.project_name,
         source_name: project.source_name,
-        created_date: project.created_date,
+        created_date: project.start_date,
         due_date: project.due_date,
         test_script: project.test_script,
         hidden_test_script: project.hidden_test_script,
@@ -33,30 +54,20 @@ class ProjectOptions extends Component {
             source_name: "",
             created_date: "",
             due_date: "",
-            test_script: false,
-            hidden_test_script: false,
+            test_script: [],
+            hidden_test_script: [],
             show_test_scripts: false,
             show_hidden_scripts: false
         }
     }
 
     static getDerivedStateFromProps(props, state) {
+        console.log(props, state);
         if (props.new_project !== state.new_project) {
             if (state.new_project)
                 return getStateFromProjectsProp(props);
             else
-                return {
-                    name: "",
-                    source_name: "",
-                    created_date: "",
-                    due_date: "",
-                    test_script: [],
-                    hidden_test_script: [],
-                    current_project: props.current_project,
-                    new_project: true,
-                    show_test_scripts: false,
-                    show_hidden_scripts: false
-                };
+                return getEmptyState(props);
         }
 
         if(state.show !== props.show || props.current_project !== state.current_project)
@@ -70,7 +81,11 @@ class ProjectOptions extends Component {
     };
 
     addTestScript = () => {
-        this.setState({ test_script : this.state.test_script.push({filename: "", pointvalue: 0}) });
+        if(this.state.test_script)
+            this.state.test_script.push({ filename: "", pointvalue: 0 });
+        else
+            this.state.test_script = [{ filename: "", pointvalue: 0 }];
+        this.setState({ test_script : this.state.test_script });
     };
 
     render() {
@@ -92,11 +107,11 @@ class ProjectOptions extends Component {
                                <h4 className="header">
                                    Created Date
                                </h4>
-                               <input type="text" className="h3-size" value={this.state.created_date} placeholder="MM-DD-YYYY" onChange={this.onChange} name="created_date" ref="created_date"/>
+                               <input type="text" className="h3-size" value={this.state.created_date} placeholder="MM/DD/YYYY" onChange={this.onChange} name="created_date" ref="created_date"/>
                                <h4 className="header">
                                    Due Date
                                </h4>
-                               <input type="text" className="h3-size" value={this.state.due_date} placeholder="MM-DD-YYYY" onChange={this.onChange} name="due_date" ref="due_date"/>
+                               <input type="text" className="h3-size" value={this.state.due_date} placeholder="MM/DD/YYYY" onChange={this.onChange} name="due_date" ref="due_date"/>
                                <div className="project-options-scripts">
                                    <h4 onClick={ () => this.setState({ show_test_scripts: true }) }>
                                        Test Scripts
@@ -135,17 +150,26 @@ class ProjectOptions extends Component {
                                <h4 className="break-line title" />
                                <div className="project-options-script-list">
                                    {
+                                       this.state.test_script &&
                                        this.state.test_script.map((script) =>
                                             <div className="project-options-script" key={`${ script.filename }-${ script.pointvalue }`}>
-                                                <h4>
-                                                    { script.filename }
-                                                </h4>
+                                                <div className="script-filename">
+                                                    <img src={ searchIcon } />
+                                                    <h4>
+                                                        { script.filename }
+                                                    </h4>
+                                                </div>
                                                 <input type="number" placeholder="5" step="1" />
                                             </div>
                                        )
                                    }
                                    <div className="project-options-new-script" onClick={ this.addTestScript }>
                                        <img src={ plusIcon } />
+                                   </div>
+                               </div>
+                               <div className="modal-buttons float-height">
+                                   <div onClick={ () => this.setState({ show_test_scripts: false }) }>
+                                       <img src={ backIcon } />
                                    </div>
                                </div>
                            </div>
@@ -157,7 +181,31 @@ class ProjectOptions extends Component {
                        onClose={ () => this.setState({ show_hidden_scripts: false }) }
                        component={
                            <div className="panel-project-options">
-
+                               <h4 className="header">
+                                   Hidden Test Scripts
+                               </h4>
+                               <h4 className="break-line title" />
+                               <div className="project-options-script-list">
+                                   {
+                                       this.state.test_script &&
+                                       this.state.test_script.map((script) =>
+                                           <div className="project-options-script" key={`${ script.filename }-${ script.pointvalue }`}>
+                                               <h4>
+                                                   { script.filename }
+                                               </h4>
+                                               <input type="number" placeholder="5" step="1" />
+                                           </div>
+                                       )
+                                   }
+                                   <div className="project-options-new-script" onClick={ this.addTestScript }>
+                                       <img src={ plusIcon } />
+                                   </div>
+                               </div>
+                               <div className="modal-buttons float-height">
+                                   <div onClick={ () => this.setState({ show_hidden_scripts: false }) }>
+                                       <img src={ backIcon } />
+                                   </div>
+                               </div>
                            </div>
                        } />
             </div>
