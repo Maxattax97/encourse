@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
-import { getStudentPreviews, getClassProjects, setCurrentProject, setCurrentStudent } from '../../redux/actions'
+import { getStudentPreviews, getClassProjects, setCurrentProject, setCurrentStudent, setModalBlur } from '../../redux/actions'
 import ProjectNavigation from '../project/ProjectNavigation'
 import Card from '../Card'
 import StudentPreview from './StudentPreview'
@@ -95,69 +95,29 @@ class CoursePanel extends Component {
                     id: 3
                 }
             ],
-            project_options: false,
-            new_project: false
+            modal_blur: ""
         };
     }
-
-    showProjectOptions = () => {
-        this.setState({project_options: !this.state.project_options, new_project: false})
-    };
 
     showStudentPanel = (student) => {
         this.props.setCurrentStudent(student);
         history.push(`/student/${student.id}`)
     };
 
-    updateProjectState = (project_index) => {
-        this.setState({ new_project: false });
-        this.props.setCurrentProject(project_index)
-    };
-
-    newProject = () => {
-        this.setState({ project_options: true, new_project: true });
-    };
-
-    createNewProject = () => {
-        this.setState({ new_project: true });
-    };
-
-    createProject = () => {
-
-    };
-
-    deleteProject = () => {
-
-    };
-
-    changeProject = () => {
-
-    };
-
     render() {
         return (
             <div className="panel-course">
-                <ProjectNavigation titleClick={this.showProjectOptions} projectClick={this.updateProjectState}
-                                   currentProject={this.props.currentProject} info={this.state.projects}
-                                   newProjectClick={this.newProject} />
-                <div className="panel-center-content">
-                    <div className="project-options">
-                        <Modal left show={this.state.project_options} onClose={() => this.setState({project_options: false})}
-                               component={<ProjectOptions projects={this.state.projects} current_project={this.props.currentProject} new_project={this.state.new_project}
-                                                          updateProject={{create: this.createProject, delete: this.deleteProject, change: this.changeProject}}
-                                                          visible={this.state.project_options}/>}/>
-                    </div>
+                <ProjectNavigation info={this.state.projects}
+                                   onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})}
+                                   {...this.props}/>
 
-                    <div className={"panel-course-content " + (this.state.project_options ? "blur" : "")}>
+                <div className="panel-center-content">
+
+                    <div className={ `panel-course-content${this.state.modal_blur}` }>
                         <h1>CS252</h1>
                         <h1 className="break-line title" />
                         <h3>Class Statistics</h3>
                         <div className="charts float-height">
-                            <Card component={<ClassProgressHistogram/>} />
-                            <Card component={<ClassProgressHistogram/>} />
-                            <Card component={<ClassProgressHistogram/>} />
-                            <Card component={<ClassProgressHistogram/>} />
-                            <Card component={<ClassProgressHistogram/>} />
                             <Card component={<ClassProgressHistogram/>} />
                         </div>
                         <h2 className="break-line" />
@@ -182,7 +142,7 @@ const mapStateToProps = (state) => {
     return {
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : null,
         projects: state.course && state.course.getClassProjectsData ? state.course.getClassProjectsData : null,
-        currentProject: state.projects && state.projects.currentProject !== undefined ? state.projects.currentProject : 2,
+        currentProject: state.projects && state.projects.currentProject ? state.projects.currentProject : 0
     }
 };
   

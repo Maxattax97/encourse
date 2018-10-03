@@ -10,6 +10,7 @@ import Modal from "../Modal";
 import ProjectOptions from "../project/ProjectOptions";
 import ClassProgressHistogram from "../charts/ClassProgressHistogram";
 import StudentPreview from "../course/StudentPreview";
+import Statistics from './Statistics'
 import {history} from "../../redux/store";
 
 
@@ -49,68 +50,7 @@ class StudentPanel extends Component {
                     id: 3
                 }
             ],
-            stats: [
-                {
-                    statname: "Estimated Time Spent",
-                    statvalue: "5 hours"
-                },
-                {
-                    statname: "Additions",
-                    statvalue: "103"
-                },
-                {
-                    statname: "Deletions",
-                    statvalue: "3415"
-                },
-                {
-                    statname: "Additions",
-                    statvalue: "`35"
-                },
-                {
-                    statname: "Deletions",
-                    statvalue: "1234"
-                },
-                {
-                    statname: "Additions",
-                    statvalue: "123"
-                },
-                {
-                    statname: "Deletions",
-                    statvalue: "5342"
-                },
-                {
-                    statname: "Additions",
-                    statvalue: "213"
-                },
-                {
-                    statname: "Deletions",
-                    statvalue: "76"
-                },
-                {
-                    statname: "Additions",
-                    statvalue: "123"
-                },
-                {
-                    statname: "Deletions",
-                    statvalue: "567"
-                },
-                {
-                    statname: "Additions",
-                    statvalue: "43"
-                },
-                {
-                    statname: "Deletions",
-                    statvalue: "123"
-                },
-                {
-                    statname: "Additions",
-                    statvalue: "45"
-                },
-                {
-                    statname: "Deletions",
-                    statvalue: "36"
-                }
-            ]
+            modal_blur: ""
         }
     }
 
@@ -145,16 +85,9 @@ class StudentPanel extends Component {
     render() {
         return (
             <div className="panel-student">
-                <ProjectNavigation titleClick={this.showProjectOptions} projectClick={this.updateProjectState} backClick={this.back}
-                                   currentProject={this.state.current_project} info={this.state.projects} back="Course"
-                                   newProjectClick={this.newProject} />
+                <ProjectNavigation info={this.state.projects} onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})} {...this.props}/>
                 <div className="panel-center-content">
-                    <Modal left show={this.state.project_options} onClose={() => this.setState({project_options: false})}
-                           component={<ProjectOptions projects={this.state.projects} current_project={this.state.current_project} new_project={this.state.new_project}
-                                                      updateProject={{create: this.createProject, delete: this.deleteProject, change: this.changeProject}}
-                                                      visible={this.state.project_options}/>}/>
-
-                    <div className={"panel-student-content " + (this.state.project_options ? "blur" : "")}>
+                    <div className={ `panel-student-content${this.state.modal_blur}` }>
                         <h1>{this.props.currentStudent ? this.props.currentStudent.first_name + ' ' + this.props.currentStudent.last_name : ''}</h1>
                         <h1 className="break-line title" />
                         <h3>Charts</h3>
@@ -165,27 +98,7 @@ class StudentPanel extends Component {
                         </div>
                         <h2 className="break-line" />
                         <div className="student-stats-comments float-height">
-                            <Card component={
-                                <div className="student-stats-container">
-                                    <div className="title">
-                                        <h3>Statistics</h3>
-                                    </div>
-                                    <h3 className="break-line title" />
-                                    {
-                                        this.state.stats.map((stat, index) =>
-                                            <div className="student-stat">
-                                                <div className="student-stat-content">
-                                                    <h5>{stat.statname}</h5>
-                                                    <h5>{stat.statvalue}</h5>
-                                                </div>
-                                                {
-                                                    index % 2 === 1 && index !== this.state.stats.length - 1 ?
-                                                        <h5 className="break-line" /> : null
-                                                }
-                                            </div>)
-                                    }
-                                </div>
-                            } />
+                            <Card component={<Statistics />}/>
                             <Card component={
                                 <div className="student-feedback-container">
                                     <div className="title">
@@ -198,7 +111,7 @@ class StudentPanel extends Component {
                     </div>
                 </div>
                 <div className="panel-right-nav">
-                    <div className={"panel-student-side-content " + (this.state.project_options ? "blur" : "")}>
+                    <div className={ `panel-student-side-content${this.state.modal_blur}` }>
                         <Card component={
                             <div className="student-actions-container">
                                 <div className="title">
