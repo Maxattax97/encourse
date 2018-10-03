@@ -5,6 +5,7 @@ import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.ProfessorService;
 import edu.purdue.cs.encourse.util.JSONReturnable;
+import org.aspectj.weaver.patterns.IfPointcut;
 import org.codehaus.jackson.map.util.JSONPObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -30,6 +31,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     public final static String NAME = "ProfessorService";
     private final static String pythonPath = "src/main/python/";
     private final static int RATE = 3600000;
+    private final static Boolean DEBUG = false;
 
     /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
     final static String testDir = "test-shell";
@@ -297,6 +299,23 @@ public class ProfessorServiceImpl implements ProfessorService {
         return json;
     }
 
+    public JSONReturnable getClassProgress(@NonNull String projectID) {
+        String testResult = "";
+        if (DEBUG == true) {
+            testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
+        }
+        // TODO:    JARDON replace testResult with a file path to a file
+        //          with a line per student, listing pass/fail test scores
+
+        /** python executable.py dailyCountsFile commitLogFile userName **/
+        String pyPath = pythonPath + "get_class_progress.py";
+        String command = "python " + pyPath + " " + testResult;
+        JSONReturnable json = runPython(command);
+
+        executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
     public JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
@@ -325,26 +344,36 @@ public class ProfessorServiceImpl implements ProfessorService {
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
 
-        //Testing
-        //dailyCountsFile = pythonPath + "test_datasets/sampleCountsDay.txt";
-        //commitLogFile = pythonPath + "test_datasets/sampleCommitList.txt";
-        //String testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
-
         if(dailyCountsFile == null) {
             return new JSONReturnable(-1, null);
         }
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
-        Student student = studentRepository.findByUserName(userName);
-        System.out.println(student);
-        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-        String testResult = project.getBestGrade();
 
+        String testResult = null;
+        if (DEBUG == true) {
+            testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
+        } else {
+            Student student = studentRepository.findByUserName(userName);
+            System.out.println(student);
+            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+            testResult = project.getBestGrade();
+        }
         /** python executable.py commitLogFile dailyCountsFile project.getBestGrade() userName **/
         String pyPath = pythonPath + "get_statistics.py";
         String command = "python " + pyPath + " " + userName + " " + dailyCountsFile + " " + commitLogFile + " " + testResult;
         JSONReturnable json = runPython(command);
+
+        if (DEBUG == true) {
+            executeBashScript("cleanDirectory.sh src/main/temp");
+            return json;
+        }
+
+        Student student = studentRepository.findByUserName(userName);
+        System.out.println(student);
+        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+        testResult = project.getBestGrade();
 
         JSONArray array = (JSONArray)json.getJsonObject().get("data");
         for(int i = 0; i < array.size(); i++) {
@@ -365,6 +394,22 @@ public class ProfessorServiceImpl implements ProfessorService {
                 project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString()));
             }
         }
+        executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
+    public JSONReturnable getCommitCounts(@NonNull String projectID, @NonNull String userName) {
+        String commitLogFile = listStudentCommitsByTime(projectID, userName);
+
+        if(commitLogFile == null) {
+            return new JSONReturnable(-2, null);
+        }
+
+        /** python executable.py commitLogFile dailyCountsFile userName **/
+        String pyPath = pythonPath + "get_git_commits.py";
+        String command = "python " + pyPath + " " + commitLogFile + " " + userName;
+        JSONReturnable json = runPython(command);
+
         executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
@@ -430,6 +475,10 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     /** Counts the number of commits that a single student has made for each day that the project is active **/
     public String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName) {
+        if (DEBUG == true) {
+            return pythonPath + "test_datasets/sampleCountsDay.txt";
+        }
+
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return null;
@@ -455,6 +504,10 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     /** Lists various information about git history, including commit time and dates, and files modified in each commit for all students **/
     public String listAllCommitsByTime(@NonNull String projectID) {
+        if (DEBUG == true) {
+            return pythonPath + "test_datasets/sampleCommitList.txt";
+        }
+
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return null;
@@ -475,6 +528,10 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     /** Lists various information about git history, including commit time and dates, and files modified in each commit for one student **/
     public String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName) {
+        if (DEBUG == true) {
+            return pythonPath + "test_datasets/sampleCommitList.txt";
+        }
+
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return null;

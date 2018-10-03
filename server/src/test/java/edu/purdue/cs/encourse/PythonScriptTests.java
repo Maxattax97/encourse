@@ -116,15 +116,24 @@ public class PythonScriptTests {
 
             System.out.println("=============================   Individual Progress Test    ============================\n");
             jsonReturn = professorService.getStudentProgress(projectID, studentID);
-            assertEquals("Failed to generate individual data", 1, jsonReturn.errorCode);
+            assertEquals("Failed to generate individual progress data", 1, jsonReturn.errorCode);
 
             System.out.println("=============================  Statistics Test    ============================\n");
             jsonReturn = professorService.getStatistics(projectID, studentID);
-            assertEquals("Failed to generate individual data", 1, jsonReturn.errorCode);
+            assertEquals("Failed to generate individual statistics", 1, jsonReturn.errorCode);
 
             System.out.println("=============================  Git Commit List Test    ============================\n");
             jsonReturn = professorService.getCommitList(projectID, studentID);
             assertEquals("Failed to generate git commit list data", 1, jsonReturn.errorCode);
+
+            System.out.println("=============================  Git Commit List Test    ============================\n");
+            jsonReturn = professorService.getClassProgress(projectID);
+            // Won't work until Jordan passes test file
+            //assertEquals("Failed to generate class progress histogram data", 1, jsonReturn.errorCode);
+
+            System.out.println("=============================  Git Commit Count Test    ============================\n");
+            jsonReturn = professorService.getCommitCounts(projectID, studentID);
+            assertEquals("Failed to generate git commit count data", 1, jsonReturn.errorCode);
 
             System.out.println("=============================   End Python Tests    ============================\n");
 

@@ -34,7 +34,7 @@ def api_format_data(data):
 
 if len(sys.argv) != 2:
     print("USAGE: \t`python getProgressHistogram.py file1`")
-    print("\tfile1 is a properly formatted commit data file")
+    print("\tfile1 is a properly formatted test_case file")
     sys.exit()
 
 test_score_file = open(sys.argv[1], "r")

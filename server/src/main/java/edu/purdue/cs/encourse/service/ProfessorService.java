@@ -18,6 +18,8 @@ public interface ProfessorService {
     JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getClassProgress(@NonNull String projectID);
+    JSONReturnable getCommitCounts(@NonNull String projectID, @NonNull String userName);
 
     String countAllCommits(@NonNull String projectID);
     String countAllCommitsByDay(@NonNull String projectID);
