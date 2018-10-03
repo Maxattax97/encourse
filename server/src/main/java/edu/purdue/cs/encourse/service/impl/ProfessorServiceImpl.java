@@ -278,21 +278,15 @@ public class ProfessorServiceImpl implements ProfessorService {
     public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
-
         if(dailyCountsFile == null) {
             return new JSONReturnable(-1, null);
         }
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
-
-		System.out.println("\n\n\n" + dailyCountsFile + "\n" + commitLogFile);
-
-        /** python executable.py dailyCountsFile commitLogFile userName **/
         String pyPath = pythonPath + "get_individual_progress.py";
         String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
-
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
@@ -302,14 +296,10 @@ public class ProfessorServiceImpl implements ProfessorService {
         if (DEBUG == true) {
             testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
         }
-        // TODO:    JARDON replace testResult with a file path to a file
-        //          with a line per student, listing pass/fail test scores
-
-        /** python executable.py dailyCountsFile commitLogFile userName **/
+        // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_class_progress.py";
         String command = "python " + pyPath + " " + testResult;
         JSONReturnable json = runPython(command);
-
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
@@ -317,25 +307,15 @@ public class ProfessorServiceImpl implements ProfessorService {
     public JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
-
-        //Testing
-        //dailyCountsFile = pythonPath + "test_datasets/sampleCountsDay.txt";
-        //commitLogFile = pythonPath + "test_datasets/sampleCommitList.txt";
-
-		System.out.println("\n\n\n" + dailyCountsFile + "\n" + commitLogFile);
-
         if(dailyCountsFile == null) {
             return new JSONReturnable(-1, null);
         }
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
-
-        /** python executable.py commitLogFile dailyCountsFile userName **/
         String pyPath = pythonPath + "get_add_del.py";
         String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
-
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
@@ -343,16 +323,12 @@ public class ProfessorServiceImpl implements ProfessorService {
     public JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
-
         if(dailyCountsFile == null) {
             return new JSONReturnable(-1, null);
         }
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
-
-		System.out.println("\n\n\n" + dailyCountsFile + "\n" + commitLogFile);
-
         String testResult = null;
         if (DEBUG == true) {
             testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
@@ -365,16 +341,13 @@ public class ProfessorServiceImpl implements ProfessorService {
         String pyPath = pythonPath + "get_statistics.py";
         String command = "python " + pyPath + " " + userName + " " + dailyCountsFile + " " + commitLogFile + " " + testResult;
         JSONReturnable json = runPython(command);
-
         if (DEBUG == true) {
             executeBashScript("cleanDirectory.sh src/main/temp");
             return json;
         }
-
         Student student = studentRepository.findByUserName(userName);
         StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
         testResult = project.getBestGrade();
-
         JSONArray array = (JSONArray)json.getJsonObject().get("data");
         for(int i = 0; i < array.size(); i++) {
             JSONObject data = (JSONObject)array.get(i);
@@ -401,12 +374,9 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     public JSONReturnable getCommitCounts(@NonNull String projectID, @NonNull String userName) {
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
-
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
-
-        /** python executable.py commitLogFile dailyCountsFile userName **/
         String pyPath = pythonPath + "get_git_commits.py";
         String command = "python " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
@@ -417,21 +387,12 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     public JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userName) {
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
-
-        //Testing
-        //commitLogFile = pythonPath + "test_datasets/sampleCommitList.txt";
-
         if(commitLogFile == null) {
             return new JSONReturnable(-1, null);
         }
-
-		System.out.println("\n\n\n" + commitLogFile);
-
-        /** python executable.py commitLogFile userName **/
         String pyPath = pythonPath + "get_git_commit_list.py";
         String command = "python " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
-
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
@@ -742,7 +703,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 System.out.println(error);
             }
             while ((input = stdInput.readLine()) != null) {
-                System.out.println(input);
+                //System.out.println(input);
                 if (input.equals("Hello World")) {
                     return 1;
                 }
@@ -793,7 +754,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     json =  new JSONReturnable(-3, null);
                 }
                 if (obj != null) {
-                    System.out.println(obj);
+                    //System.out.println(obj);
                     JSONObject jsonObject = null;
                     if (obj.getClass() == JSONObject.class) {
                         jsonObject = (JSONObject)obj;
