@@ -13,7 +13,7 @@ import settingsIcon from "../../img/settings.svg";
 class CoursePanel extends Component {
 
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
             student_data : [
@@ -155,8 +155,8 @@ class CoursePanel extends Component {
 const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
-        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : null,
-        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : null,
+        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
+        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 };
