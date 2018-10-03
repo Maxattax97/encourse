@@ -157,7 +157,7 @@ const mapStateToProps = (state) => {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : 0
     }
 };
   

@@ -94,7 +94,7 @@ class StudentPanel extends Component {
                             }
                         </h1>
                         <h1 className="break-line title" />
-                        <h3>Charts</h3>
+                        <h3>Student Charts</h3>
                         <div className="charts float-height">
                             <Card component={<StudentProgressLineGraph id={this.props.currentStudent.id}/>} />
                             <Card component={<CodeChangesChart id={this.props.currentStudent.id}/>} />
