@@ -5,6 +5,7 @@ from helper import time_string
 from start_end import commit_data as commit_times
 from daily_git_data import get_daily_commit_data as commit_list
 from test_completion import get_test_completion as test_completion
+from test_completion import get_test_completion_string as test_completion_string
 
 def format_commit_data(dates, stats, tests):
     data = {}
@@ -73,18 +74,17 @@ def sum_statistics(data):
 
 # Runs on file call
 if len(sys.argv) != 5:
-    print("USAGE: python getStatistics.py name file_1 file_2")
+    print("USAGE: python getStatistics.py name file_1 file_2 tests")
     print("name is the name of the student for which statistics are being requested")
     print("file_1 should be a properly formatted commit times file")
     print("file_2 should be a properly formatted commit list file")
-    print("file_3 should be a properly formatted test case file")
-
+    print("tests should be a properly formatted test case string")
     sys.exit("Incorrect usage")
 
 student_id = sys.argv[1]
 commit_date_file = open(sys.argv[2], "r")
 commit_data_file = open(sys.argv[3], "r")
-test_case_file = open(sys.argv[4], "r")
+test_case_string = sys.argv[4]
 
 dates_dict = commit_times(commit_date_file)
 #for user in dates_dict.keys():
@@ -97,7 +97,7 @@ student_data = commit_list(commit_data_file)
 formatted_student_data = sum_statistics(student_data)
 # TODO: check for valid dicts
 
-test_data = test_completion(test_case_file)
+test_data = test_completion_string(test_case_string)
 #print(test_data)
 
 data = format_commit_data(dates_dict, formatted_student_data, test_data)

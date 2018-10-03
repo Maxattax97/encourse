@@ -289,45 +289,9 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         /** python executable.py dailyCountsFile commitLogFile userName **/
-        JSONReturnable json = null;
         String pyPath = pythonPath + "get_individual_progress.py";
-        try {
-            Process process = Runtime.getRuntime().exec("python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String input = null;
-            String error = null;
-            while ((error = stdError.readLine()) != null) {
-                System.out.println(error);
-            }
-            while ((input = stdInput.readLine()) != null) {
-                JSONParser jsonParser = new JSONParser();
-                Object obj = null;
-                try {
-                    obj = jsonParser.parse(input);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    json =  new JSONReturnable(-3, null);
-                }
-                if (obj != null) {
-                    System.out.println(obj);
-                    JSONObject jsonObject = null;
-                    if (obj.getClass() == JSONObject.class) {
-                        jsonObject = (JSONObject)obj;
-                    } else if (obj.getClass() == JSONArray.class) {
-                        jsonObject = new JSONObject();
-                        JSONArray jsonArray = (JSONArray)obj;
-                        jsonObject.put("data", jsonArray);
-                    } else {
-                        json = new JSONReturnable(-4, null);
-                    }
-                    json = new JSONReturnable(1, jsonObject);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            json =  new JSONReturnable(-2, null);
-        }
+        String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
+        JSONReturnable json = runPython(command);
 
         executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -349,45 +313,9 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         /** python executable.py commitLogFile dailyCountsFile userName **/
-        JSONReturnable json = null;
         String pyPath = pythonPath + "get_add_del.py";
-        try {
-            Process process = Runtime.getRuntime().exec("python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String input = null;
-            String error = null;
-            while ((error = stdError.readLine()) != null) {
-                System.out.println(error);
-            }
-            while ((input = stdInput.readLine()) != null) {
-                JSONParser jsonParser = new JSONParser();
-                Object obj = null;
-                try {
-                    obj = jsonParser.parse(input);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    json =  new JSONReturnable(-3, null);
-                }
-                if (obj != null) {
-                    System.out.println(obj);
-                    JSONObject jsonObject = null;
-                    if (obj.getClass() == JSONObject.class) {
-                        jsonObject = (JSONObject)obj;
-                    } else if (obj.getClass() == JSONArray.class) {
-                        jsonObject = new JSONObject();
-                        JSONArray jsonArray = (JSONArray)obj;
-                        jsonObject.put("data", jsonArray);
-                    } else {
-                        json = new JSONReturnable(-4, null);
-                    }
-                    json = new JSONReturnable(1, jsonObject);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            json =  new JSONReturnable(-2, null);
-        }
+        String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
+        JSONReturnable json = runPython(command);
 
         executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -396,6 +324,12 @@ public class ProfessorServiceImpl implements ProfessorService {
     public JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
+
+        //Testing
+        //dailyCountsFile = pythonPath + "test_datasets/sampleCountsDay.txt";
+        //commitLogFile = pythonPath + "test_datasets/sampleCommitList.txt";
+        //String testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
+
         if(dailyCountsFile == null) {
             return new JSONReturnable(-1, null);
         }
@@ -403,51 +337,15 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
         Student student = studentRepository.findByUserName(userName);
+        System.out.println(student);
         StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
         String testResult = project.getBestGrade();
 
         /** python executable.py commitLogFile dailyCountsFile project.getBestGrade() userName **/
-        JSONReturnable json = null;
         String pyPath = pythonPath + "get_statistics.py";
-        try {
-            Process process = Runtime.getRuntime().exec("python " + pyPath + " " + dailyCountsFile + " " + commitLogFile + " " + userName);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String input = null;
-            String error = null;
-            while ((error = stdError.readLine()) != null) {
-                System.out.println(error);
-            }
-            while ((input = stdInput.readLine()) != null) {
-                JSONParser jsonParser = new JSONParser();
-                Object obj = null;
-                try {
-                    obj = jsonParser.parse(input);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    json =  new JSONReturnable(-3, null);
-                }
-                if (obj != null) {
-                    System.out.println(obj);
-                    JSONObject jsonObject = null;
-                    if (obj.getClass() == JSONObject.class) {
-                        jsonObject = (JSONObject)obj;
-                    } else if (obj.getClass() == JSONArray.class) {
-                        jsonObject = new JSONObject();
-                        JSONArray jsonArray = (JSONArray)obj;
-                        jsonObject.put("data", jsonArray);
-                        jsonObject.get("");
-                    } else {
-                        json = new JSONReturnable(-4, null);
-                    }
-                    json = new JSONReturnable(1, jsonObject);
-                }
-            }
-            json =  new JSONReturnable(-1, null);
-        } catch (IOException e) {
-            e.printStackTrace();
-            json =  new JSONReturnable(-2, null);
-        }
+        String command = "python " + pyPath + " " + userName + " " + dailyCountsFile + " " + commitLogFile + " " + testResult;
+        JSONReturnable json = runPython(command);
+
         JSONArray array = (JSONArray)json.getJsonObject().get("data");
         for(int i = 0; i < array.size(); i++) {
             JSONObject data = (JSONObject)array.get(i);
@@ -473,51 +371,18 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     public JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userName) {
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
+
+        //Testing
+        //commitLogFile = pythonPath + "test_datasets/sampleCommitList.txt";
+
         if(commitLogFile == null) {
             return new JSONReturnable(-1, null);
         }
 
         /** python executable.py commitLogFile userName **/
-        JSONReturnable json = null;
-        String pyPath = pythonPath + "get_get_commit_list.py";
-        try {
-            Process process = Runtime.getRuntime().exec("python " + pyPath + " " + commitLogFile + " " + userName);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String input = null;
-            String error = null;
-            while ((error = stdError.readLine()) != null) {
-                System.out.println(error);
-            }
-            while ((input = stdInput.readLine()) != null) {
-                JSONParser jsonParser = new JSONParser();
-                Object obj = null;
-                try {
-                    obj = jsonParser.parse(input);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    json =  new JSONReturnable(-3, null);
-                }
-                if (obj != null) {
-                    System.out.println(obj);
-                    JSONObject jsonObject = null;
-                    if (obj.getClass() == JSONObject.class) {
-                        jsonObject = (JSONObject)obj;
-                    } else if (obj.getClass() == JSONArray.class) {
-                        jsonObject = new JSONObject();
-                        JSONArray jsonArray = (JSONArray)obj;
-                        jsonObject.put("data", jsonArray);
-                    } else {
-                        json = new JSONReturnable(-4, null);
-                    }
-                    json = new JSONReturnable(1, jsonObject);
-                }
-            }
-            json =  new JSONReturnable(-1, null);
-        } catch (IOException e) {
-            e.printStackTrace();
-            json =  new JSONReturnable(-2, null);
-        }
+        String pyPath = pythonPath + "get_git_commit_list.py";
+        String command = "python " + pyPath + " " + commitLogFile + " " + userName;
+        JSONReturnable json = runPython(command);
 
         executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -821,86 +686,6 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
     }
 
-    public JSONReturnable getCommitData(@NonNull String filePath) {
-        String pyPath = pythonPath + "getStatistics.py";
-        try {
-            Process process = Runtime.getRuntime().exec("python " + pyPath + " " + filePath + " " + filePath);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String input = null;
-            String error = null;
-            while ((error = stdError.readLine()) != null) {
-                System.out.println(error);
-            }
-            while ((input = stdInput.readLine()) != null) {
-                JSONParser jsonParser = new JSONParser();
-                Object obj = null;
-                try {
-                    obj = jsonParser.parse(input);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    return new JSONReturnable(-3, null);
-                }
-                if (obj != null) {
-                    System.out.println(obj);
-                    JSONObject jsonObject = (JSONObject)obj;
-                    JSONReturnable jsonReturn = new JSONReturnable(1, jsonObject);
-                    //System.out.println(jsonObject.toString());
-                    return jsonReturn;
-                }
-            }
-            return new JSONReturnable(-1, null);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new JSONReturnable(-2, null);
-        }
-    }
-
-    public JSONReturnable getProgressHistogram(@NonNull String filePath, @NonNull String userName) {
-        String pyPath = pythonPath + "getProgressHistogram.py";
-        try {
-            Process process = Runtime.getRuntime().exec("python " +  pyPath + " " + userName + " " + filePath);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String input = null;
-            String error = null;
-            /*while ((error = stdError.readLine()) != null) {
-                System.out.println(error);
-            }*/
-            while ((input = stdInput.readLine()) != null) {
-                System.out.println("INPUT: " + input);
-                JSONParser jsonParser = new JSONParser();
-                Object obj = null;
-                try {
-                    obj = jsonParser.parse(input);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    return new JSONReturnable(-3, null);
-                }
-                if (obj != null) {
-                    JSONObject jsonObject = null;
-                    if (obj.getClass() == JSONObject.class) {
-                        jsonObject = (JSONObject)obj;
-                    } else if (obj.getClass() == JSONArray.class) {
-                        jsonObject = new JSONObject();
-                        JSONArray jsonArray = (JSONArray)obj;
-                        jsonObject.put(userName, jsonArray);
-                    } else {
-                        return new JSONReturnable(-4, null);
-                    }
-                    JSONReturnable jsonReturn = new JSONReturnable(1, jsonObject);
-                    //System.out.println(jsonObject.toString());
-                    System.out.println("JSONRETURN OBJECT: " + jsonReturn.jsonObject.toJSONString());
-                    return jsonReturn;
-                }
-            }
-            return new JSONReturnable(-1, null);
-        } catch (IOException e){
-            e.printStackTrace();
-            return new JSONReturnable(-2, null);
-        }
-    }
-
     /** Makes a new assignment between teaching assistant and student. Can have multiple students assigned to same TA
      or multiple TAs assigned to the same student **/
     public int assignTeachingAssistantToStudent(@NonNull String teachAssistUserName, @NonNull String studentUserName) {
@@ -918,6 +703,46 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
         return 0;
     }
+
+    public JSONReturnable runPython(@NonNull String command) {
+        JSONReturnable json = null;
+        try {
+            Process process = Runtime.getRuntime().exec(command);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String input = null;
+            String error = null;
+            while ((error = stdError.readLine()) != null) {
+                System.out.println(error);
+            }
+            while ((input = stdInput.readLine()) != null) {
+                JSONParser jsonParser = new JSONParser();
+                Object obj = null;
+                try {
+                    obj = jsonParser.parse(input);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    json =  new JSONReturnable(-3, null);
+                }
+                if (obj != null) {
+                    System.out.println(obj);
+                    JSONObject jsonObject = null;
+                    if (obj.getClass() == JSONObject.class) {
+                        jsonObject = (JSONObject)obj;
+                    } else if (obj.getClass() == JSONArray.class) {
+                        jsonObject = new JSONObject();
+                        JSONArray jsonArray = (JSONArray)obj;
+                        jsonObject.put("data", jsonArray);
+                    } else {
+                        json = new JSONReturnable(-4, null);
+                    }
+                    json = new JSONReturnable(1, jsonObject);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            json =  new JSONReturnable(-2, null);
+        }
+        return json;
+    }
 }
-
-

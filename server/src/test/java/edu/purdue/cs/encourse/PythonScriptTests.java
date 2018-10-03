@@ -118,6 +118,14 @@ public class PythonScriptTests {
             jsonReturn = professorService.getStudentProgress(projectID, studentID);
             assertEquals("Failed to generate individual data", 1, jsonReturn.errorCode);
 
+            System.out.println("=============================  Statistics Test    ============================\n");
+            jsonReturn = professorService.getStatistics(projectID, studentID);
+            assertEquals("Failed to generate individual data", 1, jsonReturn.errorCode);
+
+            System.out.println("=============================  Git Commit List Test    ============================\n");
+            jsonReturn = professorService.getCommitList(projectID, studentID);
+            assertEquals("Failed to generate git commit list data", 1, jsonReturn.errorCode);
+
             System.out.println("=============================   End Python Tests    ============================\n");
 
 
