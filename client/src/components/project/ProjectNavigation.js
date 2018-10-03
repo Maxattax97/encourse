@@ -59,12 +59,12 @@ class ProjectNavigation extends Component {
                                 <h3 className="break-line title"/>
                                 {
                                     this.props.info &&
-                                    Object.keys(this.props.info).map((id, index) =>
+                                    this.props.info.map((project, index) =>
                                         <h4 className={ this.props.currentProjectIndex === index ? "projects-highlight" : "" }
-                                            key={ id }
-                                            onClick={ () => this.changeProject(id, index) }>
+                                            key={ project.id }
+                                            onClick={ () => this.changeProject(project.id, index) }>
 
-                                            { this.props.info[id].project_name }
+                                            { project.project_name }
                                         </h4>)
                                 }
                                 <div className="projects-new" onClick={ this.handleNewProject }>
@@ -78,7 +78,7 @@ class ProjectNavigation extends Component {
                 <ProjectOptions show={ this.state.show_project_options }
                                 close={ () => this.toggleProjectOptions(false) }
                                 projects={ this.props.info }
-                                current_project={ this.props.currentProject }
+                                current_project={ this.props.currentProjectIndex }
                                 new_project={ this.state.new_project }/>
 
                 <div className={`modal-overlay${ this.state.show_project_options ? " show" : "" }`}

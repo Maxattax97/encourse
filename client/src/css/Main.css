@@ -227,6 +227,14 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .projects-nav .projects-new:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
 
+.test-scripts-list { width: 100%; height: 331px; }
+
+.test-scripts-list .scripts-new { padding: .75em; cursor: pointer; }
+
+.test-scripts-list .scripts-new img { width: 1.5em; height: 1.5em; margin: 0 auto; display: block; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.test-scripts-list .scripts-new:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
 .panel-project-options { float: left; height: 440px; width: 245px; }
 
 .panel-project-options .header { cursor: default; }
@@ -236,14 +244,6 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 .panel-project-options .project-options-scripts h4 { margin: 0; padding: .75em 0; cursor: pointer; }
 
 .panel-project-options .project-options-scripts h4:hover { color: #1f1e1c99; padding: 0.75em 0 0.75em calc(3px); }
-
-.panel-project-options .project-options-script-list { width: 100%; }
-
-.panel-project-options .project-options-script-list .project-options-new-script { padding: .75em; cursor: pointer; }
-
-.panel-project-options .project-options-script-list .project-options-new-script img { width: 1.5em; height: 1.5em; margin: 0 auto; display: block; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
-
-.panel-project-options .project-options-script-list .project-options-new-script:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
 
 .charts .card { width: calc((100% - 32px) / 2); padding-top: calc((100% - 32px) / 2 / (2)); }
 

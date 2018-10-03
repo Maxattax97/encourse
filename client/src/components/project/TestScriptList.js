@@ -32,10 +32,10 @@ class TestScriptList extends Component {
 
     render() {
         return (
-                <div className="test-script-list">
+                <div className="test-scripts-list">
                     {
                         this.state.scripts.map((script) =>
-                            <div className="project-options-script" key={`${ script.filename }-${ script.pointvalue }`}>
+                            <div className="scripts-script" key={`${ script.filename }-${ script.pointvalue }`}>
                                 <div className="script-filename">
                                     <img src={ searchIcon } />
                                     <h4>
@@ -46,7 +46,7 @@ class TestScriptList extends Component {
                             </div>
                         )
                     }
-                    <div className="project-options-new-script" onClick={ this.addTestScript }>
+                    <div className="scripts-new" onClick={ this.addTestScript }>
                         <img src={ plusIcon } />
                     </div>
                 </div>

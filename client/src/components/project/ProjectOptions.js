@@ -96,6 +96,24 @@ class ProjectOptions extends Component {
     };
 
     render() {
+
+        const modal_buttons =
+            <div className="modal-buttons float-height">
+                <div onClick={ this.deleteProject }>
+                    <img src={deleteIcon} />
+                </div>
+                {
+                    this.state.new_project ?
+                        <div className="project-options-add" onClick={ this.addProject }>
+                            <img src={plusIcon} />
+                        </div>
+                        :
+                        <div className="project-options-sync" onClick={ this.updateProject }>
+                            <img src={syncIcon} />
+                        </div>
+                }
+            </div>;
+
         return (
             <div className="project-options">
                 <Modal left
@@ -127,28 +145,13 @@ class ProjectOptions extends Component {
                                        Hidden Test Scripts
                                    </h4>
                                </div>
-                               <div className="modal-buttons float-height">
-                                   <div onClick={ this.deleteProject }>
-                                       <img src={deleteIcon} />
-                                   </div>
-                                   {
-                                       this.state.new_project ?
-                                           <div className="project-options-add" onClick={ this.addProject }>
-                                               <img src={plusIcon} />
-                                           </div>
-                                           :
-                                           <div className="project-options-sync" onClick={ this.updateProject }>
-                                               <img src={syncIcon} />
-                                           </div>
-                                   }
-                               </div>
+                               { modal_buttons }
                            </div>
                        } />
 
                 <Modal left
                        show={ this.props.show && this.state.show_test_scripts && !this.state.show_hidden_scripts }
                        onExit={ this.props.close }
-                       onClose={ () => this.setState({ show_test_scripts: false }) }
                        component={
                            <div className="panel-project-options">
                                <h4 className="header">
@@ -157,20 +160,15 @@ class ProjectOptions extends Component {
                                <h4 className="break-line title" />
 
                                <TestScriptList script_list={ this.state.test_script }
-                                               ref={this.test_script_ref}/>
+                                               ref={ this.test_script_ref }/>
 
-                               <div className="modal-buttons float-height">
-                                   <div onClick={ () => this.setState({ show_test_scripts: false }) }>
-                                       <img src={ backIcon } />
-                                   </div>
-                               </div>
+                               { modal_buttons }
                            </div>
                        } />
 
                 <Modal left
                        show={ this.props.show && !this.state.show_test_scripts && this.state.show_hidden_scripts }
                        onExit={ this.props.close }
-                       onClose={ () => this.setState({ show_hidden_scripts: false }) }
                        component={
                            <div className="panel-project-options">
                                <h4 className="header">
@@ -181,11 +179,7 @@ class ProjectOptions extends Component {
                                <TestScriptList script_list={ this.state.hidden_test_script }
                                                ref={this.hidden_script_ref}/>
 
-                               <div className="modal-buttons float-height">
-                                   <div onClick={ () => this.setState({ show_hidden_scripts: false }) }>
-                                       <img src={ backIcon } />
-                                   </div>
-                               </div>
+                               { modal_buttons }
                            </div>
                        } />
             </div>

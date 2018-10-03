@@ -17,7 +17,7 @@ function projects(state = {}, action) {
         case 'GET_CLASS_PROJECTS_DATA_SUCCESS':
             return Object.assign({}, state, {
                 getClassProjectsData: action.data,
-                currentProjectId: action.data[Object.keys(action.data)[0]].id
+                currentProjectId: action.data[0].id
             })
         default:
             return state

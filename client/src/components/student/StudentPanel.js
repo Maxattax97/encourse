@@ -94,7 +94,7 @@ class StudentPanel extends Component {
                             }
                         </h1>
                         <h1 className="break-line title" />
-                        <h3>Charts</h3>
+                        <h3>Student Charts</h3>
                         <div className="charts float-height">
                             <Card component={<StudentProgressLineGraph id={this.props.currentStudent.id}/>} />
                             <Card component={<CodeChangesChart id={this.props.currentStudent.id}/>} />
@@ -147,7 +147,7 @@ class StudentPanel extends Component {
 const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
-        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : null,
+        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
         currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
     }
 };

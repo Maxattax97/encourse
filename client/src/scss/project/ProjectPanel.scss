@@ -1,4 +1,6 @@
 @import "ProjectNavigation";
+@import "TestScriptsList";
+
 
 .panel-project-options {
   float:left;
@@ -20,29 +22,6 @@
     h4:hover {
       color: #1f1e1c99;
       padding: .75em 0 .75em calc(3px);
-    }
-  }
-
-  .project-options-script-list {
-    width: 100%;
-
-    .project-options-new-script {
-      padding: .75em;
-      cursor:pointer;
-
-      img {
-        width: 1.5em;
-        height: 1.5em;
-        margin: 0 auto;
-        display: block;
-        filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
-      }
-    }
-
-    .project-options-new-script:hover {
-      img {
-        filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
-      }
     }
   }
 }

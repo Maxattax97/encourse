@@ -62,12 +62,12 @@ public class ReadController {
         if (json == null) {
             return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
         }
-        Map<String, JSONObject> map = new HashMap<>();
-        for (Object j: json) {
-            JSONObject jsonObject = (JSONObject)j;
-            map.put(jsonObject.get("id").toString(), jsonObject);
-        }
-        return new ResponseEntity<>(map, HttpStatus.OK);
+//        Map<String, JSONObject> map = new HashMap<>();
+//        for (Object j: json) {
+//            JSONObject jsonObject = (JSONObject)j;
+//            map.put(jsonObject.get("id").toString(), jsonObject);
+//        }
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")

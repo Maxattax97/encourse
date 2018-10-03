@@ -16,85 +16,6 @@ class CoursePanel extends Component {
         super(props);
 
         this.state = {
-            student_data : [
-                {
-                    first_name: "Ryan", //first name of student
-                    last_name: "Sullivan", //last name of student
-                    progress: [100, 100, 30], //array of size n of integers, n being the number of projects, containing the progress completion for each project
-                    commitCount: [13, 12, 12], //array of size n of integers, n being the number of projects, containing the commit count for each project
-                    timeSpent: ["12 hours", "12 hours", "12 hours"], //array of size n of strings, n being the number of projects, containing a formatted time spent for each project
-                    id: 100 //PUID, but preferably something more unique when expanding to different colleges
-                },
-                {
-                    first_name: "Jordan",
-                    last_name: "Reed",
-                    progress: [100, 100, 100],
-                    commitCount: [280, 280, 280],
-                    timeSpent: ["3 hours", "3 hours", "3 hours"],
-                    id: 101
-                },
-                {
-                    first_name: "Killian",
-                    last_name: "Le Clainche",
-                    progress: [6.9, 6.9, 6.9],
-                    commitCount: [69, 69, 69],
-                    timeSpent: ["6 hr 9 min", "6 hr 9 min", "6 hr 9 min"],
-                    id: 102
-                },
-                {
-                    first_name: "Shawn",
-                    last_name: "Montgomery",
-                    progress: [100, 100, 30],
-                    commitCount: [13, 12, 12],
-                    timeSpent: ["12 hours", "12 hours", "12 hours"],
-                    id: 103
-                },
-                {
-                    first_name: "Jordan",
-                    last_name: "Buckmaster",
-                    progress: [100, 100, 30],
-                    commitCount: [13, 12, 12],
-                    timeSpent: ["12 hours", "12 hours", "12 hours"],
-                    id: 104
-                },
-                {
-                    first_name: "Jarett",
-                    last_name: "Lee",
-                    progress: [100, 100, 30],
-                    commitCount: [13, 12, 12],
-                    timeSpent: ["12 hours", "12 hours", "12 hours"],
-                    id: 105
-                }
-            ],
-            projects : [
-                {
-                    name: "My Malloc",
-                    source_name: "lab1-src",
-                    created_date: "09-01-18",
-                    due_date: "09-08-18",
-                    test_script: [],
-                    hidden_test_script: [],
-                    id: 1 //id would be preferable for unique identification
-                },
-                {
-                    name: "Lab 2",
-                    source_name: "lab2-src",
-                    created_date: "09-01-18",
-                    due_date: "09-08-18",
-                    test_script: ["test1"],
-                    hidden_test_script: ["test2"],
-                    id: 2
-                },
-                {
-                    name: "Shell Project",
-                    source_name: "lab3-src",
-                    created_date: "09-01-18",
-                    due_date: "09-08-18",
-                    test_script: [],
-                    hidden_test_script: [],
-                    id: 3
-                }
-            ],
             modal_blur: ""
         };
     }
@@ -157,7 +78,7 @@ const mapStateToProps = (state) => {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : 0
     }
 };
   
