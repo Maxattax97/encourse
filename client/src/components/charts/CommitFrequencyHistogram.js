@@ -54,7 +54,8 @@ class CommitHistoryHistogram extends Component {
         return moment(date).format('M-D')
     }
 
-    formatApiData = (data) => {
+    formatApiData = (udata) => {
+        const data = udata.data;
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf();
         }

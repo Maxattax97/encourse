@@ -81,7 +81,8 @@ class ClassProgressHistogram extends Component {
         {'Authorization': `Bearer ${props.token}`})
     }
 
-    formatApiData = (data) => {
+    formatApiData = (udata) => {
+        const data = udata.data;
         const formattedData = []
         const data2 = Object.entries(data);
         const total = data2.reduce((sum, p) => sum + p[1], 0);

@@ -7,19 +7,19 @@ import { connect } from 'react-redux'
 import { getProgressLine } from '../../redux/actions'
 import url from '../../server'
 
+const defaultData = [
+    {date: moment('9/10/18').valueOf(), progress: 0},
+    {date: moment('9/11/18').valueOf(), progress: 0},
+    {date: moment('9/12/18').valueOf(), progress: 0},
+    {date: moment('9/13/18').valueOf(), progress: 0},
+    {date: moment('9/14/18').valueOf(), progress: 0},
+    {date: moment('9/15/18').valueOf(), progress: 0},
+    {date: moment('9/16/18').valueOf(), progress: 0},
+];
+
 class StudentProgressLineGraph extends Component {
     constructor(props) {
         super(props);
-
-        const defaultData = [
-            {date: moment('9/10/18').valueOf(), progress: 0},
-            {date: moment('9/11/18').valueOf(), progress: 20},
-            {date: moment('9/12/18').valueOf(), progress: 20},
-            {date: moment('9/13/18').valueOf(), progress: 30},
-            {date: moment('9/14/18').valueOf(), progress: 50},
-            {date: moment('9/15/18').valueOf(), progress: 60},
-            {date: moment('9/16/18').valueOf(), progress: 100},
-        ];
 
         this.state = {
             formattedData: defaultData,
@@ -45,7 +45,11 @@ class StudentProgressLineGraph extends Component {
     }
 
 
-    formatApiData = (data) => {
+    formatApiData = (udata) => {
+        if (!udata) {
+            return defaultData
+        }
+        const data = udata.data;
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf();
         }

@@ -34,7 +34,8 @@ class CommitHistory extends Component {
         {'Authorization': `Bearer ${props.token}`})
     }
 
-    formatApiData = (data) => {
+    formatApiData = (udata) => {
+        const data = udata.data;
         const formattedData = data.slice();
 
         return formattedData;
