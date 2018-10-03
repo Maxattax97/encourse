@@ -94,7 +94,8 @@ class Statistics extends Component {
         {'Authorization': `Bearer ${props.token}`})
     }
 
-    formatApiData = (data) => {
+    formatApiData = (udata) => {
+        const data = udata.data;
         const formattedData = data.slice();
 
         return formattedData;
@@ -108,8 +109,9 @@ class Statistics extends Component {
                 </div>
                 <h3 className="break-line title" />
                 {
-                    this.props.stats && 
-                    this.props.stats.map((stat, index) =>
+                    this.props.stats &&
+                    this.props.stats.map &&
+                    this.props.stats.map((stat, index)  =>
                         <div className="student-stat">
                             <div className="student-stat-content">
                                 <h5>{stat.stat_name}</h5>
