@@ -358,7 +358,6 @@ public class ProfessorServiceImpl implements ProfessorService {
             testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
         } else {
             Student student = studentRepository.findByUserName(userName);
-            System.out.println(student);
             StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
             testResult = project.getBestGrade();
         }
@@ -373,7 +372,6 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         Student student = studentRepository.findByUserName(userName);
-        System.out.println(student);
         StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
         testResult = project.getBestGrade();
 
@@ -384,16 +382,16 @@ public class ProfessorServiceImpl implements ProfessorService {
                 project.setMostRecentCommitDate(data.get("stat_value").toString());
             }
             if(data.get("stat_name").equals("Additions")) {
-                project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString()));
+                project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
             }
             else if(data.get("stat_name").equals("Deletions")) {
-                project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString()));
+                project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
             }
             else if(data.get("stat_name").equals("Commit Count")) {
-                project.setCommitCount(Integer.parseInt(data.get("stat_value").toString()));
+                project.setCommitCount(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
             }
             else if(data.get("stat_name").equals("Estimated Time Spent")) {
-                project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString()));
+                project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
             }
         }
         //executeBashScript("cleanDirectory.sh src/main/temp");
