@@ -2,11 +2,12 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { getStatistics } from '../../redux/actions'
+import url from '../../server'
 
 class Statistics extends Component {
 
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
             stats: [
@@ -75,7 +76,8 @@ class Statistics extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getStatistics(/*TODO: add endpoint for statistics*/)
+        this.props.getStatistics(`${url}/secured/statistics?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.id}`, 
+        {'Authorization': `Bearer ${this.props.token}`})
     }
 
     render() {
@@ -86,7 +88,6 @@ class Statistics extends Component {
                 </div>
                 <h3 className="break-line title" />
                 {
-                    this.props.stats && 
                     this.props.stats.map((stat, index) =>
                         <div className="student-stat">
                             <div className="student-stat-content">
@@ -107,8 +108,8 @@ class Statistics extends Component {
 const mapStateToProps = (state) => {
     return { 
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
-        stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : null,
-        isLoading: state.student ? state.student.getStatisticsIsLoading : false,
+        stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : [],
+        isLoading: state.student ? state.student.getStatisticsIsLoading : true
     }
   }
   

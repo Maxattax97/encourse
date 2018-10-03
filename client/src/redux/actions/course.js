@@ -25,31 +25,6 @@ export const getStudentPreviews = genericDispatch(
     getStudentPreviewsHasError, getStudentPreviewsIsLoading, getStudentPreviewsDataSuccess, 'GET'
 )
 
-export function getClassProjectsHasError(hasError) {
-    return {
-        type: 'GET_CLASS_PROJECTS_HAS_ERROR',
-        hasError
-    }
-}
-
-export function getClassProjectsIsLoading(isLoading) {
-    return {
-        type: 'GET_CLASS_PROJECTS_IS_LOADING',
-        isLoading
-    }
-}
-
-export function getClassProjectsDataSuccess(data) {
-    return {
-        type: 'GET_CLASS_PROJECTS_DATA_SUCCESS',
-        data
-    }
-}
-
-export const getClassProjects = genericDispatch(
-    getClassProjectsHasError, getClassProjectsIsLoading, getClassProjectsDataSuccess, 'GET'
-)
-
 export function getClassProgressHasError(hasError) {
     return {
         type: 'GET_CLASS_PROGRESS_HAS_ERROR',

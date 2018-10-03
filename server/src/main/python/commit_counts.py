@@ -1,6 +1,6 @@
 import json
 
-def import_commit_counts(count_file):
+def commit_counts(count_file):
     counts = {}
     line = count_file.readline()
     line = line.strip("\n").strip(" ")

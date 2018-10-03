@@ -11,7 +11,10 @@ import ProjectOptions from "../project/ProjectOptions";
 import ClassProgressHistogram from "../charts/ClassProgressHistogram";
 import StudentPreview from "../course/StudentPreview";
 import Statistics from './Statistics'
-import {history} from "../../redux/store";
+import CommitHistory from "./CommitHistory";
+import { history } from "../../redux/store"
+import { getClassProjects, clearStudent } from '../../redux/actions'
+import url from '../../server'
 
 
 class StudentPanel extends Component {
@@ -54,51 +57,52 @@ class StudentPanel extends Component {
         }
     }
 
+    componentWillMount = () => this.clear()
+    componentWillUnmount = () => this.clear()
+    clear = () => this.props.clearStudent()
+
+    componentDidMount = () => {
+        if(!this.props.projects) {
+            //TODO: remove classid and semester hardcoding
+            this.props.getClassProjects(`${url}/secured/projectsData?courseID=cs252&semester=Fall2018`, 
+            {'Authorization': `Bearer ${this.props.token}`})
+        }
+    }
+
     back = () => {
         history.push("/course");
-    };
-
-    showProjectOptions = () => {
-        this.setState({project_options: !this.state.project_options, new_project: false})
-    };
-
-    updateProjectState = (project_index) => {
-        this.setState({current_project: project_index})
-    };
-
-    newProject = () => {
-        this.setState({ project_options: true, new_project: true });
-    };
-
-    createProject = () => {
-
-    };
-
-    deleteProject = () => {
-
-    };
-
-    changeProject = () => {
-
     };
 
     render() {
         return (
             <div className="panel-student">
-                <ProjectNavigation info={this.state.projects} onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})} {...this.props}/>
+
+                <ProjectNavigation
+                    info={ this.props.projects }
+                    back="Course"
+                    backClick={ this.back }
+                    onModalBlur={ (blur) => this.setState({modal_blur : blur ? " blur" : ""}) }
+                    { ...this.props }/>
+
                 <div className="panel-center-content">
                     <div className={ `panel-student-content${this.state.modal_blur}` }>
-                        <h1>{this.props.currentStudent ? this.props.currentStudent.first_name + ' ' + this.props.currentStudent.last_name : ''}</h1>
+                        <h1>
+                            {
+                                this.props.currentStudent ?
+                                    this.props.currentStudent.first_name + ' ' + this.props.currentStudent.last_name :
+                                    ''
+                            }
+                        </h1>
                         <h1 className="break-line title" />
                         <h3>Charts</h3>
                         <div className="charts float-height">
-                            <Card component={<StudentProgressLineGraph/>} />
-                            <Card component={<CodeChangesChart/>} />
-                            <Card component={<CommitFrequencyHistogram/>}/>
+                            <Card component={<StudentProgressLineGraph id={this.props.currentStudent.id}/>} />
+                            <Card component={<CodeChangesChart id={this.props.currentStudent.id}/>} />
+                            <Card component={<CommitFrequencyHistogram id={this.props.currentStudent.id}/>}/>
                         </div>
                         <h2 className="break-line" />
                         <div className="student-stats-comments float-height">
-                            <Card component={<Statistics />}/>
+                            <Card component={<Statistics id={this.props.currentStudent.id}/>}/>
                             <Card component={
                                 <div className="student-feedback-container">
                                     <div className="title">
@@ -132,6 +136,7 @@ class StudentPanel extends Component {
                                 </h4>
                             </div>
                         } />
+                        <Card component={ <CommitHistory id={this.props.currentStudent.id} /> } />
                     </div>
                 </div>
             </div>
@@ -141,13 +146,16 @@ class StudentPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
+        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : null,
         currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
     }
 };
   
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        getClassProjects: (url, headers, body) => dispatch(getClassProjects(url, headers, body)),
+        clearStudent: () => dispatch(clearStudent),
     }
 };
 

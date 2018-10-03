@@ -5,6 +5,7 @@ import moment from 'moment';
 import { connect } from 'react-redux'
 
 import { getCommitFrequency } from '../../redux/actions'
+import url from '../../server'
 
 const defaultData = [
     {date: moment('2018-09-16').valueOf(), count: 8},
@@ -21,25 +22,40 @@ const defaultData = [
     {date: moment('2018-09-27').valueOf(), count: 0},
 ];
 
-function dateFormatter(date) {
-    const m = moment(date);
-    return m.format('M-D')
-}
-
 class CommitHistoryHistogram extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            formattedData: defaultData,
+        };
+    }
 
     componentDidMount = () => {
         this.props.getData(/*TODO: add endpoint */)
+    }
+
+    dateFormatter = (date) => {
+        return moment(date).format('M-D')
+    }
+
+    formatApiData = (data) => {
+        for (let entry of data) {
+            entry.date = moment(entry.date).valueOf();
+        }
+
+        return data;
     }
 
     render() {
         return (
             <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={this.props.data || defaultData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
+                    <BarChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
                         <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Commit Frequency</text>
                         <CartesianGrid/>
-                        <XAxis dataKey="date" tickFormatter={dateFormatter}>
+                        <XAxis dataKey="date" tickFormatter={this.dateFormatter}>
                             <Label offset={-15} position="insideBottom">
                                 Commits
                             </Label>
@@ -49,7 +65,7 @@ class CommitHistoryHistogram extends Component {
                                 Date
                             </Label>
                         </YAxis>
-                        <Tooltip labelFormatter={dateFormatter} animationDuration={500}/>
+                        <Tooltip labelFormatter={this.dateFormatter} animationDuration={500}/>
                         <Bar dataKey="count" fill="#8884d8"/>
                     </BarChart>
                 </ResponsiveContainer>
@@ -64,12 +80,12 @@ const mapStateToProps = (state) => {
         data: state.student && state.student.getCommitFrequencyData ? state.student.getCommitFrequencyData : null,
         isLoading: state.student ? state.student.getCommitFrequencyIsLoading : false,
     }
-  }
+}
 
-  const mapDispatchToProps = (dispatch) => {
-      return {
-          getData: (url, headers, body) => dispatch(getCommitFrequency(url, headers, body))
-      }
-  }
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getData: (url, headers, body) => dispatch(getCommitFrequency(url, headers, body))
+    }
+}
 
-  export default connect(mapStateToProps, mapDispatchToProps)(CommitHistoryHistogram)
+export default connect(mapStateToProps, mapDispatchToProps)(CommitHistoryHistogram)

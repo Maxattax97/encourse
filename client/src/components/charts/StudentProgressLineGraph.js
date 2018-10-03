@@ -5,6 +5,7 @@ import moment from 'moment'
 import { connect } from 'react-redux'
 
 import { getProgressLine } from '../../redux/actions'
+import url from '../../server'
 
 class StudentProgressLineGraph extends Component {
     constructor(props) {
@@ -26,7 +27,8 @@ class StudentProgressLineGraph extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getData(/*TODO: add endpoint*/)
+        this.props.getData(`${url}/secured/progress?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.id}`, 
+        {'Authorization': `Bearer ${this.props.token}`})
     }
 
     formatApiData = (data) => {

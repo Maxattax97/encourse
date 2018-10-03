@@ -1,11 +1,11 @@
 export { 
     getStudentPreviewsHasError, getStudentPreviewsIsLoading, getStudentPreviewsDataSuccess, getStudentPreviews,
-    getClassProjectsHasError, getClassProjectsIsLoading, getClassProjectsDataSuccess, getClassProjects,
     getClassProgressHasError, getClassProgressIsLoading, getClassProgressDataSuccess, getClassProgress
 } from './course' 
 
 export {
-    setCurrentProject
+    setCurrentProject,
+    getClassProjectsHasError, getClassProjectsIsLoading, getClassProjectsDataSuccess, getClassProjects,
 } from './projects'
 
 export {
@@ -15,9 +15,10 @@ export {
 } from './auth'
 
 export {
-    setCurrentStudent,
+    setCurrentStudent, clearStudent,
     getProgressLineHasError, getProgressLineIsLoading, getProgressLineDataSuccess, getProgressLine,
     getCodeFrequencyHasError, getCodeFrequencyIsLoading, getCodeFrequencyDataSuccess, getCodeFrequency,
     getCommitFrequencyHasError, getCommitFrequencyIsLoading, getCommitFrequencyDataSuccess, getCommitFrequency,
-    getStatisticsHasError, getStatisticsIsLoading, getStatisticsDataSuccess, getStatistics
+    getStatisticsHasError, getStatisticsIsLoading, getStatisticsDataSuccess, getStatistics,
+    getCommitHistoryHasError, getCommitHistoryIsLoading, getCommitHistoryDataSuccess, getCommitHistory
 } from './student'
