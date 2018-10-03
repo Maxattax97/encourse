@@ -115,6 +115,14 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-course .panel-course-content { -webkit-transition: filter .15s ease-in; -moz-transition: filter .15s ease-in; -ms-transition: filter .15s ease-in; -o-transition: filter .15s ease-in; transition: filter .15s ease-in; }
 
+.panel-course .panel-course-content div.title { cursor: pointer; }
+
+.panel-course .panel-course-content div.title img { position: absolute; top: 0; right: 0; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); width: 1em; height: 1em; }
+
+.panel-course .panel-course-content div.title:hover h1 { color: #1f1e1c99; margin-left: 3px; }
+
+.panel-course .panel-course-content div.title:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
 .panel-course .panel-course-content > h3 { cursor: default; }
 
 .panel-course-students .card { width: 192px; cursor: pointer; }
