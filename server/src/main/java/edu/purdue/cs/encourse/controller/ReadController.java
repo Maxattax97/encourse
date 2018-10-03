@@ -85,11 +85,10 @@ public class ReadController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    // Made by Ryan. Might not work
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/commitCount", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
-                                                       @RequestParam(name = "userName") String userName) {
+    public @ResponseBody ResponseEntity<?> getCommitCount(@RequestParam(name = "projectID") String projectID,
+                                                          @RequestParam(name = "userName") String userName) {
         JSONReturnable returnJson = professorService.getCommitCounts(projectID, userName);
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
@@ -146,8 +145,8 @@ public class ReadController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    // Made by Ryan. Might not work
-    @PreAuthorize("isAuthenticated()")
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/classProgress", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID) {
         JSONReturnable returnJson = professorService.getClassProgress(projectID);
