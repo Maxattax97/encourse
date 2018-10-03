@@ -1,11 +1,11 @@
 export { 
     getStudentPreviewsHasError, getStudentPreviewsIsLoading, getStudentPreviewsDataSuccess, getStudentPreviews,
-    getClassProjectsHasError, getClassProjectsIsLoading, getClassProjectsDataSuccess, getClassProjects,
     getClassProgressHasError, getClassProgressIsLoading, getClassProgressDataSuccess, getClassProgress
 } from './course' 
 
 export {
-    setCurrentProject
+    setCurrentProject,
+    getClassProjectsHasError, getClassProjectsIsLoading, getClassProjectsDataSuccess, getClassProjects,
 } from './projects'
 
 export {

@@ -5,22 +5,20 @@ class StudentPreview extends Component {
         return (
             <div className="student-preview">
                 <div className="title">
-                    <h4>{this.props.info.first_name}</h4>
-                    <h4>{this.props.info.last_name}</h4>
+                    <h4>{this.props.student.first_name}</h4>
+                    <h4>{this.props.student.last_name}</h4>
                 </div>
                 <h4 className="break-line title" />
                 <div className="student-preview-commits">
-                    <h5>Time: {this.props.info.timeSpent[this.props.project]}</h5>
-                    <h5>Commits: {this.props.info.commitCounts[this.props.project]}</h5>
+                    <h5>Time: {this.props.student.timeSpent[this.props.projectID]}</h5>
+                    <h5>Commits: {this.props.student.commitCounts[this.props.projectID]}</h5>
                 </div>
                 <div className="student-preview-progress">
                     <div className="progress-bar">
-                        {/*TODO: <div style={{width: this.props.info.progress[this.props.project] + "%"}} /> */}
-                        <div style={{width: 30 + "%"}} />
+                        <div style={{width: this.props.student.grades[this.props.projectID] + "%"}} />             
                     </div>
                     <div className="progress-text">
-                    {/*TODO: {this.props.info.progress[this.props.project]}%*/}
-                        30%
+                        {this.props.student.grades[this.props.projectID]}%
                     </div>
                 </div>
             </div>
