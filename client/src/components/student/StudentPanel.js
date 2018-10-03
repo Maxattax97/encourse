@@ -78,7 +78,7 @@ class StudentPanel extends Component {
             <div className="panel-student">
 
                 <ProjectNavigation
-                    info={ this.state.projects }
+                    info={ this.props.projects }
                     back="Course"
                     backClick={ this.back }
                     onModalBlur={ (blur) => this.setState({modal_blur : blur ? " blur" : ""}) }
