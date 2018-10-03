@@ -57,6 +57,10 @@ class CodeChangesChart extends Component {
             entry.deletions = -entry.deletions;
         }
 
+        if (!data || data.length === 0) {
+            return defaultData;
+        }
+
         const minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date);
         const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date);
 
