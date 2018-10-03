@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
+import { connect } from 'react-redux'
+
+import { getClassProgress } from '../../redux/actions'
 
 const students = [
     {name: 'Student A', progress: 50},
@@ -58,6 +61,11 @@ const AxisLabel = ({ axisType, x, y, width, height, stroke, children }) => {
 };
 
 class ClassProgressHistogram extends Component {
+
+    componentDidMount = () => {
+        this.props.getData(/*TODO: add endpoint*/)
+    }
+
     render() {
         return (
             <div className="chart-container">
@@ -87,4 +95,18 @@ class ClassProgressHistogram extends Component {
     }
 }
 
-export default ClassProgressHistogram;
+const mapStateToProps = (state) => {
+    return { 
+        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+        data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
+        isLoading: state.course ? state.course.getClassProgressData : false,
+    }
+  }
+  
+  const mapDispatchToProps = (dispatch) => {
+      return {
+          getData: (url, headers, body) => dispatch(getClassProgress(url, headers, body))
+      }
+  }
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(ClassProgressHistogram)

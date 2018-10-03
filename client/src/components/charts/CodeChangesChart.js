@@ -33,6 +33,10 @@ class CodeChangesChart extends Component {
         }
     }
 
+    componentDidMount = () => {
+        this.props.getData(/*TODO: add endpoint*/)
+    }
+
     dateFormatter = (dateUnix) => {
         return moment(dateUnix).format('MM-DD')
     }
