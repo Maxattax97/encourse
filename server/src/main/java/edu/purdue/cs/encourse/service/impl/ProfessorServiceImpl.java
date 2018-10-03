@@ -62,6 +62,9 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Autowired
     private TeachingAssistantStudentRepository teachingAssistantStudentRepository;
 
+    @Autowired
+    private ProjectTestScriptRepository projectTestScriptRepository;
+
     private int executeBashScript(@NonNull String command) {
         try {
             Process process = Runtime.getRuntime().exec("./src/main/bash/" + command);
@@ -75,7 +78,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    private boolean isTakingCourse(Student student, Project project) {
+    private boolean isTakingCourse(@NonNull Student student, @NonNull Project project) {
         List<StudentSection> studentSections = studentSectionRepository.findByIdStudentID(student.getUserID());
         boolean isTaking = false;
         for(StudentSection s : studentSections) {
@@ -88,15 +91,19 @@ public class ProfessorServiceImpl implements ProfessorService {
         return isTaking;
     }
 
-    private double parseProgressForProject(String testOutput) {
+    private double parseProgressForProject(@NonNull String projectID, @NonNull String testOutput) {
         String[] testResults = testOutput.split(" ");
-        double passedCount = 0.0;
+        double earnedPoints = 0.0;
+        double maxPoints = 0.0;
         for(String r : testResults) {
+            String testName = testOutput.split(":")[0];
+            ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
+            maxPoints += testScript.getPointsWorth();
             if(r.endsWith("P")) {
-                passedCount++;
+                earnedPoints += testScript.getPointsWorth();
             }
         }
-        return passedCount / testResults.length;
+        return earnedPoints / maxPoints;
     }
 
     /** Adds a new project to the database, which needs to be done before cloning the project in the course hub **/
@@ -436,7 +443,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Uploads a testing script to testcases directory in the course hub **/
-    public int uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents) {
+    public int uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents, boolean isHidden, int points) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return -1;
@@ -455,6 +462,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         catch(IOException e) {
             return -3;
         }
+        ProjectTestScript script = new ProjectTestScript(projectID, testName, isHidden, points);
+        projectTestScriptRepository.save(script);
         if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
             return -4;
         }
@@ -488,11 +497,11 @@ public class ProfessorServiceImpl implements ProfessorService {
                 Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + " " + testCaseDirectory);
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String result = stdInput.readLine();
-                double grade = parseProgressForProject(result);
+                double grade = parseProgressForProject(projectID, result);
                 boolean exists = false;
                 for(StudentProjectDate d : projectDates) {
                     if(d.getProjectIdentifier().equals(p.getProjectIdentifier())) {
-                        if(grade > parseProgressForProject(d.getDateGrade())) {
+                        if(grade > parseProgressForProject(projectID, d.getDateGrade())) {
                             d.setDateGrade(result);
                             studentProjectDateRepository.save(d);
                         }
@@ -504,7 +513,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     StudentProjectDate projectDate = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, result);
                     studentProjectDateRepository.save(projectDate);
                 }
-                if(p.getBestGrade() == null || grade > parseProgressForProject(p.getBestGrade())) {
+                if(p.getBestGrade() == null || grade > parseProgressForProject(projectID, p.getBestGrade())) {
                     p.setBestGrade(result);
                     studentProjectRepository.save(p);
                 }
@@ -542,11 +551,11 @@ public class ProfessorServiceImpl implements ProfessorService {
                     Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + " " + testCaseDirectory);
                     BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     String result = stdInput.readLine();
-                    double grade = parseProgressForProject(result);
+                    double grade = parseProgressForProject(projectID, result);
                     boolean exists = false;
                     for(StudentProjectDate d : projectDates) {
                         if(d.getProjectIdentifier().equals(p.getProjectIdentifier())) {
-                            if(grade > parseProgressForProject(d.getDateGrade())) {
+                            if(grade > parseProgressForProject(projectID, d.getDateGrade())) {
                                 d.setDateGrade(result);
                                 studentProjectDateRepository.save(d);
                             }
@@ -558,7 +567,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                         StudentProjectDate projectDate = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, result);
                         studentProjectDateRepository.save(projectDate);
                     }
-                    if(grade > parseProgressForProject(p.getBestGrade())) {
+                    if(grade > parseProgressForProject(projectID, p.getBestGrade())) {
                         p.setBestGrade(result);
                         studentProjectRepository.save(p);
                     }
