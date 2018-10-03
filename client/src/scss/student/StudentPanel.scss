@@ -66,6 +66,23 @@
 
   .card {
     margin: 0 0 30px;
+    width: 100%;
+  }
+
+  .component {
+    width: 100%;
+  }
+
+  .student-commits {
+    max-height: 340px;
+
+    .card {
+      padding: 3px;
+    }
+
+    .component {
+      background: white;
+    }
   }
 
   div.title {

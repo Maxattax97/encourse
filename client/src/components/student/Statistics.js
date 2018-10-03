@@ -6,7 +6,7 @@ import { getStatistics } from '../../redux/actions'
 class Statistics extends Component {
 
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
             stats: [
@@ -86,7 +86,6 @@ class Statistics extends Component {
                 </div>
                 <h3 className="break-line title" />
                 {
-                    this.props.stats && 
                     this.props.stats.map((stat, index) =>
                         <div className="student-stat">
                             <div className="student-stat-content">
@@ -107,8 +106,8 @@ class Statistics extends Component {
 const mapStateToProps = (state) => {
     return { 
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
-        stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : null,
-        isLoading: state.student ? state.student.getStatisticsIsLoading : false,
+        stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : [],
+        isLoading: state.student ? state.student.getStatisticsIsLoading : true
     }
   }
   

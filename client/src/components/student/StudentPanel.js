@@ -12,6 +12,7 @@ import ClassProgressHistogram from "../charts/ClassProgressHistogram";
 import StudentPreview from "../course/StudentPreview";
 import Statistics from './Statistics'
 import {history} from "../../redux/store";
+import CommitHistory from "./CommitHistory";
 
 
 class StudentPanel extends Component {
@@ -58,37 +59,26 @@ class StudentPanel extends Component {
         history.push("/course");
     };
 
-    showProjectOptions = () => {
-        this.setState({project_options: !this.state.project_options, new_project: false})
-    };
-
-    updateProjectState = (project_index) => {
-        this.setState({current_project: project_index})
-    };
-
-    newProject = () => {
-        this.setState({ project_options: true, new_project: true });
-    };
-
-    createProject = () => {
-
-    };
-
-    deleteProject = () => {
-
-    };
-
-    changeProject = () => {
-
-    };
-
     render() {
         return (
             <div className="panel-student">
-                <ProjectNavigation info={this.state.projects} onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})} {...this.props}/>
+
+                <ProjectNavigation
+                    info={ this.state.projects }
+                    back="Course"
+                    backClick={ this.back }
+                    onModalBlur={ (blur) => this.setState({modal_blur : blur ? " blur" : ""}) }
+                    { ...this.props }/>
+
                 <div className="panel-center-content">
                     <div className={ `panel-student-content${this.state.modal_blur}` }>
-                        <h1>{this.props.currentStudent ? this.props.currentStudent.first_name + ' ' + this.props.currentStudent.last_name : ''}</h1>
+                        <h1>
+                            {
+                                this.props.currentStudent ?
+                                    this.props.currentStudent.first_name + ' ' + this.props.currentStudent.last_name :
+                                    ''
+                            }
+                        </h1>
                         <h1 className="break-line title" />
                         <h3>Charts</h3>
                         <div className="charts float-height">
@@ -132,6 +122,7 @@ class StudentPanel extends Component {
                                 </h4>
                             </div>
                         } />
+                        <Card component={ <CommitHistory /> } />
                     </div>
                 </div>
             </div>
