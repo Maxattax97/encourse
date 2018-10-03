@@ -105,7 +105,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     private double parseProgressForProject(@NonNull String projectID, @NonNull String testOutput) {
-        String[] testResults = testOutput.split(" ");
+        String[] testResults = testOutput.split(";");
         double earnedPoints = 0.0;
         double maxPoints = 0.0;
         for(String r : testResults) {
@@ -599,18 +599,26 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
         String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
+        String makefilePath = sections.get(0).getCourseHub() + "/makefiles/" + project.getRepoName() + "/Makefile";
         File directory = new File(testCaseDirectory);
         if(!directory.isDirectory() || directory.listFiles().length == 0) {
             return -3;
+        }
+        File file = new File(makefilePath);
+        if(!file.exists()) {
+            return -4;
         }
         String date = LocalDate.now().toString();
         int code = 0;
         for(StudentProject p : projects) {
             Student student = studentRepository.findByUserID(p.getStudentID());
             List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdDateAndIdStudentID(date, p.getStudentID());
-            String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName() + "/" + testDir;
+            String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName();
             try {
-                Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + " " + testCaseDirectory);
+                if(executeBashScript("src/main/bash/runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
+                    code = -5;
+                }
+                Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + testCaseDirectory);
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String result = stdInput.readLine();
                 double grade = parseProgressForProject(projectID, result);
@@ -635,7 +643,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 }
             }
             catch(Exception e) {
-                code = -4;
+                code = -6;
             }
         }
         return code;
@@ -702,7 +710,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Pulls and tests every project in the database on one hour intervals **/
-    @Scheduled(fixedRate = RATE)
+    @Scheduled(fixedDelay = RATE)
     public int pullAndTestAllProjects() {
         int code = 0;
         for(Project project : projectRepository.findAll()) {

@@ -80,7 +80,7 @@ public class CourseServiceImpl implements CourseService {
                 grades.put(p.getProjectIdentifier(), 0.0);
                 continue;
             }
-            String[] testResults = p.getBestGrade().split(" ");
+            String[] testResults = p.getBestGrade().split(";");
             double passedCount = 0.0;
             for(String r : testResults) {
                 if(r.endsWith("P")) {

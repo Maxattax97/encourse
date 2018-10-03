@@ -67,7 +67,8 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                     if(student.equals("grr")) {
                         continue;
                     }
-                    adminService.addAccount(Integer.toString(100 + count), student, "Student", Integer.toString(count),
+                    //adminService.addAccount(Integer.toString(100 + count), student, "Student", Integer.toString(count),
+                    adminService.addAccount(Integer.toString(100 + count), student, "Student", student,
                             "Student", null, student + "@purdue.edu");
                     adminService.registerStudentToSection(student, "cs252", "Fall2018", "LE1");
                     count++;

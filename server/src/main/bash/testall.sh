@@ -9,8 +9,8 @@ cd $1
 ls $2 | while read t; do
     printf "${t}:"
     if [[ $($2/${t}) = "" ]]
-        then printf "P "
-        else printf "F "
+        then printf "P;"
+        else printf "F;"
     fi
 done
 cd "${DIRECTORY}"
