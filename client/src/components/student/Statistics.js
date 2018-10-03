@@ -71,7 +71,8 @@ class Statistics extends Component {
                     stat_name: "Deletions",
                     stat_value: "36"
                 }
-            ]
+            ],
+            formattedData: [],
         }
     }
 
@@ -80,6 +81,9 @@ class Statistics extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        if(this.props.isLoading && !nextProps.isLoading) {
+            this.setState({ formattedData: this.formatApiData(nextProps.data) })
+        }
         if (nextProps.projectID !== this.props.projectID) {
             this.fetch(nextProps)
         }
@@ -104,6 +108,7 @@ class Statistics extends Component {
                 </div>
                 <h3 className="break-line title" />
                 {
+                    this.props.stats && 
                     this.props.stats.map((stat, index) =>
                         <div className="student-stat">
                             <div className="student-stat-content">
