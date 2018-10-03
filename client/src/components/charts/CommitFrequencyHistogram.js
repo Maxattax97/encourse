@@ -8,15 +8,15 @@ import { getCommitFrequency } from '../../redux/actions'
 import url from '../../server'
 
 const defaultData = [
-    {date: moment('2018-09-16').valueOf(), count: 8},
-    {date: moment('2018-09-17').valueOf(), count: 13},
-    {date: moment('2018-09-18').valueOf(), count: 14},
-    {date: moment('2018-09-19').valueOf(), count: 3},
-    {date: moment('2018-09-20').valueOf(), count: 4},
-    {date: moment('2018-09-21').valueOf(), count: 6},
-    {date: moment('2018-09-22').valueOf(), count: 92},
-    {date: moment('2018-09-23').valueOf(), count: 104},
-    {date: moment('2018-09-24').valueOf(), count: 2},
+    {date: moment('2018-09-16').valueOf(), count: 0},
+    {date: moment('2018-09-17').valueOf(), count: 0},
+    {date: moment('2018-09-18').valueOf(), count: 0},
+    {date: moment('2018-09-19').valueOf(), count: 0},
+    {date: moment('2018-09-20').valueOf(), count: 0},
+    {date: moment('2018-09-21').valueOf(), count: 0},
+    {date: moment('2018-09-22').valueOf(), count: 0},
+    {date: moment('2018-09-23').valueOf(), count: 0},
+    {date: moment('2018-09-24').valueOf(), count: 0},
     {date: moment('2018-09-25').valueOf(), count: 0},
     {date: moment('2018-09-26').valueOf(), count: 0},
     {date: moment('2018-09-27').valueOf(), count: 0},
@@ -33,14 +33,35 @@ class CommitHistoryHistogram extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getData(/*TODO: add endpoint */)
+        this.fetch(this.props)
+    }
+
+    componentWillReceiveProps = (nextProps) => {
+        if(!this.props.data && nextProps.data) {
+            this.setState({ formattedData: this.formatApiData(nextProps.data) })
+        }
+        if (nextProps.projectID !== this.props.projectID) {
+            this.fetch(nextProps)
+        }
+    }
+
+    fetch = (props) => {
+        props.getData(`${url}/secured/commitCount?projectID=${props.projectID}&userName=${props.id}`,
+        {'Authorization': `Bearer ${props.token}`})
     }
 
     dateFormatter = (date) => {
         return moment(date).format('M-D')
     }
 
-    formatApiData = (data) => {
+    formatApiData = (udata) => {
+        const data = udata.data;
+        console.log('format api data', data)
+
+        if (!data || data.length === 0) {
+            return defaultData;
+        }
+
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf();
         }

@@ -47,6 +47,7 @@ public class ReadController {
     public @ResponseBody ResponseEntity<?> getStudentData(@RequestParam(name = "courseID") String courseID,
                                                           @RequestParam(name = "semester") String semester) {
         JSONArray json = courseService.getStudentData(semester, courseID);
+        System.out.println("STUDENT DATA RETURN: " + json);
         if (json == null) {
             return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
         }

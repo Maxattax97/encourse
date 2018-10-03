@@ -4,6 +4,69 @@ import { connect } from 'react-redux'
 import { getStatistics } from '../../redux/actions'
 import url from '../../server'
 
+const defaultData = [
+                {
+                    stat_name: "Estimated Time Spent",
+                    stat_value: "5 hours"
+                },
+                {
+                    stat_name: "Additions",
+                    stat_value: "103"
+                },
+                {
+                    stat_name: "Deletions",
+                    stat_value: "3415"
+                },
+                {
+                    stat_name: "Additions",
+                    stat_value: "`35"
+                },
+                {
+                    stat_name: "Deletions",
+                    stat_value: "1234"
+                },
+                {
+                    stat_name: "Additions",
+                    stat_value: "123"
+                },
+                {
+                    stat_name: "Deletions",
+                    stat_value: "5342"
+                },
+                {
+                    stat_name: "Additions",
+                    stat_value: "213"
+                },
+                {
+                    stat_name: "Deletions",
+                    stat_value: "76"
+                },
+                {
+                    stat_name: "Additions",
+                    stat_value: "123"
+                },
+                {
+                    stat_name: "Deletions",
+                    stat_value: "567"
+                },
+                {
+                    stat_name: "Additions",
+                    stat_value: "43"
+                },
+                {
+                    stat_name: "Deletions",
+                    stat_value: "123"
+                },
+                {
+                    stat_name: "Additions",
+                    stat_value: "45"
+                },
+                {
+                    stat_name: "Deletions",
+                    stat_value: "36"
+                }
+            ]
+
 class Statistics extends Component {
 
     constructor(props) {
@@ -71,13 +134,38 @@ class Statistics extends Component {
                     stat_name: "Deletions",
                     stat_value: "36"
                 }
-            ]
+            ],
+            formattedData: [],
         }
     }
 
     componentDidMount = () => {
-        this.props.getStatistics(`${url}/secured/statistics?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.id}`, 
-        {'Authorization': `Bearer ${this.props.token}`})
+        this.fetch(this.props)
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(this.props.isLoading && !nextProps.isLoading) {
+            this.setState({ formattedData: this.formatApiData(nextProps.data) })
+        }
+        if (nextProps.projectID !== this.props.projectID) {
+            this.fetch(nextProps)
+        }
+    }
+
+    fetch = (props) => {
+        props.getStatistics(`${url}/secured/statistics?projectID=${props.projectID}&userName=${props.id}`,
+        {'Authorization': `Bearer ${props.token}`})
+    }
+
+    formatApiData = (udata) => {
+        if (!udata) {
+            return defaultData
+        }
+        const data = udata.data;
+        console.log('format api data', data)
+        const formattedData = data.slice();
+
+        return formattedData;
     }
 
     render() {
@@ -88,7 +176,9 @@ class Statistics extends Component {
                 </div>
                 <h3 className="break-line title" />
                 {
-                    this.props.stats.map((stat, index) =>
+                    this.props.stats &&
+                    this.props.stats.map &&
+                    this.props.stats.map((stat, index)  =>
                         <div className="student-stat">
                             <div className="student-stat-content">
                                 <h5>{stat.stat_name}</h5>
@@ -106,17 +196,17 @@ class Statistics extends Component {
 }
 
 const mapStateToProps = (state) => {
-    return { 
+    return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : [],
         isLoading: state.student ? state.student.getStatisticsIsLoading : true
     }
   }
-  
+
   const mapDispatchToProps = (dispatch) => {
       return {
          getStatistics: (url, headers, body) => dispatch(getStatistics(url, headers, body))
       }
   }
-  
+
   export default connect(mapStateToProps, mapDispatchToProps)(Statistics)

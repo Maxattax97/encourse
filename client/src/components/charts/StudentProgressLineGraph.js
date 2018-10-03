@@ -7,19 +7,19 @@ import { connect } from 'react-redux'
 import { getProgressLine } from '../../redux/actions'
 import url from '../../server'
 
+const defaultData = [
+    {date: moment('9/10/18').valueOf(), progress: 0},
+    {date: moment('9/11/18').valueOf(), progress: 0},
+    {date: moment('9/12/18').valueOf(), progress: 0},
+    {date: moment('9/13/18').valueOf(), progress: 0},
+    {date: moment('9/14/18').valueOf(), progress: 0},
+    {date: moment('9/15/18').valueOf(), progress: 0},
+    {date: moment('9/16/18').valueOf(), progress: 0},
+];
+
 class StudentProgressLineGraph extends Component {
     constructor(props) {
         super(props);
-
-        const defaultData = [
-            {date: moment('9/10/18').valueOf(), progress: 0},
-            {date: moment('9/11/18').valueOf(), progress: 20},
-            {date: moment('9/12/18').valueOf(), progress: 20},
-            {date: moment('9/13/18').valueOf(), progress: 30},
-            {date: moment('9/14/18').valueOf(), progress: 50},
-            {date: moment('9/15/18').valueOf(), progress: 60},
-            {date: moment('9/16/18').valueOf(), progress: 100},
-        ];
 
         this.state = {
             formattedData: defaultData,
@@ -27,13 +27,36 @@ class StudentProgressLineGraph extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getData(`${url}/secured/progress?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.id}`, 
-        {'Authorization': `Bearer ${this.props.token}`})
+        this.fetch(this.props)
     }
 
-    formatApiData = (data) => {
+    componentWillReceiveProps(nextProps) {
+        if(!this.props.data && nextProps.data) {
+            this.setState({ formattedData: this.formatApiData(nextProps.data) })
+        }
+        if (nextProps.projectID !== this.props.projectID) {
+            this.fetch(nextProps)
+        }
+    }
+
+    fetch = (props) => {
+        props.getData(`${url}/secured/progress?projectID=${props.projectID}&userName=${props.id}`,
+        {'Authorization': `Bearer ${props.token}`})
+    }
+
+
+    formatApiData = (udata) => {
+        if (!udata) {
+            return defaultData
+        }
+        const data = udata.data;
+        console.log('format api data', data)
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf();
+        }
+
+        if (!data || data.length === 0) {
+            return defaultData;
         }
 
         const minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date);

@@ -96,13 +96,13 @@ class StudentPanel extends Component {
                         <h1 className="break-line title" />
                         <h3>Student Charts</h3>
                         <div className="charts float-height">
-                            <Card component={<StudentProgressLineGraph id={this.props.currentStudent.id}/>} />
-                            <Card component={<CodeChangesChart id={this.props.currentStudent.id}/>} />
-                            <Card component={<CommitFrequencyHistogram id={this.props.currentStudent.id}/>}/>
+                            <Card component={<StudentProgressLineGraph projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>} />
+                            <Card component={<CodeChangesChart projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>} />
+                            <Card component={<CommitFrequencyHistogram projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>}/>
                         </div>
                         <h2 className="break-line" />
                         <div className="student-stats-comments float-height">
-                            <Card component={<Statistics id={this.props.currentStudent.id}/>}/>
+                            <Card component={<Statistics projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>}/>
                             <Card component={
                                 <div className="student-feedback-container">
                                     <div className="title">
@@ -136,7 +136,7 @@ class StudentPanel extends Component {
                                 </h4>
                             </div>
                         } />
-                        <Card component={ <CommitHistory id={this.props.currentStudent.id} /> } />
+                        <Card component={ <CommitHistory projectID={this.props.currentProjectID} id={this.props.currentStudent.id} /> } />
                     </div>
                 </div>
             </div>
@@ -149,6 +149,7 @@ const mapStateToProps = (state) => {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
         currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
+        currentProjectID: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : 0
     }
 };
   

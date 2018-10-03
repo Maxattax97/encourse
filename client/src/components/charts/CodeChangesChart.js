@@ -7,16 +7,16 @@ import { getCodeFrequency } from '../../redux/actions'
 import url from '../../server'
 
 const defaultData = [
-    {date: moment('9/9/2018').valueOf(), additions: 200, deletions: -0},
-    {date: moment('9/10/2018').valueOf(), additions: 32, deletions: -0},
-    {date: moment('9/11/2018').valueOf(), additions: 100, deletions: -0},
-    {date: moment('9/12/2018').valueOf(), additions: 765, deletions: -0},
-    {date: moment('9/13/2018').valueOf(), additions: 20, deletions: -50},
-    {date: moment('9/14/2018').valueOf(), additions: 0, deletions: -10},
-    {date: moment('9/15/2018').valueOf(), additions: 10, deletions: -100},
-    {date: moment('9/16/2018').valueOf(), additions: 84, deletions: -327},
-    {date: moment('9/17/2018').valueOf(), additions: 284, deletions: -400},
-    {date: moment('9/18/2018').valueOf(), additions: 102, deletions: -90},
+    {date: moment('9/9/2018').valueOf(), additions: 0, deletions: -0},
+    {date: moment('9/10/2018').valueOf(), additions: 0, deletions: -0},
+    {date: moment('9/11/2018').valueOf(), additions: 0, deletions: -0},
+    {date: moment('9/12/2018').valueOf(), additions: 0, deletions: -0},
+    {date: moment('9/13/2018').valueOf(), additions: 0, deletions: -0},
+    {date: moment('9/14/2018').valueOf(), additions: 0, deletions: -0},
+    {date: moment('9/15/2018').valueOf(), additions: 0, deletions: -0},
+    {date: moment('9/16/2018').valueOf(), additions: 0, deletions: -0},
+    {date: moment('9/17/2018').valueOf(), additions: 0, deletions: -0},
+    {date: moment('9/18/2018').valueOf(), additions: 0, deletions: -0},
 ];
 
 class CodeChangesChart extends Component {
@@ -28,25 +28,38 @@ class CodeChangesChart extends Component {
         }
     }
 
+    componentDidMount = () => {
+        this.fetch(this.props)
+    }
+
     componentWillReceiveProps = (nextProps) => {
         if(!this.props.data && nextProps.data) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
+        if (nextProps.projectID !== this.props.projectID) {
+            this.fetch(nextProps)
+        }
     }
 
-    componentDidMount = () => {
-        this.props.getData(`${url}/secured/diffs?projectID=cs252%20Fall2018:%20MyMalloc&userName=${this.props.id}`, 
-        {'Authorization': `Bearer ${this.props.token}`})
+    fetch = (props) => {
+        props.getData(`${url}/secured/diffs?projectID=${props.projectID}&userName=${props.id}`,
+        {'Authorization': `Bearer ${props.token}`})
     }
 
     dateFormatter = (date) => {
         return moment(date).format('M-D')
     }
 
-    formatApiData = (data) => {
+    formatApiData = (udata) => {
+        const data = udata.data;
+        console.log('format api data', data)
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf();
             entry.deletions = -entry.deletions;
+        }
+
+        if (!data || data.length === 0) {
+            return defaultData;
         }
 
         const minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date);
