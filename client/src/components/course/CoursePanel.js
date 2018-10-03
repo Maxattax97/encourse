@@ -140,7 +140,7 @@ class CoursePanel extends Component {
                                 this.props.students && 
                                 this.props.students.map((student) =>
                                     <Card key={student.id}
-                                          component={<StudentPreview info={student} project={this.props.currentProject}
+                                          component={<StudentPreview student={student} projectID={this.props.currentProjectId}
                                                                      setCurrentProject={this.props.setCurrentProject} />}
                                           onClick={() => this.showStudentPanel(student)}/>)
                             }
@@ -156,8 +156,8 @@ const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : null,
-        projects: state.course && state.course.getClassProjectsData ? state.course.getClassProjectsData : null,
-        currentProject: state.projects && state.projects.currentProject ? state.projects.currentProject : 0
+        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : null,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 };
   
@@ -165,7 +165,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
         getClassProjects: (url, headers, body) => dispatch(getClassProjects(url, headers, body)),
-        setCurrentProject: (project) => dispatch(setCurrentProject(project)),
+        setCurrentProject: (id, index) => dispatch(setCurrentProject(id, index)),
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
     }
 };

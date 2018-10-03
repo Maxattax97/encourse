@@ -147,7 +147,7 @@ class StudentPanel extends Component {
 const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
-        projects: state.course && state.course.getClassProjectsData ? state.course.getClassProjectsData : null,
+        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : null,
         currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
     }
 };

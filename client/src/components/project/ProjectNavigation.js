@@ -25,8 +25,8 @@ class ProjectNavigation extends Component {
         this.props.onModalBlur(mode);
     };
 
-    changeProject = (project_index) => {
-        this.props.setCurrentProject(project_index);
+    changeProject = (project_id, project_index) => {
+        this.props.setCurrentProject(project_id, project_index);
     };
 
     handleNewProject = () => {
@@ -59,12 +59,12 @@ class ProjectNavigation extends Component {
                                 <h3 className="break-line title"/>
                                 {
                                     this.props.info &&
-                                    this.props.info.map((project, index) =>
-                                        <h4 className={ this.props.currentProject === index ? "projects-highlight" : "" }
-                                            key={ project.id }
-                                            onClick={ () => this.changeProject(index) }>
+                                    Object.keys(this.props.info).map((id, index) =>
+                                        <h4 className={ this.props.currentProjectIndex === index ? "projects-highlight" : "" }
+                                            key={ id }
+                                            onClick={ () => this.changeProject(id, index) }>
 
-                                            { project.project_name }
+                                            { this.props.info[id].project_name }
                                         </h4>)
                                 }
                                 <div className="projects-new" onClick={ this.handleNewProject }>
@@ -91,14 +91,14 @@ class ProjectNavigation extends Component {
 const mapStateToProps = (state) => {
     return {
         projects: state.course && state.course.getClassProjectsData ? state.course.getClassProjectsData : null,
-        currentProject: state.projects && state.projects.currentProject ? state.projects.currentProject : 0
+        currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0
     }
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
         getClassProjects: (url, headers) => dispatch(getClassProjects(url, headers)),
-        setCurrentProject: (project) => dispatch(setCurrentProject(project))
+        setCurrentProject: (id, index) => dispatch(setCurrentProject(id, index))
     }
 };
 
