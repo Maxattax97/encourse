@@ -37,8 +37,8 @@ class CodeChangesChart extends Component {
         this.props.getData(/*TODO: add endpoint*/)
     }
 
-    dateFormatter = (dateUnix) => {
-        return moment(dateUnix).format('MM-DD')
+    dateFormatter = (date) => {
+        return moment(date).format('M-D')
     }
 
     formatApiData = (data) => {
@@ -46,17 +46,17 @@ class CodeChangesChart extends Component {
             entry.date = moment(entry.date).valueOf();
             entry.deletions = -entry.deletions;
         }
-    
+
         const minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date);
         const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date);
-    
+
         const formattedData = []
-    
+
         let inputIndex = 0;
         for (let m = moment(minDate); m.diff(moment(maxDate), 'days') <= 0; m.add(1, 'days')) {
             const inputEntry = data[inputIndex];
             const inputDate = inputEntry.date;
-    
+
             if (m.isSame(inputDate, 'day')) {
                 formattedData.push(inputEntry);
                 inputIndex++;
@@ -69,7 +69,7 @@ class CodeChangesChart extends Component {
                 })
             }
         }
-    
+
         return formattedData;
     }
 
@@ -84,7 +84,7 @@ class CodeChangesChart extends Component {
                             <Label position="insideBottom" offset={-15} value="Date"/>
                         </XAxis>
                         <YAxis/>
-                        <Tooltip/>
+                        <Tooltip labelFormatter={this.dateFormatter}/>
                         <Area type="monotone" dataKey="additions" stroke="none" fill="green" />
                         <Area type="monotone" dataKey="deletions" stroke="none" fill="red" />
                     </AreaChart>
@@ -95,17 +95,17 @@ class CodeChangesChart extends Component {
 }
 
 const mapStateToProps = (state) => {
-    return { 
+    return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.student && state.student.getCodeFrequencyData ? state.student.getCodeFrequencyData : null,
         isLoading: state.student ? state.student.getCodeFrequencyIsLoading : false,
     }
   }
-  
+
   const mapDispatchToProps = (dispatch) => {
       return {
           getData: (url, headers, body) => dispatch(getCodeFrequency(url, headers, body))
       }
   }
-  
+
   export default connect(mapStateToProps, mapDispatchToProps)(CodeChangesChart)

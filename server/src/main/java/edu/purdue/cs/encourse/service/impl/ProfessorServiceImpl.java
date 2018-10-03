@@ -39,6 +39,12 @@ public class ProfessorServiceImpl implements ProfessorService {
     private TeachingAssistantRepository teachingAssistantRepository;
 
     @Autowired
+    private ProfessorRepository professorRepository;
+
+    @Autowired
+    private ProfessorCourseRepository professorCourseRepository;
+
+    @Autowired
     private ProjectRepository projectRepository;
 
     @Autowired
@@ -249,8 +255,78 @@ public class ProfessorServiceImpl implements ProfessorService {
         return code;
     }
 
+    public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName) {
+        String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
+        String commitLogFile = listStudentCommitsByTime(projectID, userName);
+        if(dailyCountsFile == null) {
+            return new JSONReturnable(-1, null);
+        }
+        if(commitLogFile == null) {
+            return new JSONReturnable(-2, null);
+        }
+
+        // TODO: RYAN PUT YOUR SHIT HERE
+        /** python executable.py dailyCountsFile commitLogFile userName **/
+        JSONReturnable json = null;
+
+        executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
+    public JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName) {
+        String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
+        String commitLogFile = listStudentCommitsByTime(projectID, userName);
+        if(dailyCountsFile == null) {
+            return new JSONReturnable(-1, null);
+        }
+        if(commitLogFile == null) {
+            return new JSONReturnable(-2, null);
+        }
+
+        // TODO: RYAN PUT YOUR SHIT HERE
+        /** python executable.py commitLogFile dailyCountsFile userName **/
+        JSONReturnable json = null;
+
+        executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
+    public JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userName) {
+        String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
+        String commitLogFile = listStudentCommitsByTime(projectID, userName);
+        if(dailyCountsFile == null) {
+            return new JSONReturnable(-1, null);
+        }
+        if(commitLogFile == null) {
+            return new JSONReturnable(-2, null);
+        }
+        Student student = studentRepository.findByUserName(userName);
+        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+
+        // TODO: RYAN PUT YOUR SHIT HERE
+        /** python executable.py commitLogFile dailyCountsFile project.getBestGrade() userName **/
+        JSONReturnable json = null;
+
+        executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
+    public JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userName) {
+        String commitLogFile = listStudentCommitsByTime(projectID, userName);
+        if(commitLogFile == null) {
+            return new JSONReturnable(-1, null);
+        }
+
+        // TODO: RYAN PUT YOUR SHIT HERE
+        /** python executable.py commitLogFile userName **/
+        JSONReturnable json = null;
+
+        executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
     /** Counts the number of commits that every student in the class has made for a project **/
-    public JSONReturnable countAllCommits(@NonNull String projectID) {
+    public String countAllCommits(@NonNull String projectID) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return null;
@@ -266,13 +342,11 @@ public class ProfessorServiceImpl implements ProfessorService {
             String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
             executeBashScript("countCommits.sh " + destPath + " " + fileName + " " + student.getUserName());
         }
-        JSONReturnable json = getCommitData(fileName);
-        executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
+        return fileName;
     }
 
     /** Counts the total number of commits made each day that the project was active **/
-    public JSONReturnable countAllCommitsByDay(@NonNull String projectID) {
+    public String countAllCommitsByDay(@NonNull String projectID) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return null;
@@ -288,13 +362,11 @@ public class ProfessorServiceImpl implements ProfessorService {
             String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
             executeBashScript("countCommitsByDay.sh " + destPath + " " + fileName + " " + student.getUserName());
         }
-        JSONReturnable json = getCommitData(fileName);
-        executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
+        return fileName;
     }
 
     /** Counts the number of commits that a single student has made for each day that the project is active **/
-    public JSONReturnable countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName) {
+    public String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return null;
@@ -315,13 +387,31 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(executeBashScript("countCommitsByDay.sh " + destPath + " " + fileName + " " + student.getUserName()) == -1) {
             return null;
         }
-        JSONReturnable json = getCommitData(fileName);
-        executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
+        return fileName;
     }
 
-    /** Lists various information about git history, including commit time and dates, and files modified in each commit **/
-    public JSONReturnable listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName) {
+    /** Lists various information about git history, including commit time and dates, and files modified in each commit for all students **/
+    public String listAllCommitsByTime(@NonNull String projectID) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return null;
+        }
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
+            return null;
+        }
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+        for(StudentProject s : projects) {
+            Student student = studentRepository.findByUserID(s.getStudentID());
+            String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
+            executeBashScript("listCommitsByTime.sh " + destPath + " " + fileName + " " + student.getUserName());
+        }
+        return fileName;
+    }
+
+    /** Lists various information about git history, including commit time and dates, and files modified in each commit for one student **/
+    public String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return null;
@@ -342,9 +432,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(executeBashScript("listCommitsByTime.sh " + destPath + " " + fileName + " " + student.getUserName()) == -1) {
             return null;
         }
-        JSONReturnable json = getProgressHistogram(fileName, userName);
-        executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
+        return fileName;
     }
 
     /** Uploads a testing script to testcases directory in the course hub **/
@@ -416,7 +504,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     StudentProjectDate projectDate = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, result);
                     studentProjectDateRepository.save(projectDate);
                 }
-                if(grade > parseProgressForProject(p.getBestGrade())) {
+                if(p.getBestGrade() == null || grade > parseProgressForProject(p.getBestGrade())) {
                     p.setBestGrade(result);
                     studentProjectRepository.save(p);
                 }

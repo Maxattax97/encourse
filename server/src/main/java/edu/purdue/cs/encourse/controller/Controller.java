@@ -95,8 +95,11 @@ public class Controller {
     @RequestMapping(value = "/studentCommitTime", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
                                                                   @RequestParam(name = "userName") String userName) {
-        JSONReturnable returnJson = professorService.listStudentCommitsByTime(projectID, userName);
+        JSONReturnable returnJson = professorService.getCommitList(projectID, userName);
         if (returnJson == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NOT_FOUND);
+        }
+        if (returnJson.jsonObject == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NOT_FOUND);
         }
         String json = returnJson.jsonObject.toJSONString();
@@ -108,14 +111,7 @@ public class Controller {
     public @ResponseBody ResponseEntity<?> getStudentCommitCountByDay(@RequestParam(name = "projectID") String projectID,
                                                                       @RequestParam(name = "userName", required = false) String userName,
                                                                       @RequestParam(name = "all", required = false, defaultValue = "false") boolean all) {
-        JSONReturnable returnJson;
-        if (userName != null) {
-            returnJson = professorService.countStudentCommitsByDay(projectID, userName);
-        } else if (all) {
-            returnJson = professorService.countAllCommits(projectID);
-        } else {
-            returnJson = professorService.countAllCommitsByDay(projectID);
-        }
+        JSONReturnable returnJson = professorService.getCommitList(projectID, userName);
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NOT_FOUND);
         }
