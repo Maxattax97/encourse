@@ -63,7 +63,7 @@ public class ReadController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/commitList", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
                                                                   @RequestParam(name = "userName") String userName) {
