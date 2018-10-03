@@ -2,6 +2,7 @@
 src/main/resources/application-secret.properties
 src/main/resources/encourse*
 src/main/resources/keystore*
+src/main/resources/store*
 pgdb_password.txt
 pgdb_user.txt
 src/main/java/edu/purdue/cs/encourse/security/StartupFeed.java

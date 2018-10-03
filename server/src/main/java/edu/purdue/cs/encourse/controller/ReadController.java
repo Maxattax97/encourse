@@ -26,7 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value="/secured")
-public class Controller {
+public class ReadController {
 
     @Autowired
     private ProfessorService professorService;
@@ -39,35 +39,6 @@ public class Controller {
 
     @Autowired
     private CourseService courseService;
-
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @RequestMapping(value = "/create/section", method = RequestMethod.POST, consumes = "application/json")
-    public @ResponseBody ResponseEntity<?> createSection(@RequestParam(name = "userName", required = false) String userName,
-                                                         @RequestBody String json) {
-        int result;
-        Section s;
-        try {
-            s = new ObjectMapper().readValue(json, Section.class);
-            System.out.println(s);
-            result = adminService.addSection(s.getCRN(), s.getSemester(), s.getCourseID(), s.getCourseTitle(), s.getSectionType());
-            if (userName != null && !userName.isEmpty()) {
-                adminService.assignProfessorToCourse(userName, s.getCourseID(), s.getSemester());
-            }
-        } catch (IOException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>((s != null)? s: result, (s != null)? HttpStatus.CREATED: HttpStatus.NOT_MODIFIED);
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @RequestMapping(value = "/modify/section", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> modifySection(@RequestParam(name = "userName") String userName,
-                                                         @RequestParam(name = "courseID") String courseID,
-                                                         @RequestParam(name = "semester") String semester) {
-        int result = adminService.assignProfessorToCourse(userName, courseID, semester);
-        HttpStatus status = (result == 0)? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
-        return new ResponseEntity<>(result, status);
-    }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/studentsData", method = RequestMethod.GET)
@@ -120,13 +91,6 @@ public class Controller {
         }
         String json = returnJson.jsonObject.toJSONString();
         return new ResponseEntity<>(json, HttpStatus.OK);
-    }
-
-
-
-    private User getUserFromAuth() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        return ((User)securityContext.getAuthentication().getPrincipal());
     }
 
 }

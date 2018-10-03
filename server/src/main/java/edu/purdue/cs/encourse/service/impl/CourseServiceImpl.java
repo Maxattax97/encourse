@@ -202,7 +202,7 @@ public class CourseServiceImpl implements CourseService {
                     studentJSON.put("id", student.getUserName());
                     studentJSON.put("grades", grades);
                     studentJSON.put("commitCounts", commitCounts);
-                    studentJSON.put("timeSpend", timeSpent);
+                    studentJSON.put("timeSpent", timeSpent);
                     studentsJSON.add(studentJSON);
                 }
             }
