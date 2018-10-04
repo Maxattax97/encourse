@@ -84,6 +84,26 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             professorService.addProject("cs252", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018");
             professorService.assignProject(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
             professorService.assignProject(Project.createProjectID("cs252", "Fall2018", "Shell"));
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "MyMalloc"), "Test1.sh",
+                    "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "MyMalloc"), "Test2.sh",
+                    "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "MyMalloc"), "Test3.sh",
+                    "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "MyMalloc"), "Test4.sh",
+                    "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "MyMalloc"), "Test5.sh",
+                    "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "MyMalloc"), "Test6.sh",
+                    "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "MyMalloc"), "Test7.sh",
+                    "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "MyMalloc"), "Test8.sh",
+                    "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "MyMalloc"), "Test9.sh",
+                    "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "MyMalloc"), "Test10.sh",
+                    "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
 
             List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
             for(StudentProject p : projects) {
