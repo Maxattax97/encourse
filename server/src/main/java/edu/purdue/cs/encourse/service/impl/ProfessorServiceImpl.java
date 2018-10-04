@@ -336,8 +336,8 @@ public class ProfessorServiceImpl implements ProfessorService {
             Student student = studentRepository.findByUserName(userName);
             StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
             testResult = userName + ";" + project.getBestGrade();
+            testResult = testResult.substring(0, testResult.length() - 1);
         }
-        /** python executable.py commitLogFile dailyCountsFile project.getBestGrade() userName **/
         String pyPath = pythonPath + "get_statistics.py";
         String command = "python " + pyPath + " " + userName + " " + dailyCountsFile + " " + commitLogFile + " " + testResult;
         JSONReturnable json = runPython(command);
