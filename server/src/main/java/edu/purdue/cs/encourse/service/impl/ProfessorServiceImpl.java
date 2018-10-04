@@ -296,6 +296,14 @@ public class ProfessorServiceImpl implements ProfessorService {
         if (DEBUG == true) {
             testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
         }
+        /*
+        else {
+            Student student = studentRepository.findByUserName(userName);
+            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+            testResult = userName + ";" + project.getBestGrade();
+            testResult = testResult.substring(0, testResult.length() - 1);
+        }
+        */
         // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_class_progress.py";
         String command = "python " + pyPath + " " + testResult;
@@ -549,8 +557,15 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(sections.isEmpty()) {
             return -2;
         }
-        new File(sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName()).mkdirs();
-        String filePath = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName() + "/" + testName;
+        String filePath;
+        if(isHidden) {
+            new File(sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName()).mkdirs();
+            filePath = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName() + "/" + testName;
+        }
+        else {
+            new File(sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName()).mkdirs();
+            filePath = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName() + "/" + testName;
+        }
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
             writer.write(testContents);
@@ -567,6 +582,100 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
+    /** Modify an uploaded testing script to either change its contents, point value, or if it is hidden **/
+    public int modifyTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String field, @NonNull String value) {
+        ProjectTestScript script = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
+        if(script == null) {
+            return -1;
+        }
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -2;
+        }
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
+            return -3;
+        }
+        if(field.equals("content")) {
+            String filePath;
+            if(script.isHidden()) {
+                new File(sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName()).mkdirs();
+                filePath = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName() + "/" + testName;
+            }
+            else {
+                new File(sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName()).mkdirs();
+                filePath = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName() + "/" + testName;
+            }
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+                writer.write("value");
+                writer.close();
+            }
+            catch(IOException e) {
+                return -4;
+            }
+            if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
+                return -5;
+            }
+            return 0;
+        }
+        else if(field.equals("hidden")) {
+            try {
+                boolean isHidden = Boolean.parseBoolean(value);
+                if(script.isHidden() == isHidden) {
+                    return 0;
+                }
+                script.setHidden(isHidden);
+            }
+            catch(Exception e) {
+                return -6;
+            }
+            String newFilePath;
+            String oldFilePath;
+            if(script.isHidden()) {
+                new File(sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName()).mkdirs();
+                newFilePath = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName() + "/" + testName;
+                oldFilePath = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName() + "/" + testName;
+            }
+            else {
+                new File(sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName()).mkdirs();
+                newFilePath = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName() + "/" + testName;
+                oldFilePath = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName() + "/" + testName;
+            }
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(oldFilePath));
+                BufferedWriter writer = new BufferedWriter(new FileWriter(newFilePath));
+                String line;
+                while((line = reader.readLine()) != null) {
+                    writer.write(line);
+                    writer.write("\n");
+                }
+                reader.close();
+                writer.close();
+                new File(oldFilePath).delete();
+            }
+            catch(IOException e) {
+                return -7;
+            }
+            if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
+                return -8;
+            }
+        }
+        else if(field.equals("points")) {
+            try {
+                script.setPointsWorth(Integer.parseInt(value));
+            }
+            catch(NumberFormatException e) {
+                return -9;
+            }
+        }
+        else {
+            return -10;
+        }
+        projectTestScriptRepository.save(script);
+        return 0;
+    }
+
     /** Runs a generic testall script, which simply checks if nothing is output, which usually means test was passed,
         and assigns a pass or fail to each test case based on if there was no output from test script **/
     public int runTestall(@NonNull String projectID) {
@@ -580,6 +689,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
         String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
+        String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
         String makefilePath = sections.get(0).getCourseHub() + "/makefiles/" + project.getRepoName() + "/Makefile";
         File directory = new File(testCaseDirectory);
         if(!directory.isDirectory() || directory.listFiles().length == 0) {
@@ -602,6 +712,9 @@ public class ProfessorServiceImpl implements ProfessorService {
                 Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + testCaseDirectory);
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String result = stdInput.readLine();
+                process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory);
+                stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                result = result + stdInput.readLine();
                 double grade = parseProgressForProject(projectID, result);
                 boolean exists = false;
                 for(StudentProjectDate d : projectDates) {
@@ -652,10 +765,14 @@ public class ProfessorServiceImpl implements ProfessorService {
                 List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdDateAndIdStudentID(date, p.getStudentID());
                 String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName() + "/" + testDir;
                 String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
+                String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
                 try {
                     Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + " " + testCaseDirectory);
                     BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     String result = stdInput.readLine();
+                    process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory);
+                    stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    result = result + stdInput.readLine();
                     double grade = parseProgressForProject(projectID, result);
                     boolean exists = false;
                     for(StudentProjectDate d : projectDates) {
