@@ -555,6 +555,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             writer.close();
         }
         catch(IOException e) {
+            System.out.println("Testcase not save");
             return -3;
         }
         ProjectTestScript script = new ProjectTestScript(projectID, testName, isHidden, points);
