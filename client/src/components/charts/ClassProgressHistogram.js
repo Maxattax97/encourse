@@ -153,4 +153,5 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
+export { ClassProgressHistogram }
 export default connect(mapStateToProps, mapDispatchToProps)(ClassProgressHistogram)
