@@ -6,7 +6,7 @@ import deleteIcon from "../../img/delete.svg"
 import backIcon from "../../img/back.svg"
 import searchIcon from "../../img/search.svg"
 import Modal from "../Modal";
-import TestScriptList from "./TestScriptList";
+import TestScriptList from "../project/TestScriptList";
 
 function getEmptyState(props) {
     return {
@@ -44,7 +44,7 @@ function getStateFromProjectsProp(props) {
     };
 }
 
-class ProjectOptions extends Component {
+class ProjectModal extends Component {
 
     constructor(props) {
         super(props);
@@ -188,4 +188,4 @@ class ProjectOptions extends Component {
 
 }
 
-export default ProjectOptions;
+export default ProjectModal;

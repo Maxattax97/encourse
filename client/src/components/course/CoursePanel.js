@@ -4,11 +4,12 @@ import { connect } from 'react-redux'
 import { history } from '../../redux/store'
 import url from '../../server'
 import { getStudentPreviews, getClassProjects, setCurrentProject, setCurrentStudent, setModalBlur } from '../../redux/actions'
-import ProjectNavigation from '../project/ProjectNavigation'
+import ProjectNavigation from '../navigation/ProjectNavigation'
 import Card from '../Card'
 import StudentPreview from './StudentPreview'
 import ClassProgressHistogram from '../charts/ClassProgressHistogram'
 import settingsIcon from "../../img/settings.svg";
+import ActionNavigation from "../navigation/ActionNavigation";
 
 class CoursePanel extends Component {
 
@@ -24,14 +25,14 @@ class CoursePanel extends Component {
         //TODO: clear class projects/student previews to account for multiple classes
         //TODO: Add course ID functionality for multiple classes
         this.props.getClassProjects(`${url}/secured/projectsData?courseID=cs252&semester=Fall2018`, 
-        {'Authorization': `Bearer ${this.props.token}`})
+        {'Authorization': `Bearer ${this.props.token}`});
         this.props.getStudentPreviews(`${url}/secured/studentsData?courseID=cs252&semester=Fall2018`, 
             {'Authorization': `Bearer ${this.props.token}`})
     }
 
     showStudentPanel = (student) => {
         //TODO: move this setCurrentStudent to StudentPanel, store all students in an array in redux
-        this.props.setCurrentStudent(student)
+        this.props.setCurrentStudent(student);
         history.push(`/student/${student.id}`)
     };
 
@@ -66,6 +67,12 @@ class CoursePanel extends Component {
                                           onClick={() => this.showStudentPanel(student)}/>)
                             }
                         </div>
+                    </div>
+                </div>
+
+                <div className="panel-right-nav">
+                    <div className={ `panel-student-side-content${this.state.modal_blur}` }>
+                        <ActionNavigation />
                     </div>
                 </div>
             </div>

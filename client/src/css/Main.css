@@ -227,13 +227,33 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .projects-nav .projects-new:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
 
-.test-scripts-list { width: 100%; height: 331px; }
+.test-scripts-list { width: 100%; height: 331px; overflow-y: auto; overflow-x: hidden; }
 
 .test-scripts-list .scripts-new { padding: .75em; cursor: pointer; }
 
 .test-scripts-list .scripts-new img { width: 1.5em; height: 1.5em; margin: 0 auto; display: block; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
 
 .test-scripts-list .scripts-new:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.test-scripts-list .scripts-script { float: left; width: 100%; }
+
+.test-scripts-list .scripts-script .script-filename { cursor: pointer; float: left; width: calc(100% - 7.5em); padding: .75em; }
+
+.test-scripts-list .scripts-script .script-filename img { width: 1.5em; height: 1.5em; float: left; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.test-scripts-list .scripts-script .script-filename h4 { float: left; margin: 0; }
+
+.test-scripts-list .scripts-script .script-filename:hover { padding-left: calc(.75em + 3px); }
+
+.test-scripts-list .scripts-script .script-filename:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.test-scripts-list .scripts-script input { width: 3em; height: 2em; margin: 12px; float: right; }
+
+.test-scripts-list .scripts-script .script-delete { padding: .75em; width: 3em; height: 3em; float: right; }
+
+.test-scripts-list .scripts-script .script-delete img { width: 1.5em; height: 1.5em; float: right; cursor: pointer; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.test-scripts-list .scripts-script .script-delete:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
 
 .panel-project-options { float: left; height: 440px; width: 245px; }
 
