@@ -10,6 +10,7 @@ import StudentPreview from './util/StudentPreview'
 import ClassProgressHistogram from '../charts/ClassProgressHistogram'
 import settingsIcon from "../../img/settings.svg";
 import ActionNavigation from "../navigation/ActionNavigation";
+import CourseModal from "../modals/CourseModal";
 
 class CoursePanel extends Component {
 
@@ -39,13 +40,18 @@ class CoursePanel extends Component {
     render() {
         return (
             <div className="panel-course">
-                <ProjectNavigation onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})}
+                <div className={ this.state.show_course_options ? "blur" : "" }>
+                    <ProjectNavigation onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})}
                                    {...this.props}/>
+                </div>
+
+                <CourseModal show={ this.state.show_course_options }
+                             close={ () => this.setState({ show_course_options: false, modal_blur: "" }) }/>
 
                 <div className="panel-center-content">
 
                     <div className={ `panel-course-content${this.state.modal_blur}` }>
-                        <div className="title">
+                        <div className="title" onClick={ () => this.setState({ show_course_options: true, modal_blur: " blur" })  }>
                             <h1>CS252</h1>
                             <img src={ settingsIcon }/>
                         </div>

@@ -47,7 +47,7 @@
 
 .modal-left { position: fixed; float: left; margin-left: 13.5%; margin-top: calc(20px + 40px + 1.17em); }
 
-.modal-center { position: fixed; margin-left: 15%; margin-top: calc(20px + 40px + 1.17em); }
+.modal-center { position: fixed; left: 50%; transform: translate(-50%, 0); margin-top: calc(20px + 40px + 1.17em); }
 
 .modal-buttons { position: relative; bottom: 0; right: -2.5em; width: 100%; }
 
