@@ -1,7 +1,7 @@
 import React from 'react'
 import Enzyme, { shallow, mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
-import ConnectedClassProgressHistogram, { ClassProgressHistogram } from './ClassProgressHistogram'
+import { ClassProgressHistogram } from './ClassProgressHistogram'
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -19,8 +19,8 @@ function setup() {
   }
 }
 
-describe('render', () => {
-  it('should render self and subcomponents', () => {
+describe('<ClassProgressHistogram />', () => {
+  it('render()', () => {
     const { enzymeWrapper } = setup()
   })
 })
