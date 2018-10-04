@@ -341,13 +341,15 @@ public class ProfessorServiceImpl implements ProfessorService {
         String pyPath = pythonPath + "get_statistics.py";
         String command = "python " + pyPath + " " + userName + " " + dailyCountsFile + " " + commitLogFile + " " + testResult;
         JSONReturnable json = runPython(command);
+        if(json == null || json.getJsonObject() == null) {
+            return json;
+        }
         if (DEBUG == true) {
             executeBashScript("cleanDirectory.sh src/main/temp");
             return json;
         }
         Student student = studentRepository.findByUserName(userName);
         StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-        testResult = project.getBestGrade();
         JSONArray array = (JSONArray)json.getJsonObject().get("data");
         for(int i = 0; i < array.size(); i++) {
             JSONObject data = (JSONObject)array.get(i);
