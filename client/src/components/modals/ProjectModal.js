@@ -5,8 +5,8 @@ import syncIcon from "../../img/sync.svg"
 import deleteIcon from "../../img/delete.svg"
 import backIcon from "../../img/back.svg"
 import searchIcon from "../../img/search.svg"
-import Modal from "../Modal";
-import TestScriptList from "../project/TestScriptList";
+import Modal from "./Modal";
+import TestScriptList from "./util/TestScriptList";
 
 function getEmptyState(props) {
     return {

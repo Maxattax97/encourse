@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { getStatistics } from '../../redux/actions'
-import url from '../../server'
+import { getStatistics } from '../../../redux/actions/index'
+import url from '../../../server'
 
 const defaultData = [
                 {

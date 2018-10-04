@@ -6,14 +6,14 @@ import StudentProgressLineGraph from '../charts/StudentProgressLineGraph'
 import CodeChangesChart from '../charts/CodeChangesChart'
 import CommitFrequencyHistogram from '../charts/CommitFrequencyHistogram'
 import ProjectNavigation from "../navigation/ProjectNavigation";
-import Modal from "../Modal";
+import Modal from "../modals/Modal";
 import ProjectModal from "../modals/ProjectModal";
 import ClassProgressHistogram from "../charts/ClassProgressHistogram";
-import StudentPreview from "../course/StudentPreview";
-import Statistics from './Statistics'
-import CommitHistory from "./CommitHistory";
+import StudentPreview from "./util/StudentPreview";
+import Statistics from './util/Statistics'
+import CommitHistory from "./util/CommitHistory";
 import { history } from "../../redux/store"
-import { getClassProjects, clearStudent } from '../../redux/actions'
+import { getClassProjects, clearStudent } from '../../redux/actions/index'
 import url from '../../server'
 import ActionNavigation from "../navigation/ActionNavigation";
 

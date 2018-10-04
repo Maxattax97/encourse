@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 
-class Preferences extends Component {
+class PreferencePanel extends Component {
   render() {
     return (
       <div className="UserSettings">
@@ -11,4 +11,4 @@ class Preferences extends Component {
   }
 }
 
-export default Preferences
+export default PreferencePanel

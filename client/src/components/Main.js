@@ -5,11 +5,11 @@ import { withRouter } from 'react-router-dom'
 
 import '../css/Main.css';
 import Navbar from './navigation/Navbar'
-import CoursePanel from './course/CoursePanel'
+import CoursePanel from './panels/CoursePanel'
 import ProjectModal from "./modals/ProjectModal"
-import StudentPanel from './student/StudentPanel'
-import AdminPanel from './admin/AdminPanel'
-import Preferences from './Preferences'
+import StudentPanel from './panels/StudentPanel'
+import AdminPanel from './panels/AdminPanel'
+import PreferencePanel from './panels/PreferencePanel'
 
 class Main extends Component {
 
@@ -37,7 +37,7 @@ class Main extends Component {
                             <AdminPanel {...navProps} />
                         }/>
                         <Route path="/settings" render={(navProps) =>
-                            <Preferences />
+                            <PreferencePanel />
                         }/>
                         <Route path='/' render={(navProps) => <Redirect to="/panel" />}/>
                     </Switch>

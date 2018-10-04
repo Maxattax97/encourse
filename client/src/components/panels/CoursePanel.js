@@ -3,10 +3,10 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import url from '../../server'
-import { getStudentPreviews, getClassProjects, setCurrentProject, setCurrentStudent, setModalBlur } from '../../redux/actions'
+import { getStudentPreviews, getClassProjects, setCurrentProject, setCurrentStudent, setModalBlur } from '../../redux/actions/index'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import Card from '../Card'
-import StudentPreview from './StudentPreview'
+import StudentPreview from './util/StudentPreview'
 import ClassProgressHistogram from '../charts/ClassProgressHistogram'
 import settingsIcon from "../../img/settings.svg";
 import ActionNavigation from "../navigation/ActionNavigation";

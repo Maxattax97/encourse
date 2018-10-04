@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 
-import searchIcon from "../../img/search.svg";
-import plusIcon from "../../img/plus.svg";
-import deleteIcon from "../../img/delete.svg";
+import searchIcon from "../../../img/search.svg";
+import plusIcon from "../../../img/plus.svg";
+import deleteIcon from "../../../img/delete.svg";
 
 class TestScriptList extends Component {
 
