@@ -116,7 +116,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 earnedPoints += testScript.getPointsWorth();
             }
         }
-        return earnedPoints / maxPoints;
+        return (earnedPoints / maxPoints) * 100;
     }
 
     /** Adds a new project to the database, which needs to be done before cloning the project in the course hub **/
