@@ -109,7 +109,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         double earnedPoints = 0.0;
         double maxPoints = 0.0;
         for(String r : testResults) {
-            String testName = testOutput.split(":")[0];
+            String testName = r.split(":")[0];
             ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
             maxPoints += testScript.getPointsWorth();
             if(r.endsWith("P")) {
@@ -555,7 +555,6 @@ public class ProfessorServiceImpl implements ProfessorService {
             writer.close();
         }
         catch(IOException e) {
-            System.out.println("Testcase not save");
             return -3;
         }
         ProjectTestScript script = new ProjectTestScript(projectID, testName, isHidden, points);
