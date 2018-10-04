@@ -37,6 +37,10 @@ public class ProjectTestScript {
     public String getProjectIdentifier() {
         return id.getProjectIdentifier();
     }
+
+    public String getTestScriptName() {
+        return id.getTestScriptName();
+    }
 }
 
 @Getter
