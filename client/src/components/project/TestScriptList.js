@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import searchIcon from "../../img/search.svg";
 import plusIcon from "../../img/plus.svg";
+import deleteIcon from "../../img/delete.svg";
 
 class TestScriptList extends Component {
 
@@ -34,15 +35,19 @@ class TestScriptList extends Component {
         return (
                 <div className="test-scripts-list">
                     {
-                        this.state.scripts.map((script) =>
+                        this.state.scripts.map((script, index) =>
                             <div className="scripts-script" key={`${ script.filename }-${ script.pointvalue }`}>
+                                <input type="file" ref={ index } style={{display: "none"}}/>
                                 <div className="script-filename">
                                     <img src={ searchIcon } />
                                     <h4>
-                                        { script.filename }
+                                        Test { index + 1 }
                                     </h4>
                                 </div>
-                                <input type="number" placeholder="5" step="1" />
+                                <div className="script-delete">
+                                    <img src={deleteIcon} />
+                                </div>
+                                <input type="number" defaultValue="5" step="1" />
                             </div>
                         )
                     }

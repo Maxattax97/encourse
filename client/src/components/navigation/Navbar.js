@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import settingsIcon from '../img/settings.svg'
-import logoutIcon from '../img/logout.svg'
-import { history } from '../redux/store'
-import { logOut } from '../redux/actions'
-import url from '../server'
+import settingsIcon from '../../img/settings.svg'
+import logoutIcon from '../../img/logout.svg'
+import { history } from '../../redux/store'
+import { logOut } from '../../redux/actions/index'
+import url from '../../server'
 
 class Navbar extends Component {
 

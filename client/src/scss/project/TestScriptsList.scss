@@ -2,6 +2,9 @@
   width: 100%;
   height: 331px; //TODO calc()
 
+  overflow-y: auto;
+  overflow-x: hidden;
+
   .scripts-new {
     padding: .75em;
     cursor:pointer;
@@ -18,6 +21,65 @@
   .scripts-new:hover {
     img {
       filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+    }
+  }
+
+  .scripts-script {
+    float:left;
+    width:100%;
+
+    .script-filename {
+
+      cursor:pointer;
+      float:left;
+      width: calc(100% - 7.5em);
+      padding: .75em;
+
+      img {
+        width: 1.5em;
+        height: 1.5em;
+        float:left;
+        filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
+      }
+      h4 {
+        float: left;
+        margin: 0;
+      }
+    }
+
+    .script-filename:hover {
+      padding-left: calc(.75em + 3px);
+      img {
+        filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+      }
+    }
+
+    input {
+      width: 3em;
+      height: 2em;
+      margin: 12px;
+      float:right;
+    }
+
+    .script-delete {
+      padding: .75em;
+      width: 3em;
+      height: 3em;
+      float:right;
+
+      img {
+        width: 1.5em;
+        height: 1.5em;
+        float:right;
+        cursor: pointer;
+        filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
+      }
+    }
+
+    .script-delete:hover {
+      img {
+        filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+      }
     }
   }
 }
