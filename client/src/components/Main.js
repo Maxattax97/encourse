@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
 import '../css/Main.css';
-import Navbar from './navigation/Navbar'
+import Navbar from './navigation/TopNavigation'
 import CoursePanel from './panels/CoursePanel'
 import ProjectModal from "./modals/ProjectModal"
 import StudentPanel from './panels/StudentPanel'

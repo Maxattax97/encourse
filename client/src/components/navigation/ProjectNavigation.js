@@ -26,6 +26,7 @@ class ProjectNavigation extends Component {
     };
 
     changeProject = (project_id, project_index) => {
+        this.setState({ new_project: false });
         this.props.setCurrentProject(project_id, project_index);
     };
 
@@ -60,16 +61,16 @@ class ProjectNavigation extends Component {
                                 </div>
                                 <h3 className="break-line title"/>
                                 {
-                                    this.props.info &&
-                                    this.props.info.map((project, index) =>
-                                        <h4 className={ this.props.currentProjectIndex === index ? "projects-highlight" : "" }
+                                    this.props.projects &&
+                                    this.props.projects.map((project, index) =>
+                                        <h4 className={ this.props.currentProjectIndex === index && !this.state.new_project ? "projects-highlight" : "" }
                                             key={ project.id }
                                             onClick={ () => this.changeProject(project.id, index) }>
 
                                             { project.project_name }
                                         </h4>)
                                 }
-                                <div className="projects-new" onClick={ this.handleNewProject }>
+                                <div className={ `projects-new${this.state.new_project ? " projects-highlight" : ""}` } onClick={ this.handleNewProject }>
                                     <img src={ plusIcon } />
                                 </div>
                             </div>
@@ -79,7 +80,7 @@ class ProjectNavigation extends Component {
 
                 <ProjectModal show={ this.state.show_project_options }
                               close={ () => this.toggleProjectOptions(false) }
-                              projects={ this.props.info }
+                              projects={ this.props.projects }
                               current_project={ this.props.currentProjectIndex }
                               new_project={ this.state.new_project }/>
 
@@ -92,7 +93,7 @@ class ProjectNavigation extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        projects: state.course && state.course.getClassProjectsData ? state.course.getClassProjectsData : [],
+        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
         currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0
     }
 };

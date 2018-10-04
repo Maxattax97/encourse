@@ -39,8 +39,7 @@ class CoursePanel extends Component {
     render() {
         return (
             <div className="panel-course">
-                <ProjectNavigation info={this.props.projects}
-                                   onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})}
+                <ProjectNavigation onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})}
                                    {...this.props}/>
 
                 <div className="panel-center-content">

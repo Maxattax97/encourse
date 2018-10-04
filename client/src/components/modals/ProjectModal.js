@@ -1,10 +1,7 @@
 import React, { Component } from "react"
 
-import plusIcon from "../../img/plus.svg"
-import syncIcon from "../../img/sync.svg"
 import deleteIcon from "../../img/delete.svg"
-import backIcon from "../../img/back.svg"
-import searchIcon from "../../img/search.svg"
+import checkmarkIcon from "../../img/checkmark.svg"
 import Modal from "./Modal";
 import TestScriptList from "./util/TestScriptList";
 
@@ -102,16 +99,10 @@ class ProjectModal extends Component {
                 <div onClick={ this.deleteProject }>
                     <img src={deleteIcon} />
                 </div>
-                {
-                    this.state.new_project ?
-                        <div className="project-options-add" onClick={ this.addProject }>
-                            <img src={plusIcon} />
-                        </div>
-                        :
-                        <div className="project-options-sync" onClick={ this.updateProject }>
-                            <img src={syncIcon} />
-                        </div>
-                }
+
+                <div className="project-options-add" onClick={ this.addProject }>
+                    <img src={ checkmarkIcon } />
+                </div>
             </div>;
 
         return (
