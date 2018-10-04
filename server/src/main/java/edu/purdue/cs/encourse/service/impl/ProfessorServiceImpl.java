@@ -351,22 +351,38 @@ public class ProfessorServiceImpl implements ProfessorService {
         JSONArray array = (JSONArray)json.getJsonObject().get("data");
         for(int i = 0; i < array.size(); i++) {
             JSONObject data = (JSONObject)array.get(i);
-            try {
-                if (data.get("stat_name").equals("End Date")) {
-                    project.setMostRecentCommitDate(data.get("stat_value").toString());
-                }
-                if (data.get("stat_name").equals("Additions")) {
+            if (data.get("stat_name").equals("End Date")) {
+                project.setMostRecentCommitDate(data.get("stat_value").toString());
+            }
+            else if (data.get("stat_name").equals("Additions")) {
+                try {
                     project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                } else if (data.get("stat_name").equals("Deletions")) {
-                    project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                } else if (data.get("stat_name").equals("Commit Count")) {
-                    project.setCommitCount(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                } else if (data.get("stat_name").equals("Estimated Time Spent")) {
-                    project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setTotalLinesAdded(0);
                 }
             }
-            catch(NumberFormatException e) {
-                e.printStackTrace();
+            else if (data.get("stat_name").equals("Deletions")) {
+                try {
+                    project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setTotalLinesRemoved(0);
+                }
+            } else if (data.get("stat_name").equals("Commit Count")) {
+                try {
+                    project.setCommitCount(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setCommitCount(0);
+                }
+            }
+            else if (data.get("stat_name").equals("Estimated Time Spent")) {
+                try {
+                    project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
+                } catch (NumberFormatException e) {
+                    project.setTotalTimeSpent(0.0);
+                }
             }
         }
         studentProjectRepository.save(project);
