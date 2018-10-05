@@ -92,8 +92,6 @@ class ClassProgressHistogram extends Component {
         if (!data || data.length === 0) {
             return defaultData;
         }
-
-        console.log('format api data', data)
         const formattedData = []
         const data2 = Object.entries(data);
         const total = data2.reduce((sum, p) => sum + p[1], 0);

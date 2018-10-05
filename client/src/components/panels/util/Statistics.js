@@ -145,7 +145,7 @@ class Statistics extends Component {
 
     componentWillReceiveProps(nextProps) {
         if(!this.props.isFinished && nextProps.isFinished) {
-            this.setState({ formattedData: this.formatApiData(nextProps.data) })
+            this.setState({ formattedData: this.formatApiData(nextProps.stats) })
         }
         if (nextProps.projectID !== this.props.projectID) {
             this.fetch(nextProps)
@@ -162,7 +162,6 @@ class Statistics extends Component {
             return defaultData
         }
         const data = udata.data;
-        console.log('format api data', data)
         const formattedData = data.slice();
 
         return formattedData;
@@ -176,9 +175,9 @@ class Statistics extends Component {
                 </div>
                 <h3 className="break-line title" />
                 {
-                    this.props.stats &&
-                    this.props.stats.map &&
-                    this.props.stats.map((stat, index)  =>
+                    this.state.formattedData &&
+                    this.state.formattedData.map &&
+                    this.state.formattedData.map((stat, index)  =>
                         <div className="student-stat">
                             <div className="student-stat-content">
                                 <h5>{stat.stat_name}</h5>
