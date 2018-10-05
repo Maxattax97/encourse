@@ -64,6 +64,31 @@ export const addProject = genericDispatch(
     addProjectHasError, addProjectIsLoading, addProjectDataSuccess, 'POST'
 )
 
+export function deleteProjectHasError(hasError) {
+    return {
+        type: 'DELETE_PROJECT_HAS_ERROR',
+        hasError
+    }
+}
+
+export function deleteProjectIsLoading(isLoading) {
+    return {
+        type: 'DELETE_PROJECT_IS_LOADING',
+        isLoading
+    }
+}
+
+export function deleteProjectDataSuccess(data) {
+    return {
+        type: 'DELETE_PROJECT_DATA_SUCCESS',
+        data
+    }
+}
+
+export const deleteProject = genericDispatch(
+    deleteProjectHasError, deleteProjectIsLoading, deleteProjectDataSuccess, 'DELETE'
+)
+
 export function modifyProjectHasError(hasError) {
     return {
         type: 'MODIFY_PROJECT_HAS_ERROR',

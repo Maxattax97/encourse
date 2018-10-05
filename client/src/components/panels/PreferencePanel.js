@@ -79,10 +79,12 @@ class PreferencePanel extends Component {
 
     saveCourse = () => {
         //TODO Bucky
+        console.log('hello')
     };
 
     saveAccount = () => {
         //TODO Bucky
+        console.log('hello2')
     };
 
     render() {

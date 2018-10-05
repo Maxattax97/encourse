@@ -10,6 +10,7 @@ export {
     getClassProjectsHasError, getClassProjectsIsLoading, getClassProjectsDataSuccess, getClassProjects,
     modifyProjectHasError, modifyProjectIsLoading, modifyProjectDataSuccess, modifyProject,
     addProjectHasError, addProjectIsLoading, addProjectDataSuccess, addProject,
+    deleteProjectHasError, deleteProjectIsLoading, deleteProjectDataSuccess, deleteProject,
     addTestHasError, addTestIsLoading, addTestDataSuccess, addTest,
 } from './projects'
 

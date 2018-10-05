@@ -44,8 +44,41 @@ function projects(state = {}, action) {
                 addProjectIsLoading: action.isLoading,
             })
         case 'ADD_PROJECT_DATA_SUCCESS':
+            let projects1 = [...state.getClassProjectsData]
+            projects1.push({
+                project_name: action.data.projectName,
+                source_name: action.data.repoName,
+                start_date: action.data.startDate,
+                due_date: action.data.dueDate,
+                id: action.data.projectIdentifier,
+                hidden_test_script: [],
+                test_script: [],
+            })
             return Object.assign({}, state, {
                 addProjectData: action.data,
+                getClassProjectsData: projects1,
+                currentProjectIndex: projects1.length - 1,
+                currentProjectId: action.data.projectIdentifier
+            })
+        case 'DELETE_PROJECT_HAS_ERROR':
+            return Object.assign({}, state, {
+                deleteProjectHasError: action.hasError,
+            })
+        case 'DELETE_PROJECT_IS_LOADING':
+            return Object.assign({}, state, {
+                deleteProjectIsLoading: action.isLoading,
+            })
+        case 'DELETE_PROJECT_DATA_SUCCESS':
+            let projects2 = [...state.getClassProjectsData]
+            projects2.splice(state.currentProjectIndex, 1)
+            let currentProjectIndex = state.currentProjectIndex == 0 ? 
+            (state.currentProjectIndex ? state.currentProjectIndex - 1 : null)
+            : 0
+            return Object.assign({}, state, {
+                deleteProjectData: action.data,
+                getClassProjectsData: projects2,
+                currentProjectIndex,
+                currentProjectId: state.getClassProjectsData[currentProjectIndex].id
             })
         case 'ADD_TEST_HAS_ERROR':
             return Object.assign({}, state, {

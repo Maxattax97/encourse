@@ -5,7 +5,7 @@ import checkmarkIcon from "../../img/checkmark.svg"
 import backIcon from "../../img/back.svg"
 import Modal from "./Modal";
 import TestScriptList from "./util/TestScriptList";
-import { addProject, modifyProject, addTest } from "../../redux/actions";
+import { addProject, modifyProject, addTest, deleteProject } from "../../redux/actions";
 import url from '../../server'
 import { connect } from "react-redux"
 
@@ -67,7 +67,6 @@ class ProjectModal extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        //console.log(props, state);
         if (props.new_project !== state.new_project) {
             if (state.new_project)
                 return getStateFromProjectsProp(props);
@@ -113,6 +112,7 @@ class ProjectModal extends Component {
                 this.postTest(script, true)
             }
         }
+        this.props.toggleProjectOptions()
     }
 
     postTest = (script, isHidden) => {
@@ -141,8 +141,10 @@ class ProjectModal extends Component {
             })
         }
         else {
-            //TODO Bucky delete project at given project index
+            this.props.deleteProject(`${url}/api/delete/project?projectID=${this.props.currentProjectId}`,
+            {'Authorization': `Bearer ${this.props.token}`})
         }
+        this.props.toggleProjectOptions()
     };
 
     render() {
@@ -250,6 +252,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         addProject: (url, headers, body) => dispatch(addProject(url, headers, body)),
+        deleteProject: (url, headers, body) => dispatch(deleteProject(url, headers, body)),
         modifyProject: (url, headers, body) => dispatch(modifyProject(url, headers, body)),
         addTest: (url, headers, body) => dispatch(addTest(url, headers, body)),
     }
