@@ -122,7 +122,7 @@ class ClassProgressHistogram extends Component {
                                 % Completion
                             </Label>
                         </XAxis>
-                        <YAxis tickFormatter={toPercent}>
+                        <YAxis tickFormatter={toPercent} domain={[0, 1]}>
                             <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                                 % of Class
                             </Label>
