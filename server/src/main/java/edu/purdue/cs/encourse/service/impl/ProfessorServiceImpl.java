@@ -29,8 +29,9 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     public final static String NAME = "ProfessorService";
     private final static String pythonPath = "src/main/python/";
+    private final static String tailFile = "src/main/temp/tail.txt";
     private final static int RATE = 3600000;
-    private final static Boolean DEBUG = false;
+    private final static Boolean DEBUG = true;
     private final static Boolean OBFUSCATE = true;
 
     /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
@@ -342,7 +343,6 @@ public class ProfessorServiceImpl implements ProfessorService {
             visibleTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
             hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
         }
-
 
         // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_class_progress.py";
@@ -937,6 +937,13 @@ public class ProfessorServiceImpl implements ProfessorService {
     public JSONReturnable runPython(@NonNull String command) {
         if (OBFUSCATE) {
             command += " -O";
+        }
+        try {
+            BufferedWriter tailWriter = new BufferedWriter(new FileWriter(tailFile));
+            String arr[] = command.split(" ", 3);
+            tailWriter.write(arr[0] + arr[1]);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         System.out.println(command);
         JSONReturnable json = null;
