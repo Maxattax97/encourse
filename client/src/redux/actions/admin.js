@@ -22,7 +22,7 @@ export function getCoursesDataSuccess(data) {
 }
 
 export const getCourses = genericDispatch(
-    getCoursesHasError, getCoursesIsLoading, getCoursesDataSuccess, 'DELETE'
+    getCoursesHasError, getCoursesIsLoading, getCoursesDataSuccess, 'GET'
 )
 
 export function addCourseHasError(hasError) {
@@ -122,7 +122,7 @@ export function getAccountsDataSuccess(data) {
 }
 
 export const getAccounts = genericDispatch(
-    getAccountsHasError, getAccountsIsLoading, getAccountsDataSuccess, 'DELETE'
+    getAccountsHasError, getAccountsIsLoading, getAccountsDataSuccess, 'GET'
 )
 
 export function addAccountHasError(hasError) {

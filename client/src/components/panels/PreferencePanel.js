@@ -48,7 +48,7 @@ class PreferencePanel extends Component {
             {'Authorization': `Bearer ${this.props.token}`})
         }
         if(this.props.accounts.length === 0) {
-            this.props.getAccounts(/*TODO!: add endpoint*/``,
+            this.props.getAccounts(`${url}/api/accounts`,
             {'Authorization': `Bearer ${this.props.token}`})
         }
     }
@@ -99,7 +99,7 @@ class PreferencePanel extends Component {
 
     saveAccount = () => {
         //TODO!: verify this works
-        this.props.addCourse(`${url}/api/add/user?username=${this.state.name}&type=${this.state.account_type}`,
+        this.props.addAccount(`${url}/api/add/user?userName=${this.state.name}&type=${this.state.account_type}`,
         {'Authorization': `Bearer ${this.props.token}`})
     };
 
@@ -133,8 +133,8 @@ class PreferencePanel extends Component {
                                 <h3>Accounts</h3>
                             </div>
                             {
-                                this.state.accounts && this.state.accounts.map &&
-                                this.state.accounts.map((account, index) =>
+                                this.props.accounts && this.props.accounts.map &&
+                                this.props.accounts.map((account, index) =>
                                     <Card key={account.id}
                                           component={<AccountPreview account={account}/>}
                                           onClick={ () => this.displayAccountOptions(index) }/>)
