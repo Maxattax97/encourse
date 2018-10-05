@@ -40,7 +40,7 @@ class StudentProgressLineGraph extends Component {
     }
 
     fetch = (props) => {
-        props.getData(`${url}/secured/progress?projectID=${props.projectID}&userName=${props.id}`,
+        props.getData(`${url}/api/progress?projectID=${props.projectID}&userName=${props.id}`,
         {'Authorization': `Bearer ${props.token}`})
     }
 
