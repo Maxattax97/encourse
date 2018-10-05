@@ -1,4 +1,6 @@
 import genericDispatch from './fetch'
+import { fuzzing, nameMapping } from '../../fuzz'
+import faker from 'faker'
 
 export function getStudentPreviewsHasError(hasError) {
     return {
@@ -15,6 +17,19 @@ export function getStudentPreviewsIsLoading(isLoading) {
 }
 
 export function getStudentPreviewsDataSuccess(data) {
+    if (fuzzing) {
+        for (let e of data) {
+            if (!nameMapping[e.id]) {
+                nameMapping[e.id] = {}
+                nameMapping[e.id].first_name = faker.name.firstName()
+                nameMapping[e.id].last_name = faker.name.lastName()
+            }
+
+            e.first_name = nameMapping[e.id].first_name
+            e.last_name = nameMapping[e.id].last_name
+        }
+    }
+
     return {
         type: 'GET_STUDENT_PREVIEWS_DATA_SUCCESS',
         data
@@ -49,29 +64,3 @@ export function getClassProgressDataSuccess(data) {
 export const getClassProgress = genericDispatch(
     getClassProgressHasError, getClassProgressIsLoading, getClassProgressDataSuccess, 'GET'
 )
-
-export function setDirectoryHasError(hasError) {
-    return {
-        type: 'SET_DIRECTORY_HAS_ERROR',
-        hasError
-    }
-}
-
-export function setDirectoryIsLoading(isLoading) {
-    return {
-        type: 'SET_DIRECTORY_IS_LOADING',
-        isLoading
-    }
-}
-
-export function setDirectoryDataSuccess(data) {
-    return {
-        type: 'SET_DIRECTORY_DATA_SUCCESS',
-        data
-    }
-}
-
-export const setDirectory = genericDispatch(
-    setDirectoryHasError, setDirectoryIsLoading, setDirectoryDataSuccess, 'POST'
-)
-
