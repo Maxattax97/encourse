@@ -1,5 +1,5 @@
 import genericDispatch from './fetch'
-import { fuzzing, nameMapping } from '../../fuzz'
+import { fuzzing, realToFakeMapping, getFakeUid } from '../../fuzz'
 import faker from 'faker'
 
 export function getStudentPreviewsHasError(hasError) {
@@ -19,14 +19,22 @@ export function getStudentPreviewsIsLoading(isLoading) {
 export function getStudentPreviewsDataSuccess(data) {
     if (fuzzing) {
         for (let e of data) {
-            if (!nameMapping[e.id]) {
-                nameMapping[e.id] = {}
-                nameMapping[e.id].first_name = faker.name.firstName()
-                nameMapping[e.id].last_name = faker.name.lastName()
+            if (!realToFakeMapping[e.id]) {
+                const fake = {}
+                fake.id = getFakeUid()
+                fake.first_name = faker.name.firstName()
+                fake.last_name = faker.name.lastName()
+                realToFakeMapping[e.id] = fake
+
+                const real = {}
+                real.id = e.id
+                real.first_name = e.first_name
+                real.last_name = e.last_name
+                fakeToRealMapping[fake.id] = real
             }
 
-            e.first_name = nameMapping[e.id].first_name
-            e.last_name = nameMapping[e.id].last_name
+            e.first_name = realToFakeMapping[e.id].first_name
+            e.last_name = realToFakeMapping[e.id].last_name
         }
     }
 
