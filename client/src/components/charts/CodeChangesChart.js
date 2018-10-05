@@ -33,7 +33,7 @@ class CodeChangesChart extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(!this.props.data && nextProps.data) {
+        if(!this.props.isFinished && nextProps.isFinished) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -51,8 +51,11 @@ class CodeChangesChart extends Component {
     }
 
     formatApiData = (udata) => {
+        if (!udata) {
+            return defaultData
+        }
         const data = udata.data;
-        console.log('format api data', data)
+    
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf();
             entry.deletions = -entry.deletions;
@@ -114,6 +117,7 @@ const mapStateToProps = (state) => {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.student && state.student.getCodeFrequencyData ? state.student.getCodeFrequencyData : null,
         isLoading: state.student ? state.student.getCodeFrequencyIsLoading : false,
+        isFinished: state.student ? state.student.getCodeFrequencyIsFinished : false,
     }
   }
 
