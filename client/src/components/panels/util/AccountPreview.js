@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 
-import deleteIcon from "../../../img/delete.svg"
 import { removeAccount } from '../../../redux/actions'
 import url from '../../../server'
 
@@ -9,14 +8,14 @@ import url from '../../../server'
 class AccountPreview extends Component {
 
     deleteAccount = () => {
-        //TODO: add parameter to delete any account
+        //TODO!: add parameter to delete any account
         this.props.removeAccount(`${url}/api/delete/user`,
         {'Authorization': `Bearer ${this.props.token}`})
     }
 
     render() {
         return (
-            <div className="account-preview">
+            <div className="account-preview" onClick={this.deleteAccount}>
                 <div className="title">
                     <h3>{this.props.account.login}</h3>
                     <h3>{this.props.account.account_type}</h3>

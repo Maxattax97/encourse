@@ -107,7 +107,7 @@ class ProjectModal extends Component {
                 'Content-Type': 'application/json'},
                 JSON.stringify({
                     startDate: this.state.created_date,
-                    dueDate: this.statrt.due_date,
+                    dueDate: this.state.due_date,
                 }))
             for(let script of this.state.test_script) {
                 this.postTest(script, false)
@@ -121,12 +121,19 @@ class ProjectModal extends Component {
 
     postTest = (script, isHidden) => {
         if(script.file) {
-            //TODO: ADD BODY WITH FILE CONTENTS
-            this.props.addTest(`${url}/api/add/test?projectID=${this.props.currentProjectId}&testName=${script.testScriptName}&isHidden=${isHidden}&points=${script.pointValue}`,
-            {'Authorization': `Bearer ${this.props.token}`})
+            if (FileReader) {
+                let fr = new FileReader()
+                fr.onload = () => {
+                    this.props.addTest(`${url}/api/add/test?projectID=${this.props.currentProjectId}&testName=${script.testScriptName}&isHidden=${isHidden}&points=${script.pointValue ? script.pointValue : 5}`,
+                    {'Authorization': `Bearer ${this.props.token}`}, btoa(fr.result))
+                }
+                fr.readAsText(script.file)
+            }
+            console.log(script)
+        
         }   
         if(script.pointValue && !script.file) {
-            //TODO: Only point value changed, add API call whenever endpoint is changed
+            //TODO!: Only point value changed, add API call whenever endpoint is changed
         }
        
     }

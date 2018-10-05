@@ -40,16 +40,13 @@ class TestScriptList extends Component {
 
     uploadFile = (ev) => {
         let file = ev.target.files[0]
-        console.log(file)
         if(!file) return
-        console.log(file)
         this.state.scripts[this.state.index].testScriptName = file.name
         this.state.scripts[this.state.index].file = file
         this.setState({ scripts : this.state.scripts })
     }   
 
     updatePointValue = (ev, script_index) => {
-        console.log(ev.target.value)
         this.state.scripts[script_index].pointValue = ev.target.value
         this.state.pointValue[script_index] = ev.target.value
         this.setState({ scripts : this.state.scripts, pointValue: this.state.pointValue })
