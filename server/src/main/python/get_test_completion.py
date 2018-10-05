@@ -1,6 +1,7 @@
 import sys
 import json
 import copy
+import argparse
 from datetime import datetime
 from test_completion import get_test_completion as get_scores
 
@@ -10,12 +11,13 @@ def format_data(data):
         pass
     return data
 
-if len(sys.argv) != 2:
-    print("USAGE: \t`python getProgressHistogram.py file1`")
-    print("\tfile1 is a properly formatted test case progress file")
-    sys.exit()
-commit_data_path = sys.argv[1]
-commit_data_file = open(commit_data_path, "r")
+parser = argparse.ArgumentParser()
+parser.add_argument("testfile", help="path to test score file")
+parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
+
+args = parser.parse_args()
+
+commit_data_file = open(args.timefile, "r")
 data = get_scores(commit_data_file)
 #print(data)
 

@@ -1,6 +1,7 @@
 import sys
 import json
 import copy
+import argparse
 from datetime import datetime
 from helper import time_string
 from helper import daterange
@@ -32,12 +33,13 @@ def api_format_data(data):
             histogram_data["80-100%"] += 1
     return histogram_data
 
-if len(sys.argv) != 2:
-    print("USAGE: \t`python getProgressHistogram.py file1`")
-    print("\tfile1 is a properly formatted test_case file")
-    sys.exit()
+parser = argparse.ArgumentParser()
+parser.add_argument("testfile", help="path to test score file")
+parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
-test_score_file = open(sys.argv[1], "r")
+args = parser.parse_args()
+
+test_score_file = open(args.testfile, "r")
 
 data = get_test_scores(test_score_file)
 #print(individual_data)

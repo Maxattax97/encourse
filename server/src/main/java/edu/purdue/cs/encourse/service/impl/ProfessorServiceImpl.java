@@ -32,6 +32,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     private final static String pythonPath = "src/main/python/";
     private final static int RATE = 3600000;
     private final static Boolean DEBUG = true;
+    private final static Boolean OBFUSCATE = true;
 
     /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
     final static String testDir = "test-shell";
@@ -293,7 +294,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     public JSONReturnable getClassProgress(@NonNull String projectID) {
         String testResult = "";
-        if (DEBUG == true) {
+        if (DEBUG) {
             testResult = pythonPath + "test_datasets/sampleTestCases.txt";
         }
         /*
@@ -338,7 +339,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
         String testResult = null;
-        if (DEBUG == true) {
+        if (DEBUG) {
             testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
         } else {
             Student student = studentRepository.findByUserName(userName);
@@ -347,12 +348,12 @@ public class ProfessorServiceImpl implements ProfessorService {
             testResult = testResult.substring(0, testResult.length() - 1);
         }
         String pyPath = pythonPath + "get_statistics.py";
-        String command = "python " + pyPath + " " + userName + " " + dailyCountsFile + " " + commitLogFile + " " + testResult;
+        String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult;
         JSONReturnable json = runPython(command);
         if(json == null || json.getJsonObject() == null) {
             return json;
         }
-        if (DEBUG == true) {
+        if (DEBUG) {
             executeBashScript("cleanDirectory.sh src/main/temp");
             return json;
         }
@@ -467,7 +468,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     /** Counts the number of commits that a single student has made for each day that the project is active **/
     public String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName) {
-        if (DEBUG == true) {
+        if (DEBUG) {
             return pythonPath + "test_datasets/sampleCountsDay.txt";
         }
 
@@ -496,7 +497,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     /** Lists various information about git history, including commit time and dates, and files modified in each commit for all students **/
     public String listAllCommitsByTime(@NonNull String projectID) {
-        if (DEBUG == true) {
+        if (DEBUG) {
             return pythonPath + "test_datasets/sampleCommitList.txt";
         }
 
@@ -520,7 +521,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     /** Lists various information about git history, including commit time and dates, and files modified in each commit for one student **/
     public String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName) {
-        if (DEBUG == true) {
+        if (DEBUG) {
             return pythonPath + "test_datasets/sampleCommitList.txt";
         }
 
@@ -871,6 +872,9 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public JSONReturnable runPython(@NonNull String command) {
+        if (OBFUSCATE) {
+            command += " -O";
+        }
         System.out.println(command);
         JSONReturnable json = null;
         try {

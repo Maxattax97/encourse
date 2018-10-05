@@ -49,9 +49,9 @@ parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate fl
 
 args = parser.parse_args()
 
-commit_data_file = open(sys.argv[1], "r")
-commit_times_file = open(sys.argv[2], "r")
-student_id = sys.argv[3]
+commit_data_file = open(args.logfile, "r")
+commit_times_file = open(args.timefile, "r")
+student_id = args.name
 
 
 data = get_progress(commit_data_file)
