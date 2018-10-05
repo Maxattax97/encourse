@@ -31,17 +31,17 @@ def api_format_data(data, hidden):
                 else:
                     tests[test_name] = 0
                     test_totals[test_name] = 1
-
-        test_list = []
-        # Reformat into api format
-        for test_name in tests:
-            test_score = tests[test_name]
-            test_total = test_totals[test_name]
-            new_bar = {}
-            new_bar["name"] = test_name + " H" if hidden else test_name
-            new_bar["hidden"] = hidden
-            new_bar["score"] = int(test_score * 100 / test_total)
-            test_list.append(new_bar)
+        
+    test_list = []
+    # Reformat into api format
+    for test_name in tests:
+        test_score = tests[test_name]
+        test_total = test_totals[test_name]
+        new_bar = {}
+        new_bar["name"] = test_name + " H" if hidden else test_name
+        new_bar["hidden"] = hidden
+        new_bar["score"] = int(test_score * 100 / test_total)
+        test_list.append(new_bar)
     return test_list
 
 
