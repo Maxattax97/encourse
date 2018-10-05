@@ -11,7 +11,7 @@ class AccountPreview extends Component {
         return (
             <div className="account-preview" >
                 <div className="title">
-                    <h3 onClick={this.deleteAccount}>{this.props.account.userName}</h3>
+                    <h3 onClick={this.deleteAccount}>{this.props.account.first_name}</h3>
                     <h3>{this.props.getRole(this.props.account.role)}</h3>
                 </div>
                 <h4 className="break-line title" />
