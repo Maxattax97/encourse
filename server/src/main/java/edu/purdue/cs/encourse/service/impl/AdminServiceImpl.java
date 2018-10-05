@@ -347,6 +347,20 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    public int deleteSection(@NonNull String sectionID) {
+        System.out.println("ADDING SECTION");
+        Section section = sectionRepository.findBySectionIdentifier(sectionID);
+        if(section == null) {
+            return -1;
+        }
+        List<StudentSection> sections = studentSectionRepository.findByIdSectionIdentifier(sectionID);
+        for(StudentSection s : sections) {
+            studentSectionRepository.delete(s);
+        }
+        sectionRepository.delete(section);
+        return 0;
+    }
+
     public int assignProfessorToCourse(@NonNull String userName, @NonNull String courseID, @NonNull String semester) {
         System.out.println("INSIDE ASSIGNMENTS");
         Professor professor = professorRepository.findByUserName(userName);

@@ -175,8 +175,12 @@ public class ProfessorServiceImpl implements ProfessorService {
             projectTestScriptRepository.delete(t);
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        for(ProjectTestScript t : testScripts) {
-            projectTestScriptRepository.delete(t);
+        for(StudentProject p : projects) {
+            studentProjectRepository.delete(p);
+        }
+        List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifier(projectID);
+        for(StudentProjectDate p : projectDates) {
+            studentProjectDateRepository.delete(p);
         }
         projectRepository.delete(project);
         return 0;
