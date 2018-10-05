@@ -31,6 +31,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     private final static String pythonPath = "src/main/python/";
     private final static int RATE = 3600000;
     private final static Boolean DEBUG = false;
+    private final static Boolean OBFUSCATE = true;
 
     /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
     final static String testDir = "test-shell";
@@ -164,7 +165,30 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
+    /** Deletes project and all relations referring to project **/
+    public int deleteProject(@NonNull String projectID) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -1;
+        }
+        List<ProjectTestScript> testScripts = projectTestScriptRepository.findByIdProjectIdentifier(projectID);
+        for(ProjectTestScript t : testScripts) {
+            projectTestScriptRepository.delete(t);
+        }
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        for(StudentProject p : projects) {
+            studentProjectRepository.delete(p);
+        }
+        List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifier(projectID);
+        for(StudentProjectDate p : projectDates) {
+            studentProjectDateRepository.delete(p);
+        }
+        projectRepository.delete(project);
+        return 0;
+    }
+
     /** Modifies project information like start and end dates **/
+    // TODO: RACE CONDITION FOR MULTIPLE CALLS SIMULTANEOUSLY
     public int modifyProject(@NonNull String projectID, @NonNull String field, String value) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
@@ -189,7 +213,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    private Project getProject(@NonNull String projectID) {
+    public Project getProject(@NonNull String projectID) {
         return projectRepository.findByProjectIdentifier(projectID);
     }
 
@@ -282,46 +306,48 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
         String pyPath = pythonPath + "get_individual_progress.py";
-        String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
+        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
     public JSONReturnable getClassProgress(@NonNull String projectID) {
-        String testResult = "";
-        if (DEBUG == true) {
-            testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
-        }
-        else {
-            List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-            String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
-            String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
-            try {
-                BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-                BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-                for (StudentProject p : projects) {
-                    Student student = studentRepository.findByUserID(p.getStudentID());
-                    String visibleTestResult = student.getUserName() + ";" + p.getBestVisibleGrade();
-                    visibleTestResult = visibleTestResult.substring(0, visibleTestResult.length() - 1);
-                    String hiddenTestResult = student.getUserName() + ";" + p.getBestHiddenGrade();
-                    hiddenTestResult = hiddenTestResult.substring(0, hiddenTestResult.length() - 1);
-                    visibleWriter.write(visibleTestResult);
-                    visibleWriter.write("\n");
-                    hiddenWriter.write(hiddenTestResult);
-                    hiddenWriter.write("\n");
-                }
-                visibleWriter.close();
-                hiddenWriter.close();
+        JSONReturnable json = null;
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+        try {
+            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+            for (StudentProject p : projects) {
+                Student student = studentRepository.findByUserID(p.getStudentID());
+                String visibleTestResult = student.getUserName() + ";" + p.getBestVisibleGrade();
+                visibleTestResult = visibleTestResult.substring(0, visibleTestResult.length() - 1);
+                String hiddenTestResult = student.getUserName() + ";" + p.getBestHiddenGrade();
+                hiddenTestResult = hiddenTestResult.substring(0, hiddenTestResult.length() - 1);
+                visibleWriter.write(visibleTestResult);
+                visibleWriter.write("\n");
+                hiddenWriter.write(hiddenTestResult);
+                hiddenWriter.write("\n");
             }
-            catch(IOException e) {
-                return new JSONReturnable(-1, null);
-            }
+            visibleWriter.close();
+            hiddenWriter.close();
         }
+        catch(IOException e) {
+            json = new JSONReturnable(-1, null);
+        }
+
+        if (DEBUG) {
+            visibleTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
+            hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
+        }
+
+
         // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_class_progress.py";
-        String command = "python " + pyPath + " " + testResult;
-        JSONReturnable json = runPython(command);
+        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
+        json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
@@ -336,7 +362,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
         String pyPath = pythonPath + "get_add_del.py";
-        String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
+        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -352,7 +378,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
         String testResult = null;
-        if (DEBUG == true) {
+        if (DEBUG) {
             testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
         } else {
             Student student = studentRepository.findByUserName(userName);
@@ -361,12 +387,12 @@ public class ProfessorServiceImpl implements ProfessorService {
             testResult = testResult.substring(0, testResult.length() - 1);
         }
         String pyPath = pythonPath + "get_statistics.py";
-        String command = "python " + pyPath + " " + userName + " " + dailyCountsFile + " " + commitLogFile + " " + testResult;
+        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult;
         JSONReturnable json = runPython(command);
         if(json == null || json.getJsonObject() == null) {
             return json;
         }
-        if (DEBUG == true) {
+        if (DEBUG) {
             executeBashScript("cleanDirectory.sh src/main/temp");
             return json;
         }
@@ -420,7 +446,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
         String pyPath = pythonPath + "get_git_commits.py";
-        String command = "python " + pyPath + " " + commitLogFile + " " + userName;
+        String command = "python3 " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
 
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -433,7 +459,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-1, null);
         }
         String pyPath = pythonPath + "get_git_commit_list.py";
-        String command = "python " + pyPath + " " + commitLogFile + " " + userName;
+        String command = "python3 " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -481,7 +507,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     /** Counts the number of commits that a single student has made for each day that the project is active **/
     public String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName) {
-        if (DEBUG == true) {
+        if (DEBUG) {
             return pythonPath + "test_datasets/sampleCountsDay.txt";
         }
 
@@ -510,7 +536,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     /** Lists various information about git history, including commit time and dates, and files modified in each commit for all students **/
     public String listAllCommitsByTime(@NonNull String projectID) {
-        if (DEBUG == true) {
+        if (DEBUG) {
             return pythonPath + "test_datasets/sampleCommitList.txt";
         }
 
@@ -534,7 +560,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     /** Lists various information about git history, including commit time and dates, and files modified in each commit for one student **/
     public String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName) {
-        if (DEBUG == true) {
+        if (DEBUG) {
             return pythonPath + "test_datasets/sampleCommitList.txt";
         }
 
@@ -869,7 +895,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
         try {
             // Run `python hello.py testData.txt` at correct directory
-            Process process = Runtime.getRuntime().exec("python " + filePath + " " + dataFilePath);
+            Process process = Runtime.getRuntime().exec("python3 " + filePath + " " + dataFilePath);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String input = null;
@@ -909,6 +935,10 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public JSONReturnable runPython(@NonNull String command) {
+        if (OBFUSCATE) {
+            command += " -O";
+        }
+        System.out.println(command);
         JSONReturnable json = null;
         try {
             Process process = Runtime.getRuntime().exec(command);
@@ -929,7 +959,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     json =  new JSONReturnable(-3, null);
                 }
                 if (obj != null) {
-                    //System.out.println(obj);
+                    System.out.println(obj);
                     JSONObject jsonObject = null;
                     if (obj.getClass() == JSONObject.class) {
                         jsonObject = (JSONObject)obj;

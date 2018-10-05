@@ -19,6 +19,13 @@ public interface AdminService {
     int addProfessor(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail);
     int addAdmin(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail);
 
+    /** Services for deleting any type of account from all relevant tables **/
+    int deleteAccount(@NonNull String userName);
+    int deleteStudent(@NonNull Account account);
+    int deleteTA(@NonNull Account account);
+    int deleteProfessor(@NonNull Account account);
+    int deleteAdmin(@NonNull Account account);
+
     /** Services for modifying any type of account in all relevant tables **/
     int modifyAccount(@NonNull String userName, @NonNull String field, String value);
     int modifyStudent(@NonNull Account account, @NonNull String field, String value);
@@ -28,6 +35,7 @@ public interface AdminService {
 
     /** Services for manipulating courses and sections **/
     int addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType);
+    int deleteSection(@NonNull String sectionID);
     int assignProfessorToCourse(@NonNull String userName, @NonNull String courseID, @NonNull String semester);
     int registerStudentToSection(@NonNull String userName, @NonNull String courseID, @NonNull String semester, @NonNull String sectionType);
     int hireStudentAsTeachingAssistant(@NonNull String userName);

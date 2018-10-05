@@ -2,9 +2,7 @@ package edu.purdue.cs.encourse.service.impl;
 
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
-import edu.purdue.cs.encourse.domain.relations.ProfessorCourse;
-import edu.purdue.cs.encourse.domain.relations.StudentSection;
-import edu.purdue.cs.encourse.domain.relations.TeachingAssistantStudent;
+import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.AdminService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +49,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private TeachingAssistantStudentRepository teachingAssistantStudentRepository;
+
+    @Autowired
+    private StudentProjectRepository studentProjectRepository;
+
+    @Autowired
+    private StudentProjectDateRepository studentProjectDateRepository;
 
     public User addUser(@NonNull String userName, @NonNull String password, @NonNull String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled) {
         Authority auth = authorityRepository.findDistinctByName(authority);
@@ -200,6 +204,75 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    public int deleteAccount(@NonNull String userName) {
+        Account account = accountRepository.findByUserName(userName);
+        if(account == null) {
+            return -1;
+        }
+        int result;
+        switch(account.getRole()) {
+            case Account.Roles.STUDENT: result = deleteStudent(account); break;
+            case Account.Roles.TA: result = deleteTA(account); break;
+            case Account.Roles.PROFESSOR: result = deleteProfessor(account); break;
+            case Account.Roles.ADMIN: result = deleteAdmin(account); break;
+            default: result = -2;
+
+        }
+        return result;
+    }
+
+    public int deleteStudent(@NonNull Account account){
+        Student student = studentRepository.findByUserID(account.getUserID());
+        student.copyAccount(account);
+        List<StudentProject> projects = studentProjectRepository.findByIdStudentID(student.getUserID());
+        for(StudentProject p : projects) {
+            studentProjectRepository.delete(p);
+        }
+        List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdStudentID(student.getUserID());
+        for(StudentProjectDate p : projectDates) {
+            studentProjectDateRepository.delete(p);
+        }
+        List<StudentSection> sections = studentSectionRepository.findByIdStudentID(student.getUserID());
+        for(StudentSection s : sections) {
+            studentSectionRepository.delete(s);
+        }
+        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdStudentID(student.getUserID());
+        for(TeachingAssistantStudent a : assignments) {
+            teachingAssistantStudentRepository.delete(a);
+        }
+        accountRepository.delete(student);
+        return 0;
+    }
+
+    public int deleteTA(@NonNull Account account) {
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(account.getUserID());
+        teachingAssistant.copyAccount(account);
+        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID(teachingAssistant.getUserID());
+        for(TeachingAssistantStudent a : assignments) {
+            teachingAssistantStudentRepository.delete(a);
+        }
+        teachingAssistantRepository.delete(teachingAssistant);
+        return 0;
+    }
+
+    public int deleteProfessor(@NonNull Account account) {
+        Professor professor = professorRepository.findByUserID(account.getUserID());
+        professor.copyAccount(account);
+        List<ProfessorCourse> assignments = professorCourseRepository.findByIdProfessorID(professor.getUserID());
+        for(ProfessorCourse a : assignments) {
+            professorCourseRepository.delete(a);
+        }
+        professorRepository.delete(professor);
+        return 0;
+    }
+
+    public int deleteAdmin(@NonNull Account account) {
+        CollegeAdmin admin = adminRepository.findByUserID(account.getUserID());
+        admin.copyAccount(account);
+        adminRepository.delete(admin);
+        return 0;
+    }
+
     public int modifyAccount(@NonNull String userName, @NonNull String field, String value) {
         Account account = accountRepository.findByUserName(userName);
         if(account == null) {
@@ -271,6 +344,20 @@ public class AdminServiceImpl implements AdminService {
             return -2;
         }
         System.out.println("SECTION ADDED");
+        return 0;
+    }
+
+    public int deleteSection(@NonNull String sectionID) {
+        System.out.println("ADDING SECTION");
+        Section section = sectionRepository.findBySectionIdentifier(sectionID);
+        if(section == null) {
+            return -1;
+        }
+        List<StudentSection> sections = studentSectionRepository.findByIdSectionIdentifier(sectionID);
+        for(StudentSection s : sections) {
+            studentSectionRepository.delete(s);
+        }
+        sectionRepository.delete(section);
         return 0;
     }
 

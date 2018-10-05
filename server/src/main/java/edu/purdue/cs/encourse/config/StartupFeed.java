@@ -69,19 +69,11 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             adminService.addSection("1001", "Fall2018", "cs252", "Systems Programming", "LE1");
             adminService.assignProfessorToCourse("grr", "cs252", "Fall2018");
 
-            // DELETE LATER
-            adminService.addAccount("500", "test1", "Ryan", "Sullivan", "Student", "P", "sulli196@purdue.edu");
-            adminService.addAccount("600", "test2", "Ryan", "Sullivan", "Student", "P", "sulli196@purdue.edu");
-            adminService.addUser("test1", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "STUDENT", false, false, false, true);
-            adminService.addUser("test2", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "STUDENT", false, false, false, true);
-            adminService.registerStudentToSection("test1", "cs252", "Fall2018", "LE1");
-            adminService.registerStudentToSection("test2", "cs252", "Fall2018", "LE1");
-
             try {
                 BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/students.txt"));
                 String student = null;
                 int count = 1;
-                while((student = fileReader.readLine()) != null) {
+                while((student = fileReader.readLine()) != null && count <= 40) {
                     if(student.equals("grr")) {
                         continue;
                     }
