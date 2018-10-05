@@ -45,11 +45,11 @@ class PreferencePanel extends Component {
     componentDidMount = () => {
         if(this.props.courses.length === 0) {
             this.props.getCourses(/*TODO: add endpoint*/``,
-            {'Authorization': `Bearer ${this.props.token}`}))
+            {'Authorization': `Bearer ${this.props.token}`})
         }
         if(this.props.accounts.length === 0) {
             this.props.getAccounts(/*TODO: add endpoint*/``,
-            {'Authorization': `Bearer ${this.props.token}`}))
+            {'Authorization': `Bearer ${this.props.token}`})
         }
     }
 

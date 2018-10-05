@@ -133,7 +133,7 @@ class Statistics extends Component {
                     this.state.formattedData &&
                     this.state.formattedData.map &&
                     this.state.formattedData.map((stat, index)  =>
-                        <div className="student-stat">
+                        <div key={stat.stat_name} className="student-stat">
                             <div className="student-stat-content">
                                 <h5>{stat.stat_name}</h5>
                                 <h5>{stat.stat_value}</h5>

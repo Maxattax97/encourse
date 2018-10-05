@@ -141,7 +141,7 @@ class ClassTestCasePercentDone extends Component {
                         <Tooltip/>
                         <Bar dataKey="percent">
                             {this.state.formattedData.map((entry, index) => (
-                                <Cell fill={entry.hidden ? '#005599' : '#8884d8' }/>
+                                <Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#8884d8' }/>
                             ))}
                         </Bar>
                     </ComposedChart>
