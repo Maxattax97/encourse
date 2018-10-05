@@ -3,7 +3,7 @@ import { ComposedChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 import { connect } from 'react-redux'
 
 // TODO change api
-import { getClassProgress } from '../../redux/actions'
+// import { getXXXXX } from '../../redux/actions'
 import url from '../../server'
 
 const toPercent = (decimal, fixed = 0) => {
@@ -128,7 +128,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         // TODO change api
-        getData: (url, headers, body) => dispatch(getXXXXX(url, headers, body))
+        // getData: (url, headers, body) => dispatch(getXXXXX(url, headers, body))
+        getData: () => {}
     }
 }
 
