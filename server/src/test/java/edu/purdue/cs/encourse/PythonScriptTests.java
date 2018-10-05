@@ -15,9 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
-//@TestPropertySource(locations="classpath:application-dev.properties")
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@TestPropertySource(locations="classpath:application-dev.properties")
 
 public class PythonScriptTests {
         /** Mainly tests that accounts are properly handled in all relevant databases**/
@@ -47,7 +47,7 @@ public class PythonScriptTests {
         public ProfessorService professorService;
 
 
-        //@Before
+        @Before
         public void populateDatabase() {
             assertEquals(0, adminService.addAccount("1", "reed226","William", "Reed",
                     "Admin", "J", "reed226@purdue.edu"));
@@ -55,8 +55,9 @@ public class PythonScriptTests {
                     "Professor", null, "grr@purdue.edu"));
         }
 
-        //@After
+        @After
         public void clearDatabase() {
+            System.out.println("");
             adminRepository.deleteAll();
             professorRepository.deleteAll();
             studentRepository.deleteAll();
@@ -64,80 +65,70 @@ public class PythonScriptTests {
         }
 
         /** Empty test prevents error from being thrown over no @Test annotations **/
-       // @Test
+        @Test
         public void emptyTest() {
 
         }
 
-        /** No longer necessary since scripts incorporated into Java services **/
-        //@Test
-        public void testPythonDirectory() {
-         /*   Account account = accountService.retrieveAccount("reed226", "b");
-            assertNull(account);
-            account = accountService.retrieveAccount("reed226", "a");
-            assertNotNull(account);
-            assertEquals("1", account.getUserID());
-            assertEquals("reed226", account.getUserName());
-            assertNull(account.getSaltPass());
-            assertEquals("William", account.getFirstName());
-            assertEquals("Reed", account.getLastName());
-            assertEquals(Account.Roles.ADMIN, account.getRole());
-            assertEquals("J", account.getMiddleInit());
-            assertEquals("reed226@purdue.edu", account.getEduEmail());
-            CollegeAdmin admin = accountService.retrieveAdmin("reed226", "a");
-            assertEquals("William", admin.getFirstName());
-            Professor professor = accountService.retrieveProfessor("grr", "b");
-            assertEquals("Gustavo", professor.getFirstName());
-            assertFalse(studentRepository.existsByUserID("grr"));*/
-
-            System.out.println("=============================   Python Tests    ============================\n");
-
-            /*System.out.println("\n==============================    Python Directory Test    ==============================");
-            assertEquals("Hello.py failed to execute", 1, professorService.testPythonDirectory());
-
-            System.out.println("\n==============================    Python Start/End Test    ==============================");
-            JSONReturnable jsonReturn = professorService.getCommitData("temp");
-            assertNotEquals("STDIN is empty", -1, jsonReturn.errorCode);
-            assertNotEquals("getStartEnd.py failed to execute", -2, jsonReturn.errorCode);
-            assertNotEquals("Failed to parse STDOUT into json", -3, jsonReturn.errorCode);
-            assertEquals("Unknown Error", 1, jsonReturn.errorCode);
-
-            System.out.println("=============================   Python Progress Histogram Test    ============================\n");
+        @Test
+        public void testIndividualProgressData() {
+            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
             String studentID = "cutz";
-            jsonReturn = professorService.getProgressHistogram(studentID, "temp");
-            assertEquals("Failed to ogenerate progress histogram data", 1, jsonReturn.errorCode);
-            */
+            JSONReturnable jsonReturn = null;
+            System.out.println("=============================   Individual Progress Test    ============================\n");
+            jsonReturn = professorService.getStudentProgress(projectID, studentID);
+            assertEquals("Failed to generate individual progress data", 1, jsonReturn.errorCode);
+        }
+
+        @Test
+        public void testClassProgressData() {
+            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
+            String studentID = "cutz";
+            JSONReturnable jsonReturn = null;
+            System.out.println("=============================  Git Commit List Test    ============================\n");
+            jsonReturn = professorService.getClassProgress(projectID);
+            // Won't work until Jordan passes test file
+            //assertEquals("Failed to generate class progress histogram data", 1, jsonReturn.errorCode);
+        }
+
+        @Test
+        public void testStatisticsData() {
+            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
+            String studentID = "cutz";
+            JSONReturnable jsonReturn = null;
+            System.out.println("=============================  Statistics Test    ============================\n");
+            jsonReturn = professorService.getStatistics(projectID, studentID);
+            assertEquals("Failed to generate individual statistics", 1, jsonReturn.errorCode);
+        }
+
+        @Test
+        public void testAdditionDeletionData() {
             String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================   Addition Deletion Test    ============================\n");
             jsonReturn = professorService.getAdditionsAndDeletions(projectID, studentID);
             assertEquals("Failed to generate addition/deletion data", 1, jsonReturn.errorCode);
+        }
 
-            System.out.println("=============================   Individual Progress Test    ============================\n");
-            jsonReturn = professorService.getStudentProgress(projectID, studentID);
-            assertEquals("Failed to generate individual progress data", 1, jsonReturn.errorCode);
-
-            System.out.println("=============================  Statistics Test    ============================\n");
-            jsonReturn = professorService.getStatistics(projectID, studentID);
-            assertEquals("Failed to generate individual statistics", 1, jsonReturn.errorCode);
-
+        @Test
+        public void testCommitListData() {
+            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
+            String studentID = "cutz";
+            JSONReturnable jsonReturn = null;
             System.out.println("=============================  Git Commit List Test    ============================\n");
             jsonReturn = professorService.getCommitList(projectID, studentID);
             assertEquals("Failed to generate git commit list data", 1, jsonReturn.errorCode);
+        }
 
-            System.out.println("=============================  Git Commit List Test    ============================\n");
-            jsonReturn = professorService.getClassProgress(projectID);
-            // Won't work until Jordan passes test file
-            //assertEquals("Failed to generate class progress histogram data", 1, jsonReturn.errorCode);
 
+        @Test
+        public void testCommitCountData() {
+            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
+            String studentID = "cutz";
+            JSONReturnable jsonReturn = null;
             System.out.println("=============================  Git Commit Count Test    ============================\n");
             jsonReturn = professorService.getCommitCounts(projectID, studentID);
             assertEquals("Failed to generate git commit count data", 1, jsonReturn.errorCode);
-
-            System.out.println("=============================   End Python Tests    ============================\n");
-
-
-            //int returnValue = professorService.countAllCommits("CS200", "Encourse");
         }
 }

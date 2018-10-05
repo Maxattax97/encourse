@@ -31,7 +31,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     public final static String NAME = "ProfessorService";
     private final static String pythonPath = "src/main/python/";
     private final static int RATE = 3600000;
-    private final static Boolean DEBUG = false;
+    private final static Boolean DEBUG = true;
 
     /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
     final static String testDir = "test-shell";
@@ -294,7 +294,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     public JSONReturnable getClassProgress(@NonNull String projectID) {
         String testResult = "";
         if (DEBUG == true) {
-            testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
+            testResult = pythonPath + "test_datasets/sampleTestCases.txt";
         }
         /*
         else {
@@ -871,6 +871,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public JSONReturnable runPython(@NonNull String command) {
+        System.out.println(command);
         JSONReturnable json = null;
         try {
             Process process = Runtime.getRuntime().exec(command);
@@ -891,7 +892,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     json =  new JSONReturnable(-3, null);
                 }
                 if (obj != null) {
-                    //System.out.println(obj);
+                    System.out.println(obj);
                     JSONObject jsonObject = null;
                     if (obj.getClass() == JSONObject.class) {
                         jsonObject = (JSONObject)obj;
