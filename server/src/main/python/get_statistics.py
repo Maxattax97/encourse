@@ -1,5 +1,6 @@
 import sys
 import json
+import argparse
 from datetime import datetime
 from helper import time_string
 from start_end import commit_data as commit_times
@@ -73,18 +74,19 @@ def sum_statistics(data):
     return new_data
 
 # Runs on file call
-if len(sys.argv) != 5:
-    print("USAGE: python getStatistics.py name file_1 file_2 tests")
-    print("name is the name of the student for which statistics are being requested")
-    print("file_1 should be a properly formatted commit times file")
-    print("file_2 should be a properly formatted commit list file")
-    print("tests should be a properly formatted test case string")
-    sys.exit("Incorrect usage")
+parser = argparse.ArgumentParser()
+parser.add_argument("logfile", help="path to commit log file")
+parser.add_argument("timefile", help="path to commit time file")
+parser.add_argument("name", help="user name")
+parser.add_argument("tests", help="test case string")
+parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
-student_id = sys.argv[1]
-commit_date_file = open(sys.argv[2], "r")
-commit_data_file = open(sys.argv[3], "r")
-test_case_string = sys.argv[4]
+args = parser.parse_args()
+
+student_id = args.name
+commit_date_file = open(args.timefile, "r")
+commit_data_file = open(args.logfile, "r")
+test_case_string = args.tests
 
 dates_dict = commit_times(commit_date_file)
 #for user in dates_dict.keys():
