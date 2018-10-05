@@ -33,7 +33,6 @@ class ClassTestCasePercentDone extends Component {
     constructor(props) {
         super(props);
 
-
         this.state = {
             formattedData: defaultData,
         };
@@ -44,7 +43,7 @@ class ClassTestCasePercentDone extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(!this.props.data && nextProps.data) {
+        if(!this.props.isFinished && nextProps.isFinished) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
