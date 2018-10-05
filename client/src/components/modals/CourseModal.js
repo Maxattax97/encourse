@@ -26,15 +26,15 @@ class CourseModal extends Component {
         this.setState({ [event.target.name]: event.target.value });
     };
 
+    saveSettings = () => {
+        //TODO Bucky save course data here
+    };
+
     render() {
 
         const modal_buttons =
             <div className="modal-buttons float-height">
-                <div onClick={ this.deleteProject }>
-                    <img src={deleteIcon} />
-                </div>
-
-                <div className="project-options-add" onClick={ this.addProject }>
+                <div className="project-options-add" onClick={ this.saveSettings }>
                     <img src={ checkmarkIcon } />
                 </div>
             </div>;
@@ -51,9 +51,9 @@ class CourseModal extends Component {
                                </div>
                                <h2 className="break-line title" />
                                <h4 className="header">
-                                   Name
+                                   Student Repositories Directory
                                </h4>
-                               <input type="text" className="h3-size" value={this.state.name} onChange={this.onChange} name="name" ref="name"/>
+                               <input type="text" className="h3-size" value={this.state.name} onChange={this.onChange} name="student_directory" ref="student_directory"/>
                                { modal_buttons }
                            </div>
                        } />
