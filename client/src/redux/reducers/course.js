@@ -28,6 +28,18 @@ function course(state = {}, action) {
                 getClassProgressData: action.data,
                 getClassProgressIsFinished: true
             })
+        case 'SET_DIRECTORY_HAS_ERROR':
+            return Object.assign({}, state, {
+                setDirectoryHasError: action.hasError,
+            })
+        case 'SET_DIRECTORY_IS_LOADING':
+            return Object.assign({}, state, {
+                setDirectoryIsLoading: action.isLoading,
+            })
+        case 'SET_DIRECTORY_DATA_SUCCESS':
+            return Object.assign({}, state, {
+                setDirectoryData: action.data,
+            })
         default:
             return state
     }
