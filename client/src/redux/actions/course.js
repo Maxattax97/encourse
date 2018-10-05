@@ -1,5 +1,5 @@
 import genericDispatch from './fetch'
-import { fuzzing, realToFakeMapping, getFakeUid } from '../../fuzz'
+import { fuzzing, realToFakeMapping, fakeToRealMapping, getFakeUid } from '../../fuzz'
 import faker from 'faker'
 
 export function getStudentPreviewsHasError(hasError) {
