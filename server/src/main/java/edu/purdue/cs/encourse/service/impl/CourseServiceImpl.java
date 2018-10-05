@@ -127,7 +127,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     /** Mainly needed to populate the database when course hub already exists **/
-    public int setDirectory(@NonNull String semester, @NonNull String courseID){
+    public int setDirectory(@NonNull String semester, @NonNull String courseID) {
         List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
         if(sections.isEmpty()) {
             return -1;
