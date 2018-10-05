@@ -30,24 +30,34 @@ describe('<ClassProgressHistogram />', () => {
     const formatApiDataSpy = jest.spyOn(wrapper.instance(), 'formatApiData')
 
     wrapper.setProps({
-        data: [
-            { "0-50%": 5 },
-            { "50-100%": 10 },
-        ],
-        isFinished: true,
+      data: [
+        { "0-50%": 5 },
+        { "50-100%": 10 },
+      ],
+      isFinished: true,
     })
     await new Promise(resolve => process.nextTick(resolve))
     wrapper.update()
     expect(componentWillReceivePropsSpy).toHaveBeenCalledTimes(1)
     expect(formatApiDataSpy).toHaveBeenCalledTimes(1)
 
-    wrapper.setProps({ data: [
-      { "0-50%": 10 },
-      { "50-100%": 5 },
-    ] })
+    wrapper.setProps({
+      isFinished: false,
+    })
     await new Promise(resolve => process.nextTick(resolve))
     wrapper.update()
     expect(componentWillReceivePropsSpy).toHaveBeenCalledTimes(2)
+
+    wrapper.setProps({
+      data: [
+        { "0-50%": 10 },
+        { "50-100%": 5 },
+      ],
+      isFinished: true,
+    })
+    await new Promise(resolve => process.nextTick(resolve))
+    wrapper.update()
+    expect(componentWillReceivePropsSpy).toHaveBeenCalledTimes(3)
     expect(formatApiDataSpy).toHaveBeenCalledTimes(2)
   })
 })

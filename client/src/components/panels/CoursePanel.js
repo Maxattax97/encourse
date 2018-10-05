@@ -13,6 +13,8 @@ import settingsIcon from "../../img/settings.svg";
 import ActionNavigation from "../navigation/ActionNavigation";
 import CourseModal from "../modals/CourseModal";
 
+import { fuzzing } from '../../fuzz'
+
 class CoursePanel extends Component {
 
     constructor(props) {
@@ -35,7 +37,12 @@ class CoursePanel extends Component {
     showStudentPanel = (student) => {
         //TODO: move this setCurrentStudent to StudentPanel, store all students in an array in redux
         this.props.setCurrentStudent(student);
-        history.push(`/student/${student.id}`)
+        if (fuzzing) {
+            // NOTE: we don't even use the student id in the url
+            history.push(`/student/student`)
+        } else {
+            history.push(`/student/${student.id}`)
+        }
     };
 
     render() {

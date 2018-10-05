@@ -6,6 +6,10 @@ function projects(state = {}, action) {
                 currentProjectId: action.id,
                 currentProjectIndex: action.index,
             })
+        case 'TOGGLE_HIDDEN':
+            return Object.assign({}, state, {
+                isHidden: !state.isHidden,
+            })
         case 'GET_CLASS_PROJECTS_HAS_ERROR':
             return Object.assign({}, state, {
                 getClassProjectsHasError: action.hasError,
@@ -17,7 +21,8 @@ function projects(state = {}, action) {
         case 'GET_CLASS_PROJECTS_DATA_SUCCESS':
             return Object.assign({}, state, {
                 getClassProjectsData: action.data,
-                currentProjectId: action.data[0].id
+                currentProjectId: action.data[0].id,
+                currentProjectIndex: 0,
             })
         case 'MODIFY_PROJECT_HAS_ERROR':
             return Object.assign({}, state, {
@@ -28,8 +33,19 @@ function projects(state = {}, action) {
                 modifyProjectIsLoading: action.isLoading,
             })
         case 'MODIFY_PROJECT_DATA_SUCCESS':
+            let projects3 = [...state.getClassProjectsData]
+            projects3[state.currentProjectIndex] = {
+                project_name: action.data.projectName,
+                source_name: action.data.repoName,
+                start_date: action.data.startDate,
+                due_date: action.data.dueDate,
+                id: action.data.projectIdentifier,
+                hidden_test_script: [],
+                test_script: [],
+            }
             return Object.assign({}, state, {
                 modifyProjectData: action.data,
+                getClassProjectsData: projects3,
             })
         case 'ADD_PROJECT_HAS_ERROR':
             return Object.assign({}, state, {
@@ -40,8 +56,53 @@ function projects(state = {}, action) {
                 addProjectIsLoading: action.isLoading,
             })
         case 'ADD_PROJECT_DATA_SUCCESS':
+            let projects1 = [...state.getClassProjectsData]
+            projects1.push({
+                project_name: action.data.projectName,
+                source_name: action.data.repoName,
+                start_date: action.data.startDate,
+                due_date: action.data.dueDate,
+                id: action.data.projectIdentifier,
+                hidden_test_script: [],
+                test_script: [],
+            })
             return Object.assign({}, state, {
                 addProjectData: action.data,
+                getClassProjectsData: projects1,
+                currentProjectIndex: projects1.length - 1,
+                currentProjectId: action.data.projectIdentifier
+            })
+        case 'DELETE_PROJECT_HAS_ERROR':
+            return Object.assign({}, state, {
+                deleteProjectHasError: action.hasError,
+            })
+        case 'DELETE_PROJECT_IS_LOADING':
+            return Object.assign({}, state, {
+                deleteProjectIsLoading: action.isLoading,
+            })
+        case 'DELETE_PROJECT_DATA_SUCCESS':
+            let projects2 = [...state.getClassProjectsData]
+            projects2.splice(state.currentProjectIndex, 1)
+            let currentProjectIndex = state.currentProjectIndex === 0 ? 
+            (state.currentProjectIndex ? state.currentProjectIndex - 1 : null)
+            : 0
+            return Object.assign({}, state, {
+                deleteProjectData: action.data,
+                getClassProjectsData: projects2,
+                currentProjectIndex,
+                currentProjectId: state.getClassProjectsData[currentProjectIndex].id
+            })
+        case 'ADD_TEST_HAS_ERROR':
+            return Object.assign({}, state, {
+                addTestHasError: action.hasError,
+            })
+        case 'ADD_TEST_IS_LOADING':
+            return Object.assign({}, state, {
+                addTestIsLoading: action.isLoading,
+            })
+        case 'ADD_TEST_DATA_SUCCESS':
+            return Object.assign({}, state, {
+                addTestData: action.data,
             })
         default:
             return state

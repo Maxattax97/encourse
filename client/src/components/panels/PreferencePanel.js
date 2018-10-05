@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
 import Card from "../Card";
 import plusIcon from "../../img/plus.svg";
 import StudentPreview from "./util/StudentPreview";
@@ -7,7 +9,8 @@ import AccountPreview from "./util/AccountPreview";
 import ProjectModal from "../modals/ProjectModal";
 import Modal from "../modals/Modal";
 import checkmarkIcon from "../../img/checkmark.svg";
-
+import { addCourse, addAccount, getCourses, getAccounts, modifyCourse, modifyAccount } from '../../redux/actions'
+import url from '../../server'
 
 class PreferencePanel extends Component {
 
@@ -17,7 +20,7 @@ class PreferencePanel extends Component {
         this.state = {
             courses: [{
                 name: "CS252",
-                semester: "Fall 2018",
+                semester: "Fall2018",
                 professor: "Gustavo",
                 id: "1"
             }],
@@ -39,11 +42,22 @@ class PreferencePanel extends Component {
         }
     }
 
+    componentDidMount = () => {
+        if(this.props.courses.length === 0) {
+            this.props.getCourses(/*TODO!: add endpoint*/``,
+            {'Authorization': `Bearer ${this.props.token}`})
+        }
+        if(this.props.accounts.length === 0) {
+            this.props.getAccounts(`${url}/api/accounts`,
+            {'Authorization': `Bearer ${this.props.token}`})
+        }
+    }
+
     resetOptions = () => {
         this.setState(
             {
                 name: "",
-                semester: "Fall 2018",
+                semester: "Fall2018",
                 account_type: "student",
                 show_course_options: false,
                 show_account_options: false,
@@ -56,6 +70,19 @@ class PreferencePanel extends Component {
     onChange = (event) => {
         this.setState({ [event.target.name]: event.target.value });
     };
+
+    getRole = (role) => {
+        switch(role) {
+            case 0:
+                return 'student'
+            case 1:
+                return 'TA'
+            case 2:
+                return 'professor'
+            case 3:
+                return 'admin'
+        }
+    }
 
     displayCourseOptions = (index) => {
         this.setState({
@@ -72,17 +99,35 @@ class PreferencePanel extends Component {
             show_account_options: true,
             current_account: index,
             modal_blur: " blur",
-            name: this.state.accounts[index].name,
-            account_type: this.state.accounts[index].account_type
+            name: this.props.accounts[index].userName,
+            account_type: this.getRole(this.props.accounts[index].role)
         });
     };
 
     saveCourse = () => {
-        //TODO Bucky
+        //TODO!: verify this works
+        if(this.state.current_course === -1) { 
+            //Add course
+            this.props.addCourse(`${url}/api/add/course?courseID=${this.state.name}&semester=${this.state.semester}`,
+            {'Authorization': `Bearer ${this.props.token}`})
+        } else {
+            this.props.modifyCourse(/*!: add endpoint*/)
+            //Edit course
+        }     
     };
 
     saveAccount = () => {
-        //TODO Bucky
+        //TODO!: verify this works
+        if(this.state.current_account === -1) {
+            //Add account
+            this.props.addAccount(`${url}/api/add/user?userName=${this.state.name}&type=${this.state.account_type}`,
+            {'Authorization': `Bearer ${this.props.token}`})
+        } else {
+            //Edit account
+            this.props.modifyAccount(`${url}/api/modify/account?userName=${this.state.name}&field=role&value=${this.state.account_type}`,
+            {'Authorization': `Bearer ${this.props.token}`})
+        }
+
     };
 
     render() {
@@ -115,10 +160,10 @@ class PreferencePanel extends Component {
                                 <h3>Accounts</h3>
                             </div>
                             {
-                                this.state.accounts && this.state.accounts.map &&
-                                this.state.accounts.map((account, index) =>
-                                    <Card key={account.id}
-                                          component={<AccountPreview account={account}/>}
+                                this.props.accounts && this.props.accounts.map &&
+                                this.props.accounts.map((account, index) =>
+                                    <Card key={account.userName}
+                                          component={<AccountPreview getRole={this.getRole} account={account}/>}
                                           onClick={ () => this.displayAccountOptions(index) }/>)
                             }
                         </div>
@@ -143,8 +188,8 @@ class PreferencePanel extends Component {
                                        Semester
                                    </h4>
                                    <select className="h3-size" value={this.state.semester} onChange={this.onChange} name="semester" ref="semester">
-                                       <option value="Fall 2018">Fall 2018</option>
-                                       <option value="Spring 2019">Spring 2019</option>
+                                       <option value="Fall2018">Fall 2018</option>
+                                       <option value="Spring2019">Spring 2019</option>
                                    </select>
                                    <div className="modal-buttons float-height">
                                        <div className="project-options-add" onClick={ this.saveCourse }>
@@ -193,4 +238,23 @@ class PreferencePanel extends Component {
     }
 }
 
-export default PreferencePanel
+const mapStateToProps = (state) => {
+    return {
+        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+        courses: state.admin && state.admin.getCoursesData ? state.admin.getCoursesData : [],
+        accounts: state.admin && state.admin.getAccountsData ? state.admin.getAccountsData : [],
+    }
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addCourse: (url, headers, body) => dispatch(addCourse(url, headers, body)),
+        addAccount: (url, headers, body) => dispatch(addAccount(url, headers, body)),
+        modifyCourse: (url, headers, body) => dispatch(modifyCourse(url, headers, body)),
+        modifyAccount: (url, headers, body) => dispatch(modifyAccount(url, headers, body)),   
+        getCourses: (url, headers, body) => dispatch(getCourses(url, headers, body)),
+        getAccounts: (url, headers, body) => dispatch(getAccounts(url, headers, body)),
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PreferencePanel);

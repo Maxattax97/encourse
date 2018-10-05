@@ -7,6 +7,7 @@ import edu.purdue.cs.encourse.service.AccountService;
 import edu.purdue.cs.encourse.service.AdminService;
 import edu.purdue.cs.encourse.service.impl.AccountServiceImpl;
 import edu.purdue.cs.encourse.service.impl.AdminServiceImpl;
+import edu.purdue.cs.encourse.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,20 +41,24 @@ public class AuthController {
     @Autowired
     private SessionRegistry sessionRegistry;
 
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
+
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/modify/account", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> modifyAccount(@RequestParam(name = "field") String field, @RequestParam(name = "value") String value) {
-        User u = getUserFromAuth();
-        int result = adminService.modifyAccount(u.getUsername(), field, value);
+    public @ResponseBody ResponseEntity<?> modifyAccount(@RequestParam(name = "userName") String userName,
+                                                         @RequestParam(name = "field") String field,
+                                                         @RequestParam(name = "value") String value) {
+        //User u = getUserFromAuth();
+        int result = adminService.modifyAccount(userName, field, value);
         HttpStatus status = (result == 0)? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
-        String response = (result == 0)? "Account " + u.getUsername() + " modified successfully": "Account not modified";
-        return new ResponseEntity<>("{ \"result\": " + result + ",\"response\": " + response + " }", status);
+        return new ResponseEntity<>(result, status);
     }
 
     // TODO: Adjust how frontend calls this endpoint
     @PreAuthorize("hasAuthority('ADMIN')")
-    @RequestMapping(value = "/create/account", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/add/account", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity<?> createAccount(@RequestParam(name = "password") String password, @RequestBody String json) {
 
         int result;
@@ -92,7 +97,16 @@ public class AuthController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/accounts", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getAccounts() {
-        return new ResponseEntity<>(accountService.retrieveAllAccounts(), HttpStatus.FOUND);
+        List<Account> accounts = accountService.retrieveAllAccounts();
+        List<User> disabled = userDetailsService.getDisabledAccounts();
+        for (User disable: disabled) {
+            System.out.println(disable.getUsername());
+            Account a = accountService.retrieveAccount(disable.getUsername());
+            if (accounts.contains(a)) {
+                accounts.remove(a);
+            }
+        }
+        return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -101,7 +115,7 @@ public class AuthController {
         Account a = getAccountFromAuth();
         boolean flag = true;
         if (userName != null) {
-            if (!hasPermissionForStudent(userName)) {
+            if (!hasPermissionOverAccount(userName)) {
                 flag = false;
             }
         }
@@ -139,8 +153,8 @@ public class AuthController {
         return ((User)securityContext.getAuthentication().getPrincipal());
     }
 
-    private boolean hasPermissionForStudent(String userName) {
-        return adminService.hasPermissionForStudent(getUserFromAuth(), userName);
+    private boolean hasPermissionOverAccount(String userName) {
+        return adminService.hasPermissionOverAccount(getUserFromAuth(), userName);
     }
 
     private int logout(User user) {

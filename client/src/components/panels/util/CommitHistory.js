@@ -56,7 +56,7 @@ class CommitHistory extends Component {
                     {
                         this.state.formattedData &&
                         this.state.formattedData.map((commit) =>
-                            <Card component={
+                            <Card key={commit.date} component={
                                 <div className="student-commit-container">
                                     <h5>
                                         { commit.date }
@@ -67,7 +67,7 @@ class CommitHistory extends Component {
                                     <ul>
                                         {
                                             commit.files.map((file) =>
-                                                <li>
+                                                <li key={file}>
                                                     { file }
                                                 </li>
                                             )

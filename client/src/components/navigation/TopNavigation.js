@@ -20,7 +20,10 @@ class TopNavigation extends Component {
             <div className="nav">
                 <div className="nav-list">
                     <div className="nav-options">
-                        <div className="nav-settings" onClick={() => history.push('/settings')}>
+                        <div className="nav-settings" onClick={() => {
+                            if(this.props.path === '/settings') history.push('/course')
+                            else history.push('/settings')
+                        }}>
                             <img src={settingsIcon} alt="options" />
                         </div>
                         <div className="nav-logout" onClick={() => this.logOut()}>
@@ -40,6 +43,7 @@ class TopNavigation extends Component {
 const mapStateToProps = (state) => {
     return { 
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+        path: state.router && state.router.location ? state.router.location.pathname : null,
     }
 }
   

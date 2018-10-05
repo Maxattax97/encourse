@@ -42,6 +42,6 @@ public interface AdminService {
 
     /** Services for authentication **/
     User addUser(@NonNull String userName, @NonNull String password, @NonNull String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled);
-    boolean hasPermissionForStudent(@NonNull User loggedIn, @NonNull String userName);
+    boolean hasPermissionOverAccount(@NonNull User loggedIn, @NonNull String userName);
     List<User> findAllUsers();
 }
