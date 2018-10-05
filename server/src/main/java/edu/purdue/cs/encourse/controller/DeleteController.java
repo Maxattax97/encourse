@@ -37,7 +37,7 @@ public class DeleteController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/delete/user", method = RequestMethod.DELETE)
     public @ResponseBody ResponseEntity<?> deleteUser(@RequestParam(name = "userName") String userName) {
-        if (hasPermissionForStudent(userName)) {
+        if (hasPermissionOverAccount(userName)) {
             userDetailsService.changeUserEnabled((User)userDetailsService.loadUserByUsername(userName));
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
@@ -64,8 +64,8 @@ public class DeleteController {
         return ((User)securityContext.getAuthentication().getPrincipal());
     }
 
-    private boolean hasPermissionForStudent(String userName) {
-        return adminService.hasPermissionForStudent(getUserFromAuth(), userName);
+    private boolean hasPermissionOverAccount(String userName) {
+        return adminService.hasPermissionOverAccount(getUserFromAuth(), userName);
     }
 
 }

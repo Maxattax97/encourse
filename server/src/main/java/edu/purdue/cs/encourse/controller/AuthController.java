@@ -115,7 +115,7 @@ public class AuthController {
         Account a = getAccountFromAuth();
         boolean flag = true;
         if (userName != null) {
-            if (!hasPermissionForStudent(userName)) {
+            if (!hasPermissionOverAccount(userName)) {
                 flag = false;
             }
         }
@@ -153,8 +153,8 @@ public class AuthController {
         return ((User)securityContext.getAuthentication().getPrincipal());
     }
 
-    private boolean hasPermissionForStudent(String userName) {
-        return adminService.hasPermissionForStudent(getUserFromAuth(), userName);
+    private boolean hasPermissionOverAccount(String userName) {
+        return adminService.hasPermissionOverAccount(getUserFromAuth(), userName);
     }
 
     private int logout(User user) {

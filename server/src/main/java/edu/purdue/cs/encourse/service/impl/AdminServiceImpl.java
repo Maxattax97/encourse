@@ -75,8 +75,8 @@ public class AdminServiceImpl implements AdminService {
         return user;
     }
 
-    public boolean hasPermissionForStudent(User loggedIn, String userName) {
-        Account account = studentRepository.findByUserName(userName);
+    public boolean hasPermissionOverAccount(User loggedIn, String userName) {
+        Account account = accountRepository.findByUserName(userName);
         if (account == null) {
             return false;
         }
