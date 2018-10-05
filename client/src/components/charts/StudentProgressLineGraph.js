@@ -3,6 +3,7 @@ import { LineChart, CartesianGrid, XAxis, YAxis,
     Tooltip, Legend, Line, Label, ResponsiveContainer } from 'recharts'
 import moment from 'moment'
 import { connect } from 'react-redux'
+import { fuzzing } from '../../fuzz'
 
 import { getProgressLine } from '../../redux/actions'
 import url from '../../server'
@@ -58,7 +59,8 @@ class StudentProgressLineGraph extends Component {
             return defaultData;
         }
 
-        const minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date);
+        let minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date);
+        minDate = moment(minDate).isBefore(moment('2018-02-10'), 'day') ? moment('2018-09-20').valueOf() : minDate
         const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date);
 
         const formattedData = []
@@ -77,6 +79,18 @@ class StudentProgressLineGraph extends Component {
                     date: m.valueOf(),
                     progress: inputEntry.progress,
                 })
+            }
+        }
+
+        if (fuzzing) {
+            let start = parseInt(Math.random() * formattedData.length)
+            let min = 0
+            for (start; start < formattedData.length; start++) {
+                const entry = formattedData[start]
+
+                min = Math.max(min, entry.progress)
+                entry.progress = parseInt(Math.random() * (100 - min) + min)
+                min = Math.min(Math.max(min, entry.progress + 20), 100)
             }
         }
 

@@ -55,7 +55,7 @@ class CodeChangesChart extends Component {
             return defaultData
         }
         const data = udata.data;
-    
+
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf();
             entry.deletions = -entry.deletions;
@@ -65,7 +65,8 @@ class CodeChangesChart extends Component {
             return defaultData;
         }
 
-        const minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date);
+        let minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date);
+        minDate = moment(minDate).isBefore(moment('2018-02-10'), 'day') ? moment('2018-09-20').valueOf() : minDate
         const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date);
 
         const formattedData = []
