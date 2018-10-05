@@ -20,7 +20,7 @@ class ProjectNavigation extends Component {
     }
 
     toggleProjectOptions = (mode) => {
-        this.setState({ show_project_options: mode, new_project: this.props.projects.length === 0 });
+        this.setState({ show_project_options: mode, new_project: this.props.projects.length === 0 && mode });
 
         this.props.onModalBlur(mode);
     };

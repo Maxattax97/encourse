@@ -257,7 +257,17 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-project-options { float: left; height: 440px; width: 245px; }
 
-.panel-project-options .header { cursor: default; }
+.panel-project-options .title { cursor: pointer; padding-left: 3px; }
+
+.panel-project-options .title img { width: 1.17em; height: 1.17em; float: left; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.panel-project-options .header { margin-top: 20px; margin-bottom: 5px; }
+
+.panel-project-options .title:hover { padding-left: 0px; }
+
+.panel-project-options .title:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.panel-project-options .title:hover h4 { color: #1f1e1c99; }
 
 .panel-project-options .project-options-scripts { margin-top: 5px; }
 

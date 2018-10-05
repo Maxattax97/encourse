@@ -15,13 +15,14 @@ class TestScriptList extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
+        console.log(props, state);
         if(props.script_list && props.script_list.map)
             return {
                 scripts: props.script_list
             };
 
         return {
-            scripts: []
+            scripts: state.scripts ? state.scripts : []
         };
     }
 
@@ -31,12 +32,18 @@ class TestScriptList extends Component {
         this.setState({ scripts : this.state.scripts });
     };
 
+    removeTestScript = (script_index) => {
+        this.state.scripts.splice(script_index, 1);
+
+        this.setState({ scripts: this.state.scripts });
+    };
+
     render() {
         return (
                 <div className="test-scripts-list">
                     {
                         this.state.scripts.map((script, index) =>
-                            <div className="scripts-script" key={`${ script.filename }-${ script.pointvalue }`}>
+                            <div className="scripts-script" key={`${ index }`}>
                                 <input type="file" ref={ index } style={{display: "none"}}/>
                                 <div className="script-filename">
                                     <img src={ searchIcon } />
@@ -44,7 +51,7 @@ class TestScriptList extends Component {
                                         Test { index + 1 }
                                     </h4>
                                 </div>
-                                <div className="script-delete">
+                                <div className="script-delete" onClick={ () => this.removeTestScript(index) }>
                                     <img src={deleteIcon} />
                                 </div>
                                 <input type="number" defaultValue="5" step="1" />
