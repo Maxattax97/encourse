@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.Base64;
 
 @RestController
-@RequestMapping(value="/secured")
+@RequestMapping(value="/api")
 public class WriteController {
 
     @Autowired
@@ -121,6 +121,38 @@ public class WriteController {
         }
 
         int result = professorService.uploadTestScript(projectID, testName, contents, isHidden, points);
+        if (result == 0) {
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } else if (result == -1) {
+            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/modify/test", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> modifyProject(@RequestParam(name = "projectID") String projectID,
+                                                         @RequestParam(name = "testName") String testName,
+                                                         @RequestParam(name = "field") String field,
+                                                         @RequestParam(name = "value") String value) {
+
+        int result = professorService.modifyTestScript(projectID, testName, field, value);
+        if (result == 0) {
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } else if (result == -1) {
+            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/add/directory", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> modifyProject(@RequestParam(name = "courseID") String courseID,
+                                                         @RequestParam(name = "semester") String semester) {
+
+        int result = courseService.createDirectory(semester, courseID);
         if (result == 0) {
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else if (result == -1) {
