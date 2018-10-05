@@ -56,8 +56,7 @@ class ClassTestCasePercentDone extends Component {
     }
 
     fetch = (props) => {
-        // TODO change api
-        props.getData(`${url}/api/classProgress?projectID=${props.projectID}`,
+        props.getData(`${url}/api/testSummary?projectID=${props.projectID}`,
         {'Authorization': `Bearer ${props.token}`})
     }
 
@@ -120,15 +119,16 @@ const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         // TODO change api
-        data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
-        isLoading: state.course ? state.course.getClassProgressData : false,
+        data: state.course && state.course.getXXXXX ? state.course.getXXXXX : null,
+        isLoading: state.course ? state.course.getXXXXX : false,
+        isFinished: state.course ? state.course.getXXXXX : false,
     }
   }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         // TODO change api
-        getData: (url, headers, body) => dispatch(getClassProgress(url, headers, body))
+        getData: (url, headers, body) => dispatch(getXXXXX(url, headers, body))
     }
 }
 
