@@ -25,6 +25,8 @@ import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import lombok.NonNull;
 
+import javax.persistence.criteria.CriteriaBuilder;
+
 @Service(value = ProfessorServiceImpl.NAME)
 public class ProfessorServiceImpl implements ProfessorService {
 
@@ -120,8 +122,8 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Adds a new project to the database, which needs to be done before cloning the project in the course hub **/
-    public int addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate) {
-        Project project = new Project(courseID, semester, projectName, repoName, startDate, dueDate);
+    public int addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate) {
+        Project project = new Project(courseID, semester, projectName, repoName, startDate, dueDate, testRate);
         if(projectRepository.existsByProjectIdentifier(project.getProjectIdentifier())) {
             return -1;
         }
@@ -184,11 +186,18 @@ public class ProfessorServiceImpl implements ProfessorService {
             case "startDate": project.setStartDate(value); break;
             case "dueDate": project.setDueDate(value); break;
             case "repoName": project.setRepoName(value); break;
-            default: return -2;
+            case "testRate":
+                try {
+                    project.setTestRate(Integer.parseInt(value));
+                    project.setTestCount(Integer.parseInt(value) - 1);
+                    break;
+                }
+                catch(NumberFormatException e) {
+                    return -2;
+                }
+            default: return -3;
         }
-        if(projectRepository.save(project) == null) {
-            return -3;
-        }
+        projectRepository.save(project);
         return 0;
     }
 
@@ -812,11 +821,17 @@ public class ProfessorServiceImpl implements ProfessorService {
     public int pullAndTestAllProjects() {
         int code = 0;
         for(Project project : projectRepository.findAll()) {
-            if(pullProjects(project.getProjectIdentifier()) < 0) {
-                code -= 1;
+            if(project.getTestRate() > 0 && project.getTestCount() <= 0) {
+                if (pullProjects(project.getProjectIdentifier()) < 0) {
+                    code -= 1;
+                }
+                if (runTestall(project.getProjectIdentifier()) < 0) {
+                    code -= 1;
+                }
+                project.setTestCount(project.getTestRate() - 1);
             }
-            if(runTestall(project.getProjectIdentifier()) < 0) {
-                code -= 1;
+            else {
+                project.setTestCount(project.getTestCount() - 1);
             }
         }
         return code;

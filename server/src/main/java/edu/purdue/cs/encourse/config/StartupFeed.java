@@ -80,8 +80,8 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
 
             courseService.setSectionRemotePaths("Fall2018", "cs252", "/homes/cs252/sourcecontrol/work");
             courseService.setDirectory("Fall2018", "cs252");
-            professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/27/2018", "9/10/2018");
-            professorService.addProject("cs252", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018");
+            professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/27/2018", "9/10/2018", 0);
+            professorService.addProject("cs252", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
             professorService.assignProject(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
             professorService.assignProject(Project.createProjectID("cs252", "Fall2018", "Shell"));
             professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "MyMalloc"), "Test1.sh",
@@ -105,6 +105,28 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "MyMalloc"), "Test10.sh",
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 20);
             professorService.runTestall(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
+
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test1.sh",
+                    "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 5);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test2.sh",
+                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test3.sh",
+                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 5);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test4.sh",
+                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test5.sh",
+                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 20);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test6.sh",
+                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 5);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test7.sh",
+                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 10);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test8.sh",
+                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 5);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test9.sh",
+                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 10);
+            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test10.sh",
+                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 20);
+            professorService.runTestall(Project.createProjectID("cs252", "Fall2018", "Shell"));
 
             List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
             for(StudentProject p : projects) {

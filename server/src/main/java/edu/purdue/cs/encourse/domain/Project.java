@@ -31,8 +31,16 @@ public class Project {
     /** The name of the directory that will store the project. Remove .git if this is included **/
     private String repoName;
 
+    /** Rate in which projects will be pulled and tested, in hourse **/
+    @Setter
+    private int testRate;
+
+    /** Current count towards pulling and testing **/
+    @Setter
+    private int testCount;
+
     public Project(String courseID, String semester, String projectName,
-                   String repoName, String startDate, String dueDate) {
+                   String repoName, String startDate, String dueDate, int testRate) {
         this.courseID = courseID;
         this.semester = semester;
         this.projectName = projectName;
@@ -40,6 +48,14 @@ public class Project {
         this.projectIdentifier = createProjectID(courseID, semester, projectName);
         this.startDate = startDate;
         this.dueDate = dueDate;
+        if(testRate > 0) {
+            this.testRate = testRate;
+            this.testCount = testRate - 1;
+        }
+        else {
+            this.testRate = 0;
+            this.testCount = 0;
+        }
     }
 
     public Project() {
