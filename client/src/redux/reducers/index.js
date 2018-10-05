@@ -5,7 +5,8 @@ import course from './course'
 import projects from './projects'
 import auth from './auth'
 import student from './student'
+import admin from './admin'
 
-const rootReducer = combineReducers({ student, auth, course, projects, router: routerReducer })
+const rootReducer = combineReducers({ student, auth, course, projects, admin, router: routerReducer })
 
 export default rootReducer
