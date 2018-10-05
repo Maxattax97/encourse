@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import { connect } from "react-redux"
 
 import deleteIcon from "../../img/delete.svg"
 import checkmarkIcon from "../../img/checkmark.svg"
@@ -7,7 +8,7 @@ import Modal from "./Modal";
 import TestScriptList from "./util/TestScriptList";
 import { addProject, modifyProject, addTest, deleteProject } from "../../redux/actions";
 import url from '../../server'
-import { connect } from "react-redux"
+
 
 function getEmptyState(props) {
     return {
@@ -88,27 +89,30 @@ class ProjectModal extends Component {
         if(this.state.new_project) {
             //TODO: remove courseID and semester hardcoding
             this.props.addProject(`${url}/api/add/project`, 
-            {'Authorization': `Bearer ${this.props.token}`,
-            'Content-Type': 'application/json'},
-            JSON.stringify({
-                courseID: 'cs252',
-                semester: 'Fall2018',
-                projectName: this.state.name,
-                repoName: this.state.source_name,
-                startDate: this.state.created_date,
-                dueDate: this.state.due_date,
-                projectIdentifier: 'cs252 Fall2018:' + this.state.name,
-            }))
+                {'Authorization': `Bearer ${this.props.token}`,
+                'Content-Type': 'application/json'},
+                JSON.stringify({
+                    courseID: 'cs252',
+                    semester: 'Fall2018',
+                    projectName: this.state.name,
+                    repoName: this.state.source_name,
+                    startDate: this.state.created_date,
+                    dueDate: this.state.due_date,
+                    projectIdentifier: 'cs252 Fall2018:' + this.state.name,
+                }))
         }
         else {
-            this.props.modifyProject(`${url}/api/modify/project?projectID=${this.props.currentProjectId}&field=startDate&value=${this.state.created_date}`,
-            {'Authorization': `Bearer ${this.props.token}`})
-            this.props.modifyProject(`${url}/api/modify/project?projectID=${this.props.currentProjectId}&field=dueDate&value=${this.state.due_date}`,
-            {'Authorization': `Bearer ${this.props.token}`})
-            for(let script in this.state.test_script) {
+            this.props.modifyProject(`${url}/api/modifybulk/project?projectID=${this.props.currentProjectId}`,
+                {'Authorization': `Bearer ${this.props.token}`,
+                'Content-Type': 'application/json'},
+                JSON.stringify({
+                    startDate: this.state.created_date,
+                    dueDate: this.statrt.due_date,
+                }))
+            for(let script of this.state.test_script) {
                 this.postTest(script, false)
             } 
-            for(let script in this.state.hidden_test_script) {
+            for(let script of this.state.hidden_test_script) {
                 this.postTest(script, true)
             }
         }
