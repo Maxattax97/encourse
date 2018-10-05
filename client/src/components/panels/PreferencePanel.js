@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
 import Card from "../Card";
 import plusIcon from "../../img/plus.svg";
 import StudentPreview from "./util/StudentPreview";
@@ -7,7 +9,8 @@ import AccountPreview from "./util/AccountPreview";
 import ProjectModal from "../modals/ProjectModal";
 import Modal from "../modals/Modal";
 import checkmarkIcon from "../../img/checkmark.svg";
-
+import { addCourse, addAccount, getCourses, getAccounts } from '../../redux/actions'
+import url from '../../server'
 
 class PreferencePanel extends Component {
 
@@ -17,7 +20,7 @@ class PreferencePanel extends Component {
         this.state = {
             courses: [{
                 name: "CS252",
-                semester: "Fall 2018",
+                semester: "Fall2018",
                 professor: "Gustavo",
                 id: "1"
             }],
@@ -39,11 +42,22 @@ class PreferencePanel extends Component {
         }
     }
 
+    componentDidMount = () => {
+        if(this.props.courses.length === 0) {
+            this.props.getCourses(/*TODO: add endpoint*/``,
+            {'Authorization': `Bearer ${this.props.token}`}))
+        }
+        if(this.props.accounts.length === 0) {
+            this.props.getAccounts(/*TODO: add endpoint*/``,
+            {'Authorization': `Bearer ${this.props.token}`}))
+        }
+    }
+
     resetOptions = () => {
         this.setState(
             {
                 name: "",
-                semester: "Fall 2018",
+                semester: "Fall2018",
                 account_type: "student",
                 show_course_options: false,
                 show_account_options: false,
@@ -78,13 +92,15 @@ class PreferencePanel extends Component {
     };
 
     saveCourse = () => {
-        //TODO Bucky
-        console.log('hello')
+        //TODO: verify this works
+        this.props.addCourse(`${url}/api/add/course?courseID=${this.state.name}&semester=${this.state.semester}`,
+        {'Authorization': `Bearer ${this.props.token}`})
     };
 
     saveAccount = () => {
-        //TODO Bucky
-        console.log('hello2')
+        //TODO: verify this works
+        this.props.addCourse(`${url}/api/add/user?username=${this.state.name}&type=${this.state.account_type}`,
+        {'Authorization': `Bearer ${this.props.token}`})
     };
 
     render() {
@@ -145,8 +161,8 @@ class PreferencePanel extends Component {
                                        Semester
                                    </h4>
                                    <select className="h3-size" value={this.state.semester} onChange={this.onChange} name="semester" ref="semester">
-                                       <option value="Fall 2018">Fall 2018</option>
-                                       <option value="Spring 2019">Spring 2019</option>
+                                       <option value="Fall2018">Fall 2018</option>
+                                       <option value="Spring2019">Spring 2019</option>
                                    </select>
                                    <div className="modal-buttons float-height">
                                        <div className="project-options-add" onClick={ this.saveCourse }>
@@ -195,4 +211,21 @@ class PreferencePanel extends Component {
     }
 }
 
-export default PreferencePanel
+const mapStateToProps = (state) => {
+    return {
+        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+        courses: state.admin && state.admin.getCoursesData ? state.admin.getCoursesData : [],
+        accounts: state.admin && state.admin.getAccountsData ? state.admin.getAccountsData : [],
+    }
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addCourse: (url, headers, body) => dispatch(addCourse(url, headers, body)),
+        addAccount: (url, headers, body) => dispatch(addAccount(url, headers, body)),
+        getCourses: (url, headers, body) => dispatch(getCourses(url, headers, body)),
+        getAccounts: (url, headers, body) => dispatch(getAccounts(url, headers, body)),
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PreferencePanel);

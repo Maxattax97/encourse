@@ -71,7 +71,7 @@ function projects(state = {}, action) {
         case 'DELETE_PROJECT_DATA_SUCCESS':
             let projects2 = [...state.getClassProjectsData]
             projects2.splice(state.currentProjectIndex, 1)
-            let currentProjectIndex = state.currentProjectIndex == 0 ? 
+            let currentProjectIndex = state.currentProjectIndex === 0 ? 
             (state.currentProjectIndex ? state.currentProjectIndex - 1 : null)
             : 0
             return Object.assign({}, state, {

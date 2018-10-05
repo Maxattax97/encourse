@@ -1,5 +1,30 @@
 import genericDispatch from './fetch'
 
+export function getCoursesHasError(hasError) {
+    return {
+        type: 'GET_COURSES_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getCoursesIsLoading(isLoading) {
+    return {
+        type: 'GET_COURSES_IS_LOADING',
+        isLoading
+    }
+}
+
+export function getCoursesDataSuccess(data) {
+    return {
+        type: 'GET_COURSES_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getCourses = genericDispatch(
+    getCoursesHasError, getCoursesIsLoading, getCoursesDataSuccess, 'DELETE'
+)
+
 export function addCourseHasError(hasError) {
     return {
         type: 'ADD_COURSE_HAS_ERROR',
@@ -75,6 +100,31 @@ export const removeCourse = genericDispatch(
     removeCourseHasError, removeCourseIsLoading, removeCourseDataSuccess, 'DELETE'
 )
 
+export function getAccountsHasError(hasError) {
+    return {
+        type: 'GET_ACCOUNTS_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getAccountsIsLoading(isLoading) {
+    return {
+        type: 'GET_ACCOUNTS_IS_LOADING',
+        isLoading
+    }
+}
+
+export function getAccountsDataSuccess(data) {
+    return {
+        type: 'GET_ACCOUNTS_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getAccounts = genericDispatch(
+    getAccountsHasError, getAccountsIsLoading, getAccountsDataSuccess, 'DELETE'
+)
+
 export function addAccountHasError(hasError) {
     return {
         type: 'ADD_ACCOUNT_HAS_ERROR',
@@ -147,5 +197,5 @@ export function removeAccountDataSuccess(data) {
 }
 
 export const removeAccount = genericDispatch(
-    removeAccountHasError, removeAccountIsLoading, removeAccountDataSuccess, 'POST'
+    removeAccountHasError, removeAccountIsLoading, removeAccountDataSuccess, 'DELETE'
 )

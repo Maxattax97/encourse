@@ -1,5 +1,17 @@
 function admin(state = {}, action) {
     switch(action.type) {
+        case 'GET_COURSES_HAS_ERROR':
+            return Object.assign({}, state, {
+                getCoursesHasError: action.hasError,
+            })
+        case 'GET_COURSES_IS_LOADING':
+            return Object.assign({}, state, {
+                getCoursesIsLoading: action.isLoading,
+            })
+        case 'GET_COURSES_DATA_SUCCESS':
+            return Object.assign({}, state, {
+                getCoursesData: action.data,
+            })
         case 'ADD_COURSE_HAS_ERROR':
             return Object.assign({}, state, {
                 addCourseHasError: action.hasError,
@@ -35,6 +47,18 @@ function admin(state = {}, action) {
         case 'REMOVE_COURSE_DATA_SUCCESS':
             return Object.assign({}, state, {
                 removeCourseData: action.data,
+            })
+        case 'GET_ACCOUNTS_HAS_ERROR':
+            return Object.assign({}, state, {
+                getAccountsHasError: action.hasError,
+            })
+        case 'GET_ACCOUNTS_IS_LOADING':
+            return Object.assign({}, state, {
+                getAccountsIsLoading: action.isLoading,
+            })
+        case 'GET_ACCOUNTS_DATA_SUCCESS':
+            return Object.assign({}, state, {
+                getAccountsData: action.data,
             })
         case 'ADD_ACCOUNT_HAS_ERROR':
             return Object.assign({}, state, {
