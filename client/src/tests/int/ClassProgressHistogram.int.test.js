@@ -22,7 +22,7 @@ describe('<ClassProgressHistogram />', () => {
       token: null,
     }
 
-    const enzymeWrapper = mount(
+    const wrapper = mount(
       <Provider store={store}>
         <ClassProgressHistogram {...props} />
       </Provider>
@@ -30,11 +30,11 @@ describe('<ClassProgressHistogram />', () => {
 
     return {
       props,
-      enzymeWrapper
+      wrapper
     }
   }
 
   it('render()', () => {
-    const { enzymeWrapper } = setup()
+    const { wrapper } = setup()
   })
 })
