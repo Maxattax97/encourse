@@ -31,6 +31,18 @@ function projects(state = {}, action) {
             return Object.assign({}, state, {
                 modifyProjectData: action.data,
             })
+        case 'ADD_PROJECT_HAS_ERROR':
+            return Object.assign({}, state, {
+                addProjectHasError: action.hasError,
+            })
+        case 'ADD_PROJECT_IS_LOADING':
+            return Object.assign({}, state, {
+                addProjectIsLoading: action.isLoading,
+            })
+        case 'ADD_PROJECT_DATA_SUCCESS':
+            return Object.assign({}, state, {
+                addProjectData: action.data,
+            })
         default:
             return state
     }

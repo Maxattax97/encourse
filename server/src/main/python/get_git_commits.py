@@ -1,6 +1,7 @@
 import sys
 import json
 import copy
+import argparse
 from datetime import datetime
 from helper import date_string
 from helper import daterange
@@ -27,14 +28,15 @@ def format_data(data):
                 break
     return new_data
 
-if len(sys.argv) != 3:
-    print("USAGE: \t`python getProgressHistogram.py file1 name`")
-    print("\tfile1 is a properly formatted git log file")
-    print("\tname is the name of the student whose commit count is being requested")
-    sys.exit()
+parser = argparse.ArgumentParser()
+parser.add_argument("logfile", help="path to commit log file")
+parser.add_argument("name", help="user name")
+parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
-commit_data_file = open(sys.argv[1], "r")
-student_id = sys.argv[2]
+args = parser.parse_args()
+
+commit_data_file = open(args.logfile, "r")
+student_id = args.name
 
 data = commit_list(commit_data_file)[student_id]
 

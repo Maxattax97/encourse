@@ -36,8 +36,8 @@ class Main extends Component {
                         <Route path="/admin" render={(navProps) =>
                             <AdminPanel {...navProps} />
                         }/>
-                        <Route path="/settings" render={(navProps) =>
-                            <PreferencePanel />
+                        <Route path="/settings" render={(navProps) => 
+                            <PreferencePanel />   
                         }/>
                         <Route path='/' render={(navProps) => <Redirect to="/panel" />}/>
                     </Switch>

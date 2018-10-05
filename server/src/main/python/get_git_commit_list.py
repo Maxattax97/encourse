@@ -1,6 +1,7 @@
 import sys
 import json
 import copy
+import argparse
 from datetime import datetime
 from helper import time_string
 from daily_git_data import get_daily_commit_data as get_progress
@@ -27,15 +28,16 @@ def format_data(data):
             day["date"] = date_string(day["date"])
     return data
 
-if len(sys.argv) != 3:
-    print("USAGE: \t`python getProgressHistogram.py file1 name`")
-    print("\tfile1 is a properly formatted commit data file")
-    print("\tname is the name of the student whose git log is being requested")
-    sys.exit()
 
-commit_data_path = sys.argv[1]
-student_id = sys.argv[2]
-commit_data_file = open(commit_data_path, "r")
+parser = argparse.ArgumentParser()
+parser.add_argument("logfile", help="path to commit log file")
+parser.add_argument("name", help="user name")
+parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
+
+args = parser.parse_args()
+
+student_id = args.name
+commit_data_file = open(args.logfile, "r")
 data = get_progress(commit_data_file)
 
 api_formatted_data = api_format_data(data)[student_id]

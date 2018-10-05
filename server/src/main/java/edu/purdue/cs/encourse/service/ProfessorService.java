@@ -13,6 +13,7 @@ public interface ProfessorService {
     int assignProject(@NonNull String projectID);
     int assignProjectToStudent(@NonNull String projectID, @NonNull String userName);
     int modifyProject(@NonNull String projectID, @NonNull String field, String value);
+    int deleteProject(@NonNull String projectID);
     int cloneProjects(@NonNull String projectID);
     int pullProjects(@NonNull String projectID);
 

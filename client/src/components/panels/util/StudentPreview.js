@@ -18,7 +18,7 @@ class StudentPreview extends Component {
                         <div style={{width: this.props.student.grades[this.props.projectID] + "%"}} />             
                     </div>
                     <div className="progress-text">
-                        {this.props.student.grades[this.props.projectID]}%
+                        {parseInt(this.props.student.grades[this.props.projectID])}%
                     </div>
                 </div>
             </div>
