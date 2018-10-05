@@ -22,6 +22,7 @@ function projects(state = {}, action) {
             return Object.assign({}, state, {
                 getClassProjectsData: action.data,
                 currentProjectId: action.data[0].id,
+                currentProjectIndex: 0,
             })
         case 'MODIFY_PROJECT_HAS_ERROR':
             return Object.assign({}, state, {
@@ -32,8 +33,19 @@ function projects(state = {}, action) {
                 modifyProjectIsLoading: action.isLoading,
             })
         case 'MODIFY_PROJECT_DATA_SUCCESS':
+            let projects3 = [...state.getClassProjectsData]
+            projects3[state.currentProjectIndex] = {
+                project_name: action.data.projectName,
+                source_name: action.data.repoName,
+                start_date: action.data.startDate,
+                due_date: action.data.dueDate,
+                id: action.data.projectIdentifier,
+                hidden_test_script: [],
+                test_script: [],
+            }
             return Object.assign({}, state, {
                 modifyProjectData: action.data,
+                getClassProjectsData: projects3,
             })
         case 'ADD_PROJECT_HAS_ERROR':
             return Object.assign({}, state, {

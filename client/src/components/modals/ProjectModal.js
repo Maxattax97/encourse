@@ -102,7 +102,7 @@ class ProjectModal extends Component {
                 }))
         }
         else {
-            this.props.modifyProject(`${url}/api/modifybulk/project?projectID=${this.props.currentProjectId}`,
+            this.props.modifyProject(`${url}/api/modify/project?projectID=${this.props.currentProjectId}`,
                 {'Authorization': `Bearer ${this.props.token}`,
                 'Content-Type': 'application/json'},
                 JSON.stringify({
