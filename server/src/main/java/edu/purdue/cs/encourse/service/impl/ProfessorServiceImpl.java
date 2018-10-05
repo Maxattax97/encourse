@@ -293,14 +293,31 @@ public class ProfessorServiceImpl implements ProfessorService {
         if (DEBUG == true) {
             testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
         }
-        /*
         else {
-            Student student = studentRepository.findByUserName(userName);
-            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-            testResult = userName + ";" + project.getBestGrade();
-            testResult = testResult.substring(0, testResult.length() - 1);
+            List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+            String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+            String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+            try {
+                BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+                BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+                for (StudentProject p : projects) {
+                    Student student = studentRepository.findByUserID(p.getStudentID());
+                    String visibleTestResult = student.getUserName() + ";" + p.getBestVisibleGrade();
+                    visibleTestResult = visibleTestResult.substring(0, visibleTestResult.length() - 1);
+                    String hiddenTestResult = student.getUserName() + ";" + p.getBestHiddenGrade();
+                    hiddenTestResult = hiddenTestResult.substring(0, hiddenTestResult.length() - 1);
+                    visibleWriter.write(visibleTestResult);
+                    visibleWriter.write("\n");
+                    hiddenWriter.write(hiddenTestResult);
+                    hiddenWriter.write("\n");
+                }
+                visibleWriter.close();
+                hiddenWriter.close();
+            }
+            catch(IOException e) {
+                return new JSONReturnable(-1, null);
+            }
         }
-        */
         // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_class_progress.py";
         String command = "python " + pyPath + " " + testResult;
@@ -340,7 +357,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         } else {
             Student student = studentRepository.findByUserName(userName);
             StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-            testResult = userName + ";" + project.getBestGrade();
+            testResult = userName + ";" + project.getBestVisibleGrade() + project.getBestHiddenGrade();
             testResult = testResult.substring(0, testResult.length() - 1);
         }
         String pyPath = pythonPath + "get_statistics.py";
@@ -708,16 +725,21 @@ public class ProfessorServiceImpl implements ProfessorService {
                 }
                 Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + testCaseDirectory);
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String result = stdInput.readLine();
+                String visibleResult = stdInput.readLine();
                 process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory);
                 stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                result = result + stdInput.readLine();
-                double grade = parseProgressForProject(projectID, result);
+                String hiddenResult = stdInput.readLine();
+                double visibleGrade = parseProgressForProject(projectID, visibleResult);
+                double hiddenGrade = parseProgressForProject(projectID, hiddenResult);
                 boolean exists = false;
                 for(StudentProjectDate d : projectDates) {
                     if(d.getProjectIdentifier().equals(p.getProjectIdentifier())) {
-                        if(grade > parseProgressForProject(projectID, d.getDateGrade())) {
-                            d.setDateGrade(result);
+                        if(visibleGrade > parseProgressForProject(projectID, d.getDateVisibleGrade())) {
+                            d.setDateVisibleGrade(visibleResult);
+                            d = studentProjectDateRepository.save(d);
+                        }
+                        if(hiddenGrade > parseProgressForProject(projectID, d.getDateHiddenGrade())) {
+                            d.setDateHiddenGrade(hiddenResult);
                             studentProjectDateRepository.save(d);
                         }
                         exists = true;
@@ -725,11 +747,15 @@ public class ProfessorServiceImpl implements ProfessorService {
                     }
                 }
                 if(!exists) {
-                    StudentProjectDate projectDate = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, result);
+                    StudentProjectDate projectDate = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleResult, hiddenResult);
                     studentProjectDateRepository.save(projectDate);
                 }
-                if(p.getBestGrade() == null || grade > parseProgressForProject(projectID, p.getBestGrade())) {
-                    p.setBestGrade(result);
+                if(p.getBestVisibleGrade() == null || visibleGrade > parseProgressForProject(projectID, p.getBestVisibleGrade())) {
+                    p.setBestVisibleGrade(visibleResult);
+                    p = studentProjectRepository.save(p);
+                }
+                if(p.getBestHiddenGrade() == null || hiddenGrade > parseProgressForProject(projectID, p.getBestHiddenGrade())) {
+                    p.setBestHiddenGrade(hiddenResult);
                     studentProjectRepository.save(p);
                 }
             }
@@ -766,16 +792,21 @@ public class ProfessorServiceImpl implements ProfessorService {
                 try {
                     Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + " " + testCaseDirectory);
                     BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    String result = stdInput.readLine();
+                    String visibleResult = stdInput.readLine();
                     process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory);
                     stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    result = result + stdInput.readLine();
-                    double grade = parseProgressForProject(projectID, result);
+                    String hiddenResult = stdInput.readLine();
+                    double visibleGrade = parseProgressForProject(projectID, visibleResult);
+                    double hiddenGrade = parseProgressForProject(projectID, hiddenResult);
                     boolean exists = false;
                     for(StudentProjectDate d : projectDates) {
                         if(d.getProjectIdentifier().equals(p.getProjectIdentifier())) {
-                            if(grade > parseProgressForProject(projectID, d.getDateGrade())) {
-                                d.setDateGrade(result);
+                            if(visibleGrade > parseProgressForProject(projectID, d.getDateVisibleGrade())) {
+                                d.setDateVisibleGrade(visibleResult);
+                                d = studentProjectDateRepository.save(d);
+                            }
+                            if(hiddenGrade > parseProgressForProject(projectID, d.getDateHiddenGrade())) {
+                                d.setDateHiddenGrade(hiddenResult);
                                 studentProjectDateRepository.save(d);
                             }
                             exists = true;
@@ -783,11 +814,15 @@ public class ProfessorServiceImpl implements ProfessorService {
                         }
                     }
                     if(!exists) {
-                        StudentProjectDate projectDate = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, result);
+                        StudentProjectDate projectDate = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleResult, hiddenResult);
                         studentProjectDateRepository.save(projectDate);
                     }
-                    if(grade > parseProgressForProject(projectID, p.getBestGrade())) {
-                        p.setBestGrade(result);
+                    if(visibleGrade > parseProgressForProject(projectID, p.getBestVisibleGrade())) {
+                        p.setBestVisibleGrade(visibleResult);
+                        p = studentProjectRepository.save(p);
+                    }
+                    if(hiddenGrade > parseProgressForProject(projectID, p.getBestHiddenGrade())) {
+                        p.setBestHiddenGrade(hiddenResult);
                         studentProjectRepository.save(p);
                     }
                     hasProject = true;
