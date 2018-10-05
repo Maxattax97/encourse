@@ -35,7 +35,7 @@ class CourseModal extends Component {
             this.props.setDirectory(`${url}`)
         }
         for(let project in this.props.projects) {
-            this.props.modifyProject(`${url}/secured/modify/project?projectID=${project.id}&field=testRate&value=${this.state.interval}`,
+            this.props.modifyProject(`${url}/api/modify/project?projectID=${project.id}&field=testRate&value=${this.state.interval}`,
             {'Authorization': `Bearer ${this.props.token}`})
         }    
     };

@@ -5,8 +5,9 @@ import checkmarkIcon from "../../img/checkmark.svg"
 import backIcon from "../../img/back.svg"
 import Modal from "./Modal";
 import TestScriptList from "./util/TestScriptList";
-import {getClassProjects, setCurrentProject} from "../../redux/actions";
-import connect from "react-redux/es/connect/connect";
+import { addProject } from "../../redux/actions";
+import url from '../../server'
+import { connect } from "react-redux"
 
 function getEmptyState(props) {
     return {
@@ -87,6 +88,16 @@ class ProjectModal extends Component {
     submitProject = () => {
         if(this.state.new_project) {
             //TODO Bucky add new project
+            this.props.addProject(`${url}/secured/add/project`, 
+            {'Authorization': `Bearer ${this.props.token}`},
+            {
+                courseID: 'cs252',
+                semester: 'Fall2018',
+                projectName: this.state.name,
+                repoName: this.source_name,
+                startDate: this.created_date,
+                endDate: this.due_date,
+            })
         }
         else {
             //TODO Bucky update new project
@@ -206,6 +217,7 @@ class ProjectModal extends Component {
 
 const mapStateToProps = (state) => {
     return {
+        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
         current_project: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0
     }
@@ -213,7 +225,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getClassProjects: (url, headers) => dispatch(getClassProjects(url, headers))
+        addProject: (url, headers, body) => dispatch(addProject(url, headers, body))
     }
 };
 

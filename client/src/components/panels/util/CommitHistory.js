@@ -31,7 +31,7 @@ class CommitHistory extends Component {
     }
 
     fetch = (props) => {
-        props.getCommitHistory(`${url}/secured/commitList?projectID=${props.projectID}&userName=${props.id}`,
+        props.getCommitHistory(`${url}/api/commitList?projectID=${props.projectID}&userName=${props.id}`,
         {'Authorization': `Bearer ${props.token}`})
     }
 

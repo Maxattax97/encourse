@@ -10,7 +10,7 @@ import url from '../../server'
 class TopNavigation extends Component {
 
     logOut = () => {
-        this.props.logOut(`${url}/secured/logout`, {
+        this.props.logOut(`${url}/api/logout`, {
             'Authorization': `Bearer ${this.props.token}`
         })
     }

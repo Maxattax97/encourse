@@ -46,7 +46,7 @@ class CommitHistoryHistogram extends Component {
     }
 
     fetch = (props) => {
-        props.getData(`${url}/secured/commitCount?projectID=${props.projectID}&userName=${props.id}`,
+        props.getData(`${url}/api/commitCount?projectID=${props.projectID}&userName=${props.id}`,
         {'Authorization': `Bearer ${props.token}`})
     }
 

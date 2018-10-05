@@ -8,6 +8,7 @@ export {
     setCurrentProject,
     getClassProjectsHasError, getClassProjectsIsLoading, getClassProjectsDataSuccess, getClassProjects,
     modifyProjectHasError, modifyProjectIsLoading, modifyProjectDataSuccess, modifyProject,
+    addProjectHasError, addProjectIsLoading, addProjectDataSuccess, addProject,
 } from './projects'
 
 export {
