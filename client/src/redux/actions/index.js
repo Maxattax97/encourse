@@ -1,6 +1,7 @@
 export { 
     getStudentPreviewsHasError, getStudentPreviewsIsLoading, getStudentPreviewsDataSuccess, getStudentPreviews,
     getClassProgressHasError, getClassProgressIsLoading, getClassProgressDataSuccess, getClassProgress,
+    getTestBarGraphHasError, getTestBarGraphIsLoading, getTestBarGraphDataSuccess, getTestBarGraph,
     setDirectoryHasError, setDirectoryIsLoading, setDirectoryDataSuccess, setDirectory,
 } from './course' 
 

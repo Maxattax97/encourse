@@ -28,6 +28,21 @@ function course(state = {}, action) {
                 getClassProgressData: action.data,
                 getClassProgressIsFinished: true
             })
+        case 'GET_TEST_BAR_GRAPH_HAS_ERROR':
+            return Object.assign({}, state, {
+                getTestBarGraphHasError: action.hasError,
+                getTestBarGraphIsFinished: true
+            })
+        case 'GET_TEST_BAR_GRAPH_IS_LOADING':
+            return Object.assign({}, state, {
+                getTestBarGraphIsLoading: action.isLoading,
+                getTestBarGraphIsFinished: false
+            })
+        case 'GET_TEST_BAR_GRAPH_DATA_SUCCESS':
+            return Object.assign({}, state, {
+                getTestBarGraphData: action.data,
+                getTestBarGraphIsFinished: true
+            })
         case 'SET_DIRECTORY_HAS_ERROR':
             return Object.assign({}, state, {
                 setDirectoryHasError: action.hasError,
