@@ -82,3 +82,28 @@ export function modifyProjectDataSuccess(data) {
 export const modifyProject = genericDispatch(
     modifyProjectHasError, modifyProjectIsLoading, modifyProjectDataSuccess, 'POST'
 )
+
+export function addTestHasError(hasError) {
+    return {
+        type: 'ADD_TEST_HAS_ERROR',
+        hasError
+    }
+}
+
+export function addTestIsLoading(isLoading) {
+    return {
+        type: 'ADD_TEST_IS_LOADING',
+        isLoading
+    }
+}
+
+export function addTestDataSuccess(data) {
+    return {
+        type: 'ADD_TEST_DATA_SUCCESS',
+        data
+    }
+}
+
+export const addTest = genericDispatch(
+    addTestHasError, addTestIsLoading, addTestDataSuccess, 'POST'
+)

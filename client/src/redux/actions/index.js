@@ -9,6 +9,7 @@ export {
     getClassProjectsHasError, getClassProjectsIsLoading, getClassProjectsDataSuccess, getClassProjects,
     modifyProjectHasError, modifyProjectIsLoading, modifyProjectDataSuccess, modifyProject,
     addProjectHasError, addProjectIsLoading, addProjectDataSuccess, addProject,
+    addTestHasError, addTestIsLoading, addTestDataSuccess, addTest,
 } from './projects'
 
 export {

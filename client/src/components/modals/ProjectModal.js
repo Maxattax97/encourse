@@ -5,7 +5,7 @@ import checkmarkIcon from "../../img/checkmark.svg"
 import backIcon from "../../img/back.svg"
 import Modal from "./Modal";
 import TestScriptList from "./util/TestScriptList";
-import { addProject } from "../../redux/actions";
+import { addProject, modifyProject, addTest } from "../../redux/actions";
 import url from '../../server'
 import { connect } from "react-redux"
 
@@ -72,11 +72,11 @@ class ProjectModal extends Component {
             if (state.new_project)
                 return getStateFromProjectsProp(props);
             else
-                return getEmptyState(props);
+                return getEmptyState(props)
         }
 
         if(state.show !== props.show || props.current_project !== state.current_project)
-            return getStateFromProjectsProp(props);
+            return getStateFromProjectsProp(props)
         else
             return state;
     }
@@ -87,22 +87,45 @@ class ProjectModal extends Component {
 
     submitProject = () => {
         if(this.state.new_project) {
-            //TODO Bucky add new project
-            this.props.addProject(`${url}/secured/add/project`, 
-            {'Authorization': `Bearer ${this.props.token}`},
-            {
+            //TODO: remove courseID and semester hardcoding
+            this.props.addProject(`${url}/api/add/project`, 
+            {'Authorization': `Bearer ${this.props.token}`,
+            'Content-Type': 'application/json'},
+            JSON.stringify({
                 courseID: 'cs252',
                 semester: 'Fall2018',
                 projectName: this.state.name,
-                repoName: this.source_name,
-                startDate: this.created_date,
-                endDate: this.due_date,
-            })
+                repoName: this.state.source_name,
+                startDate: this.state.created_date,
+                dueDate: this.state.due_date,
+                projectIdentifier: 'cs252 Fall2018:' + this.state.name,
+            }))
         }
         else {
-            //TODO Bucky update new project
+            this.props.modifyProject(`${url}/api/modify/project?projectID=${this.props.currentProjectId}&field=startDate&value=${this.state.created_date}`,
+            {'Authorization': `Bearer ${this.props.token}`})
+            this.props.modifyProject(`${url}/api/modify/project?projectID=${this.props.currentProjectId}&field=dueDate&value=${this.state.due_date}`,
+            {'Authorization': `Bearer ${this.props.token}`})
+            for(let script in this.state.test_script) {
+                this.postTest(script, false)
+            } 
+            for(let script in this.state.hidden_test_script) {
+                this.postTest(script, true)
+            }
         }
-    };
+    }
+
+    postTest = (script, isHidden) => {
+        if(script.file) {
+            //TODO: ADD BODY WITH FILE CONTENTS
+            this.props.addTest(`${url}/api/add/test?projectID=${this.props.currentProjectId}&testName=${script.testScriptName}&isHidden=${isHidden}&points=${script.pointValue}`,
+            {'Authorization': `Bearer ${this.props.token}`})
+        }   
+        if(script.pointValue && !script.file) {
+            //TODO: Only point value changed, add API call whenever endpoint is changed
+        }
+       
+    }
 
     deleteProject = () => {
         if(this.state.new_project) {
@@ -219,13 +242,16 @@ const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
-        current_project: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0
+        current_project: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addProject: (url, headers, body) => dispatch(addProject(url, headers, body))
+        addProject: (url, headers, body) => dispatch(addProject(url, headers, body)),
+        modifyProject: (url, headers, body) => dispatch(modifyProject(url, headers, body)),
+        addTest: (url, headers, body) => dispatch(addTest(url, headers, body)),
     }
 };
 
