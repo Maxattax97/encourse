@@ -176,14 +176,19 @@ public class ProfessorServiceImpl implements ProfessorService {
             projectTestScriptRepository.delete(t);
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        for(ProjectTestScript t : testScripts) {
-            projectTestScriptRepository.delete(t);
+        for(StudentProject p : projects) {
+            studentProjectRepository.delete(p);
+        }
+        List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifier(projectID);
+        for(StudentProjectDate p : projectDates) {
+            studentProjectDateRepository.delete(p);
         }
         projectRepository.delete(project);
         return 0;
     }
 
     /** Modifies project information like start and end dates **/
+    // TODO: RACE CONDITION FOR MULTIPLE CALLS SIMULTANEOUSLY
     public int modifyProject(@NonNull String projectID, @NonNull String field, String value) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
@@ -208,7 +213,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    private Project getProject(@NonNull String projectID) {
+    public Project getProject(@NonNull String projectID) {
         return projectRepository.findByProjectIdentifier(projectID);
     }
 

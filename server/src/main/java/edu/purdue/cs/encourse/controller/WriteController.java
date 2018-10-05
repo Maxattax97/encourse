@@ -164,17 +164,20 @@ public class WriteController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/project", method = RequestMethod.POST, consumes = "application/json")
-    public @ResponseBody
-    ResponseEntity<?> addProject(@RequestBody String json) {
+    public @ResponseBody ResponseEntity<?> addProject(@RequestBody String json) {
         int result;
         Project p;
         try {
+            System.out.println("BEFORE READING: " + json);
             p = new ObjectMapper().readValue(json, Project.class);
+            System.out.println(p);
             result = professorService.addProject(p.getCourseID(), p.getSemester(), p.getProjectName(), p.getRepoName(), p.getStartDate(), p.getDueDate(), p.getTestRate());
+            System.out.println("AFTER PARSING");
             if (result == 0) {
-                professorService.assignProject(p.getProjectIdentifier());
+                professorService.assignProject(p.getCourseID() + " " + p.getSemester() + ": " + p.getProjectName());
             }
         } catch (IOException e) {
+            System.out.println(e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>((p != null)? p: result, (p != null)? HttpStatus.CREATED: HttpStatus.NOT_MODIFIED);

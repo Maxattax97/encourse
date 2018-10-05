@@ -1,5 +1,6 @@
 package edu.purdue.cs.encourse.service;
 
+import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import lombok.NonNull;
@@ -12,6 +13,7 @@ public interface ProfessorService {
     int assignProject(@NonNull String projectID);
     int assignProjectToStudent(@NonNull String projectID, @NonNull String userName);
     int modifyProject(@NonNull String projectID, @NonNull String field, String value);
+    int deleteProject(@NonNull String projectID);
     int cloneProjects(@NonNull String projectID);
     int pullProjects(@NonNull String projectID);
 
@@ -38,4 +40,6 @@ public interface ProfessorService {
     int assignTeachingAssistantToStudent(@NonNull String teachAssistUserName, @NonNull String studentUserName);
 
     int testPythonDirectory();
+
+    Project getProject(String projectID);
 }

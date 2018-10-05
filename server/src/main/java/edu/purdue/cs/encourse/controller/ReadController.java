@@ -127,6 +127,21 @@ public class ReadController {
     }
 
     @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/testSummary", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getTestSummary(@RequestParam(name = "projectID") String projectID) {
+        // TODO: RYAN PUT YOUR SHIT HERE
+        JSONReturnable returnJson = null; //professorService.getTestSummary(projectID);
+        if (returnJson == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        String json = returnJson.jsonObject.toJSONString();
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStatistics(@RequestParam(name = "projectID") String projectID,
                                                          @RequestParam(name = "userName") String userName) {
