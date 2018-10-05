@@ -16,14 +16,17 @@ function course(state = {}, action) {
         case 'GET_CLASS_PROGRESS_HAS_ERROR':
             return Object.assign({}, state, {
                 getClassProgressHasError: action.hasError,
+                getClassProgressIsFinished: true
             })
         case 'GET_CLASS_PROGRESS_IS_LOADING':
             return Object.assign({}, state, {
                 getClassProgressIsLoading: action.isLoading,
+                getClassProgressIsFinished: false
             })
         case 'GET_CLASS_PROGRESS_DATA_SUCCESS':
             return Object.assign({}, state, {
                 getClassProgressData: action.data,
+                getClassProgressIsFinished: true
             })
         default:
             return state

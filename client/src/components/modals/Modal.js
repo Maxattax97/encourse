@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
-import exitIcon from '../img/x.svg'
-import Card from "./Card";
+import exitIcon from '../../img/x.svg'
+import Card from "../Card";
 
 class Modal extends Component {
 

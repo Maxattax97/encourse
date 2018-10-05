@@ -30,11 +30,11 @@ class Login extends Component {
                 </header>
                 <div className="credentials-container">
                     <form onSubmit={this.handleSubmit}>
-                        <p>Username</p>
+                        <h3>Username</h3>
                         <input type="text" name="username" />
-                        <p>Password</p>
+                        <h3>Password</h3>
                         <input type="password" name="password" />
-                        <br />
+                        <h3></h3>
                         <input type="submit" value="Enter Credentials" />
                     </form>
                 </div>

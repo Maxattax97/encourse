@@ -4,12 +4,12 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
 import '../css/Main.css';
-import Navbar from './Navbar'
-import CoursePanel from './course/CoursePanel'
-import ProjectOptions from "./project/ProjectOptions"
-import StudentPanel from './student/StudentPanel'
-import AdminPanel from './AdminPanel'
-import Preferences from './Preferences'
+import Navbar from './navigation/TopNavigation'
+import CoursePanel from './panels/CoursePanel'
+import ProjectModal from "./modals/ProjectModal"
+import StudentPanel from './panels/StudentPanel'
+import AdminPanel from './panels/AdminPanel'
+import PreferencePanel from './panels/PreferencePanel'
 
 class Main extends Component {
 
@@ -25,19 +25,19 @@ class Main extends Component {
                             return <Redirect to="/course"/>
                         }}/>
                         <Route path="/project-settings" render={(navProps) =>
-                            <ProjectOptions {...navProps} />
+                            <ProjectModal {...navProps} />
                         } />
                         <Route path="/course" render={(navProps) =>
                             <CoursePanel {...navProps} />
                         }/>
                         <Route path="/student/:id" render={(navProps) =>
-                            <StudentPanel {...navProps}/>
+                            <StudentPanel {...navProps} />
                         }/>
                         <Route path="/admin" render={(navProps) =>
-                            <AdminPanel />
+                            <AdminPanel {...navProps} />
                         }/>
                         <Route path="/settings" render={(navProps) =>
-                            <Preferences />
+                            <PreferencePanel />
                         }/>
                         <Route path='/' render={(navProps) => <Redirect to="/panel" />}/>
                     </Switch>

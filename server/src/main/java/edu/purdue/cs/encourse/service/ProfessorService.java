@@ -8,7 +8,7 @@ import org.json.simple.JSONArray;
 import java.io.File;
 
 public interface ProfessorService {
-    int addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate);
+    int addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate);
     int assignProject(@NonNull String projectID);
     int assignProjectToStudent(@NonNull String projectID, @NonNull String userName);
     int modifyProject(@NonNull String projectID, @NonNull String field, String value);
@@ -29,6 +29,7 @@ public interface ProfessorService {
     String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName);
 
     int uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents, boolean isHidden, int points);
+    int modifyTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String field, @NonNull String value);
     int runTestall(@NonNull String projectID);
     int runTestallForStudent(@NonNull String projectID, @NonNull String userName);
 

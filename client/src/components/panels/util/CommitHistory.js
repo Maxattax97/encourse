@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import Card from "../Card";
+import Card from "../../Card";
 
-import { getCommitHistory } from '../../redux/actions'
-import url from '../../server'
+import { getCommitHistory } from '../../../redux/actions/index'
+import url from '../../../server'
+
+const defaultData = [{"date": "2018-08-25", "files": ["myMalloc.c", "printing.c", "testing.c"], "time_spent": "50 minutes", "additions": 2060, "deletions": 2, "commit_count": 3}, {"date": "2018-08-30", "files": ["myMalloc.c", "myMalloc.h", "Makefile"], "time_spent": "3 hours", "additions": 159, "deletions": 100, "commit_count": 25}, {"date": "2018-09-04", "files": ["myMalloc.c"], "time_spent": "4 hours", "additions": 147, "deletions": 45, "commit_count": 15}, {"date": "2018-09-05", "files": ["myMalloc.c", "tests/Makefile"], "time_spent": "6 hours", "additions": 279, "deletions": 132, "commit_count": 28}, {"date": "2018-09-06", "files": [".local.git.out", "myMalloc.c", "examples/composite_ex"], "time_spent": "3 hours", "additions": 1072, "deletions": 152, "commit_count": 29}]
 
 class CommitHistory extends Component {
 
@@ -11,7 +13,6 @@ class CommitHistory extends Component {
         super(props);
 
         this.state = {
-            commits: [{"date": "2018-08-25", "files": ["myMalloc.c", "printing.c", "testing.c"], "time_spent": "50 minutes", "additions": 2060, "deletions": 2, "commit_count": 3}, {"date": "2018-08-30", "files": ["myMalloc.c", "myMalloc.h", "Makefile"], "time_spent": "3 hours", "additions": 159, "deletions": 100, "commit_count": 25}, {"date": "2018-09-04", "files": ["myMalloc.c"], "time_spent": "4 hours", "additions": 147, "deletions": 45, "commit_count": 15}, {"date": "2018-09-05", "files": ["myMalloc.c", "tests/Makefile"], "time_spent": "6 hours", "additions": 279, "deletions": 132, "commit_count": 28}, {"date": "2018-09-06", "files": [".local.git.out", "myMalloc.c", "examples/composite_ex"], "time_spent": "3 hours", "additions": 1072, "deletions": 152, "commit_count": 29}],
             formattedData: [],
         }
     }
@@ -21,7 +22,7 @@ class CommitHistory extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(this.props.isLoading && !nextProps.isLoading) {
+        if(!this.props.isFinished && nextProps.isFinished) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -35,9 +36,11 @@ class CommitHistory extends Component {
     }
 
     formatApiData = (udata) => {
-        const data = udata.data;
-        console.log('format api data', data)
-        const formattedData = data.slice();
+        if (!udata) {
+            return defaultData
+        }
+        const data = udata.data
+        const formattedData = data.slice()
 
         return formattedData;
     }
@@ -51,8 +54,8 @@ class CommitHistory extends Component {
                 <h3 className="break-line title" />
                 <div className="student-commits float-height card-overflow">
                     {
-                        this.props.commits &&
-                        this.props.commits.map((commit) =>
+                        this.state.formattedData &&
+                        this.state.formattedData.map((commit) =>
                             <Card component={
                                 <div className="student-commit-container">
                                     <h5>
@@ -84,7 +87,8 @@ const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         commits: state.student && state.student.getCommitHistoryData ? state.student.getCommitHistoryData : [],
-        isLoading: state.student ? state.student.getCommitHistoryIsLoading : true
+        isLoading: state.student ? state.student.getCommitHistoryIsLoading : true,
+        isFinished: state.student ? state.student.getCommitHistoryIsFinished : false,
     }
 }
 

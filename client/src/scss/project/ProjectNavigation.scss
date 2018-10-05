@@ -99,8 +99,9 @@
   }
 
   .projects-new {
-    padding: .85em 0;
-    height: 3em;
+    padding: .75em 0 .75em .75em;
+    width: calc(100% - .75em);
+    height: 2.75em;
     cursor: pointer;
 
     img {

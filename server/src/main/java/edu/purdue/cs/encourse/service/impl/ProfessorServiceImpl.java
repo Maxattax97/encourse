@@ -22,6 +22,8 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import lombok.NonNull;
 
+import javax.persistence.criteria.CriteriaBuilder;
+
 @Service(value = ProfessorServiceImpl.NAME)
 public class ProfessorServiceImpl implements ProfessorService {
 
@@ -97,19 +99,19 @@ public class ProfessorServiceImpl implements ProfessorService {
         double earnedPoints = 0.0;
         double maxPoints = 0.0;
         for(String r : testResults) {
-            String testName = testOutput.split(":")[0];
+            String testName = r.split(":")[0];
             ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
             maxPoints += testScript.getPointsWorth();
             if(r.endsWith("P")) {
                 earnedPoints += testScript.getPointsWorth();
             }
         }
-        return earnedPoints / maxPoints;
+        return (earnedPoints / maxPoints) * 100;
     }
 
     /** Adds a new project to the database, which needs to be done before cloning the project in the course hub **/
-    public int addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate) {
-        Project project = new Project(courseID, semester, projectName, repoName, startDate, dueDate);
+    public int addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate) {
+        Project project = new Project(courseID, semester, projectName, repoName, startDate, dueDate, testRate);
         if(projectRepository.existsByProjectIdentifier(project.getProjectIdentifier())) {
             return -1;
         }
@@ -172,11 +174,18 @@ public class ProfessorServiceImpl implements ProfessorService {
             case "startDate": project.setStartDate(value); break;
             case "dueDate": project.setDueDate(value); break;
             case "repoName": project.setRepoName(value); break;
-            default: return -2;
+            case "testRate":
+                try {
+                    project.setTestRate(Integer.parseInt(value));
+                    project.setTestCount(Integer.parseInt(value) - 1);
+                    break;
+                }
+                catch(NumberFormatException e) {
+                    return -2;
+                }
+            default: return -3;
         }
-        if(projectRepository.save(project) == null) {
-            return -3;
-        }
+        projectRepository.save(project);
         return 0;
     }
 
@@ -266,21 +275,15 @@ public class ProfessorServiceImpl implements ProfessorService {
     public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
-
         if(dailyCountsFile == null) {
             return new JSONReturnable(-1, null);
         }
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
-
-		System.out.println("\n\n\n" + dailyCountsFile + "\n" + commitLogFile);
-
-        /** python executable.py dailyCountsFile commitLogFile userName **/
         String pyPath = pythonPath + "get_individual_progress.py";
         String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
-
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
@@ -290,14 +293,18 @@ public class ProfessorServiceImpl implements ProfessorService {
         if (DEBUG == true) {
             testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
         }
-        // TODO:    JARDON replace testResult with a file path to a file
-        //          with a line per student, listing pass/fail test scores
-
-        /** python executable.py dailyCountsFile commitLogFile userName **/
+        /*
+        else {
+            Student student = studentRepository.findByUserName(userName);
+            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+            testResult = userName + ";" + project.getBestGrade();
+            testResult = testResult.substring(0, testResult.length() - 1);
+        }
+        */
+        // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_class_progress.py";
         String command = "python " + pyPath + " " + testResult;
         JSONReturnable json = runPython(command);
-
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
@@ -305,25 +312,15 @@ public class ProfessorServiceImpl implements ProfessorService {
     public JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
-
-        //Testing
-        //dailyCountsFile = pythonPath + "test_datasets/sampleCountsDay.txt";
-        //commitLogFile = pythonPath + "test_datasets/sampleCommitList.txt";
-
-		System.out.println("\n\n\n" + dailyCountsFile + "\n" + commitLogFile);
-
         if(dailyCountsFile == null) {
             return new JSONReturnable(-1, null);
         }
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
-
-        /** python executable.py commitLogFile dailyCountsFile userName **/
         String pyPath = pythonPath + "get_add_del.py";
         String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
-
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
@@ -331,55 +328,68 @@ public class ProfessorServiceImpl implements ProfessorService {
     public JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
-
         if(dailyCountsFile == null) {
             return new JSONReturnable(-1, null);
         }
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
-
-		System.out.println("\n\n\n" + dailyCountsFile + "\n" + commitLogFile);
-
         String testResult = null;
         if (DEBUG == true) {
             testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
         } else {
             Student student = studentRepository.findByUserName(userName);
             StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-            testResult = project.getBestGrade();
+            testResult = userName + ";" + project.getBestGrade();
+            testResult = testResult.substring(0, testResult.length() - 1);
         }
-        /** python executable.py commitLogFile dailyCountsFile project.getBestGrade() userName **/
         String pyPath = pythonPath + "get_statistics.py";
         String command = "python " + pyPath + " " + userName + " " + dailyCountsFile + " " + commitLogFile + " " + testResult;
         JSONReturnable json = runPython(command);
-
+        if(json == null || json.getJsonObject() == null) {
+            return json;
+        }
         if (DEBUG == true) {
             executeBashScript("cleanDirectory.sh src/main/temp");
             return json;
         }
-
         Student student = studentRepository.findByUserName(userName);
         StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-        testResult = project.getBestGrade();
-
         JSONArray array = (JSONArray)json.getJsonObject().get("data");
         for(int i = 0; i < array.size(); i++) {
             JSONObject data = (JSONObject)array.get(i);
-            if(data.get("stat_name").equals("End Date")) {
+            if (data.get("stat_name").equals("End Date")) {
                 project.setMostRecentCommitDate(data.get("stat_value").toString());
             }
-            if(data.get("stat_name").equals("Additions")) {
-                project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+            else if (data.get("stat_name").equals("Additions")) {
+                try {
+                    project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setTotalLinesAdded(0);
+                }
             }
-            else if(data.get("stat_name").equals("Deletions")) {
-                project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+            else if (data.get("stat_name").equals("Deletions")) {
+                try {
+                    project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setTotalLinesRemoved(0);
+                }
+            } else if (data.get("stat_name").equals("Commit Count")) {
+                try {
+                    project.setCommitCount(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setCommitCount(0);
+                }
             }
-            else if(data.get("stat_name").equals("Commit Count")) {
-                project.setCommitCount(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-            }
-            else if(data.get("stat_name").equals("Estimated Time Spent")) {
-                project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
+            else if (data.get("stat_name").equals("Estimated Time Spent")) {
+                try {
+                    project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
+                } catch (NumberFormatException e) {
+                    project.setTotalTimeSpent(0.0);
+                }
             }
         }
         studentProjectRepository.save(project);
@@ -389,12 +399,9 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     public JSONReturnable getCommitCounts(@NonNull String projectID, @NonNull String userName) {
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
-
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
-
-        /** python executable.py commitLogFile dailyCountsFile userName **/
         String pyPath = pythonPath + "get_git_commits.py";
         String command = "python " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
@@ -405,21 +412,12 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     public JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userName) {
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
-
-        //Testing
-        //commitLogFile = pythonPath + "test_datasets/sampleCommitList.txt";
-
         if(commitLogFile == null) {
             return new JSONReturnable(-1, null);
         }
-
-		System.out.println("\n\n\n" + commitLogFile);
-
-        /** python executable.py commitLogFile userName **/
         String pyPath = pythonPath + "get_git_commit_list.py";
         String command = "python " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
-
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
@@ -556,8 +554,15 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(sections.isEmpty()) {
             return -2;
         }
-        new File(sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName()).mkdirs();
-        String filePath = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName() + "/" + testName;
+        String filePath;
+        if(isHidden) {
+            new File(sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName()).mkdirs();
+            filePath = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName() + "/" + testName;
+        }
+        else {
+            new File(sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName()).mkdirs();
+            filePath = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName() + "/" + testName;
+        }
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
             writer.write(testContents);
@@ -574,6 +579,100 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
+    /** Modify an uploaded testing script to either change its contents, point value, or if it is hidden **/
+    public int modifyTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String field, @NonNull String value) {
+        ProjectTestScript script = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
+        if(script == null) {
+            return -1;
+        }
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -2;
+        }
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
+            return -3;
+        }
+        if(field.equals("content")) {
+            String filePath;
+            if(script.isHidden()) {
+                new File(sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName()).mkdirs();
+                filePath = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName() + "/" + testName;
+            }
+            else {
+                new File(sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName()).mkdirs();
+                filePath = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName() + "/" + testName;
+            }
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+                writer.write("value");
+                writer.close();
+            }
+            catch(IOException e) {
+                return -4;
+            }
+            if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
+                return -5;
+            }
+            return 0;
+        }
+        else if(field.equals("hidden")) {
+            try {
+                boolean isHidden = Boolean.parseBoolean(value);
+                if(script.isHidden() == isHidden) {
+                    return 0;
+                }
+                script.setHidden(isHidden);
+            }
+            catch(Exception e) {
+                return -6;
+            }
+            String newFilePath;
+            String oldFilePath;
+            if(script.isHidden()) {
+                new File(sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName()).mkdirs();
+                newFilePath = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName() + "/" + testName;
+                oldFilePath = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName() + "/" + testName;
+            }
+            else {
+                new File(sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName()).mkdirs();
+                newFilePath = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName() + "/" + testName;
+                oldFilePath = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName() + "/" + testName;
+            }
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(oldFilePath));
+                BufferedWriter writer = new BufferedWriter(new FileWriter(newFilePath));
+                String line;
+                while((line = reader.readLine()) != null) {
+                    writer.write(line);
+                    writer.write("\n");
+                }
+                reader.close();
+                writer.close();
+                new File(oldFilePath).delete();
+            }
+            catch(IOException e) {
+                return -7;
+            }
+            if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
+                return -8;
+            }
+        }
+        else if(field.equals("points")) {
+            try {
+                script.setPointsWorth(Integer.parseInt(value));
+            }
+            catch(NumberFormatException e) {
+                return -9;
+            }
+        }
+        else {
+            return -10;
+        }
+        projectTestScriptRepository.save(script);
+        return 0;
+    }
+
     /** Runs a generic testall script, which simply checks if nothing is output, which usually means test was passed,
         and assigns a pass or fail to each test case based on if there was no output from test script **/
     public int runTestall(@NonNull String projectID) {
@@ -587,6 +686,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
         String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
+        String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
         String makefilePath = sections.get(0).getCourseHub() + "/makefiles/" + project.getRepoName() + "/Makefile";
         File directory = new File(testCaseDirectory);
         if(!directory.isDirectory() || directory.listFiles().length == 0) {
@@ -609,6 +709,9 @@ public class ProfessorServiceImpl implements ProfessorService {
                 Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + testCaseDirectory);
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String result = stdInput.readLine();
+                process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory);
+                stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                result = result + stdInput.readLine();
                 double grade = parseProgressForProject(projectID, result);
                 boolean exists = false;
                 for(StudentProjectDate d : projectDates) {
@@ -659,10 +762,14 @@ public class ProfessorServiceImpl implements ProfessorService {
                 List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdDateAndIdStudentID(date, p.getStudentID());
                 String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName() + "/" + testDir;
                 String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
+                String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
                 try {
                     Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + " " + testCaseDirectory);
                     BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     String result = stdInput.readLine();
+                    process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory);
+                    stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    result = result + stdInput.readLine();
                     double grade = parseProgressForProject(projectID, result);
                     boolean exists = false;
                     for(StudentProjectDate d : projectDates) {
@@ -702,11 +809,17 @@ public class ProfessorServiceImpl implements ProfessorService {
     public int pullAndTestAllProjects() {
         int code = 0;
         for(Project project : projectRepository.findAll()) {
-            if(pullProjects(project.getProjectIdentifier()) < 0) {
-                code -= 1;
+            if(project.getTestRate() > 0 && project.getTestCount() <= 0) {
+                if (pullProjects(project.getProjectIdentifier()) < 0) {
+                    code -= 1;
+                }
+                if (runTestall(project.getProjectIdentifier()) < 0) {
+                    code -= 1;
+                }
+                project.setTestCount(project.getTestRate() - 1);
             }
-            if(runTestall(project.getProjectIdentifier()) < 0) {
-                code -= 1;
+            else {
+                project.setTestCount(project.getTestCount() - 1);
             }
         }
         return code;
@@ -730,7 +843,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 System.out.println(error);
             }
             while ((input = stdInput.readLine()) != null) {
-                System.out.println(input);
+                //System.out.println(input);
                 if (input.equals("Hello World")) {
                     return 1;
                 }
@@ -781,7 +894,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     json =  new JSONReturnable(-3, null);
                 }
                 if (obj != null) {
-                    System.out.println(obj);
+                    //System.out.println(obj);
                     JSONObject jsonObject = null;
                     if (obj.getClass() == JSONObject.class) {
                         jsonObject = (JSONObject)obj;

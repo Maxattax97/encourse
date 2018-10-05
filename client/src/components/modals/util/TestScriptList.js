@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 
-import searchIcon from "../../img/search.svg";
-import plusIcon from "../../img/plus.svg";
+import searchIcon from "../../../img/search.svg";
+import plusIcon from "../../../img/plus.svg";
+import deleteIcon from "../../../img/delete.svg";
 
 class TestScriptList extends Component {
 
@@ -14,13 +15,14 @@ class TestScriptList extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
+        //console.log(props, state);
         if(props.script_list && props.script_list.map)
             return {
                 scripts: props.script_list
             };
 
         return {
-            scripts: []
+            scripts: state.scripts ? state.scripts : []
         };
     }
 
@@ -30,19 +32,29 @@ class TestScriptList extends Component {
         this.setState({ scripts : this.state.scripts });
     };
 
+    removeTestScript = (script_index) => {
+        this.state.scripts.splice(script_index, 1);
+
+        this.setState({ scripts: this.state.scripts });
+    };
+
     render() {
         return (
                 <div className="test-scripts-list">
                     {
-                        this.state.scripts.map((script) =>
-                            <div className="scripts-script" key={`${ script.filename }-${ script.pointvalue }`}>
+                        this.state.scripts.map((script, index) =>
+                            <div className="scripts-script" key={`${ index }`}>
+                                <input type="file" ref={ index } style={{display: "none"}}/>
                                 <div className="script-filename">
                                     <img src={ searchIcon } />
                                     <h4>
-                                        { script.filename }
+                                        Test { index + 1 }
                                     </h4>
                                 </div>
-                                <input type="number" placeholder="5" step="1" />
+                                <div className="script-delete" onClick={ () => this.removeTestScript(index) }>
+                                    <img src={deleteIcon} />
+                                </div>
+                                <input type="number" defaultValue="5" step="1" />
                             </div>
                         )
                     }

@@ -11,7 +11,7 @@ class App extends Component {
 
     loggedIn = () => {
         return this.props.token != null;
-    }
+    };
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.logOutHasError) {

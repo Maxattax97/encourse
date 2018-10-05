@@ -3,12 +3,14 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import url from '../../server'
-import { getStudentPreviews, getClassProjects, setCurrentProject, setCurrentStudent, setModalBlur } from '../../redux/actions'
-import ProjectNavigation from '../project/ProjectNavigation'
+import { getStudentPreviews, getClassProjects, setCurrentProject, setCurrentStudent, setModalBlur } from '../../redux/actions/index'
+import ProjectNavigation from '../navigation/ProjectNavigation'
 import Card from '../Card'
-import StudentPreview from './StudentPreview'
+import StudentPreview from './util/StudentPreview'
 import ClassProgressHistogram from '../charts/ClassProgressHistogram'
 import settingsIcon from "../../img/settings.svg";
+import ActionNavigation from "../navigation/ActionNavigation";
+import CourseModal from "../modals/CourseModal";
 
 class CoursePanel extends Component {
 
@@ -24,28 +26,32 @@ class CoursePanel extends Component {
         //TODO: clear class projects/student previews to account for multiple classes
         //TODO: Add course ID functionality for multiple classes
         this.props.getClassProjects(`${url}/secured/projectsData?courseID=cs252&semester=Fall2018`, 
-        {'Authorization': `Bearer ${this.props.token}`})
+        {'Authorization': `Bearer ${this.props.token}`});
         this.props.getStudentPreviews(`${url}/secured/studentsData?courseID=cs252&semester=Fall2018`, 
             {'Authorization': `Bearer ${this.props.token}`})
     }
 
     showStudentPanel = (student) => {
         //TODO: move this setCurrentStudent to StudentPanel, store all students in an array in redux
-        this.props.setCurrentStudent(student)
+        this.props.setCurrentStudent(student);
         history.push(`/student/${student.id}`)
     };
 
     render() {
         return (
             <div className="panel-course">
-                <ProjectNavigation info={this.props.projects}
-                                   onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})}
+                <div className={ this.state.show_course_options ? "blur" : "" }>
+                    <ProjectNavigation onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})}
                                    {...this.props}/>
+                </div>
+
+                <CourseModal show={ this.state.show_course_options }
+                             close={ () => this.setState({ show_course_options: false, modal_blur: "" }) }/>
 
                 <div className="panel-center-content">
 
                     <div className={ `panel-course-content${this.state.modal_blur}` }>
-                        <div className="title">
+                        <div className="title" onClick={ () => this.setState({ show_course_options: true, modal_blur: " blur" })  }>
                             <h1>CS252</h1>
                             <img src={ settingsIcon }/>
                         </div>
@@ -66,6 +72,12 @@ class CoursePanel extends Component {
                                           onClick={() => this.showStudentPanel(student)}/>)
                             }
                         </div>
+                    </div>
+                </div>
+
+                <div className="panel-right-nav">
+                    <div className={ `panel-student-side-content${this.state.modal_blur}` }>
+                        <ActionNavigation />
                     </div>
                 </div>
             </div>

@@ -5,16 +5,17 @@ import Card from '../Card'
 import StudentProgressLineGraph from '../charts/StudentProgressLineGraph'
 import CodeChangesChart from '../charts/CodeChangesChart'
 import CommitFrequencyHistogram from '../charts/CommitFrequencyHistogram'
-import ProjectNavigation from "../project/ProjectNavigation";
-import Modal from "../Modal";
-import ProjectOptions from "../project/ProjectOptions";
+import ProjectNavigation from "../navigation/ProjectNavigation";
+import Modal from "../modals/Modal";
+import ProjectModal from "../modals/ProjectModal";
 import ClassProgressHistogram from "../charts/ClassProgressHistogram";
-import StudentPreview from "../course/StudentPreview";
-import Statistics from './Statistics'
-import CommitHistory from "./CommitHistory";
+import StudentPreview from "./util/StudentPreview";
+import Statistics from './util/Statistics'
+import CommitHistory from "./util/CommitHistory";
 import { history } from "../../redux/store"
-import { getClassProjects, clearStudent } from '../../redux/actions'
+import { getClassProjects, clearStudent } from '../../redux/actions/index'
 import url from '../../server'
+import ActionNavigation from "../navigation/ActionNavigation";
 
 
 class StudentPanel extends Component {
@@ -116,26 +117,7 @@ class StudentPanel extends Component {
                 </div>
                 <div className="panel-right-nav">
                     <div className={ `panel-student-side-content${this.state.modal_blur}` }>
-                        <Card component={
-                            <div className="student-actions-container">
-                                <div className="title">
-                                    <h3>Actions</h3>
-                                </div>
-                                <h3 className="break-line title" />
-                                <h4 className="student-action-test">
-                                    Run Tests
-                                </h4>
-                                <h4 className="student-action-hidden-test">
-                                    Run Hidden Tests
-                                </h4>
-                                <h4 className="student-action-pull-repo">
-                                    Pull Repository
-                                </h4>
-                                <h4 className="student-action-view-report">
-                                    View Plagiarism Report
-                                </h4>
-                            </div>
-                        } />
+                        <ActionNavigation />
                         <Card component={ <CommitHistory projectID={this.props.currentProjectID} id={this.props.currentStudent.id} /> } />
                     </div>
                 </div>

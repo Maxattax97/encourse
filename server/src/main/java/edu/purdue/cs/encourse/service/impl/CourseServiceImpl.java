@@ -81,13 +81,17 @@ public class CourseServiceImpl implements CourseService {
                 continue;
             }
             String[] testResults = p.getBestGrade().split(";");
-            double passedCount = 0.0;
+            double earnedPoints = 0.0;
+            double maxPoints = 0.0;
             for(String r : testResults) {
+                String testName = r.split(":")[0];
+                ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(p.getProjectIdentifier(), testName);
+                maxPoints += testScript.getPointsWorth();
                 if(r.endsWith("P")) {
-                    passedCount++;
+                    earnedPoints += testScript.getPointsWorth();
                 }
             }
-            grades.put(p.getProjectIdentifier(), passedCount / testResults.length);
+            grades.put(p.getProjectIdentifier(), (earnedPoints / maxPoints) * 100);
         }
         return grades;
     }
