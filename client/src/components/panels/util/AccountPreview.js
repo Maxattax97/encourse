@@ -9,21 +9,8 @@ class AccountPreview extends Component {
 
     deleteAccount = () => {
         //TODO!: add parameter to delete any account
-        this.props.removeAccount(`${url}/api/delete/user?userName=${this.props.account.login}`,
+        this.props.removeAccount(`${url}/api/delete/user?userName=${this.props.account.userName}`,
         {'Authorization': `Bearer ${this.props.token}`})
-    }
-
-    getRole = (role) => {
-        switch(role) {
-            case 0:
-                return 'student'
-            case 1:
-                return 'TA'
-            case 2:
-                return 'professor'
-            case 3:
-                return 'admin'
-        }
     }
 
     render() {
@@ -31,7 +18,7 @@ class AccountPreview extends Component {
             <div className="account-preview" >
                 <div className="title">
                     <h3 onClick={this.deleteAccount}>{this.props.account.userName}</h3>
-                    <h3>{this.getRole(this.props.account.role)}</h3>
+                    <h3>{this.props.getRole(this.props.account.role)}</h3>
                 </div>
                 <h4 className="break-line title" />
             </div>

@@ -9,7 +9,7 @@ import AccountPreview from "./util/AccountPreview";
 import ProjectModal from "../modals/ProjectModal";
 import Modal from "../modals/Modal";
 import checkmarkIcon from "../../img/checkmark.svg";
-import { addCourse, addAccount, getCourses, getAccounts } from '../../redux/actions'
+import { addCourse, addAccount, getCourses, getAccounts, modifyCourse, modifyAccount } from '../../redux/actions'
 import url from '../../server'
 
 class PreferencePanel extends Component {
@@ -71,6 +71,19 @@ class PreferencePanel extends Component {
         this.setState({ [event.target.name]: event.target.value });
     };
 
+    getRole = (role) => {
+        switch(role) {
+            case 0:
+                return 'student'
+            case 1:
+                return 'TA'
+            case 2:
+                return 'professor'
+            case 3:
+                return 'admin'
+        }
+    }
+
     displayCourseOptions = (index) => {
         this.setState({
             show_course_options: true,
@@ -86,21 +99,35 @@ class PreferencePanel extends Component {
             show_account_options: true,
             current_account: index,
             modal_blur: " blur",
-            name: this.state.accounts[index].name,
-            account_type: this.state.accounts[index].account_type
+            name: this.props.accounts[index].userName,
+            account_type: this.getRole(this.props.accounts[index].role)
         });
     };
 
     saveCourse = () => {
         //TODO!: verify this works
-        this.props.addCourse(`${url}/api/add/course?courseID=${this.state.name}&semester=${this.state.semester}`,
-        {'Authorization': `Bearer ${this.props.token}`})
+        if(this.state.current_course === -1) { 
+            //Add course
+            this.props.addCourse(`${url}/api/add/course?courseID=${this.state.name}&semester=${this.state.semester}`,
+            {'Authorization': `Bearer ${this.props.token}`})
+        } else {
+            this.props.modifyCourse(/*!: add endpoint*/)
+            //Edit course
+        }     
     };
 
     saveAccount = () => {
         //TODO!: verify this works
-        this.props.addAccount(`${url}/api/add/user?userName=${this.state.name}&type=${this.state.account_type}`,
-        {'Authorization': `Bearer ${this.props.token}`})
+        if(this.state.current_account === -1) {
+            //Add account
+            this.props.addAccount(`${url}/api/add/user?userName=${this.state.name}&type=${this.state.account_type}`,
+            {'Authorization': `Bearer ${this.props.token}`})
+        } else {
+            //Edit account
+            this.props.modifyAccount(`${url}/api/modify/account?userName=${this.state.name}&field=role&value=${this.state.account_type}`,
+            {'Authorization': `Bearer ${this.props.token}`})
+        }
+
     };
 
     render() {
@@ -135,8 +162,8 @@ class PreferencePanel extends Component {
                             {
                                 this.props.accounts && this.props.accounts.map &&
                                 this.props.accounts.map((account, index) =>
-                                    <Card key={account.id}
-                                          component={<AccountPreview account={account}/>}
+                                    <Card key={account.userName}
+                                          component={<AccountPreview getRole={this.getRole} account={account}/>}
                                           onClick={ () => this.displayAccountOptions(index) }/>)
                             }
                         </div>
@@ -223,6 +250,8 @@ const mapDispatchToProps = (dispatch) => {
     return {
         addCourse: (url, headers, body) => dispatch(addCourse(url, headers, body)),
         addAccount: (url, headers, body) => dispatch(addAccount(url, headers, body)),
+        modifyCourse: (url, headers, body) => dispatch(modifyCourse(url, headers, body)),
+        modifyAccount: (url, headers, body) => dispatch(modifyAccount(url, headers, body)),   
         getCourses: (url, headers, body) => dispatch(getCourses(url, headers, body)),
         getAccounts: (url, headers, body) => dispatch(getAccounts(url, headers, body)),
     }
