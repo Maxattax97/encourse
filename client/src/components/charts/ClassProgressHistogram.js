@@ -58,7 +58,6 @@ class ClassProgressHistogram extends Component {
     constructor(props) {
         super(props);
 
-
         this.state = {
             formattedData: defaultData,
         };
@@ -87,11 +86,7 @@ class ClassProgressHistogram extends Component {
             return defaultData
         }
 
-        const data = udata.data;
-
-        if (!data || data.length === 0) {
-            return defaultData;
-        }
+        const data = udata;
         const formattedData = []
         const data2 = Object.entries(data);
         const total = data2.reduce((sum, p) => sum + p[1], 0);
@@ -145,8 +140,8 @@ const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
-        isLoading: state.course ? state.course.getClassProgressData : false,
-        isFinished: state.student ? state.student.getClassProgressIsFinished : false,
+        isLoading: state.course ? state.course.getClassProgressIsLoading : false,
+        isFinished: state.course ? state.course.getClassProgressIsFinished : false,
     }
   }
 
