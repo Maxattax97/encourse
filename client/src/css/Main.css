@@ -277,6 +277,26 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-project-options .project-options-scripts h4:hover { color: #1f1e1c99; padding: 0.75em 0 0.75em calc(3px); }
 
+.panel-preference-content .panel-course-students > .title { cursor: pointer; }
+
+.panel-preference-content .panel-course-students > .title h3 { float: left; width: auto; padding-top: .4em; }
+
+.panel-preference-content .panel-course-students > .title img { width: 3em; height: 3em; float: left; padding: .25em 1em 1em; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.panel-preference-content .panel-course-students .student-preview h4:not(.break-line) { margin: 0; }
+
+.panel-preference-content .panel-course-students .student-preview h5 { margin: 0; }
+
+.panel-preference-content .panel-course-students .account-preview { position: relative; width: 10em; height: 8.5em; }
+
+.panel-preference-content .panel-course-students .account-preview h4:not(.break-line) { margin: 0; }
+
+.panel-preference-content .panel-course-students .account-preview h5 { margin: 0; }
+
+.panel-preference-content .panel-course-students > .title:hover h3 { color: #1f1e1c99; padding-left: 3px; }
+
+.panel-preference-content .panel-course-students > .title:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
 .charts .card { width: calc((100% - 32px) / 2); padding-top: calc((100% - 32px) / 2 / (2)); }
 
 .charts .card > .component { position: absolute; float: none; top: 0; left: 0; bottom: 0; right: 0; }

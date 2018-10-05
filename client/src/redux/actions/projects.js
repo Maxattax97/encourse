@@ -32,3 +32,28 @@ export function getClassProjectsDataSuccess(data) {
 export const getClassProjects = genericDispatch(
     getClassProjectsHasError, getClassProjectsIsLoading, getClassProjectsDataSuccess, 'GET'
 )
+
+export function modifyProjectHasError(hasError) {
+    return {
+        type: 'MODIFY_PROJECT_HAS_ERROR',
+        hasError
+    }
+}
+
+export function modifyProjectIsLoading(isLoading) {
+    return {
+        type: 'MODIFY_PROJECT_IS_LOADING',
+        isLoading
+    }
+}
+
+export function modifyProjectDataSuccess(data) {
+    return {
+        type: 'MODIFY_PROJECT_DATA_SUCCESS',
+        data
+    }
+}
+
+export const modifyProject = genericDispatch(
+    modifyProjectHasError, modifyProjectIsLoading, modifyProjectDataSuccess, 'POST'
+)

@@ -50,7 +50,6 @@ class StudentProgressLineGraph extends Component {
             return defaultData
         }
         const data = udata.data;
-        console.log('format api data', data)
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf();
         }

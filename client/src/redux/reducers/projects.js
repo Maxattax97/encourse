@@ -19,6 +19,18 @@ function projects(state = {}, action) {
                 getClassProjectsData: action.data,
                 currentProjectId: action.data[0].id
             })
+        case 'MODIFY_PROJECT_HAS_ERROR':
+            return Object.assign({}, state, {
+                modifyProjectHasError: action.hasError,
+            })
+        case 'MODIFY_PROJECT_IS_LOADING':
+            return Object.assign({}, state, {
+                modifyProjectIsLoading: action.isLoading,
+            })
+        case 'MODIFY_PROJECT_DATA_SUCCESS':
+            return Object.assign({}, state, {
+                modifyProjectData: action.data,
+            })
         default:
             return state
     }

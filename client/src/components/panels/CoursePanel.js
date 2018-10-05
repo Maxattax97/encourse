@@ -8,6 +8,7 @@ import ProjectNavigation from '../navigation/ProjectNavigation'
 import Card from '../Card'
 import StudentPreview from './util/StudentPreview'
 import ClassProgressHistogram from '../charts/ClassProgressHistogram'
+import ClassTestCasePercentDone from '../charts/ClassTestCasePercentDone'
 import settingsIcon from "../../img/settings.svg";
 import ActionNavigation from "../navigation/ActionNavigation";
 import CourseModal from "../modals/CourseModal";
@@ -59,6 +60,7 @@ class CoursePanel extends Component {
                         <h3>Course Charts</h3>
                         <div className="charts float-height">
                             <Card component={<ClassProgressHistogram projectID={this.props.currentProjectId}/>} />
+                            <Card component={<ClassTestCasePercentDone projectID={this.props.currentProjectId}/>} />
                         </div>
                         <h2 className="break-line" />
                         <h3>Students</h3>
