@@ -42,7 +42,7 @@ class CodeChangesChart extends Component {
     }
 
     fetch = (props) => {
-        props.getData(`${url}/secured/diffs?projectID=${props.projectID}&userName=${props.id}`,
+        props.getData(`${url}/api/diffs?projectID=${props.projectID}&userName=${props.id}`,
         {'Authorization': `Bearer ${props.token}`})
     }
 

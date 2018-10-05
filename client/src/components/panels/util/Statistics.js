@@ -153,12 +153,12 @@ class Statistics extends Component {
     }
 
     fetch = (props) => {
-        props.getStatistics(`${url}/secured/statistics?projectID=${props.projectID}&userName=${props.id}`,
+        props.getStatistics(`${url}/api/statistics?projectID=${props.projectID}&userName=${props.id}`,
         {'Authorization': `Bearer ${props.token}`})
     }
 
     formatApiData = (udata) => {
-        if (!udata) {
+        if (!udata || !udata.data) {
             return defaultData
         }
         const data = udata.data;

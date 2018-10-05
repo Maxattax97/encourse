@@ -53,7 +53,7 @@ class ClassTestCasePercentDone extends Component {
 
     fetch = (props) => {
         // TODO change api
-        props.getData(`${url}/secured/classProgress?projectID=${props.projectID}`,
+        props.getData(`${url}/api/classProgress?projectID=${props.projectID}`,
         {'Authorization': `Bearer ${props.token}`})
     }
 

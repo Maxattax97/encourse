@@ -65,7 +65,7 @@ class StudentPanel extends Component {
     componentDidMount = () => {
         if(!this.props.projects) {
             //TODO: remove classid and semester hardcoding
-            this.props.getClassProjects(`${url}/secured/projectsData?courseID=cs252&semester=Fall2018`, 
+            this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`, 
             {'Authorization': `Bearer ${this.props.token}`})
         }
     }
