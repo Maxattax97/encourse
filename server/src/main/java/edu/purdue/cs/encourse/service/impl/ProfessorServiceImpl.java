@@ -165,6 +165,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Modifies project information like start and end dates **/
+    // TODO: RACE CONDITION FOR MULTIPLE CALLS SIMULTANEOUSLY
     public int modifyProject(@NonNull String projectID, @NonNull String field, String value) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
@@ -189,7 +190,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    private Project getProject(@NonNull String projectID) {
+    public Project getProject(@NonNull String projectID) {
         return projectRepository.findByProjectIdentifier(projectID);
     }
 

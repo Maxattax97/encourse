@@ -1,5 +1,6 @@
 package edu.purdue.cs.encourse.service;
 
+import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import lombok.NonNull;
@@ -38,4 +39,6 @@ public interface ProfessorService {
     int assignTeachingAssistantToStudent(@NonNull String teachAssistUserName, @NonNull String studentUserName);
 
     int testPythonDirectory();
+
+    Project getProject(String projectID);
 }
