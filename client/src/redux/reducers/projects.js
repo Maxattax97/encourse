@@ -6,6 +6,10 @@ function projects(state = {}, action) {
                 currentProjectId: action.id,
                 currentProjectIndex: action.index,
             })
+        case 'TOGGLE_HIDDEN':
+            return Object.assign({}, state, {
+                isHidden: !state.isHidden,
+            })
         case 'GET_CLASS_PROJECTS_HAS_ERROR':
             return Object.assign({}, state, {
                 getClassProjectsHasError: action.hasError,
@@ -17,7 +21,7 @@ function projects(state = {}, action) {
         case 'GET_CLASS_PROJECTS_DATA_SUCCESS':
             return Object.assign({}, state, {
                 getClassProjectsData: action.data,
-                currentProjectId: action.data[0].id
+                currentProjectId: action.data[0].id,
             })
         case 'MODIFY_PROJECT_HAS_ERROR':
             return Object.assign({}, state, {

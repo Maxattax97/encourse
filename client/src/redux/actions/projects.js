@@ -8,6 +8,12 @@ export function setCurrentProject(id, index) {
     }
 }
 
+export function toggleHidden() {
+    return {
+        type: 'TOGGLE_HIDDEN',
+    }
+}
+
 export function getClassProjectsHasError(hasError) {
     return {
         type: 'GET_CLASS_PROJECTS_HAS_ERROR',

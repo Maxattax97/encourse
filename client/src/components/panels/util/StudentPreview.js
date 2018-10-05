@@ -1,7 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
 class StudentPreview extends Component {
     render() {
+        const percent = this.props.isHidden ? this.props.student.hiddenGrades[this.props.projectID] : this.props.student.grades[this.props.projectID]
         return (
             <div className="student-preview">
                 <div className="title">
@@ -15,10 +17,10 @@ class StudentPreview extends Component {
                 </div>
                 <div className="student-preview-progress">
                     <div className="progress-bar">
-                        <div style={{width: this.props.student.grades[this.props.projectID] + "%"}} />             
+                        <div style={{width: percent + "%"}} />             
                     </div>
                     <div className="progress-text">
-                        {parseInt(this.props.student.grades[this.props.projectID])}%
+                        {parseInt(percent)}%
                     </div>
                 </div>
             </div>
@@ -26,4 +28,10 @@ class StudentPreview extends Component {
     }
 }
 
-export default StudentPreview;
+const mapStateToProps = (state) => {
+    return {
+        isHidden: state.projects ? state.projects.isHidden : false,
+    }
+}
+
+export default connect(mapStateToProps, null)(StudentPreview)

@@ -5,7 +5,7 @@ export {
 } from './course' 
 
 export {
-    setCurrentProject,
+    setCurrentProject, toggleHidden,
     getClassProjectsHasError, getClassProjectsIsLoading, getClassProjectsDataSuccess, getClassProjects,
     modifyProjectHasError, modifyProjectIsLoading, modifyProjectDataSuccess, modifyProject,
     addProjectHasError, addProjectIsLoading, addProjectDataSuccess, addProject,
