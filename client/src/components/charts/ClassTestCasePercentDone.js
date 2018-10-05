@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
+import { ComposedChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
 import { connect } from 'react-redux'
 
 // TODO change api
@@ -14,18 +14,22 @@ const defaultData = [
     {
         "testName": "Test 1",
         "percent": .50,
+        "hidden": false,
     },
     {
         "testName": "Test 2",
         "percent": .23,
+        "hidden": false,
     },
     {
         "testName": "Test 3",
         "percent": .94,
+        "hidden": false,
     },
     {
         "testName": "Test 4",
         "percent": .38,
+        "hidden": true,
     },
 ]
 
@@ -69,6 +73,7 @@ class ClassTestCasePercentDone extends Component {
         for (let apiEntry of data) {
             const entry = {
                 testName: apiEntry.testName,
+                hidden: apiEntry.hidden,
                 percent: apiEntry.score / 100,
                 score: apiEntry.score,
             }
@@ -86,7 +91,6 @@ class ClassTestCasePercentDone extends Component {
                     <ComposedChart
                         data={this.state.formattedData}
                         margin={{top: 5, right: 30, left: 30, bottom: 35}}
-                        barCategoryGap={0}
                     >
                         <CartesianGrid/>
                         <XAxis dataKey="testName" type="category">
@@ -100,7 +104,11 @@ class ClassTestCasePercentDone extends Component {
                             </Label>
                         </YAxis>
                         <Tooltip/>
-                        <Bar dataKey="percent" fill="#8884d8"/>
+                        <Bar dataKey="percent">
+                            {this.state.formattedData.map((entry, index) => (
+                                <Cell fill={entry.hidden ? '#005599' : '#8884d8' }/>
+                            ))}
+                        </Bar>
                     </ComposedChart>
                 </ResponsiveContainer>
             </div>
