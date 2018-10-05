@@ -19,6 +19,13 @@ public interface AdminService {
     int addProfessor(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail);
     int addAdmin(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail);
 
+    /** Services for deleting any type of account from all relevant tables **/
+    int deleteAccount(@NonNull String userName);
+    int deleteStudent(@NonNull Account account);
+    int deleteTA(@NonNull Account account);
+    int deleteProfessor(@NonNull Account account);
+    int deleteAdmin(@NonNull Account account);
+
     /** Services for modifying any type of account in all relevant tables **/
     int modifyAccount(@NonNull String userName, @NonNull String field, String value);
     int modifyStudent(@NonNull Account account, @NonNull String field, String value);

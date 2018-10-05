@@ -164,6 +164,24 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
+    /** Deletes project and all relations referring to project **/
+    public int deleteProject(@NonNull String projectID) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -1;
+        }
+        List<ProjectTestScript> testScripts = projectTestScriptRepository.findByIdProjectIdentifier(projectID);
+        for(ProjectTestScript t : testScripts) {
+            projectTestScriptRepository.delete(t);
+        }
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        for(ProjectTestScript t : testScripts) {
+            projectTestScriptRepository.delete(t);
+        }
+        projectRepository.delete(project);
+        return 0;
+    }
+
     /** Modifies project information like start and end dates **/
     public int modifyProject(@NonNull String projectID, @NonNull String field, String value) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
