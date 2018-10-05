@@ -11,7 +11,9 @@ class CourseModal extends Component {
 
         this.state = {
             show: false,
-            course_directory: ""
+            course_directory: "",
+            directory_list: ["cs252"],
+            interval: 24
         };
     }
 
@@ -53,7 +55,19 @@ class CourseModal extends Component {
                                <h4 className="header">
                                    Student Repositories Directory
                                </h4>
-                               <input type="text" className="h3-size" value={this.state.name} onChange={this.onChange} name="student_directory" ref="student_directory"/>
+                               <input list="student_directory" className="h3-size" value={this.state.name} onChange={this.onChange} name="name" ref="student_directory" autoComplete="off"/>
+                               <datalist id="student_directory">
+                                   {
+                                       this.state.directory_list && this.state.directory_list.map &&
+                                           this.state.directory_list.map((dir) =>
+                                               <option value={dir}/>
+                                           )
+                                   }
+                               </datalist>
+                               <h4 className="header">
+                                   Repositories Update Interval
+                               </h4>
+                               <input type="number" className="h3-size" value={this.state.interval} onChange={this.onChange} name="interval" ref="interval"/>
                                { modal_buttons }
                            </div>
                        } />
