@@ -1,27 +1,23 @@
 export { 
-    getStudentPreviewsHasError, getStudentPreviewsIsLoading, getStudentPreviewsDataSuccess, getStudentPreviews,
-    getClassProgressHasError, getClassProgressIsLoading, getClassProgressDataSuccess, getClassProgress,
-    setDirectoryHasError, setDirectoryIsLoading, setDirectoryDataSuccess, setDirectory,
+    getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory,
 } from './course' 
 
 export {
-    setCurrentProject,
-    getClassProjectsHasError, getClassProjectsIsLoading, getClassProjectsDataSuccess, getClassProjects,
-    modifyProjectHasError, modifyProjectIsLoading, modifyProjectDataSuccess, modifyProject,
-    addProjectHasError, addProjectIsLoading, addProjectDataSuccess, addProject,
+    setCurrentProject, toggleHidden,
+    getClassProjects, modifyProject, addProject, deleteProject,
+    addTest,
 } from './projects'
 
 export {
-    logInHasError, logInIsLoading, logInDataSuccess, logIn,
-    logOutHasError, logOutIsLoading, logOutDataSuccess, logOut,
-    setToken, logOutClient
+    logIn, logOut, setToken, logOutClient
 } from './auth'
 
 export {
     setCurrentStudent, clearStudent,
-    getProgressLineHasError, getProgressLineIsLoading, getProgressLineDataSuccess, getProgressLine,
-    getCodeFrequencyHasError, getCodeFrequencyIsLoading, getCodeFrequencyDataSuccess, getCodeFrequency,
-    getCommitFrequencyHasError, getCommitFrequencyIsLoading, getCommitFrequencyDataSuccess, getCommitFrequency,
-    getStatisticsHasError, getStatisticsIsLoading, getStatisticsDataSuccess, getStatistics,
-    getCommitHistoryHasError, getCommitHistoryIsLoading, getCommitHistoryDataSuccess, getCommitHistory
+    getProgressLine, getCodeFrequency, getCommitFrequency, getStatistics, getCommitHistory
 } from './student'
+
+export {
+    getCourses, addCourse, modifyCourse, removeCourse, 
+    getAccounts, addAccount, modifyAccount, removeAccount,
+} from './admin'

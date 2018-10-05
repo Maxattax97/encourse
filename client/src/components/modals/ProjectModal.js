@@ -1,13 +1,14 @@
 import React, { Component } from "react"
+import { connect } from "react-redux"
 
 import deleteIcon from "../../img/delete.svg"
 import checkmarkIcon from "../../img/checkmark.svg"
 import backIcon from "../../img/back.svg"
 import Modal from "./Modal";
 import TestScriptList from "./util/TestScriptList";
-import { addProject } from "../../redux/actions";
+import { addProject, modifyProject, addTest, deleteProject } from "../../redux/actions";
 import url from '../../server'
-import { connect } from "react-redux"
+
 
 function getEmptyState(props) {
     return {
@@ -67,16 +68,15 @@ class ProjectModal extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        //console.log(props, state);
         if (props.new_project !== state.new_project) {
             if (state.new_project)
                 return getStateFromProjectsProp(props);
             else
-                return getEmptyState(props);
+                return getEmptyState(props)
         }
 
         if(state.show !== props.show || props.current_project !== state.current_project)
-            return getStateFromProjectsProp(props);
+            return getStateFromProjectsProp(props)
         else
             return state;
     }
@@ -87,22 +87,56 @@ class ProjectModal extends Component {
 
     submitProject = () => {
         if(this.state.new_project) {
-            //TODO Bucky add new project
-            this.props.addProject(`${url}/secured/add/project`, 
-            {'Authorization': `Bearer ${this.props.token}`},
-            {
-                courseID: 'cs252',
-                semester: 'Fall2018',
-                projectName: this.state.name,
-                repoName: this.source_name,
-                startDate: this.created_date,
-                endDate: this.due_date,
-            })
+            //TODO: remove courseID and semester hardcoding
+            this.props.addProject(`${url}/api/add/project`, 
+                {'Authorization': `Bearer ${this.props.token}`,
+                'Content-Type': 'application/json'},
+                JSON.stringify({
+                    courseID: 'cs252',
+                    semester: 'Fall2018',
+                    projectName: this.state.name,
+                    repoName: this.state.source_name,
+                    startDate: this.state.created_date,
+                    dueDate: this.state.due_date,
+                    projectIdentifier: 'cs252 Fall2018:' + this.state.name,
+                }))
         }
         else {
-            //TODO Bucky update new project
+            this.props.modifyProject(`${url}/api/modify/project?projectID=${this.props.currentProjectId}`,
+                {'Authorization': `Bearer ${this.props.token}`,
+                'Content-Type': 'application/json'},
+                JSON.stringify({
+                    startDate: this.state.created_date,
+                    dueDate: this.state.due_date,
+                }))
+            for(let script of this.state.test_script) {
+                this.postTest(script, false)
+            } 
+            for(let script of this.state.hidden_test_script) {
+                this.postTest(script, true)
+            }
         }
-    };
+        this.props.toggleProjectOptions()
+    }
+
+    postTest = (script, isHidden) => {
+        if(script.file) {
+            if (FileReader) {
+                let fr = new FileReader()
+                fr.onload = () => {
+                    this.props.addTest(`${url}/api/add/test?projectID=${this.props.currentProjectId}&testName=${script.testScriptName}&isHidden=${isHidden}&points=${script.pointValue ? script.pointValue : 5}`,
+                    {'Authorization': `Bearer ${this.props.token}`}, btoa(fr.result))
+                }
+                fr.readAsText(script.file)
+            }
+            console.log(script)
+        
+        }   
+        if(script.pointValue && !script.file) {
+            //TODO!: Only point value changed, add API call whenever endpoint is changed
+        }
+       
+    }
 
     deleteProject = () => {
         if(this.state.new_project) {
@@ -118,8 +152,10 @@ class ProjectModal extends Component {
             })
         }
         else {
-            //TODO Bucky delete project at given project index
+            this.props.deleteProject(`${url}/api/delete/project?projectID=${this.props.currentProjectId}`,
+            {'Authorization': `Bearer ${this.props.token}`})
         }
+        this.props.toggleProjectOptions()
     };
 
     render() {
@@ -219,13 +255,17 @@ const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
-        current_project: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0
+        current_project: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addProject: (url, headers, body) => dispatch(addProject(url, headers, body))
+        addProject: (url, headers, body) => dispatch(addProject(url, headers, body)),
+        deleteProject: (url, headers, body) => dispatch(deleteProject(url, headers, body)),
+        modifyProject: (url, headers, body) => dispatch(modifyProject(url, headers, body)),
+        addTest: (url, headers, body) => dispatch(addTest(url, headers, body)),
     }
 };
 

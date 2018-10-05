@@ -75,8 +75,8 @@ public class AdminServiceImpl implements AdminService {
         return user;
     }
 
-    public boolean hasPermissionForStudent(User loggedIn, String userName) {
-        Account account = studentRepository.findByUserName(userName);
+    public boolean hasPermissionOverAccount(User loggedIn, String userName) {
+        Account account = accountRepository.findByUserName(userName);
         if (account == null) {
             return false;
         }
@@ -88,7 +88,9 @@ public class AdminServiceImpl implements AdminService {
         boolean hasAuth = false;
         Iterator<Authority> auths = loggedIn.getAuthorities().iterator();
         while (auths.hasNext()) {
-            switch (auths.next().getAuthority()) {
+            String au = auths.next().getAuthority();
+            System.out.println("AUTHORITY: " + au);
+            switch (au) {
                 case "STUDENT":
                     if (sentRequest.getUserName().contentEquals(userName)) {
                         hasAuth = true;
@@ -125,6 +127,7 @@ public class AdminServiceImpl implements AdminService {
                     }
                     break;
                 case "ADMIN":
+                    System.out.println("ADMIN AUTHORITY");
                     hasAuth = true;
                     break;
             }

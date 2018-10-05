@@ -82,7 +82,8 @@ class ProjectNavigation extends Component {
                               close={ () => this.toggleProjectOptions(false) }
                               projects={ this.props.projects }
                               current_project={ this.props.currentProjectIndex }
-                              new_project={ this.state.new_project }/>
+                              new_project={ this.state.new_project }
+                              toggleProjectOptions={ this.toggleProjectOptions }/>
 
                 <div className={`modal-overlay${ this.state.show_project_options ? " show" : "" }`}
                      onClick={ () => this.toggleProjectOptions(false) } />

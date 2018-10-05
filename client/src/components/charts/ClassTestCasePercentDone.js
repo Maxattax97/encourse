@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { ComposedChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
 import { connect } from 'react-redux'
-
-// TODO change api
-// import { getXXXXX } from '../../redux/actions'
+import { getTestBarGraph } from '../../redux/actions'
 import url from '../../server'
 
 const toPercent = (decimal, fixed = 0) => {
@@ -100,12 +98,11 @@ class ClassTestCasePercentDone extends Component {
     }
 
     formatApiData = (udata) => {
-        const data = udata.data;
-
-        if (!data || data.length === 0) {
-            return this.getDefaultData();
+        if(!udata || !udata.data || udata.data.length === 0) {
+            return this.getDefaultData()
         }
 
+        const data = udata.data;
         const formattedData = []
 
         for (let apiEntry of data) {
@@ -144,7 +141,7 @@ class ClassTestCasePercentDone extends Component {
                         <Tooltip/>
                         <Bar dataKey="percent">
                             {this.state.formattedData.map((entry, index) => (
-                                <Cell fill={entry.hidden ? '#005599' : '#8884d8' }/>
+                                <Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#8884d8' }/>
                             ))}
                         </Bar>
                     </ComposedChart>
@@ -157,20 +154,16 @@ class ClassTestCasePercentDone extends Component {
 const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
-        // TODO change api
-        data: state.course && state.course.getXXXXX ? state.course.getXXXXX : null,
-        isLoading: state.course ? state.course.getXXXXX : false,
-        isFinished: state.course ? state.course.getXXXXX : false,
+        data: state.course && state.course.getTestBarGraphData ? state.course.getTestBarGraphData : null,
+        isLoading: state.course ? state.course.getTestBarGraphIsLoading : false,
+        isFinished: state.course ? state.course.getTestBarGraphIsFinished : false,
     }
   }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        // TODO change api
-        // getData: (url, headers, body) => dispatch(getXXXXX(url, headers, body))
-        getData: () => {}
+        getData: (url, headers, body) => dispatch(getTestBarGraph(url, headers, body))
     }
 }
 
-export { ClassTestCasePercentDone }
 export default connect(mapStateToProps, mapDispatchToProps)(ClassTestCasePercentDone)
