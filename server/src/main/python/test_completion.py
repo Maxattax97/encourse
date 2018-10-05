@@ -47,4 +47,4 @@ def get_test_completion_string(test_case_string):
 
     if total_score == 0:
 	    return {"tests":tests, "total":0} 
-    return {"tests":tests, "total":test_score * 100 / total_score)}
+    return {"tests":tests, "total":test_score * 100 / total_score}

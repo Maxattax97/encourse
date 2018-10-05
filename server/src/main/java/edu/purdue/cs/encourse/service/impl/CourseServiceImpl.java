@@ -16,6 +16,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.apache.commons.text.RandomStringGenerator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.concurrent.Executors;
 @Service(value = CourseServiceImpl.NAME)
 public class CourseServiceImpl implements CourseService {
     public final static String NAME = "CourseService";
+    public final static Boolean OBFUSCATE = true;
 
     @Autowired
     private StudentRepository studentRepository;
@@ -238,6 +240,17 @@ public class CourseServiceImpl implements CourseService {
                     studentJSON.put("hiddenGrades", grades);
                     studentJSON.put("commitCounts", commitCounts);
                     studentJSON.put("timeSpent", timeSpent);
+                    if (OBFUSCATE) {
+                        RandomStringGenerator generator = new RandomStringGenerator.Builder()
+                                .withinRange('a', 'z').build();
+                        studentJSON.put("first_name", generator.generate(10));
+                        studentJSON.put("last_name", generator.generate(8));
+                        studentJSON.put("id", generator.generate(8));
+                        studentJSON.put("grades", grades);
+                        studentJSON.put("hiddenGrades", grades);
+                        studentJSON.put("commitCounts", commitCounts);
+                        studentJSON.put("timeSpent", timeSpent);
+                    }
                     studentsJSON.add(studentJSON);
                 }
             }

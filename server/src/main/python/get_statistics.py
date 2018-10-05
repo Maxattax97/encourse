@@ -1,8 +1,10 @@
 import sys
 import json
 import argparse
+import random
 from datetime import datetime
 from helper import time_string
+from helper import eprint
 from start_end import commit_data as commit_times
 from daily_git_data import get_daily_commit_data as commit_list
 from test_completion import get_test_completion as test_completion
@@ -82,6 +84,11 @@ parser.add_argument("tests", help="test case string")
 parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
 args = parser.parse_args()
+
+if args.obfuscate:
+    fake_data = [{'stat_name': 'Start Date', 'stat_value': '2018-08-0{}'.format(random.randint(1,9))}, {'stat_name': 'End Date', 'stat_value': '2018-09-0{}'.format(random.randint(1,9))}, {'stat_name': 'Additions', 'stat_value': '{} lines'.format(random.randint(2000,5000))}, {'stat_name': 'Deletions', 'stat_value': '{} lines'.format(random.randint(0,2000))}, {'stat_name': 'Commit Count', 'stat_value': '{} commits'.format(random.randint(0,200))}, {'stat_name': 'Estimated Time Spent', 'stat_value': '{} hours'.format(random.randint(0,36))}, {'stat_name': 'Current Test Score', 'stat_value': '{}%'.format(10*random.randint(0,10))}]
+    print(json.dumps(fake_data))
+    sys.exit()
 
 student_id = args.name
 commit_date_file = open(args.timefile, "r")
