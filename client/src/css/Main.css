@@ -175,7 +175,7 @@ input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
 
 .panel-student-side-content .component { width: 100%; }
 
-.panel-student-side-content .student-commits { max-height: 340px; }
+.panel-student-side-content .student-commits { max-height: 280px; }
 
 .panel-student-side-content .student-commits .card { padding: 3px; }
 
