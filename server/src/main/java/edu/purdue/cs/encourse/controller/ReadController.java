@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value="/secured")
+@RequestMapping(value="/api")
 public class ReadController {
 
     @Autowired
@@ -70,6 +70,23 @@ public class ReadController {
 //        }
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/coursesData", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getProjectData(@RequestParam(name = "userName") String userName) {
+        if (hasPermissionForStudent(userName)) {
+            JSONArray json = courseService.getCourseData(userName);
+
+            if (json == null) {
+                return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(json, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/commitList", method = RequestMethod.GET)
