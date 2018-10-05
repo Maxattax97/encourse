@@ -301,7 +301,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
         String pyPath = pythonPath + "get_individual_progress.py";
-        String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
+        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -337,11 +337,11 @@ public class ProfessorServiceImpl implements ProfessorService {
             visibleTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
             hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
         }
-        
+
 
         // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_class_progress.py";
-        String command = "python " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
+        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
         json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -357,7 +357,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
         String pyPath = pythonPath + "get_add_del.py";
-        String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
+        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -382,7 +382,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             testResult = testResult.substring(0, testResult.length() - 1);
         }
         String pyPath = pythonPath + "get_statistics.py";
-        String command = "python " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult;
+        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult;
         JSONReturnable json = runPython(command);
         if(json == null || json.getJsonObject() == null) {
             return json;
@@ -441,7 +441,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
         String pyPath = pythonPath + "get_git_commits.py";
-        String command = "python " + pyPath + " " + commitLogFile + " " + userName;
+        String command = "python3 " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
 
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -454,7 +454,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-1, null);
         }
         String pyPath = pythonPath + "get_git_commit_list.py";
-        String command = "python " + pyPath + " " + commitLogFile + " " + userName;
+        String command = "python3 " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -890,7 +890,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
         try {
             // Run `python hello.py testData.txt` at correct directory
-            Process process = Runtime.getRuntime().exec("python " + filePath + " " + dataFilePath);
+            Process process = Runtime.getRuntime().exec("python3 " + filePath + " " + dataFilePath);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String input = null;
