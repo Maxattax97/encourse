@@ -17,54 +17,6 @@ const defaultData = [
                     stat_name: "Deletions",
                     stat_value: "3415"
                 },
-                {
-                    stat_name: "Additions",
-                    stat_value: "`35"
-                },
-                {
-                    stat_name: "Deletions",
-                    stat_value: "1234"
-                },
-                {
-                    stat_name: "Additions",
-                    stat_value: "123"
-                },
-                {
-                    stat_name: "Deletions",
-                    stat_value: "5342"
-                },
-                {
-                    stat_name: "Additions",
-                    stat_value: "213"
-                },
-                {
-                    stat_name: "Deletions",
-                    stat_value: "76"
-                },
-                {
-                    stat_name: "Additions",
-                    stat_value: "123"
-                },
-                {
-                    stat_name: "Deletions",
-                    stat_value: "567"
-                },
-                {
-                    stat_name: "Additions",
-                    stat_value: "43"
-                },
-                {
-                    stat_name: "Deletions",
-                    stat_value: "123"
-                },
-                {
-                    stat_name: "Additions",
-                    stat_value: "45"
-                },
-                {
-                    stat_name: "Deletions",
-                    stat_value: "36"
-                }
             ]
 
 class Statistics extends Component {
@@ -162,6 +114,9 @@ class Statistics extends Component {
             return defaultData
         }
         const data = udata.data;
+        if (!data) {
+            return defaultData
+        }
         const formattedData = data.slice();
 
         return formattedData;
