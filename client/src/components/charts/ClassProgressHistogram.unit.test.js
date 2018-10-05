@@ -11,16 +11,16 @@ function setup() {
     token: null
   }
 
-  const enzymeWrapper = mount(<ClassProgressHistogram {...props} />)
+  const wrapper = mount(<ClassProgressHistogram {...props} />)
 
   return {
     props,
-    enzymeWrapper
+    wrapper
   }
 }
 
 describe('<ClassProgressHistogram />', () => {
   it('render()', () => {
-    const { enzymeWrapper } = setup()
+    const { wrapper } = setup()
   })
 })
