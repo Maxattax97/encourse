@@ -6,12 +6,6 @@ import url from '../../../server'
 
 class CoursePreview extends Component {
 
-    deleteCourse = () => {
-        //TODO!: add endpoint
-        this.props.removeAccount(`${url}/api/delete/user`,
-        {'Authorization': `Bearer ${this.props.token}`})
-    }
-
     render() {
         return (
             <div className="student-preview" onClick={this.deleteCourse}>
@@ -33,7 +27,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        removeCourse: (url, headers, body) => dispatch(removeCourse(url, headers, body)),
     }
 };
 

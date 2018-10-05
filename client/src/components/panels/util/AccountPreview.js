@@ -7,12 +7,6 @@ import url from '../../../server'
 
 class AccountPreview extends Component {
 
-    deleteAccount = () => {
-        //TODO!: add parameter to delete any account
-        this.props.removeAccount(`${url}/api/delete/user?userName=${this.props.account.userName}`,
-        {'Authorization': `Bearer ${this.props.token}`})
-    }
-
     render() {
         return (
             <div className="account-preview" >
@@ -34,7 +28,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        removeAccount: (url, headers, body) => dispatch(removeAccount(url, headers, body)),
     }
 };
 

@@ -9,8 +9,17 @@ import AccountPreview from "./util/AccountPreview";
 import ProjectModal from "../modals/ProjectModal";
 import Modal from "../modals/Modal";
 import checkmarkIcon from "../../img/checkmark.svg";
-import { addCourse, addAccount, getCourses, getAccounts, modifyCourse, modifyAccount } from '../../redux/actions'
+import {
+    addCourse,
+    addAccount,
+    getCourses,
+    getAccounts,
+    modifyCourse,
+    modifyAccount,
+    removeCourse, removeAccount
+} from '../../redux/actions'
 import url from '../../server'
+import deleteIcon from "../../img/delete.svg";
 
 class PreferencePanel extends Component {
 
@@ -130,6 +139,22 @@ class PreferencePanel extends Component {
 
     };
 
+    deleteCourse = () => {
+        //TODO!: add endpoint
+        this.props.removeCourse(`${url}/api/delete/user`,
+            {'Authorization': `Bearer ${this.props.token}`});
+
+        this.resetOptions();
+    };
+
+    deleteAccount = () => {
+        //TODO!: add parameter to delete any account
+        this.props.removeAccount(`${url}/api/delete/user?userName=${this.props.account.userName}`,
+            {'Authorization': `Bearer ${this.props.token}`});
+
+        this.resetOptions();
+    };
+
     render() {
         return (
             <div className="panel-preference">
@@ -192,6 +217,10 @@ class PreferencePanel extends Component {
                                        <option value="Spring2019">Spring 2019</option>
                                    </select>
                                    <div className="modal-buttons float-height">
+                                       <div onClick={ this.deleteCourse }>
+                                           <img src={deleteIcon} />
+                                       </div>
+
                                        <div className="project-options-add" onClick={ this.saveCourse }>
                                            <img src={ checkmarkIcon } />
                                        </div>
@@ -223,6 +252,10 @@ class PreferencePanel extends Component {
                                        <option value="student">Student</option>
                                    </select>
                                    <div className="modal-buttons float-height">
+                                       <div onClick={ this.deleteAccount }>
+                                           <img src={deleteIcon} />
+                                       </div>
+
                                        <div className="project-options-add" onClick={ this.saveAccount }>
                                            <img src={ checkmarkIcon } />
                                        </div>
@@ -251,7 +284,9 @@ const mapDispatchToProps = (dispatch) => {
         addCourse: (url, headers, body) => dispatch(addCourse(url, headers, body)),
         addAccount: (url, headers, body) => dispatch(addAccount(url, headers, body)),
         modifyCourse: (url, headers, body) => dispatch(modifyCourse(url, headers, body)),
-        modifyAccount: (url, headers, body) => dispatch(modifyAccount(url, headers, body)),   
+        modifyAccount: (url, headers, body) => dispatch(modifyAccount(url, headers, body)),
+        removeCourse: (url, headers, body) => dispatch(removeCourse(url, headers, body)),
+        removeAccount: (url, headers, body) => dispatch(removeAccount(url, headers, body)),
         getCourses: (url, headers, body) => dispatch(getCourses(url, headers, body)),
         getAccounts: (url, headers, body) => dispatch(getAccounts(url, headers, body)),
     }
