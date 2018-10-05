@@ -91,6 +91,16 @@ public class PythonScriptTests {
         }
 
         @Test
+        public void testTestSummaryData() {
+            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
+            String studentID = "cutz";
+            JSONReturnable jsonReturn = null;
+            System.out.println("=============================  Test Summary Test    ============================\n");
+            jsonReturn = professorService.getTestSummary(projectID);
+            assertEquals("Failed to generate class progress histogram data", 1, jsonReturn.errorCode);
+        }
+
+        @Test
         public void testStatisticsData() {
             String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
             String studentID = "cutz";

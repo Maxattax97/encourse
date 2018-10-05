@@ -129,8 +129,7 @@ public class ReadController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/testSummary", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getTestSummary(@RequestParam(name = "projectID") String projectID) {
-        // TODO: RYAN PUT YOUR SHIT HERE
-        JSONReturnable returnJson = null; //professorService.getTestSummary(projectID);
+        JSONReturnable returnJson = professorService.getTestSummary(projectID);
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }

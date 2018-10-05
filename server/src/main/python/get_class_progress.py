@@ -49,7 +49,7 @@ hidden_test_score_file = open(args.hidden, "r")
 
 visible_data = get_test_scores(visible_test_score_file)
 hidden_data = get_test_scores(hidden_test_score_file)
-
+#print(visible_data)
 
 formatted_visible = api_format_data(visible_data)
 formatted_hidden = api_format_data(hidden_data)

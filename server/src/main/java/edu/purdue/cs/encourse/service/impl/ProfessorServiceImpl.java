@@ -29,9 +29,9 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     public final static String NAME = "ProfessorService";
     private final static String pythonPath = "src/main/python/";
-    private final static String tailFile = "src/main/temp/tail.txt";
+    private final static String tailFilePath = "src/main/temp/";
     private final static int RATE = 3600000;
-    private final static Boolean DEBUG = true;
+    private final static Boolean DEBUG = false;
     private final static Boolean OBFUSCATE = true;
 
     /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
@@ -346,6 +346,45 @@ public class ProfessorServiceImpl implements ProfessorService {
 
         // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_class_progress.py";
+        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
+        json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
+ public JSONReturnable getTestSummary(@NonNull String projectID) {
+        JSONReturnable json = null;
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+        try {
+            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+            for (StudentProject p : projects) {
+                Student student = studentRepository.findByUserID(p.getStudentID());
+                String visibleTestResult = student.getUserName() + ";" + p.getBestVisibleGrade();
+                visibleTestResult = visibleTestResult.substring(0, visibleTestResult.length() - 1);
+                String hiddenTestResult = student.getUserName() + ";" + p.getBestHiddenGrade();
+                hiddenTestResult = hiddenTestResult.substring(0, hiddenTestResult.length() - 1);
+                visibleWriter.write(visibleTestResult);
+                visibleWriter.write("\n");
+                hiddenWriter.write(hiddenTestResult);
+                hiddenWriter.write("\n");
+            }
+            visibleWriter.close();
+            hiddenWriter.close();
+        }
+        catch(IOException e) {
+            json = new JSONReturnable(-1, null);
+        }
+
+        if (DEBUG) {
+            visibleTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
+            hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
+        }
+
+        // TODO: Check that test results work as expected
+        String pyPath = pythonPath + "get_test_summary.py";
         String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
         json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -938,8 +977,19 @@ public class ProfessorServiceImpl implements ProfessorService {
         if (OBFUSCATE) {
             command += " -O";
         }
+        File file= new File (tailFilePath, "tail.txt");
+        FileWriter tailWriter;
         try {
-            BufferedWriter tailWriter = new BufferedWriter(new FileWriter(tailFile));
+            if (file.exists())
+            {
+                tailWriter = new FileWriter(file,true);//if file exists append to file. Works fine.
+            }
+            else
+            {
+                file.createNewFile();
+                tailWriter = new FileWriter(file);// If file does not exist. Create it. This throws a FileNotFoundException. Why?
+            }
+
             String arr[] = command.split(" ", 3);
             tailWriter.write(arr[0] + arr[1]);
         } catch (IOException e) {

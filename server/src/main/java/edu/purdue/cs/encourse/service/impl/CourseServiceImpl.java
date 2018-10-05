@@ -243,18 +243,18 @@ public class CourseServiceImpl implements CourseService {
                     if (OBFUSCATE) {
                         RandomStringGenerator generator = new RandomStringGenerator.Builder()
                                 .withinRange('a', 'z').build();
-                        studentJSON.put("first_name", generator.generate(10));
-                        studentJSON.put("last_name", generator.generate(8));
-                        studentJSON.put("id", generator.generate(8));
+                        studentJSON.put("first_name", student.getFirstName());
+                        studentJSON.put("last_name", student.getLastName());
+                        studentJSON.put("id", student.getUserName());
                         studentJSON.put("grades", grades);
                         studentJSON.put("hiddenGrades", grades);
                         studentJSON.put("commitCounts", commitCounts);
                         studentJSON.put("timeSpent", timeSpent);
                     }
                     studentsJSON.add(studentJSON);
+                    }
                 }
             }
-        }
         return studentsJSON;
     }
 
