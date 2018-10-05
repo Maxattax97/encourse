@@ -58,7 +58,7 @@ class CommitHistoryHistogram extends Component {
         if (!udata) {
             return defaultData
         }
-        const data = udata.data;
+        let data = udata.data;
 
         if (!data || data.length === 0) {
             return defaultData;
@@ -66,6 +66,11 @@ class CommitHistoryHistogram extends Component {
 
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf();
+        }
+
+        let minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date);
+        if (moment(minDate).isBefore(moment('2018-03-10'), 'day')) {
+            data = data.filter(e => moment(e.date).isAfter(moment('2018-09-19'), 'day'))
         }
 
         return data;
