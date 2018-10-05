@@ -144,7 +144,7 @@ class Statistics extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(this.props.isLoading && !nextProps.isLoading) {
+        if(!this.props.isFinished && nextProps.isFinished) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -199,7 +199,8 @@ const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : [],
-        isLoading: state.student ? state.student.getStatisticsIsLoading : true
+        isLoading: state.student ? state.student.getStatisticsIsLoading : true,
+        isFinished: state.student ? state.student.getStatisticsIsFinished : false,
     }
   }
 

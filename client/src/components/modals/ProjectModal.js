@@ -66,7 +66,7 @@ class ProjectModal extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        console.log(props, state);
+        //console.log(props, state);
         if (props.new_project !== state.new_project) {
             if (state.new_project)
                 return getStateFromProjectsProp(props);
