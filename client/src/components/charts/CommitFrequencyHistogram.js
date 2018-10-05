@@ -37,7 +37,7 @@ class CommitHistoryHistogram extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(!this.props.data && nextProps.data) {
+        if(!this.props.isFinished && nextProps.isFinished) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -55,8 +55,10 @@ class CommitHistoryHistogram extends Component {
     }
 
     formatApiData = (udata) => {
+        if (!udata) {
+            return defaultData
+        }
         const data = udata.data;
-        console.log('format api data', data)
 
         if (!data || data.length === 0) {
             return defaultData;
@@ -100,6 +102,7 @@ const mapStateToProps = (state) => {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.student && state.student.getCommitFrequencyData ? state.student.getCommitFrequencyData : null,
         isLoading: state.student ? state.student.getCommitFrequencyIsLoading : false,
+        isFinished: state.student ? state.student.getCommitFrequencyIsFinished : false,
     }
 }
 

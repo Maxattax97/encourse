@@ -69,7 +69,7 @@ class ClassProgressHistogram extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(!this.props.data && nextProps.data) {
+        if(!this.props.isFinished && nextProps.isFinished) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -83,6 +83,10 @@ class ClassProgressHistogram extends Component {
     }
 
     formatApiData = (udata) => {
+        if (!udata) {
+            return defaultData
+        }
+
         const data = udata.data;
 
         if (!data || data.length === 0) {
@@ -144,6 +148,7 @@ const mapStateToProps = (state) => {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
         isLoading: state.course ? state.course.getClassProgressData : false,
+        isFinished: state.student ? state.student.getClassProgressIsFinished : false,
     }
   }
 

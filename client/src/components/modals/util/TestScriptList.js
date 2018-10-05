@@ -15,7 +15,7 @@ class TestScriptList extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        console.log(props, state);
+        //console.log(props, state);
         if(props.script_list && props.script_list.map)
             return {
                 scripts: props.script_list
