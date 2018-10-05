@@ -10,25 +10,57 @@ const toPercent = (decimal, fixed = 0) => {
     return `${(decimal * 100).toFixed(fixed)}%`;
 };
 
-const defaultData = [
+const defaultData1 = [
     {
         "testName": "Test 1",
-        "percent": .50,
+        "percent": .98,
         "hidden": false,
     },
     {
         "testName": "Test 2",
-        "percent": .23,
-        "hidden": false,
-    },
-    {
-        "testName": "Test 3",
         "percent": .94,
         "hidden": false,
     },
     {
+        "testName": "Test 3",
+        "percent": 1,
+        "hidden": false,
+    },
+    {
         "testName": "Test 4",
-        "percent": .38,
+        "percent": .89,
+        "hidden": true,
+    },
+]
+const defaultData2 = [
+    {
+        "testName": "Test 1",
+        "percent": .07,
+        "hidden": false,
+    },
+    {
+        "testName": "Test 2",
+        "percent": .08,
+        "hidden": false,
+    },
+    {
+        "testName": "Test 3",
+        "percent": .01,
+        "hidden": false,
+    },
+    {
+        "testName": "Test 4",
+        "percent": .01,
+        "hidden": false,
+    },
+    {
+        "testName": "Test 5",
+        "percent": .01,
+        "hidden": false,
+    },
+    {
+        "testName": "Test 6",
+        "percent": .02,
         "hidden": true,
     },
 ]
@@ -38,7 +70,7 @@ class ClassTestCasePercentDone extends Component {
         super(props);
 
         this.state = {
-            formattedData: defaultData,
+            formattedData: this.getDefaultData()
         };
     }
 
@@ -47,12 +79,19 @@ class ClassTestCasePercentDone extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(!this.props.isFinished && nextProps.isFinished) {
+        if (nextProps.data === null) {
+            this.setState({ formattedData: this.getDefaultData(nextProps) })
+        }
+        if (!this.props.isFinished && nextProps.isFinished) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
             this.fetch(nextProps)
         }
+    }
+
+    getDefaultData = (props) => {
+        return (props && props.projectID || this.props.projectID) == 'cs252 Fall2018: MyMalloc' ? defaultData1 : defaultData2
     }
 
     fetch = (props) => {
@@ -64,7 +103,7 @@ class ClassTestCasePercentDone extends Component {
         const data = udata.data;
 
         if (!data || data.length === 0) {
-            return defaultData;
+            return this.getDefaultData();
         }
 
         const formattedData = []
