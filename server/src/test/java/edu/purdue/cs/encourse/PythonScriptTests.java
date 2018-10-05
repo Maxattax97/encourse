@@ -85,10 +85,9 @@ public class PythonScriptTests {
             String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
-            System.out.println("=============================  Git Commit List Test    ============================\n");
+            System.out.println("=============================  Class Progress Test    ============================\n");
             jsonReturn = professorService.getClassProgress(projectID);
-            // Won't work until Jordan passes test file
-            //assertEquals("Failed to generate class progress histogram data", 1, jsonReturn.errorCode);
+            assertEquals("Failed to generate class progress histogram data", 1, jsonReturn.errorCode);
         }
 
         @Test
