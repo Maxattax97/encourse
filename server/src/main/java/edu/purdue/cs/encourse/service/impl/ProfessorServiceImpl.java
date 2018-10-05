@@ -18,10 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.Executors;
 import lombok.NonNull;
 
@@ -93,15 +90,6 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
         }
         return isTaking;
-    }
-
-
-    public boolean hasPermissionForStudent(Account loggedIn, String userName) {
-
-
-
-        //teachingAssistantStudentRepository.findByIdTeachingAssistantID()
-        return false;
     }
 
     private double parseProgressForProject(@NonNull String projectID, @NonNull String testOutput) {
