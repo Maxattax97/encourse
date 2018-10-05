@@ -337,6 +337,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             visibleTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
             hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
         }
+        
 
         // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_class_progress.py";
