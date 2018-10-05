@@ -75,12 +75,37 @@ public class CourseServiceImpl implements CourseService {
         Map<String, Double> grades = new TreeMap<>();
         int code = 0;
         for(StudentProject p : projects) {
-            if(p.getBestGrade() == null) {
+            if(p.getBestVisibleGrade() == null) {
                 code--;
                 grades.put(p.getProjectIdentifier(), 0.0);
                 continue;
             }
-            String[] testResults = p.getBestGrade().split(";");
+            String[] testResults = p.getBestVisibleGrade().split(";");
+            double earnedPoints = 0.0;
+            double maxPoints = 0.0;
+            for(String r : testResults) {
+                String testName = r.split(":")[0];
+                ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(p.getProjectIdentifier(), testName);
+                maxPoints += testScript.getPointsWorth();
+                if(r.endsWith("P")) {
+                    earnedPoints += testScript.getPointsWorth();
+                }
+            }
+            grades.put(p.getProjectIdentifier(), (earnedPoints / maxPoints) * 100);
+        }
+        return grades;
+    }
+
+    private Map<String, Double> parseHiddenProgressForProjects(List<StudentProject> projects) {
+        Map<String, Double> grades = new TreeMap<>();
+        int code = 0;
+        for(StudentProject p : projects) {
+            if(p.getBestHiddenGrade() == null) {
+                code--;
+                grades.put(p.getProjectIdentifier(), 0.0);
+                continue;
+            }
+            String[] testResults = p.getBestHiddenGrade().split(";");
             double earnedPoints = 0.0;
             double maxPoints = 0.0;
             for(String r : testResults) {
@@ -198,6 +223,7 @@ public class CourseServiceImpl implements CourseService {
                     completedStudents.add(student.getUserID());
                     List<StudentProject> studentProjects = studentProjectRepository.findByIdStudentID(student.getUserID());
                     Map<String, Double> grades = parseProgressForProjects(studentProjects);
+                    Map<String, Double> hiddenGrades = parseHiddenProgressForProjects(studentProjects);
                     Map<String, Integer> commitCounts = new TreeMap<>();
                     Map<String, Double> timeSpent = new TreeMap<>();
                     for(StudentProject p : studentProjects) {
@@ -209,6 +235,7 @@ public class CourseServiceImpl implements CourseService {
                     studentJSON.put("last_name", student.getLastName());
                     studentJSON.put("id", student.getUserName());
                     studentJSON.put("grades", grades);
+                    studentJSON.put("hiddenGrades", grades);
                     studentJSON.put("commitCounts", commitCounts);
                     studentJSON.put("timeSpent", timeSpent);
                     studentsJSON.add(studentJSON);

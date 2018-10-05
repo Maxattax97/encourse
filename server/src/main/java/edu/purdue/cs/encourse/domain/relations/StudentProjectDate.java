@@ -16,13 +16,18 @@ public class StudentProjectDate {
     @EmbeddedId
     StudentProjectDateID id;
 
-    /** Best grade output by testall on the given date **/
+    /** Best visible grade output by testall on the given date **/
     @Setter
-    private String dateGrade;
+    private String dateVisibleGrade;
 
-    public StudentProjectDate(String userID, String projectIdentifier, String date, String dateGrade) {
+    /** Best hidden grade output by testall on the given date **/
+    @Setter
+    private String dateHiddenGrade;
+
+    public StudentProjectDate(String userID, String projectIdentifier, String date, String dateVisibleGrade, String dateHiddenGrade) {
         this.id = new StudentProjectDateID(userID, projectIdentifier, date);
-        this.dateGrade = dateGrade;
+        this.dateVisibleGrade = dateVisibleGrade;
+        this.dateHiddenGrade = dateHiddenGrade;
     }
 
     public StudentProjectDate() {
