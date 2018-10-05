@@ -1,5 +1,6 @@
 package edu.purdue.cs.encourse.service;
 
+import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import lombok.NonNull;
 import org.json.simple.JSONArray;
@@ -7,7 +8,7 @@ import org.json.simple.JSONArray;
 import java.io.File;
 
 public interface ProfessorService {
-    int addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate);
+    int addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate);
     int assignProject(@NonNull String projectID);
     int assignProjectToStudent(@NonNull String projectID, @NonNull String userName);
     int modifyProject(@NonNull String projectID, @NonNull String field, String value);

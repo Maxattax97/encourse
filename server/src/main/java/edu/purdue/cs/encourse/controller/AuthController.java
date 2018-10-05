@@ -97,11 +97,21 @@ public class AuthController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/account", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getAccount() {
+    public @ResponseBody ResponseEntity<?> getAccount(@RequestParam(name = "userName", required = false) String userName) {
         Account a = getAccountFromAuth();
-        List<Account> accounts = new ArrayList<>();
-        accounts.add(a);
-        return new ResponseEntity<>(accounts, HttpStatus.FOUND);
+        boolean flag = true;
+        if (userName != null) {
+            if (!hasPermissionForStudent(userName)) {
+                flag = false;
+            }
+        }
+        if (flag) {
+            List<Account> accounts = new ArrayList<>();
+            accounts.add(a);
+            return new ResponseEntity<>(accounts, HttpStatus.FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -127,6 +137,10 @@ public class AuthController {
     private User getUserFromAuth() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return ((User)securityContext.getAuthentication().getPrincipal());
+    }
+
+    private boolean hasPermissionForStudent(String userName) {
+        return adminService.hasPermissionForStudent(getUserFromAuth(), userName);
     }
 
     private int logout(User user) {

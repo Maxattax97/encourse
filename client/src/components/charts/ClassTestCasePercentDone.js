@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
 import { connect } from 'react-redux'
 
+// TODO change api
 import { getClassProgress } from '../../redux/actions'
 import url from '../../server'
 
@@ -9,55 +10,28 @@ const toPercent = (decimal, fixed = 0) => {
     return `${(decimal * 100).toFixed(fixed)}%`;
 };
 
-const AxisLabel = ({ axisType, x, y, width, height, stroke, children }) => {
-    const isVert = axisType === 'yAxis';
-    const cx = isVert ? x : x + (width / 2);
-    const cy = isVert ? (height / 2) + y : y + height + 10;
-    const rot = isVert ? `270 ${cx} ${cy}` : 0;
-    return (
-        <text x={cx} y={cy} transform={`rotate(${rot})`} textAnchor="middle" stroke={stroke}>
-            {children}
-        </text>
-    );
-};
-
 const defaultData = [
     {
-        "progressBin": "0-20%",
-        "order": 0,
-        "count": 10,
-        "percent": 0.625
+        "testName": "Test 1",
+        "percent": .50,
     },
     {
-        "progressBin": "20-40%",
-        "order": 20,
-        "count": 3,
-        "percent": 0.1875
+        "testName": "Test 2",
+        "percent": .23,
     },
     {
-        "progressBin": "40-60%",
-        "order": 40,
-        "count": 2,
-        "percent": 0.125
+        "testName": "Test 3",
+        "percent": .94,
     },
     {
-        "progressBin": "60-80%",
-        "order": 60,
-        "count": 0,
-        "percent": 0
+        "testName": "Test 4",
+        "percent": .38,
     },
-    {
-        "progressBin": "80-100%",
-        "order": 80,
-        "count": 1,
-        "percent": 0.0625
-    }
 ]
 
-class ClassProgressHistogram extends Component {
+class ClassTestCasePercentDone extends Component {
     constructor(props) {
         super(props);
-
 
         this.state = {
             formattedData: defaultData,
@@ -78,36 +52,29 @@ class ClassProgressHistogram extends Component {
     }
 
     fetch = (props) => {
+        // TODO change api
         props.getData(`${url}/secured/classProgress?projectID=${props.projectID}`,
         {'Authorization': `Bearer ${props.token}`})
     }
 
     formatApiData = (udata) => {
-        if (!udata) {
-            return defaultData
-        }
-
         const data = udata.data;
 
         if (!data || data.length === 0) {
             return defaultData;
         }
-        const formattedData = []
-        const data2 = Object.entries(data);
-        const total = data2.reduce((sum, p) => sum + p[1], 0);
 
-        for (let apiEntry of data2) {
+        const formattedData = []
+
+        for (let apiEntry of data) {
             const entry = {
-                progressBin: apiEntry[0],
-                order: parseInt(apiEntry[0]),
-                count: apiEntry[1],
-                percent: apiEntry[1] / total,
+                testName: apiEntry.testName,
+                percent: apiEntry.score / 100,
+                score: apiEntry.score,
             }
 
             formattedData.push(entry);
         }
-
-        formattedData.sort((a, b) => a.order - b.order)
 
         return formattedData;
     }
@@ -122,9 +89,9 @@ class ClassProgressHistogram extends Component {
                         barCategoryGap={0}
                     >
                         <CartesianGrid/>
-                        <XAxis dataKey="progressBin" type="category">
+                        <XAxis dataKey="testName" type="category">
                             <Label offset={-10} position="insideBottom">
-                                % Completion
+                                Test Case
                             </Label>
                         </XAxis>
                         <YAxis tickFormatter={toPercent}>
@@ -144,17 +111,18 @@ class ClassProgressHistogram extends Component {
 const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+        // TODO change api
         data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
         isLoading: state.course ? state.course.getClassProgressData : false,
-        isFinished: state.student ? state.student.getClassProgressIsFinished : false,
     }
   }
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        // TODO change api
         getData: (url, headers, body) => dispatch(getClassProgress(url, headers, body))
     }
 }
 
-export { ClassProgressHistogram }
-export default connect(mapStateToProps, mapDispatchToProps)(ClassProgressHistogram)
+export { ClassTestCasePercentDone }
+export default connect(mapStateToProps, mapDispatchToProps)(ClassTestCasePercentDone)

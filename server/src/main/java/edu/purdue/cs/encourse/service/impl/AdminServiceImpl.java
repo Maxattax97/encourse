@@ -4,12 +4,14 @@ import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.ProfessorCourse;
 import edu.purdue.cs.encourse.domain.relations.StudentSection;
+import edu.purdue.cs.encourse.domain.relations.TeachingAssistantStudent;
 import edu.purdue.cs.encourse.service.AdminService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 @Service(value = AdminServiceImpl.NAME)
@@ -47,6 +49,9 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private AuthorityRepository authorityRepository;
 
+    @Autowired
+    private TeachingAssistantStudentRepository teachingAssistantStudentRepository;
+
     public User addUser(@NonNull String userName, @NonNull String password, @NonNull String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled) {
         Authority auth = authorityRepository.findDistinctByName(authority);
         if (auth == null) {
@@ -64,6 +69,66 @@ public class AdminServiceImpl implements AdminService {
         userRepository.save(user);
         user.setPassword(null);
         return user;
+    }
+
+    public boolean hasPermissionForStudent(User loggedIn, String userName) {
+        Account account = studentRepository.findByUserName(userName);
+        if (account == null) {
+            return false;
+        }
+        Account sentRequest = accountRepository.findByUserName(loggedIn.getUsername());
+        if (sentRequest == null) {
+            return false;
+        }
+
+        boolean hasAuth = false;
+        Iterator<Authority> auths = loggedIn.getAuthorities().iterator();
+        while (auths.hasNext()) {
+            switch (auths.next().getAuthority()) {
+                case "STUDENT":
+                    if (sentRequest.getUserName().contentEquals(userName)) {
+                        hasAuth = true;
+                        break;
+                    }
+                    break;
+                case "TA":
+                    List<TeachingAssistantStudent> teachingAssistantStudents = teachingAssistantStudentRepository.findByIdTeachingAssistantID(sentRequest.getUserID());
+                    if (teachingAssistantStudents.contains(account)) {
+                        hasAuth = true;
+                        break;
+                    }
+                    break;
+                case "PROFESSOR":
+                    System.out.println("PROFESSOR: " + sentRequest.getUserID());
+
+                    List<StudentSection> studentSections = studentSectionRepository.findByIdStudentID(account.getUserID());
+                    List<ProfessorCourse> professorCourses = professorCourseRepository.findByIdProfessorID(sentRequest.getUserID());
+                    System.out.println(studentSections);
+                    System.out.println(professorCourses);
+
+                    for (StudentSection ss: studentSections) {
+                        Section section = sectionRepository.findBySectionIdentifier(ss.getSectionIdentifier());
+                        System.out.println("SECTION COURSE: " + section.getCourseID());
+                        System.out.println("SECTION SEMESTER: " + section.getSemester());
+                        for (ProfessorCourse pc: professorCourses) {
+                            System.out.println("COURSE: " + pc.getCourseID());
+                            System.out.println("SEMESTER: " + pc.getSemester());
+                            if (pc.getCourseID().contentEquals(section.getCourseID()) && pc.getSemester().contentEquals(section.getSemester())) {
+                                hasAuth = true;
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case "ADMIN":
+                    hasAuth = true;
+                    break;
+            }
+        }
+        if (!hasAuth) {
+            System.out.println("User " + loggedIn.getUsername() + " does not have authority over " + userName);
+        }
+        return hasAuth;
     }
 
     public int addAccount(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName,
@@ -196,25 +261,32 @@ public class AdminServiceImpl implements AdminService {
     }
 
     public int addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType) {
+        System.out.println("ADDING SECTION");
         Section section = new Section(CRN, semester, courseID, courseTitle, sectionType);
         if(sectionRepository.existsBySectionIdentifier(section.getSectionIdentifier())) {
             return -1;
         }
+        System.out.println("SECTION DOES NOT EXIST YET");
         if(sectionRepository.save(section) == null) {
             return -2;
         }
+        System.out.println("SECTION ADDED");
         return 0;
     }
 
     public int assignProfessorToCourse(@NonNull String userName, @NonNull String courseID, @NonNull String semester) {
+        System.out.println("INSIDE ASSIGNMENTS");
         Professor professor = professorRepository.findByUserName(userName);
         if(professor == null) {
             return -1;
         }
+        System.out.println("PROFESSOR NOT NULL");
         if(sectionRepository.findByCourseID(courseID).isEmpty()) {
             return -2;
         }
+        System.out.println("SECTION IS NOT EMPTY");
         ProfessorCourse assignment = new ProfessorCourse(professor.getUserID(), courseID, semester);
+        System.out.println("ASSIGNMENT: " + assignment);
         if(professorCourseRepository.save(assignment) == null) {
             return -3;
         }

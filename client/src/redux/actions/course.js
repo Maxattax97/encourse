@@ -50,3 +50,28 @@ export const getClassProgress = genericDispatch(
     getClassProgressHasError, getClassProgressIsLoading, getClassProgressDataSuccess, 'GET'
 )
 
+export function setDirectoryHasError(hasError) {
+    return {
+        type: 'SET_DIRECTORY_HAS_ERROR',
+        hasError
+    }
+}
+
+export function setDirectoryIsLoading(isLoading) {
+    return {
+        type: 'SET_DIRECTORY_IS_LOADING',
+        isLoading
+    }
+}
+
+export function setDirectoryDataSuccess(data) {
+    return {
+        type: 'SET_DIRECTORY_DATA_SUCCESS',
+        data
+    }
+}
+
+export const setDirectory = genericDispatch(
+    setDirectoryHasError, setDirectoryIsLoading, setDirectoryDataSuccess, 'POST'
+)
+
