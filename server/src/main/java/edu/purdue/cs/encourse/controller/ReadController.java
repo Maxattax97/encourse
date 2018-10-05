@@ -75,75 +75,95 @@ public class ReadController {
     @RequestMapping(value = "/commitList", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
                                                                   @RequestParam(name = "userName") String userName) {
-        JSONReturnable returnJson = professorService.getCommitList(projectID, userName);
-        if (returnJson == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        if (hasPermissionForStudent(userName)) {
+            JSONReturnable returnJson = professorService.getCommitList(projectID, userName);
+            if (returnJson == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
+            if (returnJson.jsonObject == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
+            String json = returnJson.jsonObject.toJSONString();
+            return new ResponseEntity<>(json, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        if (returnJson.jsonObject == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-        }
-        String json = returnJson.jsonObject.toJSONString();
-        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/commitCount", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getCommitCount(@RequestParam(name = "projectID") String projectID,
                                                           @RequestParam(name = "userName") String userName) {
-        JSONReturnable returnJson = professorService.getCommitCounts(projectID, userName);
-        if (returnJson == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        if (hasPermissionForStudent(userName)) {
+            JSONReturnable returnJson = professorService.getCommitCounts(projectID, userName);
+            if (returnJson == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
+            if (returnJson.jsonObject == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
+            String json = returnJson.jsonObject.toJSONString();
+            return new ResponseEntity<>(json, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        if (returnJson.jsonObject == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-        }
-        String json = returnJson.jsonObject.toJSONString();
-        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStatistics(@RequestParam(name = "projectID") String projectID,
                                                          @RequestParam(name = "userName") String userName) {
-        JSONReturnable returnJson = professorService.getStatistics(projectID, userName);
-        if (returnJson == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        if (hasPermissionForStudent(userName)) {
+            JSONReturnable returnJson = professorService.getStatistics(projectID, userName);
+            if (returnJson == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
+            if (returnJson.jsonObject == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
+            String json = returnJson.jsonObject.toJSONString();
+            return new ResponseEntity<>(json, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        if (returnJson.jsonObject == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-        }
-        String json = returnJson.jsonObject.toJSONString();
-        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/diffs", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getDiffs(@RequestParam(name = "projectID") String projectID,
                                                     @RequestParam(name = "userName") String userName) {
-        JSONReturnable returnJson = professorService.getAdditionsAndDeletions(projectID, userName);
-        if (returnJson == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        if (hasPermissionForStudent(userName)) {
+            JSONReturnable returnJson = professorService.getAdditionsAndDeletions(projectID, userName);
+            if (returnJson == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
+            if (returnJson.jsonObject == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
+            String json = returnJson.jsonObject.toJSONString();
+            return new ResponseEntity<>(json, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        if (returnJson.jsonObject == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-        }
-        String json = returnJson.jsonObject.toJSONString();
-        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/progress", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
                                                        @RequestParam(name = "userName") String userName) {
-        JSONReturnable returnJson = professorService.getStudentProgress(projectID, userName);
-        if (returnJson == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        if (hasPermissionForStudent(userName)) {
+            JSONReturnable returnJson = professorService.getStudentProgress(projectID, userName);
+            if (returnJson == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
+            if (returnJson.jsonObject == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
+            String json = returnJson.jsonObject.toJSONString();
+            return new ResponseEntity<>(json, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        if (returnJson.jsonObject == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-        }
-        String json = returnJson.jsonObject.toJSONString();
-        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
 
@@ -173,11 +193,7 @@ public class ReadController {
     }
 
     private boolean hasPermissionForStudent(String userName) {
-        boolean hasPermission = false;
-
-
-
-        return hasPermission;
+        return adminService.hasPermissionForStudent(getUserFromAuth(), userName);
     }
 
 }
