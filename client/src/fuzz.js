@@ -6,4 +6,4 @@ export const getFakeUid = () => {
 
 export const realToFakeMapping = {};
 export const fakeToRealMapping = {};
-export const fuzzing = true;
+export const fuzzing = false;
