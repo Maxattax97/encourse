@@ -1,75 +1,75 @@
-import React, { Component } from 'react';
-import { ComposedChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
+import React, { Component } from 'react'
+import { ComposedChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import { connect } from 'react-redux'
 import { getTestBarGraph } from '../../redux/actions'
 import url from '../../server'
 
 const toPercent = (decimal, fixed = 0) => {
-    return `${(decimal * 100).toFixed(fixed)}%`;
-};
+    return `${(decimal * 100).toFixed(fixed)}%`
+}
 
 const defaultData1 = [
     {
-        "testName": "Test 1",
-        "percent": .98,
-        "hidden": false,
+        'testName': 'Test 1',
+        'percent': .98,
+        'hidden': false,
     },
     {
-        "testName": "Test 2",
-        "percent": .94,
-        "hidden": false,
+        'testName': 'Test 2',
+        'percent': .94,
+        'hidden': false,
     },
     {
-        "testName": "Test 3",
-        "percent": 1,
-        "hidden": false,
+        'testName': 'Test 3',
+        'percent': 1,
+        'hidden': false,
     },
     {
-        "testName": "Test 4",
-        "percent": .89,
-        "hidden": true,
+        'testName': 'Test 4',
+        'percent': .89,
+        'hidden': true,
     },
 ]
 const defaultData2 = [
     {
-        "testName": "Test 1",
-        "percent": .07,
-        "hidden": false,
+        'testName': 'Test 1',
+        'percent': .07,
+        'hidden': false,
     },
     {
-        "testName": "Test 2",
-        "percent": .08,
-        "hidden": false,
+        'testName': 'Test 2',
+        'percent': .08,
+        'hidden': false,
     },
     {
-        "testName": "Test 3",
-        "percent": .01,
-        "hidden": false,
+        'testName': 'Test 3',
+        'percent': .01,
+        'hidden': false,
     },
     {
-        "testName": "Test 4",
-        "percent": .01,
-        "hidden": false,
+        'testName': 'Test 4',
+        'percent': .01,
+        'hidden': false,
     },
     {
-        "testName": "Test 5",
-        "percent": .01,
-        "hidden": false,
+        'testName': 'Test 5',
+        'percent': .01,
+        'hidden': false,
     },
     {
-        "testName": "Test 6",
-        "percent": .02,
-        "hidden": true,
+        'testName': 'Test 6',
+        'percent': .02,
+        'hidden': true,
     },
 ]
 
 class ClassTestCasePercentDone extends Component {
     constructor(props) {
-        super(props);
+        super(props)
 
         this.state = {
             formattedData: this.getDefaultData()
-        };
+        }
     }
 
     componentDidMount = () => {
@@ -94,7 +94,7 @@ class ClassTestCasePercentDone extends Component {
 
     fetch = (props) => {
         props.getData(`${url}/api/testSummary?projectID=${props.projectID}`,
-        {'Authorization': `Bearer ${props.token}`})
+            {'Authorization': `Bearer ${props.token}`})
     }
 
     formatApiData = (udata) => {
@@ -102,7 +102,7 @@ class ClassTestCasePercentDone extends Component {
             return this.getDefaultData()
         }
 
-        const data = udata.data;
+        const data = udata.data
         const formattedData = []
 
         for (let apiEntry of data) {
@@ -113,10 +113,10 @@ class ClassTestCasePercentDone extends Component {
                 score: apiEntry.score,
             }
 
-            formattedData.push(entry);
+            formattedData.push(entry)
         }
 
-        return formattedData;
+        return formattedData
     }
 
     render() {
@@ -147,7 +147,7 @@ class ClassTestCasePercentDone extends Component {
                     </ComposedChart>
                 </ResponsiveContainer>
             </div>
-        );
+        )
     }
 }
 
@@ -158,7 +158,7 @@ const mapStateToProps = (state) => {
         isLoading: state.course ? state.course.getTestBarGraphIsLoading : false,
         isFinished: state.course ? state.course.getTestBarGraphIsFinished : false,
     }
-  }
+}
 
 const mapDispatchToProps = (dispatch) => {
     return {

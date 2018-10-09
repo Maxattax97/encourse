@@ -1,7 +1,7 @@
 
-import React, { Component } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
-import moment from 'moment';
+import React, { Component } from 'react'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
+import moment from 'moment'
 import { connect } from 'react-redux'
 
 import { getCommitFrequency } from '../../redux/actions'
@@ -20,16 +20,16 @@ const defaultData = [
     {date: moment('2018-09-25').valueOf(), count: 0},
     {date: moment('2018-09-26').valueOf(), count: 0},
     {date: moment('2018-09-27').valueOf(), count: 0},
-];
+]
 
 class CommitHistoryHistogram extends Component {
 
     constructor(props) {
-        super(props);
+        super(props)
 
         this.state = {
             formattedData: defaultData,
-        };
+        }
     }
 
     componentDidMount = () => {
@@ -47,7 +47,7 @@ class CommitHistoryHistogram extends Component {
 
     fetch = (props) => {
         props.getData(`${url}/api/commitCount?projectID=${props.projectID}&userName=${props.id}`,
-        {'Authorization': `Bearer ${props.token}`})
+            {'Authorization': `Bearer ${props.token}`})
     }
 
     dateFormatter = (date) => {
@@ -58,22 +58,22 @@ class CommitHistoryHistogram extends Component {
         if (!udata) {
             return defaultData
         }
-        let data = udata.data;
+        let data = udata.data
 
         if (!data || data.length === 0) {
-            return defaultData;
+            return defaultData
         }
 
         for (let entry of data) {
-            entry.date = moment(entry.date).valueOf();
+            entry.date = moment(entry.date).valueOf()
         }
 
-        let minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date);
+        let minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date)
         if (moment(minDate).isBefore(moment('2018-03-10'), 'day')) {
             data = data.filter(e => moment(e.date).isAfter(moment('2018-09-19'), 'day'))
         }
 
-        return data;
+        return data
     }
 
     render() {
@@ -98,7 +98,7 @@ class CommitHistoryHistogram extends Component {
                     </BarChart>
                 </ResponsiveContainer>
             </div>
-        );
+        )
     }
 }
 

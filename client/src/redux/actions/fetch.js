@@ -22,5 +22,5 @@ export default function genericDispatch(hasError, isLoading, success, method) {
                 })
         }
     }
-    return specificDispatch;
+    return specificDispatch
 }

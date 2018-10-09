@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { removeCourse } from '../../../redux/actions'
@@ -15,7 +15,7 @@ class CoursePreview extends Component {
                 </div>
                 <h4 className="break-line title" />
             </div>
-        );
+        )
     }
 }
 
@@ -23,12 +23,12 @@ const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
     }
-};
+}
 
 const mapDispatchToProps = (dispatch) => {
     return {
     }
-};
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(CoursePreview);
+export default connect(mapStateToProps, mapDispatchToProps)(CoursePreview)
 

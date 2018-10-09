@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import Card from "../Card"
+import Card from '../Card'
 import { toggleHidden } from '../../redux/actions'
 
 class ActionNavigation extends Component {
@@ -16,7 +16,7 @@ class ActionNavigation extends Component {
 
     swapTestView = () => {
         this.setState({ view_hidden_tests: !this.state.view_hidden_tests },
-            () => this.props.toggleHidden());
+            () => this.props.toggleHidden())
     }
 
     render() {
@@ -28,7 +28,7 @@ class ActionNavigation extends Component {
                     </div>
                     <h3 className="break-line title" />
                     <h4 className="student-action-view" onClick={ this.swapTestView }>
-                        { this.state.view_hidden_tests ? "View Visible Tests" : "View Hidden Tests" }
+                        { this.state.view_hidden_tests ? 'View Visible Tests' : 'View Hidden Tests' }
                     </h4>
                     <h4 className="student-action-test">
                         Run Tests

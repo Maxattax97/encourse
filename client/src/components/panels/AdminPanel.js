@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 
 class AdminPanel extends Component {
-  render() {
-    return (
-      <div className="AdminPanel">
+    render() {
+        return (
+            <div className="AdminPanel">
         
-      </div>
-    )
-  }
+            </div>
+        )
+    }
 }
 
 export default AdminPanel

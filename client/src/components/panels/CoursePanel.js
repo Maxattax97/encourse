@@ -9,37 +9,37 @@ import Card from '../Card'
 import StudentPreview from './util/StudentPreview'
 import ClassProgressHistogram from '../charts/ClassProgressHistogram'
 import ClassTestCasePercentDone from '../charts/ClassTestCasePercentDone'
-import settingsIcon from "../../img/settings.svg";
-import ActionNavigation from "../navigation/ActionNavigation";
-import CourseModal from "../modals/CourseModal";
+import settingsIcon from '../../img/settings.svg'
+import ActionNavigation from '../navigation/ActionNavigation'
+import CourseModal from '../modals/CourseModal'
 
 import { fuzzing } from '../../fuzz'
 
 class CoursePanel extends Component {
 
     constructor(props) {
-        super(props);
+        super(props)
 
         this.state = {
-            modal_blur: ""
-        };
+            modal_blur: ''
+        }
     }
 
     componentDidMount = () => {
         //TODO: clear class projects/student previews to account for multiple classes
         //TODO: Add course ID functionality for multiple classes
-        this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`, 
-        {'Authorization': `Bearer ${this.props.token}`});
-        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`, 
+        this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`,
+            {'Authorization': `Bearer ${this.props.token}`})
+        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`,
             {'Authorization': `Bearer ${this.props.token}`})
     }
 
     showStudentPanel = (student) => {
         //TODO: move this setCurrentStudent to StudentPanel, store all students in an array in redux
-        this.props.setCurrentStudent(student);
+        this.props.setCurrentStudent(student)
         if (fuzzing) {
             // NOTE: we don't even use the student id in the url
-            history.push(`/student/student`)
+            history.push('/student/student')
         } else {
             history.push(`/student/${student.id}`)
         }
@@ -48,18 +48,18 @@ class CoursePanel extends Component {
     render() {
         return (
             <div className="panel-course">
-                <div className={ this.state.show_course_options ? "blur" : "" }>
-                    <ProjectNavigation onModalBlur={(blur) => this.setState({modal_blur : blur ? " blur" : ""})}
-                                   {...this.props}/>
+                <div className={ this.state.show_course_options ? 'blur' : '' }>
+                    <ProjectNavigation onModalBlur={(blur) => this.setState({modal_blur : blur ? ' blur' : ''})}
+                        {...this.props}/>
                 </div>
 
                 <CourseModal show={ this.state.show_course_options }
-                             close={ () => this.setState({ show_course_options: false, modal_blur: "" }) }/>
+                    close={ () => this.setState({ show_course_options: false, modal_blur: '' }) }/>
 
                 <div className="panel-center-content">
 
                     <div className={ `panel-course-content${this.state.modal_blur}` }>
-                        <div className="title" onClick={ () => this.setState({ show_course_options: true, modal_blur: " blur" })  }>
+                        <div className="title" onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' })  }>
                             <h1>CS252</h1>
                             <img src={ settingsIcon }/>
                         </div>
@@ -73,12 +73,12 @@ class CoursePanel extends Component {
                         <h3>Students</h3>
                         <div className="panel-course-students float-height">
                             {
-                                this.props.students && 
+                                this.props.students &&
                                 this.props.students.map((student) =>
                                     <Card key={student.id}
-                                          component={<StudentPreview student={student} projectID={this.props.currentProjectId}
-                                                                     setCurrentProject={this.props.setCurrentProject} />}
-                                          onClick={() => this.showStudentPanel(student)}/>)
+                                        component={<StudentPreview student={student} projectID={this.props.currentProjectId}
+                                            setCurrentProject={this.props.setCurrentProject} />}
+                                        onClick={() => this.showStudentPanel(student)}/>)
                             }
                         </div>
                     </div>
@@ -101,8 +101,8 @@ const mapStateToProps = (state) => {
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : 0
     }
-};
-  
+}
+
 const mapDispatchToProps = (dispatch) => {
     return {
         getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
@@ -110,6 +110,6 @@ const mapDispatchToProps = (dispatch) => {
         setCurrentProject: (id, index) => dispatch(setCurrentProject(id, index)),
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
     }
-};
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(CoursePanel);
+export default connect(mapStateToProps, mapDispatchToProps)(CoursePanel)
