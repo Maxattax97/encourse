@@ -28,7 +28,7 @@ def select_best(files):
     #print(top_files)
     return top_files[:3]
 
-def get_daily_commit_data(progress_file):
+def get_daily_commit_data(progress_file, max_change=sys.maxsize):
     expect_time = False
     name = ""
     current_date = datetime(1,1,1).date()
@@ -108,6 +108,10 @@ def get_daily_commit_data(progress_file):
                 continue
             additions = int(words[0]) if is_number(words[0]) else 0
             deletions = int(words[1]) if is_number(words[1]) else 0
+            
+            if additions > max_change or deletions > max_change:
+                continue    # Needs testing
+
             file_path = words[2]        # Unused
             if file_path in daily_files:
                 daily_files[file_path] += (additions - deletions)
