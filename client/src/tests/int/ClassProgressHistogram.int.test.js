@@ -1,5 +1,5 @@
 import React from 'react'
-import Enzyme, { shallow, mount } from 'enzyme'
+import Enzyme, { mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 import { Provider } from 'react-redux'
 import ClassProgressHistogram from '../../components/charts/ClassProgressHistogram'
@@ -10,10 +10,10 @@ Enzyme.configure({ adapter: new Adapter() })
 
 describe('<ClassProgressHistogram />', () => {
     let store
-    let dispatchSpy
+    // let dispatchSpy
 
     beforeEach(() => {
-        ({ store, dispatchSpy } = setupIntegrationTest({ myReducer }))
+        ({ store, /* dispatchSpy */ } = setupIntegrationTest({ myReducer }))
     })
 
     function setup() {
@@ -35,6 +35,6 @@ describe('<ClassProgressHistogram />', () => {
     }
 
     it('render()', () => {
-        const { wrapper } = setup()
+        setup()
     })
 })

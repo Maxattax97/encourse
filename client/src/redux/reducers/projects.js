@@ -32,7 +32,7 @@ function projects(state = {}, action) {
         return Object.assign({}, state, {
             modifyProjectIsLoading: action.isLoading,
         })
-    case 'MODIFY_PROJECT_DATA_SUCCESS':
+    case 'MODIFY_PROJECT_DATA_SUCCESS': {
         let projects3 = [...state.getClassProjectsData]
         projects3[state.currentProjectIndex] = {
             project_name: action.data.projectName,
@@ -47,6 +47,7 @@ function projects(state = {}, action) {
             modifyProjectData: action.data,
             getClassProjectsData: projects3,
         })
+    }
     case 'ADD_PROJECT_HAS_ERROR':
         return Object.assign({}, state, {
             addProjectHasError: action.hasError,
@@ -55,7 +56,7 @@ function projects(state = {}, action) {
         return Object.assign({}, state, {
             addProjectIsLoading: action.isLoading,
         })
-    case 'ADD_PROJECT_DATA_SUCCESS':
+    case 'ADD_PROJECT_DATA_SUCCESS': {
         let projects1 = [...state.getClassProjectsData]
         projects1.push({
             project_name: action.data.projectName,
@@ -72,6 +73,7 @@ function projects(state = {}, action) {
             currentProjectIndex: projects1.length - 1,
             currentProjectId: action.data.projectIdentifier
         })
+    }
     case 'DELETE_PROJECT_HAS_ERROR':
         return Object.assign({}, state, {
             deleteProjectHasError: action.hasError,
@@ -80,7 +82,7 @@ function projects(state = {}, action) {
         return Object.assign({}, state, {
             deleteProjectIsLoading: action.isLoading,
         })
-    case 'DELETE_PROJECT_DATA_SUCCESS':
+    case 'DELETE_PROJECT_DATA_SUCCESS': {
         let projects2 = [...state.getClassProjectsData]
         projects2.splice(state.currentProjectIndex, 1)
         let currentProjectIndex = state.currentProjectIndex === 0 ? 
@@ -92,6 +94,7 @@ function projects(state = {}, action) {
             currentProjectIndex,
             currentProjectId: state.getClassProjectsData[currentProjectIndex].id
         })
+    }
     case 'ADD_TEST_HAS_ERROR':
         return Object.assign({}, state, {
             addTestHasError: action.hasError,

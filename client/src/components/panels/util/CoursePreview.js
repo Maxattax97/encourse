@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { removeCourse } from '../../../redux/actions'
-import url from '../../../server'
+// import { removeCourse } from '../../../redux/actions'
+// import url from '../../../server'
 
 class CoursePreview extends Component {
 
@@ -25,10 +25,9 @@ const mapStateToProps = (state) => {
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (/* dispatch */) => {
     return {
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CoursePreview)
-

@@ -63,7 +63,7 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
-    "lint": "eslint --fix --ignore-path .gitignore src; exit 0"
+    "lint": "eslint --fix src; exit 0"
   },
   "jest": {
     "collectCoverageFrom": [

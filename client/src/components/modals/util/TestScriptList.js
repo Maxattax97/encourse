@@ -58,7 +58,7 @@ class TestScriptList extends Component {
                 {
                     this.state.scripts.map((script, index) =>
                         <div className="scripts-script" key={`${ Date.now()+index }`}>
-                            <input type="file" id="script-upload" onChange={(ev) => {console.log('here');this.uploadFile(ev)}} ref={ index } style={{display: 'none'}}/>
+                            <input type="file" id="script-upload" onChange={(ev) => {/*console.log('here');*/this.uploadFile(ev)}} ref={ index } style={{display: 'none'}}/>
                             <div className="script-filename">
                                 <img src={ searchIcon } onClick={ () => this.setState({ index }, () => document.getElementById('script-upload').click())}/>
                                 <h4>

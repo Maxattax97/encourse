@@ -3,10 +3,8 @@ import { connect } from 'react-redux'
 
 import Card from '../Card'
 import plusIcon from '../../img/plus.svg'
-import StudentPreview from './util/StudentPreview'
 import CoursePreview from './util/CoursePreview'
 import AccountPreview from './util/AccountPreview'
-import ProjectModal from '../modals/ProjectModal'
 import Modal from '../modals/Modal'
 import checkmarkIcon from '../../img/checkmark.svg'
 import {
@@ -115,14 +113,14 @@ class PreferencePanel extends Component {
 
     saveCourse = () => {
         //TODO!: verify this works
-        if(this.state.current_course === -1) { 
+        if(this.state.current_course === -1) {
             //Add course
             this.props.addCourse(`${url}/api/add/course?courseID=${this.state.name}&semester=${this.state.semester}`,
                 {'Authorization': `Bearer ${this.props.token}`})
         } else {
             this.props.modifyCourse(/*!: add endpoint*/)
             //Edit course
-        }     
+        }
     };
 
     saveAccount = () => {

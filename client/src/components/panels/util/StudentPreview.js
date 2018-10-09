@@ -17,7 +17,7 @@ class StudentPreview extends Component {
                 </div>
                 <div className="student-preview-progress">
                     <div className="progress-bar">
-                        <div style={{width: percent + '%'}} />             
+                        <div style={{width: percent + '%'}} />
                     </div>
                     <div className="progress-text">
                         {parseInt(percent)}%

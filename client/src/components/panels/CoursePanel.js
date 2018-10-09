@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import url from '../../server'
-import { getStudentPreviews, getClassProjects, setCurrentProject, setCurrentStudent, setModalBlur } from '../../redux/actions/index'
+import { getStudentPreviews, getClassProjects, setCurrentProject, setCurrentStudent } from '../../redux/actions/index'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import Card from '../Card'
 import StudentPreview from './util/StudentPreview'

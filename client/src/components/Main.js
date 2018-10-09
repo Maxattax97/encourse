@@ -20,8 +20,8 @@ class Main extends Component {
                 <div className="panel">
                     <div className="panel-container">
                         <Switch>
-                            <Route path="/panel" render={(navProps) => {
-                            //determine logic for course panel, student panel, or admin panel. For now, use course panel
+                            <Route path="/panel" render={(/* navProps */) => {
+                                //determine logic for course panel, student panel, or admin panel. For now, use course panel
                                 return <Redirect to="/course"/>
                             }}/>
                             <Route path="/project-settings" render={(navProps) =>
@@ -36,24 +36,24 @@ class Main extends Component {
                             <Route path="/admin" render={(navProps) =>
                                 <AdminPanel {...navProps} />
                             }/>
-                            <Route path="/settings" render={(navProps) => 
-                                <PreferencePanel />   
+                            <Route path="/settings" render={(/* navProps */) =>
+                                <PreferencePanel />
                             }/>
-                            <Route path='/' render={(navProps) => <Redirect to="/panel" />}/>
+                            <Route path='/' render={(/* navProps */) => <Redirect to="/panel" />}/>
                         </Switch>
                     </div>
                 </div>
-           
+
             </div>
         )
     }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (/* state */) => {
     return { }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (/* dispatch */) => {
     return { }
 }
 

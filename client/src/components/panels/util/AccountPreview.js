@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { removeAccount } from '../../../redux/actions'
-import url from '../../../server'
+// import { removeAccount } from '../../../redux/actions'
+// import url from '../../../server'
 
 
 class AccountPreview extends Component {
@@ -26,7 +26,7 @@ const mapStateToProps = (state) => {
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (/* dispatch */) => {
     return {
     }
 }

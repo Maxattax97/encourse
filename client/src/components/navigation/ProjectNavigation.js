@@ -32,7 +32,7 @@ class ProjectNavigation extends Component {
 
     handleNewProject = () => {
         if(this.state.show_project_options && this.state.new_project) {
-
+            return
         }
         else {
             this.setState({ show_project_options: true, new_project: true })

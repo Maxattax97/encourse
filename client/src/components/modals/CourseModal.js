@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import checkmarkIcon from '../../img/checkmark.svg'
 import Modal from './Modal'
-import deleteIcon from '../../img/delete.svg'
+// import deleteIcon from '../../img/delete.svg'
 import { setDirectory, modifyProject } from '../../redux/actions'
 import url from '../../server'
 
@@ -35,7 +35,7 @@ class CourseModal extends Component {
             this.props.setDirectory(`${url}`)
         }
         for(let project of this.props.projects) {
-            console.log(project)
+            // console.log(project)
             this.props.modifyProject(`${url}/api/modify/project?projectID=${project.id}&field=testRate&value=${this.state.interval}`,
                 {'Authorization': `Bearer ${this.props.token}`})
         }    

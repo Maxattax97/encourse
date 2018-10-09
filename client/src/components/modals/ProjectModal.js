@@ -129,7 +129,7 @@ class ProjectModal extends Component {
                 }
                 fr.readAsText(script.file)
             }
-            console.log(script)
+            // console.log(script)
         
         }   
         if(script.pointValue && !script.file) {
