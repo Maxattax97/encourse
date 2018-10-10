@@ -1,6 +1,7 @@
 import sys
 from helper import is_number as is_number
 from datetime import datetime
+from datetime import timedelta
 
 def create_day_dict(date, files, time_spent, additions, deletions, commit_count):
     daily_data = {}
@@ -28,7 +29,9 @@ def select_best(files):
     #print(top_files)
     return top_files[:3]
 
-def get_daily_commit_data(progress_file, max_change=sys.maxsize):
+def get_daily_commit_data(progress_file, max_change=sys.maxsize, timeout=24):
+    timeout_interval = timedelta(hours=float(timeout))
+    print(timeout_interval)
     expect_time = False
     name = ""
     current_date = datetime(1,1,1).date()
@@ -98,7 +101,8 @@ def get_daily_commit_data(progress_file, max_change=sys.maxsize):
                 daily_files = {}
                 continue
             #print(time_delta.total_seconds())
-            daily_time_spent += time_delta.total_seconds()
+            if time_delta.total_seconds() < timeout_interval.total_seconds():
+                daily_time_spent += time_delta.total_seconds()
             current_date = date
             previous_time = time
             daily_commit_count += 1

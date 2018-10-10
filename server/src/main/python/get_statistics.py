@@ -81,6 +81,7 @@ parser.add_argument("logfile", help="path to commit log file")
 parser.add_argument("timefile", help="path to commit time file")
 parser.add_argument("name", help="user name")
 parser.add_argument("tests", help="test case string")
+parser.add_argument("-t", "--timeout", help="time spent timeout")
 parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
 args = parser.parse_args()
@@ -102,7 +103,8 @@ dates_dict = commit_times(commit_date_file)
 
 #print(counts_dict)
 
-student_data = commit_list(commit_data_file)
+print(args.timeout)
+student_data = commit_list(commit_data_file, timeout=args.timeout) if args.timeout else commit_list(commit_data_file)
 formatted_student_data = sum_statistics(student_data)
 # TODO: check for valid dicts
 
@@ -114,9 +116,3 @@ data = format_commit_data(dates_dict, formatted_student_data, test_data)
 json = json.dumps(data[student_id])
 # Outputs json to stdout
 print(json)
-
-
-
-
-
-
