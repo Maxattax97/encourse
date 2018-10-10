@@ -661,6 +661,21 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
+    /** Adds a testing script to the database. Mainly for testing purposes **/
+    public int addTestScript(@NonNull String projectID, @NonNull String testName, boolean isHidden, int points) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -1;
+        }
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
+            return -2;
+        }
+        ProjectTestScript script = new ProjectTestScript(projectID, testName, isHidden, points);
+        projectTestScriptRepository.save(script);
+        return 0;
+    }
+
     /** Modify an uploaded testing script to either change its contents, point value, or if it is hidden **/
     public int modifyTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String field, @NonNull String value) {
         ProjectTestScript script = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
