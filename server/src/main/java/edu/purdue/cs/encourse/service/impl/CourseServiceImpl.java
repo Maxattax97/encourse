@@ -88,6 +88,9 @@ public class CourseServiceImpl implements CourseService {
             for(String r : testResults) {
                 String testName = r.split(":")[0];
                 ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(p.getProjectIdentifier(), testName);
+                if(testScript == null) {
+                    continue;
+                }
                 maxPoints += testScript.getPointsWorth();
                 if(r.endsWith("P")) {
                     earnedPoints += testScript.getPointsWorth();

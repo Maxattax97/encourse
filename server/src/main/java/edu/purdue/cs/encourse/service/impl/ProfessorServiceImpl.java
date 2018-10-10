@@ -105,6 +105,9 @@ public class ProfessorServiceImpl implements ProfessorService {
         for(String r : testResults) {
             String testName = r.split(":")[0];
             ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
+            if(testScript == null) {
+                continue;
+            }
             maxPoints += testScript.getPointsWorth();
             if(r.endsWith("P")) {
                 earnedPoints += testScript.getPointsWorth();
