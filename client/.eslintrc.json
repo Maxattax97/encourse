@@ -16,7 +16,7 @@
         "react": {
             "createClass": "createReactClass",
             "pragma": "React",
-            "version": "16.5.1"
+            "version": "16.5"
         },
         "propWrapperFunctions": [ "forbidExtraProps" ]
     },
@@ -46,7 +46,7 @@
         "no-console": "warn",
         "react/display-name": "off",
         "react/no-children-prop": "off",
-        "react/no-deprecated": "off",
+        "react/no-deprecated": "warn",
         "react/no-direct-mutation-state": "off",
         "react/prop-types": "off",
         "react/no-string-refs": "warn",
