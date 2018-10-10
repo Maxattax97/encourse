@@ -5,11 +5,13 @@ import argparse
 from datetime import datetime
 from test_completion import get_test_completion as get_scores
 
+
 def format_data(data):
     data = copy.deepcopy(data)
     for student in data:
         pass
     return data
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("testfile", help="path to test score file")
@@ -19,7 +21,7 @@ args = parser.parse_args()
 
 commit_data_file = open(args.timefile, "r")
 data = get_scores(commit_data_file)
-#print(data)
+# print(data)
 
 formatted_data = format_data(data)
 json = json.dumps(formatted_data)
