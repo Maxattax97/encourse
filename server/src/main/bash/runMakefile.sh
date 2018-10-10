@@ -6,6 +6,7 @@
 DIRECTORY="$(pwd)"
 mkdir -p $1
 cd $1
+rm Makefile
 cp $2 $1
 make
 cd "${DIRECTORY}"
