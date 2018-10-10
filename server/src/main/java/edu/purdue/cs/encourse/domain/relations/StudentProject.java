@@ -50,8 +50,8 @@ public class StudentProject {
 
     public StudentProject(String userID, String projectIdentifier) {
         this.id = new StudentProjectID(userID, projectIdentifier);
-        this.bestVisibleGrade = null;
-        this.bestHiddenGrade = null;
+        this.bestVisibleGrade = "";
+        this.bestHiddenGrade = "";
         this.commitCount = 0;
         this.totalLinesAdded = 0;
         this.totalLinesRemoved = 0;
