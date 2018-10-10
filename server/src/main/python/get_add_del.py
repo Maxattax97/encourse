@@ -48,11 +48,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("logfile", help="path to commit log file")
 parser.add_argument("timefile", help="path to commit time file")
 parser.add_argument("name", help="user name")
-parser.add_argument(
-    "-l",
-    "--limit",
-    help="ignore files with greater number of changes than the specified limit",
-)
+parser.add_argument("-l", "--limit", help="ignore file changes above limit")
 parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
 
@@ -71,13 +67,11 @@ data = (
 individual_data = data[student_id]
 # print(individual_data)
 # print("\n")
-print(args.limit)
 reformatted_data = reformat_commit_data(individual_data)
 
 commit_times = commit_data(commit_times_file)
 # print(commit_times)
 individual_commit_times = commit_times[student_id]
-print(commit_times)
 
 api_formatted_data = api_format_data(reformatted_data, individual_commit_times)
 api_json = json.dumps(api_formatted_data)

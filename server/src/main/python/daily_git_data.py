@@ -34,9 +34,14 @@ def select_best(files):
     return top_files[:3]
 
 
-def get_daily_commit_data(progress_file, max_change=sys.maxsize, timeout=24):
+def get_daily_commit_data(progress_file, max_change=None, timeout=None):
+    if not max_change:
+        max_change = sys.maxsize
+    else:
+        max_change = int(max_change)
+    if not timeout:
+        timeout = 24
     timeout_interval = timedelta(hours=float(timeout))
-    print(timeout_interval)
     expect_time = False
     name = ""
     current_date = datetime(1, 1, 1).date()

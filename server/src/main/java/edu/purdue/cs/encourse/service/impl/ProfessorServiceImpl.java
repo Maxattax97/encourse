@@ -404,7 +404,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
         String pyPath = pythonPath + "get_add_del.py";
-        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
+        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + "-l 10000";
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -429,7 +429,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             testResult = testResult.substring(0, testResult.length() - 1);
         }
         String pyPath = pythonPath + "get_statistics.py";
-        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult;
+        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 10000";
         JSONReturnable json = runPython(command);
         if(json == null || json.getJsonObject() == null) {
             return json;

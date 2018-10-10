@@ -1,5 +1,6 @@
 import sys
 from helper import is_number as is_number
+from helper import eprint
 
 
 def get_test_completion(test_case_file):
@@ -35,13 +36,12 @@ def get_test_completion_string(test_case_string):
     if len(words) == 0 or words == [""]:
         return {}
     name = words[0]
-    # print(name)
     total_score = 0
     test_score = 0
     tests = {}
     for word in words[1:]:
         test, score = word.split(":")
-        # print(test,score)
+        # eprint(test,score)
         tests[test] = score
         if score == "P":
             test_score += 1

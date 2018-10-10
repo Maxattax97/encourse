@@ -26,9 +26,13 @@ def format_commit_data(dates, stats, tests):
             count = info["commit_count"]
             time = info["time_spent"]
         test_score = 0
-        if user in tests:
+        if (
+            user in tests
+        ):  # This if else is dumb, fix it. strings and files should both be handled gracefully
             info = tests[user]
             test_score = info["total"]
+        elif "total" in tests:
+            test_score = tests["total"]
         user_data = {}
         if len(user_dates) == 2:
             user_data["Start Date"] = format_date(user_dates[0])
@@ -86,6 +90,7 @@ parser.add_argument("timefile", help="path to commit time file")
 parser.add_argument("name", help="user name")
 parser.add_argument("tests", help="test case string")
 parser.add_argument("-t", "--timeout", help="time spent timeout")
+parser.add_argument("-l", "--limit", help="ignore file changes above limit")
 parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
 args = parser.parse_args()
@@ -136,17 +141,14 @@ dates_dict = commit_times(commit_date_file)
 
 # print(counts_dict)
 
-print(args.timeout)
-student_data = (
-    commit_list(commit_data_file, timeout=args.timeout)
-    if args.timeout
-    else commit_list(commit_data_file)
+student_data = commit_list(
+    commit_data_file, max_change=args.limit, timeout=args.timeout
 )
 formatted_student_data = sum_statistics(student_data)
 # TODO: check for valid dicts
 
 test_data = test_completion_string(test_case_string)
-# print(test_data)
+eprint(test_data)
 
 data = format_commit_data(dates_dict, formatted_student_data, test_data)
 # print(data)

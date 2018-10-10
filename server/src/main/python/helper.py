@@ -32,10 +32,7 @@ def time_string(seconds):
     if minutes < 60:
         return "{} minutes".format(int(minutes))
     hours, minutes = divmod(minutes, 60)
-    if hours < 24:
-        return "{} hours".format(int(hours))
-    days, hours = divmod(hours, 24)
-    return "{} days".format(int(days))
+    return "{} hours".format(int(hours))
 
 
 def daterange(start_date, end_date):
