@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -23,8 +25,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user != null) {
             return user;
         }
-
         throw new UsernameNotFoundException(username);
+    }
+
+    public void changeUserEnabled(User user) {
+        user.setEnabled(!user.isEnabled());
+        userRepository.save(user);
+    }
+
+    public List<User> getDisabledAccounts() {
+        return userRepository.findAllByEnabledIsFalse();
     }
 
 }

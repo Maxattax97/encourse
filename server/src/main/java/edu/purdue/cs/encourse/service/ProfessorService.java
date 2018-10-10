@@ -1,5 +1,6 @@
 package edu.purdue.cs.encourse.service;
 
+import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import lombok.NonNull;
@@ -21,6 +22,7 @@ public interface ProfessorService {
     JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getClassProgress(@NonNull String projectID);
+    JSONReturnable getTestSummary(@NonNull String projectID);
     JSONReturnable getCommitCounts(@NonNull String projectID, @NonNull String userName);
 
     String countAllCommits(@NonNull String projectID);
@@ -40,4 +42,6 @@ public interface ProfessorService {
     int assignTeachingAssistantToStudent(@NonNull String teachAssistUserName, @NonNull String studentUserName);
 
     int testPythonDirectory();
+
+    Project getProject(String projectID);
 }

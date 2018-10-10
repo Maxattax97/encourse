@@ -1,67 +1,54 @@
-import React, { Component } from 'react';
-import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
+import React, { Component } from 'react'
+import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import { connect } from 'react-redux'
 
 import { getClassProgress } from '../../redux/actions'
 import url from '../../server'
 
 const toPercent = (decimal, fixed = 0) => {
-    return `${(decimal * 100).toFixed(fixed)}%`;
-};
-
-const AxisLabel = ({ axisType, x, y, width, height, stroke, children }) => {
-    const isVert = axisType === 'yAxis';
-    const cx = isVert ? x : x + (width / 2);
-    const cy = isVert ? (height / 2) + y : y + height + 10;
-    const rot = isVert ? `270 ${cx} ${cy}` : 0;
-    return (
-        <text x={cx} y={cy} transform={`rotate(${rot})`} textAnchor="middle" stroke={stroke}>
-            {children}
-        </text>
-    );
-};
+    return `${(decimal * 100).toFixed(fixed)}%`
+}
 
 const defaultData = [
     {
-        "progressBin": "0-20%",
-        "order": 0,
-        "count": 10,
-        "percent": 0.625
+        'progressBin': '0-20%',
+        'order': 0,
+        'count': 10,
+        'percent': 0.625
     },
     {
-        "progressBin": "20-40%",
-        "order": 20,
-        "count": 3,
-        "percent": 0.1875
+        'progressBin': '20-40%',
+        'order': 20,
+        'count': 3,
+        'percent': 0.1875
     },
     {
-        "progressBin": "40-60%",
-        "order": 40,
-        "count": 2,
-        "percent": 0.125
+        'progressBin': '40-60%',
+        'order': 40,
+        'count': 2,
+        'percent': 0.125
     },
     {
-        "progressBin": "60-80%",
-        "order": 60,
-        "count": 0,
-        "percent": 0
+        'progressBin': '60-80%',
+        'order': 60,
+        'count': 0,
+        'percent': 0
     },
     {
-        "progressBin": "80-100%",
-        "order": 80,
-        "count": 1,
-        "percent": 0.0625
+        'progressBin': '80-100%',
+        'order': 80,
+        'count': 1,
+        'percent': 0.0625
     }
 ]
 
 class ClassProgressHistogram extends Component {
     constructor(props) {
-        super(props);
-
+        super(props)
 
         this.state = {
             formattedData: defaultData,
-        };
+        }
     }
 
     componentDidMount = () => {
@@ -79,7 +66,7 @@ class ClassProgressHistogram extends Component {
 
     fetch = (props) => {
         props.getData(`${url}/api/classProgress?projectID=${props.projectID}`,
-        {'Authorization': `Bearer ${props.token}`})
+            {'Authorization': `Bearer ${props.token}`})
     }
 
     formatApiData = (udata) => {
@@ -87,14 +74,10 @@ class ClassProgressHistogram extends Component {
             return defaultData
         }
 
-        const data = udata.data;
-
-        if (!data || data.length === 0) {
-            return defaultData;
-        }
+        const data = udata
         const formattedData = []
-        const data2 = Object.entries(data);
-        const total = data2.reduce((sum, p) => sum + p[1], 0);
+        const data2 = Object.entries(data)
+        const total = data2.reduce((sum, p) => sum + p[1], 0)
 
         for (let apiEntry of data2) {
             const entry = {
@@ -104,12 +87,12 @@ class ClassProgressHistogram extends Component {
                 percent: apiEntry[1] / total,
             }
 
-            formattedData.push(entry);
+            formattedData.push(entry)
         }
 
         formattedData.sort((a, b) => a.order - b.order)
 
-        return formattedData;
+        return formattedData
     }
 
     render() {
@@ -127,7 +110,7 @@ class ClassProgressHistogram extends Component {
                                 % Completion
                             </Label>
                         </XAxis>
-                        <YAxis tickFormatter={toPercent}>
+                        <YAxis tickFormatter={toPercent} domain={[0, 1]}>
                             <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                                 % of Class
                             </Label>
@@ -137,7 +120,7 @@ class ClassProgressHistogram extends Component {
                     </ComposedChart>
                 </ResponsiveContainer>
             </div>
-        );
+        )
     }
 }
 
@@ -145,10 +128,10 @@ const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
-        isLoading: state.course ? state.course.getClassProgressData : false,
-        isFinished: state.student ? state.student.getClassProgressIsFinished : false,
+        isLoading: state.course ? state.course.getClassProgressIsLoading : false,
+        isFinished: state.course ? state.course.getClassProgressIsFinished : false,
     }
-  }
+}
 
 const mapDispatchToProps = (dispatch) => {
     return {

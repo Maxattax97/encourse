@@ -6,6 +6,9 @@ import edu.purdue.cs.encourse.service.AccountService;
 import edu.purdue.cs.encourse.service.AdminService;
 import edu.purdue.cs.encourse.service.CourseService;
 import edu.purdue.cs.encourse.service.ProfessorService;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping(value="/api")
@@ -109,9 +113,11 @@ public class WriteController {
                                                          @RequestBody String body) {
         String contents = null;
         try {
-            Base64.Decoder dec= Base64.getDecoder();
-            byte[] strdec=dec.decode(body);
+            System.out.println("BEFORE: " + body);
+            Base64.Decoder dec = Base64.getDecoder();
+            byte[] strdec = dec.decode(body);
             contents = new String(strdec, "UTF-8");
+            System.out.println("AFTER: " + contents);
         } catch (Exception e) {
             System.out.println("Could not parse body: \n" + e);
         }
@@ -121,6 +127,7 @@ public class WriteController {
         }
 
         int result = professorService.uploadTestScript(projectID, testName, contents, isHidden, points);
+        System.out.println("RESULT: " + result);
         if (result == 0) {
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else if (result == -1) {
@@ -164,36 +171,60 @@ public class WriteController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/project", method = RequestMethod.POST, consumes = "application/json")
-    public @ResponseBody
-    ResponseEntity<?> addProject(@RequestBody String json) {
+    public @ResponseBody ResponseEntity<?> addProject(@RequestBody String json) {
         int result;
         Project p;
         try {
             p = new ObjectMapper().readValue(json, Project.class);
             result = professorService.addProject(p.getCourseID(), p.getSemester(), p.getProjectName(), p.getRepoName(), p.getStartDate(), p.getDueDate(), p.getTestRate());
             if (result == 0) {
-                professorService.assignProject(p.getProjectIdentifier());
+                professorService.assignProject(p.getCourseID() + " " + p.getSemester() + ": " + p.getProjectName());
             }
         } catch (IOException e) {
+            System.out.println(e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>((p != null)? p: result, (p != null)? HttpStatus.CREATED: HttpStatus.NOT_MODIFIED);
     }
+//    @Deprecated
+//    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+//    @RequestMapping(value = "/modify/project", method = RequestMethod.POST)
+//    public @ResponseBody ResponseEntity<?> modifyProject(@RequestParam(name = "projectID") String projectID,
+//                                                         @RequestParam(name = "field") String field,
+//                                                         @RequestParam(name = "value") String value) {
+//
+//        int result = professorService.modifyProject(projectID, field, value);
+//        if (result == 0) {
+//            return new ResponseEntity<>(result, HttpStatus.OK);
+//        } else if (result == -1) {
+//            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+//        } else {
+//            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+//        }
+//    }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/modify/project", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> modifyProject(@RequestParam(name = "projectID") String projectID,
-                                                         @RequestParam(name = "field") String field,
-                                                         @RequestParam(name = "value") String value) {
-
-        int result = professorService.modifyProject(projectID, field, value);
-        if (result == 0) {
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } else if (result == -1) {
-            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
-        } else {
+    public @ResponseBody ResponseEntity<?> modifyBulkProject(@RequestParam(name = "projectID") String projectID,
+                                                             @RequestBody String body) {
+        int result = -1;
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject json = (JSONObject) parser.parse(body);
+            for (Object k: json.keySet()) {
+                String key = (String)k;
+                Object v = json.get(key);
+                String val = (String)v;
+                result = professorService.modifyProject(projectID, key, val);
+                if (result != 0) {
+                    throw new ParseException(0);
+                }
+            }
+        } catch (ParseException e) {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
+        Project p = professorService.getProject(projectID);
+        return new ResponseEntity<>(p, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")

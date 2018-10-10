@@ -1,45 +1,75 @@
-import React, { Component } from 'react';
-import { ComposedChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, ResponsiveContainer } from 'recharts';
+import React, { Component } from 'react'
+import { ComposedChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import { connect } from 'react-redux'
-
-// TODO change api
-import { getClassProgress } from '../../redux/actions'
+import { getTestBarGraph } from '../../redux/actions'
 import url from '../../server'
 
 const toPercent = (decimal, fixed = 0) => {
-    return `${(decimal * 100).toFixed(fixed)}%`;
-};
+    return `${(decimal * 100).toFixed(fixed)}%`
+}
 
-const defaultData = [
+const defaultData1 = [
     {
-        "testName": "Test 1",
-        "percent": .50,
-        "hidden": false,
+        'testName': 'Test 1',
+        'percent': .98,
+        'hidden': false,
     },
     {
-        "testName": "Test 2",
-        "percent": .23,
-        "hidden": false,
+        'testName': 'Test 2',
+        'percent': .94,
+        'hidden': false,
     },
     {
-        "testName": "Test 3",
-        "percent": .94,
-        "hidden": false,
+        'testName': 'Test 3',
+        'percent': 1,
+        'hidden': false,
     },
     {
-        "testName": "Test 4",
-        "percent": .38,
-        "hidden": true,
+        'testName': 'Test 4',
+        'percent': .89,
+        'hidden': true,
+    },
+]
+const defaultData2 = [
+    {
+        'testName': 'Test 1',
+        'percent': .07,
+        'hidden': false,
+    },
+    {
+        'testName': 'Test 2',
+        'percent': .08,
+        'hidden': false,
+    },
+    {
+        'testName': 'Test 3',
+        'percent': .01,
+        'hidden': false,
+    },
+    {
+        'testName': 'Test 4',
+        'percent': .01,
+        'hidden': false,
+    },
+    {
+        'testName': 'Test 5',
+        'percent': .01,
+        'hidden': false,
+    },
+    {
+        'testName': 'Test 6',
+        'percent': .02,
+        'hidden': true,
     },
 ]
 
 class ClassTestCasePercentDone extends Component {
     constructor(props) {
-        super(props);
+        super(props)
 
         this.state = {
-            formattedData: defaultData,
-        };
+            formattedData: this.getDefaultData()
+        }
     }
 
     componentDidMount = () => {
@@ -47,7 +77,10 @@ class ClassTestCasePercentDone extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(!this.props.isFinished && nextProps.isFinished) {
+        if (nextProps.data === null) {
+            this.setState({ formattedData: this.getDefaultData(nextProps) })
+        }
+        if (!this.props.isFinished && nextProps.isFinished) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -55,19 +88,21 @@ class ClassTestCasePercentDone extends Component {
         }
     }
 
+    getDefaultData = (props) => {
+        return (props && props.projectID || this.props.projectID) == 'cs252 Fall2018: MyMalloc' ? defaultData1 : defaultData2
+    }
+
     fetch = (props) => {
-        // TODO change api
-        props.getData(`${url}/api/classProgress?projectID=${props.projectID}`,
-        {'Authorization': `Bearer ${props.token}`})
+        props.getData(`${url}/api/testSummary?projectID=${props.projectID}`,
+            {'Authorization': `Bearer ${props.token}`})
     }
 
     formatApiData = (udata) => {
-        const data = udata.data;
-
-        if (!data || data.length === 0) {
-            return defaultData;
+        if(!udata || !udata.data || udata.data.length === 0) {
+            return this.getDefaultData()
         }
 
+        const data = udata.data
         const formattedData = []
 
         for (let apiEntry of data) {
@@ -78,10 +113,10 @@ class ClassTestCasePercentDone extends Component {
                 score: apiEntry.score,
             }
 
-            formattedData.push(entry);
+            formattedData.push(entry)
         }
 
-        return formattedData;
+        return formattedData
     }
 
     render() {
@@ -98,7 +133,7 @@ class ClassTestCasePercentDone extends Component {
                                 Test Case
                             </Label>
                         </XAxis>
-                        <YAxis tickFormatter={toPercent}>
+                        <YAxis tickFormatter={toPercent} domain={[0, 1]}>
                             <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                                 % of Class
                             </Label>
@@ -106,31 +141,29 @@ class ClassTestCasePercentDone extends Component {
                         <Tooltip/>
                         <Bar dataKey="percent">
                             {this.state.formattedData.map((entry, index) => (
-                                <Cell fill={entry.hidden ? '#005599' : '#8884d8' }/>
+                                <Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#8884d8' }/>
                             ))}
                         </Bar>
                     </ComposedChart>
                 </ResponsiveContainer>
             </div>
-        );
+        )
     }
 }
 
 const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
-        // TODO change api
-        data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
-        isLoading: state.course ? state.course.getClassProgressData : false,
-    }
-  }
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        // TODO change api
-        getData: (url, headers, body) => dispatch(getClassProgress(url, headers, body))
+        data: state.course && state.course.getTestBarGraphData ? state.course.getTestBarGraphData : null,
+        isLoading: state.course ? state.course.getTestBarGraphIsLoading : false,
+        isFinished: state.course ? state.course.getTestBarGraphIsFinished : false,
     }
 }
 
-export { ClassTestCasePercentDone }
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getData: (url, headers, body) => dispatch(getTestBarGraph(url, headers, body))
+    }
+}
+
 export default connect(mapStateToProps, mapDispatchToProps)(ClassTestCasePercentDone)

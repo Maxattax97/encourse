@@ -74,7 +74,7 @@ public class ReadController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/coursesData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getProjectData(@RequestParam(name = "userName") String userName) {
-        if (hasPermissionForStudent(userName)) {
+        if (hasPermissionOverAccount(userName)) {
             JSONArray json = courseService.getCourseData(userName);
 
             if (json == null) {
@@ -92,7 +92,7 @@ public class ReadController {
     @RequestMapping(value = "/commitList", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
                                                                   @RequestParam(name = "userName") String userName) {
-        if (hasPermissionForStudent(userName)) {
+        if (hasPermissionOverAccount(userName)) {
             JSONReturnable returnJson = professorService.getCommitList(projectID, userName);
             if (returnJson == null) {
                 return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
@@ -111,7 +111,7 @@ public class ReadController {
     @RequestMapping(value = "/commitCount", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getCommitCount(@RequestParam(name = "projectID") String projectID,
                                                           @RequestParam(name = "userName") String userName) {
-        if (hasPermissionForStudent(userName)) {
+        if (hasPermissionOverAccount(userName)) {
             JSONReturnable returnJson = professorService.getCommitCounts(projectID, userName);
             if (returnJson == null) {
                 return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
@@ -127,10 +127,24 @@ public class ReadController {
     }
 
     @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/testSummary", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getTestSummary(@RequestParam(name = "projectID") String projectID) {
+        JSONReturnable returnJson = professorService.getTestSummary(projectID);
+        if (returnJson == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        String json = returnJson.jsonObject.toJSONString();
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStatistics(@RequestParam(name = "projectID") String projectID,
                                                          @RequestParam(name = "userName") String userName) {
-        if (hasPermissionForStudent(userName)) {
+        if (hasPermissionOverAccount(userName)) {
             JSONReturnable returnJson = professorService.getStatistics(projectID, userName);
             if (returnJson == null) {
                 return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
@@ -149,7 +163,7 @@ public class ReadController {
     @RequestMapping(value = "/diffs", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getDiffs(@RequestParam(name = "projectID") String projectID,
                                                     @RequestParam(name = "userName") String userName) {
-        if (hasPermissionForStudent(userName)) {
+        if (hasPermissionOverAccount(userName)) {
             JSONReturnable returnJson = professorService.getAdditionsAndDeletions(projectID, userName);
             if (returnJson == null) {
                 return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
@@ -168,7 +182,7 @@ public class ReadController {
     @RequestMapping(value = "/progress", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
                                                        @RequestParam(name = "userName") String userName) {
-        if (hasPermissionForStudent(userName)) {
+        if (hasPermissionOverAccount(userName)) {
             JSONReturnable returnJson = professorService.getStudentProgress(projectID, userName);
             if (returnJson == null) {
                 return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
@@ -209,8 +223,8 @@ public class ReadController {
         return ((User)securityContext.getAuthentication().getPrincipal());
     }
 
-    private boolean hasPermissionForStudent(String userName) {
-        return adminService.hasPermissionForStudent(getUserFromAuth(), userName);
+    private boolean hasPermissionOverAccount(String userName) {
+        return adminService.hasPermissionOverAccount(getUserFromAuth(), userName);
     }
 
 }

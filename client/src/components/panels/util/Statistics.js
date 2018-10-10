@@ -5,86 +5,86 @@ import { getStatistics } from '../../../redux/actions/index'
 import url from '../../../server'
 
 const defaultData = [
-                {
-                    stat_name: "Estimated Time Spent",
-                    stat_value: "5 hours"
-                },
-                {
-                    stat_name: "Additions",
-                    stat_value: "103"
-                },
-                {
-                    stat_name: "Deletions",
-                    stat_value: "3415"
-                },
-            ]
+    {
+        stat_name: 'Estimated Time Spent',
+        stat_value: '5 hours'
+    },
+    {
+        stat_name: 'Additions',
+        stat_value: '103'
+    },
+    {
+        stat_name: 'Deletions',
+        stat_value: '3415'
+    },
+]
 
 class Statistics extends Component {
 
     constructor(props) {
-        super(props);
+        super(props)
 
         this.state = {
             stats: [
                 {
-                    stat_name: "Estimated Time Spent",
-                    stat_value: "5 hours"
+                    stat_name: 'Estimated Time Spent',
+                    stat_value: '5 hours'
                 },
                 {
-                    stat_name: "Additions",
-                    stat_value: "103"
+                    stat_name: 'Additions',
+                    stat_value: '103'
                 },
                 {
-                    stat_name: "Deletions",
-                    stat_value: "3415"
+                    stat_name: 'Deletions',
+                    stat_value: '3415'
                 },
                 {
-                    stat_name: "Additions",
-                    stat_value: "`35"
+                    stat_name: 'Additions',
+                    stat_value: '`35'
                 },
                 {
-                    stat_name: "Deletions",
-                    stat_value: "1234"
+                    stat_name: 'Deletions',
+                    stat_value: '1234'
                 },
                 {
-                    stat_name: "Additions",
-                    stat_value: "123"
+                    stat_name: 'Additions',
+                    stat_value: '123'
                 },
                 {
-                    stat_name: "Deletions",
-                    stat_value: "5342"
+                    stat_name: 'Deletions',
+                    stat_value: '5342'
                 },
                 {
-                    stat_name: "Additions",
-                    stat_value: "213"
+                    stat_name: 'Additions',
+                    stat_value: '213'
                 },
                 {
-                    stat_name: "Deletions",
-                    stat_value: "76"
+                    stat_name: 'Deletions',
+                    stat_value: '76'
                 },
                 {
-                    stat_name: "Additions",
-                    stat_value: "123"
+                    stat_name: 'Additions',
+                    stat_value: '123'
                 },
                 {
-                    stat_name: "Deletions",
-                    stat_value: "567"
+                    stat_name: 'Deletions',
+                    stat_value: '567'
                 },
                 {
-                    stat_name: "Additions",
-                    stat_value: "43"
+                    stat_name: 'Additions',
+                    stat_value: '43'
                 },
                 {
-                    stat_name: "Deletions",
-                    stat_value: "123"
+                    stat_name: 'Deletions',
+                    stat_value: '123'
                 },
                 {
-                    stat_name: "Additions",
-                    stat_value: "45"
+                    stat_name: 'Additions',
+                    stat_value: '45'
                 },
                 {
-                    stat_name: "Deletions",
-                    stat_value: "36"
+                    stat_name: 'Deletions',
+                    stat_value: '36'
                 }
             ],
             formattedData: [],
@@ -106,20 +106,20 @@ class Statistics extends Component {
 
     fetch = (props) => {
         props.getStatistics(`${url}/api/statistics?projectID=${props.projectID}&userName=${props.id}`,
-        {'Authorization': `Bearer ${props.token}`})
+            {'Authorization': `Bearer ${props.token}`})
     }
 
     formatApiData = (udata) => {
         if (!udata || !udata.data) {
             return defaultData
         }
-        const data = udata.data;
+        const data = udata.data
         if (!data) {
             return defaultData
         }
-        const formattedData = data.slice();
+        const formattedData = data.slice()
 
-        return formattedData;
+        return formattedData
     }
 
     render() {
@@ -133,7 +133,7 @@ class Statistics extends Component {
                     this.state.formattedData &&
                     this.state.formattedData.map &&
                     this.state.formattedData.map((stat, index)  =>
-                        <div className="student-stat">
+                        <div key={stat.stat_name} className="student-stat">
                             <div className="student-stat-content">
                                 <h5>{stat.stat_name}</h5>
                                 <h5>{stat.stat_value}</h5>
@@ -156,12 +156,12 @@ const mapStateToProps = (state) => {
         isLoading: state.student ? state.student.getStatisticsIsLoading : true,
         isFinished: state.student ? state.student.getStatisticsIsFinished : false,
     }
-  }
+}
 
-  const mapDispatchToProps = (dispatch) => {
-      return {
-         getStatistics: (url, headers, body) => dispatch(getStatistics(url, headers, body))
-      }
-  }
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getStatistics: (url, headers, body) => dispatch(getStatistics(url, headers, body))
+    }
+}
 
-  export default connect(mapStateToProps, mapDispatchToProps)(Statistics)
+export default connect(mapStateToProps, mapDispatchToProps)(Statistics)
