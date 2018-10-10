@@ -116,18 +116,17 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 20);
             professorService.runTestall(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
 
-            try {
+            /*try {
                 BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/tests.txt"));
                 String testName = null;
                 while((testName = fileReader.readLine()) != null) {
                     professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), testName, false, 1);
-
                 }
                 professorService.runTestall(Project.createProjectID("cs252", "Fall2018", "Shell"));
             }
             catch(IOException e) {
                 e.printStackTrace();
-            }
+            }*/
 
             List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
             for(StudentProject p : projects) {
