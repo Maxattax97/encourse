@@ -75,6 +75,8 @@ public class ProfessorServiceImpl implements ProfessorService {
             Process process = Runtime.getRuntime().exec("./src/main/bash/" + command);
             StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
             Executors.newSingleThreadExecutor().submit(streamGobbler);
+            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), System.out::println);
+            Executors.newSingleThreadExecutor().submit(errorGobbler);
             process.waitFor();
         }
         catch(Exception e) {
@@ -812,6 +814,8 @@ public class ProfessorServiceImpl implements ProfessorService {
                 process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory);
                 stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String hiddenResult = stdInput.readLine();
+                StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), System.out::println);
+                Executors.newSingleThreadExecutor().submit(errorGobbler);
                 double visibleGrade = parseProgressForProject(projectID, visibleResult);
                 double hiddenGrade = parseProgressForProject(projectID, hiddenResult);
                 boolean exists = false;
