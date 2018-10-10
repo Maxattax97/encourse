@@ -32,7 +32,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     private final static String tailFilePath = "src/main/temp/";
     private final static int RATE = 3600000;
     private final static Boolean DEBUG = false;
-    private final static Boolean OBFUSCATE = true;
+    private final static Boolean OBFUSCATE = false;
 
     /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
     final static String testDir = "test-shell";
@@ -107,6 +107,9 @@ public class ProfessorServiceImpl implements ProfessorService {
             if(r.endsWith("P")) {
                 earnedPoints += testScript.getPointsWorth();
             }
+        }
+        if(maxPoints == 0.0) {
+            return 0.0;
         }
         return (earnedPoints / maxPoints) * 100;
     }
