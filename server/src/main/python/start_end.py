@@ -1,5 +1,6 @@
 import sys
 
+
 def commit_data(commit_times_file):
     line = commit_times_file.readline()
     line = line.lstrip(" ").rstrip("\n")
@@ -7,7 +8,7 @@ def commit_data(commit_times_file):
     current_name = ""
     previous_words = []
     while line != "":
-        #print(line)
+        # print(line)
         words = line.split(" ")
         if words[0] == "Start":
             # Update the current user
@@ -20,7 +21,7 @@ def commit_data(commit_times_file):
             # Update the user's final time
             if current_name != "" and previous_words != []:
                 users[current_name] = (users[current_name][0], previous_words[1])
-            
+
         line = commit_times_file.readline()
         line = line.lstrip(" ").rstrip("\n")
         previous_words = words

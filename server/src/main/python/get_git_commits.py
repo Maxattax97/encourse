@@ -7,16 +7,14 @@ from helper import date_string
 from helper import daterange
 from daily_git_data import get_daily_commit_data as commit_list
 
+
 def format_data(data):
     new_data = []
     date1 = data[0]["date"]
-    date2 = data[len(data)-1]["date"]
+    date2 = data[len(data) - 1]["date"]
     dates = daterange(date1, date2)
     for date in dates:
-        new_bar = {
-            "date": date_string(date),
-            "count": 0
-        }
+        new_bar = {"date": date_string(date), "count": 0}
         new_data.append(new_bar)
     for entry in data:
         date = date_string(entry["date"])
@@ -27,6 +25,7 @@ def format_data(data):
                 e["count"] = count
                 break
     return new_data
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("logfile", help="path to commit log file")

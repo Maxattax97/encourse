@@ -34,8 +34,9 @@ src/main/java/edu/purdue/cs/encourse/security/StartupFeed.java
 /nbdist/
 /.nb-gradle/
 
-### Python ###
-/src/main/python/test_datasets/
+### Scripting ###
+test_datasets/
+temp/
 *.swp
 
 ### Temporary Files ###

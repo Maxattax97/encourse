@@ -10,6 +10,7 @@ from helper import eprint
 from test_completion import get_test_completion as get_test_scores
 from start_end import commit_data
 
+
 def api_format_data(data, hidden):
     tests = {}
     test_totals = {}
@@ -31,7 +32,7 @@ def api_format_data(data, hidden):
                 else:
                     tests[test_name] = 0
                     test_totals[test_name] = 1
-        
+
     test_list = []
     # Reformat into api format
     for test_name in tests:
@@ -48,6 +49,8 @@ def api_format_data(data, hidden):
 def merge_data(visible, hidden):
     visible.append(hidden)
     return visible
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("visible", help="path to visible test score file")
 parser.add_argument("hidden", help="path to hidden test score file")

@@ -2,6 +2,7 @@ from __future__ import print_function
 from datetime import date, timedelta
 import sys
 
+
 def is_number(string):
     try:
         int(string)
@@ -9,9 +10,11 @@ def is_number(string):
     except ValueError:
         return False
 
+
 def date_string(date):
-    #print(date)
+    # print(date)
     return date.isoformat()
+
 
 def time_string(seconds):
     """
@@ -29,13 +32,11 @@ def time_string(seconds):
     if minutes < 60:
         return "{} minutes".format(int(minutes))
     hours, minutes = divmod(minutes, 60)
-    if hours < 24:
-        return "{} hours".format(int(hours))
-    days, hours = divmod(hours, 24)
-    return "{} days".format(int(days))
+    return "{} hours".format(int(hours))
+
 
 def daterange(start_date, end_date):
-    for n in range(int ((end_date - start_date).days)):
+    for n in range(int((end_date - start_date).days)):
         yield start_date + timedelta(n)
 
 
