@@ -41,12 +41,12 @@ class TopNavigation extends Component {
 }
 
 const mapStateToProps = (state) => {
-    return { 
+    return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         path: state.router && state.router.location ? state.router.location.pathname : null,
     }
 }
-  
+
 const mapDispatchToProps = (dispatch) => {
     return {
         logOut: (url, headers) => dispatch(logOut(url, headers))

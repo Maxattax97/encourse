@@ -32,7 +32,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     private final static String tailFilePath = "src/main/temp/";
     private final static int RATE = 3600000;
     private final static Boolean DEBUG = false;
-    private final static Boolean OBFUSCATE = true;
+    private final static Boolean OBFUSCATE = false;
 
     /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
     final static String testDir = "test-shell";
@@ -107,6 +107,9 @@ public class ProfessorServiceImpl implements ProfessorService {
             if(r.endsWith("P")) {
                 earnedPoints += testScript.getPointsWorth();
             }
+        }
+        if(maxPoints == 0.0) {
+            return 0.0;
         }
         return (earnedPoints / maxPoints) * 100;
     }
@@ -661,6 +664,21 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
+    /** Adds a testing script to the database. Mainly for testing purposes **/
+    public int addTestScript(@NonNull String projectID, @NonNull String testName, boolean isHidden, int points) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -1;
+        }
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
+            return -2;
+        }
+        ProjectTestScript script = new ProjectTestScript(projectID, testName, isHidden, points);
+        projectTestScriptRepository.save(script);
+        return 0;
+    }
+
     /** Modify an uploaded testing script to either change its contents, point value, or if it is hidden **/
     public int modifyTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String field, @NonNull String value) {
         ProjectTestScript script = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
@@ -785,7 +803,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdDateAndIdStudentID(date, p.getStudentID());
             String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName();
             try {
-                if(executeBashScript("src/main/bash/runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
+                if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
                     code = -5;
                 }
                 Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + testCaseDirectory);

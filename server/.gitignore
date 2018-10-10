@@ -38,3 +38,6 @@ src/main/java/edu/purdue/cs/encourse/security/StartupFeed.java
 test_datasets/
 temp/
 *.swp
+
+### Temporary Files ###
+/src/main/temp/

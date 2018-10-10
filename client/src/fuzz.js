@@ -4,6 +4,6 @@ export const getFakeUid = () => {
     return fakeUid++
 }
 
-export const realToFakeMapping = {};
-export const fakeToRealMapping = {};
-export const fuzzing = false;
+export const realToFakeMapping = {}
+export const fakeToRealMapping = {}
+export const fuzzing = false

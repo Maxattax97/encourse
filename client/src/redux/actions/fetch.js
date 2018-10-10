@@ -1,3 +1,5 @@
+/* eslint no-console: off */
+
 export default function genericDispatch(hasError, isLoading, success, method) {
     function specificDispatch(url, headers, body, extra) {
         return (dispatch) => {
@@ -22,5 +24,5 @@ export default function genericDispatch(hasError, isLoading, success, method) {
                 })
         }
     }
-    return specificDispatch;
+    return specificDispatch
 }

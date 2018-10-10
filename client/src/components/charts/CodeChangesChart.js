@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Label, Legend, ResponsiveContainer } from 'recharts';
+import React, { Component } from 'react'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import moment from 'moment'
 import { connect } from 'react-redux'
 
@@ -17,11 +17,11 @@ const defaultData = [
     {date: moment('9/16/2018').valueOf(), additions: 0, deletions: -0},
     {date: moment('9/17/2018').valueOf(), additions: 0, deletions: -0},
     {date: moment('9/18/2018').valueOf(), additions: 0, deletions: -0},
-];
+]
 
 class CodeChangesChart extends Component {
     constructor(props) {
-        super(props);
+        super(props)
 
         this.state = {
             formattedData: defaultData,
@@ -43,7 +43,7 @@ class CodeChangesChart extends Component {
 
     fetch = (props) => {
         props.getData(`${url}/api/diffs?projectID=${props.projectID}&userName=${props.id}`,
-        {'Authorization': `Bearer ${props.token}`})
+            {'Authorization': `Bearer ${props.token}`})
     }
 
     dateFormatter = (date) => {
@@ -54,31 +54,31 @@ class CodeChangesChart extends Component {
         if (!udata) {
             return defaultData
         }
-        const data = udata.data;
+        const data = udata.data
 
         for (let entry of data) {
-            entry.date = moment(entry.date).valueOf();
-            entry.deletions = -entry.deletions;
+            entry.date = moment(entry.date).valueOf()
+            entry.deletions = -entry.deletions
         }
 
         if (!data || data.length === 0) {
-            return defaultData;
+            return defaultData
         }
 
-        let minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date);
+        let minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date)
         minDate = moment(minDate).isBefore(moment('2018-02-10'), 'day') ? moment('2018-09-20').valueOf() : minDate
-        const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date);
+        const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date)
 
         const formattedData = []
 
-        let inputIndex = 0;
+        let inputIndex = 0
         for (let m = moment(minDate); m.diff(moment(maxDate), 'days') <= 0; m.add(1, 'days')) {
-            const inputEntry = data[inputIndex];
-            const inputDate = inputEntry.date;
+            const inputEntry = data[inputIndex]
+            const inputDate = inputEntry.date
 
             if (m.isSame(inputDate, 'day')) {
-                formattedData.push(inputEntry);
-                inputIndex++;
+                formattedData.push(inputEntry)
+                inputIndex++
             }
             else {
                 formattedData.push({
@@ -89,7 +89,7 @@ class CodeChangesChart extends Component {
             }
         }
 
-        return formattedData;
+        return formattedData
     }
 
     render() {
@@ -109,7 +109,7 @@ class CodeChangesChart extends Component {
                     </AreaChart>
                 </ResponsiveContainer>
             </div>
-        );
+        )
     }
 }
 
@@ -120,12 +120,12 @@ const mapStateToProps = (state) => {
         isLoading: state.student ? state.student.getCodeFrequencyIsLoading : false,
         isFinished: state.student ? state.student.getCodeFrequencyIsFinished : false,
     }
-  }
+}
 
-  const mapDispatchToProps = (dispatch) => {
-      return {
-          getData: (url, headers, body) => dispatch(getCodeFrequency(url, headers, body))
-      }
-  }
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getData: (url, headers, body) => dispatch(getCodeFrequency(url, headers, body))
+    }
+}
 
-  export default connect(mapStateToProps, mapDispatchToProps)(CodeChangesChart)
+export default connect(mapStateToProps, mapDispatchToProps)(CodeChangesChart)

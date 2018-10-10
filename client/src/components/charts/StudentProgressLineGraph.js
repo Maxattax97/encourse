@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import { LineChart, CartesianGrid, XAxis, YAxis,
     Tooltip, Legend, Line, Label, ResponsiveContainer } from 'recharts'
 import moment from 'moment'
@@ -16,15 +16,15 @@ const defaultData = [
     {date: moment('9/14/18').valueOf(), progress: 0},
     {date: moment('9/15/18').valueOf(), progress: 0},
     {date: moment('9/16/18').valueOf(), progress: 0},
-];
+]
 
 class StudentProgressLineGraph extends Component {
     constructor(props) {
-        super(props);
+        super(props)
 
         this.state = {
             formattedData: defaultData,
-        };
+        }
     }
 
     componentDidMount = () => {
@@ -42,7 +42,7 @@ class StudentProgressLineGraph extends Component {
 
     fetch = (props) => {
         props.getData(`${url}/api/progress?projectID=${props.projectID}&userName=${props.id}`,
-        {'Authorization': `Bearer ${props.token}`})
+            {'Authorization': `Bearer ${props.token}`})
     }
 
 
@@ -50,29 +50,29 @@ class StudentProgressLineGraph extends Component {
         if (!udata) {
             return defaultData
         }
-        const data = udata.data;
+        const data = udata.data
         for (let entry of data) {
-            entry.date = moment(entry.date).valueOf();
+            entry.date = moment(entry.date).valueOf()
         }
 
         if (!data || data.length === 0) {
-            return defaultData;
+            return defaultData
         }
 
-        let minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date);
+        let minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date)
         minDate = moment(minDate).isBefore(moment('2018-02-10'), 'day') ? moment('2018-09-20').valueOf() : minDate
-        const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date);
+        const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date)
 
         const formattedData = []
 
-        let inputIndex = 0;
+        let inputIndex = 0
         for (let m = moment(minDate); m.diff(moment(maxDate), 'days') <= 0; m.add(1, 'days')) {
-            const inputEntry = data[inputIndex];
-            const inputDate = inputEntry.date;
+            const inputEntry = data[inputIndex]
+            const inputDate = inputEntry.date
 
             if (m.isSame(inputDate, 'day')) {
-                formattedData.push(inputEntry);
-                inputIndex++;
+                formattedData.push(inputEntry)
+                inputIndex++
             }
             else {
                 formattedData.push({
@@ -94,7 +94,7 @@ class StudentProgressLineGraph extends Component {
             }
         }
 
-        return formattedData;
+        return formattedData
     }
 
     dateFormatter = (dateUnix) => {
@@ -103,26 +103,26 @@ class StudentProgressLineGraph extends Component {
 
     render() {
         return (
-          <div className="chart-container">
-            <ResponsiveContainer width="100%" height="100%">
-                <LineChart className="chart" width={730} height={500} data={this.state.formattedData}
-                 margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                    <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Student Progress Over Time</text>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" type="number" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
-                        <Label value="Date" position="bottom" />
-                    </XAxis>
-                    <YAxis>
-                        <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+            <div className="chart-container">
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart className="chart" width={730} height={500} data={this.state.formattedData}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Student Progress Over Time</text>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" type="number" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
+                            <Label value="Date" position="bottom" />
+                        </XAxis>
+                        <YAxis>
+                            <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                             % Completion
-                        </Label>
-                    </YAxis>
-                    <Tooltip labelFormatter={this.dateFormatter}/>
-                    <Legend verticalAlign="top"/>
-                    <Line type="monotone" dataKey="progress" stroke="#8884d8" />
-                </LineChart>
-            </ResponsiveContainer>
-          </div>
+                            </Label>
+                        </YAxis>
+                        <Tooltip labelFormatter={this.dateFormatter}/>
+                        <Legend verticalAlign="top"/>
+                        <Line type="monotone" dataKey="progress" stroke="#8884d8" />
+                    </LineChart>
+                </ResponsiveContainer>
+            </div>
         )
     }
 }

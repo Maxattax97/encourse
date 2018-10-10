@@ -32,6 +32,7 @@ public interface ProfessorService {
     String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName);
 
     int uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents, boolean isHidden, int points);
+    int addTestScript(@NonNull String projectID, @NonNull String testName, boolean isHidden, int points);
     int modifyTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String field, @NonNull String value);
     int runTestall(@NonNull String projectID);
     int runTestallForStudent(@NonNull String projectID, @NonNull String userName);

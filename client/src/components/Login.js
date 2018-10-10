@@ -9,14 +9,16 @@ class Login extends Component {
 
     handleSubmit = (ev) => {
         ev.preventDefault()
-        let form = new FormData()
-        form.append('grant_type', 'password')
-        form.append('username', ev.target.username.value)
-        form.append('password', ev.target.password.value)
-        form.append('client_id', 'encourse-client')
 
         let username = ev.target.username.value
         let password = ev.target.password.value
+
+        let form = new FormData()
+        form.append('grant_type', 'password')
+        form.append('username', username)
+        form.append('password', password)
+        form.append('client_id', 'encourse-client')
+
         this.props.logIn(`${url}/oauth/token`, {
             'Authorization': `Basic ${btoa('encourse-client:encourse-password')}`,
         }, form)
@@ -39,20 +41,20 @@ class Login extends Component {
                     </form>
                 </div>
             </div>
-        );
+        )
     }
 }
 
 const mapStateToProps = (state) => {
-    return { 
+    return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
     }
 }
-  
+
 const mapDispatchToProps = (dispatch) => {
     return {
         logIn: (url, headers, body) => dispatch(logIn(url, headers, body))
     }
 }
-  
+
 export default connect(mapStateToProps, mapDispatchToProps)(Login)

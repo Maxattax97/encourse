@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 class Card extends Component {
     render() {
@@ -8,8 +8,8 @@ class Card extends Component {
                     {this.props.component}
                 </div>
             </div>
-        );
+        )
     }
 }
 
-export default Card;
+export default Card

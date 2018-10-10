@@ -73,7 +73,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/students.txt"));
                 String student = null;
                 int count = 1;
-                while((student = fileReader.readLine()) != null && count <= 40) {
+                while((student = fileReader.readLine()) != null && count <= 10) {
                     if(student.equals("grr")) {
                         continue;
                     }
@@ -116,27 +116,17 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 20);
             professorService.runTestall(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
 
-            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test1.sh",
-                    "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 5);
-            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test2.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
-            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test3.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 5);
-            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test4.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
-            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test5.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 20);
-            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test6.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 5);
-            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test7.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 10);
-            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test8.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 5);
-            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test9.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 10);
-            professorService.uploadTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "Test10.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 20);
-            professorService.runTestall(Project.createProjectID("cs252", "Fall2018", "Shell"));
+            try {
+                BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/tests.txt"));
+                String testName = null;
+                while((testName = fileReader.readLine()) != null) {
+                    professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), testName, false, 1);
+                }
+                professorService.runTestall(Project.createProjectID("cs252", "Fall2018", "Shell"));
+            }
+            catch(IOException e) {
+                e.printStackTrace();
+            }
 
             List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
             for(StudentProject p : projects) {
