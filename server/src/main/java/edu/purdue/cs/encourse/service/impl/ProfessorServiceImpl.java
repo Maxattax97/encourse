@@ -800,7 +800,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdDateAndIdStudentID(date, p.getStudentID());
             String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName();
             try {
-                if(executeBashScript("src/main/bash/runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
+                if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
                     code = -5;
                 }
                 Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + testCaseDirectory);
