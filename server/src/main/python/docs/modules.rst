@@ -14,8 +14,6 @@ python
    get_statistics
    get_test_completion
    get_test_summary
-   hello
    helper
-   index
    start_end
    test_completion
