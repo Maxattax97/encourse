@@ -33,22 +33,22 @@ def merge_data(visible, hidden):
         visible[key] += hidden[key]
     return visible
 
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("visible", help="path to visible test score file")
+    parser.add_argument("hidden", help="path to hidden test score file")
+    parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
-parser = argparse.ArgumentParser()
-parser.add_argument("visible", help="path to visible test score file")
-parser.add_argument("hidden", help="path to hidden test score file")
-parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
+    args = parser.parse_args()
 
-args = parser.parse_args()
+    visible_test_score_file = open(args.visible, "r")
+    hidden_test_score_file = open(args.hidden, "r")
 
-visible_test_score_file = open(args.visible, "r")
-hidden_test_score_file = open(args.hidden, "r")
+    visible_data = get_test_scores(visible_test_score_file)
+    hidden_data = get_test_scores(hidden_test_score_file)
+    # print(visible_data)
 
-visible_data = get_test_scores(visible_test_score_file)
-hidden_data = get_test_scores(hidden_test_score_file)
-# print(visible_data)
-
-formatted_visible = api_format_data(visible_data)
-formatted_hidden = api_format_data(hidden_data)
-api_json = json.dumps(merge_data(formatted_visible, formatted_hidden))
-print(api_json)
+    formatted_visible = api_format_data(visible_data)
+    formatted_hidden = api_format_data(hidden_data)
+    api_json = json.dumps(merge_data(formatted_visible, formatted_hidden))
+    print(api_json)

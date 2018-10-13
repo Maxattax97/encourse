@@ -3,7 +3,6 @@ from helper import is_number as is_number
 from datetime import datetime
 from datetime import timedelta
 
-
 def create_day_dict(date, files, time_spent, additions, deletions, commit_count):
     daily_data = {}
     daily_data["date"] = date
@@ -14,14 +13,12 @@ def create_day_dict(date, files, time_spent, additions, deletions, commit_count)
     daily_data["commit_count"] = commit_count
     return daily_data
 
-
 def select_best(files):
-    """
-    Selects 3 best files from a list based on the quantity (additions-deletions) for each file
-    :param file_list is a list of dictionaries, each with a filename and net_changes property
-        net_changes = additions - deletions
+    """Selects 3 best files from a list based on the quantity (additions-deletions) for each file
+    :param file_list is a list of dictionaries, each with a filename and net_changes property net_changes = additions - deletions
     :return a list of the top 3 files
     """
+
     file_list = list(files.keys())
     file_changes = list(files.values())
     # print(file_changes)

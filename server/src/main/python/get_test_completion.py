@@ -13,16 +13,17 @@ def format_data(data):
     return data
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("testfile", help="path to test score file")
-parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("testfile", help="path to test score file")
+    parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
-args = parser.parse_args()
+    args = parser.parse_args()
 
-commit_data_file = open(args.timefile, "r")
-data = get_scores(commit_data_file)
-# print(data)
+    commit_data_file = open(args.timefile, "r")
+    data = get_scores(commit_data_file)
+    # print(data)
 
-formatted_data = format_data(data)
-json = json.dumps(formatted_data)
-print(json)
+    formatted_data = format_data(data)
+    json = json.dumps(formatted_data)
+    print(json)

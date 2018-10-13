@@ -31,21 +31,22 @@ def format_data(data):
     return data
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("logfile", help="path to commit log file")
-parser.add_argument("name", help="user name")
-parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("logfile", help="path to commit log file")
+    parser.add_argument("name", help="user name")
+    parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
-args = parser.parse_args()
+    args = parser.parse_args()
 
-student_id = args.name
-commit_data_file = open(args.logfile, "r")
-data = get_progress(commit_data_file)
+    student_id = args.name
+    commit_data_file = open(args.logfile, "r")
+    data = get_progress(commit_data_file)
 
-api_formatted_data = api_format_data(data)[student_id]
-api_json = json.dumps(api_formatted_data)
-print(api_json)
-# print(data)
-formatted_data = format_data(data)[student_id]
-json = json.dumps(formatted_data)
-# print(json)
+    api_formatted_data = api_format_data(data)[student_id]
+    api_json = json.dumps(api_formatted_data)
+    print(api_json)
+    # print(data)
+    formatted_data = format_data(data)[student_id]
+    json = json.dumps(formatted_data)
+    # print(json)

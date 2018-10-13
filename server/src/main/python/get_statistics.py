@@ -84,74 +84,75 @@ def sum_statistics(data):
 
 
 # Runs on file call
-parser = argparse.ArgumentParser()
-parser.add_argument("logfile", help="path to commit log file")
-parser.add_argument("timefile", help="path to commit time file")
-parser.add_argument("name", help="user name")
-parser.add_argument("tests", help="test case string")
-parser.add_argument("-t", "--timeout", help="time spent timeout")
-parser.add_argument("-l", "--limit", help="ignore file changes above limit")
-parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("logfile", help="path to commit log file")
+    parser.add_argument("timefile", help="path to commit time file")
+    parser.add_argument("name", help="user name")
+    parser.add_argument("tests", help="test case string")
+    parser.add_argument("-t", "--timeout", help="time spent timeout")
+    parser.add_argument("-l", "--limit", help="ignore file changes above limit")
+    parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
-args = parser.parse_args()
+    args = parser.parse_args()
 
-if args.obfuscate:
-    fake_data = [
-        {
-            "stat_name": "Start Date",
-            "stat_value": "2018-08-0{}".format(random.randint(1, 9)),
-        },
-        {
-            "stat_name": "End Date",
-            "stat_value": "2018-09-0{}".format(random.randint(1, 9)),
-        },
-        {
-            "stat_name": "Additions",
-            "stat_value": "{} lines".format(random.randint(2000, 5000)),
-        },
-        {
-            "stat_name": "Deletions",
-            "stat_value": "{} lines".format(random.randint(0, 2000)),
-        },
-        {
-            "stat_name": "Commit Count",
-            "stat_value": "{} commits".format(random.randint(0, 200)),
-        },
-        {
-            "stat_name": "Estimated Time Spent",
-            "stat_value": "{} hours".format(random.randint(0, 36)),
-        },
-        {
-            "stat_name": "Current Test Score",
-            "stat_value": "{}%".format(10 * random.randint(0, 10)),
-        },
-    ]
-    print(json.dumps(fake_data))
-    sys.exit()
+    if args.obfuscate:
+        fake_data = [
+            {
+                "stat_name": "Start Date",
+                "stat_value": "2018-08-0{}".format(random.randint(1, 9)),
+            },
+            {
+                "stat_name": "End Date",
+                "stat_value": "2018-09-0{}".format(random.randint(1, 9)),
+            },
+            {
+                "stat_name": "Additions",
+                "stat_value": "{} lines".format(random.randint(2000, 5000)),
+            },
+            {
+                "stat_name": "Deletions",
+                "stat_value": "{} lines".format(random.randint(0, 2000)),
+            },
+            {
+                "stat_name": "Commit Count",
+                "stat_value": "{} commits".format(random.randint(0, 200)),
+            },
+            {
+                "stat_name": "Estimated Time Spent",
+                "stat_value": "{} hours".format(random.randint(0, 36)),
+            },
+            {
+                "stat_name": "Current Test Score",
+                "stat_value": "{}%".format(10 * random.randint(0, 10)),
+            },
+        ]
+        print(json.dumps(fake_data))
+        sys.exit()
 
-student_id = args.name
-commit_date_file = open(args.timefile, "r")
-commit_data_file = open(args.logfile, "r")
-test_case_string = args.tests
+    student_id = args.name
+    commit_date_file = open(args.timefile, "r")
+    commit_data_file = open(args.logfile, "r")
+    test_case_string = args.tests
 
-dates_dict = commit_times(commit_date_file)
-# for user in dates_dict.keys():
-#    start_end = dates_dict[user]
-#    print("{} -> {}".format(user, start_end))
+    dates_dict = commit_times(commit_date_file)
+    # for user in dates_dict.keys():
+    #    start_end = dates_dict[user]
+    #    print("{} -> {}".format(user, start_end))
 
-# print(counts_dict)
+    # print(counts_dict)
 
-student_data = commit_list(
-    commit_data_file, max_change=args.limit, timeout=args.timeout
-)
-formatted_student_data = sum_statistics(student_data)
-# TODO: check for valid dicts
+    student_data = commit_list(
+        commit_data_file, max_change=args.limit, timeout=args.timeout
+    )
+    formatted_student_data = sum_statistics(student_data)
+    # TODO: check for valid dicts
 
-test_data = test_completion_string(test_case_string)
-eprint(test_data)
+    test_data = test_completion_string(test_case_string)
+    eprint(test_data)
 
-data = format_commit_data(dates_dict, formatted_student_data, test_data)
-# print(data)
-json = json.dumps(data[student_id])
-# Outputs json to stdout
-print(json)
+    data = format_commit_data(dates_dict, formatted_student_data, test_data)
+    # print(data)
+    json = json.dumps(data[student_id])
+    # Outputs json to stdout
+    print(json)
