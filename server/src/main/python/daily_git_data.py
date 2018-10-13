@@ -3,6 +3,7 @@ from helper import is_number as is_number
 from datetime import datetime
 from datetime import timedelta
 
+
 def create_day_dict(date, files, time_spent, additions, deletions, commit_count):
     daily_data = {}
     daily_data["date"] = date
@@ -13,12 +14,24 @@ def create_day_dict(date, files, time_spent, additions, deletions, commit_count)
     daily_data["commit_count"] = commit_count
     return daily_data
 
-def select_best(files):
-    """Selects 3 best files from a list based on the quantity (additions-deletions) for each file
-    :param file_list is a list of dictionaries, each with a filename and net_changes property net_changes = additions - deletions
-    :return a list of the top 3 files
-    """
 
+def select_best(files: list):
+    """Selects 3 best files 
+    
+    Selects the best 3 files from **files** by maximizing the quantity ``(additions-deletions)`` for each file
+
+    **Args**:
+        **files**: list of dictionaries of the form: ::
+
+            {
+                'file_name': 'file name',
+                'net_changes': additions-deletions
+            }
+
+    **Returns**: 
+        **list**: top 3 files
+
+    """
     file_list = list(files.keys())
     file_changes = list(files.values())
     # print(file_changes)
@@ -32,6 +45,22 @@ def select_best(files):
 
 
 def get_daily_commit_data(progress_file, max_change=None, timeout=None):
+    """ Generates git commit statistics by day
+
+    Uses the data in **progress_file** to generate git statistics by day
+
+    **Args**:
+        |  **progress_file** (file): The file pointer to a commit log file.
+        |  **max_change** (int): The maximum additions or deletions for which a file 
+        |      is counted.
+        |  **timeout** (float): The amount of time between commits for which the 
+        |      interval will still be added to the estimated time total.
+
+    **Returns**:
+        **dict**: A map of students to data, returned from create_day_dict
+        
+
+    """
     if not max_change:
         max_change = sys.maxsize
     else:

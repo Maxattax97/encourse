@@ -48,7 +48,8 @@ def api_format_data(data, times):
         daily_data.append(new_entry)
     return daily_data
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("logfile", help="path to commit log file")
     parser.add_argument("timefile", help="path to commit time file")
@@ -56,13 +57,11 @@ if __name__ == '__main__':
     parser.add_argument("-l", "--limit", help="ignore file changes above limit")
     parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
-
     args = parser.parse_args()
 
     commit_data_file = open(args.logfile, "r")
     commit_times_file = open(args.timefile, "r")
     student_id = args.name
-
 
     data = (
         get_progress(commit_data_file, max_change=int(args.limit))

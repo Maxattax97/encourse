@@ -13,7 +13,7 @@ def format_data(data):
     return data
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("testfile", help="path to test score file")
     parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")

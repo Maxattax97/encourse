@@ -84,7 +84,7 @@ def sum_statistics(data):
 
 
 # Runs on file call
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("logfile", help="path to commit log file")
     parser.add_argument("timefile", help="path to commit time file")

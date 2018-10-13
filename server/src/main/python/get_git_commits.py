@@ -27,7 +27,7 @@ def format_data(data):
     return new_data
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("logfile", help="path to commit log file")
     parser.add_argument("name", help="user name")

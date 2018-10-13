@@ -33,7 +33,8 @@ def merge_data(visible, hidden):
         visible[key] += hidden[key]
     return visible
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("visible", help="path to visible test score file")
     parser.add_argument("hidden", help="path to hidden test score file")
