@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 
-import settingsIcon from '../../img/settings.svg'
-import backIcon from '../../img/back.svg'
-import plusIcon from '../../img/plus.svg'
+import settingsIcon from '../../resources/settings.svg'
+import backIcon from '../../resources/back.svg'
+import plusIcon from '../../resources/plus.svg'
 import Card from '../Card'
 import ProjectModal from '../modals/ProjectModal'
 import {getClassProjects, setCurrentProject} from '../../redux/actions/index'

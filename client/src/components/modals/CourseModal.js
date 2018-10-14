@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import checkmarkIcon from '../../img/checkmark.svg'
+import checkmarkIcon from '../../resources/checkmark.svg'
 import Modal from './Modal'
 // import deleteIcon from '../../img/delete.svg'
 import { setDirectory, modifyProject } from '../../redux/actions'

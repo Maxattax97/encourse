@@ -3,7 +3,7 @@ import { Route, Redirect, Switch } from 'react-router'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import '../css/Main.css'
+import '../styles/css/Main.css'
 import Navbar from './navigation/TopNavigation'
 import CoursePanel from './panels/CoursePanel'
 import ProjectModal from './modals/ProjectModal'

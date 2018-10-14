@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import Card from '../Card'
-import plusIcon from '../../img/plus.svg'
+import plusIcon from '../../resources/plus.svg'
 import CoursePreview from './util/CoursePreview'
 import AccountPreview from './util/AccountPreview'
 import Modal from '../modals/Modal'
-import checkmarkIcon from '../../img/checkmark.svg'
+import checkmarkIcon from '../../resources/checkmark.svg'
 import {
     addCourse,
     addAccount,
@@ -17,7 +17,7 @@ import {
     removeCourse, removeAccount
 } from '../../redux/actions'
 import url from '../../server'
-import deleteIcon from '../../img/delete.svg'
+import deleteIcon from '../../resources/delete.svg'
 
 class PreferencePanel extends Component {
 

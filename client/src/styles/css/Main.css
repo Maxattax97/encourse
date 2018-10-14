@@ -1,0 +1,306 @@
+.nav { cursor: default; position: fixed; top: 0; left: 0; width: 100%; height: 3em; padding: .5em 0; z-index: 0; background: #1f1e1c; }
+
+.nav .nav-list { position: fixed; top: 0; left: 0; width: 100%; height: 3em; font-family: "Rhodium Libre", serif; margin: 0; overflow: hidden; z-index: 10; }
+
+.nav .nav-title { position: fixed; top: 0; left: 0; width: 100%; font-size: 2em; text-align: center; margin: auto; font-family: "Rhodium Libre", serif; z-index: 1; }
+
+.nav .nav-title .nav-en { color: white; }
+
+.nav .nav-title .nav-course { color: #0057A7; }
+
+.nav .nav-options { float: right; display: flex; position: relative; width: 6em; cursor: pointer; z-index: 10; }
+
+.nav .nav-options .nav-settings { float: right; width: 3em; height: 3em; padding: .5em .5em; }
+
+.nav .nav-options .nav-settings img { width: 100%; height: 100%; }
+
+.nav .nav-options .nav-logout { float: right; width: 3em; height: 3em; padding: .5em .5em; }
+
+.nav .nav-options .nav-logout img { width: 100%; height: 100%; }
+
+/* rhodium-libre-regular - latin */
+.panel { position: fixed; left: 0; top: 3em; height: calc(100% - 3em); width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; color: #1f1f1f; overflow: auto; }
+
+.panel::-webkit-scrollbar { width: .5em; }
+
+.panel::-webkit-scrollbar-thumb { background: #666; }
+
+.panel-container { position: relative; max-width: 105.000em; width: 100%; margin: 2em auto; }
+
+.panel-container > div:after { content: ""; display: block; height: 0; clear: both; }
+
+.panel-left-nav { position: relative; float: left; width: 15%; max-width: 240px; min-width: 180px; height: 100%; padding: 0 20px; margin: 0; min-height: 1px; }
+
+.panel-center-content { position: relative; float: left; width: 70%; height: 100%; margin: 0; padding: 20px; min-height: 1px; }
+
+.panel-right-nav { position: relative; float: left; width: 15%; max-width: 240px; min-width: 180px; height: 100%; padding: 0 10px; margin: 0; min-height: 1px; }
+
+.panel-right-nav h1, .panel-right-nav h2, .panel-right-nav h3, .panel-right-nav h4, .panel-right-nav h5, .panel-right-nav h6 { margin: 0; }
+
+.exit-nav { position: relative; float: right; height: 2.5em; width: 2.5em; padding: .5em; cursor: pointer; }
+
+.exit-nav img { position: absolute; top: .5em; left: .5em; z-index: 2; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); width: 1.5em; height: 1.5em; }
+
+.exit-nav:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.modal { position: absolute; z-index: 101; top: 0; left: 0; width: 100%; height: 100%; }
+
+.modal-left { position: fixed; float: left; margin-left: 13.5%; margin-top: calc(20px + 40px + 1.17em); }
+
+.modal-center { position: fixed; left: 50%; transform: translate(-50%, 0); margin-top: calc(20px + 40px + 1.17em); }
+
+.modal-buttons { position: relative; bottom: 0; right: -2.5em; width: 100%; }
+
+.modal-buttons img { width: 1.5em; height: 1.5em; margin: 0 auto; display: block; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.modal-buttons div { cursor: pointer; float: right; padding: 10px 10px; margin-left: 10px; }
+
+.modal-buttons div:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.modal-overlay { position: fixed; top: 3em; bottom: 0; left: 0; right: 0; z-index: -100; }
+
+.modal-overlay.show { z-index: 100; }
+
+.card { position: relative; height: auto; margin-right: 32px; margin-bottom: 32px; float: left; box-sizing: border-box; }
+
+.component { float: left; height: auto; padding: 16px; background-color: #F8F8F8; border-radius: 4px; box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25); }
+
+.card-overflow { overflow-y: scroll; overflow-x: hidden; }
+
+.card-overflow::-webkit-scrollbar { width: .5em; }
+
+.card-overflow::-webkit-scrollbar-thumb { background: #666; }
+
+.progress-bar { border: 1px solid #a4a4a4; width: 100%; height: 1em; position: relative; }
+
+.progress-bar div { padding: 1px; width: 0; height: 100%; background: #4caf50; -webkit-transition: width .33s ease; -moz-transition: width .33s ease; -ms-transition: width .33s ease; -o-transition: width .33s ease; transition: width .33s ease; }
+
+* { box-sizing: border-box; }
+
+div.title { position: relative; }
+
+div.title h1, div.title h2, div.title h3, div.title h4, div.title h5, div.title h6 { margin: 0; width: 100%; }
+
+h1 { margin: 0 0; line-height: 2em; height: 2em; }
+
+h3 { margin: 15px 0; line-height: 1.17em; height: 1.17em; }
+
+h4 { margin: 20px 0; }
+
+.h2-size { font-size: 1.5em; }
+
+.h3-size { font-size: 1.33em; }
+
+.break-line { width: 100%; height: 1px; background-color: #a4a4a4; }
+
+h1.break-line { margin: 30px 0; }
+
+h2.break-line { margin: 25px 0; }
+
+h3.break-line { margin: 20px 0; }
+
+h4.break-line { margin: 15px 0; }
+
+.break-line.title { margin-top: 5px; }
+
+h1.break-line.title { margin-top: 0; }
+
+.header { margin-bottom: 5px; }
+
+.blur { filter: brightness(80%) blur(3px); }
+
+.float-height:after { content: ""; display: block; height: 0; clear: both; }
+
+input { width: 100%; font-family: "Raleway", "Rhodium Libre", sans-serif; }
+
+.panel-course { text-align: left; font-weight: bold; }
+
+.panel-course .panel-course-content { -webkit-transition: filter .15s ease-in; -moz-transition: filter .15s ease-in; -ms-transition: filter .15s ease-in; -o-transition: filter .15s ease-in; transition: filter .15s ease-in; }
+
+.panel-course .panel-course-content div.title { cursor: pointer; }
+
+.panel-course .panel-course-content div.title img { position: absolute; top: 0; right: 0; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); width: 1em; height: 1em; }
+
+.panel-course .panel-course-content div.title:hover h1 { color: #1f1e1c99; margin-left: 3px; }
+
+.panel-course .panel-course-content div.title:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.panel-course .panel-course-content > h3 { cursor: default; }
+
+.panel-course-students .card { width: 192px; cursor: pointer; }
+
+.panel-course-students .card:hover .component { background-color: #F0F0F0; }
+
+.panel-course-students .card:not(:nth-child(5n)) { margin-right: calc((100% - 5 * (10em + 32px)) / 4); }
+
+.panel-course-students .card:nth-child(5n) { margin: 0; }
+
+.student-preview { position: relative; width: 10em; height: 7.5em; }
+
+.student-preview-commits { margin-bottom: 10px; }
+
+.student-preview-commits h5 { margin-top: 0; margin-bottom: 5px; }
+
+.student-preview-progress { position: relative; }
+
+.student-preview-progress .progress-text { position: absolute; top: -1.25em; right: 0; color: #1f1f1f; font-size: .75em; }
+
+.panel-course-options { width: 300px; float: left; }
+
+.panel-student-content, .panel-student-side-content { -webkit-transition: filter .15s ease-in; -moz-transition: filter .15s ease-in; -ms-transition: filter .15s ease-in; -o-transition: filter .15s ease-in; transition: filter .15s ease-in; }
+
+.panel-student-content .student-stats-comments { position: relative; }
+
+.panel-student-content .student-stats-comments .card { margin: 0; }
+
+.panel-student-content .student-stats-comments .card:first-child { width: 33.5%; padding-right: 32px; }
+
+.panel-student-content .student-stats-comments .card:nth-child(2) { width: 66.5%; height: 100%; }
+
+.panel-student-content .student-stats-comments .component { width: 100%; }
+
+.student-stats-container .student-stat { float: left; width: 100%; }
+
+.student-stats-container .student-stat .student-stat-content { float: left; width: 100%; padding: .5em; }
+
+.student-stats-container .student-stat h5 { margin: 0; }
+
+.student-stats-container .student-stat h5:first-child { width: auto; float: left; }
+
+.student-stats-container .student-stat h5:nth-child(2) { width: auto; float: right; }
+
+.panel-student-side-content { position: fixed; padding-top: calc(20px + 1.17em + 40px); width: calc(.15 * 105em - 40px); min-width: 180px; max-width: 240px; }
+
+.panel-student-side-content .card { margin: 0 0 30px; width: 100%; }
+
+.panel-student-side-content .component { width: 100%; }
+
+.panel-student-side-content .student-commits { max-height: 280px; }
+
+.panel-student-side-content .student-commits .card { padding: 3px; }
+
+.panel-student-side-content .student-commits .component { background: white; }
+
+.panel-student-side-content div.title { padding-top: 1em; height: 2.5em; cursor: default; }
+
+.panel-student-side-content h4 { margin: 0; padding: .75em 0 .75em .75em; width: calc(100% - .75em); cursor: pointer; }
+
+.panel-student-side-content h4:hover { color: #1f1e1c99; padding: 0.75em 0 0.75em calc(.75em + 3px); }
+
+.projects-nav { position: fixed; padding-top: 20px; width: calc(.15 * 105em - 40px); min-width: 180px; max-width: 240px; z-index: 102; }
+
+.projects-nav div.title { padding-top: 1em; height: 2.5em; cursor: pointer; }
+
+.projects-nav div.title img { position: absolute; top: 0; right: 0; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); width: 1em; height: 1em; }
+
+.projects-nav .back-nav { color: white; cursor: default; }
+
+.projects-nav .back-nav img { width: 1.3em; height: 1.3em; margin: 20px 0; float: right; }
+
+.projects-nav .back-nav h3 { margin-top: 20px; float: right; }
+
+.projects-nav .back-nav.back-nav-color { color: #1f1f1f; cursor: pointer; }
+
+.projects-nav .back-nav.back-nav-color img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.projects-nav .back-nav.back-nav-color:hover { color: #1f1e1c99; }
+
+.projects-nav .back-nav.back-nav-color:hover h3 { margin-right: 3px; }
+
+.projects-nav .card { width: 100%; }
+
+.projects-nav .card .component { width: 100%; }
+
+.projects-nav div.title:hover { background-image: linear-gradient(to right, #e8e8e800, #0057A755 100%); }
+
+.projects-nav div.title:hover h3 { color: #1f1e1c99; margin-left: 3px; }
+
+.projects-nav div.title:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.projects-nav h4 { margin: 0; padding: .75em 0 .75em .75em; width: calc(100% - .75em); cursor: pointer; }
+
+.projects-nav h4:hover { color: #1f1e1c99; padding: 0.75em 0 0.75em calc(.75em + 3px); }
+
+.projects-nav .projects-highlight { color: #1f1e1ccc; background-image: linear-gradient(to right, #e8e8e800, #0057A755 100%); }
+
+.projects-nav .projects-new { padding: .75em 0 .75em .75em; width: calc(100% - .75em); height: 2.75em; cursor: pointer; }
+
+.projects-nav .projects-new img { width: 1.25em; height: 1.25em; margin: 0 auto; display: block; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.projects-nav .projects-new:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.test-scripts-list { width: 100%; height: 331px; overflow-y: auto; overflow-x: hidden; }
+
+.test-scripts-list .scripts-new { padding: .75em; cursor: pointer; }
+
+.test-scripts-list .scripts-new img { width: 1.5em; height: 1.5em; margin: 0 auto; display: block; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.test-scripts-list .scripts-new:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.test-scripts-list .scripts-script { float: left; width: 100%; }
+
+.test-scripts-list .scripts-script .script-filename { cursor: pointer; float: left; width: calc(100% - 7.5em); padding: .75em; }
+
+.test-scripts-list .scripts-script .script-filename img { width: 1.5em; height: 1.5em; float: left; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.test-scripts-list .scripts-script .script-filename h4 { float: left; margin: 0; }
+
+.test-scripts-list .scripts-script .script-filename:hover { padding-left: calc(.75em + 3px); }
+
+.test-scripts-list .scripts-script .script-filename:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.test-scripts-list .scripts-script input { width: 3em; height: 2em; margin: 12px; float: right; }
+
+.test-scripts-list .scripts-script .script-delete { padding: .75em; width: 3em; height: 3em; float: right; }
+
+.test-scripts-list .scripts-script .script-delete img { width: 1.5em; height: 1.5em; float: right; cursor: pointer; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.test-scripts-list .scripts-script .script-delete:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.panel-project-options { float: left; height: 440px; width: 245px; }
+
+.panel-project-options .title { cursor: pointer; padding-left: 3px; }
+
+.panel-project-options .title img { width: 1.17em; height: 1.17em; float: left; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.panel-project-options .header { margin-top: 20px; margin-bottom: 5px; }
+
+.panel-project-options .title:hover { padding-left: 0px; }
+
+.panel-project-options .title:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.panel-project-options .title:hover h4 { color: #1f1e1c99; }
+
+.panel-project-options .project-options-scripts { margin-top: 5px; }
+
+.panel-project-options .project-options-scripts h4 { margin: 0; padding: .75em 0; cursor: pointer; }
+
+.panel-project-options .project-options-scripts h4:hover { color: #1f1e1c99; padding: 0.75em 0 0.75em calc(3px); }
+
+.panel-preference-content .panel-course-students > .title { cursor: pointer; }
+
+.panel-preference-content .panel-course-students > .title h3 { float: left; width: auto; padding-top: .4em; }
+
+.panel-preference-content .panel-course-students > .title img { width: 3em; height: 3em; float: left; padding: .25em 1em 1em; filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%); }
+
+.panel-preference-content .panel-course-students .student-preview h4:not(.break-line) { margin: 0; }
+
+.panel-preference-content .panel-course-students .student-preview h5 { margin: 0; }
+
+.panel-preference-content .panel-course-students .account-preview { position: relative; width: 10em; height: 8.5em; }
+
+.panel-preference-content .panel-course-students .account-preview h4:not(.break-line) { margin: 0; }
+
+.panel-preference-content .panel-course-students .account-preview h5 { margin: 0; }
+
+.panel-preference-content .panel-course-students > .title:hover h3 { color: #1f1e1c99; padding-left: 3px; }
+
+.panel-preference-content .panel-course-students > .title:hover img { filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%); }
+
+.charts .card { width: calc((100% - 32px) / 2); padding-top: calc((100% - 32px) / 2 / (2)); }
+
+.charts .card > .component { position: absolute; float: none; top: 0; left: 0; bottom: 0; right: 0; }
+
+.charts .chart-container { width: 100%; height: 100%; }
+
+.charts .card:nth-child(2n) { margin: 0; }

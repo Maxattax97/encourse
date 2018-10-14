@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import deleteIcon from '../../img/delete.svg'
-import checkmarkIcon from '../../img/checkmark.svg'
-import backIcon from '../../img/back.svg'
+import deleteIcon from '../../resources/delete.svg'
+import checkmarkIcon from '../../resources/checkmark.svg'
+import backIcon from '../../resources/back.svg'
 import Modal from './Modal'
 import TestScriptList from './util/TestScriptList'
 import { addProject, modifyProject, addTest, deleteProject } from '../../redux/actions'
