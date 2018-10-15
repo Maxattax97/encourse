@@ -2,10 +2,7 @@ package edu.purdue.cs.encourse.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.purdue.cs.encourse.domain.*;
-import edu.purdue.cs.encourse.service.AccountService;
-import edu.purdue.cs.encourse.service.AdminService;
-import edu.purdue.cs.encourse.service.CourseService;
-import edu.purdue.cs.encourse.service.ProfessorService;
+import edu.purdue.cs.encourse.service.*;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -13,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,7 +91,7 @@ public class WriteController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/studentToTA", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> addTA(@RequestParam(name = "userName") String userName) {
+    public @ResponseBody ResponseEntity<?> addStudentToTA(@RequestParam(name = "userName") String userName) {
 
         Student student = accountService.retrieveStudent(userName);
         if (student != null) {
@@ -103,6 +101,8 @@ public class WriteController {
         }
         return new ResponseEntity<>(student, HttpStatus.NOT_FOUND);
     }
+
+
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/test", method = RequestMethod.POST)
@@ -186,22 +186,6 @@ public class WriteController {
         }
         return new ResponseEntity<>((p != null)? p: result, (p != null)? HttpStatus.CREATED: HttpStatus.NOT_MODIFIED);
     }
-//    @Deprecated
-//    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-//    @RequestMapping(value = "/modify/project", method = RequestMethod.POST)
-//    public @ResponseBody ResponseEntity<?> modifyProject(@RequestParam(name = "projectID") String projectID,
-//                                                         @RequestParam(name = "field") String field,
-//                                                         @RequestParam(name = "value") String value) {
-//
-//        int result = professorService.modifyProject(projectID, field, value);
-//        if (result == 0) {
-//            return new ResponseEntity<>(result, HttpStatus.OK);
-//        } else if (result == -1) {
-//            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
-//        } else {
-//            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-//        }
-//    }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/modify/project", method = RequestMethod.POST)
