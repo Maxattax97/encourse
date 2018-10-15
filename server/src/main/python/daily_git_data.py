@@ -42,7 +42,7 @@ def select_best(all_files: list):
         *sorted(zip(file_list, file_changes), key=lambda k: k[1], reverse=True)
     )
 
-    #eprint("Selected top files: {}".format(top_files))
+    # eprint("Selected top files: {}".format(top_files))
     return top_files[:3]
 
 

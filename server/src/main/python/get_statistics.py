@@ -10,6 +10,7 @@ from daily_git_data import get_daily_commit_data as commit_list
 from test_completion import get_test_completion as test_completion
 from test_completion import get_test_completion_string as test_completion_string
 
+
 def combine_statistics(dates, stats, tests):
     """Creates a list of statistics for each user
 
@@ -71,9 +72,8 @@ def combine_statistics(dates, stats, tests):
             count = info["commit_count"]
             time = info["time_spent"]
         test_score = 0
-        if (
-            user in tests
-        ):  # This if else is dumb, fix it. strings and files should both be handled gracefully
+        # This if else is dumb, fix it. strings and files should both be handled gracefully
+        if user in tests:
             info = tests[user]
             test_score = info["total"]
         elif "total" in tests:
@@ -99,7 +99,7 @@ def combine_statistics(dates, stats, tests):
 
 def format_date(date):
     """Converts a git date string to the iso format date string"""
-        
+
     date_data = datetime.strptime(date, "%Y-%m-%d")
     return date_data.date().isoformat()
 
@@ -140,8 +140,8 @@ def sum_statistics(commit_data):
         
     """
     new_data = {}
-    for student in data:
-        commits = data[student]
+    for student in commit_data:
+        commits = commit_data[student]
         total_add = 0
         total_del = 0
         total_count = 0

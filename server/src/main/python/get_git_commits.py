@@ -43,12 +43,12 @@ def jsonify(commit_data):
     date2 = commit_data[len(commit_data) - 1]["date"]
     dates = daterange(date1, date2)
 
-    #Create a list of dictionaries for each date between the first and last
+    # Create a list of dictionaries for each date between the first and last
     for date in dates:
         new_bar = {"date": date_string(date), "count": 0}
         new_data.append(new_bar)
 
-    #Replace the counts for each date with actual data
+    # Replace the counts for each date with actual data
     for entry in commit_data:
         date = date_string(entry["date"])
         count = entry["commit_count"]
