@@ -151,6 +151,7 @@
 <span class="kn">from</span> <span class="nn">test_completion</span> <span class="k">import</span> <span class="n">get_test_completion</span> <span class="k">as</span> <span class="n">test_completion</span>
 <span class="kn">from</span> <span class="nn">test_completion</span> <span class="k">import</span> <span class="n">get_test_completion_string</span> <span class="k">as</span> <span class="n">test_completion_string</span>
 
+
 <div class="viewcode-block" id="combine_statistics"><a class="viewcode-back" href="../get_statistics.html#get_statistics.combine_statistics">[docs]</a><span class="k">def</span> <span class="nf">combine_statistics</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">tests</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates a list of statistics for each user</span>
 
@@ -198,6 +199,7 @@
 <span class="sd">            }</span>
 <span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">dates</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">user_dates</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[</span><span class="n">user</span><span class="p">]</span>
@@ -212,9 +214,8 @@
             <span class="n">count</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;commit_count&quot;</span><span class="p">]</span>
             <span class="n">time</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;time_spent&quot;</span><span class="p">]</span>
         <span class="n">test_score</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">user</span> <span class="ow">in</span> <span class="n">tests</span>
-        <span class="p">):</span>  <span class="c1"># This if else is dumb, fix it. strings and files should both be handled gracefully</span>
+        <span class="c1"># This if else is dumb, fix it. strings and files should both be handled gracefully</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
             <span class="n">info</span> <span class="o">=</span> <span class="n">tests</span><span class="p">[</span><span class="n">user</span><span class="p">]</span>
             <span class="n">test_score</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span>
         <span class="k">elif</span> <span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
@@ -240,7 +241,7 @@
 
 <div class="viewcode-block" id="format_date"><a class="viewcode-back" href="../get_statistics.html#get_statistics.format_date">[docs]</a><span class="k">def</span> <span class="nf">format_date</span><span class="p">(</span><span class="n">date</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Converts a git date string to the iso format date string&quot;&quot;&quot;</span>
-        
+
     <span class="n">date_data</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">date_data</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span></div>
 

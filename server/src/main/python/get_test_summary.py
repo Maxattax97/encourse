@@ -11,12 +11,49 @@ from test_completion import get_test_completion as get_test_scores
 from start_end import commit_data
 
 
-def api_format_data(data, hidden):
+def jsonify(test_data, hidden):
+    """Counts the number of students who have passed each test case
+   
+    Sums up the total number of students who have passed each particular test case, and
+    stores that information with the test case name. If the test case is hidden, "H" is
+    appended to the end of the test case name
+
+    **Args**:
+        **data** (dict): A dictionary of users mapped to their respective test scores
+        The dictionary has the following format: ::
+
+            {
+                "name1": {
+                   "tests": {
+                        "Test1": ("P" or "F"),
+                        ...
+                   },
+                   "total": int (percentage)
+                },
+                ...
+            }
+        
+        **hidden** (bool): A boolean that is true if the test cases are hidden
+
+    **Returns**:
+        json: A json array containing the percentage of students who passed each test.
+        The json has the form: ::
+            
+            [
+                {
+                    "name": str,
+                    "hidden": bool,
+                    "score": int (percentage)
+                },
+                ...
+            ]
+    
+    """
     tests = {}
     test_totals = {}
     # Collect scores for each test
-    for student in data:
-        info = data[student]
+    for student in test_data:
+        info = test_data[student]
         test_scores = info["tests"]
         for test_name in test_scores:
             if test_scores[test_name] == "P":
@@ -24,7 +61,7 @@ def api_format_data(data, hidden):
                     tests[test_name] += 1
                     test_totals[test_name] += 1
                 else:
-                    tests[test_name] = 0
+                    tests[test_name] = 1
                     test_totals[test_name] = 1
             else:
                 if test_name in tests:
@@ -32,7 +69,6 @@ def api_format_data(data, hidden):
                 else:
                     tests[test_name] = 0
                     test_totals[test_name] = 1
-
     test_list = []
     # Reformat into api format
     for test_name in tests:
@@ -43,12 +79,15 @@ def api_format_data(data, hidden):
         new_bar["hidden"] = hidden
         new_bar["score"] = int(test_score * 100 / test_total)
         test_list.append(new_bar)
-    return test_list
+    return json.dumps(test_list)
 
 
 def merge_data(visible, hidden):
+    """Combines the visible and hidden test cases into a single json"""
+    visible = list(json.loads(visible))
+    hidden = list(json.loads(hidden))
     visible.append(hidden)
-    return visible
+    return json.dumps(visible)
 
 
 if __name__ == "__main__":
@@ -65,7 +104,7 @@ if __name__ == "__main__":
     visible_data = get_test_scores(visible_test_score_file)
     hidden_data = get_test_scores(hidden_test_score_file)
 
-    formatted_visible = api_format_data(visible_data, False)
-    formatted_hidden = api_format_data(hidden_data, True)
-    api_json = json.dumps(merge_data(formatted_visible, formatted_hidden))
+    formatted_visible = jsonify(visible_data, False)
+    formatted_hidden = jsonify(hidden_data, True)
+    api_json = merge_data(formatted_visible, formatted_hidden)
     print(api_json)

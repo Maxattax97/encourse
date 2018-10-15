@@ -58,6 +58,7 @@ def combine_statistics(dates, stats, tests):
             }
         
     """
+
     data = {}
     for user in dates.keys():
         user_dates = dates[user]

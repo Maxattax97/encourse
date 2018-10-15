@@ -148,32 +148,56 @@
 <dl class="function">
 <dt id="helper.date_string">
 <code class="descclassname">helper.</code><code class="descname">date_string</code><span class="sig-paren">(</span><em>date</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#date_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.date_string" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Converts a datetime object into the api’s standard date format</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="helper.daterange">
-<code class="descclassname">helper.</code><code class="descname">daterange</code><span class="sig-paren">(</span><em>start_date</em>, <em>end_date</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#daterange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.daterange" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">helper.</code><code class="descname">daterange</code><span class="sig-paren">(</span><em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#daterange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.daterange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of every date between <strong>start</strong> and <strong>end</strong></p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><div class="first last line-block">
+<div class="line"><strong>start</strong> (date): A datetime date object, representing the start of the range</div>
+<div class="line">of dates to be returned        </div>
+<div class="line"><strong>end</strong> (date): A datetime date object, representing the end of the range</div>
+<div class="line">of dates to be returned</div>
+</div>
+</dd>
+<dt><strong>Returns</strong></dt>
+<dd>list: A list of datetime date objects representing every date between start
+and end (inclusive)</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="helper.eprint">
 <code class="descclassname">helper.</code><code class="descname">eprint</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#eprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.eprint" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A duplicate of the python print method that instead prints to standard error</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="helper.is_number">
 <code class="descclassname">helper.</code><code class="descname">is_number</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#is_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.is_number" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns true if a string can be converted to an int, false otherwise</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="helper.time_string">
 <code class="descclassname">helper.</code><code class="descname">time_string</code><span class="sig-paren">(</span><em>seconds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/helper.html#time_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#helper.time_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a datetime object to a concise string
-returns a String:
-‘X days’ if the number of days is greater than 0
-‘X hours’ if the number of hours is greater than 0
-‘X minutes’ if the number of minutes if greater than 1
-‘Not started’ otherwise</p>
+<dd><p>Converts a datetime object to a concise string</p>
+<dl class="docutils">
+<dt><strong>Args</strong></dt>
+<dd><strong>seconds</strong> (int): The number of seconds that a student has worked on a project</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">str: Returns a string representing a (rounded) time, using the following rules:</p>
+<div class="last line-block">
+<div class="line">- “None” if the number of seconds &lt; 60</div>
+<div class="line">- “X minutes” if the number of minutes if greater than 1</div>
+<div class="line">- “X hours” if the number of hours is greater than 0</div>
+</div>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

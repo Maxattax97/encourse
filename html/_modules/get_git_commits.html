@@ -184,12 +184,12 @@
     <span class="n">date2</span> <span class="o">=</span> <span class="n">commit_data</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">commit_data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="s2">&quot;date&quot;</span><span class="p">]</span>
     <span class="n">dates</span> <span class="o">=</span> <span class="n">daterange</span><span class="p">(</span><span class="n">date1</span><span class="p">,</span> <span class="n">date2</span><span class="p">)</span>
 
-    <span class="c1">#Create a list of dictionaries for each date between the first and last</span>
+    <span class="c1"># Create a list of dictionaries for each date between the first and last</span>
     <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">:</span>
         <span class="n">new_bar</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">date_string</span><span class="p">(</span><span class="n">date</span><span class="p">),</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
         <span class="n">new_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_bar</span><span class="p">)</span>
 
-    <span class="c1">#Replace the counts for each date with actual data</span>
+    <span class="c1"># Replace the counts for each date with actual data</span>
     <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">commit_data</span><span class="p">:</span>
         <span class="n">date</span> <span class="o">=</span> <span class="n">date_string</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">])</span>
         <span class="n">count</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;commit_count&quot;</span><span class="p">]</span>

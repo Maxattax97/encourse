@@ -146,14 +146,52 @@
   <div class="section" id="module-get_test_summary">
 <span id="get-test-summary-module"></span><h1>get_test_summary module<a class="headerlink" href="#module-get_test_summary" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="get_test_summary.api_format_data">
-<code class="descclassname">get_test_summary.</code><code class="descname">api_format_data</code><span class="sig-paren">(</span><em>data</em>, <em>hidden</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_test_summary.html#api_format_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_test_summary.api_format_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="get_test_summary.jsonify">
+<code class="descclassname">get_test_summary.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>test_data</em>, <em>hidden</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_test_summary.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_test_summary.jsonify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the number of students who have passed each test case</p>
+<p>Sums up the total number of students who have passed each particular test case, and
+stores that information with the test case name. If the test case is hidden, “H” is
+appended to the end of the test case name</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>data</strong> (dict): A dictionary of users mapped to their respective test scores
+The dictionary has the following format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">{</span>
+       <span class="s2">&quot;tests&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Test1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span> <span class="ow">or</span> <span class="s2">&quot;F&quot;</span><span class="p">),</span>
+            <span class="o">...</span>
+       <span class="p">},</span>
+       <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">percentage</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p class="last"><strong>hidden</strong> (bool): A boolean that is true if the test cases are hidden</p>
+</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">json: A json array containing the percentage of students who passed each test.
+The json has the form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;hidden&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">percentage</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="get_test_summary.merge_data">
 <code class="descclassname">get_test_summary.</code><code class="descname">merge_data</code><span class="sig-paren">(</span><em>visible</em>, <em>hidden</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_test_summary.html#merge_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_test_summary.merge_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Combines the visible and hidden test cases into a single json</p>
+</dd></dl>
 
 </div>
 

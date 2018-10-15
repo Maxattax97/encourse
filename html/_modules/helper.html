@@ -145,6 +145,7 @@
 
 
 <div class="viewcode-block" id="is_number"><a class="viewcode-back" href="../helper.html#helper.is_number">[docs]</a><span class="k">def</span> <span class="nf">is_number</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns true if a string can be converted to an int, false otherwise&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="nb">int</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
@@ -153,18 +154,23 @@
 
 
 <div class="viewcode-block" id="date_string"><a class="viewcode-back" href="../helper.html#helper.date_string">[docs]</a><span class="k">def</span> <span class="nf">date_string</span><span class="p">(</span><span class="n">date</span><span class="p">):</span>
-    <span class="c1"># print(date)</span>
+    <span class="sd">&quot;&quot;&quot;Converts a datetime object into the api&#39;s standard date format&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="time_string"><a class="viewcode-back" href="../helper.html#helper.time_string">[docs]</a><span class="k">def</span> <span class="nf">time_string</span><span class="p">(</span><span class="n">seconds</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Converts a datetime object to a concise string</span>
-<span class="sd">    returns a String:</span>
-<span class="sd">    &#39;X days&#39; if the number of days is greater than 0</span>
-<span class="sd">    &#39;X hours&#39; if the number of hours is greater than 0</span>
-<span class="sd">    &#39;X minutes&#39; if the number of minutes if greater than 1</span>
-<span class="sd">    &#39;Not started&#39; otherwise</span>
+    <span class="sd">&quot;&quot;&quot;Converts a datetime object to a concise string</span>
+<span class="sd">    </span>
+<span class="sd">    **Args**</span>
+<span class="sd">        **seconds** (int): The number of seconds that a student has worked on a project</span>
+
+<span class="sd">    **Returns**:</span>
+<span class="sd">        str: Returns a string representing a (rounded) time, using the following rules:</span>
+
+<span class="sd">        |  - &quot;None&quot; if the number of seconds &lt; 60</span>
+<span class="sd">        |  - &quot;X minutes&quot; if the number of minutes if greater than 1</span>
+<span class="sd">        |  - &quot;X hours&quot; if the number of hours is greater than 0</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">seconds</span> <span class="o">&lt;</span> <span class="mi">60</span><span class="p">:</span>
@@ -176,12 +182,26 @@
     <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> hours&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">hours</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="daterange"><a class="viewcode-back" href="../helper.html#helper.daterange">[docs]</a><span class="k">def</span> <span class="nf">daterange</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">end_date</span> <span class="o">-</span> <span class="n">start_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span><span class="p">)):</span>
-        <span class="k">yield</span> <span class="n">start_date</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
+<div class="viewcode-block" id="daterange"><a class="viewcode-back" href="../helper.html#helper.daterange">[docs]</a><span class="k">def</span> <span class="nf">daterange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a list of every date between **start** and **end**</span>
+<span class="sd">        </span>
+<span class="sd">    **Args**:</span>
+<span class="sd">        |  **start** (date): A datetime date object, representing the start of the range</span>
+<span class="sd">        |  of dates to be returned        </span>
+<span class="sd">        |  **end** (date): A datetime date object, representing the end of the range</span>
+<span class="sd">        |  of dates to be returned</span>
+
+<span class="sd">    **Returns**</span>
+<span class="sd">        list: A list of datetime date objects representing every date between start</span>
+<span class="sd">        and end (inclusive)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">days</span><span class="p">)):</span>
+        <span class="k">yield</span> <span class="n">start</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="eprint"><a class="viewcode-back" href="../helper.html#helper.eprint">[docs]</a><span class="k">def</span> <span class="nf">eprint</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A duplicate of the python print method that instead prints to standard error&quot;&quot;&quot;</span> 
     <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </pre></div>
 

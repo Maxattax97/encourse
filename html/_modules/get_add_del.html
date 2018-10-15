@@ -147,6 +147,7 @@
 <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">time_string</span>
 <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">daterange</span>
 <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">date_string</span>
+<span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">eprint</span>
 <span class="kn">from</span> <span class="nn">daily_git_data</span> <span class="k">import</span> <span class="n">get_daily_commit_data</span> <span class="k">as</span> <span class="n">get_progress</span>
 <span class="kn">from</span> <span class="nn">start_end</span> <span class="k">import</span> <span class="n">commit_data</span>
 
@@ -222,9 +223,9 @@
         <span class="n">day</span> <span class="o">=</span> <span class="n">date_string</span><span class="p">(</span><span class="n">day</span><span class="p">)</span>
         <span class="n">new_entry</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">day</span>
-        <span class="k">if</span> <span class="n">day</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">day</span><span class="p">][</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span>
-            <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">day</span><span class="p">][</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">day</span> <span class="ow">in</span> <span class="n">commit_data</span><span class="p">:</span>
+            <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">commit_data</span><span class="p">[</span><span class="n">day</span><span class="p">][</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span>
+            <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">commit_data</span><span class="p">[</span><span class="n">day</span><span class="p">][</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -253,15 +254,14 @@
         <span class="k">else</span> <span class="n">get_progress</span><span class="p">(</span><span class="n">commit_data_file</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="n">individual_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">student_id</span><span class="p">]</span>
-    <span class="c1"># print(individual_data)</span>
     <span class="c1"># print(&quot;\n&quot;)</span>
     <span class="n">reformatted_data</span> <span class="o">=</span> <span class="n">reformat</span><span class="p">(</span><span class="n">individual_data</span><span class="p">)</span>
 
     <span class="n">commit_times</span> <span class="o">=</span> <span class="n">commit_data</span><span class="p">(</span><span class="n">commit_times_file</span><span class="p">)</span>
-    <span class="c1"># print(commit_times)</span>
+    <span class="n">eprint</span><span class="p">(</span><span class="n">commit_times</span><span class="p">)</span>
     <span class="n">individual_commit_times</span> <span class="o">=</span> <span class="n">commit_times</span><span class="p">[</span><span class="n">student_id</span><span class="p">]</span>
 
-    <span class="n">api_json</span> <span class="o">=</span> <span class="n">api_format_data</span><span class="p">(</span><span class="n">reformatted_data</span><span class="p">,</span> <span class="n">individual_commit_times</span><span class="p">)</span>
+    <span class="n">api_json</span> <span class="o">=</span> <span class="n">jsonify_data</span><span class="p">(</span><span class="n">reformatted_data</span><span class="p">,</span> <span class="n">individual_commit_times</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">api_json</span><span class="p">)</span>
 </pre></div>
 
