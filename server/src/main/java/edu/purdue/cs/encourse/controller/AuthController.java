@@ -5,9 +5,14 @@ import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.service.AccountService;
 import edu.purdue.cs.encourse.service.AdminService;
+import edu.purdue.cs.encourse.service.EmailService;
 import edu.purdue.cs.encourse.service.impl.AccountServiceImpl;
 import edu.purdue.cs.encourse.service.impl.AdminServiceImpl;
 import edu.purdue.cs.encourse.service.impl.UserDetailsServiceImpl;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.stream.Collectors;
 
 @RestController
@@ -44,6 +50,10 @@ public class AuthController {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
+    @Autowired
+    private EmailService emailService;
+
+
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/modify/account", method = RequestMethod.POST)
@@ -56,10 +66,35 @@ public class AuthController {
         return new ResponseEntity<>(result, status);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @RequestMapping(value = "/add/accounts", method = RequestMethod.POST, consumes = "application/json")
+    public @ResponseBody ResponseEntity<?> createAccountsBulk(@RequestBody String body) {
+        String curr = null;
+        List<String> users = new ArrayList<>();
+        try {
+            JSONParser parser = new JSONParser();
+            JSONArray json = (JSONArray) parser.parse(body);
+            ListIterator iter = json.listIterator();
+
+            while(iter.hasNext()) {
+                JSONObject obj = (JSONObject) iter.next();
+                curr = obj.toJSONString();
+                ResponseEntity<?> response = createAccount(null, curr);
+                if (response.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                    throw new ParseException(0);
+                }
+                users.add(response.getBody().toString());
+            }
+        } catch (ParseException e) {
+            return new ResponseEntity<>("Could not parse the following index in array: \n" + curr, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(body, HttpStatus.OK);
+    }
+
     // TODO: Adjust how frontend calls this endpoint
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/account", method = RequestMethod.POST, consumes = "application/json")
-    public @ResponseBody ResponseEntity<?> createAccount(@RequestParam(name = "password") String password, @RequestBody String json) {
+    public @ResponseBody ResponseEntity<?> createAccount(@RequestParam(name = "password", required = false) String password, @RequestBody String json) {
 
         int result;
         User user;
@@ -86,6 +121,10 @@ public class AuthController {
                     accountType = "Student";
             }
             result = adminService.addAccount(a.getUserID(), a.getUserName(), a.getFirstName(), a.getLastName(), accountType, a.getMiddleInit(), a.getEduEmail());
+            String genPassword = emailService.sendGeneratedPasswordMessage(a);
+            if (password == null || password.isEmpty()) {
+                password = genPassword;
+            }
             user = adminService.addUser(a.getUserName(), password, userType, false, false, false, true);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
