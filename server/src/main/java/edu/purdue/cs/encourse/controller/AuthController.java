@@ -66,6 +66,13 @@ public class AuthController {
         return new ResponseEntity<>(result, status);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/modify/password", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> modifyAccount(@RequestParam(name = "password") String password) {
+        userDetailsService.updatePassword(getUserFromAuth(), password);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/accounts", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity<?> createAccountsBulk(@RequestBody String body) {
