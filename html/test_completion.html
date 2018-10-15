@@ -147,11 +147,11 @@
 <span id="test-completion-module"></span><h1>test_completion module<a class="headerlink" href="#module-test_completion" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="test_completion.get_test_completion">
-<code class="descclassname">test_completion.</code><code class="descname">get_test_completion</code><span class="sig-paren">(</span><em>test_case_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/test_completion.html#get_test_completion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#test_completion.get_test_completion" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">test_completion.</code><code class="descname">get_test_completion</code><span class="sig-paren">(</span><em>test_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/test_completion.html#get_test_completion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#test_completion.get_test_completion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates test score dictionary for each student</p>
 <dl class="docutils">
 <dt><strong>Args</strong>:</dt>
-<dd><p class="first"><strong>test_case_file</strong> (file): A specially formatted file containing test_case data
+<dd><p class="first"><strong>test_file</strong> (file): A specially formatted file containing test data
 The following is a sample of one of these files:</p>
 <div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name1</span><span class="p">;</span><span class="n">Test1</span><span class="p">:</span><span class="n">P</span><span class="p">;</span><span class="n">Test2</span><span class="p">:</span><span class="n">P</span><span class="p">;</span><span class="n">Test3</span><span class="p">:</span><span class="n">P</span><span class="p">;</span><span class="n">Test4</span><span class="p">:</span><span class="n">P</span><span class="p">;</span><span class="n">Test5</span><span class="p">:</span><span class="n">P</span>
 <span class="n">name2</span><span class="p">;</span><span class="n">Test1</span><span class="p">:</span><span class="n">F</span><span class="p">;</span><span class="n">Test2</span><span class="p">:</span><span class="n">F</span><span class="p">;</span><span class="n">Test3</span><span class="p">:</span><span class="n">P</span><span class="p">;</span><span class="n">Test4</span><span class="p">:</span><span class="n">P</span><span class="p">;</span><span class="n">Test5</span><span class="p">:</span><span class="n">P</span>
@@ -179,8 +179,34 @@ The dictionary has the following format:</p>
 
 <dl class="function">
 <dt id="test_completion.get_test_completion_string">
-<code class="descclassname">test_completion.</code><code class="descname">get_test_completion_string</code><span class="sig-paren">(</span><em>test_case_string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/test_completion.html#get_test_completion_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#test_completion.get_test_completion_string" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">test_completion.</code><code class="descname">get_test_completion_string</code><span class="sig-paren">(</span><em>test_string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/test_completion.html#get_test_completion_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#test_completion.get_test_completion_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates test score dictionary for each student</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>test_case_string</strong> (str): A specially formatted string containing test data
+The following is a sample of one of these strings:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;name2;Test1:F;Test2:F;Test3:P;Test4:P;Test5:P&quot;</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">dict: A dictionary mapping students to their respective test data.
+The dictionary has the following format:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">{</span>
+       <span class="s2">&quot;tests&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Test1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span> <span class="ow">or</span> <span class="s2">&quot;F&quot;</span><span class="p">),</span>
+            <span class="o">...</span>
+       <span class="p">},</span>
+       <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">percentage</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 

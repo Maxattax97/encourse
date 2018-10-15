@@ -144,11 +144,11 @@
 <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">eprint</span>
 
 
-<div class="viewcode-block" id="get_test_completion"><a class="viewcode-back" href="../test_completion.html#test_completion.get_test_completion">[docs]</a><span class="k">def</span> <span class="nf">get_test_completion</span><span class="p">(</span><span class="n">test_case_file</span><span class="p">):</span>
+<div class="viewcode-block" id="get_test_completion"><a class="viewcode-back" href="../test_completion.html#test_completion.get_test_completion">[docs]</a><span class="k">def</span> <span class="nf">get_test_completion</span><span class="p">(</span><span class="n">test_file</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Generates test score dictionary for each student</span>
 <span class="sd">    </span>
 <span class="sd">    **Args**:</span>
-<span class="sd">        **test_case_file** (file): A specially formatted file containing test_case data</span>
+<span class="sd">        **test_file** (file): A specially formatted file containing test data</span>
 <span class="sd">        The following is a sample of one of these files: ::</span>
 <span class="sd">            </span>
 <span class="sd">            name1;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P</span>
@@ -171,7 +171,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">students</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">test_case_file</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">test_file</span><span class="p">:</span>
         <span class="c1"># Clean line for parsing</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
         <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">))</span>
@@ -197,8 +197,32 @@
     <span class="k">return</span> <span class="n">students</span></div>
 
 
-<div class="viewcode-block" id="get_test_completion_string"><a class="viewcode-back" href="../test_completion.html#test_completion.get_test_completion_string">[docs]</a><span class="k">def</span> <span class="nf">get_test_completion_string</span><span class="p">(</span><span class="n">test_case_string</span><span class="p">):</span>
-    <span class="n">words</span> <span class="o">=</span> <span class="n">test_case_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="get_test_completion_string"><a class="viewcode-back" href="../test_completion.html#test_completion.get_test_completion_string">[docs]</a><span class="k">def</span> <span class="nf">get_test_completion_string</span><span class="p">(</span><span class="n">test_string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates test score dictionary for each student</span>
+<span class="sd">    </span>
+<span class="sd">    **Args**:</span>
+<span class="sd">        **test_case_string** (str): A specially formatted string containing test data</span>
+<span class="sd">        The following is a sample of one of these strings: ::</span>
+<span class="sd">            </span>
+<span class="sd">            &quot;name2;Test1:F;Test2:F;Test3:P;Test4:P;Test5:P&quot;</span>
+
+<span class="sd">    **Returns**:</span>
+<span class="sd">        dict: A dictionary mapping students to their respective test data.</span>
+<span class="sd">        The dictionary has the following format: ::</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;name1&quot;: {</span>
+<span class="sd">                   &quot;tests&quot;: {</span>
+<span class="sd">                        &quot;Test1&quot;: (&quot;P&quot; or &quot;F&quot;),</span>
+<span class="sd">                        ...</span>
+<span class="sd">                   },</span>
+<span class="sd">                   &quot;total&quot;: int (percentage)</span>
+<span class="sd">                },</span>
+<span class="sd">                ...</span>
+<span class="sd">            }</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">test_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">words</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">{}</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
