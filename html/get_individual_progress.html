@@ -146,14 +146,69 @@
   <div class="section" id="module-get_individual_progress">
 <span id="get-individual-progress-module"></span><h1>get_individual_progress module<a class="headerlink" href="#module-get_individual_progress" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="get_individual_progress.api_format_data">
-<code class="descclassname">get_individual_progress.</code><code class="descname">api_format_data</code><span class="sig-paren">(</span><em>data</em>, <em>times</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_individual_progress.html#api_format_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_individual_progress.api_format_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="get_individual_progress.extract_changes">
+<code class="descclassname">get_individual_progress.</code><code class="descname">extract_changes</code><span class="sig-paren">(</span><em>commit_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_individual_progress.html#extract_changes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_individual_progress.extract_changes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts additions and deletions from commit data</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>commit_data</strong> (dict): A list of dictionaries containing commit data,
+each with the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+    <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">dict: A dictionary that maps dates to additions and deletions
+with the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;date1&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">}</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
-<dt id="get_individual_progress.reformat_commit_data">
-<code class="descclassname">get_individual_progress.</code><code class="descname">reformat_commit_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_individual_progress.html#reformat_commit_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_individual_progress.reformat_commit_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a dict of date: additions,deletions</p>
+<dt id="get_individual_progress.jsonify">
+<code class="descclassname">get_individual_progress.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>commit_data</em>, <em>times</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_individual_progress.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_individual_progress.jsonify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert data to json for /progress endpoint</p>
+<p>Converts the data to a list of dictionaries. One dictionary is
+created per day. A dictionary is also created for each day in between
+the first and last date, even if there is no data for that date. In that case,
+progress for that day are set to the same value as the previous day.</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>commit_data</strong> (dict): A dictionary containing the git commit list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;date1&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+        <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">seconds</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p class="last"><strong>times</strong> (str, str): A tuple of start and end dates of the form “mm-dd-yyyy”</p>
+</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">json: A json list of entries, one per day, of the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;mm-dd-yyyy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

@@ -33,7 +33,7 @@ def jsonify(commit_data):
         json: A json list with entries of the following format: ::
             
             {
-                "date": "MM-DD-YYYY",
+                "date": "mm-dd-yyyy",
                 "count": int
             }
 

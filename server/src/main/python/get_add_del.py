@@ -25,7 +25,7 @@ def reformat(commit_list) -> dict:
     **Returns**:
         dict: a single dictionary of the following form: ::
 
-            "MM/DD/YYYY": {
+            "mm-dd-yyyy": {
                 "additions": int,
                 "deletions": int
             }
@@ -67,7 +67,7 @@ def jsonify_data(commit_data, times) -> json:
         json: A json list of entries, one per day, of the following form: ::
 
           {
-                "date": "MM/DD/YYYY",
+                "date": "mm-dd-yyyy",
                 "additions": int,
                 "deletions": int
             }

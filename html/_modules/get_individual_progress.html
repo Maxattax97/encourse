@@ -147,16 +147,39 @@
 <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">time_string</span>
 <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">daterange</span>
 <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">date_string</span>
+<span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">eprint</span>
 <span class="kn">from</span> <span class="nn">daily_git_data</span> <span class="k">import</span> <span class="n">get_daily_commit_data</span> <span class="k">as</span> <span class="n">get_progress</span>
 <span class="kn">from</span> <span class="nn">start_end</span> <span class="k">import</span> <span class="n">commit_data</span>
 
 
-<div class="viewcode-block" id="reformat_commit_data"><a class="viewcode-back" href="../get_individual_progress.html#get_individual_progress.reformat_commit_data">[docs]</a><span class="k">def</span> <span class="nf">reformat_commit_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a dict of date: additions,deletions</span>
+<div class="viewcode-block" id="extract_changes"><a class="viewcode-back" href="../get_individual_progress.html#get_individual_progress.extract_changes">[docs]</a><span class="k">def</span> <span class="nf">extract_changes</span><span class="p">(</span><span class="n">commit_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extracts additions and deletions from commit data</span>
+
+<span class="sd">    **Args**:</span>
+<span class="sd">        **commit_data** (dict): A list of dictionaries containing commit data,</span>
+<span class="sd">        each with the following form: ::</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;date&quot;: datetime,</span>
+<span class="sd">                &quot;additions&quot;: int,</span>
+<span class="sd">                &quot;deletions&quot;: int</span>
+<span class="sd">            }</span>
+
+<span class="sd">    **Returns**:</span>
+<span class="sd">        dict: A dictionary that maps dates to additions and deletions</span>
+<span class="sd">        with the following form: ::</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;date1&quot;: {</span>
+<span class="sd">                    &quot;additions&quot;: int,</span>
+<span class="sd">                    &quot;deletions&quot;: int</span>
+<span class="sd">                }</span>
+<span class="sd">                ...</span>
+<span class="sd">            }</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">new_data</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">commit_data</span><span class="p">:</span>
         <span class="n">new_entry</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span>
         <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span>
@@ -165,20 +188,54 @@
     <span class="k">return</span> <span class="n">new_data</span></div>
 
 
-<div class="viewcode-block" id="api_format_data"><a class="viewcode-back" href="../get_individual_progress.html#get_individual_progress.api_format_data">[docs]</a><span class="k">def</span> <span class="nf">api_format_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
+<div class="viewcode-block" id="jsonify"><a class="viewcode-back" href="../get_individual_progress.html#get_individual_progress.jsonify">[docs]</a><span class="k">def</span> <span class="nf">jsonify</span><span class="p">(</span><span class="n">commit_data</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert data to json for /progress endpoint</span>
+
+<span class="sd">    Converts the data to a list of dictionaries. One dictionary is</span>
+<span class="sd">    created per day. A dictionary is also created for each day in between</span>
+<span class="sd">    the first and last date, even if there is no data for that date. In that case,</span>
+<span class="sd">    progress for that day are set to the same value as the previous day.</span>
+<span class="sd">    </span>
+<span class="sd">    **Args**:</span>
+<span class="sd">        **commit_data** (dict): A dictionary containing the git commit list: ::</span>
+<span class="sd">            </span>
+<span class="sd">            {</span>
+<span class="sd">                &quot;date1&quot;: {</span>
+<span class="sd">                    &quot;additions&quot;: datetime,</span>
+<span class="sd">                    &quot;deletions&quot;: int (seconds),</span>
+<span class="sd">                },</span>
+<span class="sd">                ...</span>
+<span class="sd">            }</span>
+
+<span class="sd">        **times** (str, str): A tuple of start and end dates of the form &quot;mm-dd-yyyy&quot;</span>
+
+<span class="sd">    **Returns**:</span>
+<span class="sd">        json: A json list of entries, one per day, of the following form: ::</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;date&quot;: &quot;mm-dd-yyyy&quot;,</span>
+<span class="sd">                &quot;progress&quot;: int,</span>
+<span class="sd">            }</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">daily_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Create date range using times file</span>
     <span class="n">date1</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
     <span class="n">date2</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
     <span class="n">dates</span> <span class="o">=</span> <span class="n">daterange</span><span class="p">(</span><span class="n">date1</span><span class="p">,</span> <span class="n">date2</span><span class="p">)</span>
     <span class="n">progress</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Fill each date with comulative progress</span>
     <span class="k">for</span> <span class="n">day</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">:</span>
         <span class="n">day</span> <span class="o">=</span> <span class="n">date_string</span><span class="p">(</span><span class="n">day</span><span class="p">)</span>
         <span class="n">new_entry</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">day</span>
-        <span class="k">if</span> <span class="n">day</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">progress</span> <span class="o">+=</span> <span class="n">data</span><span class="p">[</span><span class="n">day</span><span class="p">][</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="n">day</span><span class="p">][</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">day</span> <span class="ow">in</span> <span class="n">commit_data</span><span class="p">:</span>
+            <span class="n">progress</span> <span class="o">+=</span> <span class="n">commit_data</span><span class="p">[</span><span class="n">day</span><span class="p">][</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">commit_data</span><span class="p">[</span><span class="n">day</span><span class="p">][</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span>
         <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;progress&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">progress</span>
         <span class="n">daily_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_entry</span><span class="p">)</span>
+
+    <span class="c1"># Convert progress to a percentage by divding by the final total</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">daily_data</span><span class="p">:</span>
         <span class="n">item</span><span class="p">[</span><span class="s2">&quot;progress&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;progress&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">progress</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">daily_data</span></div>
@@ -199,15 +256,13 @@
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">get_progress</span><span class="p">(</span><span class="n">commit_data_file</span><span class="p">)</span>
     <span class="n">individual_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">student_id</span><span class="p">]</span>
-    <span class="c1"># print(individual_data)</span>
     <span class="c1"># print(&quot;\n&quot;)</span>
-    <span class="n">reformatted_data</span> <span class="o">=</span> <span class="n">reformat_commit_data</span><span class="p">(</span><span class="n">individual_data</span><span class="p">)</span>
+    <span class="n">reformatted_data</span> <span class="o">=</span> <span class="n">extract_changes</span><span class="p">(</span><span class="n">individual_data</span><span class="p">)</span>
 
     <span class="n">commit_times</span> <span class="o">=</span> <span class="n">commit_data</span><span class="p">(</span><span class="n">commit_times_file</span><span class="p">)</span>
-    <span class="c1"># print(commit_times)</span>
     <span class="n">individual_commit_times</span> <span class="o">=</span> <span class="n">commit_times</span><span class="p">[</span><span class="n">student_id</span><span class="p">]</span>
 
-    <span class="n">api_formatted_data</span> <span class="o">=</span> <span class="n">api_format_data</span><span class="p">(</span><span class="n">reformatted_data</span><span class="p">,</span> <span class="n">individual_commit_times</span><span class="p">)</span>
+    <span class="n">api_formatted_data</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">reformatted_data</span><span class="p">,</span> <span class="n">individual_commit_times</span><span class="p">)</span>
     <span class="n">api_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">api_formatted_data</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">api_json</span><span class="p">)</span>
 </pre></div>
