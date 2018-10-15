@@ -5,6 +5,7 @@ from datetime import timedelta
 
 
 def create_day_dict(date, files, time_spent, additions, deletions, commit_count):
+    """Creates a dictionary from inputs"""
     daily_data = {}
     daily_data["date"] = date
     daily_data["files"] = files
@@ -15,13 +16,13 @@ def create_day_dict(date, files, time_spent, additions, deletions, commit_count)
     return daily_data
 
 
-def select_best(files: list):
+def select_best(all_files: list):
     """Selects 3 best files 
     
-    Selects the best 3 files from **files** by maximizing the quantity ``(additions-deletions)`` for each file
+    Selects the best 3 files from **all_files** by maximizing the quantity ``(additions-deletions)`` for each file
 
     **Args**:
-        **files**: list of dictionaries of the form: ::
+        **all_files**: list of dictionaries of the form: ::
 
             {
                 'file_name': 'file name',
@@ -29,18 +30,19 @@ def select_best(files: list):
             }
 
     **Returns**: 
-        **list**: top 3 files
+        **list**: top 3 files, or **all_files** if it contains fewer than 3 files
 
     """
-    file_list = list(files.keys())
-    file_changes = list(files.values())
-    # print(file_changes)
+    file_list = list(all_files.keys())
+    file_changes = list(all_files.values())
+
     if len(file_list) < 3:
         return file_list
     top_files, progress = zip(
         *sorted(zip(file_list, file_changes), key=lambda k: k[1], reverse=True)
     )
-    # print(top_files)
+
+    #eprint("Selected top files: {}".format(top_files))
     return top_files[:3]
 
 
