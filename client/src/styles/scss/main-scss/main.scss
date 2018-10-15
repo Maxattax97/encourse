@@ -1,5 +1,11 @@
-* {
-  box-sizing: border-box;
+@import "helpers";
+
+*,
+*:before,
+*:after {
+  @include box-sizing(border-box);
+  padding: 0;
+  margin: 0;
 }
 
 div.title {
@@ -90,9 +96,16 @@ input {
   font-family: "Raleway", "Rhodium Libre", sans-serif;
 }
 
-@import "navigation";
-@import "panel";
-@import "modal";
-@import "card";
-@import "progress-bar";
-@import "exit";
+@import "main/navigation";
+@import "main/panel";
+@import "main/modal";
+@import "main/card";
+@import "main/progress-bar";
+@import "main/exit";
+
+@import "../course/CoursePanel";
+@import "../student/StudentPanel";
+
+@import "../project/ProjectPanel";
+@import "../PreferencePanel";
+@import "../chart/Chart";

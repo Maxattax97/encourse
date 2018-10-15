@@ -88,6 +88,8 @@ class PreferencePanel extends Component {
             return 'professor'
         case 3:
             return 'admin'
+        default:
+            return 'student'
         }
     }
 
@@ -165,7 +167,7 @@ class PreferencePanel extends Component {
                         <h1 className="break-line title" />
                         <div className="panel-course-students float-height">
                             <div className="title float-height" onClick={ () => this.setState({ show_course_options: true, current_course: -1, modal_blur: ' blur' }) }>
-                                <img src={ plusIcon } />
+                                <img src={ plusIcon } alt="Add Course"/>
                                 <h3>Courses</h3>
                             </div>
                             {
@@ -179,7 +181,7 @@ class PreferencePanel extends Component {
                         <h2 className="break-line" />
                         <div className="panel-course-students float-height">
                             <div className="title float-height" onClick={ () => this.setState({ show_account_options: true, current_account: -1, modal_blur: ' blur' }) }>
-                                <img src={ plusIcon } />
+                                <img src={ plusIcon } alt="Add Account"/>
                                 <h3>Accounts</h3>
                             </div>
                             {
