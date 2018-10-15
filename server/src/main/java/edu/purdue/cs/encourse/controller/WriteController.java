@@ -1,8 +1,10 @@
 package edu.purdue.cs.encourse.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.purdue.cs.encourse.database.TeachingAssistantStudentRepository;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.service.*;
+import edu.purdue.cs.encourse.service.impl.UserDetailsServiceImpl;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -12,11 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Base64;
-import java.util.HashMap;
+import java.util.*;
 
 @RestController
 @RequestMapping(value="/api")
@@ -33,6 +36,9 @@ public class WriteController {
 
     @Autowired
     private CourseService courseService;
+
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
 
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -90,8 +96,8 @@ public class WriteController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @RequestMapping(value = "/add/studentToTA", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> addStudentToTA(@RequestParam(name = "userName") String userName) {
+    @RequestMapping(value = "/modify/studentToTA", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> modifyStudentToTA(@RequestParam(name = "userName") String userName) {
 
         Student student = accountService.retrieveStudent(userName);
         if (student != null) {
@@ -100,6 +106,40 @@ public class WriteController {
             return new ResponseEntity<>(ta, HttpStatus.OK);
         }
         return new ResponseEntity<>(student, HttpStatus.NOT_FOUND);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/add/studentsToTA", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> addStudentsToTA(@RequestBody String body) {
+        List<String> errors = new ArrayList<>();
+        Map<String, List<String>> map = new HashMap<>();
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject json = (JSONObject) parser.parse(body);
+            for (Object k: json.keySet()) {
+                String key = (String) k;
+                List<String> names = (List<String>) json.get(key);
+                map.put(key, names);
+            }
+        } catch (ParseException e) {
+            return new ResponseEntity<>("Could not parse body", HttpStatus.BAD_REQUEST);
+        }
+
+        for (String key: map.keySet()) {
+            User user = (User) userDetailsService.loadUserByUsername(key);
+            for (String userName: map.get(key)) {
+                Student student = accountService.retrieveStudent(userName);
+                if (student == null) {
+                    errors.add("Student " + userName + " could not be found");
+                    continue;
+                }
+                professorService.assignTeachingAssistantToStudent(key, userName);
+            }
+        }
+        if (errors.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(errors, HttpStatus.NOT_MODIFIED);
     }
 
 
@@ -237,5 +277,18 @@ public class WriteController {
         } else {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private User getUserFromAuth() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        return ((User)securityContext.getAuthentication().getPrincipal());
+    }
+
+    private boolean hasPermissionOverAccount(String userName) {
+        return adminService.hasPermissionOverAccount(getUserFromAuth(), userName);
+    }
+
+    private boolean hasPermissionOverAccount(User user, String userName) {
+        return adminService.hasPermissionOverAccount(user, userName);
     }
 }
