@@ -146,19 +146,103 @@
   <div class="section" id="module-get_statistics">
 <span id="get-statistics-module"></span><h1>get_statistics module<a class="headerlink" href="#module-get_statistics" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="get_statistics.format_commit_data">
-<code class="descclassname">get_statistics.</code><code class="descname">format_commit_data</code><span class="sig-paren">(</span><em>dates</em>, <em>stats</em>, <em>tests</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_statistics.html#format_commit_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_statistics.format_commit_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="get_statistics.combine_statistics">
+<code class="descclassname">get_statistics.</code><code class="descname">combine_statistics</code><span class="sig-paren">(</span><em>dates</em>, <em>stats</em>, <em>tests</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_statistics.html#combine_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_statistics.combine_statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a list of statistics for each user</p>
+<p>Combines the data from multiple sources into a set of statistics per student</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>dates</strong> (dict): A dict mapping students to a tuple of start and end dates:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;mm-dd-yyyy&quot;</span><span class="p">,</span>  <span class="s2">&quot;mm-dd-yyyy&quot;</span><span class="p">),</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>stats</strong> (dict): A dictionary of git log data per user. 
+The dictionary is of the following form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;commit_counts&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;time_spent&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">seconds</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>tests</strong> (dict): A dictionary of each user’s score for each test case.
+The dictionary is of the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;tests&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;Test1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span> <span class="ow">or</span> <span class="s2">&quot;F&quot;</span><span class="p">),</span>
+        <span class="o">...</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">percentage</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Returns</strong></dt>
+<dd><p class="first">json: A json dictionary mapping users to a list of statistics. 
+Each statistic is of the form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;stat_name&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="s2">&quot;stat_value&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="get_statistics.format_date">
 <code class="descclassname">get_statistics.</code><code class="descname">format_date</code><span class="sig-paren">(</span><em>date</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_statistics.html#format_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_statistics.format_date" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Converts a git date string to the iso format date string</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="get_statistics.sum_statistics">
-<code class="descclassname">get_statistics.</code><code class="descname">sum_statistics</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_statistics.html#sum_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_statistics.sum_statistics" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">get_statistics.</code><code class="descname">sum_statistics</code><span class="sig-paren">(</span><em>commit_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_statistics.html#sum_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_statistics.sum_statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts data per student per commit into cumulative statistics per student</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>commit_data</strong> (dict): A dictionary of students mapped to lists of commit data
+The dict has the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="s2">&quot;commit_count&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="s2">&quot;time_spent&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">seconds</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="o">...</span>
+    <span class="p">]</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">dict: A dictionary mapping students to cumulative statistics,
+The dictionary has the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;commit_count&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;time_spent&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">seconds</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 

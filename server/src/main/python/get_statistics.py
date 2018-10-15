@@ -10,8 +10,53 @@ from daily_git_data import get_daily_commit_data as commit_list
 from test_completion import get_test_completion as test_completion
 from test_completion import get_test_completion_string as test_completion_string
 
+def combine_statistics(dates, stats, tests):
+    """Creates a list of statistics for each user
 
-def format_commit_data(dates, stats, tests):
+    Combines the data from multiple sources into a set of statistics per student
+
+    **Args**:
+        **dates** (dict): A dict mapping students to a tuple of start and end dates: ::
+
+            {
+                "name1": ("mm-dd-yyyy",  "mm-dd-yyyy"),
+                ...
+            }
+
+        **stats** (dict): A dictionary of git log data per user. 
+        The dictionary is of the following form: ::
+
+            {
+                "name1": {
+                    "additions": int,
+                    "deletions": int,
+                    "commit_counts": int,
+                    "time_spent": int (seconds),
+                }
+                ...
+            }
+
+        **tests** (dict): A dictionary of each user's score for each test case.
+        The dictionary is of the following form: ::
+
+            {
+                "tests": {
+                    "Test1": ("P" or "F"),
+                    ...
+                },
+                "total": int (percentage)
+            }
+    
+    **Returns**
+        json: A json dictionary mapping users to a list of statistics. 
+        Each statistic is of the form: ::
+
+            {
+                "stat_name": int,
+                "stat_value": int,
+            }
+        
+    """
     data = {}
     for user in dates.keys():
         user_dates = dates[user]
@@ -53,15 +98,47 @@ def format_commit_data(dates, stats, tests):
 
 
 def format_date(date):
+    """Converts a git date string to the iso format date string"""
+        
     date_data = datetime.strptime(date, "%Y-%m-%d")
-    formatted_date = {}
-    formatted_date["day"] = date_data.day
-    formatted_date["month"] = date_data.month
-    formatted_date["year"] = date_data.year
     return date_data.date().isoformat()
 
 
-def sum_statistics(data):
+def sum_statistics(commit_data):
+    """Converts data per student per commit into cumulative statistics per student
+
+    **Args**:
+        **commit_data** (dict): A dictionary of students mapped to lists of commit data
+        The dict has the following form: ::
+            
+            {
+                "name1": [
+                    {
+                        "additions": int,
+                        "deletions": int,
+                        "commit_count": int,
+                        "time_spent": int (seconds)
+                    }
+                    ...
+                ]
+                ...
+            }
+
+    **Returns**:
+        dict: A dictionary mapping students to cumulative statistics,
+        The dictionary has the following form: ::
+
+            {
+                "name1": {
+                    "additions": int,
+                    "deletions": int,
+                    "commit_count": int,
+                    "time_spent": int (seconds)
+                }
+                ...
+            }
+        
+    """
     new_data = {}
     for student in data:
         commits = data[student]
@@ -149,9 +226,8 @@ if __name__ == "__main__":
     # TODO: check for valid dicts
 
     test_data = test_completion_string(test_case_string)
-    eprint(test_data)
 
-    data = format_commit_data(dates_dict, formatted_student_data, test_data)
+    data = combine_statistics(dates_dict, formatted_student_data, test_data)
     # print(data)
     json = json.dumps(data[student_id])
     # Outputs json to stdout
