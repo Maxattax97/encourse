@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Route, Redirect, Switch } from 'react-router'
 import { connect } from 'react-redux'
 
-import '../styles/css/App.css'
+import '../styles/css/login.css'
 import Login from './Login'
 import Main from './Main'
 import { setToken, logOutClient } from '../redux/actions'

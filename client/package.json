@@ -26,13 +26,20 @@
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
+    "concurrently": "^4.0.1",
     "enzyme": "^3.6.0",
     "enzyme-adapter-react-16": "^1.5.0",
-    "eslint-plugin-jest": "^21.24.1"
+    "eslint-plugin-jest": "^21.24.1",
+    "node-sass": "^4.9.4",
+    "watch": "^1.0.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "sass:login": "watch \"node-sass src\\styles\\scss\\login-scss\\login.scss src\\styles\\css\\login.css -r --output-style expanded\" src\\styles\\scss\\login-scss",
+    "sass:base": "watch \"node-sass src\\styles\\scss\\base-scss\\base.scss src\\styles\\css\\base.css -r --output-style expanded\" src\\styles\\scss\\base-scss",
+    "sass:main": "watch \"node-sass src\\styles\\scss\\main-scss\\main.scss src\\styles\\css\\main.css -r --output-style expanded\" src\\styles\\scss\\main-scss",
+    "sass:build": "node-sass src\\styles\\scss\\login-scss\\login.scss src\\styles\\css\\login.css -r --output-style compressed && node-sass src\\styles\\scss\\base-scss\\base.scss src\\styles\\css\\base.css -r --output-style compressed && node-sass src\\styles\\scss\\main-scss\\main.scss src\\styles\\css\\main.css -r --output-style compressed",
+    "start": "sass:build && concurrently --kill-others \"react-scripts start\" \"npm run sass:login\" \"npm run sass:base\" \"npm run sass:main\"",
+    "build": "npm run sass:build && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "lint": "eslint --fix src; exit 0"
