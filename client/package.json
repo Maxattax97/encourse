@@ -1,7 +1,14 @@
 {
-  "name": "client",
-  "version": "0.1.0",
+  "name": "encourse-client",
+  "version": "1.0.0",
   "private": true,
+  "contributors": [
+    {
+      "name": "Killian Le Clainche",
+      "email": "kalc319@gmail.com",
+      "url": "https://github.com/Killian-LeClainche"
+    }
+  ],
   "dependencies": {
     "connected-react-router": "^4.4.1",
     "eslint-plugin-react": "^7.11.1",

@@ -9,7 +9,7 @@ import Card from '../Card'
 import StudentPreview from './util/StudentPreview'
 import ClassProgressHistogram from '../charts/ClassProgressHistogram'
 import ClassTestCasePercentDone from '../charts/ClassTestCasePercentDone'
-import settingsIcon from '../../img/settings.svg'
+import settingsIcon from '../../resources/settings.svg'
 import ActionNavigation from '../navigation/ActionNavigation'
 import CourseModal from '../modals/CourseModal'
 

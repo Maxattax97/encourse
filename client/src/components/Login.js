@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import logo from '../img/encourse-logo-large.png'
+import logo from '../resources/encourse-logo-large.png'
 import { logIn } from '../redux/actions'
 import url from '../server'
 
