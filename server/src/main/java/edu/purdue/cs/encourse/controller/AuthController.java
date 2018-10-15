@@ -91,7 +91,6 @@ public class AuthController {
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    // TODO: Adjust how frontend calls this endpoint
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/account", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity<?> createAccount(@RequestParam(name = "password", required = false) String password, @RequestBody String json) {
@@ -137,14 +136,6 @@ public class AuthController {
     @RequestMapping(value = "/accounts", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getAccounts() {
         List<Account> accounts = accountService.retrieveAllAccounts();
-        List<User> disabled = userDetailsService.getDisabledAccounts();
-        for (User disable: disabled) {
-            System.out.println(disable.getUsername());
-            Account a = accountService.retrieveAccount(disable.getUsername());
-            if (accounts.contains(a)) {
-                accounts.remove(a);
-            }
-        }
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 

@@ -37,4 +37,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return userRepository.findAllByEnabledIsFalse();
     }
 
+    public void deleteAccount(User user) {
+        userRepository.delete(user);
+    }
+
+    public void deleteAccount(String userName) {
+        userRepository.delete(userRepository.findByUsername(userName));
+    }
+
 }
