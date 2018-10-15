@@ -86,46 +86,6 @@ public class ReadController {
         }
     }
 
-
-
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/commitList", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
-                                                                  @RequestParam(name = "userName") String userName) {
-        if (hasPermissionOverAccount(userName)) {
-            JSONReturnable returnJson = professorService.getCommitList(projectID, userName);
-            if (returnJson == null) {
-                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-            }
-            if (returnJson.jsonObject == null) {
-                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-            }
-            String json = returnJson.jsonObject.toJSONString();
-            return new ResponseEntity<>(json, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/commitCount", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getCommitCount(@RequestParam(name = "projectID") String projectID,
-                                                          @RequestParam(name = "userName") String userName) {
-        if (hasPermissionOverAccount(userName)) {
-            JSONReturnable returnJson = professorService.getCommitCounts(projectID, userName);
-            if (returnJson == null) {
-                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-            }
-            if (returnJson.jsonObject == null) {
-                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-            }
-            String json = returnJson.jsonObject.toJSONString();
-            return new ResponseEntity<>(json, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-    }
-
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/testSummary", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getTestSummary(@RequestParam(name = "projectID") String projectID) {
@@ -140,61 +100,126 @@ public class ReadController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
+
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/commitList", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
+                                                                  @RequestParam(name = "userName") List<String> userNames) {
+        List<String> errors = new ArrayList<>();
+        List<String> correct = new ArrayList<>();
+        for (String userName: userNames) {
+            if (hasPermissionOverAccount(userName)) {
+                JSONReturnable returnJson = professorService.getCommitList(projectID, userName);
+                if (returnJson == null || returnJson.jsonObject == null) {
+                    errors.add(userName + " does not have content");
+                }
+                String json = returnJson.jsonObject.toJSONString();
+                correct.add(json);
+            } else {
+                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+            }
+        }
+        if (errors.isEmpty()) {
+            return new ResponseEntity<>(correct, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/commitCount", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getCommitCount(@RequestParam(name = "projectID") String projectID,
+                                                          @RequestParam(name = "userName") List<String> userNames) {
+        List<String> errors = new ArrayList<>();
+        List<String> correct = new ArrayList<>();
+        for (String userName: userNames) {
+            if (hasPermissionOverAccount(userName)) {
+                JSONReturnable returnJson = professorService.getCommitCounts(projectID, userName);
+                if (returnJson == null || returnJson.jsonObject == null) {
+                    errors.add(userName + " does not have content");
+                }
+                String json = returnJson.jsonObject.toJSONString();
+                correct.add(json);
+            } else {
+                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+            }
+        }
+        if (errors.isEmpty()) {
+            return new ResponseEntity<>(correct, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
+    }
+
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStatistics(@RequestParam(name = "projectID") String projectID,
-                                                         @RequestParam(name = "userName") String userName) {
-        if (hasPermissionOverAccount(userName)) {
-            JSONReturnable returnJson = professorService.getStatistics(projectID, userName);
-            if (returnJson == null) {
-                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+                                                         @RequestParam(name = "userName") List<String> userNames) {
+        List<String> errors = new ArrayList<>();
+        List<String> correct = new ArrayList<>();
+        for (String userName: userNames) {
+            if (hasPermissionOverAccount(userName)) {
+                JSONReturnable returnJson = professorService.getStatistics(projectID, userName);
+                if (returnJson == null || returnJson.jsonObject == null) {
+                    errors.add(userName + " does not have content");
+                }
+                String json = returnJson.jsonObject.toJSONString();
+                correct.add(json);
+            } else {
+                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
             }
-            if (returnJson.jsonObject == null) {
-                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-            }
-            String json = returnJson.jsonObject.toJSONString();
-            return new ResponseEntity<>(json, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        if (errors.isEmpty()) {
+            return new ResponseEntity<>(correct, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/diffs", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getDiffs(@RequestParam(name = "projectID") String projectID,
-                                                    @RequestParam(name = "userName") String userName) {
-        if (hasPermissionOverAccount(userName)) {
-            JSONReturnable returnJson = professorService.getAdditionsAndDeletions(projectID, userName);
-            if (returnJson == null) {
-                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+                                                    @RequestParam(name = "userName") List<String> userNames) {
+        List<String> errors = new ArrayList<>();
+        List<String> correct = new ArrayList<>();
+        for (String userName: userNames) {
+            if (hasPermissionOverAccount(userName)) {
+                JSONReturnable returnJson = professorService.getAdditionsAndDeletions(projectID, userName);
+                if (returnJson == null || returnJson.jsonObject == null) {
+                    errors.add(userName + " does not have content");
+                }
+                String json = returnJson.jsonObject.toJSONString();
+                correct.add(json);
+            } else {
+                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
             }
-            if (returnJson.jsonObject == null) {
-                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-            }
-            String json = returnJson.jsonObject.toJSONString();
-            return new ResponseEntity<>(json, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        if (errors.isEmpty()) {
+            return new ResponseEntity<>(correct, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/progress", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
-                                                       @RequestParam(name = "userName") String userName) {
-        if (hasPermissionOverAccount(userName)) {
-            JSONReturnable returnJson = professorService.getStudentProgress(projectID, userName);
-            if (returnJson == null) {
-                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+                                                       @RequestParam(name = "userName") List<String> userNames) {
+        List<String> errors = new ArrayList<>();
+        List<String> correct = new ArrayList<>();
+        for (String userName: userNames) {
+            if (hasPermissionOverAccount(userName)) {
+                JSONReturnable returnJson = professorService.getStudentProgress(projectID, userName);
+                if (returnJson == null || returnJson.jsonObject == null) {
+                    errors.add(userName + " does not have content");
+                }
+                String json = returnJson.jsonObject.toJSONString();
+                correct.add(json);
+            } else {
+                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
             }
-            if (returnJson.jsonObject == null) {
-                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-            }
-            String json = returnJson.jsonObject.toJSONString();
-            return new ResponseEntity<>(json, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        if (errors.isEmpty()) {
+            return new ResponseEntity<>(correct, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
     }
 
 
