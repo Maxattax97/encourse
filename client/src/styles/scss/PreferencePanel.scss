@@ -40,15 +40,5 @@
         margin: 0;
       }
     }
-
-    > .title:hover {
-      h3 {
-        color: #1f1e1c99;
-        padding-left: 3px;
-      }
-      img {
-        filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
-      }
-    }
   }
 }

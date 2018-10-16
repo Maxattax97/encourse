@@ -7,32 +7,9 @@
   height: 440px; //TODO Calc() instead
   width: 245px; //TODO Calc() instead
 
-  .title {
-    cursor: pointer;
-    padding-left: 3px;
-  }
-
-  .title img {
-    width: 1.17em;
-    height: 1.17em;
-    float:left;
-    filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
-  }
-
   .header {
     margin-top: 20px;
     margin-bottom: 5px;
-  }
-
-  .title:hover {
-    padding-left: 0px;
-    img {
-      filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
-    }
-
-    h4 {
-      color: #1f1e1c99;
-    }
   }
 
   .project-options-scripts {

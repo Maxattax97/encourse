@@ -8,6 +8,8 @@ import Modal from './Modal'
 import TestScriptList from './util/TestScriptList'
 import { addProject, modifyProject, addTest, deleteProject } from '../../redux/actions'
 import url from '../../server'
+import {Title} from '../Helpers'
+import {back} from '../../helpers/icons'
 
 
 function getEmptyState(props) {
@@ -211,12 +213,7 @@ class ProjectModal extends Component {
                     onExit={ this.props.close }
                     component={
                         <div className="panel-project-options">
-                            <div className="title" onClick={ () => this.setState({ show_test_scripts: false }) }>
-                                <img src={ backIcon } />
-                                <h4 className="header">
-                                       Test Scripts
-                                </h4>
-                            </div>
+                            <Title onClick={ () => this.setState({ show_test_scripts: false }) } header={ <h4>Test Scripts</h4> } icon={ back } />
                             <h4 className="break-line title" />
 
                             <TestScriptList script_list={ this.state.test_script }
@@ -231,12 +228,7 @@ class ProjectModal extends Component {
                     onExit={ this.props.close }
                     component={
                         <div className="panel-project-options">
-                            <div className="title" onClick={ () => this.setState({ show_hidden_scripts: false }) }>
-                                <img src={ backIcon } />
-                                <h4 className="header">
-                                       Hidden Test Scripts
-                                </h4>
-                            </div>
+                            <Title onClick={ () => this.setState({ show_hidden_scripts: false }) } header={ <h4>Hidden Test Scripts</h4> } icon={ back } />
                             <h4 className="break-line title" />
 
                             <TestScriptList script_list={ this.state.hidden_test_script }
