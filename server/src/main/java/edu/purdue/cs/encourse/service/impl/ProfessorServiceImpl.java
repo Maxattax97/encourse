@@ -905,7 +905,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 if(hiddenGrade > p.getBestHiddenGrade()) {
                     p.setBestHiddenGrade(hiddenGrade);
                     studentProjectRepository.save(p);
-                    updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), true);
+                    updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
                 }
             }
             catch(Exception e) {
