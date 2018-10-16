@@ -7,21 +7,6 @@
   max-width: 240px;
   z-index: 102;
 
-  div.title {
-    padding-top: 1em;
-    height: 2.5em;
-    cursor: pointer;
-
-    img {
-      position:absolute;
-      top: 0;
-      right: 0;
-      filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
-      width: 1em;
-      height: 1em;
-    }
-  }
-
   .back-nav {
     color: white;
     cursor:default;
@@ -61,21 +46,6 @@
 
     .component {
       width: 100%;
-    }
-  }
-
-  div.title:hover {
-    background-image: linear-gradient(to right,
-            #e8e8e800,
-            #0057A755 100%);
-
-    h3 {
-      color: #1f1e1c99;
-      margin-left: 3px;
-    }
-
-    img {
-      filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
     }
   }
 

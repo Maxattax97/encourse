@@ -1,0 +1,37 @@
+@import "../helpers";
+@import "../definitions";
+
+div.title {
+
+  position:relative;
+
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    width: 100%;
+  }
+
+  img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
+    width: to-rem(16px);
+    height: to-rem(16px);
+  }
+
+}
+
+div.title.action {
+  cursor:pointer;
+}
+
+div.title.action:hover {
+  h1, h2, h3, h4, h5, h6 {
+    color: $hover-color;
+    margin-left: 3px;
+  }
+
+  img {
+    filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+  }
+}

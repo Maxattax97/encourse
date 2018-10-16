@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import searchIcon from '../../../resources/search.svg'
 import plusIcon from '../../../resources/plus.svg'
-import deleteIcon from '../../../resources/delete.svg'
+import deleteIcon from '../../../resources/trash.svg'
 
 class TestScriptList extends Component {
 

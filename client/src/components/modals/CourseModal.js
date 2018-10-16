@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import checkmarkIcon from '../../resources/checkmark.svg'
 import Modal from './Modal'
-// import deleteIcon from '../../img/delete.svg'
+// import deleteIcon from '../../img/trash.svg'
 import { setDirectory, modifyProject } from '../../redux/actions'
 import url from '../../server'
 

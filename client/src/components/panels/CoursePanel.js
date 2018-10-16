@@ -9,9 +9,10 @@ import Card from '../Card'
 import StudentPreview from './util/StudentPreview'
 import ClassProgressHistogram from '../charts/ClassProgressHistogram'
 import ClassTestCasePercentDone from '../charts/ClassTestCasePercentDone'
-import settingsIcon from '../../resources/settings.svg'
 import ActionNavigation from '../navigation/ActionNavigation'
 import CourseModal from '../modals/CourseModal'
+import { Title } from '../Helpers'
+import { settings } from '../../helpers/icons'
 
 import { fuzzing } from '../../fuzz'
 
@@ -59,11 +60,9 @@ class CoursePanel extends Component {
                 <div className="panel-center-content">
 
                     <div className={ `panel-course-content${this.state.modal_blur}` }>
-                        <div className="title" onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' })  }>
-                            <h1>CS252</h1>
-                            <img src={ settingsIcon }/>
-                        </div>
+                        <Title onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' }) } header={ <h1>CS252</h1> } icon={ settings } break />
                         <h1 className="break-line title" />
+
                         <h3>Course Charts</h3>
                         <div className="charts float-height">
                             <Card component={<ClassProgressHistogram projectID={this.props.currentProjectId}/>} />

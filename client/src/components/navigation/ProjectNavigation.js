@@ -7,6 +7,8 @@ import Card from '../Card'
 import ProjectModal from '../modals/ProjectModal'
 import {getClassProjects, setCurrentProject} from '../../redux/actions/index'
 import connect from 'react-redux/es/connect/connect'
+import {Title} from '../Helpers'
+import {settings} from '../../helpers/icons'
 
 class ProjectNavigation extends Component {
 
@@ -53,12 +55,7 @@ class ProjectNavigation extends Component {
                         </div>
                         <Card component={
                             <div className="projects-container">
-                                <div className="title" onClick={ () => this.toggleProjectOptions(!this.state.show_project_options) }>
-                                    <h3>
-                                        Projects
-                                    </h3>
-                                    <img src={ settingsIcon }/>
-                                </div>
+                                <Title onClick={ () => this.toggleProjectOptions(!this.state.show_project_options) } header={ <h3>Projects</h3> } icon={ settings }/>
                                 <h3 className="break-line title"/>
                                 {
                                     this.props.projects &&

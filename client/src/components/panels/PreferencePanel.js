@@ -17,7 +17,7 @@ import {
     removeCourse, removeAccount
 } from '../../redux/actions'
 import url from '../../server'
-import deleteIcon from '../../resources/delete.svg'
+import deleteIcon from '../../resources/trash.svg'
 
 class PreferencePanel extends Component {
 

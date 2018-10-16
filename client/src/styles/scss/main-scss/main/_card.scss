@@ -1,17 +1,18 @@
+@import "../definitions";
+
 .card {
   position:relative;
   height: auto;
   margin-right: 32px;
   margin-bottom: 32px;
   float: left;
-  box-sizing: border-box;
 }
 
 .component {
   float:left;
   height: auto;
   padding: 16px;
-  background-color: #F8F8F8;
+  background-color: $card-color;
   border-radius: 4px;
   box-shadow: 0 4px 4px rgba(0, 0, 0, .25);
 }

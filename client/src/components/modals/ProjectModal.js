@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import deleteIcon from '../../resources/delete.svg'
+import deleteIcon from '../../resources/trash.svg'
 import checkmarkIcon from '../../resources/checkmark.svg'
 import backIcon from '../../resources/back.svg'
 import Modal from './Modal'

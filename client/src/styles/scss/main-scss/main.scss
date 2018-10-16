@@ -8,16 +8,6 @@
   margin: 0;
 }
 
-div.title {
-  position: relative;
-
-  h1, h2, h3, h4, h5, h6 {
-    margin: 0;
-    width: 100%;
-  }
-
-}
-
 h1 {
   margin: 0 0;
   line-height: 2em;
@@ -102,6 +92,7 @@ input {
 @import "main/card";
 @import "main/progress-bar";
 @import "main/exit";
+@import "main/title";
 
 @import "../course/CoursePanel";
 @import "../student/StudentPanel";

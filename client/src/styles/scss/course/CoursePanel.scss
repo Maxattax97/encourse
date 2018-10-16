@@ -9,30 +9,6 @@
     -o-transition: filter .15s ease-in;
     transition: filter .15s ease-in;
 
-    div.title {
-      cursor: pointer;
-
-      img {
-        position:absolute;
-        top: 0;
-        right: 0;
-        filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
-        width: 1em;
-        height: 1em;
-      }
-    }
-
-    div.title:hover {
-      h1 {
-        color: #1f1e1c99;
-        margin-left: 3px;
-      }
-
-      img {
-        filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
-      }
-    }
-
     > h3 {
       cursor: default;
     }
