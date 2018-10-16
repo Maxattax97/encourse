@@ -122,11 +122,11 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 while((testName = fileReader.readLine()) != null) {
                     professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), testName, false, 1);
                 }
-                professorService.runTestall(Project.createProjectID("cs252", "Fall2018", "Shell"));
             }
             catch(IOException e) {
                 e.printStackTrace();
             }
+            professorService.runTestall(Project.createProjectID("cs252", "Fall2018", "Shell"));
 
             List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
             for(StudentProject p : projects) {
