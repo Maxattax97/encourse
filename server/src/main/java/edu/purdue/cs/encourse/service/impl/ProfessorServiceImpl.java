@@ -863,7 +863,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 TestExecuter tester = new TestExecuter(testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
                 Thread thread = new Thread(tester);
                 thread.start();
-                Thread.sleep(2500);
+                Thread.sleep(5000);
                 thread.interrupt();
                 String visibleResult = tester.getVisibleResult();
                 String hiddenResult = tester.getHiddenResult();
