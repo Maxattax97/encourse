@@ -16,6 +16,7 @@ public interface CourseService {
     int setSectionRemotePaths(@NonNull String semester, @NonNull String courseID, @NonNull String remotePath);
 
     JSONArray getCourseData(@NonNull String userName);
+    public JSONArray sortStudentData(@NonNull JSONArray studentsJSON, @NonNull List<String> parameters, @NonNull List<Integer> orders);
     JSONArray getStudentData(@NonNull String semester, @NonNull String courseID);
     JSONArray getProjectData(@NonNull String semester, @NonNull String courseID);
 }

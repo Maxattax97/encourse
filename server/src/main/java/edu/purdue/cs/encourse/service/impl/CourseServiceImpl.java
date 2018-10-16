@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 @Service(value = CourseServiceImpl.NAME)
 public class CourseServiceImpl implements CourseService {
     public final static String NAME = "CourseService";
-    public final static Boolean OBFUSCATE = true;
+    public final static Boolean OBFUSCATE = false;
 
     @Autowired
     private StudentRepository studentRepository;
@@ -95,7 +95,12 @@ public class CourseServiceImpl implements CourseService {
                     earnedPoints += testScript.getPointsWorth();
                 }
             }
-            grades.put(p.getProjectIdentifier(), (earnedPoints / maxPoints) * 100);
+            if(maxPoints == 0.0) {
+                grades.put(p.getProjectIdentifier(), 0.0);
+            }
+            else {
+                grades.put(p.getProjectIdentifier(), (earnedPoints / maxPoints) * 100);
+            }
         }
         return grades;
     }
@@ -115,12 +120,20 @@ public class CourseServiceImpl implements CourseService {
             for(String r : testResults) {
                 String testName = r.split(":")[0];
                 ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(p.getProjectIdentifier(), testName);
+                if(testScript == null) {
+                    continue;
+                }
                 maxPoints += testScript.getPointsWorth();
                 if(r.endsWith("P")) {
                     earnedPoints += testScript.getPointsWorth();
                 }
             }
-            grades.put(p.getProjectIdentifier(), (earnedPoints / maxPoints) * 100);
+            if(maxPoints == 0.0) {
+                grades.put(p.getProjectIdentifier(), 0.0);
+            }
+            else {
+                grades.put(p.getProjectIdentifier(), (earnedPoints / maxPoints) * 100);
+            }
         }
         return grades;
     }
@@ -258,6 +271,10 @@ public class CourseServiceImpl implements CourseService {
                 }
             }
         return studentsJSON;
+    }
+
+    public JSONArray sortStudentData(@NonNull JSONArray studentsJSON, @NonNull List<String> parameters, @NonNull List<Integer> orders) {
+        return null;
     }
 
     /** Retrieves basic data for all projects in the course **/
