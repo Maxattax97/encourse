@@ -85,9 +85,7 @@ class StudentPanel extends Component {
                     <div className={ `panel-student-content${this.state.modal_blur}` }>
                         <h1 className='header'>
                             {
-                                this.props.currentStudent ?
-                                    this.props.currentStudent.first_name + ' ' + this.props.currentStudent.last_name :
-                                    ''
+                                `CS252 - ${this.props.currentStudent ? `${this.props.currentStudent.first_name} ${this.props.currentStudent.last_name}` : ''}`
                             }
                         </h1>
                         <div className="h1 break-line header" />
