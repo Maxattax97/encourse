@@ -72,7 +72,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     private int executeBashScript(@NonNull String command) {
         try {
-            Process process = Runtime.getRuntime().exec("./src/main/bash/" + command);
+            Process process = Runtime.getRuntime().exec("./src/main/bash/" + command + " 2> /dev/null");
             StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
             Executors.newSingleThreadExecutor().submit(streamGobbler);
             StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), System.out::println);
@@ -324,8 +324,8 @@ public class ProfessorServiceImpl implements ProfessorService {
     public JSONReturnable getClassProgress(@NonNull String projectID) {
         JSONReturnable json = null;
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
-        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
         try {
             BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
             BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
@@ -363,8 +363,8 @@ public class ProfessorServiceImpl implements ProfessorService {
  public JSONReturnable getTestSummary(@NonNull String projectID) {
         JSONReturnable json = null;
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
-        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
         try {
             BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
             BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
@@ -523,7 +523,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return null;
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_counts.txt";
         for(StudentProject s : projects) {
             Student student = studentRepository.findByUserID(s.getStudentID());
             String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
@@ -543,7 +543,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return null;
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_countsByDay.txt";
         for(StudentProject s : projects) {
             Student student = studentRepository.findByUserID(s.getStudentID());
             String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
@@ -573,7 +573,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(!isTakingCourse(student, project)) {
             return null;
         }
-        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_studentCountsByDay.txt";
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
         if(executeBashScript("countCommitsByDay.sh " + destPath + " " + fileName + " " + student.getUserName()) == -1) {
             return null;
@@ -596,7 +596,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return null;
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_commitInfo.txt";
         for(StudentProject s : projects) {
             Student student = studentRepository.findByUserID(s.getStudentID());
             String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
@@ -626,7 +626,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(!isTakingCourse(student, project)) {
             return null;
         }
-        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + ".txt";
+        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_studentCommitInfo.txt";
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
         if(executeBashScript("listCommitsByTime.sh " + destPath + " " + fileName + " " + student.getUserName()) == -1) {
             return null;
@@ -811,10 +811,10 @@ public class ProfessorServiceImpl implements ProfessorService {
                 if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
                     code = -5;
                 }
-                Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + testCaseDirectory);
+                Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + testCaseDirectory + " 2> /dev/null");
                 BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String visibleResult = stdInput.readLine();
-                process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory);
+                process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory + " 2> /dev/null");
                 stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String hiddenResult = stdInput.readLine();
                 StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), System.out::println);
@@ -880,10 +880,10 @@ public class ProfessorServiceImpl implements ProfessorService {
                 String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
                 String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
                 try {
-                    Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + " " + testCaseDirectory);
+                    Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + " " + testCaseDirectory + " 2> /dev/null");
                     BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     String visibleResult = stdInput.readLine();
-                    process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory);
+                    process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory + " 2> /dev/null");
                     stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     String hiddenResult = stdInput.readLine();
                     double visibleGrade = parseProgressForProject(projectID, visibleResult);
