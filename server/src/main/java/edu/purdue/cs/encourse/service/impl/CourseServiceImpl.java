@@ -72,72 +72,6 @@ public class CourseServiceImpl implements CourseService {
         return 0;
     }
 
-    private Map<String, Double> parseProgressForProjects(List<StudentProject> projects) {
-        Map<String, Double> grades = new TreeMap<>();
-        int code = 0;
-        for(StudentProject p : projects) {
-            if(p.getBestVisibleGrade() == null) {
-                code--;
-                grades.put(p.getProjectIdentifier(), 0.0);
-                continue;
-            }
-            String[] testResults = p.getBestVisibleGrade().split(";");
-            double earnedPoints = 0.0;
-            double maxPoints = 0.0;
-            for(String r : testResults) {
-                String testName = r.split(":")[0];
-                ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(p.getProjectIdentifier(), testName);
-                if(testScript == null) {
-                    continue;
-                }
-                maxPoints += testScript.getPointsWorth();
-                if(r.endsWith("P")) {
-                    earnedPoints += testScript.getPointsWorth();
-                }
-            }
-            if(maxPoints == 0.0) {
-                grades.put(p.getProjectIdentifier(), 0.0);
-            }
-            else {
-                grades.put(p.getProjectIdentifier(), (earnedPoints / maxPoints) * 100);
-            }
-        }
-        return grades;
-    }
-
-    private Map<String, Double> parseHiddenProgressForProjects(List<StudentProject> projects) {
-        Map<String, Double> grades = new TreeMap<>();
-        int code = 0;
-        for(StudentProject p : projects) {
-            if(p.getBestHiddenGrade() == null) {
-                code--;
-                grades.put(p.getProjectIdentifier(), 0.0);
-                continue;
-            }
-            String[] testResults = p.getBestHiddenGrade().split(";");
-            double earnedPoints = 0.0;
-            double maxPoints = 0.0;
-            for(String r : testResults) {
-                String testName = r.split(":")[0];
-                ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(p.getProjectIdentifier(), testName);
-                if(testScript == null) {
-                    continue;
-                }
-                maxPoints += testScript.getPointsWorth();
-                if(r.endsWith("P")) {
-                    earnedPoints += testScript.getPointsWorth();
-                }
-            }
-            if(maxPoints == 0.0) {
-                grades.put(p.getProjectIdentifier(), 0.0);
-            }
-            else {
-                grades.put(p.getProjectIdentifier(), (earnedPoints / maxPoints) * 100);
-            }
-        }
-        return grades;
-    }
-
     public List<Section> getSectionsBySemesterAndCourseID(@NonNull String semester, @NonNull String courseID) {
         return sectionRepository.findBySemesterAndCourseID(semester, courseID);
 
@@ -239,11 +173,13 @@ public class CourseServiceImpl implements CourseService {
                 if(!(completedStudents.contains(student.getUserID()))) {
                     completedStudents.add(student.getUserID());
                     List<StudentProject> studentProjects = studentProjectRepository.findByIdStudentID(student.getUserID());
-                    Map<String, Double> grades = parseProgressForProjects(studentProjects);
-                    Map<String, Double> hiddenGrades = parseHiddenProgressForProjects(studentProjects);
+                    Map<String, Double> grades = new TreeMap<>();
+                    Map<String, Double> hiddenGrades = new TreeMap<>();
                     Map<String, Integer> commitCounts = new TreeMap<>();
                     Map<String, Double> timeSpent = new TreeMap<>();
                     for(StudentProject p : studentProjects) {
+                        grades.put(p.getProjectIdentifier(), p.getBestVisibleGrade());
+                        hiddenGrades.put(p.getProjectIdentifier(), p.getBestHiddenGrade());
                         commitCounts.put(p.getProjectIdentifier(), p.getCommitCount());
                         timeSpent.put(p.getProjectIdentifier(), p.getTotalTimeSpent());
                     }

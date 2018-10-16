@@ -70,13 +70,14 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Autowired
     private ProjectTestScriptRepository projectTestScriptRepository;
 
+    @Autowired
+    private StudentProjectTestRepository studentProjectTestRepository;
+
     private int executeBashScript(@NonNull String command) {
         try {
             Process process = Runtime.getRuntime().exec("./src/main/bash/" + command + " 2> /dev/null");
             StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
             Executors.newSingleThreadExecutor().submit(streamGobbler);
-            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), System.out::println);
-            Executors.newSingleThreadExecutor().submit(errorGobbler);
             process.waitFor();
         }
         catch(Exception e) {
@@ -117,6 +118,25 @@ public class ProfessorServiceImpl implements ProfessorService {
             return 0.0;
         }
         return (earnedPoints / maxPoints) * 100;
+    }
+
+    private void updateTestResults(String result, String studentID, String projectID, boolean isHidden) {
+        String[] testResults = result.split(";");
+        for(String s : testResults) {
+            String testName = s.split(":")[0];
+            String testScore = s.split(":")[1];
+            boolean isPassing = testScore.equals("P");
+            StudentProjectTest studentProjectTest =
+                    studentProjectTestRepository.findByIdProjectIdentifierAndIdTestScriptNameAndIdStudentID(projectID, testName, studentID);
+            if(studentProjectTest == null) {
+                studentProjectTest = new StudentProjectTest(studentID, projectID, testName, isPassing, isHidden);
+                studentProjectTestRepository.save(studentProjectTest);
+            }
+            else {
+                studentProjectTest.setPassing(isPassing);
+                studentProjectTestRepository.save(studentProjectTest);
+            }
+        }
     }
 
     /** Adds a new project to the database, which needs to be done before cloning the project in the course hub **/
@@ -331,10 +351,20 @@ public class ProfessorServiceImpl implements ProfessorService {
             BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
             for (StudentProject p : projects) {
                 Student student = studentRepository.findByUserID(p.getStudentID());
-                String visibleTestResult = student.getUserName() + ";" + p.getBestVisibleGrade();
-                visibleTestResult = visibleTestResult.substring(0, visibleTestResult.length() - 1);
-                String hiddenTestResult = student.getUserName() + ";" + p.getBestHiddenGrade();
-                hiddenTestResult = hiddenTestResult.substring(0, hiddenTestResult.length() - 1);
+                StringBuilder builder = new StringBuilder();
+                builder.append(student.getUserName());
+                List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), false);
+                for(StudentProjectTest t : testResults) {
+                    builder.append(";").append(t.getTestResultString());
+                }
+                String visibleTestResult = builder.toString();
+                builder = new StringBuilder();
+                builder.append(student.getUserName());
+                testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), true);
+                for(StudentProjectTest t : testResults) {
+                    builder.append(";").append(t.getTestResultString());
+                }
+                String hiddenTestResult = builder.toString();
                 visibleWriter.write(visibleTestResult);
                 visibleWriter.write("\n");
                 hiddenWriter.write(hiddenTestResult);
@@ -370,10 +400,20 @@ public class ProfessorServiceImpl implements ProfessorService {
             BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
             for (StudentProject p : projects) {
                 Student student = studentRepository.findByUserID(p.getStudentID());
-                String visibleTestResult = student.getUserName() + ";" + p.getBestVisibleGrade();
-                visibleTestResult = visibleTestResult.substring(0, visibleTestResult.length() - 1);
-                String hiddenTestResult = student.getUserName() + ";" + p.getBestHiddenGrade();
-                hiddenTestResult = hiddenTestResult.substring(0, hiddenTestResult.length() - 1);
+                StringBuilder builder = new StringBuilder();
+                builder.append(student.getUserName());
+                List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), false);
+                for(StudentProjectTest t : testResults) {
+                    builder.append(";").append(t.getTestResultString());
+                }
+                String visibleTestResult = builder.toString();
+                builder = new StringBuilder();
+                builder.append(student.getUserName());
+                testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), true);
+                for(StudentProjectTest t : testResults) {
+                    builder.append(";").append(t.getTestResultString());
+                }
+                String hiddenTestResult = builder.toString();
                 visibleWriter.write(visibleTestResult);
                 visibleWriter.write("\n");
                 hiddenWriter.write(hiddenTestResult);
@@ -430,8 +470,17 @@ public class ProfessorServiceImpl implements ProfessorService {
         } else {
             Student student = studentRepository.findByUserName(userName);
             StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-            testResult = userName + ";" + project.getBestVisibleGrade() + project.getBestHiddenGrade();
-            testResult = testResult.substring(0, testResult.length() - 1);
+            StringBuilder builder = new StringBuilder();
+            builder.append(student.getUserName());
+            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), false);
+            for(StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
+            }
+            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), true);
+            for(StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
+            }
+            testResult = builder.toString();
         }
         String pyPath = pythonPath + "get_statistics.py";
         String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 10000";
@@ -811,25 +860,30 @@ public class ProfessorServiceImpl implements ProfessorService {
                 if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
                     code = -5;
                 }
-                Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + testCaseDirectory + " 2> /dev/null");
-                BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String visibleResult = stdInput.readLine();
-                process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory + " 2> /dev/null");
-                stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String hiddenResult = stdInput.readLine();
-                StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), System.out::println);
-                Executors.newSingleThreadExecutor().submit(errorGobbler);
+                TestExecuter tester = new TestExecuter(testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
+                Thread thread = new Thread(tester);
+                thread.start();
+                Thread.sleep(5000);
+                thread.interrupt();
+                String visibleResult = tester.getVisibleResult();
+                String hiddenResult = tester.getHiddenResult();
+                if(visibleResult == null) {
+                    visibleResult = "";
+                }
+                if(hiddenResult == null) {
+                    hiddenResult = "";
+                }
                 double visibleGrade = parseProgressForProject(projectID, visibleResult);
                 double hiddenGrade = parseProgressForProject(projectID, hiddenResult);
                 boolean exists = false;
                 for(StudentProjectDate d : projectDates) {
                     if(d.getProjectIdentifier().equals(p.getProjectIdentifier())) {
-                        if(visibleGrade > parseProgressForProject(projectID, d.getDateVisibleGrade())) {
-                            d.setDateVisibleGrade(visibleResult);
+                        if(visibleGrade > d.getDateVisibleGrade()) {
+                            d.setDateVisibleGrade(visibleGrade);
                             d = studentProjectDateRepository.save(d);
                         }
-                        if(hiddenGrade > parseProgressForProject(projectID, d.getDateHiddenGrade())) {
-                            d.setDateHiddenGrade(hiddenResult);
+                        if(hiddenGrade > d.getDateHiddenGrade()) {
+                            d.setDateHiddenGrade(hiddenGrade);
                             studentProjectDateRepository.save(d);
                         }
                         exists = true;
@@ -837,16 +891,18 @@ public class ProfessorServiceImpl implements ProfessorService {
                     }
                 }
                 if(!exists) {
-                    StudentProjectDate projectDate = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleResult, hiddenResult);
+                    StudentProjectDate projectDate = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
                     studentProjectDateRepository.save(projectDate);
                 }
-                if(p.getBestVisibleGrade() == null || visibleGrade > parseProgressForProject(projectID, p.getBestVisibleGrade())) {
-                    p.setBestVisibleGrade(visibleResult);
+                if(visibleGrade > p.getBestVisibleGrade()) {
+                    p.setBestVisibleGrade(visibleGrade);
                     p = studentProjectRepository.save(p);
+                    updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
                 }
-                if(p.getBestHiddenGrade() == null || hiddenGrade > parseProgressForProject(projectID, p.getBestHiddenGrade())) {
-                    p.setBestHiddenGrade(hiddenResult);
+                if(hiddenGrade > p.getBestHiddenGrade()) {
+                    p.setBestHiddenGrade(hiddenGrade);
                     studentProjectRepository.save(p);
+                    updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
                 }
             }
             catch(Exception e) {
@@ -857,7 +913,9 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Runs testall for a single student, which is quicker if the professor or TA wants to manually run testall for a student **/
+    /** TODO: @reed Fix this once runTestall is finalized **/
     public int runTestallForStudent(@NonNull String projectID, @NonNull String userName) {
+        /*
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return -1;
@@ -926,6 +984,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(!hasProject) {
             return -5;
         }
+        return 0;
+        */
         return 0;
     }
 
