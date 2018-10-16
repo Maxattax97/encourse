@@ -33,15 +33,17 @@ public class DeleteController {
     @Autowired
     private CourseService courseService;
 
-    // TODO: make delete work for all types
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/delete/user", method = RequestMethod.DELETE)
     public @ResponseBody ResponseEntity<?> deleteUser(@RequestParam(name = "userName") String userName) {
+        int result = -1;
         if (hasPermissionOverAccount(userName)) {
-            userDetailsService.changeUserEnabled((User)userDetailsService.loadUserByUsername(userName));
-            return new ResponseEntity<>(HttpStatus.OK);
+            userDetailsService.deleteAccount(userName);
+            result = adminService.deleteAccount(userName);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
         }
     }
 
@@ -50,6 +52,20 @@ public class DeleteController {
     public @ResponseBody ResponseEntity<?> deleteProject(@RequestParam(value = "projectID") String projectID) {
 
         int result = professorService.deleteProject(projectID);
+        if (result == 0) {
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } else if (result == -1) {
+            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/delete/section", method = RequestMethod.DELETE)
+    public @ResponseBody ResponseEntity<?> deleteSection(@RequestParam(value = "sectionID") String sectionID) {
+
+        int result = adminService.deleteSection(sectionID);
         if (result == 0) {
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else if (result == -1) {

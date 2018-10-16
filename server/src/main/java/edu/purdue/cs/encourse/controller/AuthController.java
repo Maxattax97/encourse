@@ -66,6 +66,13 @@ public class AuthController {
         return new ResponseEntity<>(result, status);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/modify/password", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> modifyAccount(@RequestParam(name = "password") String password) {
+        userDetailsService.updatePassword(getUserFromAuth(), password);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/accounts", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity<?> createAccountsBulk(@RequestBody String body) {
@@ -91,7 +98,6 @@ public class AuthController {
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    // TODO: Adjust how frontend calls this endpoint
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/account", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity<?> createAccount(@RequestParam(name = "password", required = false) String password, @RequestBody String json) {
@@ -137,14 +143,6 @@ public class AuthController {
     @RequestMapping(value = "/accounts", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getAccounts() {
         List<Account> accounts = accountService.retrieveAllAccounts();
-        List<User> disabled = userDetailsService.getDisabledAccounts();
-        for (User disable: disabled) {
-            System.out.println(disable.getUsername());
-            Account a = accountService.retrieveAccount(disable.getUsername());
-            if (accounts.contains(a)) {
-                accounts.remove(a);
-            }
-        }
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
