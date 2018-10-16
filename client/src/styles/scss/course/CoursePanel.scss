@@ -1,20 +1,3 @@
-.panel-course {
-  text-align:left;
-  font-weight: bold;
-
-  .panel-course-content {
-    -webkit-transition: filter .15s ease-in;
-    -moz-transition: filter .15s ease-in;
-    -ms-transition: filter .15s ease-in;
-    -o-transition: filter .15s ease-in;
-    transition: filter .15s ease-in;
-
-    > h3 {
-      cursor: default;
-    }
-  }
-}
-
 .panel-course-students {
 
   .card {

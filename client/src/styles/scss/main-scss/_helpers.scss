@@ -1,17 +1,36 @@
+@function is-number($value) {
+  @return type-of($value) == 'number';
+}
+
+@function to-rem($val) {
+  $remVal: $val / 16px;
+  @return #{$remVal}rem;
+}
+
+@function is-rem($val) {
+  @return is-number($val) and unit($val) == 'rem';
+}
+
+@mixin set-rem-safe($prop, $val) {
+  @if is-rem($val) {
+    #{$prop}: #{($val / 1rem) * 16}px;
+    #{$prop}: $val;
+  }
+  @else {
+    #{$prop}: $val;
+    #{$prop}: to-rem($val);
+  }
+}
+
+@mixin set-size-rem-safe($width, $height) {
+  @include set-rem-safe(width, $width);
+  @include set-rem-safe(height, $height);
+}
+
 @mixin box-sizing($box-model) {
   box-sizing: $box-model;
   -moz-box-sizing: $box-model;
   -webkit-box-sizing: $box-model;
-}
-
-@function to-rem($size) {
-  $remSize: $size / 16px;
-  @return #{$remSize}rem;
-}
-
-@mixin font-size($val) {
-  font-size: $val + px;
-  font-size: to-rem($val) + rem;
 }
 
 @mixin keyframes($animation-name) {

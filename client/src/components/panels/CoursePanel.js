@@ -48,7 +48,7 @@ class CoursePanel extends Component {
 
     render() {
         return (
-            <div className="panel-course">
+            <div className='panel-course'>
                 <div className={ this.state.show_course_options ? 'blur' : '' }>
                     <ProjectNavigation onModalBlur={(blur) => this.setState({modal_blur : blur ? ' blur' : ''})}
                         {...this.props}/>
@@ -57,20 +57,22 @@ class CoursePanel extends Component {
                 <CourseModal show={ this.state.show_course_options }
                     close={ () => this.setState({ show_course_options: false, modal_blur: '' }) }/>
 
-                <div className="panel-center-content">
+                <div className='panel-center-content'>
 
                     <div className={ `panel-course-content${this.state.modal_blur}` }>
-                        <Title onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' }) } header={ <h1>CS252</h1> } icon={ settings } break />
-                        <h1 className="break-line title" />
+                        <Title onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' }) } header={ <h1 className='header'>CS252</h1> } icon={ settings } break />
+                        <div className='h1 break-line header' />
 
-                        <h3>Course Charts</h3>
-                        <div className="charts float-height">
+                        <h3 className='header'>Course Charts</h3>
+                        <div className='charts float-height'>
                             <Card component={<ClassProgressHistogram projectID={this.props.currentProjectId}/>} />
                             <Card component={<ClassTestCasePercentDone projectID={this.props.currentProjectId}/>} />
                         </div>
-                        <h2 className="break-line" />
-                        <h3>Students</h3>
-                        <div className="panel-course-students float-height">
+
+                        <div className='h1 break-line' />
+
+                        <h3 className='header'>Students</h3>
+                        <div className='panel-course-students float-height'>
                             {
                                 this.props.students &&
                                 this.props.students.map((student) =>
@@ -83,7 +85,7 @@ class CoursePanel extends Component {
                     </div>
                 </div>
 
-                <div className="panel-right-nav">
+                <div className='panel-right-nav'>
                     <div className={ `panel-student-side-content${this.state.modal_blur}` }>
                         <ActionNavigation />
                     </div>

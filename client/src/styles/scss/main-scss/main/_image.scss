@@ -1,0 +1,6 @@
+@import "../helpers";
+@import "../definitions";
+
+img.svg-icon {
+  filter: $icon-color;
+}

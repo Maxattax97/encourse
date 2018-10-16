@@ -1,0 +1,19 @@
+@import "../definitions";
+
+div.action {
+  cursor: pointer;
+  * {
+    cursor: pointer;
+  }
+}
+
+div.action:hover {
+  h1, h2, h3, h4, h5, h6 {
+    color: $hover-color;
+    padding-left: 3px;
+  }
+}
+
+div.action:hover img.svg-icon {
+  filter: $icon-hover-color;
+}
