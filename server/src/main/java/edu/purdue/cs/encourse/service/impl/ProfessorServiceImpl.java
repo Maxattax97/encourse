@@ -362,7 +362,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 String visibleTestResult = builder.toString();
                 builder = new StringBuilder();
                 builder.append(student.getUserName());
-                testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), false);
+                testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), true);
                 for(StudentProjectTest t : testResults) {
                     builder.append(";").append(t.getTestResultString());
                 }
@@ -411,7 +411,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 String visibleTestResult = builder.toString();
                 builder = new StringBuilder();
                 builder.append(student.getUserName());
-                testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), false);
+                testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), true);
                 for(StudentProjectTest t : testResults) {
                     builder.append(";").append(t.getTestResultString());
                 }
@@ -478,7 +478,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             for(StudentProjectTest t : testResults) {
                 builder.append(";").append(t.getTestResultString());
             }
-            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), false);
+            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), true);
             for(StudentProjectTest t : testResults) {
                 builder.append(";").append(t.getTestResultString());
             }
