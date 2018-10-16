@@ -40,6 +40,9 @@ public class WriteController {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
+    @Autowired
+    private EmailService emailService;
+
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/section", method = RequestMethod.POST, consumes = "application/json")
@@ -142,7 +145,17 @@ public class WriteController {
         return new ResponseEntity<>(errors, HttpStatus.NOT_MODIFIED);
     }
 
-
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/share/report", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> addReport(@RequestParam(name = "userName") String userName,
+                                                     @RequestParam(name = "reportID") String reportID) {
+        Account account = accountService.retrieveAccount(userName);
+        if (account != null) {
+            emailService.sendGeneratedReportMessage(account.getUserID(), reportID);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/test", method = RequestMethod.POST)

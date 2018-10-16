@@ -5,6 +5,7 @@ import edu.purdue.cs.encourse.database.UserRepository;
 import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.service.EmailService;
+import edu.purdue.cs.encourse.service.ReportService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,11 +31,14 @@ public class EmailServiceImpl implements EmailService {
     @Autowired
     private PasswordEncoder userPasswordEncoder;
 
+    @Autowired
+    private ReportService reportService;
+
     @Value("${spring.mail.username}")
     private String from;
 
     public String sendGeneratedPasswordMessage(Account account) {
-        String password = generatePassword();
+        String password = generatePassword(20);
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
@@ -45,9 +49,25 @@ public class EmailServiceImpl implements EmailService {
         return userPasswordEncoder.encode(password);
     }
 
-    private String generatePassword() {
+    public void sendGeneratedReportMessage(String accountID, String reportID) {
+        String lock = reportService.shareReport(reportID);
+        String link = "vm2.cs.purdue.edu/api/report?reportID=" + reportID + "&lock=" + lock;
+
+        Account account = accountRepository.findByUserID(accountID);
+        if (account == null) {
+            return;
+        }
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
+        message.setTo(account.getEduEmail());
+        message.setSubject("EnCourse Dishonesty Report");
+        message.setText("Please use the following link to obtain the dishonesty report: \n\n" + link);
+        emailSender.send(message);
+    }
+
+    private String generatePassword(int size) {
         char[] possibleCharacters = (new String("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}\\|;:\'\",<.>/?")).toCharArray();
-        return RandomStringUtils.random( 15, 0, possibleCharacters.length - 1, false, false, possibleCharacters, new SecureRandom());
+        return RandomStringUtils.random( size, 0, possibleCharacters.length - 1, false, false, possibleCharacters, new SecureRandom());
     }
 
 }
