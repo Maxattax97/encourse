@@ -8,70 +8,74 @@
   margin: 0;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
 h1 {
-  margin: 0 0;
-  line-height: 2em;
-  height: 2em;
+  cursor:default;
+  @include set-rem-safe(font-size, 2rem);
+  @include set-rem-safe(line-height, 2rem);
+  @include set-rem-safe(height, 2rem);
+}
+
+h1.header {
+  @include set-rem-safe(line-height, 4rem);
+  @include set-rem-safe(height, 4rem);
+}
+
+h2 {
+  cursor:default;
+  @include set-rem-safe(line-height, 3.5rem);
+  @include set-rem-safe(height, 3.5rem);
 }
 
 h3 {
-  margin: 15px 0;
-  line-height: 1.17em;
-  height: 1.17em;
+  cursor:default;
+  @include set-rem-safe(font-size, 1.17rem);
+  @include set-rem-safe(line-height, 1.17rem);
+  @include set-rem-safe(height, 1.17rem);
+}
+
+h3.header {
+  @include set-rem-safe(line-height, 2.24rem);
+  @include set-rem-safe(height, 2.24rem);
 }
 
 h4 {
-  margin: 20px 0;
+  cursor:default;
+  @include set-rem-safe(font-size, 1rem);
+  @include set-rem-safe(line-height, 1rem);
+  @include set-rem-safe(height, 1rem);
 }
 
-.h2-size {
-  font-size: 1.5em;
+h4.header {
+  @include set-rem-safe(line-height, 2rem);
+  @include set-rem-safe(height, 2rem);
 }
 
-.h3-size {
-  font-size: 1.33em;
+h5 {
+  cursor:default;
+  @include set-rem-safe(font-size, .83rem);
+  @include set-rem-safe(line-height, .83rem);
+  @include set-rem-safe(height, .83rem);
 }
 
-.break-line {
-  width: 100%;
-  height: 1px;
-  background-color: #a4a4a4;
+h5.header {
+  @include set-rem-safe(line-height, 1.66rem);
+  @include set-rem-safe(height, 1.66rem);
 }
 
-h1.break-line {
-  margin: 30px 0;
+h6 {
+  cursor:default;
+  @include set-rem-safe(font-size, .67rem);
+  @include set-rem-safe(line-height, .67rem);
+  @include set-rem-safe(height, .67rem);
 }
 
-h2.break-line {
-  margin: 25px 0;
-}
-
-h3.break-line {
-  margin: 20px 0;
-}
-
-h4.break-line {
-  margin: 15px 0;
-}
-
-.break-line.title {
-  margin-top: 5px;
-}
-
-h1.break-line.title {
-  margin-top: 0;
-}
-
-h4.break-line.title {
-  //margin:
-}
-
-.header {
-  margin-bottom: 5px;
-}
-
-.blur {
-  filter: brightness(80%) blur(3px);
+h6.header {
+  @include set-rem-safe(line-height, 1.34rem);
+  @include set-rem-safe(height, 1.34rem);
 }
 
 .float-height:after {
@@ -86,16 +90,20 @@ input {
   font-family: "Raleway", "Rhodium Libre", sans-serif;
 }
 
+@import "main/action";
+@import "main/breakline";
+@import "main/card";
+@import "main/exit";
+@import "main/image";
+@import "main/list";
+@import "main/modal";
 @import "main/navigation";
 @import "main/panel";
-@import "main/modal";
-@import "main/card";
 @import "main/progress-bar";
-@import "main/exit";
 @import "main/title";
 
 @import "../course/CoursePanel";
-@import "../student/StudentPanel";
+@import "panel/student";
 
 @import "../project/ProjectPanel";
 @import "../PreferencePanel";

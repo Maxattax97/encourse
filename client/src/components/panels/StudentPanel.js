@@ -83,21 +83,23 @@ class StudentPanel extends Component {
 
                 <div className="panel-center-content">
                     <div className={ `panel-student-content${this.state.modal_blur}` }>
-                        <h1>
+                        <h1 className='header'>
                             {
                                 this.props.currentStudent ?
                                     this.props.currentStudent.first_name + ' ' + this.props.currentStudent.last_name :
                                     ''
                             }
                         </h1>
-                        <h1 className="break-line title" />
-                        <h3>Student Charts</h3>
+                        <div className="h1 break-line header" />
+
+                        <h3 className='header'>Student Charts</h3>
                         <div className="charts float-height">
                             <Card component={<StudentProgressLineGraph projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>} />
                             <Card component={<CodeChangesChart projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>} />
                             <Card component={<CommitFrequencyHistogram projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>}/>
                         </div>
-                        <h2 className="break-line" />
+
+                        <div className="h1 break-line" />
                         <div className="student-stats-comments float-height">
                             <Card component={<Statistics projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>}/>
                             <Card component={

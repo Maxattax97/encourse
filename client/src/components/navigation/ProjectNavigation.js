@@ -1,14 +1,11 @@
 import React, { Component } from 'react'
 
-import settingsIcon from '../../resources/settings.svg'
-import backIcon from '../../resources/back.svg'
-import plusIcon from '../../resources/plus.svg'
 import Card from '../Card'
 import ProjectModal from '../modals/ProjectModal'
 import {getClassProjects, setCurrentProject} from '../../redux/actions/index'
 import connect from 'react-redux/es/connect/connect'
 import {Title} from '../Helpers'
-import {settings} from '../../helpers/icons'
+import {back, settings, plus} from '../../helpers/icons'
 
 class ProjectNavigation extends Component {
 
@@ -51,24 +48,29 @@ class ProjectNavigation extends Component {
                             <h3>
                                 { this.props.back }
                             </h3>
-                            <img src={ backIcon } alt={'back'} />
+                            {
+                                this.props.backClick ? <img src={ back.icon } alt={ back.alt_text } /> : null
+                            }
                         </div>
                         <Card component={
                             <div className="projects-container">
-                                <Title onClick={ () => this.toggleProjectOptions(!this.state.show_project_options) } header={ <h3>Projects</h3> } icon={ settings }/>
-                                <h3 className="break-line title"/>
-                                {
-                                    this.props.projects &&
-                                    this.props.projects.map((project, index) =>
-                                        <h4 className={ this.props.currentProjectIndex === index && !this.state.new_project ? 'projects-highlight' : '' }
-                                            key={ project.id }
-                                            onClick={ () => this.changeProject(project.id, index) }>
-
-                                            { project.project_name }
-                                        </h4>)
-                                }
-                                <div className={ `projects-new${this.state.new_project ? ' projects-highlight' : ''}` } onClick={ this.handleNewProject }>
-                                    <img src={ plusIcon } />
+                                <Title onClick={ () => this.toggleProjectOptions(!this.state.show_project_options) } header={ <h3 className='header'>Projects</h3> } icon={ settings }/>
+                                <div className="h3 break-line header"/>
+                                <div className='text-list'>
+                                    {
+                                        this.props.projects &&
+                                        this.props.projects.map((project, index) =>
+                                            <div key={ project.id }
+                                                onClick={ () => this.changeProject(project.id, index) }
+                                                className={ `action${this.props.currentProjectIndex === index && !this.state.new_project ? ' projects-highlight' : ''}` }>
+                                                <h4>
+                                                    { project.project_name }
+                                                </h4>
+                                            </div>)
+                                    }
+                                    <div className={ `projects-new action svg-icon${this.state.new_project ? ' projects-highlight' : ''}` } onClick={ this.handleNewProject }>
+                                        <img className='svg-icon' src={ plus.icon } alt={ plus.alt_text } />
+                                    </div>
                                 </div>
                             </div>
                         } />
@@ -82,7 +84,8 @@ class ProjectNavigation extends Component {
                     new_project={ this.state.new_project }
                     toggleProjectOptions={ this.toggleProjectOptions }/>
 
-                <div className={`modal-overlay${ this.state.show_project_options ? ' show' : '' }`}
+                <div className={ `modal-overlay${ this.state.show_project_options ? ' show' : '' }` }
+                    style={ this.state.show_project_options ? { } : { 'display': 'none' } }
                     onClick={ () => this.toggleProjectOptions(false) } />
             </div>
         )

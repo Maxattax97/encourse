@@ -1,3 +1,6 @@
+@import "../helpers";
+@import "../definitions";
+
 .exit-nav {
   position: relative;
   float: right;
@@ -54,11 +57,10 @@
   width: 100%;
 
   img {
-    width: 1.5em;
-    height: 1.5em;
+    @include set-size-rem-safe(1.5rem, 1.5rem);
     margin: 0 auto;
     display:block;
-    filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
+    filter: $icon-color;
   }
 
   div {
@@ -70,7 +72,7 @@
 
   div:hover {
     img {
-      filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+      filter: $icon-hover-color;
     }
   }
 }
@@ -82,8 +84,16 @@
   left: 0;
   right: 0;
   z-index: -100;
+
+  //TODO animation
+  -webkit-transition: background-color .15s ease-in;
+  -moz-transition: background-color .15s ease-in;
+  -ms-transition: background-color .15s ease-in;
+  -o-transition: background-color .15s ease-in;
+  transition: background-color .15s ease-in;
 }
 
 .modal-overlay.show {
   z-index: 100;
+  background-color:rgba(black, .2);
 }

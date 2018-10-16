@@ -31,19 +31,9 @@
 }
 
 .student-stats-container {
-  .student-stat {
-    float:left;
-    width:100%;
 
-    .student-stat-content {
-      float:left;
-      width: 100%;
-      padding: .5em;
-    }
-
-    h5 {
-      margin: 0;
-    }
+  div.student-stat {
+    padding: 8px 0 8px 8px;
 
     h5:first-child {
       width:auto;
@@ -54,6 +44,10 @@
       width: auto;
       float:right;
     }
+  }
+
+  div.student-stat:nth-child(2n) {
+    padding-bottom: 16px;
   }
 }
 
@@ -83,17 +77,5 @@
     .component {
       background: white;
     }
-  }
-
-  h4 {
-    margin: 0;
-    padding: .75em 0 .75em .75em;
-    width: calc(100% - .75em);
-    cursor: pointer;
-  }
-
-  h4:hover {
-    color: #1f1e1c99;
-    padding: .75em 0 .75em calc(.75em + 3px);
   }
 }

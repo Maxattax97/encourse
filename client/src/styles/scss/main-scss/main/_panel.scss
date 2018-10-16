@@ -8,6 +8,7 @@
   font-family: "Raleway", "Rhodium Libre", sans-serif;
   color: #1f1f1f;
   overflow: auto;
+  text-align:left;
 }
 
 .panel::-webkit-scrollbar {
@@ -64,8 +65,4 @@
   padding: 0 10px;
   margin: 0;
   min-height: 1px;
-
-  h1, h2, h3, h4, h5, h6 {
-    margin: 0;
-  }
 }

@@ -1,0 +1,13 @@
+.text-list div:not(.break-line) {
+  padding: 12px 0 12px 12px;
+  width: 100%;
+}
+
+.text-list div.svg-icon {
+  padding-right: 12px;
+
+  img {
+    margin: 0 auto;
+    display: block;
+  }
+}

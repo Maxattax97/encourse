@@ -125,25 +125,19 @@ class Statistics extends Component {
     render() {
         return (
             <div className="student-stats-container">
-                <div className="title">
-                    <h3>Statistics</h3>
-                </div>
-                <h3 className="break-line title" />
-                {
-                    this.state.formattedData &&
-                    this.state.formattedData.map &&
-                    this.state.formattedData.map((stat, index)  =>
-                        <div key={stat.stat_name} className="student-stat">
-                            <div className="student-stat-content">
+                <h3 className='header'>Statistics</h3>
+                <div className="h3 break-line header" />
+                <div className='text-list'>
+                    {
+                        this.state.formattedData &&
+                        this.state.formattedData.map &&
+                        this.state.formattedData.map((stat)  =>
+                            <div key={stat.stat_name} className="student-stat  float-height">
                                 <h5>{stat.stat_name}</h5>
                                 <h5>{stat.stat_value}</h5>
-                            </div>
-                            {
-                                index % 2 === 1 && index !== this.state.stats.length - 1 ?
-                                    <h5 className="break-line" /> : null
-                            }
-                        </div>)
-                }
+                            </div>)
+                    }
+                </div>
             </div>
         )
     }

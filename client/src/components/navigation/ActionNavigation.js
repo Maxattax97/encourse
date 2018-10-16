@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 
 import Card from '../Card'
 import { toggleHidden } from '../../redux/actions'
+import {Title} from '../Helpers'
 
 class ActionNavigation extends Component {
 
@@ -22,26 +23,39 @@ class ActionNavigation extends Component {
     render() {
         return (
             <Card component={
-                <div className="student-actions-container">
-                    <div className="title">
-                        <h3>Actions</h3>
+                <div className="actions-container">
+                    <Title header={ <h3 className='header'>Actions</h3> } />
+                    <div className="h3 break-line header" />
+                    <div className="text-list">
+                        <div className="action">
+                            <h4 onClick={ this.swapTestView }>
+                                { this.state.view_hidden_tests ? 'View Visible Tests' : 'View Hidden Tests' }
+                            </h4>
+                        </div>
+                        <div className="action">
+                            <h4>
+                                Run Tests
+                            </h4>
+                        </div>
+                        <div className="action">
+                            <h4>
+                                Run Hidden Tests
+                            </h4>
+                        </div>
+                        <div className="action">
+                            <h4>
+                                Pull Repository
+                            </h4>
+                        </div>
+                        <div className="action">
+                            <h4>
+                                View Plagiarism
+                            </h4>
+                            <h4>
+                                Report
+                            </h4>
+                        </div>
                     </div>
-                    <h3 className="break-line title" />
-                    <h4 className="student-action-view" onClick={ this.swapTestView }>
-                        { this.state.view_hidden_tests ? 'View Visible Tests' : 'View Hidden Tests' }
-                    </h4>
-                    <h4 className="student-action-test">
-                        Run Tests
-                    </h4>
-                    <h4 className="student-action-hidden-test">
-                        Run Hidden Tests
-                    </h4>
-                    <h4 className="student-action-pull-repo">
-                        Pull Repository
-                    </h4>
-                    <h4 className="student-action-view-report">
-                        View Plagiarism Report
-                    </h4>
                 </div>
             } />
         )

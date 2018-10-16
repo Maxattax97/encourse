@@ -1,3 +1,6 @@
+@import "../helpers";
+@import "../definitions";
+
 .nav {
   cursor: default;
   position: fixed;
@@ -52,8 +55,7 @@
 
     .nav-settings {
       float:right;
-      width: 3em;
-      height: 3em;
+      @include set-size-rem-safe(3rem, 3rem);
       padding: .5em .5em;
 
       img {
@@ -64,8 +66,7 @@
 
     .nav-logout {
       float:right;
-      width: 3em;
-      height: 3em;
+      @include set-size-rem-safe(3rem, 3rem);
       padding: .5em .5em;
 
       img {

@@ -8,66 +8,101 @@
   margin: 0;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
 h1 {
-  margin: 0 0;
-  line-height: 2em;
-  height: 2em;
+  cursor: default;
+  font-size: 32px;
+  font-size: 2rem;
+  line-height: 32px;
+  line-height: 2rem;
+  height: 32px;
+  height: 2rem;
+}
+
+h1.header {
+  line-height: 64px;
+  line-height: 4rem;
+  height: 64px;
+  height: 4rem;
+}
+
+h2 {
+  cursor: default;
+  line-height: 56px;
+  line-height: 3.5rem;
+  height: 56px;
+  height: 3.5rem;
 }
 
 h3 {
-  margin: 15px 0;
-  line-height: 1.17em;
-  height: 1.17em;
+  cursor: default;
+  font-size: 18.72px;
+  font-size: 1.17rem;
+  line-height: 18.72px;
+  line-height: 1.17rem;
+  height: 18.72px;
+  height: 1.17rem;
+}
+
+h3.header {
+  line-height: 35.84px;
+  line-height: 2.24rem;
+  height: 35.84px;
+  height: 2.24rem;
 }
 
 h4 {
-  margin: 20px 0;
+  cursor: default;
+  font-size: 16px;
+  font-size: 1rem;
+  line-height: 16px;
+  line-height: 1rem;
+  height: 16px;
+  height: 1rem;
 }
 
-.h2-size {
-  font-size: 1.5em;
+h4.header {
+  line-height: 32px;
+  line-height: 2rem;
+  height: 32px;
+  height: 2rem;
 }
 
-.h3-size {
-  font-size: 1.33em;
+h5 {
+  cursor: default;
+  font-size: 13.28px;
+  font-size: 0.83rem;
+  line-height: 13.28px;
+  line-height: 0.83rem;
+  height: 13.28px;
+  height: 0.83rem;
 }
 
-.break-line {
-  width: 100%;
-  height: 1px;
-  background-color: #a4a4a4;
+h5.header {
+  line-height: 26.56px;
+  line-height: 1.66rem;
+  height: 26.56px;
+  height: 1.66rem;
 }
 
-h1.break-line {
-  margin: 30px 0;
+h6 {
+  cursor: default;
+  font-size: 10.72px;
+  font-size: 0.67rem;
+  line-height: 10.72px;
+  line-height: 0.67rem;
+  height: 10.72px;
+  height: 0.67rem;
 }
 
-h2.break-line {
-  margin: 25px 0;
-}
-
-h3.break-line {
-  margin: 20px 0;
-}
-
-h4.break-line {
-  margin: 15px 0;
-}
-
-.break-line.title {
-  margin-top: 5px;
-}
-
-h1.break-line.title {
-  margin-top: 0;
-}
-
-.header {
-  margin-bottom: 5px;
-}
-
-.blur {
-  filter: brightness(80%) blur(3px);
+h6.header {
+  line-height: 21.44px;
+  line-height: 1.34rem;
+  height: 21.44px;
+  height: 1.34rem;
 }
 
 .float-height:after {
@@ -80,6 +115,216 @@ h1.break-line.title {
 input {
   width: 100%;
   font-family: "Raleway", "Rhodium Libre", sans-serif;
+}
+
+div.action {
+  cursor: pointer;
+}
+
+div.action * {
+  cursor: pointer;
+}
+
+div.action:hover h1, div.action:hover h2, div.action:hover h3, div.action:hover h4, div.action:hover h5, div.action:hover h6 {
+  color: rgba(31, 30, 28, 0.6);
+  padding-left: 3px;
+}
+
+div.action:hover img.svg-icon {
+  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+}
+
+div.break-line {
+  width: 100%;
+  height: 1px;
+  background-color: #a4a4a4;
+}
+
+div.h1 {
+  margin: 30px 0;
+}
+
+div.h2 {
+  margin: 25px 0;
+}
+
+div.h3 {
+  margin: 20px 0;
+}
+
+div.h4 {
+  margin: 15px 0;
+}
+
+div.h5 {
+  margin: 10px 0;
+}
+
+div.break-line.header {
+  margin-top: 0;
+}
+
+.card {
+  position: relative;
+  height: auto;
+  margin-right: 32px;
+  margin-bottom: 32px;
+  float: left;
+}
+
+.component {
+  float: left;
+  height: auto;
+  padding: 16px;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.card-overflow {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.card-overflow::-webkit-scrollbar {
+  width: .5em;
+}
+
+.card-overflow::-webkit-scrollbar-thumb {
+  background: #666;
+}
+
+.exit-nav {
+  position: relative;
+  height: 1.5em;
+  width: 1.5em;
+  padding: .5em;
+  cursor: pointer;
+}
+
+.exit-nav img {
+  position: absolute;
+  top: .5em;
+  left: .5em;
+  z-index: 2;
+  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.exit-nav:hover img {
+  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+}
+
+img.svg-icon {
+  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
+}
+
+.text-list div:not(.break-line) {
+  padding: 12px 0 12px 12px;
+  width: 100%;
+}
+
+.text-list div.svg-icon {
+  padding-right: 12px;
+}
+
+.text-list div.svg-icon img {
+  margin: 0 auto;
+  display: block;
+}
+
+.exit-nav {
+  position: relative;
+  float: right;
+  height: 2.5em;
+  width: 2.5em;
+  padding: .5em;
+  cursor: pointer;
+}
+
+.exit-nav img {
+  position: absolute;
+  top: .5em;
+  left: .5em;
+  z-index: 2;
+  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.exit-nav:hover img {
+  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+}
+
+.modal {
+  position: absolute;
+  z-index: 101;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.modal-left {
+  position: fixed;
+  float: left;
+  margin-left: 13.5%;
+  margin-top: calc(20px + 40px + 1.17em);
+}
+
+.modal-center {
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%, 0);
+  margin-top: calc(20px + 40px + 1.17em);
+}
+
+.modal-buttons {
+  position: relative;
+  bottom: 0;
+  right: -2.5em;
+  width: 100%;
+}
+
+.modal-buttons img {
+  width: 24px;
+  width: 1.5rem;
+  height: 24px;
+  height: 1.5rem;
+  margin: 0 auto;
+  display: block;
+  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
+}
+
+.modal-buttons div {
+  cursor: pointer;
+  float: right;
+  padding: 10px 10px;
+  margin-left: 10px;
+}
+
+.modal-buttons div:hover img {
+  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 3em;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -100;
+  -webkit-transition: background-color .15s ease-in;
+  -moz-transition: background-color .15s ease-in;
+  -ms-transition: background-color .15s ease-in;
+  -o-transition: background-color .15s ease-in;
+  transition: background-color .15s ease-in;
+}
+
+.modal-overlay.show {
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .nav {
@@ -137,8 +382,10 @@ input {
 
 .nav .nav-options .nav-settings {
   float: right;
-  width: 3em;
-  height: 3em;
+  width: 48px;
+  width: 3rem;
+  height: 48px;
+  height: 3rem;
   padding: .5em .5em;
 }
 
@@ -149,8 +396,10 @@ input {
 
 .nav .nav-options .nav-logout {
   float: right;
-  width: 3em;
-  height: 3em;
+  width: 48px;
+  width: 3rem;
+  height: 48px;
+  height: 3rem;
   padding: .5em .5em;
 }
 
@@ -169,6 +418,7 @@ input {
   font-family: "Raleway", "Rhodium Libre", sans-serif;
   color: #1f1f1f;
   overflow: auto;
+  text-align: left;
 }
 
 .panel::-webkit-scrollbar {
@@ -227,125 +477,6 @@ input {
   min-height: 1px;
 }
 
-.panel-right-nav h1, .panel-right-nav h2, .panel-right-nav h3, .panel-right-nav h4, .panel-right-nav h5, .panel-right-nav h6 {
-  margin: 0;
-}
-
-.exit-nav {
-  position: relative;
-  float: right;
-  height: 2.5em;
-  width: 2.5em;
-  padding: .5em;
-  cursor: pointer;
-}
-
-.exit-nav img {
-  position: absolute;
-  top: .5em;
-  left: .5em;
-  z-index: 2;
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
-  width: 1.5em;
-  height: 1.5em;
-}
-
-.exit-nav:hover img {
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
-}
-
-.modal {
-  position: absolute;
-  z-index: 101;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.modal-left {
-  position: fixed;
-  float: left;
-  margin-left: 13.5%;
-  margin-top: calc(20px + 40px + 1.17em);
-}
-
-.modal-center {
-  position: fixed;
-  left: 50%;
-  transform: translate(-50%, 0);
-  margin-top: calc(20px + 40px + 1.17em);
-}
-
-.modal-buttons {
-  position: relative;
-  bottom: 0;
-  right: -2.5em;
-  width: 100%;
-}
-
-.modal-buttons img {
-  width: 1.5em;
-  height: 1.5em;
-  margin: 0 auto;
-  display: block;
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
-}
-
-.modal-buttons div {
-  cursor: pointer;
-  float: right;
-  padding: 10px 10px;
-  margin-left: 10px;
-}
-
-.modal-buttons div:hover img {
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 3em;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: -100;
-}
-
-.modal-overlay.show {
-  z-index: 100;
-}
-
-.card {
-  position: relative;
-  height: auto;
-  margin-right: 32px;
-  margin-bottom: 32px;
-  float: left;
-}
-
-.component {
-  float: left;
-  height: auto;
-  padding: 16px;
-  background-color: #f8f8f8;
-  border-radius: 4px;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-}
-
-.card-overflow {
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
-
-.card-overflow::-webkit-scrollbar {
-  width: .5em;
-}
-
-.card-overflow::-webkit-scrollbar-thumb {
-  background: #666;
-}
-
 .progress-bar {
   border: 1px solid #a4a4a4;
   width: 100%;
@@ -365,28 +496,6 @@ input {
   transition: width .33s ease;
 }
 
-.exit-nav {
-  position: relative;
-  height: 1.5em;
-  width: 1.5em;
-  padding: .5em;
-  cursor: pointer;
-}
-
-.exit-nav img {
-  position: absolute;
-  top: .5em;
-  left: .5em;
-  z-index: 2;
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
-  width: 1.5em;
-  height: 1.5em;
-}
-
-.exit-nav:hover img {
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
-}
-
 div.title {
   position: relative;
 }
@@ -400,39 +509,10 @@ div.title img {
   position: absolute;
   top: 0;
   right: 0;
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
+  width: 16px;
   width: 1rem;
+  height: 16px;
   height: 1rem;
-}
-
-div.title.action {
-  cursor: pointer;
-}
-
-div.title.action:hover h1, div.title.action:hover h2, div.title.action:hover h3, div.title.action:hover h4, div.title.action:hover h5, div.title.action:hover h6 {
-  color: rgba(31, 30, 28, 0.6);
-  margin-left: 3px;
-}
-
-div.title.action:hover img {
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
-}
-
-.panel-course {
-  text-align: left;
-  font-weight: bold;
-}
-
-.panel-course .panel-course-content {
-  -webkit-transition: filter .15s ease-in;
-  -moz-transition: filter .15s ease-in;
-  -ms-transition: filter .15s ease-in;
-  -o-transition: filter .15s ease-in;
-  transition: filter .15s ease-in;
-}
-
-.panel-course .panel-course-content > h3 {
-  cursor: default;
 }
 
 .panel-course-students .card {
@@ -463,7 +543,6 @@ div.title.action:hover img {
 }
 
 .student-preview-commits h5 {
-  margin-top: 0;
   margin-bottom: 5px;
 }
 
@@ -514,29 +593,22 @@ div.title.action:hover img {
   width: 100%;
 }
 
-.student-stats-container .student-stat {
-  float: left;
-  width: 100%;
+.student-stats-container div.student-stat {
+  padding: 8px 0 8px 8px;
 }
 
-.student-stats-container .student-stat .student-stat-content {
-  float: left;
-  width: 100%;
-  padding: .5em;
-}
-
-.student-stats-container .student-stat h5 {
-  margin: 0;
-}
-
-.student-stats-container .student-stat h5:first-child {
+.student-stats-container div.student-stat h5:first-child {
   width: auto;
   float: left;
 }
 
-.student-stats-container .student-stat h5:nth-child(2) {
+.student-stats-container div.student-stat h5:nth-child(2) {
   width: auto;
   float: right;
+}
+
+.student-stats-container div.student-stat:nth-child(2n) {
+  padding-bottom: 16px;
 }
 
 .panel-student-side-content {
@@ -568,24 +640,6 @@ div.title.action:hover img {
   background: white;
 }
 
-.panel-student-side-content div.title {
-  padding-top: 1em;
-  height: 2.5em;
-  cursor: default;
-}
-
-.panel-student-side-content h4 {
-  margin: 0;
-  padding: .75em 0 .75em .75em;
-  width: calc(100% - .75em);
-  cursor: pointer;
-}
-
-.panel-student-side-content h4:hover {
-  color: #1f1e1c99;
-  padding: 0.75em 0 0.75em calc(.75em + 3px);
-}
-
 .projects-nav {
   position: fixed;
   padding-top: 20px;
@@ -598,6 +652,7 @@ div.title.action:hover img {
 .projects-nav .back-nav {
   color: white;
   cursor: default;
+  height: 4rem;
 }
 
 .projects-nav .back-nav img {
@@ -637,40 +692,16 @@ div.title.action:hover img {
   width: 100%;
 }
 
-.projects-nav h4 {
-  margin: 0;
-  padding: .75em 0 .75em .75em;
-  width: calc(100% - .75em);
-  cursor: pointer;
-}
-
-.projects-nav h4:hover {
-  color: #1f1e1c99;
-  padding: 0.75em 0 0.75em calc(.75em + 3px);
-}
-
 .projects-nav .projects-highlight {
   color: #1f1e1ccc;
   background-image: linear-gradient(to right, #e8e8e800, #0057A755 100%);
 }
 
-.projects-nav .projects-new {
-  padding: .75em 0 .75em .75em;
-  width: calc(100% - .75em);
-  height: 2.75em;
-  cursor: pointer;
-}
-
 .projects-nav .projects-new img {
-  width: 1.25em;
-  height: 1.25em;
-  margin: 0 auto;
-  display: block;
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
-}
-
-.projects-nav .projects-new:hover img {
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+  width: 20px;
+  width: 1.25rem;
+  height: 20px;
+  height: 1.25rem;
 }
 
 .test-scripts-list {
@@ -761,33 +792,9 @@ div.title.action:hover img {
   width: 245px;
 }
 
-.panel-project-options .title {
-  cursor: pointer;
-  padding-left: 3px;
-}
-
-.panel-project-options .title img {
-  width: 1.17em;
-  height: 1.17em;
-  float: left;
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
-}
-
 .panel-project-options .header {
   margin-top: 20px;
   margin-bottom: 5px;
-}
-
-.panel-project-options .title:hover {
-  padding-left: 0px;
-}
-
-.panel-project-options .title:hover img {
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
-}
-
-.panel-project-options .title:hover h4 {
-  color: #1f1e1c99;
 }
 
 .panel-project-options .project-options-scripts {
@@ -843,15 +850,6 @@ div.title.action:hover img {
 
 .panel-preference-content .panel-course-students .account-preview h5 {
   margin: 0;
-}
-
-.panel-preference-content .panel-course-students > .title:hover h3 {
-  color: #1f1e1c99;
-  padding-left: 3px;
-}
-
-.panel-preference-content .panel-course-students > .title:hover img {
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
 }
 
 .charts .card {
