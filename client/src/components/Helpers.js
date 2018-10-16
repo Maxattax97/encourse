@@ -10,3 +10,36 @@ export class Title extends Component {
         )
     }
 }
+
+export class Summary extends Component {
+
+    constructor(props) {
+        super(props)
+    }
+
+    render() {
+        return (
+            <div className={ `summary ${this.props.className ? this.props.className : ''}` }>
+                { this.props.header }
+                { this.props.data && this.props.data.map && this.props.iterator ?
+                    <div className='summary-container'>
+                        <div className={`float-height cols-${this.props.columns ? this.props.columns : '2'}`}>
+                            { this.props.data.map(this.props.iterator) }
+                        </div>
+                    </div> : null }
+            </div>
+        )
+    }
+}
+
+export class Card extends Component {
+    render() {
+        return (
+            <div className={ `card${this.props.className ? ` ${this.props.className}` : '' }` } onClick={this.props.onClick || (() => {})}>
+                <div className="component">
+                    {this.props.component}
+                </div>
+            </div>
+        )
+    }
+}

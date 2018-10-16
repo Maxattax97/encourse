@@ -1,0 +1,21 @@
+.summary-container {
+  .float-height {
+    > div {
+      float:left;
+      padding: 12px;
+    }
+  }
+
+  .cols-5 {
+
+    > div {
+      width: 227px;
+    }
+  }
+
+  .cols-2 {
+    > div {
+      width: 50%;
+    }
+  }
+}

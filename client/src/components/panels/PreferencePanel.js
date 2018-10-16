@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import Card from '../Card'
+import { Card } from '../Helpers'
 import plusIcon from '../../resources/plus.svg'
 import CoursePreview from './util/CoursePreview'
 import AccountPreview from './util/AccountPreview'

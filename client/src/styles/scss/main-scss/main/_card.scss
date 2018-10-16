@@ -3,13 +3,11 @@
 .card {
   position:relative;
   height: auto;
-  margin-right: 32px;
-  margin-bottom: 32px;
-  float: left;
+  width: 100%;
 }
 
 .component {
-  float:left;
+  width: 100%;
   height: auto;
   padding: 16px;
   background-color: $card-color;
@@ -23,7 +21,7 @@
 }
 
 .card-overflow::-webkit-scrollbar {
-  width: .5em;
+  width: 8px;
 }
 
 .card-overflow::-webkit-scrollbar-thumb {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import Card from '../../Card'
+import { Card } from '../../Helpers'
 
 import { getCommitHistory } from '../../../redux/actions/index'
 import url from '../../../server'

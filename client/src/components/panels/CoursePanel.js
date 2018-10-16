@@ -5,13 +5,12 @@ import { history } from '../../redux/store'
 import url from '../../server'
 import { getStudentPreviews, getClassProjects, setCurrentProject, setCurrentStudent } from '../../redux/actions/index'
 import ProjectNavigation from '../navigation/ProjectNavigation'
-import Card from '../Card'
 import StudentPreview from './util/StudentPreview'
 import ClassProgressHistogram from '../charts/ClassProgressHistogram'
 import ClassTestCasePercentDone from '../charts/ClassTestCasePercentDone'
 import ActionNavigation from '../navigation/ActionNavigation'
 import CourseModal from '../modals/CourseModal'
-import { Title } from '../Helpers'
+import { Title, Summary, Card } from '../Helpers'
 import { settings } from '../../helpers/icons'
 
 import { fuzzing } from '../../fuzz'
@@ -49,9 +48,12 @@ class CoursePanel extends Component {
     render() {
         return (
             <div className='panel-course'>
-                <div className={ this.state.show_course_options ? 'blur' : '' }>
-                    <ProjectNavigation onModalBlur={(blur) => this.setState({modal_blur : blur ? ' blur' : ''})}
-                        {...this.props}/>
+                <ProjectNavigation onModalBlur={(blur) => this.setState({modal_blur : blur ? ' blur' : ''})}
+                    {...this.props}/>
+
+                <div className='panel-right-nav'>
+                    <div className='top-nav' />
+                    <ActionNavigation />
                 </div>
 
                 <CourseModal show={ this.state.show_course_options }
@@ -63,31 +65,29 @@ class CoursePanel extends Component {
                         <Title onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' }) } header={ <h1 className='header'>CS252</h1> } icon={ settings } break />
                         <div className='h1 break-line header' />
 
-                        <h3 className='header'>Course Charts</h3>
-                        <div className='charts float-height'>
-                            <Card component={<ClassProgressHistogram projectID={this.props.currentProjectId}/>} />
-                            <Card component={<ClassTestCasePercentDone projectID={this.props.currentProjectId}/>} />
-                        </div>
+
+                        <Summary header={ <h3 className='header'>Course Charts</h3> }
+                            columns={ 2 }
+                            data={ [
+                                <ClassProgressHistogram projectID={this.props.currentProjectId} key={1}/>,
+                                <ClassTestCasePercentDone projectID={this.props.currentProjectId} key={2}/>
+                            ] }
+                            className='charts'
+                            iterator={ (chart) => <Card key={ chart.key } component={ chart } /> } />
 
                         <div className='h1 break-line' />
 
-                        <h3 className='header'>Students</h3>
-                        <div className='panel-course-students float-height'>
-                            {
-                                this.props.students &&
-                                this.props.students.map((student) =>
-                                    <Card key={student.id}
-                                        component={<StudentPreview student={student} projectID={this.props.currentProjectId}
-                                            setCurrentProject={this.props.setCurrentProject} />}
-                                        onClick={() => this.showStudentPanel(student)}/>)
-                            }
-                        </div>
-                    </div>
-                </div>
-
-                <div className='panel-right-nav'>
-                    <div className={ `panel-student-side-content${this.state.modal_blur}` }>
-                        <ActionNavigation />
+                        <Summary header={ <h3 className='header'>Students</h3> }
+                            columns={ 5 }
+                            data={ this.props.students }
+                            className='course-students'
+                            iterator={ (student) =>
+                                <Card key={ student.id }
+                                    component={
+                                        <StudentPreview student={ student } projectID={ this.props.currentProjectId }
+                                            setCurrentProject={ this.props.setCurrentProject } />
+                                    }
+                                    onClick={ () => this.showStudentPanel(student) } /> } />
                     </div>
                 </div>
             </div>

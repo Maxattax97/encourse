@@ -127,7 +127,7 @@ div.action * {
 
 div.action:hover h1, div.action:hover h2, div.action:hover h3, div.action:hover h4, div.action:hover h5, div.action:hover h6 {
   color: rgba(31, 30, 28, 0.6);
-  padding-left: 3px;
+  padding: 0 3px;
 }
 
 div.action:hover img.svg-icon {
@@ -167,13 +167,11 @@ div.break-line.header {
 .card {
   position: relative;
   height: auto;
-  margin-right: 32px;
-  margin-bottom: 32px;
-  float: left;
+  width: 100%;
 }
 
 .component {
-  float: left;
+  width: 100%;
   height: auto;
   padding: 16px;
   background-color: #f8f8f8;
@@ -187,11 +185,23 @@ div.break-line.header {
 }
 
 .card-overflow::-webkit-scrollbar {
-  width: .5em;
+  width: 8px;
 }
 
 .card-overflow::-webkit-scrollbar-thumb {
   background: #666;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  padding: 25%;
+}
+
+.chart-container > div {
+  position: absolute !important;
+  top: 0;
+  left: 0;
 }
 
 .exit-nav {
@@ -412,8 +422,10 @@ img.svg-icon {
 .panel {
   position: fixed;
   left: 0;
-  top: 3em;
-  height: calc(100% - 3em);
+  top: 48px;
+  top: 3rem;
+  height: calc(100% - 48px);
+  height: calc(100% - 3rem);
   width: 100%;
   font-family: "Raleway", "Rhodium Libre", sans-serif;
   color: #1f1f1f;
@@ -431,9 +443,11 @@ img.svg-icon {
 
 .panel-container {
   position: relative;
-  max-width: 105.000em;
+  max-width: 1680px;
+  max-width: 105rem;
   width: 100%;
-  margin: 2em auto;
+  margin: 32px auto;
+  margin: 2rem auto;
 }
 
 .panel-container > div:after {
@@ -444,37 +458,61 @@ img.svg-icon {
 }
 
 .panel-left-nav {
-  position: relative;
-  float: left;
+  position: fixed;
+  left: 50%;
+  -webkit-transform: translate(-334%, 0);
+  -moz-transform: translate(-334%, 0);
+  -ms-transform: translate(-334%, 0);
+  -o-transform: translate(-334%, 0);
+  transform: translate(-334%, 0);
+  max-width: 252px;
+  max-width: 15.75rem;
   width: 15%;
-  max-width: 240px;
-  min-width: 180px;
-  height: 100%;
-  padding: 0 20px;
+  padding: 0;
   margin: 0;
-  min-height: 1px;
+}
+
+.panel-left-nav:after {
+  content: "";
+  display: block;
+  height: 0;
+  clear: both;
 }
 
 .panel-center-content {
   position: relative;
-  float: left;
+  left: 50%;
+  -webkit-transform: translate(-50%, 0);
+  -moz-transform: translate(-50%, 0);
+  -ms-transform: translate(-50%, 0);
+  -o-transform: translate(-50%, 0);
+  transform: translate(-50%, 0);
   width: 70%;
   height: 100%;
   margin: 0;
-  padding: 20px;
-  min-height: 1px;
+  padding: 0 20px;
 }
 
 .panel-right-nav {
-  position: relative;
-  float: left;
+  position: fixed;
+  left: 50%;
+  -webkit-transform: translate(233%, 0);
+  -moz-transform: translate(233%, 0);
+  -ms-transform: translate(233%, 0);
+  -o-transform: translate(233%, 0);
+  transform: translate(233%, 0);
+  max-width: 252px;
+  max-width: 15.75rem;
   width: 15%;
-  max-width: 240px;
-  min-width: 180px;
-  height: 100%;
-  padding: 0 10px;
+  padding: 0;
   margin: 0;
-  min-height: 1px;
+}
+
+.panel-right-nav:after {
+  content: "";
+  display: block;
+  height: 0;
+  clear: both;
 }
 
 .progress-bar {
@@ -496,6 +534,19 @@ img.svg-icon {
   transition: width .33s ease;
 }
 
+.summary-container .float-height > div {
+  float: left;
+  padding: 12px;
+}
+
+.summary-container .cols-5 > div {
+  width: 227px;
+}
+
+.summary-container .cols-2 > div {
+  width: 50%;
+}
+
 div.title {
   position: relative;
 }
@@ -515,27 +566,26 @@ div.title img {
   height: 1rem;
 }
 
-.panel-course-students .card {
-  width: 192px;
+.top-nav {
+  height: 64px;
+  height: 4rem;
+}
+
+.panel-course .course-students .float-height * {
   cursor: pointer;
 }
 
-.panel-course-students .card:hover .component {
+.panel-course .course-students .card:hover .component {
   background-color: #F0F0F0;
-}
-
-.panel-course-students .card:not(:nth-child(5n)) {
-  margin-right: calc((100% - 5 * (10em + 32px)) / 4);
-}
-
-.panel-course-students .card:nth-child(5n) {
-  margin: 0;
 }
 
 .student-preview {
   position: relative;
-  width: 10em;
-  height: 7.5em;
+  width: 160px;
+  width: 10rem;
+  height: 120px;
+  height: 7.5rem;
+  margin: 5.5px;
 }
 
 .student-preview-commits {
@@ -552,136 +602,35 @@ div.title img {
 
 .student-preview-progress .progress-text {
   position: absolute;
-  top: -1.25em;
+  top: -20px;
+  top: -1.25rem;
   right: 0;
   color: #1f1f1f;
-  font-size: .75em;
-}
-
-.panel-course-options {
-  width: 300px;
-  float: left;
-}
-
-.panel-student-content, .panel-student-side-content {
-  -webkit-transition: filter .15s ease-in;
-  -moz-transition: filter .15s ease-in;
-  -ms-transition: filter .15s ease-in;
-  -o-transition: filter .15s ease-in;
-  transition: filter .15s ease-in;
-}
-
-.panel-student-content .student-stats-comments {
-  position: relative;
-}
-
-.panel-student-content .student-stats-comments .card {
-  margin: 0;
-}
-
-.panel-student-content .student-stats-comments .card:first-child {
-  width: 33.5%;
-  padding-right: 32px;
-}
-
-.panel-student-content .student-stats-comments .card:nth-child(2) {
-  width: 66.5%;
-  height: 100%;
-}
-
-.panel-student-content .student-stats-comments .component {
-  width: 100%;
-}
-
-.student-stats-container div.student-stat {
-  padding: 8px 0 8px 8px;
-}
-
-.student-stats-container div.student-stat h5:first-child {
-  width: auto;
-  float: left;
-}
-
-.student-stats-container div.student-stat h5:nth-child(2) {
-  width: auto;
-  float: right;
-}
-
-.student-stats-container div.student-stat:nth-child(2n) {
-  padding-bottom: 16px;
-}
-
-.panel-student-side-content {
-  position: fixed;
-  padding-top: calc(20px + 1.17em + 40px);
-  width: calc(.15 * 105em - 40px);
-  min-width: 180px;
-  max-width: 240px;
-}
-
-.panel-student-side-content .card {
-  margin: 0 0 30px;
-  width: 100%;
-}
-
-.panel-student-side-content .component {
-  width: 100%;
-}
-
-.panel-student-side-content .student-commits {
-  max-height: 280px;
-}
-
-.panel-student-side-content .student-commits .card {
-  padding: 3px;
-}
-
-.panel-student-side-content .student-commits .component {
-  background: white;
+  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .projects-nav {
-  position: fixed;
-  padding-top: 20px;
-  width: calc(.15 * 105em - 40px);
+  float: right;
+  width: 100%;
   min-width: 180px;
   max-width: 240px;
-  z-index: 102;
 }
 
-.projects-nav .back-nav {
-  color: white;
-  cursor: default;
-  height: 4rem;
-}
-
-.projects-nav .back-nav img {
-  width: 1.3em;
-  height: 1.3em;
-  margin: 20px 0;
-  float: right;
-}
-
-.projects-nav .back-nav h3 {
+.projects-nav .top-nav img {
+  width: 24px;
+  width: 1.5rem;
+  height: 24px;
+  height: 1.5rem;
   margin-top: 20px;
+  margin-top: 1.25rem;
   float: right;
 }
 
-.projects-nav .back-nav.back-nav-color {
-  color: #1f1f1f;
-  cursor: pointer;
-}
-
-.projects-nav .back-nav.back-nav-color img {
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
-}
-
-.projects-nav .back-nav.back-nav-color:hover {
-  color: #1f1e1c99;
-}
-
-.projects-nav .back-nav.back-nav-color:hover h3 {
-  margin-right: 3px;
+.projects-nav .top-nav h3 {
+  margin-top: 21.6px;
+  margin-top: 1.35rem;
+  float: right;
 }
 
 .projects-nav .card {
@@ -812,6 +761,76 @@ div.title img {
   padding: 0.75em 0 0.75em calc(3px);
 }
 
+.student-stats-comments {
+  position: relative;
+}
+
+.student-stats-comments .card {
+  float: left;
+  margin: 0;
+}
+
+.student-stats-comments .card:first-child {
+  width: 33.5%;
+  padding-right: 32px;
+}
+
+.student-stats-comments .card:nth-child(2) {
+  width: 66.5%;
+  height: 100%;
+}
+
+.student-stats-comments .component {
+  width: 100%;
+}
+
+.student-stats-container div.student-stat {
+  padding: 8px 0 8px 8px;
+}
+
+.student-stats-container div.student-stat h5:first-child {
+  width: auto;
+  float: left;
+}
+
+.student-stats-container div.student-stat h5:nth-child(2) {
+  width: auto;
+  float: right;
+}
+
+.student-stats-container div.student-stat:nth-child(2n) {
+  padding-bottom: 16px;
+}
+
+.panel-student-side-content {
+  position: fixed;
+  padding-top: calc(20px + 1.17em + 40px);
+  width: calc(.15 * 105em - 40px);
+  min-width: 180px;
+  max-width: 240px;
+}
+
+.panel-student-side-content .card {
+  margin: 0 0 30px;
+  width: 100%;
+}
+
+.panel-student-side-content .component {
+  width: 100%;
+}
+
+.panel-student-side-content .student-commits {
+  max-height: 280px;
+}
+
+.panel-student-side-content .student-commits .card {
+  padding: 3px;
+}
+
+.panel-student-side-content .student-commits .component {
+  background: white;
+}
+
 .panel-preference-content .panel-course-students > .title {
   cursor: pointer;
 }
@@ -849,28 +868,5 @@ div.title img {
 }
 
 .panel-preference-content .panel-course-students .account-preview h5 {
-  margin: 0;
-}
-
-.charts .card {
-  width: calc((100% - 32px) / 2);
-  padding-top: calc((100% - 32px) / 2 / (2));
-}
-
-.charts .card > .component {
-  position: absolute;
-  float: none;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-}
-
-.charts .chart-container {
-  width: 100%;
-  height: 100%;
-}
-
-.charts .card:nth-child(2n) {
   margin: 0;
 }

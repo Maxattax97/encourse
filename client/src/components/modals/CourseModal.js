@@ -74,6 +74,7 @@ class CourseModal extends Component {
 
 
                 <div className={`modal-overlay${ this.props.show ? ' show' : '' }`}
+                    style={ this.props.show ? { } : { 'display': 'none' } }
                     onClick={ this.props.close } />
             </div>
         )

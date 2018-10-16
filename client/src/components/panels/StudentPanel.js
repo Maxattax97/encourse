@@ -1,17 +1,20 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import Card from '../Card'
+import {Card, Summary} from '../Helpers'
 import StudentProgressLineGraph from '../charts/StudentProgressLineGraph'
 import CodeChangesChart from '../charts/CodeChangesChart'
 import CommitFrequencyHistogram from '../charts/CommitFrequencyHistogram'
 import ProjectNavigation from '../navigation/ProjectNavigation'
-import Statistics from './util/Statistics'
+import StudentStatistics from './util/StudentStatistics'
 import CommitHistory from './util/CommitHistory'
 import { history } from '../../redux/store'
 import { getClassProjects, clearStudent } from '../../redux/actions/index'
 import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
+import StudentFeedback from './util/StudentFeedback'
+import ClassProgressHistogram from '../charts/ClassProgressHistogram'
+import ClassTestCasePercentDone from '../charts/ClassTestCasePercentDone'
 
 
 class StudentPanel extends Component {
@@ -81,6 +84,13 @@ class StudentPanel extends Component {
                     onModalBlur={ (blur) => this.setState({modal_blur : blur ? ' blur' : ''}) }
                     { ...this.props }/>
 
+                <div className="panel-right-nav">
+                    <div className={ `panel-student-side-content${this.state.modal_blur}` }>
+                        <ActionNavigation />
+                        <Card component={ <CommitHistory projectID={this.props.currentProjectID} id={this.props.currentStudent.id} /> } />
+                    </div>
+                </div>
+
                 <div className="panel-center-content">
                     <div className={ `panel-student-content${this.state.modal_blur}` }>
                         <h1 className='header'>
@@ -90,31 +100,21 @@ class StudentPanel extends Component {
                         </h1>
                         <div className="h1 break-line header" />
 
-                        <h3 className='header'>Student Charts</h3>
-                        <div className="charts float-height">
-                            <Card component={<StudentProgressLineGraph projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>} />
-                            <Card component={<CodeChangesChart projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>} />
-                            <Card component={<CommitFrequencyHistogram projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>}/>
-                        </div>
+                        <Summary header={ <h3 className='header'>Student Charts</h3> }
+                            columns={ 2 }
+                            data={ [
+                                <StudentProgressLineGraph projectID={this.props.currentProjectID} key={1}/>,
+                                <CodeChangesChart projectID={this.props.currentProjectID} key={2}/>,
+                                <CommitFrequencyHistogram projectID={this.props.currentProjectID} key={3}/>
+                            ] }
+                            className='charts'
+                            iterator={ (chart) => <Card key={ chart.key } component={ chart } /> } />
 
                         <div className="h1 break-line" />
                         <div className="student-stats-comments float-height">
-                            <Card component={<Statistics projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>}/>
-                            <Card component={
-                                <div className="student-feedback-container">
-                                    <div className="title">
-                                        <h3>Feedback</h3>
-                                    </div>
-                                    <h3 className="break-line title" />
-                                </div>
-                            } />
+                            <Card component={ <StudentStatistics projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/> } />
+                            <Card component={ <StudentFeedback/> } />
                         </div>
-                    </div>
-                </div>
-                <div className="panel-right-nav">
-                    <div className={ `panel-student-side-content${this.state.modal_blur}` }>
-                        <ActionNavigation />
-                        <Card component={ <CommitHistory projectID={this.props.currentProjectID} id={this.props.currentStudent.id} /> } />
                     </div>
                 </div>
             </div>

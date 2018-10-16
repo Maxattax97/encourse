@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import Card from '../Card'
 import { toggleHidden } from '../../redux/actions'
-import {Title} from '../Helpers'
+import {Title, Card} from '../Helpers'
 
 class ActionNavigation extends Component {
 

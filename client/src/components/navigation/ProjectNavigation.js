@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 
-import Card from '../Card'
 import ProjectModal from '../modals/ProjectModal'
 import {getClassProjects, setCurrentProject} from '../../redux/actions/index'
 import connect from 'react-redux/es/connect/connect'
-import {Title} from '../Helpers'
+import {Title, Card} from '../Helpers'
 import {back, settings, plus} from '../../helpers/icons'
 
 class ProjectNavigation extends Component {
@@ -44,12 +43,12 @@ class ProjectNavigation extends Component {
             <div className="projects-nav-container">
                 <div className="panel-left-nav">
                     <div className="projects-nav">
-                        <div className={ `back-nav float-height${ this.props.backClick ? ' back-nav-color' : '' }` } onClick={ this.props.backClick }>
+                        <div className={ `top-nav svg-icon float-height${ this.props.backClick ? ' action' : '' }` } onClick={ this.props.backClick }>
                             <h3>
                                 { this.props.back }
                             </h3>
                             {
-                                this.props.backClick ? <img src={ back.icon } alt={ back.alt_text } /> : null
+                                this.props.backClick ? <img className='svg-icon' src={ back.icon } alt={ back.alt_text } /> : null
                             }
                         </div>
                         <Card component={

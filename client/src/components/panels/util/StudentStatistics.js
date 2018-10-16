@@ -19,7 +19,7 @@ const defaultData = [
     },
 ]
 
-class Statistics extends Component {
+class StudentStatistics extends Component {
 
     constructor(props) {
         super(props)
@@ -158,4 +158,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Statistics)
+export default connect(mapStateToProps, mapDispatchToProps)(StudentStatistics)

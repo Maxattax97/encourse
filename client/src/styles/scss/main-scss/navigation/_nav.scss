@@ -1,0 +1,5 @@
+@import "../helpers";
+
+.top-nav {
+  @include set-rem-safe(height, 4rem);
+}

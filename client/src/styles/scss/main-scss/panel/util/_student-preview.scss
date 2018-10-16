@@ -1,7 +1,9 @@
+@import "../../helpers";
+
 .student-preview {
   position: relative;
-  width:10em;
-  height:7.5em;
+  @include set-size-rem-safe(10rem, 7.5rem);
+  margin: 5.5px;
 }
 
 .student-preview-commits {
@@ -17,10 +19,10 @@
 
   .progress-text {
     position:absolute;
-    top: -1.25em;
+    @include set-rem-safe(top, -1.25rem);
     right: 0;
 
     color: #1f1f1f;
-    font-size: .75em;
+    @include set-rem-safe(font-size, .75rem);
   }
 }

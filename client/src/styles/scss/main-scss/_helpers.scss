@@ -58,3 +58,18 @@
   -o-animation: #{$str};
   animation: #{$str};
 }
+
+@mixin transform($str) {
+  -webkit-transform: #{$str};
+  -moz-transform: #{$str};
+  -ms-transform: #{$str};
+  -o-transform: #{$str};
+  transform: #{$str};
+}
+
+@mixin float-height() {
+  content: "";
+  display: block;
+  height: 0;
+  clear: both;
+}

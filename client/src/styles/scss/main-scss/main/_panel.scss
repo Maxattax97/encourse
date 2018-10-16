@@ -1,9 +1,12 @@
+@import "../helpers";
+
 /* rhodium-libre-regular - latin */
 .panel {
   position:fixed;
   left: 0;
-  top: 3em;
-  height: calc(100% - 3em);
+  @include set-rem-safe(top, 3rem);
+  height: calc(100% - 48px);
+  height: calc(100% - 3rem);
   width: 100%;
   font-family: "Raleway", "Rhodium Libre", sans-serif;
   color: #1f1f1f;
@@ -21,48 +24,50 @@
 
 .panel-container {
   position:relative;
-  max-width: 105.000em; //1680px
+  @include set-rem-safe(max-width, 105rem);
   width: 100%;
-  margin: 2em auto;
+  margin: 32px auto;
+  margin: 2rem auto;
 
   > div:after {
-    content: "";
-    display: block;
-    height: 0;
-    clear: both;
+    @include float-height;
   }
 }
 
 .panel-left-nav {
-  position: relative;
-  float:left;
+  position:fixed;
+  left: 50%;
+  @include transform(translate(-334%, 0));
+  @include set-rem-safe(max-width, 15.75rem);
   width: 15%;
-  max-width: 240px;
-  min-width: 180px;
-  height: 100%;
-  padding: 0 20px;
+  padding: 0;
   margin: 0;
-  min-height: 1px;
+}
+
+.panel-left-nav:after {
+  @include float-height;
 }
 
 .panel-center-content {
   position:relative;
-  float:left;
+  left: 50%;
+  @include transform(translate(-50%, 0));
   width: 70%;
   height: 100%;
   margin: 0;
-  padding: 20px;
-  min-height: 1px;
+  padding: 0 20px;
 }
 
 .panel-right-nav {
-  position: relative;
-  float: left;
+  position:fixed;
+  left: 50%;
+  @include transform(translate(233%, 0));
+  @include set-rem-safe(max-width, 15.75rem);
   width: 15%;
-  max-width: 240px;
-  min-width: 180px;
-  height: 100%;
-  padding: 0 10px;
+  padding: 0;
   margin: 0;
-  min-height: 1px;
+}
+
+.panel-right-nav:after {
+  @include float-height;
 }

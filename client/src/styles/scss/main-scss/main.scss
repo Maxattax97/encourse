@@ -93,6 +93,7 @@ input {
 @import "main/action";
 @import "main/breakline";
 @import "main/card";
+@import "main/chart";
 @import "main/exit";
 @import "main/image";
 @import "main/list";
@@ -100,11 +101,12 @@ input {
 @import "main/navigation";
 @import "main/panel";
 @import "main/progress-bar";
+@import "main/summary";
 @import "main/title";
 
-@import "../course/CoursePanel";
-@import "panel/student";
+@import "navigation/nav";
 
-@import "../project/ProjectPanel";
-@import "../PreferencePanel";
-@import "../chart/Chart";
+@import "panel/course";
+@import "panel/project";
+@import "panel/student";
+@import "panel/preferences";
