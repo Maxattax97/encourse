@@ -78,8 +78,6 @@ public class ProfessorServiceImpl implements ProfessorService {
             Process process = Runtime.getRuntime().exec("./src/main/bash/" + command + " 2> /dev/null");
             StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
             Executors.newSingleThreadExecutor().submit(streamGobbler);
-            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), System.out::println);
-            Executors.newSingleThreadExecutor().submit(errorGobbler);
             process.waitFor();
         }
         catch(Exception e) {
@@ -862,20 +860,19 @@ public class ProfessorServiceImpl implements ProfessorService {
                 if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
                     code = -5;
                 }
-                Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + testCaseDirectory + " 2> /dev/null");
-                BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String visibleResult = stdInput.readLine();
-                process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory + " 2> /dev/null");
-                stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String hiddenResult = stdInput.readLine();
+                TestExecuter tester = new TestExecuter(testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
+                Thread thread = new Thread(tester);
+                thread.start();
+                Thread.sleep(2500);
+                thread.interrupt();
+                String visibleResult = tester.getVisibleResult();
+                String hiddenResult = tester.getHiddenResult();
                 if(visibleResult == null) {
                     visibleResult = "";
                 }
                 if(hiddenResult == null) {
                     hiddenResult = "";
                 }
-                StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), System.out::println);
-                Executors.newSingleThreadExecutor().submit(errorGobbler);
                 double visibleGrade = parseProgressForProject(projectID, visibleResult);
                 double hiddenGrade = parseProgressForProject(projectID, hiddenResult);
                 boolean exists = false;
