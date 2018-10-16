@@ -361,6 +361,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 }
                 String visibleTestResult = builder.toString();
                 builder = new StringBuilder();
+                builder.append(student.getUserName());
                 testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), false);
                 for(StudentProjectTest t : testResults) {
                     builder.append(";").append(t.getTestResultString());
@@ -409,6 +410,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 }
                 String visibleTestResult = builder.toString();
                 builder = new StringBuilder();
+                builder.append(student.getUserName());
                 testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), false);
                 for(StudentProjectTest t : testResults) {
                     builder.append(";").append(t.getTestResultString());
