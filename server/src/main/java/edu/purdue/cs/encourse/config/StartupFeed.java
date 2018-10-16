@@ -52,7 +52,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
         if (adminService.findAllUsers().isEmpty()) {
             adminService.addAccount("0", "grr", "Gustavo", "Rodriguez-Rivera", "Professor", "A", "grr@purdue.edu");
             adminService.addAccount("1", "buckmast", "Jordan", "Buckmaster", "Admin", "M", "buckmast@purdue.edu");
-            adminService.addAccount("2", "kleclain", "Killian", "LeClainche", "Student", "A", "kleclain@purdue.edu");
+            adminService.addAccount("2", "kleclain", "Killian", "LeClainche", "Admin", "A", "kleclain@purdue.edu");
             adminService.addAccount("3", "lee2363", "Jarett", "Lee", "Admin", "B", "lee2363@purdue.edu");
             adminService.addAccount("4", "montgo38", "Shawn", "Montgomery", "Admin", "K", "montgo38@purdue.edu");
             adminService.addAccount("5", "reed226", "William", "Reed", "Admin", "J", "reed226@purdue.edu");
@@ -60,7 +60,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
 
             adminService.addUser("grr", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "PROFESSOR", false, false, false, true);
             adminService.addUser("buckmast", "$2a$04$9c76evM3G9DGPy0SoSvA7uH567Raz6Tuv5vTeV/BxL.3gNSel1POK", "ADMIN", false, false, false, true);
-            adminService.addUser("kleclain", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "STUDENT", false, false, false, true);
+            adminService.addUser("kleclain", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
             adminService.addUser("lee2363", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
             adminService.addUser("montgo38", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
             adminService.addUser("reed226", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
