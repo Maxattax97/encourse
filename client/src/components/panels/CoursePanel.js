@@ -39,9 +39,9 @@ class CoursePanel extends Component {
         this.props.setCurrentStudent(student)
         if (fuzzing) {
             // NOTE: we don't even use the student id in the url
-            history.push('/student/student')
+            history.push('/cs252/student/student')
         } else {
-            history.push(`/student/${student.id}`)
+            history.push(`/cs252/student/${student.id}`)
         }
     };
 

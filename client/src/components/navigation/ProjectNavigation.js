@@ -5,6 +5,7 @@ import {getClassProjects, setCurrentProject} from '../../redux/actions/index'
 import connect from 'react-redux/es/connect/connect'
 import {Title, Card} from '../Helpers'
 import {back, settings, plus} from '../../helpers/icons'
+import {history} from '../../redux/store'
 
 class ProjectNavigation extends Component {
 
@@ -38,6 +39,10 @@ class ProjectNavigation extends Component {
         }
     };
 
+    openProjectOptions = () => {
+        history.push('/cs252/projects')
+    };
+
     render() {
         return (
             <div className="projects-nav-container">
@@ -53,7 +58,7 @@ class ProjectNavigation extends Component {
                         </div>
                         <Card component={
                             <div className="projects-container">
-                                <Title onClick={ () => this.toggleProjectOptions(!this.state.show_project_options) } header={ <h3 className='header'>Projects</h3> } icon={ settings }/>
+                                <Title onClick={ this.openProjectOptions } header={ <h3 className='header'>Projects</h3> } icon={ settings }/>
                                 <div className="h3 break-line header"/>
                                 <div className='text-list'>
                                     {
@@ -67,7 +72,7 @@ class ProjectNavigation extends Component {
                                                 </h4>
                                             </div>)
                                     }
-                                    <div className={ `projects-new action svg-icon${this.state.new_project ? ' projects-highlight' : ''}` } onClick={ this.handleNewProject }>
+                                    <div className={ `projects-new action svg-icon${this.state.new_project ? ' projects-highlight' : ''}` } onClick={ this.openProjectOptions }>
                                         <img className='svg-icon' src={ plus.icon } alt={ plus.alt_text } />
                                     </div>
                                 </div>

@@ -33,7 +33,7 @@ class App extends Component {
                     <Route path="/login" render={(navProps) =>
                         !this.loggedIn()
                             ? <Login {...navProps} />
-                            : <Redirect to="/course"/>
+                            : <Redirect to="/cs252/course"/>
                     }/>
                     <Route path="/" render={(navProps) =>
                         this.loggedIn()

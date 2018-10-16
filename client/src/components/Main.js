@@ -11,6 +11,7 @@ import ProjectModal from './modals/ProjectModal'
 import StudentPanel from './panels/StudentPanel'
 import AdminPanel from './panels/AdminPanel'
 import PreferencePanel from './panels/PreferencePanel'
+import ProjectPanel from './panels/ProjectPanel'
 
 class Main extends Component {
 
@@ -23,20 +24,20 @@ class Main extends Component {
                         <Switch>
                             <Route path="/panel" render={(/* navProps */) => {
                                 //determine logic for course panel, student panel, or admin panel. For now, use course panel
-                                return <Redirect to="/course"/>
+                                return <Redirect to="/cs252/course"/>
                             }}/>
-                            <Route path="/project-settings" render={(navProps) =>
-                                <ProjectModal {...navProps} />
-                            } />
-                            <Route path="/course" render={(navProps) =>
+                            <Route path="/:courseid/course" render={(navProps) =>
                                 <CoursePanel {...navProps} />
                             }/>
-                            <Route path="/student/:id" render={(navProps) =>
+                            <Route path="/:courseid/student/:id" render={(navProps) =>
                                 <StudentPanel {...navProps} />
                             }/>
                             <Route path="/admin" render={(navProps) =>
                                 <AdminPanel {...navProps} />
                             }/>
+                            <Route path="/:courseid/projects" render={(navProps) =>
+                                <ProjectPanel {...navProps} />
+                            } />
                             <Route path="/settings" render={(/* navProps */) =>
                                 <PreferencePanel />
                             }/>

@@ -13,8 +13,6 @@ import { getClassProjects, clearStudent } from '../../redux/actions/index'
 import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 import StudentFeedback from './util/StudentFeedback'
-import ClassProgressHistogram from '../charts/ClassProgressHistogram'
-import ClassTestCasePercentDone from '../charts/ClassTestCasePercentDone'
 
 
 class StudentPanel extends Component {
@@ -70,7 +68,7 @@ class StudentPanel extends Component {
     }
 
     back = () => {
-        history.push('/course')
+        history.push('/cs252/course')
     };
 
     render() {
