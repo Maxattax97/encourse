@@ -18,13 +18,13 @@ public class StudentProjectDate {
 
     /** Best visible grade output by testall on the given date **/
     @Setter
-    private String dateVisibleGrade;
+    private double dateVisibleGrade;
 
     /** Best hidden grade output by testall on the given date **/
     @Setter
-    private String dateHiddenGrade;
+    private double dateHiddenGrade;
 
-    public StudentProjectDate(String userID, String projectIdentifier, String date, String dateVisibleGrade, String dateHiddenGrade) {
+    public StudentProjectDate(String userID, String projectIdentifier, String date, double dateVisibleGrade, double dateHiddenGrade) {
         this.id = new StudentProjectDateID(userID, projectIdentifier, date);
         this.dateVisibleGrade = dateVisibleGrade;
         this.dateHiddenGrade = dateHiddenGrade;

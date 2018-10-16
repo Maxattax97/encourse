@@ -18,11 +18,11 @@ public class StudentProject {
 
     /** Best visible grade output by testall for the project **/
     @Setter
-    private String bestVisibleGrade;
+    private double bestVisibleGrade;
 
     /** Best hidden grade output by testall for the project **/
     @Setter
-    private String bestHiddenGrade;
+    private double bestHiddenGrade;
 
     /** Git commit count for the project **/
     @Setter
@@ -50,8 +50,8 @@ public class StudentProject {
 
     public StudentProject(String userID, String projectIdentifier) {
         this.id = new StudentProjectID(userID, projectIdentifier);
-        this.bestVisibleGrade = "";
-        this.bestHiddenGrade = "";
+        this.bestVisibleGrade = 0.0;
+        this.bestHiddenGrade = 0.0;
         this.commitCount = 0;
         this.totalLinesAdded = 0;
         this.totalLinesRemoved = 0;
