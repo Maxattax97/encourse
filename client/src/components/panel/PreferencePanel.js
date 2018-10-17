@@ -25,20 +25,6 @@ class PreferencePanel extends Component {
         super(props)
 
         this.state = {
-            courses: [{
-                name: 'CS252',
-                semester: 'Fall2018',
-                professor: 'Gustavo',
-                id: '1'
-            }],
-            accounts: [{
-                login: 'kleclain',
-                account_type: 'admin',
-                course_professor: [],
-                course_ta: [],
-                id: '1'
-            }],
-            name: '',
             semester: '',
             account_type: '',
             show_course_options: false,
@@ -51,7 +37,7 @@ class PreferencePanel extends Component {
 
     componentDidMount = () => {
         if(this.props.courses.length === 0) {
-            this.props.getCourses(/*TODO!: add endpoint*/'',
+            this.props.getCourses(`${url}/api/sections`,
                 {'Authorization': `Bearer ${this.props.token}`})
         }
         if(this.props.accounts.length === 0) {
@@ -98,10 +84,14 @@ class PreferencePanel extends Component {
             show_course_options: true,
             current_course: index,
             modal_blur: ' blur',
-            number: this.state.courses[index].courseID,
-            semester: this.state.courses[index].semester
+            number: this.props.courses[index].courseID,
+            semester: this.props.courses[index].semester,
+            title: this.props.courses[index].courseTitle,
+            crn: this.props.courses[index].crn,
+            section_type: this.props.courses[index].sectionType,
+            professor: this.props.courses[index].userName,
         })
-    };
+    }
 
     displayAccountOptions = (index) => {
         this.setState({
@@ -133,7 +123,6 @@ class PreferencePanel extends Component {
     }
 
     saveCourse = () => {
-        //TODO!: verify this works
         if(this.state.current_course === -1) {
             //Add course
             this.props.addCourse(`${url}/api/add/section?userName=${this.state.professor}`,
@@ -146,8 +135,8 @@ class PreferencePanel extends Component {
                     sectionType: this.state.section_type,
                 }))
         } else {
-            this.props.modifyCourse(/*TODO: add endpoint*/)
             //Edit course
+            this.props.modifyCourse(/*TODO: add endpoint*/)
         }
     };
 
@@ -213,9 +202,9 @@ class PreferencePanel extends Component {
                                 <h3>Courses</h3>
                             </div>
                             {
-                                this.state.courses && this.state.courses.map &&
-                                this.state.courses.map((course, index) =>
-                                    <Card key={course.id}
+                                this.props.courses && this.props.courses.map &&
+                                this.props.courses.map((course, index) =>
+                                    <Card key={course.sectionIdentifier}
                                         component={<CoursePreview course={course}/>}
                                         onClick={ () => this.displayCourseOptions(index) }/>)
                             }
@@ -351,6 +340,7 @@ const mapStateToProps = (state) => {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         courses: state.admin && state.admin.getCoursesData ? state.admin.getCoursesData : [],
         accounts: state.admin && state.admin.getAccountsData ? state.admin.getAccountsData : [],
+        courses: state.admin && state.admin.getCoursesData ? state.admin.getCoursesData : [],
     }
 }
 

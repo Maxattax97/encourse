@@ -1,5 +1,6 @@
 function admin(state = {}, action) {
     let accounts
+    let courses
     switch(action.type) {
     case 'GET_COURSES_HAS_ERROR':
         return Object.assign({}, state, {
@@ -22,8 +23,11 @@ function admin(state = {}, action) {
             addCourseIsLoading: action.isLoading,
         })
     case 'ADD_COURSE_DATA_SUCCESS':
+        courses = [...state.getCoursesData]
+        courses.push(action.data)
         return Object.assign({}, state, {
             addCourseData: action.data,
+            getCoursesData: courses,
         })
     case 'MODIFY_COURSE_HAS_ERROR':
         return Object.assign({}, state, {
