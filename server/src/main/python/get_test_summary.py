@@ -41,7 +41,7 @@ def jsonify(test_data, hidden):
             
             [
                 {
-                    "name": str,
+                    "testName": str,
                     "hidden": bool,
                     "score": int (percentage)
                 },
@@ -78,7 +78,7 @@ def jsonify(test_data, hidden):
         test_score = tests[test_name]
         test_total = test_totals[test_name]
         new_bar = {}
-        new_bar["name"] = test_name + " H" if hidden else test_name
+        new_bar["testName"] = test_name + " H" if hidden else test_name
         new_bar["hidden"] = hidden
         new_bar["score"] = int(test_score * 100 / test_total)
         test_list.append(new_bar)
