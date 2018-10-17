@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.UUID;
 
 @Getter
 @Entity
@@ -41,21 +42,15 @@ public class Section {
     private String remotePath;
 
     public Section(String CRN, String semester, String courseID, String courseTitle, String sectionType) {
+        this.sectionIdentifier = UUID.randomUUID().toString();
         this.CRN = CRN;
         this.semester = semester;
         this.courseID = courseID;
         this.courseTitle = courseTitle;
         this.sectionType = sectionType;
-        this.sectionIdentifier = createSectionID(courseID, semester, sectionType);
     }
 
     public Section() {
 
     }
-
-    public static String createSectionID(@NonNull String courseID, @NonNull String semester, @NonNull String sectionType) {
-        return (courseID + " "  + semester + ": " + sectionType);
-    }
-
-
 }

@@ -57,7 +57,7 @@ public class StudentProjectTest {
             return getTestScriptName() + ":" + pointsWorth;
         }
         else {
-            return getTestScriptName() + ":" + 0;
+            return getTestScriptName() + ":" + 0.0;
         }
     }
 }

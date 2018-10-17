@@ -336,18 +336,13 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType) {
+    public Section addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType) {
         System.out.println("ADDING SECTION");
         Section section = new Section(CRN, semester, courseID, courseTitle, sectionType);
         if(sectionRepository.existsBySectionIdentifier(section.getSectionIdentifier())) {
-            return -1;
+            return null;
         }
-        System.out.println("SECTION DOES NOT EXIST YET");
-        if(sectionRepository.save(section) == null) {
-            return -2;
-        }
-        System.out.println("SECTION ADDED");
-        return 0;
+        return sectionRepository.save(section);
     }
 
     public int deleteSection(@NonNull String sectionID) {
@@ -383,12 +378,12 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int registerStudentToSection(@NonNull String userName, @NonNull String courseID, @NonNull String semester, @NonNull String sectionType) {
+    public int registerStudentToSection(@NonNull String userName, @NonNull String sectionID) {
         Student student = studentRepository.findByUserName(userName);
         if(student == null) {
             return -1;
         }
-        Section section = sectionRepository.findBySectionIdentifier(Section.createSectionID(courseID, semester, sectionType));
+        Section section = sectionRepository.findBySectionIdentifier(sectionID);
         if(section == null) {
             return -2;
         }

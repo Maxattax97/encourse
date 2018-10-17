@@ -46,6 +46,7 @@ public class PythonScriptTests {
         @Autowired
         public ProfessorService professorService;
 
+        public Project proj1;
 
         @Before
         public void populateDatabase() {
@@ -53,6 +54,9 @@ public class PythonScriptTests {
                     "Admin", "J", "reed226@purdue.edu"));
             assertEquals(0, adminService.addAccount("2", "grr", "Gustavo", "Rodriguez-Rivera",
                     "Professor", null, "grr@purdue.edu"));
+            proj1 = professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src",
+                    "9/10/2018", "9/24/2018", 0);
+
         }
 
         @After
@@ -72,7 +76,7 @@ public class PythonScriptTests {
 
         @Test
         public void testIndividualProgressData() {
-            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
+            String projectID = proj1.getProjectIdentifier();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================   Individual Progress Test    ============================\n");
@@ -82,7 +86,7 @@ public class PythonScriptTests {
 
         @Test
         public void testClassProgressData() {
-            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
+            String projectID = proj1.getProjectIdentifier();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Class Progress Test    ============================\n");
@@ -92,7 +96,7 @@ public class PythonScriptTests {
 
         @Test
         public void testTestSummaryData() {
-            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
+            String projectID = proj1.getProjectIdentifier();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Test Summary Test    ============================\n");
@@ -102,7 +106,7 @@ public class PythonScriptTests {
 
         @Test
         public void testStatisticsData() {
-            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
+            String projectID = proj1.getProjectIdentifier();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Statistics Test    ============================\n");
@@ -112,7 +116,7 @@ public class PythonScriptTests {
 
         @Test
         public void testAdditionDeletionData() {
-            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
+            String projectID = proj1.getProjectIdentifier();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================   Addition Deletion Test    ============================\n");
@@ -122,7 +126,7 @@ public class PythonScriptTests {
 
         @Test
         public void testCommitListData() {
-            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
+            String projectID = proj1.getProjectIdentifier();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Git Commit List Test    ============================\n");
@@ -133,7 +137,7 @@ public class PythonScriptTests {
 
         @Test
         public void testCommitCountData() {
-            String projectID = Project.createProjectID("cs252", "Fall2018", "MyMalloc");
+            String projectID = proj1.getProjectIdentifier();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Git Commit Count Test    ============================\n");
