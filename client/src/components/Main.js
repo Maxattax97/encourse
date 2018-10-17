@@ -24,20 +24,23 @@ class Main extends Component {
                         <Switch>
                             <Route path="/panel" render={(/* navProps */) => {
                                 //determine logic for course panel, student panel, or admin panel. For now, use course panel
-                                return <Redirect to="/cs252/course"/>
+                                return <Redirect to="/course"/>
                             }}/>
-                            <Route path="/:courseid/course" render={(navProps) =>
+                            <Route path="/project-settings" render={(navProps) =>
+                                <ProjectModal {...navProps} />
+                            } />
+                            <Route path="/course" render={(navProps) =>
                                 <CoursePanel {...navProps} />
                             }/>
-                            <Route path="/:courseid/student/:id" render={(navProps) =>
+                            <Route path="/student/:id" render={(navProps) =>
                                 <StudentPanel {...navProps} />
                             }/>
                             <Route path="/admin" render={(navProps) =>
                                 <AdminPanel {...navProps} />
                             }/>
-                            <Route path="/:courseid/projects" render={(navProps) =>
+                            <Route path="/projects" render={(navProps) =>
                                 <ProjectPanel {...navProps} />
-                            } />
+                            }/>
                             <Route path="/settings" render={(/* navProps */) =>
                                 <PreferencePanel />
                             }/>

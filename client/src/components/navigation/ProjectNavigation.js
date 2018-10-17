@@ -40,7 +40,7 @@ class ProjectNavigation extends Component {
     };
 
     openProjectOptions = () => {
-        history.push('/cs252/projects')
+        history.push(`/projects`)
     };
 
     render() {

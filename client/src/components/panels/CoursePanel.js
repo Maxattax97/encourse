@@ -39,16 +39,16 @@ class CoursePanel extends Component {
         this.props.setCurrentStudent(student)
         if (fuzzing) {
             // NOTE: we don't even use the student id in the url
-            history.push('/cs252/student/student')
+            history.push('/student/student')
         } else {
-            history.push(`/cs252/student/${student.id}`)
+            history.push(`/student/${student.id}`)
         }
     };
 
     render() {
         return (
             <div className='panel-course'>
-                <ProjectNavigation onModalBlur={(blur) => this.setState({modal_blur : blur ? ' blur' : ''})}
+                <ProjectNavigation onModalBlur={ (blur) => this.setState({modal_blur : blur ? ' blur' : ''}) }
                     {...this.props}/>
 
                 <div className='panel-right-nav'>
@@ -62,9 +62,10 @@ class CoursePanel extends Component {
                 <div className='panel-center-content'>
 
                     <div className={ `panel-course-content${this.state.modal_blur}` }>
-                        <Title onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' }) } header={ <h1 className='header'>CS252</h1> } icon={ settings } break />
+                        <Title onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' }) }
+                            header={ <h1 className='header'>CS252</h1> }
+                            icon={ settings } />
                         <div className='h1 break-line header' />
-
 
                         <Summary header={ <h3 className='header'>Course Charts</h3> }
                             columns={ 2 }

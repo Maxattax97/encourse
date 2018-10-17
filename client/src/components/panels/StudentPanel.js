@@ -68,7 +68,7 @@ class StudentPanel extends Component {
     }
 
     back = () => {
-        history.push('/cs252/course')
+        history.push('/course')
     };
 
     render() {
