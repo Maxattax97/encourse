@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import settingsIcon from '../../resources/settings.svg'
 import logoutIcon from '../../resources/logout.svg'
 import { history } from '../../redux/store'
 import { logOut } from '../../redux/actions/index'
 import url from '../../server'
+import {settings, logout} from '../../helpers/icons'
 
 class TopNavigation extends Component {
 
@@ -18,20 +18,18 @@ class TopNavigation extends Component {
     render() {
         return (
             <div className="nav">
-                <div className="nav-list">
-                    <div className="nav-options">
-                        <div className="nav-settings" onClick={() => {
-                            if(this.props.path === '/settings') history.push('/course')
-                            else history.push('/settings')
-                        }}>
-                            <img src={settingsIcon} alt="options" />
-                        </div>
-                        <div className="nav-logout" onClick={() => this.logOut()}>
-                            <img src={logoutIcon} alt="logout" />
-                        </div>
+                <div className="nav-options">
+                    <div className="action" onClick={() => {
+                        if(this.props.path === '/settings') history.push('/course')
+                        else history.push('/settings')
+                    }}>
+                        <img src={ settings.icon } alt={ settings.alt_text } />
+                    </div>
+                    <div className="action" onClick={() => this.logOut()}>
+                        <img src={ logout.icon } alt={ logout.alt_text } />
                     </div>
                 </div>
-                <div className="nav-title">
+                <div className="nav-title" onClick={ () => history.push('/course')}>
                     <span className="nav-en">En</span>
                     <span className="nav-course">Course</span>
                 </div>

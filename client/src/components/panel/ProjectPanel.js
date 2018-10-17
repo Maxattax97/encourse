@@ -94,7 +94,6 @@ class ProjectPanel extends Component {
 
 }
 
-
 const mapStateToProps = (state) => {
     return {
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
