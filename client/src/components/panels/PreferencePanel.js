@@ -120,7 +120,7 @@ class PreferencePanel extends Component {
             this.props.addCourse(`${url}/api/add/course?courseID=${this.state.name}&semester=${this.state.semester}`,
                 {'Authorization': `Bearer ${this.props.token}`})
         } else {
-            this.props.modifyCourse(/*!: add endpoint*/)
+            this.props.modifyCourse(/*TODO: add endpoint*/)
             //Edit course
         }
     };
@@ -249,6 +249,7 @@ class PreferencePanel extends Component {
                                 <select className="h3-size" value={this.state.account_type} onChange={this.onChange} name="account_type" ref="account_type">
                                     <option value="admin">Admin</option>
                                     <option value="professor">Professor</option>
+                                    <option value="ta">TA</option>
                                     <option value="student">Student</option>
                                 </select>
                                 <div className="modal-buttons float-height">
