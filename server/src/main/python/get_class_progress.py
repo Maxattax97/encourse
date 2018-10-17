@@ -22,7 +22,7 @@ def jsonify(test_data):
 
             {
                "name1": {
-                    "Test1": ("P" or "F"),
+                    "Test1": (bool, float),
                     ...
                },
                ...

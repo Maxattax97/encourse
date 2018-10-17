@@ -10,8 +10,8 @@ def get_test_completion(test_file):
         **test_file** (file): A specially formatted file containing test data
         The following is a sample of one of these files: ::
             
-            name1;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P
-            name2;Test1:F;Test2:F;Test3:P;Test4:P;Test5:P
+            name1;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0
+            name2;Test1:F:1.0;Test2:F:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0
 
     **Returns**:
         dict: A dictionary mapping students to their respective test data.
@@ -20,7 +20,7 @@ def get_test_completion(test_file):
             {
                 "name1": {
                    "tests": {
-                        "Test1": ("P" or "F"),
+                        "Test1": (bool, float),
                         ...
                    },
                    "total": int (percentage)
@@ -44,12 +44,14 @@ def get_test_completion(test_file):
         test_score = 0
         tests = {}
         for word in words[1:]:
-            test, score = word.split(":")
+            test, passed, score = word.split(":")
+            score = float(score)
+            passed = True if passed == "P" else False
             # print(test,score)
-            tests[test] = score
-            if score == "P":
-                test_score += 1
-            total_score += 1
+            tests[test] = (passed, score)
+            if passed:
+                test_score += score
+            total_score += score
         if total_score == 0:
             return {"tests": tests, "total": 0}
         students[name] = {"tests": tests, "total": test_score * 100 / total_score}
@@ -72,7 +74,7 @@ def get_test_completion_string(test_string):
             {
                 "name1": {
                    "tests": {
-                        "Test1": ("P" or "F"),
+                        "Test1": (bool, float),
                         ...
                    },
                    "total": int (percentage)
@@ -89,12 +91,14 @@ def get_test_completion_string(test_string):
     test_score = 0
     tests = {}
     for word in words[1:]:
-        test, score = word.split(":")
-        # eprint(test,score)
-        tests[test] = score
-        if score == "P":
-            test_score += 1
-        total_score += 1
+        test, passed, score = word.split(":")
+        score = float(score)
+        passed = True if passed == "P" else False
+        # print(test,score)
+        tests[test] = (passed, score)
+        if passed:
+            test_score += score
+        total_score += score
 
     if total_score == 0:
         return {"tests": tests, "total": 0}

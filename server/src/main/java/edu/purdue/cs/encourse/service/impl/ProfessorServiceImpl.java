@@ -31,7 +31,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     private final static String pythonPath = "src/main/python/";
     private final static String tailFilePath = "src/main/temp/";
     private final static int RATE = 3600000;
-    private final static Boolean DEBUG = true;
+    private final static Boolean DEBUG = false;
     private final static Boolean OBFUSCATE = false;
 
     /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
@@ -464,7 +464,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
         String testResult = null;
         if (DEBUG) {
-            testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
+            testResult = "cutz;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0";
         } else {
             Student student = studentRepository.findByUserName(userName);
             StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());

@@ -25,7 +25,7 @@ def jsonify(test_data, hidden):
             {
                 "name1": {
                    "tests": {
-                        "Test1": ("P" or "F"),
+                        "Test1": (bool, int),
                         ...
                    },
                    "total": int (percentage)
@@ -56,19 +56,20 @@ def jsonify(test_data, hidden):
         info = test_data[student]
         test_scores = info["tests"]
         for test_name in test_scores:
-            if test_scores[test_name] == "P":
+            passed, score = test_scores[test_name]
+            if passed:
                 if test_name in tests:
-                    tests[test_name] += 1
-                    test_totals[test_name] += 1
+                    tests[test_name] += score
+                    test_totals[test_name] += score
                 else:
-                    tests[test_name] = 1
-                    test_totals[test_name] = 1
+                    tests[test_name] = score
+                    test_totals[test_name] = score
             else:
                 if test_name in tests:
-                    test_totals[test_name] += 1
+                    test_totals[test_name] += score
                 else:
                     tests[test_name] = 0
-                    test_totals[test_name] = 1
+                    test_totals[test_name] = score
     test_list = []
     # Reformat into api format
     for test_name in tests:
