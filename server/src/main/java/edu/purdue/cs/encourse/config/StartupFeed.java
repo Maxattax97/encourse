@@ -80,8 +80,8 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                         continue;
                     }
                     //adminService.addAccount(Integer.toString(100 + count), student, "Student", Integer.toString(count),
-                    adminService.addAccount(Integer.toString(100 + count), student, Account.Role_Names.STUDENT, student,
-                            "Student", null, student + "@purdue.edu");
+                    adminService.addAccount(Integer.toString(100 + count), student, "Student", student,
+                            Account.Role_Names.STUDENT, null, student + "@purdue.edu");
                     adminService.registerStudentToSection(student, section.getSectionIdentifier());
                     count++;
                 }
