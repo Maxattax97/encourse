@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
@@ -56,25 +57,36 @@ public class AuthController {
 
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/modify/account", method = RequestMethod.POST)
+    @RequestMapping(value = "/modify/account", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity<?> modifyAccount(@RequestParam(name = "userName") String userName,
-                                                         @RequestParam(name = "field") String field,
-                                                         @RequestParam(name = "value") String value) {
-        int result = adminService.modifyAccount(userName, field, value);
-        HttpStatus status = (result == 0)? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
-        return new ResponseEntity<>(result, status);
-    }
+                                                         @RequestBody String body) {
+        List<String> errors = new ArrayList<>();
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject json = (JSONObject) parser.parse(body);
+            Iterator<Object> iter = json.keySet().iterator();
+            while (iter.hasNext()) {
+                String key = (String) iter.next();
+                String val = (String) json.get(key);
+                int result;
+                if (key.contentEquals("role")) {
+                    result = adminService.modifyAuthority(userName, val);
+                } else {
+                    result = adminService.modifyAccount(userName, key, val);
+                }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @RequestMapping(value = "/modify/authority", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> modifyAuthority(@RequestParam(name = "userName") String userName,
-                                                           @RequestParam(name = "role") String role) {
-        int result = adminService.modifyAuthority(userName, role);
-        if (result != 0) {
-            return new ResponseEntity<>(result, HttpStatus.NOT_MODIFIED);
+                if (result != 0) {
+                    errors.add("Error modifying field " + key + " with value " + val);
+                }
+            }
+        } catch (ParseException e) {
+
         }
-        Account account = accountService.retrieveAccount(userName);
-        return new ResponseEntity<>(account, HttpStatus.OK);
+        if (errors.isEmpty()) {
+            Account account = accountService.retrieveAccount(userName);
+            return new ResponseEntity<>(account, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(errors, HttpStatus.NOT_MODIFIED);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -114,7 +126,7 @@ public class AuthController {
     public @ResponseBody ResponseEntity<?> createAccount(@RequestParam(name = "password", required = false) String password, @RequestBody String json) {
 
         int result;
-        User user;
+        Account account = null;
         try {
             Account a = new ObjectMapper().readValue(json, Account.class);
             String type;
@@ -137,12 +149,12 @@ public class AuthController {
             if (password == null || password.isEmpty()) {
                 password = genPassword;
             }
-            user = adminService.addUser(a.getUserName(), password, type, false, false, false, true);
+            adminService.addUser(a.getUserName(), password, type, false, false, false, true);
+            account = accountService.retrieveAccount(a.getUserName());
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        return new ResponseEntity<>((user != null)? user: result, HttpStatus.CREATED);
+        return new ResponseEntity<>(account, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

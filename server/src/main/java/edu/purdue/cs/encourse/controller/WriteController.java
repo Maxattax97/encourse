@@ -47,18 +47,24 @@ public class WriteController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/section", method = RequestMethod.POST, consumes = "application/json")
-    public @ResponseBody
-    ResponseEntity<?> addSection(@RequestParam(name = "userName", required = false) String userName,
-                                 @RequestBody String json) {
+    public @ResponseBody ResponseEntity<?> addSection(@RequestParam(name = "userName", required = false) String userName,
+                                                      @RequestBody String body) {
         Section result;
         Section s;
         try {
-            s = new ObjectMapper().readValue(json, Section.class);
-            result = adminService.addSection(s.getCRN(), s.getSemester(), s.getCourseID(), s.getCourseTitle(), s.getSectionType());
+            JSONParser parser = new JSONParser();
+            JSONObject json = (JSONObject) parser.parse(body);
+            String CRN = (String) json.get("CRN");
+            String semester = (String) json.get("semester");
+            String courseID = (String) json.get("courseID");
+            String courseTitle = (String) json.get("courseTitle");
+            String sectionType = (String) json.get("sectionType");
+            result = adminService.addSection(CRN, semester, courseID, courseTitle, sectionType);
             if (userName != null && !userName.isEmpty()) {
-                adminService.assignProfessorToCourse(userName, s.getCourseID(), s.getSemester());
+                adminService.assignProfessorToCourse(userName, courseID, semester);
             }
-        } catch (IOException e) {
+            s = adminService.retrieveSection(courseID + " "  + semester + ": " + sectionType);
+        } catch (ParseException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>((s != null)? s: result, (s != null)? HttpStatus.CREATED: HttpStatus.NOT_MODIFIED);
