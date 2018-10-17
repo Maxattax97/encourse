@@ -97,7 +97,7 @@ class CodeChangesChart extends Component {
             <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 0, bottom: 25}}>
-                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Code Frequency</text>
+                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Lines of Code Added/Deleted</text>
                         <CartesianGrid strokeDasharray="3 3"/>
                         <XAxis type="number" dataKey="date" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
                             <Label position="insideBottom" offset={-15} value="Date"/>
