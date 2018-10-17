@@ -18,10 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.Executors;
 
 @Service(value = CourseServiceImpl.NAME)
@@ -209,7 +206,183 @@ public class CourseServiceImpl implements CourseService {
         return studentsJSON;
     }
 
-    public JSONArray sortStudentData(@NonNull JSONArray studentsJSON, @NonNull List<String> parameters, @NonNull List<Integer> orders) {
+    public JSONArray sortStudentData(@NonNull JSONArray studentsJSON, @NonNull List<String> parameters, @NonNull List<Boolean> isAscending) {
+        JSONArray sorted = new JSONArray();
+        List<JSONObject> jsonList = new ArrayList<>();
+        for(Object obj : studentsJSON) {
+            jsonList.add((JSONObject)obj);
+        }
+        for(int i = 0; i < parameters.size(); i++) {
+            switch(parameters.get(i)) {
+                case "first_name": {
+                    if(isAscending.get(i)) {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                String valA = ((String) a.get("first_name")).toLowerCase();
+                                String valB = ((String) b.get("first_name")).toLowerCase();
+                                return valA.compareTo(valB);
+                            }
+                        });
+                    }
+                    else {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                String valA = ((String) a.get("first_name")).toLowerCase();
+                                String valB = ((String) b.get("first_name")).toLowerCase();
+                                return valB.compareTo(valA);
+                            }
+                        });
+                    }
+                    break;
+                }
+                case "last_name": {
+                    if(isAscending.get(i)) {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                String valA = ((String) a.get("last_name")).toLowerCase();
+                                String valB = ((String) b.get("last_name")).toLowerCase();
+                                return valA.compareTo(valB);
+                            }
+                        });
+                    }
+                    else {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                String valA = ((String) a.get("last_name")).toLowerCase();
+                                String valB = ((String) b.get("last_name")).toLowerCase();
+                                return valB.compareTo(valA);
+                            }
+                        });
+                    }
+                    break;
+                }
+                case "id": {
+                    if(isAscending.get(i)) {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                String valA = ((String) a.get("id")).toLowerCase();
+                                String valB = ((String) b.get("id")).toLowerCase();
+                                return valA.compareTo(valB);
+                            }
+                        });
+                    }
+                    else {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                String valA = ((String) a.get("id")).toLowerCase();
+                                String valB = ((String) b.get("id")).toLowerCase();
+                                return valB.compareTo(valA);
+                            }
+                        });
+                    }
+                    break;
+                }
+                case "grades": {
+                    if(isAscending.get(i)) {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                Double valA = (Double) a.get("grades");
+                                Double valB = (Double) b.get("grades");
+                                return valA.compareTo(valB);
+                            }
+                        });
+                    }
+                    else {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                Double valA = (Double) a.get("grades");
+                                Double valB = (Double) b.get("grades");
+                                return valB.compareTo(valA);
+                            }
+                        });
+                    }
+                    break;
+                }
+                case "hiddenGrades": {
+                    if(isAscending.get(i)) {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                Double valA = (Double) a.get("hiddenGrades");
+                                Double valB = (Double) b.get("hiddenGrades");
+                                return valA.compareTo(valB);
+                            }
+                        });
+                    }
+                    else {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                Double valA = (Double) a.get("hiddenGrades");
+                                Double valB = (Double) b.get("hiddenGrades");
+                                return valB.compareTo(valA);
+                            }
+                        });
+                    }
+                    break;
+                }
+                case "commitCounts": {
+                    if(isAscending.get(i)) {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                Integer valA = (Integer) a.get("commitCounts");
+                                Integer valB = (Integer) b.get("commitCounts");
+                                return valA.compareTo(valB);
+                            }
+                        });
+                    }
+                    else {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                Integer valA = (Integer) a.get("commitCounts");
+                                Integer valB = (Integer) b.get("commitCounts");
+                                return valB.compareTo(valA);
+                            }
+                        });
+                    }
+                    break;
+                }
+                case "timeSpent": {
+                    if(isAscending.get(i)) {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                Double valA = (Double) a.get("timeSpent");
+                                Double valB = (Double) b.get("timeSpent");
+                                return valA.compareTo(valB);
+                            }
+                        });
+                    }
+                    else {
+                        jsonList.sort(new Comparator<JSONObject>() {
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                Double valA = (Double) a.get("timeSpent");
+                                Double valB = (Double) b.get("timeSpent");
+                                return valB.compareTo(valA);
+                            }
+                        });
+                    }
+                    break;
+                }
+                default: break;
+            }
+        }
+        sorted.addAll(jsonList);
+        return sorted;
+    }
+
+    public JSONArray filterStudentData(@NonNull JSONArray studentsJSON, @NonNull List<String> parameters, @NonNull List<List<String>> values) {
         return null;
     }
 
