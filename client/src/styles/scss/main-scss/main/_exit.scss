@@ -3,23 +3,12 @@
 
 .exit-nav {
   position: relative;
-  height: 1.5em;
-  width: 1.5em;
-  padding: .5em;
 
-  cursor: pointer;
+  @include set-size-rem-safe(2rem, 2rem);
+  padding: 8px;
 
   img {
-    position:absolute;
-    top: .5em;
-    left: .5em;
-    z-index: 2;
-    filter: $icon-color;
-    width: 1.5em;
-    height: 1.5em;
+    width: 100%;
+    height: 100%;
   }
-}
-
-.exit-nav:hover img {
-  filter: $icon-hover-color;
 }

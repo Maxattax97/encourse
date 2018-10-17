@@ -18,15 +18,11 @@ h1 {
   font-size: 2rem;
   line-height: 32px;
   line-height: 2rem;
-  height: 32px;
-  height: 2rem;
 }
 
 h1.header {
   line-height: 64px;
   line-height: 4rem;
-  height: 64px;
-  height: 4rem;
 }
 
 h2 {
@@ -35,15 +31,11 @@ h2 {
   font-size: 1.5rem;
   line-height: 24px;
   line-height: 1.5rem;
-  height: 24px;
-  height: 1.5rem;
 }
 
 h2.header {
   line-height: 48px;
   line-height: 3rem;
-  height: 48px;
-  height: 3rem;
 }
 
 h3 {
@@ -52,15 +44,11 @@ h3 {
   font-size: 1.17rem;
   line-height: 18.72px;
   line-height: 1.17rem;
-  height: 18.72px;
-  height: 1.17rem;
 }
 
 h3.header {
   line-height: 35.84px;
   line-height: 2.24rem;
-  height: 35.84px;
-  height: 2.24rem;
 }
 
 h4 {
@@ -69,15 +57,11 @@ h4 {
   font-size: 1rem;
   line-height: 16px;
   line-height: 1rem;
-  height: 16px;
-  height: 1rem;
 }
 
 h4.header {
   line-height: 32px;
   line-height: 2rem;
-  height: 32px;
-  height: 2rem;
 }
 
 h5 {
@@ -86,15 +70,11 @@ h5 {
   font-size: 0.83rem;
   line-height: 13.28px;
   line-height: 0.83rem;
-  height: 13.28px;
-  height: 0.83rem;
 }
 
 h5.header {
   line-height: 26.56px;
   line-height: 1.66rem;
-  height: 26.56px;
-  height: 1.66rem;
 }
 
 h6 {
@@ -103,8 +83,6 @@ h6 {
   font-size: 0.67rem;
   line-height: 10.72px;
   line-height: 0.67rem;
-  height: 10.72px;
-  height: 0.67rem;
 }
 
 h6.header {
@@ -225,24 +203,16 @@ div.break-line.header {
 
 .exit-nav {
   position: relative;
-  height: 1.5em;
-  width: 1.5em;
-  padding: .5em;
-  cursor: pointer;
+  width: 32px;
+  width: 2rem;
+  height: 32px;
+  height: 2rem;
+  padding: 8px;
 }
 
 .exit-nav img {
-  position: absolute;
-  top: .5em;
-  left: .5em;
-  z-index: 2;
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
-  width: 1.5em;
-  height: 1.5em;
-}
-
-.exit-nav:hover img {
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
+  width: 100%;
+  height: 100%;
 }
 
 img.svg-icon {
@@ -305,8 +275,20 @@ img.svg-icon {
 .modal-center {
   position: fixed;
   left: 50%;
-  transform: translate(-50%, 0);
+  top: 50%;
+  transform: translate(-50%, -75%);
   margin-top: calc(20px + 40px + 1.17em);
+}
+
+.modal .component:after {
+  content: "";
+  display: block;
+  height: 0;
+  clear: both;
+}
+
+.modal-container {
+  float: left;
 }
 
 .modal-buttons {

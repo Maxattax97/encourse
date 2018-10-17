@@ -45,9 +45,18 @@
 .modal-center {
   position: fixed;
   left: 50%;
-  transform: translate(-50%, 0);
+  top: 50%;
+  transform: translate(-50%, -75%);
 
   margin-top: calc(20px + 40px + 1.17em);
+}
+
+.modal .component:after {
+  @include float-height
+}
+
+.modal-container {
+  float:left;
 }
 
 .modal-buttons {
