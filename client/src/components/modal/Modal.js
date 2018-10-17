@@ -12,7 +12,7 @@ class Modal extends Component {
                     <Card component={
                         [
                             <div className={'modal-container'} key={1}>
-                                {this.props.component}
+                                {this.props.content}
                             </div>,
                             <div className="action svg-icon exit-nav" onClick={ this.props.onClose || this.props.onExit } key={2}>
                                 <img className='svg-icon' src={ x.icon } alt={ x.alt_text } />
