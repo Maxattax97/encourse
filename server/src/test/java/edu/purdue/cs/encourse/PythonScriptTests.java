@@ -47,7 +47,7 @@ public class PythonScriptTests {
         public ProfessorService professorService;
 
 
-        @Before
+        //@Before
         public void populateDatabase() {
             assertEquals(0, adminService.addAccount("1", "reed226","William", "Reed",
                     "Admin", "J", "reed226@purdue.edu"));
