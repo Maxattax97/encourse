@@ -41,6 +41,13 @@ public class Account {
         public static final int ADMIN = 3;
     }
 
+    public static class Role_Names {
+        public static final String STUDENT = "STUDENT";
+        public static final String TA = "TA";
+        public static final String PROFESSOR = "PROFESSOR";
+        public static final String ADMIN = "ADMIN";
+    }
+
     public Account(String userID, String userName, String firstName, String lastName,
                    int role, String middleInit, String eduEmail) {
         this.userID = userID;

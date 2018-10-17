@@ -8,6 +8,7 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -61,6 +62,8 @@ public class AdminServiceImpl implements AdminService {
         if (auth == null) {
             auth = authorityRepository.findDistinctByName("STUDENT");
         }
+        List<Authority> auths = new ArrayList<>();
+        auths.add(auth);
 
         User user = new User();
         user.setUsername(userName);
@@ -69,7 +72,7 @@ public class AdminServiceImpl implements AdminService {
         user.setAccountLocked(locked);
         user.setCredentialsExpired(cred_expired);
         user.setEnabled(enabled);
-        user.setAuthorities(Arrays.asList(auth));
+        user.setAuthorities(auths);
         userRepository.save(user);
         user.setPassword(null);
         return user;
@@ -89,23 +92,21 @@ public class AdminServiceImpl implements AdminService {
         Iterator<Authority> auths = loggedIn.getAuthorities().iterator();
         while (auths.hasNext()) {
             String au = auths.next().getAuthority();
-            System.out.println("AUTHORITY: " + au);
             switch (au) {
-                case "STUDENT":
+                case Account.Role_Names.STUDENT:
                     if (sentRequest.getUserName().contentEquals(userName)) {
                         hasAuth = true;
                         break;
                     }
                     break;
-                case "TA":
+                case Account.Role_Names.TA:
                     List<TeachingAssistantStudent> teachingAssistantStudents = teachingAssistantStudentRepository.findByIdTeachingAssistantID(sentRequest.getUserID());
                     if (teachingAssistantStudents.contains(account)) {
                         hasAuth = true;
                         break;
                     }
                     break;
-                case "PROFESSOR":
-                    System.out.println("PROFESSOR: " + sentRequest.getUserID());
+                case Account.Role_Names.PROFESSOR:
 
                     List<StudentSection> studentSections = studentSectionRepository.findByIdStudentID(account.getUserID());
                     List<ProfessorCourse> professorCourses = professorCourseRepository.findByIdProfessorID(sentRequest.getUserID());
@@ -114,11 +115,7 @@ public class AdminServiceImpl implements AdminService {
 
                     for (StudentSection ss: studentSections) {
                         Section section = sectionRepository.findBySectionIdentifier(ss.getSectionIdentifier());
-                        System.out.println("SECTION COURSE: " + section.getCourseID());
-                        System.out.println("SECTION SEMESTER: " + section.getSemester());
                         for (ProfessorCourse pc: professorCourses) {
-                            System.out.println("COURSE: " + pc.getCourseID());
-                            System.out.println("SEMESTER: " + pc.getSemester());
                             if (pc.getCourseID().contentEquals(section.getCourseID()) && pc.getSemester().contentEquals(section.getSemester())) {
                                 hasAuth = true;
                                 break;
@@ -126,8 +123,7 @@ public class AdminServiceImpl implements AdminService {
                         }
                     }
                     break;
-                case "ADMIN":
-                    System.out.println("ADMIN AUTHORITY");
+                case Account.Role_Names.ADMIN:
                     hasAuth = true;
                     break;
             }
@@ -138,14 +134,36 @@ public class AdminServiceImpl implements AdminService {
         return hasAuth;
     }
 
+    public int modifyAuthority(@NonNull String userName, String role) {
+        Account a = accountRepository.findByUserName(userName);
+        if (a == null) {
+            return -1;
+        }
+        deleteAccount(userName);
+        int result = addAccount(a.getUserID(), a.getUserName(), a.getFirstName(), a.getLastName(), role, a.getMiddleInit(), a.getEduEmail());
+        User user = userRepository.findByUsername(userName);
+        if (user == null) {
+            return -2;
+        }
+        List<Authority> auths = new ArrayList<>();
+        Authority auth = authorityRepository.findDistinctByName(role);
+        if (auth == null) {
+            return -3;
+        }
+        auths.add(auth);
+        user.setAuthorities(auths);
+        userRepository.save(user);
+        return result;
+    }
+
     public int addAccount(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName,
                           @NonNull String type, String middleInit, String eduEmail) {
         int result;
         switch(type) {
-            case "Student": result = addStudent(userID, userName, firstName, lastName, middleInit, eduEmail); break;
-            case "TA": result = addTA(userID, userName, firstName, lastName, middleInit, eduEmail); break;
-            case "Professor": result = addProfessor(userID, userName, firstName, lastName, middleInit, eduEmail); break;
-            case "Admin": result = addAdmin(userID, userName, firstName, lastName, middleInit, eduEmail); break;
+            case Account.Role_Names.STUDENT: result = addStudent(userID, userName, firstName, lastName, middleInit, eduEmail); break;
+            case Account.Role_Names.TA: result = addTA(userID, userName, firstName, lastName, middleInit, eduEmail); break;
+            case Account.Role_Names.PROFESSOR: result = addProfessor(userID, userName, firstName, lastName, middleInit, eduEmail); break;
+            case Account.Role_Names.ADMIN: result = addAdmin(userID, userName, firstName, lastName, middleInit, eduEmail); break;
             default: result = -1;
         }
         return result;

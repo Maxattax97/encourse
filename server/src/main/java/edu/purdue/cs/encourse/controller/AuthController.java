@@ -60,8 +60,16 @@ public class AuthController {
     public @ResponseBody ResponseEntity<?> modifyAccount(@RequestParam(name = "userName") String userName,
                                                          @RequestParam(name = "field") String field,
                                                          @RequestParam(name = "value") String value) {
-        //User u = getUserFromAuth();
         int result = adminService.modifyAccount(userName, field, value);
+        HttpStatus status = (result == 0)? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
+        return new ResponseEntity<>(result, status);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @RequestMapping(value = "/modify/authority", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> modifyAuthority(@RequestParam(name = "userName") String userName,
+                                                           @RequestParam(name = "role") String role) {
+        int result = adminService.modifyAuthority(userName, role);
         HttpStatus status = (result == 0)? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
         return new ResponseEntity<>(result, status);
     }
@@ -106,32 +114,27 @@ public class AuthController {
         User user;
         try {
             Account a = new ObjectMapper().readValue(json, Account.class);
-            String userType;
-            String accountType;
+            String type;
             switch (a.getRole()) {
                 case Account.Roles.ADMIN:
-                    userType = "ADMIN";
-                    accountType = "Admin";
+                    type = Account.Role_Names.ADMIN;
                     break;
                 case Account.Roles.PROFESSOR:
-                    userType = "PROFESSOR";
-                    accountType = "Professor";
+                    type = Account.Role_Names.PROFESSOR;
                     break;
                 case Account.Roles.TA:
-                    userType = "TA";
-                    accountType = "TA";
+                    type = Account.Role_Names.TA;
                     break;
                 case Account.Roles.STUDENT:
                 default:
-                    userType = "STUDENT";
-                    accountType = "Student";
+                    type = Account.Role_Names.STUDENT;
             }
-            result = adminService.addAccount(a.getUserID(), a.getUserName(), a.getFirstName(), a.getLastName(), accountType, a.getMiddleInit(), a.getEduEmail());
+            result = adminService.addAccount(a.getUserID(), a.getUserName(), a.getFirstName(), a.getLastName(), type, a.getMiddleInit(), a.getEduEmail());
             String genPassword = emailService.sendGeneratedPasswordMessage(a);
             if (password == null || password.isEmpty()) {
                 password = genPassword;
             }
-            user = adminService.addUser(a.getUserName(), password, userType, false, false, false, true);
+            user = adminService.addUser(a.getUserName(), password, type, false, false, false, true);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
