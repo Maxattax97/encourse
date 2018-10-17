@@ -3,3 +3,19 @@
 .top-nav {
   @include set-rem-safe(height, 4rem);
 }
+
+.side-nav-left {
+  float:right;
+  width: 100%;
+  min-width: 180px;
+  max-width: 240px;
+  margin-bottom: 32px;
+}
+
+.side-nav-right {
+  float:left;
+  width: 100%;
+  min-width: 180px;
+  max-width: 240px;
+  margin-bottom: 32px;
+}

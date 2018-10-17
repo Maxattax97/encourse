@@ -83,10 +83,9 @@ class StudentPanel extends Component {
                     { ...this.props }/>
 
                 <div className="panel-right-nav">
-                    <div className={ `panel-student-side-content${this.state.modal_blur}` }>
-                        <ActionNavigation />
-                        <Card component={ <CommitHistory projectID={this.props.currentProjectID} id={this.props.currentStudent.id} /> } />
-                    </div>
+                    <div className='top-nav' />
+                    <ActionNavigation />
+                    <CommitHistory projectID={this.props.currentProjectID} id={this.props.currentStudent.id} />
                 </div>
 
                 <div className="panel-center-content">

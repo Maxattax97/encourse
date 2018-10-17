@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Card } from '../../Helpers'
+import {Card, Title} from '../../Helpers'
 
 import { getCommitHistory } from '../../../redux/actions/index'
 import url from '../../../server'
@@ -47,37 +47,39 @@ class CommitHistory extends Component {
 
     render() {
         return (
-            <div className="student-commit-log">
-                <div className="title">
-                    <h3>Commit History</h3>
-                </div>
-                <h3 className="break-line title" />
-                <div className="student-commits float-height card-overflow">
-                    {
-                        this.state.formattedData &&
-                        this.state.formattedData.map((commit) =>
-                            <Card key={commit.date} component={
-                                <div className="student-commit-container">
-                                    <h5>
-                                        { commit.date }
-                                    </h5>
-                                    <h5>
-                                        Main Changes
-                                    </h5>
-                                    <ul>
-                                        {
-                                            commit.files.map((file) =>
-                                                <li key={file}>
-                                                    { file }
-                                                </li>
-                                            )
-                                        }
-                                    </ul>
-                                </div>
-                            } />
-                        )
-                    }
-                </div>
+            <div className="commits-container side-nav-right">
+                <Card component={
+                    <div className='commits'>
+                        <Title header={ <h3 className='header'>History</h3> }/>
+                        <div className="h3 break-line header" />
+                        <div className="float-height card-overflow">
+                            {
+                                this.state.formattedData &&
+                                this.state.formattedData.map((commit) =>
+                                    <Card key={commit.date} component={
+                                        <div className="student-commit-container">
+                                            <h5>
+                                                { commit.date }
+                                            </h5>
+                                            <h5>
+                                                Main Changes
+                                            </h5>
+                                            <ul>
+                                                {
+                                                    commit.files.map((file) =>
+                                                        <li key={file}>
+                                                            { file }
+                                                        </li>
+                                                    )
+                                                }
+                                            </ul>
+                                        </div>
+                                    } />
+                                )
+                            }
+                        </div>
+                    </div>
+                } />
             </div>
         )
     }

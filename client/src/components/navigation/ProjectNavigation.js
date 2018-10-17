@@ -47,7 +47,7 @@ class ProjectNavigation extends Component {
         return (
             <div className="projects-nav-container">
                 <div className="panel-left-nav">
-                    <div className="projects-nav">
+                    <div className="projects-nav side-nav-left">
                         <div className={ `top-nav svg-icon float-height${ this.props.backClick ? ' action' : '' }` } onClick={ this.props.backClick }>
                             <h3>
                                 { this.props.back }
