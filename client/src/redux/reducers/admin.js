@@ -81,17 +81,17 @@ function admin(state = {}, action) {
             modifyAccountIsLoading: action.isLoading,
         })
     case 'MODIFY_ACCOUNT_DATA_SUCCESS':
-        let accounts = [...state.getAccountsData]
-        let id = action.data.userID
-        for(let i = 0; i < accounts.length; i++) {
-            if(accounts[i].userID === id) {
-                accounts[i] = action.data;
-                break;
+        let accounts1 = [...state.getAccountsData]
+        let id1 = action.data.userID
+        for(let i = 0; i < accounts1.length; i++) {
+            if(accounts1[i].userID === id1) {
+                accounts1[i] = action.data
+                break
             }
         }
         return Object.assign({}, state, {
             modifyAccountData: action.data,
-            getAccountsData: accounts
+            getAccountsData: accounts1
         })
     case 'REMOVE_ACCOUNT_HAS_ERROR':
         return Object.assign({}, state, {
@@ -102,8 +102,17 @@ function admin(state = {}, action) {
             removeAccountIsLoading: action.isLoading,
         })
     case 'REMOVE_ACCOUNT_DATA_SUCCESS':
+        let accounts2 = [...state.getAccountsData]
+        let id2 = action.data.userID
+        for(let i = 0; i < accounts2.length; i++) {
+            if(accounts2[i].userID === id2) {
+                accounts2.splice(i, 1)
+                break
+            }
+        }
         return Object.assign({}, state, {
             removeAccountData: action.data,
+            getAccountsData: accounts2,
         })
     default:
         return state

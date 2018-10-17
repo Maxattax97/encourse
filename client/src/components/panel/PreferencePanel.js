@@ -149,7 +149,7 @@ class PreferencePanel extends Component {
 
     deleteAccount = () => {
         //TODO!: add parameter to delete any account
-        this.props.removeAccount(`${url}/api/delete/user?userName=${this.props.account.userName}`,
+        this.props.removeAccount(`${url}/api/delete/user?userName=${this.state.name}`,
             {'Authorization': `Bearer ${this.props.token}`})
 
         this.resetOptions()
