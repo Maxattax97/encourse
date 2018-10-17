@@ -167,8 +167,16 @@ class PreferencePanel extends Component {
                 }))
         } else {
             //Edit account
-            this.props.modifyAccount(`${url}/api/modify/authority?userName=${this.state.username}&role=${this.state.account_type}`,
-                {'Authorization': `Bearer ${this.props.token}`})
+            this.props.modifyAccount(`${url}/api/modify/account?userName=${this.state.username}`,
+                {'Authorization': `Bearer ${this.props.token}`,
+                'Content-Type': 'application/json'}, JSON.stringify({
+                    userID: this.state.id,
+                    userName: this.state.username,
+                    firstName: this.state.first_name,
+                    lastName: this.state.last_name,
+                    role: this.state.account_type,
+                    eduEmail: this.state.email
+                }))
         }
 
     };
@@ -300,11 +308,11 @@ class PreferencePanel extends Component {
                                 <h4 className="header">
                                        Username
                                 </h4>
-                                <input list="student_directory" className="h3-size" value={this.state.username} onChange={this.onChange} name="username" ref="username" autoComplete="off"/>
+                                <input list="student_directory" disabled={this.state.current_account !== -1} className="h3-size" value={this.state.username} onChange={this.onChange} name="username" ref="username" autoComplete="off"/>
                                 <h4 className="header">
                                        University ID
                                 </h4>
-                                <input list="student_directory" className="h3-size" value={this.state.id} onChange={this.onChange} name="id" ref="id" autoComplete="off"/>
+                                <input list="student_directory" disabled={this.state.current_account !== -1} className="h3-size" value={this.state.id} onChange={this.onChange} name="id" ref="id" autoComplete="off"/>
                                 <h4 className="header">
                                        University E-mail
                                 </h4>
