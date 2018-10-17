@@ -54,10 +54,10 @@ public class StudentProjectTest {
 
     public String getTestResultString() {
         if(isPassing()) {
-            return getTestScriptName() + ":" + pointsWorth;
+            return getTestScriptName() + ":P:" + pointsWorth;
         }
         else {
-            return getTestScriptName() + ":" + 0.0;
+            return getTestScriptName() + ":F:" + pointsWorth;
         }
     }
 }
