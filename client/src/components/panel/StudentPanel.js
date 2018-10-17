@@ -100,9 +100,9 @@ class StudentPanel extends Component {
                         <Summary header={ <h3 className='header'>Student Charts</h3> }
                             columns={ 2 }
                             data={ [
-                                <StudentProgressLineGraph projectID={this.props.currentProjectID} key={1}/>,
-                                <CodeChangesChart projectID={this.props.currentProjectID} key={2}/>,
-                                <CommitFrequencyHistogram projectID={this.props.currentProjectID} key={3}/>
+                                <StudentProgressLineGraph projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={1}/>,
+                                <CodeChangesChart projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={2}/>,
+                                <CommitFrequencyHistogram projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={3}/>
                             ] }
                             className='charts'
                             iterator={ (chart) => <Card key={ chart.key } component={ chart } /> } />

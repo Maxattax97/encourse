@@ -51,7 +51,7 @@ class CodeChangesChart extends Component {
     }
 
     formatApiData = (udata) => {
-        if (!udata) {
+        if (!udata || !udata.data) {
             return defaultData
         }
         const data = udata.data

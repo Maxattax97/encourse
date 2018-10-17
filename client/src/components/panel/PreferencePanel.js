@@ -135,13 +135,12 @@ class PreferencePanel extends Component {
                     sectionType: this.state.section_type,
                 }))
         } else {
-            //Edit course
+            //Edit course: Should not be possible
             this.props.modifyCourse(/*TODO: add endpoint*/)
         }
     };
 
     saveAccount = () => {
-        //TODO!: verify this works
         if(this.state.current_account === -1) {
             //Add account
             this.props.addAccount(`${url}/api/add/account`,
@@ -179,8 +178,7 @@ class PreferencePanel extends Component {
     };
 
     deleteAccount = () => {
-        //TODO!: add parameter to delete any account
-        this.props.removeAccount(`${url}/api/delete/user?userName=${this.state.name}`,
+        this.props.removeAccount(`${url}/api/delete/user?userName=${this.state.username}`,
             {'Authorization': `Bearer ${this.props.token}`})
 
         this.resetOptions()
