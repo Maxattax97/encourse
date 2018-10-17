@@ -54,6 +54,8 @@ def jsonify(test_data, hidden):
     # Collect scores for each test
     for student in test_data:
         info = test_data[student]
+        if not isinstance(info, dict) or isinstance(info, dict) and "tests" not in info:
+            continue
         test_scores = info["tests"]
         for test_name in test_scores:
             passed, score = test_scores[test_name]
@@ -87,7 +89,7 @@ def merge_data(visible, hidden):
     """Combines the visible and hidden test cases into a single json"""
     visible = list(json.loads(visible))
     hidden = list(json.loads(hidden))
-    visible.append(hidden)
+    visible += hidden
     return json.dumps(visible)
 
 
@@ -104,8 +106,9 @@ if __name__ == "__main__":
 
     visible_data = get_test_scores(visible_test_score_file)
     hidden_data = get_test_scores(hidden_test_score_file)
-
+    eprint(visible_data)
     formatted_visible = jsonify(visible_data, False)
     formatted_hidden = jsonify(hidden_data, True)
+    eprint(formatted_visible)
     api_json = merge_data(formatted_visible, formatted_hidden)
     print(api_json)

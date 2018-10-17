@@ -36,6 +36,7 @@ def get_test_completion(test_file):
         line = " ".join(line.split("\t"))
 
         words = line.split(";")
+        #eprint(words)
         if len(words) == 0 or words == [""]:
             continue
         name = words[0]
@@ -47,13 +48,15 @@ def get_test_completion(test_file):
             test, passed, score = word.split(":")
             score = float(score)
             passed = True if passed == "P" else False
-            # print(test,score)
+            #eprint(test, passed, score)
             tests[test] = (passed, score)
             if passed:
                 test_score += score
             total_score += score
         if total_score == 0:
-            return {"tests": tests, "total": 0}
+            #eprint("no tests")
+            students[name] = {"tests": tests, "total": 0}
+            continue
         students[name] = {"tests": tests, "total": test_score * 100 / total_score}
     return students
 
