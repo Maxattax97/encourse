@@ -18,11 +18,11 @@ function auth(state = {}, action) {
             logOutHasError: action.hasError,
         })
     case 'LOG_OUT_IS_LOADING':
+        if(localStorage.getItem('token') != null) localStorage.removeItem('token')
         return Object.assign({}, state, {
             logOutIsLoading: action.isLoading,
         })
     case 'LOG_OUT_DATA_SUCCESS':
-        if(localStorage.getItem('token') != null) localStorage.removeItem('token')
         return Object.assign({}, state, {
             logInData: null,
         })
