@@ -113,7 +113,7 @@ if __name__ == "__main__":
         else get_progress(commit_data_file)
     )
     individual_data = data[student_id]
-    # print("\n")
+
     reformatted_data = reformat(individual_data)
 
     commit_times = commit_data(commit_times_file)
