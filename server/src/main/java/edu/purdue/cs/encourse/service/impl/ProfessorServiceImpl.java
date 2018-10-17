@@ -129,7 +129,8 @@ public class ProfessorServiceImpl implements ProfessorService {
             StudentProjectTest studentProjectTest =
                     studentProjectTestRepository.findByIdProjectIdentifierAndIdTestScriptNameAndIdStudentID(projectID, testName, studentID);
             if(studentProjectTest == null) {
-                studentProjectTest = new StudentProjectTest(studentID, projectID, testName, isPassing, isHidden);
+                ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
+                studentProjectTest = new StudentProjectTest(studentID, projectID, testName, isPassing, isHidden, testScript.getPointsWorth());
                 studentProjectTestRepository.save(studentProjectTest);
             }
             else {
@@ -684,7 +685,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Uploads a testing script to testcases directory in the course hub **/
-    public int uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents, boolean isHidden, int points) {
+    public int uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents, boolean isHidden, double points) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return -1;
@@ -719,7 +720,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Adds a testing script to the database. Mainly for testing purposes **/
-    public int addTestScript(@NonNull String projectID, @NonNull String testName, boolean isHidden, int points) {
+    public int addTestScript(@NonNull String projectID, @NonNull String testName, boolean isHidden, double points) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return -1;

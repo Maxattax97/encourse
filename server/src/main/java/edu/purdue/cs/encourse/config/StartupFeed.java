@@ -116,16 +116,49 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 30);
             professorService.runTestall(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));
 
-            try {
-                BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/tests.txt"));
-                String testName = null;
-                while((testName = fileReader.readLine()) != null) {
-                    professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), testName, false, 1);
-                }
-            }
-            catch(IOException e) {
-                e.printStackTrace();
-            }
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_redirect_input", false, 2);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_redirect_output", false, 2);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_redirect_error", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_redirect_error2", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_redirect_out_err", false, 2);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_redirect_multiple", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_append_output", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_pipes1", false, 2);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_pipes2", false, 2);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_pipes_redirect_out", false, 2);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_pipes_redirect_err", false, 2);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_background", false, 2);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_zombie", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_printenv", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_setenv", false, 0.5);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_unsetenv", false, 0.5);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_source", false, 2);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_cd1", false, 0.5);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_cd2", false, 0.5);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_cd3", false, 0.5);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_cd4", false, 0.5);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_parsing1", false, 0.5);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_parsing2", false, 0.5);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_quotes1", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_quotes2", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_escape", false, 2);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_subshell", false, 10);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_env_expand1", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_env_expand2", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_env_var_shell", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_env_var_dollar", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_env_var_question", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_env_var_bang", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_env_var_uscore", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "wildcards1", false, 3);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "wildcards2", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "wildcards3", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "wildcards4", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "wildcards5", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "wildcards6", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "wildcards7", false, 1);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_tilde", false, 2);
+            professorService.addTestScript(Project.createProjectID("cs252", "Fall2018", "Shell"), "test_robustness", false, 10);
             professorService.runTestall(Project.createProjectID("cs252", "Fall2018", "Shell"));
 
             List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(Project.createProjectID("cs252", "Fall2018", "MyMalloc"));

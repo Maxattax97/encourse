@@ -26,12 +26,13 @@ public class StudentProjectTest {
 
     /** Number of points earned for passing the test script **/
     @Setter
-    int pointsWorth;
+    double pointsWorth;
 
-    public StudentProjectTest(String studentID, String projectIdentifier, String testScriptName, boolean isPassing, boolean isHidden) {
+    public StudentProjectTest(String studentID, String projectIdentifier, String testScriptName, boolean isPassing, boolean isHidden, double pointsWorth) {
         this.id = new StudentProjectTestID(studentID, projectIdentifier, testScriptName);
         this.isPassing = isPassing;
         this.isHidden = isHidden;
+        this.pointsWorth = pointsWorth;
     }
 
     public StudentProjectTest() {
@@ -53,10 +54,10 @@ public class StudentProjectTest {
 
     public String getTestResultString() {
         if(isPassing()) {
-            return getTestScriptName() + ":P";
+            return getTestScriptName() + ":" + pointsWorth;
         }
         else {
-            return getTestScriptName() + ":F";
+            return getTestScriptName() + ":" + 0;
         }
     }
 }
