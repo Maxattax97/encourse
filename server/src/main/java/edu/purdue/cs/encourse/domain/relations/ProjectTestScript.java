@@ -22,9 +22,9 @@ public class ProjectTestScript {
 
     /** Number of points earned for passing the test script **/
     @Setter
-    int pointsWorth;
+    double pointsWorth;
 
-    public ProjectTestScript(String projectIdentifier, String testScriptName, boolean isHidden, int pointsWorth) {
+    public ProjectTestScript(String projectIdentifier, String testScriptName, boolean isHidden, double pointsWorth) {
         this.id = new ProjectTestScriptID(projectIdentifier, testScriptName);
         this.isHidden = isHidden;
         this.pointsWorth = pointsWorth;
