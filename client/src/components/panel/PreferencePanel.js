@@ -133,7 +133,7 @@ class PreferencePanel extends Component {
                 {'Authorization': `Bearer ${this.props.token}`})
         } else {
             //Edit account
-            this.props.modifyAccount(`${url}/api/modify/account?userName=${this.state.name}&field=role&value=${this.state.account_type}`,
+            this.props.modifyAccount(`${url}/api/modify/authority?userName=${this.state.name}&role=${this.state.account_type}`,
                 {'Authorization': `Bearer ${this.props.token}`})
         }
 
@@ -247,10 +247,10 @@ class PreferencePanel extends Component {
                                        Account Type
                                 </h4>
                                 <select className="h3-size" value={this.state.account_type} onChange={this.onChange} name="account_type" ref="account_type">
-                                    <option value="admin">Admin</option>
-                                    <option value="professor">Professor</option>
-                                    <option value="ta">TA</option>
-                                    <option value="student">Student</option>
+                                    <option value="ADMIN">Admin</option>
+                                    <option value="PROFESSOR">Professor</option>
+                                    <option value="TA">TA</option>
+                                    <option value="STUDENT">Student</option>
                                 </select>
                                 <div className="modal-buttons float-height">
                                     <div onClick={ this.deleteAccount }>

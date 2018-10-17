@@ -81,8 +81,17 @@ function admin(state = {}, action) {
             modifyAccountIsLoading: action.isLoading,
         })
     case 'MODIFY_ACCOUNT_DATA_SUCCESS':
+        let accounts = [...state.getAccountsData]
+        let id = action.data.userID
+        for(let i = 0; i < accounts.length; i++) {
+            if(accounts[i].userID === id) {
+                accounts[i] = action.data;
+                break;
+            }
+        }
         return Object.assign({}, state, {
             modifyAccountData: action.data,
+            getAccountsData: accounts
         })
     case 'REMOVE_ACCOUNT_HAS_ERROR':
         return Object.assign({}, state, {
