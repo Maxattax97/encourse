@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import logoutIcon from '../../resources/logout.svg'
 import { history } from '../../redux/store'
 import { logOut } from '../../redux/actions/index'
 import url from '../../server'

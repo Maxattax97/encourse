@@ -53,7 +53,7 @@ class CoursePanel extends Component {
 
                 <div className='panel-right-nav'>
                     <div className='top-nav' />
-                    <ActionNavigation actions={[() => {}, () => {}, () => {}, () => {}, () => {}]}/>
+                    <ActionNavigation actions={[() => {}, () => {}, () => {}, () => {}, () => {}]} action_names={['Manage Teaching Assistants', 'Run Tests', 'Academic Dishonesty Report']}/>
                 </div>
 
                 <CourseModal show={ this.state.show_course_options }
@@ -67,7 +67,7 @@ class CoursePanel extends Component {
                             icon={ settings } />
                         <div className='h1 break-line header' />
 
-                        <Summary header={ <h3 className='header'>Course Charts</h3> }
+                        <Summary header={ <h3 className='header'>Course Charts Summary</h3> }
                             columns={ 2 }
                             data={ [
                                 <ClassProgressHistogram projectID={this.props.currentProjectId} key={1}/>,
@@ -78,7 +78,7 @@ class CoursePanel extends Component {
 
                         <div className='h1 break-line' />
 
-                        <Summary header={ <h3 className='header'>Students</h3> }
+                        <Summary header={ <h3 className='header'>Students Summary</h3> }
                             columns={ 5 }
                             data={ this.props.students }
                             className='course-students'
