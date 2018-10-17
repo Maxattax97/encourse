@@ -73,8 +73,8 @@ public class WriteController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/professorToCourse", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> addProfessorToCourse(@RequestParam(name = "userName") String userName,
-                                                              @RequestParam(name = "courseID") String courseID,
-                                                              @RequestParam(name = "semester") String semester) {
+                                                                @RequestParam(name = "courseID") String courseID,
+                                                                @RequestParam(name = "semester") String semester) {
         int result = adminService.assignProfessorToCourse(userName, courseID, semester);
         HttpStatus status = (result == 0)? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
         return new ResponseEntity<>(result, status);

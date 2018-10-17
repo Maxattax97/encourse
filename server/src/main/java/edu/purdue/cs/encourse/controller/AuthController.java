@@ -125,8 +125,7 @@ public class AuthController {
     @RequestMapping(value = "/add/account", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity<?> createAccount(@RequestParam(name = "password", required = false) String password, @RequestBody String json) {
 
-        int result;
-        Account account = null;
+        Account account;
         try {
             Account a = new ObjectMapper().readValue(json, Account.class);
             String type;
@@ -144,7 +143,7 @@ public class AuthController {
                 default:
                     type = Account.Role_Names.STUDENT;
             }
-            result = adminService.addAccount(a.getUserID(), a.getUserName(), a.getFirstName(), a.getLastName(), type, a.getMiddleInit(), a.getEduEmail());
+            adminService.addAccount(a.getUserID(), a.getUserName(), a.getFirstName(), a.getLastName(), type, a.getMiddleInit(), a.getEduEmail());
             String genPassword = emailService.sendGeneratedPasswordMessage(a);
             if (password == null || password.isEmpty()) {
                 password = genPassword;
