@@ -69,6 +69,13 @@ public class ReadController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/sections", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getAllSections() {
+        List<Section> sections = adminService.findAllSections();
+        return new ResponseEntity<>(sections, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/coursesData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getProjectData(@RequestParam(name = "userName") String userName) {
         if (hasPermissionOverAccount(userName)) {

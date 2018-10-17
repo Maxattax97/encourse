@@ -304,6 +304,7 @@ public class AdminServiceImpl implements AdminService {
             case "firstName": account.setFirstName(value); break;
             case "middleInitial": account.setMiddleInit(value); break;
             case "lastName": account.setLastName(value); break;
+            case "eduEmail": account.setEduEmail(value); break;
             default: break;
         }
 
@@ -362,6 +363,10 @@ public class AdminServiceImpl implements AdminService {
             return null;
         }
         return sectionRepository.save(section);
+    }
+
+    public Section retrieveSection(@NonNull String sectionID) {
+        return sectionRepository.findBySectionIdentifier(sectionID);
     }
 
     public int deleteSection(@NonNull String sectionID) {
@@ -439,5 +444,7 @@ public class AdminServiceImpl implements AdminService {
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
+
+    public List<Section> findAllSections() { return sectionRepository.findAll(); }
 
 }

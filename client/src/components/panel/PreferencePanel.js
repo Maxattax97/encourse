@@ -25,20 +25,6 @@ class PreferencePanel extends Component {
         super(props)
 
         this.state = {
-            courses: [{
-                name: 'CS252',
-                semester: 'Fall2018',
-                professor: 'Gustavo',
-                id: '1'
-            }],
-            accounts: [{
-                login: 'kleclain',
-                account_type: 'admin',
-                course_professor: [],
-                course_ta: [],
-                id: '1'
-            }],
-            name: '',
             semester: '',
             account_type: '',
             show_course_options: false,
@@ -51,7 +37,7 @@ class PreferencePanel extends Component {
 
     componentDidMount = () => {
         if(this.props.courses.length === 0) {
-            this.props.getCourses(/*TODO!: add endpoint*/'',
+            this.props.getCourses(`${url}/api/sections`,
                 {'Authorization': `Bearer ${this.props.token}`})
         }
         if(this.props.accounts.length === 0) {
@@ -81,15 +67,15 @@ class PreferencePanel extends Component {
     getRole = (role) => {
         switch(role) {
         case 0:
-            return 'student'
+            return 'STUDENT'
         case 1:
             return 'TA'
         case 2:
-            return 'professor'
+            return 'PROFESSOR'
         case 3:
-            return 'admin'
+            return 'ADMIN'
         default:
-            return 'student'
+            return 'STUDENT'
         }
     }
 
@@ -98,30 +84,59 @@ class PreferencePanel extends Component {
             show_course_options: true,
             current_course: index,
             modal_blur: ' blur',
-            name: this.state.courses[index].name,
-            semester: this.state.courses[index].semester
+            number: this.props.courses[index].courseID,
+            semester: this.props.courses[index].semester,
+            title: this.props.courses[index].courseTitle,
+            crn: this.props.courses[index].crn,
+            section_type: this.props.courses[index].sectionType,
+            professor: this.props.courses[index].userName,
         })
-    };
+    }
 
     displayAccountOptions = (index) => {
         this.setState({
             show_account_options: true,
             current_account: index,
             modal_blur: ' blur',
-            name: this.props.accounts[index].userName,
+            first_name: this.props.accounts[index].firstName,
+            last_name: this.props.accounts[index].lastName,
+            id: this.props.accounts[index].userID,
+            email: this.props.accounts[index].eduEmail,
+            username: this.props.accounts[index].userName,
             account_type: this.getRole(this.props.accounts[index].role)
         })
     };
 
+    getRoleInt = (role) => {
+        switch(role) {
+        case 'STUDENT':
+            return 0
+        case 'TA':
+            return 1
+        case 'PROFESSOR':
+            return 2
+        case 'ADMIN':
+            return 3
+        default:
+            return 0
+        }
+    }
+
     saveCourse = () => {
-        //TODO!: verify this works
         if(this.state.current_course === -1) {
             //Add course
-            this.props.addCourse(`${url}/api/add/course?courseID=${this.state.name}&semester=${this.state.semester}`,
-                {'Authorization': `Bearer ${this.props.token}`})
+            this.props.addCourse(`${url}/api/add/section?userName=${this.state.professor}`,
+                {'Authorization': `Bearer ${this.props.token}`,
+                'Content-Type': 'application/json'}, JSON.stringify({
+                    CRN: this.state.crn,
+                    semester: this.state.semester,
+                    courseID: this.state.number,
+                    courseTitle: this.state.title,
+                    sectionType: this.state.section_type,
+                }))
         } else {
-            this.props.modifyCourse(/*TODO: add endpoint*/)
             //Edit course
+            this.props.modifyCourse(/*TODO: add endpoint*/)
         }
     };
 
@@ -129,12 +144,28 @@ class PreferencePanel extends Component {
         //TODO!: verify this works
         if(this.state.current_account === -1) {
             //Add account
-            this.props.addAccount(`${url}/api/add/user?userName=${this.state.name}&type=${this.state.account_type}`,
-                {'Authorization': `Bearer ${this.props.token}`})
+            this.props.addAccount(`${url}/api/add/account`,
+                {'Authorization': `Bearer ${this.props.token}`,
+                'Content-Type': 'application/json'}, JSON.stringify({
+                    userID: this.state.id,
+                    userName: this.state.username,
+                    firstName: this.state.first_name,
+                    lastName: this.state.last_name,
+                    role: this.getRoleInt(this.state.account_type),
+                    eduEmail: this.state.email
+                }))
         } else {
             //Edit account
-            this.props.modifyAccount(`${url}/api/modify/authority?userName=${this.state.name}&role=${this.state.account_type}`,
-                {'Authorization': `Bearer ${this.props.token}`})
+            this.props.modifyAccount(`${url}/api/modify/account?userName=${this.state.username}`,
+                {'Authorization': `Bearer ${this.props.token}`,
+                'Content-Type': 'application/json'}, JSON.stringify({
+                    userID: this.state.id,
+                    userName: this.state.username,
+                    firstName: this.state.first_name,
+                    lastName: this.state.last_name,
+                    role: this.state.account_type,
+                    eduEmail: this.state.email
+                }))
         }
 
     };
@@ -171,9 +202,9 @@ class PreferencePanel extends Component {
                                 <h3>Courses</h3>
                             </div>
                             {
-                                this.state.courses && this.state.courses.map &&
-                                this.state.courses.map((course, index) =>
-                                    <Card key={course.id}
+                                this.props.courses && this.props.courses.map &&
+                                this.props.courses.map((course, index) =>
+                                    <Card key={course.sectionIdentifier}
                                         component={<CoursePreview course={course}/>}
                                         onClick={ () => this.displayCourseOptions(index) }/>)
                             }
@@ -202,13 +233,29 @@ class PreferencePanel extends Component {
                         component={
                             <div className="panel-course-options">
                                 <div className="title">
-                                    <h2>{ this.state.current_course === -1 ? 'New Course' : `Edit Course ${this.state.name}` }</h2>
+                                    <h2>{ this.state.current_course === -1 ? 'New Course' : `Edit Course ${this.state.number}` }</h2>
                                 </div>
                                 <h2 className="break-line title" />
                                 <h4 className="header">
-                                       Course Name
+                                       Course Number
                                 </h4>
-                                <input list="student_directory" className="h3-size" value={this.state.name} onChange={this.onChange} name="name" ref="name" autoComplete="off"/>
+                                <input list="student_directory" className="h3-size" value={this.state.number} onChange={this.onChange} name="number" ref="number" autoComplete="off"/>
+                                <h4 className="header">
+                                       Course Title
+                                </h4>    
+                                <input list="student_directory" className="h3-size" value={this.state.title} onChange={this.onChange} name="title" ref="title" autoComplete="off"/>
+                                <h4 className="header">
+                                       Professor Username
+                                </h4>                             
+                                <input list="student_directory" className="h3-size" value={this.state.professor} onChange={this.onChange} name="professor" ref="professor" autoComplete="off"/>
+                                <h4 className="header">
+                                       CRN
+                                </h4>
+                                <input list="student_directory" className="h3-size" value={this.state.crn} onChange={this.onChange} name="crn" ref="crn" autoComplete="off"/>
+                                <h4 className="header">
+                                       Section Type
+                                </h4>       
+                                <input list="student_directory" className="h3-size" value={this.state.section_type} onChange={this.onChange} name="section_type" ref="section_type" autoComplete="off"/>
                                 <h4 className="header">
                                        Semester
                                 </h4>
@@ -240,9 +287,25 @@ class PreferencePanel extends Component {
                                 </div>
                                 <h2 className="break-line title" />
                                 <h4 className="header">
-                                       Account Name
+                                       First Name
                                 </h4>
-                                <input list="student_directory" className="h3-size" value={this.state.name} onChange={this.onChange} name="name" ref="name" autoComplete="off"/>
+                                <input list="student_directory" className="h3-size" value={this.state.first_name} onChange={this.onChange} name="first_name" ref="first_name" autoComplete="off"/>
+                                <h4 className="header">
+                                       Last Name
+                                </h4>
+                                <input list="student_directory" className="h3-size" value={this.state.last_name} onChange={this.onChange} name="last_name" ref="last_name" autoComplete="off"/>
+                                <h4 className="header">
+                                       Username
+                                </h4>
+                                <input list="student_directory" disabled={this.state.current_account !== -1} className="h3-size" value={this.state.username} onChange={this.onChange} name="username" ref="username" autoComplete="off"/>
+                                <h4 className="header">
+                                       University ID
+                                </h4>
+                                <input list="student_directory" disabled={this.state.current_account !== -1} className="h3-size" value={this.state.id} onChange={this.onChange} name="id" ref="id" autoComplete="off"/>
+                                <h4 className="header">
+                                       University E-mail
+                                </h4>
+                                <input list="student_directory" className="h3-size" value={this.state.email} onChange={this.onChange} name="email" ref="email" autoComplete="off"/>
                                 <h4 className="header">
                                        Account Type
                                 </h4>
@@ -254,7 +317,7 @@ class PreferencePanel extends Component {
                                 </select>
                                 <div className="modal-buttons float-height">
                                     <div onClick={ this.deleteAccount }>
-                                        <img src={deleteIcon} />
+                                        <img src={ deleteIcon } />
                                     </div>
 
                                     <div className="project-options-add" onClick={ this.saveAccount }>
@@ -277,6 +340,7 @@ const mapStateToProps = (state) => {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         courses: state.admin && state.admin.getCoursesData ? state.admin.getCoursesData : [],
         accounts: state.admin && state.admin.getAccountsData ? state.admin.getAccountsData : [],
+        courses: state.admin && state.admin.getCoursesData ? state.admin.getCoursesData : [],
     }
 }
 

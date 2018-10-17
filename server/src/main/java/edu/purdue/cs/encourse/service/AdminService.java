@@ -36,6 +36,7 @@ public interface AdminService {
 
     /** Services for manipulating courses and sections **/
     Section addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType);
+    Section retrieveSection(@NonNull String sectionID);
     int deleteSection(@NonNull String sectionID);
     int assignProfessorToCourse(@NonNull String userName, @NonNull String courseID, @NonNull String semester);
     int registerStudentToSection(@NonNull String userName, @NonNull String sectionID);
@@ -45,4 +46,5 @@ public interface AdminService {
     User addUser(@NonNull String userName, @NonNull String password, @NonNull String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled);
     boolean hasPermissionOverAccount(@NonNull User loggedIn, @NonNull String userName);
     List<User> findAllUsers();
+    List<Section> findAllSections();
 }

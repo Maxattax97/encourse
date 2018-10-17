@@ -1,5 +1,6 @@
 package edu.purdue.cs.encourse.controller;
 
+import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.service.AccountService;
 import edu.purdue.cs.encourse.service.AdminService;
@@ -37,13 +38,13 @@ public class DeleteController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/delete/user", method = RequestMethod.DELETE)
     public @ResponseBody ResponseEntity<?> deleteUser(@RequestParam(name = "userName") String userName) {
-        int result = -1;
         if (hasPermissionOverAccount(userName)) {
+            Account account = accountService.retrieveAccount(userName);
             userDetailsService.deleteAccount(userName);
-            result = adminService.deleteAccount(userName);
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            adminService.deleteAccount(userName);
+            return new ResponseEntity<>(account, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
