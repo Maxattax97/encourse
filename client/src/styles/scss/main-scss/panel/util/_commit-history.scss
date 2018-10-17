@@ -1,0 +1,16 @@
+.commits-container {
+
+  .commits .float-height {
+    max-height: 280px;
+
+    .card {
+      padding: 3px;
+      margin-bottom: 12px;
+    }
+
+    .component {
+      background: white;
+    }
+  }
+
+}

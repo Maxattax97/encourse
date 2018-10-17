@@ -10,5 +10,6 @@ public interface SectionRepository extends CrudRepository<Section, String> {
     Section findBySectionIdentifier(@NonNull String sectionID);
     List<Section> findByCourseID(@NonNull String courseID);
     List<Section> findBySemesterAndCourseID(@NonNull String semester, @NonNull String courseID);
+    List<Section> findAll();
     boolean existsBySectionIdentifier(@NonNull String sectionID);
 }

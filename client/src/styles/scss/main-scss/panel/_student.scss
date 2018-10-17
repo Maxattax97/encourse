@@ -1,3 +1,5 @@
+@import "util/commit-history";
+
 .student-stats-comments {
 
   position:relative;
@@ -42,7 +44,7 @@
     padding-bottom: 16px;
   }
 }
-
+/*
 .panel-student-side-content {
   position:fixed;
   padding-top: calc(20px + 1.17em + 40px);
@@ -70,4 +72,4 @@
       background: white;
     }
   }
-}
+}*/

@@ -118,7 +118,9 @@ input {
 @import "main/summary";
 @import "main/title";
 
+@import "navigation/actions-nav";
 @import "navigation/nav";
+@import "navigation/project-nav";
 
 @import "panel/course";
 @import "panel/project";

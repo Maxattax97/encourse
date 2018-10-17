@@ -590,6 +590,58 @@ div.title img {
   height: 4rem;
 }
 
+.side-nav-left {
+  float: right;
+  width: 100%;
+  min-width: 180px;
+  max-width: 240px;
+  margin-bottom: 32px;
+}
+
+.side-nav-right {
+  float: left;
+  width: 100%;
+  min-width: 180px;
+  max-width: 240px;
+  margin-bottom: 32px;
+}
+
+.projects-nav .top-nav img {
+  width: 24px;
+  width: 1.5rem;
+  height: 24px;
+  height: 1.5rem;
+  margin-top: 20px;
+  margin-top: 1.25rem;
+  float: right;
+}
+
+.projects-nav .top-nav h3 {
+  margin-top: 21.6px;
+  margin-top: 1.35rem;
+  float: right;
+}
+
+.projects-nav .card {
+  width: 100%;
+}
+
+.projects-nav .card .component {
+  width: 100%;
+}
+
+.projects-nav .projects-highlight {
+  color: #1f1e1ccc;
+  background-image: linear-gradient(to right, #e8e8e800, #0057A755 100%);
+}
+
+.projects-nav .projects-new img {
+  width: 20px;
+  width: 1.25rem;
+  height: 20px;
+  height: 1.25rem;
+}
+
 .panel-course .course-students .float-height * {
   cursor: pointer;
 }
@@ -627,49 +679,6 @@ div.title img {
   color: #1f1f1f;
   font-size: 12px;
   font-size: 0.75rem;
-}
-
-.projects-nav {
-  float: right;
-  width: 100%;
-  min-width: 180px;
-  max-width: 240px;
-}
-
-.projects-nav .top-nav img {
-  width: 24px;
-  width: 1.5rem;
-  height: 24px;
-  height: 1.5rem;
-  margin-top: 20px;
-  margin-top: 1.25rem;
-  float: right;
-}
-
-.projects-nav .top-nav h3 {
-  margin-top: 21.6px;
-  margin-top: 1.35rem;
-  float: right;
-}
-
-.projects-nav .card {
-  width: 100%;
-}
-
-.projects-nav .card .component {
-  width: 100%;
-}
-
-.projects-nav .projects-highlight {
-  color: #1f1e1ccc;
-  background-image: linear-gradient(to right, #e8e8e800, #0057A755 100%);
-}
-
-.projects-nav .projects-new img {
-  width: 20px;
-  width: 1.25rem;
-  height: 20px;
-  height: 1.25rem;
 }
 
 .test-scripts-list {
@@ -780,6 +789,19 @@ div.title img {
   padding: 0.75em 0 0.75em calc(3px);
 }
 
+.commits-container .commits .float-height {
+  max-height: 280px;
+}
+
+.commits-container .commits .float-height .card {
+  padding: 3px;
+  margin-bottom: 12px;
+}
+
+.commits-container .commits .float-height .component {
+  background: white;
+}
+
 .student-stats-comments {
   position: relative;
 }
@@ -821,35 +843,35 @@ div.title img {
   padding-bottom: 16px;
 }
 
+/*
 .panel-student-side-content {
-  position: fixed;
+  position:fixed;
   padding-top: calc(20px + 1.17em + 40px);
   width: calc(.15 * 105em - 40px);
   min-width: 180px;
   max-width: 240px;
-}
 
-.panel-student-side-content .card {
-  margin: 0 0 30px;
-  width: 100%;
-}
+  .card {
+    margin: 0 0 30px;
+    width: 100%;
+  }
 
-.panel-student-side-content .component {
-  width: 100%;
-}
+  .component {
+    width: 100%;
+  }
 
-.panel-student-side-content .student-commits {
-  max-height: 280px;
-}
+  .student-commits {
+    max-height: 280px;
 
-.panel-student-side-content .student-commits .card {
-  padding: 3px;
-}
+    .card {
+      padding: 3px;
+    }
 
-.panel-student-side-content .student-commits .component {
-  background: white;
-}
-
+    .component {
+      background: white;
+    }
+  }
+}*/
 .panel-preference-content .panel-course-students > .title {
   cursor: pointer;
 }

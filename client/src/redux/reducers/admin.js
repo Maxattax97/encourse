@@ -1,4 +1,6 @@
 function admin(state = {}, action) {
+    let accounts
+    let courses
     switch(action.type) {
     case 'GET_COURSES_HAS_ERROR':
         return Object.assign({}, state, {
@@ -21,8 +23,11 @@ function admin(state = {}, action) {
             addCourseIsLoading: action.isLoading,
         })
     case 'ADD_COURSE_DATA_SUCCESS':
+        courses = [...state.getCoursesData]
+        courses.push(action.data)
         return Object.assign({}, state, {
             addCourseData: action.data,
+            getCoursesData: courses,
         })
     case 'MODIFY_COURSE_HAS_ERROR':
         return Object.assign({}, state, {
@@ -69,8 +74,11 @@ function admin(state = {}, action) {
             addAccountIsLoading: action.isLoading,
         })
     case 'ADD_ACCOUNT_DATA_SUCCESS':
+        accounts = [...state.getAccountsData]
+        accounts.push(action.data)
         return Object.assign({}, state, {
             addAccountData: action.data,
+            getAccountsData: accounts,
         })
     case 'MODIFY_ACCOUNT_HAS_ERROR':
         return Object.assign({}, state, {
@@ -81,12 +89,12 @@ function admin(state = {}, action) {
             modifyAccountIsLoading: action.isLoading,
         })
     case 'MODIFY_ACCOUNT_DATA_SUCCESS':
-        let accounts = [...state.getAccountsData]
-        let id = action.data.userID
+        accounts = [...state.getAccountsData]
+        let id1 = action.data.userID
         for(let i = 0; i < accounts.length; i++) {
-            if(accounts[i].userID === id) {
-                accounts[i] = action.data;
-                break;
+            if(accounts[i].userID === id1) {
+                accounts[i] = action.data
+                break
             }
         }
         return Object.assign({}, state, {
@@ -102,8 +110,17 @@ function admin(state = {}, action) {
             removeAccountIsLoading: action.isLoading,
         })
     case 'REMOVE_ACCOUNT_DATA_SUCCESS':
+        accounts = [...state.getAccountsData]
+        let id2 = action.data.userID
+        for(let i = 0; i < accounts.length; i++) {
+            if(accounts[i].userID === id2) {
+                accounts.splice(i, 1)
+                break
+            }
+        }
         return Object.assign({}, state, {
             removeAccountData: action.data,
+            getAccountsData: accounts,
         })
     default:
         return state
