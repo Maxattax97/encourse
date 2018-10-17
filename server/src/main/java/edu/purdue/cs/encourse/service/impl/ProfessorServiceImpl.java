@@ -129,7 +129,8 @@ public class ProfessorServiceImpl implements ProfessorService {
             StudentProjectTest studentProjectTest =
                     studentProjectTestRepository.findByIdProjectIdentifierAndIdTestScriptNameAndIdStudentID(projectID, testName, studentID);
             if(studentProjectTest == null) {
-                studentProjectTest = new StudentProjectTest(studentID, projectID, testName, isPassing, isHidden);
+                ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
+                studentProjectTest = new StudentProjectTest(studentID, projectID, testName, isPassing, isHidden, testScript.getPointsWorth());
                 studentProjectTestRepository.save(studentProjectTest);
             }
             else {
@@ -140,15 +141,12 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Adds a new project to the database, which needs to be done before cloning the project in the course hub **/
-    public int addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate) {
+    public Project addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate) {
         Project project = new Project(courseID, semester, projectName, repoName, startDate, dueDate, testRate);
         if(projectRepository.existsByProjectIdentifier(project.getProjectIdentifier())) {
-            return -1;
+            return null;
         }
-        if(projectRepository.save(project) == null) {
-            return -2;
-        }
-        return 0;
+        return projectRepository.save(project);
     }
 
     /** Assigns a project to all students in the course so that the project starts being tracked **/
@@ -684,14 +682,14 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Uploads a testing script to testcases directory in the course hub **/
-    public int uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents, boolean isHidden, int points) {
+    public ProjectTestScript uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents, boolean isHidden, double points) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
-            return -1;
+            return null;
         }
         List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         if(sections.isEmpty()) {
-            return -2;
+            return null;
         }
         String filePath;
         if(isHidden) {
@@ -708,29 +706,25 @@ public class ProfessorServiceImpl implements ProfessorService {
             writer.close();
         }
         catch(IOException e) {
-            return -3;
+            return null;
         }
         ProjectTestScript script = new ProjectTestScript(projectID, testName, isHidden, points);
-        projectTestScriptRepository.save(script);
-        if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
-            return -4;
-        }
-        return 0;
+        executeBashScript("setPermissions.sh " + sections.get(0).getCourseID());
+        return projectTestScriptRepository.save(script);
     }
 
     /** Adds a testing script to the database. Mainly for testing purposes **/
-    public int addTestScript(@NonNull String projectID, @NonNull String testName, boolean isHidden, int points) {
+    public ProjectTestScript addTestScript(@NonNull String projectID, @NonNull String testName, boolean isHidden, double points) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
-            return -1;
+            return null;
         }
         List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         if(sections.isEmpty()) {
-            return -2;
+            return null;
         }
         ProjectTestScript script = new ProjectTestScript(projectID, testName, isHidden, points);
-        projectTestScriptRepository.save(script);
-        return 0;
+        return projectTestScriptRepository.save(script);
     }
 
     /** Modify an uploaded testing script to either change its contents, point value, or if it is hidden **/

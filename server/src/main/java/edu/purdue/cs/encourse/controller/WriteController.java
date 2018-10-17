@@ -3,6 +3,7 @@ package edu.purdue.cs.encourse.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.purdue.cs.encourse.database.TeachingAssistantStudentRepository;
 import edu.purdue.cs.encourse.domain.*;
+import edu.purdue.cs.encourse.domain.relations.ProjectTestScript;
 import edu.purdue.cs.encourse.service.*;
 import edu.purdue.cs.encourse.service.impl.UserDetailsServiceImpl;
 import org.json.simple.JSONObject;
@@ -49,7 +50,7 @@ public class WriteController {
     public @ResponseBody
     ResponseEntity<?> addSection(@RequestParam(name = "userName", required = false) String userName,
                                  @RequestBody String json) {
-        int result;
+        Section result;
         Section s;
         try {
             s = new ObjectMapper().readValue(json, Section.class);
@@ -76,10 +77,8 @@ public class WriteController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/studentToSection", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> addStudentToSection(@RequestParam(name = "userName") String userName,
-                                                               @RequestParam(name = "courseID") String courseID,
-                                                               @RequestParam(name = "semester") String semester,
-                                                               @RequestParam(name = "sectionType") String sectionType) {
-        int result = adminService.registerStudentToSection(userName, courseID, semester, sectionType);
+                                                               @RequestParam(name = "sectionID") String sectionID) {
+        int result = adminService.registerStudentToSection(userName, sectionID);
         HttpStatus status = (result == 0)? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
         return new ResponseEntity<>(result, status);
     }
@@ -179,14 +178,12 @@ public class WriteController {
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
 
-        int result = professorService.uploadTestScript(projectID, testName, contents, isHidden, points);
+        ProjectTestScript result = professorService.uploadTestScript(projectID, testName, contents, isHidden, points);
         System.out.println("RESULT: " + result);
-        if (result == 0) {
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } else if (result == -1) {
-            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
-        } else {
+        if (result == null) {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.OK);
         }
     }
 
@@ -225,13 +222,13 @@ public class WriteController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/project", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity<?> addProject(@RequestBody String json) {
-        int result;
+        Project result;
         Project p;
         try {
             p = new ObjectMapper().readValue(json, Project.class);
             result = professorService.addProject(p.getCourseID(), p.getSemester(), p.getProjectName(), p.getRepoName(), p.getStartDate(), p.getDueDate(), p.getTestRate());
-            if (result == 0) {
-                professorService.assignProject(p.getCourseID() + " " + p.getSemester() + ": " + p.getProjectName());
+            if (result != null) {
+                professorService.assignProject(p.getProjectIdentifier());
             }
         } catch (IOException e) {
             System.out.println(e);

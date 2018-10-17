@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.UUID;
 
 @Getter
 @Entity
@@ -45,7 +46,7 @@ public class Project {
         this.semester = semester;
         this.projectName = projectName;
         this.setRepoName(repoName);
-        this.projectIdentifier = createProjectID(courseID, semester, projectName);
+        this.projectIdentifier = UUID.randomUUID().toString();
         this.startDate = startDate;
         this.dueDate = dueDate;
         if(testRate > 0) {
@@ -60,10 +61,6 @@ public class Project {
 
     public Project() {
 
-    }
-
-    public static String createProjectID(String courseID, String semester, String projectName) {
-        return (courseID + " " + semester + ": " + projectName);
     }
 
     public void setRepoName(String repoName) {

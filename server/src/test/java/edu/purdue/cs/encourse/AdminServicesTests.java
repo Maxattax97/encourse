@@ -49,7 +49,8 @@ public class AdminServicesTests {
     @Autowired
     public AccountService accountService;
 
-
+    public Section sect1;
+    public Section sect2;
 
     @Before
     public void populateDatabase() {
@@ -70,8 +71,8 @@ public class AdminServicesTests {
                 "TA", "J", "dkrolopp@purdue.edu"));
         assertEquals(0, adminService.addAccount("5", "buckmast", "Jordan", "Buckmaster",
                 "Student", "M", "buckmast@purdue.edu"));
-        assertEquals(0, adminService.addSection("1234", "Fall2018", "cs250", "Hardware", "Lab1"));
-        assertEquals(0, adminService.addSection("1235", "Fall2018", "cs250", "Hardware", "Lab2"));
+        sect1 = adminService.addSection("1234", "Fall2018", "cs250", "Hardware", "Lab1");
+        sect2 = adminService.addSection("1235", "Fall2018", "cs250", "Hardware", "Lab2");
     }
 
     @After
@@ -137,10 +138,10 @@ public class AdminServicesTests {
 
     @Test
     public void testAssignments() {
-        assertEquals(0, adminService.registerStudentToSection("kleclain", "cs250", "Fall2018", "Lab1"));
-        assertEquals(0, adminService.registerStudentToSection("buckmast", "cs250", "Fall2018", "Lab2"));
-        assertEquals(-2, adminService.registerStudentToSection("buckmast", "cs250", "Fall2018", "Lab3"));
-        assertEquals(-1, adminService.registerStudentToSection("grr", "cs250", "Fall2018", "Lab1"));
+        assertEquals(0, adminService.registerStudentToSection("kleclain", sect1.getSectionIdentifier()));
+        assertEquals(0, adminService.registerStudentToSection("buckmast", sect2.getSectionIdentifier()));
+        assertEquals(-2, adminService.registerStudentToSection("buckmast", "InvalidSection"));
+        assertEquals(-1, adminService.registerStudentToSection("grr", sect1.getSectionIdentifier()));
         assertEquals(2, studentSectionRepository.count());
         assertEquals(0, adminService.assignProfessorToCourse("grr", "cs250", "Fall2018"));
         assertEquals(-2, adminService.assignProfessorToCourse("grr", "cs251", "Fall2018"));

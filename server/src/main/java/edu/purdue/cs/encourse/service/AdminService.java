@@ -35,10 +35,10 @@ public interface AdminService {
     int modifyAuthority(@NonNull String userName, String role);
 
     /** Services for manipulating courses and sections **/
-    int addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType);
+    Section addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType);
     int deleteSection(@NonNull String sectionID);
     int assignProfessorToCourse(@NonNull String userName, @NonNull String courseID, @NonNull String semester);
-    int registerStudentToSection(@NonNull String userName, @NonNull String courseID, @NonNull String semester, @NonNull String sectionType);
+    int registerStudentToSection(@NonNull String userName, @NonNull String sectionID);
     int hireStudentAsTeachingAssistant(@NonNull String userName);
 
     /** Services for authentication **/

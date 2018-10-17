@@ -2,6 +2,7 @@ package edu.purdue.cs.encourse;
 
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.Project;
+import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.TeachingAssistantStudent;
 import edu.purdue.cs.encourse.service.*;
@@ -63,6 +64,9 @@ public class ProfessorServicesTests {
     @Autowired
     public TeachingAssistantStudentRepository teachingAssistantStudentRepository;
 
+    public Section sect1;
+    public Project proj1;
+
     @Before
     public void populateDatabase() {
         adminRepository.deleteAll();
@@ -82,12 +86,12 @@ public class ProfessorServicesTests {
                 "Student", null, "dwyork@purdue.edu"));
         assertEquals(0, adminService.addAccount("4", "dkrolopp", "Daniel", "Krolopp",
                 "TA", "J", "dkrolopp@purdue.edu"));
-        assertEquals(0, adminService.addSection("12345", "Fall2018", "cs250", "Hardware", "Lab1"), 0);
-        assertEquals(0, professorService.addProject("cs250", "Fall2018", "MyMalloc", "lab1-src",
-                "9/10/2018", "9/24/2018", 0));
-        assertEquals(0, adminService.registerStudentToSection("dwyork", "cs250", "Fall2018", "Lab1"));
-        assertEquals(0, adminService.registerStudentToSection("rravind", "cs250", "Fall2018", "Lab1"));
-        assertEquals(0, professorService.assignProject(Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
+        sect1 = adminService.addSection("12345", "Fall2018", "cs250", "Hardware", "Lab1");
+        proj1 = professorService.addProject("cs250", "Fall2018", "MyMalloc", "lab1-src",
+                "9/10/2018", "9/24/2018", 0);
+        assertEquals(0, adminService.registerStudentToSection("dwyork", sect1.getSectionIdentifier()));
+        assertEquals(0, adminService.registerStudentToSection("rravind", sect1.getSectionIdentifier()));
+        assertEquals(0, professorService.assignProject(proj1.getProjectIdentifier()));
     }
 
     @After
@@ -115,23 +119,23 @@ public class ProfessorServicesTests {
     public void testShellScripts() {
         assertEquals(0, courseService.setSectionRemotePaths("Fall2018", "cs250", "/homes/cs252/sourcecontrol/work"));
         assertEquals(0, courseService.createDirectory("Fall2018", "cs250"));
-        assertEquals(0, professorService.cloneProjects(Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
-        assertEquals(0, professorService.pullProjects(Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
-        assertNotNull(professorService.countAllCommits(Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
-        assertNotNull(professorService.countAllCommitsByDay(Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
-        assertNotNull(professorService.countStudentCommitsByDay(Project.createProjectID("cs250", "Fall2018", "MyMalloc"), "dwyork"));
-        assertNotNull(professorService.listStudentCommitsByTime(Project.createProjectID("cs250", "Fall2018", "MyMalloc"), "rravind"));
-        assertEquals(0, professorService.uploadTestScript(Project.createProjectID("cs250", "Fall2018", "MyMalloc"), "ls_test.sh", "ls ..", false, 5));
-        assertEquals(0, professorService.uploadTestScript(Project.createProjectID("cs250", "Fall2018", "MyMalloc"), "echo_test.sh", "echo \"\"", false, 10));
-        assertEquals(0, professorService.runTestall(Project.createProjectID("cs250", "Fall2018", "MyMalloc")));
+        assertEquals(0, professorService.cloneProjects(proj1.getProjectIdentifier()));
+        assertEquals(0, professorService.pullProjects(proj1.getProjectIdentifier()));
+        assertNotNull(professorService.countAllCommits(proj1.getProjectIdentifier()));
+        assertNotNull(professorService.countAllCommitsByDay(proj1.getProjectIdentifier()));
+        assertNotNull(professorService.countStudentCommitsByDay(proj1.getProjectIdentifier(), "dwyork"));
+        assertNotNull(professorService.listStudentCommitsByTime(proj1.getProjectIdentifier(), "rravind"));
+        assertEquals(0, professorService.uploadTestScript(proj1.getProjectIdentifier(), "ls_test.sh", "ls ..", false, 5));
+        assertEquals(0, professorService.uploadTestScript(proj1.getProjectIdentifier(), "echo_test.sh", "echo \"\"", false, 10));
+        assertEquals(0, professorService.runTestall(proj1.getProjectIdentifier()));
         List<StudentProject> projects = studentProjectRepository.findByIdStudentID("1");
         assertEquals("echo_test.sh:P ls_test.sh:F ", projects.get(0).getBestVisibleGrade());
     }
 
     @Test
     public void testProjectModification() {
-        assertEquals(0, professorService.modifyProject(Project.createProjectID("cs250", "Fall2018", "MyMalloc"), "dueDate", "9/26/2018"));
-        Project project = projectRepository.findByProjectIdentifier(Project.createProjectID("cs250", "Fall2018", "MyMalloc"));
+        assertEquals(0, professorService.modifyProject(proj1.getProjectIdentifier(), "dueDate", "9/26/2018"));
+        Project project = projectRepository.findByProjectIdentifier(proj1.getProjectIdentifier());
         assertEquals("9/26/2018", project.getDueDate());
     }
 
@@ -153,19 +157,19 @@ public class ProfessorServicesTests {
     public void testProjectAssignment() {
         List<StudentProject> projects = studentProjectRepository.findByIdStudentID("1");
         assertEquals(1, projects.size());
-        assertEquals(Project.createProjectID("cs250", "Fall2018", "MyMalloc"), projects.get(0).getProjectIdentifier());
+        assertEquals(proj1.getProjectIdentifier(), projects.get(0).getProjectIdentifier());
         projects = studentProjectRepository.findByIdStudentID("3");
         assertEquals(1, projects.size());
-        assertEquals(Project.createProjectID("cs250", "Fall2018", "MyMalloc"), projects.get(0).getProjectIdentifier());
+        assertEquals(proj1.getProjectIdentifier(), projects.get(0).getProjectIdentifier());
         assertEquals(0, adminService.addAccount("10", "hayc", "Student", "Three",
                 "Student", null, "dwyork@purdue.edu"));
-        assertEquals(0, adminService.registerStudentToSection("hayc", "cs250", "Fall2018", "Lab1"));
+        assertEquals(0, adminService.registerStudentToSection("hayc", sect1.getSectionIdentifier()));
         projects = studentProjectRepository.findByIdStudentID("10");
         assertEquals(0, projects.size());
-        assertEquals(0, professorService.assignProjectToStudent(Project.createProjectID("cs250", "Fall2018", "MyMalloc"), "hayc"));
+        assertEquals(0, professorService.assignProjectToStudent(proj1.getProjectIdentifier(), "hayc"));
         projects = studentProjectRepository.findByIdStudentID("10");
         assertEquals(1, projects.size());
-        assertEquals(Project.createProjectID("cs250", "Fall2018", "MyMalloc"), projects.get(0).getProjectIdentifier());
+        assertEquals(proj1.getProjectIdentifier(), projects.get(0).getProjectIdentifier());
     }
 
 
