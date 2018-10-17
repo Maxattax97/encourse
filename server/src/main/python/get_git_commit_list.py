@@ -13,7 +13,7 @@ def date_string(date):
     return date.isoformat()
 
 
-def jsonify(git_data):
+def jsonify(git_data, student=None):
     """ Converts git log data json formatted for the /commitList endpoint
 
     Description
@@ -46,6 +46,8 @@ def jsonify(git_data):
             day["date"] = date_string(day["date"])
             day["time_spent"] = time_string(day["time_spent"])
     eprint(data)
+    if student:
+        return json.dumps(data[student])
     return json.dumps(data)
 
 
@@ -60,5 +62,5 @@ if __name__ == "__main__":
     commit_data_file = open(args.logfile, "r")
     data = get_progress(commit_data_file)
 
-    api_json = jsonify(data)[student_id]
+    api_json = jsonify(data, student_id)
     print(api_json)

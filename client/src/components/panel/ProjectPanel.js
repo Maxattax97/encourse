@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {Card, Summary, Title} from '../Helpers'
+import {Summary, Title} from '../Helpers'
 import {history} from '../../redux/store'
-import ClassProgressHistogram from '../chart/ClassProgressHistogram'
-import ClassTestCasePercentDone from '../chart/ClassTestCasePercentDone'
+import {getClassProjects, setCurrentProject} from '../../redux/actions'
+import connect from 'react-redux/es/connect/connect'
 
 class ProjectPanel extends Component {
 
@@ -33,18 +33,18 @@ class ProjectPanel extends Component {
 
                 <div className='panel-right-nav'>
                     <div className='top-nav' />
-                    <ActionNavigation />
+                    <ActionNavigation actions={[() => {}, () => {}, () => {}, () => {}, () => {}]} />
                 </div>
 
                 <div className='panel-center-content'>
-                    <Title header={ <h1 className='header'>CS252 - Projects</h1> } />
+                    <Title header={ <h1 className='header'>CS252 - Projects{this.props.projects ? ` - ${this.props.projects[this.props.current_project_index].project_name}` : ''}</h1> } />
                     <div className='h1 break-line header' />
 
-                    <Summary header={ <h3 className='header'>this.props.currentProjectID</h3> }
+                    <Summary header={ <h3 className='header'>Properties</h3> }
                         columns={ 2 }
                         data={ [ 1, 2 ] }
-                        iterator={ (index) => {
-                            return index === 1 ?
+                        iterator={ (index) =>
+                            index === 1 ?
                                 <div>
                                     <h4 className="header">
                                         Name
@@ -63,8 +63,9 @@ class ProjectPanel extends Component {
                                     </h4>
                                     <input type="text" className="h3-size" value={this.state.due_date} placeholder="MM/DD/YYYY" onChange={this.onChange} name="due_date" ref="due_date" autoComplete="off"/>
                                 </div> :
+
                                 null
-                        } }/>
+                        } />
 
                     <div className='h2 break-line' />
                     <h3 className='header'>Test Scripts</h3>
@@ -93,4 +94,18 @@ class ProjectPanel extends Component {
 
 }
 
-export default ProjectPanel
+const mapStateToProps = (state) => {
+    return {
+        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
+        current_project_index: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getClassProjects: (url, headers) => dispatch(getClassProjects(url, headers)),
+        setCurrentProject: (id, index) => dispatch(setCurrentProject(id, index))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectPanel)

@@ -53,7 +53,7 @@ class CoursePanel extends Component {
 
                 <div className='panel-right-nav'>
                     <div className='top-nav' />
-                    <ActionNavigation />
+                    <ActionNavigation actions={[() => {}, () => {}, () => {}, () => {}, () => {}]}/>
                 </div>
 
                 <CourseModal show={ this.state.show_course_options }

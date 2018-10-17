@@ -84,7 +84,7 @@ class StudentPanel extends Component {
 
                 <div className="panel-right-nav">
                     <div className='top-nav' />
-                    <ActionNavigation />
+                    <ActionNavigation actions={[() => {}, () => {}, () => {}, () => {}, () => {}]} />
                     <CommitHistory projectID={this.props.currentProjectID} id={this.props.currentStudent.id} />
                 </div>
 

@@ -464,7 +464,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
         String testResult = null;
         if (DEBUG) {
-            testResult = "cutz;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P";
+            testResult = "cutz;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0";
         } else {
             Student student = studentRepository.findByUserName(userName);
             StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
@@ -1056,24 +1056,24 @@ public class ProfessorServiceImpl implements ProfessorService {
         if (OBFUSCATE) {
             command += " -O";
         }
-        File file= new File (tailFilePath, "tail.txt");
+        /*File file= new File (tailFilePath, "tail.txt");
         FileWriter tailWriter;
         try {
             if (file.exists())
             {
-                tailWriter = new FileWriter(file,true);//if file exists append to file. Works fine.
+                tailWriter = new FileWriter(file,true);
             }
             else
             {
                 file.createNewFile();
-                tailWriter = new FileWriter(file);// If file does not exist. Create it. This throws a FileNotFoundException. Why?
+                tailWriter = new FileWriter(file);
             }
 
             String arr[] = command.split(" ", 3);
             tailWriter.write(arr[0] + arr[1]);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         System.out.println(command);
         JSONReturnable json = null;
         try {
