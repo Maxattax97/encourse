@@ -182,7 +182,6 @@ public class AuthController {
         }
     }
 
-    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> logout(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
