@@ -74,7 +74,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/students.txt"));
                 String student = null;
                 int count = 1;
-                while((student = fileReader.readLine()) != null && count <= 10) {
+                while((student = fileReader.readLine()) != null && count <= 100) {
                     if(student.equals("grr")) {
                         continue;
                     }
