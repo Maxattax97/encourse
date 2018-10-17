@@ -6,6 +6,8 @@ import {Title, Card} from '../Helpers'
 
 class ActionNavigation extends Component {
 
+    action_names_default = ['View Hidden Tests', 'Run Tests', 'Run Hidden Tests', 'Pull Repository', 'View Plagiarism Report']
+
     render() {
         return (
             <div className='actions-container side-nav-right'>
@@ -14,34 +16,23 @@ class ActionNavigation extends Component {
                         <Title header={ <h3 className='header'>Actions</h3> } />
                         <div className="h3 break-line header" />
                         <div className="text-list">
-                            <div className="action">
-                                <h4 onClick={this.props.toggleHidden}>
-                                    { this.props.isHidden ? 'View Visible Tests' : 'View Hidden Tests' }
-                                </h4>
-                            </div>
-                            <div className="action">
-                                <h4>
-                                    Run Tests
-                                </h4>
-                            </div>
-                            <div className="action">
-                                <h4>
-                                    Run Hidden Tests
-                                </h4>
-                            </div>
-                            <div className="action">
-                                <h4>
-                                    Pull Repository
-                                </h4>
-                            </div>
-                            <div className="action">
-                                <h4>
-                                    View Plagiarism
-                                </h4>
-                                <h4>
-                                    Report
-                                </h4>
-                            </div>
+                            {
+                                this.props.action_names ?
+                                    this.props.action_names.map((name, index) =>
+                                        <div className='action' key={index}>
+                                            <h4 onClick={ this.props.actions[index] }>
+                                                {name}
+                                            </h4>
+                                        </div>
+                                    ) :
+                                    this.props.actions.map((action, index) =>
+                                        <div className='action' key={index}>
+                                            <h4 onClick={ this.props.actions[index] }>
+                                                {this.action_names_default[index]}
+                                            </h4>
+                                        </div>
+                                    )
+                            }
                         </div>
                     </div>
                 } />
@@ -52,7 +43,7 @@ class ActionNavigation extends Component {
 
 const mapStateToProps = (state) => {
     return {
-       isHidden: state.projects.isHidden
+        isHidden: state.projects.isHidden
     }
 }
 

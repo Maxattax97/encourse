@@ -20,7 +20,7 @@ export class Summary extends Component {
     render() {
         return (
             <div className={ `summary ${this.props.className ? this.props.className : ''}` }>
-                { this.props.header }
+                { this.props.header ? this.props.header : null }
                 { this.props.data && this.props.data.map && this.props.iterator ?
                     <div className='summary-container'>
                         <div className={`float-height cols-${this.props.columns ? this.props.columns : '2'}`}>
