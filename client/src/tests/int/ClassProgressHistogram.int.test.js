@@ -2,7 +2,7 @@ import React from 'react'
 import Enzyme, { mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 import { Provider } from 'react-redux'
-import ClassProgressHistogram from '../../components/charts/ClassProgressHistogram'
+import ClassProgressHistogram from '../../components/chart/ClassProgressHistogram'
 import myReducer from '../../redux/reducers'
 import { setupIntegrationTest } from '../util/reduxTestUtils'
 

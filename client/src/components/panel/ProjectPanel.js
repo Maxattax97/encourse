@@ -3,8 +3,8 @@ import ProjectNavigation from '../navigation/ProjectNavigation'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {Card, Summary, Title} from '../Helpers'
 import {history} from '../../redux/store'
-import ClassProgressHistogram from '../charts/ClassProgressHistogram'
-import ClassTestCasePercentDone from '../charts/ClassTestCasePercentDone'
+import ClassProgressHistogram from '../chart/ClassProgressHistogram'
+import ClassTestCasePercentDone from '../chart/ClassTestCasePercentDone'
 
 class ProjectPanel extends Component {
 

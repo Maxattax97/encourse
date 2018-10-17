@@ -5,7 +5,7 @@ import { Card } from '../Helpers'
 import plusIcon from '../../resources/plus.svg'
 import CoursePreview from './util/CoursePreview'
 import AccountPreview from './util/AccountPreview'
-import Modal from '../modals/Modal'
+import Modal from '../modal/Modal'
 import checkmarkIcon from '../../resources/checkmark.svg'
 import {
     addCourse,
