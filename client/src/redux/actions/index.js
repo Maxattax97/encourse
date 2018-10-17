@@ -9,7 +9,8 @@ export {
 } from './projects'
 
 export {
-    logIn, logOut, setToken, logOutClient
+    logIn, logOut, changePassword,
+    setToken, logOutClient
 } from './auth'
 
 export {

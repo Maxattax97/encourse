@@ -26,6 +26,18 @@ function auth(state = {}, action) {
         return Object.assign({}, state, {
             logInData: null,
         })
+    case 'CHANGE_PASSWORD_HAS_ERROR':
+        return Object.assign({}, state, {
+            changePasswordHasError: action.hasError,
+        })
+    case 'CHANGE_PASSWORD_IS_LOADING':
+        return Object.assign({}, state, {
+            changePasswordIsLoading: action.isLoading,
+        })
+    case 'CHANGE_PASSWORD_DATA_SUCCESS':
+        return Object.assign({}, state, {
+            changePasswordData: action.data,
+        })
     case 'SET_TOKEN':
         return Object.assign({}, state, {
             logInData: action.token,
