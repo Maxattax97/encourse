@@ -6,6 +6,7 @@ import Modal from './Modal'
 // import deleteIcon from '../../img/trash.svg'
 import { setDirectory, modifyProject } from '../../redux/actions'
 import url from '../../server'
+import {Title} from '../Helpers'
 
 class CourseModal extends Component {
 
@@ -50,16 +51,14 @@ class CourseModal extends Component {
             </div>
 
         return (
-            <div className="course-options">
+            <div className="course-modal">
                 <Modal center
                     show={ this.props.show }
                     onExit={ this.props.close }
                     component={
-                        <div className="panel-course-options">
-                            <div className="title">
-                                <h2>Course Settings</h2>
-                            </div>
-                            <h2 className="break-line title" />
+                        <div className="modal-container">
+                            <Title header={<h2 className='header'>Course Settings</h2> }/>
+                            <div className="h2 break-line header" />
                             <h4 className="header">
                                    Student Repositories Directory
                             </h4>

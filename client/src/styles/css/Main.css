@@ -31,10 +31,19 @@ h1.header {
 
 h2 {
   cursor: default;
-  line-height: 56px;
-  line-height: 3.5rem;
-  height: 56px;
-  height: 3.5rem;
+  font-size: 24px;
+  font-size: 1.5rem;
+  line-height: 24px;
+  line-height: 1.5rem;
+  height: 24px;
+  height: 1.5rem;
+}
+
+h2.header {
+  line-height: 48px;
+  line-height: 3rem;
+  height: 48px;
+  height: 3rem;
 }
 
 h3 {
@@ -103,6 +112,16 @@ h6.header {
   line-height: 1.34rem;
   height: 21.44px;
   height: 1.34rem;
+}
+
+.h2-size {
+  font-size: 24px;
+  font-size: 1.5rem;
+}
+
+.h3-size {
+  font-size: 21.28px;
+  font-size: 1.33rem;
 }
 
 .float-height:after {

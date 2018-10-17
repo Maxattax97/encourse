@@ -34,7 +34,7 @@ export const logIn = genericDispatch(
 
 export function logOutHasError(hasError) {
     return {
-        type: 'LOG_OUT_HAS_ERROR',
+        type: 'CHANGE_PASSWORD_HAS_ERROR',
         hasError
     }
 }
@@ -63,4 +63,27 @@ export function logOutClient() {
     }
 }
 
+export function changePasswordHasError(hasError) {
+    return {
+        type: 'CHANGE_PASSWORD_HAS_ERROR',
+        hasError
+    }
+}
 
+export function changePasswordIsLoading(isLoading) {
+    return {
+        type: 'CHANGE_PASSWORD_IS_LOADING',
+        isLoading
+    }
+}
+
+export function changePasswordDataSuccess(data) {
+    return {
+        type: 'CHANGE_PASSWORD_DATA_SUCCESS',
+        data
+    }
+}
+
+export const changePassword = genericDispatch(
+    changePasswordHasError, changePasswordIsLoading, changePasswordDataSuccess, 'GET'
+)

@@ -6,10 +6,10 @@ import url from '../../server'
 import { getStudentPreviews, getClassProjects, setCurrentProject, setCurrentStudent } from '../../redux/actions/index'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import StudentPreview from './util/StudentPreview'
-import ClassProgressHistogram from '../charts/ClassProgressHistogram'
-import ClassTestCasePercentDone from '../charts/ClassTestCasePercentDone'
+import ClassProgressHistogram from '../chart/ClassProgressHistogram'
+import ClassTestCasePercentDone from '../chart/ClassTestCasePercentDone'
 import ActionNavigation from '../navigation/ActionNavigation'
-import CourseModal from '../modals/CourseModal'
+import CourseModal from '../modal/CourseModal'
 import { Title, Summary, Card } from '../Helpers'
 import { settings } from '../../helpers/icons'
 
@@ -48,7 +48,7 @@ class CoursePanel extends Component {
     render() {
         return (
             <div className='panel-course'>
-                <ProjectNavigation onModalBlur={(blur) => this.setState({modal_blur : blur ? ' blur' : ''})}
+                <ProjectNavigation onModalBlur={ (blur) => this.setState({modal_blur : blur ? ' blur' : ''}) }
                     {...this.props}/>
 
                 <div className='panel-right-nav'>
@@ -62,9 +62,10 @@ class CoursePanel extends Component {
                 <div className='panel-center-content'>
 
                     <div className={ `panel-course-content${this.state.modal_blur}` }>
-                        <Title onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' }) } header={ <h1 className='header'>CS252</h1> } icon={ settings } break />
+                        <Title onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' }) }
+                            header={ <h1 className='header'>CS252</h1> }
+                            icon={ settings } />
                         <div className='h1 break-line header' />
-
 
                         <Summary header={ <h3 className='header'>Course Charts</h3> }
                             columns={ 2 }

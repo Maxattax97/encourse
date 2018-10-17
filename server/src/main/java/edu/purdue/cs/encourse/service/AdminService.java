@@ -32,6 +32,7 @@ public interface AdminService {
     int modifyTA(@NonNull Account account, @NonNull String field, String value);
     int modifyProfessor(@NonNull Account account, @NonNull String field, String value);
     int modifyAdmin(@NonNull Account account, @NonNull String field, String value);
+    int modifyAuthority(@NonNull String userName, String role);
 
     /** Services for manipulating courses and sections **/
     int addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType);

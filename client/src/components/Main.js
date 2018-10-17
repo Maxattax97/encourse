@@ -6,11 +6,12 @@ import { withRouter } from 'react-router-dom'
 import '../styles/css/base.css'
 import '../styles/css/main.css'
 import Navbar from './navigation/TopNavigation'
-import CoursePanel from './panels/CoursePanel'
-import ProjectModal from './modals/ProjectModal'
-import StudentPanel from './panels/StudentPanel'
-import AdminPanel from './panels/AdminPanel'
-import PreferencePanel from './panels/PreferencePanel'
+import CoursePanel from './panel/CoursePanel'
+import ProjectModal from './modal/ProjectModal'
+import StudentPanel from './panel/StudentPanel'
+import AdminPanel from './panel/AdminPanel'
+import PreferencePanel from './panel/PreferencePanel'
+import ProjectPanel from './panel/ProjectPanel'
 
 class Main extends Component {
 
@@ -36,6 +37,9 @@ class Main extends Component {
                             }/>
                             <Route path="/admin" render={(navProps) =>
                                 <AdminPanel {...navProps} />
+                            }/>
+                            <Route path="/projects" render={(navProps) =>
+                                <ProjectPanel {...navProps} />
                             }/>
                             <Route path="/settings" render={(/* navProps */) =>
                                 <PreferencePanel />

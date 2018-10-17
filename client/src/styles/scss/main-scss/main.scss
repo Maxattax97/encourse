@@ -26,8 +26,14 @@ h1.header {
 
 h2 {
   cursor:default;
-  @include set-rem-safe(line-height, 3.5rem);
-  @include set-rem-safe(height, 3.5rem);
+  @include set-rem-safe(font-size, 1.5rem);
+  @include set-rem-safe(line-height, 1.5rem);
+  @include set-rem-safe(height, 1.5rem);
+}
+
+h2.header {
+  @include set-rem-safe(line-height, 3rem);
+  @include set-rem-safe(height, 3rem);
 }
 
 h3 {
@@ -76,6 +82,14 @@ h6 {
 h6.header {
   @include set-rem-safe(line-height, 1.34rem);
   @include set-rem-safe(height, 1.34rem);
+}
+
+.h2-size {
+  @include set-rem-safe(font-size, 1.5rem);
+}
+
+.h3-size {
+  @include set-rem-safe(font-size, 1.33rem);
 }
 
 .float-height:after {

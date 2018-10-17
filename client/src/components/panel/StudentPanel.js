@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import {Card, Summary} from '../Helpers'
-import StudentProgressLineGraph from '../charts/StudentProgressLineGraph'
-import CodeChangesChart from '../charts/CodeChangesChart'
-import CommitFrequencyHistogram from '../charts/CommitFrequencyHistogram'
+import StudentProgressLineGraph from '../chart/StudentProgressLineGraph'
+import CodeChangesChart from '../chart/CodeChangesChart'
+import CommitFrequencyHistogram from '../chart/CommitFrequencyHistogram'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import StudentStatistics from './util/StudentStatistics'
 import CommitHistory from './util/CommitHistory'
@@ -13,8 +13,6 @@ import { getClassProjects, clearStudent } from '../../redux/actions/index'
 import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 import StudentFeedback from './util/StudentFeedback'
-import ClassProgressHistogram from '../charts/ClassProgressHistogram'
-import ClassTestCasePercentDone from '../charts/ClassTestCasePercentDone'
 
 
 class StudentPanel extends Component {

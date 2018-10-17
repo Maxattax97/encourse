@@ -9,6 +9,7 @@ export default function genericDispatch(hasError, isLoading, success, method) {
                     if (!response.ok) {
                         throw Error(response.status + ' ' + response.statusText)
                     }
+                    console.log(response)
                     dispatch(isLoading(false))
                     return response
                 })
