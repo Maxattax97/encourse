@@ -141,14 +141,15 @@ public class AdminServiceImpl implements AdminService {
         }
         deleteAccount(userName);
         int result = addAccount(a.getUserID(), a.getUserName(), a.getFirstName(), a.getLastName(), role, a.getMiddleInit(), a.getEduEmail());
+
         User user = userRepository.findByUsername(userName);
         if (user == null) {
-            return -2;
+            return -3;
         }
         List<Authority> auths = new ArrayList<>();
         Authority auth = authorityRepository.findDistinctByName(role);
         if (auth == null) {
-            return -3;
+            return -4;
         }
         auths.add(auth);
         user.setAuthorities(auths);

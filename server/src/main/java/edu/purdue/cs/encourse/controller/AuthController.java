@@ -70,8 +70,11 @@ public class AuthController {
     public @ResponseBody ResponseEntity<?> modifyAuthority(@RequestParam(name = "userName") String userName,
                                                            @RequestParam(name = "role") String role) {
         int result = adminService.modifyAuthority(userName, role);
-        HttpStatus status = (result == 0)? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
-        return new ResponseEntity<>(result, status);
+        if (result != 0) {
+            return new ResponseEntity<>(result, HttpStatus.NOT_MODIFIED);
+        }
+        Account account = accountService.retrieveAccount(userName);
+        return new ResponseEntity<>(account, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
