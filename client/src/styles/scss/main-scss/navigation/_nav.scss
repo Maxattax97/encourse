@@ -1,4 +1,5 @@
 @import "../helpers";
+@import "../definitions";
 
 .top-nav {
   @include set-rem-safe(height, 4rem);
@@ -18,4 +19,59 @@
   min-width: 180px;
   max-width: 240px;
   margin-bottom: 32px;
+}
+
+.nav {
+  cursor: default;
+  position: fixed;
+  top:0;
+  left: 0;
+  width:100%;
+  @include set-rem-safe(height, 3rem);
+  z-index: 100;
+  background: #1f1e1c;
+
+  .nav-title {
+    position: fixed;
+    top:0;
+    left: 0;
+    width:100%;
+    @include set-rem-safe(font-size, 2rem);
+    text-align: center;
+    margin: auto;
+    font-family: "Rhodium Libre", serif;
+    z-index: 101;
+
+    .nav-en {
+      cursor:pointer;
+      color: white;
+    }
+    .nav-course {
+      cursor:pointer;
+      color: #0057A7;
+    }
+  }
+
+  .nav-options {
+    float: right;
+    position:relative;
+
+    @include set-rem-safe(width, 6rem);
+    z-index: 102;
+
+    div {
+      float:left;
+      @include set-size-rem-safe(3rem, 3rem);
+      padding: 8px;
+      padding: .5rem;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    div:hover {
+      filter: opacity(85%);
+    }
+  }
 }

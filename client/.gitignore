@@ -8,6 +8,7 @@
 /coverage
 /src/css
 /src/styles/css
+/src/styles/css/Main.css
 
 # production
 /build
