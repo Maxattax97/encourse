@@ -1,6 +1,7 @@
 package edu.purdue.cs.encourse.config;
 
 import edu.purdue.cs.encourse.database.*;
+import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.Student;
@@ -51,13 +52,13 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
     private void feedDatabase() {
         System.out.println("CONDITIONAL RAN");
         if (adminService.findAllUsers().isEmpty()) {
-            adminService.addAccount("0", "grr", "Gustavo", "Rodriguez-Rivera", "Professor", "A", "grr@purdue.edu");
-            adminService.addAccount("1", "buckmast", "Jordan", "Buckmaster", "Admin", "M", "buckmast@purdue.edu");
-            adminService.addAccount("2", "kleclain", "Killian", "LeClainche", "Admin", "A", "kleclain@purdue.edu");
-            adminService.addAccount("3", "lee2363", "Jarett", "Lee", "Admin", "B", "lee2363@purdue.edu");
-            adminService.addAccount("4", "montgo38", "Shawn", "Montgomery", "Admin", "K", "montgo38@purdue.edu");
-            adminService.addAccount("5", "reed226", "William", "Reed", "Admin", "J", "reed226@purdue.edu");
-            adminService.addAccount("6", "sullil96", "Ryan", "Sullivan", "Admin", "P", "sulli196@purdue.edu");
+            adminService.addAccount("0", "grr", "Gustavo", "Rodriguez-Rivera", Account.Role_Names.PROFESSOR, "A", "grr@purdue.edu");
+            adminService.addAccount("1", "buckmast", "Jordan", "Buckmaster", Account.Role_Names.ADMIN, "M", "buckmast@purdue.edu");
+            adminService.addAccount("2", "kleclain", "Killian", "LeClainche", Account.Role_Names.ADMIN, "A", "kleclain@purdue.edu");
+            adminService.addAccount("3", "lee2363", "Jarett", "Lee", Account.Role_Names.ADMIN, "B", "lee2363@purdue.edu");
+            adminService.addAccount("4", "montgo38", "Shawn", "Montgomery", Account.Role_Names.ADMIN, "K", "montgo38@purdue.edu");
+            adminService.addAccount("5", "reed226", "William", "Reed", Account.Role_Names.ADMIN, "J", "reed226@purdue.edu");
+            adminService.addAccount("6", "sullil96", "Ryan", "Sullivan", Account.Role_Names.ADMIN, "P", "sulli196@purdue.edu");
 
             adminService.addUser("grr", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "PROFESSOR", false, false, false, true);
             adminService.addUser("buckmast", "$2a$04$9c76evM3G9DGPy0SoSvA7uH567Raz6Tuv5vTeV/BxL.3gNSel1POK", "ADMIN", false, false, false, true);
@@ -79,7 +80,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                         continue;
                     }
                     //adminService.addAccount(Integer.toString(100 + count), student, "Student", Integer.toString(count),
-                    adminService.addAccount(Integer.toString(100 + count), student, "Student", student,
+                    adminService.addAccount(Integer.toString(100 + count), student, Account.Role_Names.STUDENT, student,
                             "Student", null, student + "@purdue.edu");
                     adminService.registerStudentToSection(student, section.getSectionIdentifier());
                     count++;
