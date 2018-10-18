@@ -106,7 +106,7 @@ class StudentProgressLineGraph extends Component {
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart className="chart" width={730} height={500} data={this.state.formattedData}
                         margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Student Progress Over Time</text>
+                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Student Progress Over Time (Incomplete)</text>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="date" type="number" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
                             <Label value="Date" position="bottom" />
