@@ -4,6 +4,7 @@ import edu.purdue.cs.encourse.database.AccountRepository;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.service.*;
+import edu.purdue.cs.encourse.util.ConfigurationManager;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import org.junit.After;
 import org.junit.Before;
@@ -47,10 +48,13 @@ public class PythonScriptTests {
         public ProfessorService professorService;
 
         public Project proj1;
-        public static final Boolean DEBUG = false;
+        public static final Boolean DEBUG = ConfigurationManager.getInstance().debug;
 
         @Before
         public void populateDatabase() {
+            if (DEBUG) {
+                return;
+            }
             assertEquals(0, adminService.addAccount("1", "reed226","William", "Reed",
                     "Admin", "J", "reed226@purdue.edu"));
             assertEquals(0, adminService.addAccount("2", "grr", "Gustavo", "Rodriguez-Rivera",

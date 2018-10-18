@@ -4,6 +4,7 @@ import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.ProfessorService;
+import edu.purdue.cs.encourse.util.ConfigurationManager;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import org.aspectj.weaver.patterns.IfPointcut;
 import org.codehaus.jackson.map.util.JSONPObject;
@@ -31,7 +32,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     private final static String pythonPath = "src/main/python/";
     private final static String tailFilePath = "src/main/temp/";
     private final static int RATE = 3600000;
-    private final static Boolean DEBUG = false;
+    private final static Boolean DEBUG = ConfigurationManager.getInstance().debug;
     private final static Boolean OBFUSCATE = false;
 
     /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
