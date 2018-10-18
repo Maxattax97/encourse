@@ -4,7 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Label, Brush, Resp
 import moment from 'moment'
 import { connect } from 'react-redux'
 
-import { getCommitFrequency, setBrush } from '../../redux/actions'
+import { getCommitFrequency } from '../../redux/actions'
 import url from '../../server'
 
 const defaultData = [
@@ -110,7 +110,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         getData: (url, headers, body) => dispatch(getCommitFrequency(url, headers, body)),
-        setBrush: (item) => dispatch(setBrush(item.startIndex, item.endIndex))
     }
 }
 
