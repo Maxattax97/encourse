@@ -1,10 +1,10 @@
 
 import React, { Component } from 'react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Label, Brush, ResponsiveContainer } from 'recharts'
 import moment from 'moment'
 import { connect } from 'react-redux'
 
-import { getCommitFrequency } from '../../redux/actions'
+import { getCommitFrequency, setBrush } from '../../redux/actions'
 import url from '../../server'
 
 const defaultData = [
@@ -68,11 +68,6 @@ class CommitHistoryHistogram extends Component {
             entry.date = moment(entry.date).valueOf()
         }
 
-        let minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date)
-        if (moment(minDate).isBefore(moment('2018-03-10'), 'day')) {
-            data = data.filter(e => moment(e.date).isAfter(moment('2018-09-19'), 'day'))
-        }
-
         return data
     }
 
@@ -95,6 +90,7 @@ class CommitHistoryHistogram extends Component {
                         </YAxis>
                         <Tooltip labelFormatter={this.dateFormatter} animationDuration={500}/>
                         <Bar dataKey="count" fill="#8884d8"/>
+                        <Brush dataKey="date" height={20} stroke="#8884d8" onChange={this.props.setBrush}/>
                     </BarChart>
                 </ResponsiveContainer>
             </div>
@@ -113,7 +109,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getData: (url, headers, body) => dispatch(getCommitFrequency(url, headers, body))
+        getData: (url, headers, body) => dispatch(getCommitFrequency(url, headers, body)),
+        setBrush: (item) => dispatch(setBrush(item.startIndex, item.endIndex))
     }
 }
 
