@@ -45,35 +45,33 @@
 .modal-center {
   position: fixed;
   left: 50%;
-  transform: translate(-50%, 0);
+  top: 50%;
+  transform: translate(-50%, -75%);
 
   margin-top: calc(20px + 40px + 1.17em);
 }
 
+.modal .component:after {
+  @include float-height
+}
+
+.modal-container {
+  float:left;
+}
+
 .modal-buttons {
-  position: relative;
-  bottom: 0;
-  right: -2.5em;
-  width: 100%;
+  width: calc(100% + 40px);
+  width: calc(100% + 2rem + 8px);
 
   img {
     @include set-size-rem-safe(1.5rem, 1.5rem);
-    margin: 0 auto;
     display:block;
     filter: $icon-color;
   }
 
   div {
-    cursor:pointer;
     float:right;
-    padding: 10px 10px;
-    margin-left:10px;
-  }
-
-  div:hover {
-    img {
-      filter: $icon-hover-color;
-    }
+    padding: 8px;
   }
 }
 

@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import checkmarkIcon from '../../resources/checkmark.svg'
 import Modal from './Modal'
 // import deleteIcon from '../../img/trash.svg'
 import { setDirectory, modifyProject } from '../../redux/actions'
 import url from '../../server'
 import {Title} from '../Helpers'
+import {checkmark} from '../../helpers/icons'
 
 class CourseModal extends Component {
 
@@ -43,32 +43,29 @@ class CourseModal extends Component {
     };
 
     render() {
-        const modal_buttons =
-            <div className="modal-buttons float-height">
-                <div className="project-options-add" onClick={ this.saveSettings }>
-                    <img src={ checkmarkIcon } />
-                </div>
-            </div>
-
         return (
             <div className="course-modal">
                 <Modal center
                     show={ this.props.show }
                     onExit={ this.props.close }
-                    component={
-                        <div className="modal-container">
-                            <Title header={<h2 className='header'>Course Settings</h2> }/>
-                            <div className="h2 break-line header" />
-                            <h4 className="header">
+                    content={
+                        [
+                            <Title header={<h2 className='header'>Course Settings</h2> } key={1}/>,
+                            <div className="h2 break-line header" key={2}/>,
+                            <h4 className="header" key={3}>
                                    Student Repositories Directory
-                            </h4>
-                            <input type="text" className="h3-size" value={this.props.courseID} onChange={this.onChange} name="name" autoComplete="off"/>
-                            <h4 className="header">
+                            </h4>,
+                            <input type="text" className="h3-size" value={this.props.courseID} onChange={this.onChange} name="name" autoComplete="off" key={4}/>,
+                            <h4 className="header" key={5}>
                                    Repositories Update Interval
-                            </h4>
-                            <input type="number" className="h3-size" value={this.state.interval} onChange={this.onChange} name="interval" ref="interval"/>
-                            { modal_buttons }
-                        </div>
+                            </h4>,
+                            <input type="number" className="h3-size" value={this.state.interval} onChange={this.onChange} name="interval" ref="interval" key={5}/>,
+                            <div className="modal-buttons float-height" key={6}>
+                                <div className="svg-icon action" onClick={ this.saveSettings }>
+                                    <img className='svg-icon' src={ checkmark.icon } alt={ checkmark.alt_text } />
+                                </div>
+                            </div>
+                        ]
                     } />
 
 

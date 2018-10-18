@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { LineChart, CartesianGrid, XAxis, YAxis,
+import { LineChart, CartesianGrid, XAxis, YAxis, Brush,
     Tooltip, Legend, Line, Label, ResponsiveContainer } from 'recharts'
 import moment from 'moment'
 import { connect } from 'react-redux'
@@ -59,8 +59,7 @@ class StudentProgressLineGraph extends Component {
             return defaultData
         }
 
-        let minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date)
-        minDate = moment(minDate).isBefore(moment('2018-02-10'), 'day') ? moment('2018-09-20').valueOf() : minDate
+        const minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date)
         const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date)
 
         const formattedData = []
@@ -107,7 +106,7 @@ class StudentProgressLineGraph extends Component {
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart className="chart" width={730} height={500} data={this.state.formattedData}
                         margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Student Progress Over Time</text>
+                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Student Progress Over Time (Incomplete)</text>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="date" type="number" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
                             <Label value="Date" position="bottom" />
@@ -120,6 +119,7 @@ class StudentProgressLineGraph extends Component {
                         <Tooltip labelFormatter={this.dateFormatter}/>
                         <Legend verticalAlign="top"/>
                         <Line type="monotone" dataKey="progress" stroke="#8884d8" />
+                        <Brush dataKey="Date" height={20} stroke="#8884d8" />
                     </LineChart>
                 </ResponsiveContainer>
             </div>
