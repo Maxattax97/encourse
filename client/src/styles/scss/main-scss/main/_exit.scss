@@ -2,8 +2,6 @@
 @import "../definitions";
 
 .exit-nav {
-  position: relative;
-
   @include set-size-rem-safe(2rem, 2rem);
   padding: 8px;
 

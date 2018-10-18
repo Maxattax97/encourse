@@ -48,7 +48,7 @@ class CourseModal extends Component {
                 <Modal center
                     show={ this.props.show }
                     onExit={ this.props.close }
-                    component={
+                    content={
                         [
                             <Title header={<h2 className='header'>Course Settings</h2> } key={1}/>,
                             <div className="h2 break-line header" key={2}/>,
