@@ -89,7 +89,7 @@ def jsonify_data(commit_data, times) -> json:
             total_del += commit_data[day]["deletions"]
         new_entry["additions"] = total_add
         new_entry["deletions"] = total_del
-
+        
         daily_data.append(new_entry)
     return json.dumps(daily_data)
 

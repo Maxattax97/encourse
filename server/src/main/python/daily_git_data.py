@@ -84,6 +84,8 @@ def remove_shared_commits(students):
 
         if should_remove:
             removal_count+=1
+        else:
+            break
         print(removal_count)
 
     print("students: {}".format(students))
