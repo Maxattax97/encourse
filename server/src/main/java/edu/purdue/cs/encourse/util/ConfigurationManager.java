@@ -22,9 +22,8 @@ public class ConfigurationManager {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Configuration File not found at src/config.txt");
         }
-
     }
 
     public static ConfigurationManager getInstance() {
