@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Label, Brush, ResponsiveContainer } from 'recharts'
 import moment from 'moment'
 import { connect } from 'react-redux'
 
@@ -51,7 +51,7 @@ class CodeChangesChart extends Component {
     }
 
     formatApiData = (udata) => {
-        if (!udata) {
+        if (!udata || !udata.data) {
             return defaultData
         }
         const data = udata.data
@@ -65,10 +65,9 @@ class CodeChangesChart extends Component {
             return defaultData
         }
 
-        let minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date)
-        minDate = moment(minDate).isBefore(moment('2018-02-10'), 'day') ? moment('2018-09-20').valueOf() : minDate
+        const minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date)
         const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date)
-
+        
         const formattedData = []
 
         let inputIndex = 0
@@ -83,8 +82,8 @@ class CodeChangesChart extends Component {
             else {
                 formattedData.push({
                     date: m.valueOf(),
-                    additions: 0,
-                    deletions: 0,
+                    additions: data[inputIndex - 1] || 0,
+                    deletions: data[inputIndex - 1] || 0,
                 })
             }
         }
@@ -97,7 +96,7 @@ class CodeChangesChart extends Component {
             <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 0, bottom: 25}}>
-                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Code Frequency</text>
+                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Lines of Code Added/Deleted</text>
                         <CartesianGrid strokeDasharray="3 3"/>
                         <XAxis type="number" dataKey="date" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
                             <Label position="insideBottom" offset={-15} value="Date"/>
@@ -106,6 +105,7 @@ class CodeChangesChart extends Component {
                         <Tooltip labelFormatter={this.dateFormatter}/>
                         <Area type="monotone" dataKey="additions" stroke="none" fill="green" />
                         <Area type="monotone" dataKey="deletions" stroke="none" fill="red" />
+                        <Brush dataKey="date" height={20} stroke="#8884d8" />
                     </AreaChart>
                 </ResponsiveContainer>
             </div>

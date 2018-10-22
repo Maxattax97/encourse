@@ -16,67 +16,56 @@ h1 {
   cursor:default;
   @include set-rem-safe(font-size, 2rem);
   @include set-rem-safe(line-height, 2rem);
-  @include set-rem-safe(height, 2rem);
 }
 
 h1.header {
   @include set-rem-safe(line-height, 4rem);
-  @include set-rem-safe(height, 4rem);
 }
 
 h2 {
   cursor:default;
   @include set-rem-safe(font-size, 1.5rem);
   @include set-rem-safe(line-height, 1.5rem);
-  @include set-rem-safe(height, 1.5rem);
 }
 
 h2.header {
   @include set-rem-safe(line-height, 3rem);
-  @include set-rem-safe(height, 3rem);
 }
 
 h3 {
   cursor:default;
   @include set-rem-safe(font-size, 1.17rem);
   @include set-rem-safe(line-height, 1.17rem);
-  @include set-rem-safe(height, 1.17rem);
 }
 
 h3.header {
   @include set-rem-safe(line-height, 2.24rem);
-  @include set-rem-safe(height, 2.24rem);
 }
 
 h4 {
   cursor:default;
   @include set-rem-safe(font-size, 1rem);
   @include set-rem-safe(line-height, 1rem);
-  @include set-rem-safe(height, 1rem);
 }
 
 h4.header {
   @include set-rem-safe(line-height, 2rem);
-  @include set-rem-safe(height, 2rem);
 }
 
 h5 {
   cursor:default;
   @include set-rem-safe(font-size, .83rem);
   @include set-rem-safe(line-height, .83rem);
-  @include set-rem-safe(height, .83rem);
 }
 
 h5.header {
   @include set-rem-safe(line-height, 1.66rem);
-  @include set-rem-safe(height, 1.66rem);
 }
 
 h6 {
   cursor:default;
   @include set-rem-safe(font-size, .67rem);
   @include set-rem-safe(line-height, .67rem);
-  @include set-rem-safe(height, .67rem);
 }
 
 h6.header {

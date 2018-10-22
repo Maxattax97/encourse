@@ -33,14 +33,14 @@ class ProjectPanel extends Component {
 
                 <div className='panel-right-nav'>
                     <div className='top-nav' />
-                    <ActionNavigation actions={[() => {}, () => {}, () => {}, () => {}, () => {}]} />
+                    <ActionNavigation actions={[() => {}, () => {}, () => {}, () => {}, () => {}]} action_names={['Save Changes', 'Revert Changes', 'Delete Project']}/>
                 </div>
 
                 <div className='panel-center-content'>
-                    <Title header={ <h1 className='header'>CS252 - Projects{this.props.projects ? ` - ${this.props.projects[this.props.current_project_index].project_name}` : ''}</h1> } />
+                    <Title header={ <h1 className='header'>CS252 - Projects</h1> } />
                     <div className='h1 break-line header' />
 
-                    <Summary header={ <h3 className='header'>Properties</h3> }
+                    <Summary header={ <h3 className='header'>{this.props.projects && this.props.projects[this.props.current_project_index] ? `${this.props.projects[this.props.current_project_index].project_name} - ` : 'New - '}Properties</h3> }
                         columns={ 2 }
                         data={ [ 1, 2 ] }
                         iterator={ (index) =>

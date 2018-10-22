@@ -78,16 +78,17 @@ def jsonify_data(commit_data, times) -> json:
     date1 = datetime.strptime(times[0], "%Y-%m-%d").date()
     date2 = datetime.strptime(times[1], "%Y-%m-%d").date()
     dates = daterange(date1, date2)
+    total_add = 0
+    total_del = 0
     for day in dates:
         day = date_string(day)
         new_entry = {}
         new_entry["date"] = day
         if day in commit_data:
-            new_entry["additions"] = commit_data[day]["additions"]
-            new_entry["deletions"] = commit_data[day]["deletions"]
-        else:
-            new_entry["additions"] = 0
-            new_entry["deletions"] = 0
+            total_add += commit_data[day]["additions"]
+            total_del += commit_data[day]["deletions"]
+        new_entry["additions"] = total_add
+        new_entry["deletions"] = total_del
 
         daily_data.append(new_entry)
     return json.dumps(daily_data)

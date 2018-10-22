@@ -125,7 +125,7 @@ public class ReadController {
             }
         }
         if (errors.isEmpty()) {
-            return new ResponseEntity<>(correct, HttpStatus.OK);
+            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
         }
         return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
     }
@@ -149,7 +149,7 @@ public class ReadController {
             }
         }
         if (errors.isEmpty()) {
-            return new ResponseEntity<>(correct, HttpStatus.OK);
+            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
         }
         return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
     }
@@ -173,7 +173,7 @@ public class ReadController {
             }
         }
         if (errors.isEmpty()) {
-            return new ResponseEntity<>(correct, HttpStatus.OK);
+            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
         }
         return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
     }
@@ -197,7 +197,7 @@ public class ReadController {
             }
         }
         if (errors.isEmpty()) {
-            return new ResponseEntity<>(correct, HttpStatus.OK);
+            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
         }
         return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
     }
@@ -221,7 +221,7 @@ public class ReadController {
             }
         }
         if (errors.isEmpty()) {
-            return new ResponseEntity<>(correct, HttpStatus.OK);
+            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
         }
         return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
     }
