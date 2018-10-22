@@ -337,10 +337,14 @@ public class ProfessorServiceImpl implements ProfessorService {
         try {
             BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
             BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+            visibleWriter.write("Start " + userName + "\n");
+            hiddenWriter.write("Start " + userName + "\n");
             for (StudentProjectDate d : projectDates) {
                 visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
                 hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
             }
+            visibleWriter.write("End " + userName + "\n");
+            hiddenWriter.write("End " + userName + "\n");
             visibleWriter.close();
             hiddenWriter.close();
         }
