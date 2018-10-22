@@ -324,16 +324,32 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName) {
-        String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
-        String commitLogFile = listStudentCommitsByTime(projectID, userName);
-        if(dailyCountsFile == null) {
+        if(!projectRepository.existsByProjectIdentifier(projectID)) {
             return new JSONReturnable(-1, null);
         }
-        if(commitLogFile == null) {
+        Student student = studentRepository.findByUserName(userName);
+        if(student == null) {
             return new JSONReturnable(-2, null);
         }
+        List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestDates.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestDates.txt";
+        try {
+            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+            for (StudentProjectDate d : projectDates) {
+                visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
+                hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
+            }
+            visibleWriter.close();
+            hiddenWriter.close();
+        }
+        catch(IOException e) {
+            return new JSONReturnable(-3, null);
+        }
+        // TODO: @Ryan adjust python command if needed
         String pyPath = pythonPath + "get_individual_progress.py";
-        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
+        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -352,26 +368,23 @@ public class ProfessorServiceImpl implements ProfessorService {
                 StringBuilder builder = new StringBuilder();
                 builder.append(student.getUserName());
                 List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), false);
-                for(StudentProjectTest t : testResults) {
+                for (StudentProjectTest t : testResults) {
                     builder.append(";").append(t.getTestResultString());
                 }
                 String visibleTestResult = builder.toString();
                 builder = new StringBuilder();
                 builder.append(student.getUserName());
                 testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), true);
-                for(StudentProjectTest t : testResults) {
+                for (StudentProjectTest t : testResults) {
                     builder.append(";").append(t.getTestResultString());
                 }
                 String hiddenTestResult = builder.toString();
-                visibleWriter.write(visibleTestResult);
-                visibleWriter.write("\n");
-                hiddenWriter.write(hiddenTestResult);
-                hiddenWriter.write("\n");
+                visibleWriter.write(visibleTestResult + "\n");
+                hiddenWriter.write(hiddenTestResult + "\n");
             }
             visibleWriter.close();
             hiddenWriter.close();
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             json = new JSONReturnable(-1, null);
         }
 
@@ -388,7 +401,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         return json;
     }
 
- public JSONReturnable getTestSummary(@NonNull String projectID) {
+    public JSONReturnable getTestSummary(@NonNull String projectID) {
         JSONReturnable json = null;
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
@@ -412,10 +425,8 @@ public class ProfessorServiceImpl implements ProfessorService {
                     builder.append(";").append(t.getTestResultString());
                 }
                 String hiddenTestResult = builder.toString();
-                visibleWriter.write(visibleTestResult);
-                visibleWriter.write("\n");
-                hiddenWriter.write(hiddenTestResult);
-                hiddenWriter.write("\n");
+                visibleWriter.write(visibleTestResult + "\n");
+                hiddenWriter.write(hiddenTestResult + "\n");
             }
             visibleWriter.close();
             hiddenWriter.close();
@@ -792,8 +803,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(newFilePath));
                 String line;
                 while((line = reader.readLine()) != null) {
-                    writer.write(line);
-                    writer.write("\n");
+                    writer.write(line + "\n");
                 }
                 reader.close();
                 writer.close();
@@ -848,7 +858,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         int code = 0;
         for(StudentProject p : projects) {
             Student student = studentRepository.findByUserID(p.getStudentID());
-            List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdDateAndIdStudentID(date, p.getStudentID());
+            StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
             String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName();
             try {
                 if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
@@ -869,24 +879,19 @@ public class ProfessorServiceImpl implements ProfessorService {
                 }
                 double visibleGrade = parseProgressForProject(projectID, visibleResult);
                 double hiddenGrade = parseProgressForProject(projectID, hiddenResult);
-                boolean exists = false;
-                for(StudentProjectDate d : projectDates) {
-                    if(d.getProjectIdentifier().equals(p.getProjectIdentifier())) {
-                        if(visibleGrade > d.getDateVisibleGrade()) {
-                            d.setDateVisibleGrade(visibleGrade);
-                            d = studentProjectDateRepository.save(d);
-                        }
-                        if(hiddenGrade > d.getDateHiddenGrade()) {
-                            d.setDateHiddenGrade(hiddenGrade);
-                            studentProjectDateRepository.save(d);
-                        }
-                        exists = true;
-                        break;
-                    }
+                if(projectDate == null) {
+                    StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
+                    studentProjectDateRepository.save(d);
                 }
-                if(!exists) {
-                    StudentProjectDate projectDate = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
-                    studentProjectDateRepository.save(projectDate);
+                else {
+                    if(visibleGrade > projectDate.getDateVisibleGrade()) {
+                        projectDate.setDateVisibleGrade(visibleGrade);
+                        studentProjectDateRepository.save(projectDate);
+                    }
+                    if(hiddenGrade > projectDate.getDateHiddenGrade()) {
+                        projectDate.setDateHiddenGrade(hiddenGrade);
+                        studentProjectDateRepository.save(projectDate);
+                    }
                 }
                 if(visibleGrade > p.getBestVisibleGrade()) {
                     p.setBestVisibleGrade(visibleGrade);
