@@ -10,18 +10,26 @@ import org.json.simple.JSONArray;
 import java.io.File;
 
 public interface TeachingAssistantService {
-    JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getClassProgress(@NonNull String projectID);
-    JSONReturnable getTestSummary(@NonNull String projectID);
-    JSONReturnable getCommitCounts(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
+    JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
+    JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
 
-    int runTestallForStudent(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getCommitCounts(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
+    JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
 
-    JSONArray getStudentData(@NonNull String semester, @NonNull String courseID, @NonNull String userName);
-    JSONArray getProjectData(@NonNull String semester, @NonNull String courseID, @NonNull String userName);
+    JSONReturnable getAssignmentsProgress(@NonNull String projectID, @NonNull String userNameTA);
+    JSONReturnable getAssignmentsTestSummary(@NonNull String projectID, @NonNull String userNameTA);
+
+    String countAllCommits(@NonNull String projectID, @NonNull String userNameTA);
+    String countAllCommitsByDay(@NonNull String projectID, @NonNull String userNameTA);
+    String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
+    String listAllCommitsByTime(@NonNull String projectID, @NonNull String userNameTA);
+    String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
+
+    int runTestallForStudent(@NonNull String projectID, @NonNull String userNameStudent);
+
+    JSONArray getStudentData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA);
+    JSONArray getProjectData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA);
 
     Project getProject(String projectID);
 }
