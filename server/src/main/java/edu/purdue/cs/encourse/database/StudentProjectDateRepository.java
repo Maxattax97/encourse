@@ -11,5 +11,7 @@ public interface StudentProjectDateRepository extends CrudRepository<StudentProj
     List<StudentProjectDate> findByIdProjectIdentifier(@NonNull String projectID);
     List<StudentProjectDate> findByIdDate(@NonNull String date);
     List<StudentProjectDate> findByIdDateAndIdStudentID(@NonNull String date, @NonNull String studentID);
+    List<StudentProjectDate> findByIdProjectIdentifierAndIdStudentID(@NonNull String projectID, @NonNull String studentID);
     List<StudentProjectDate> findByIdDateAndIdProjectIdentifier(@NonNull String date, @NonNull String projectID);
+    StudentProjectDate findByIdDateAndIdProjectIdentifierAndIdStudentID(@NonNull String date, @NonNull String projectID, @NonNull String studentID);
 }

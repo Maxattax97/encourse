@@ -52,8 +52,25 @@ class CoursePanel extends Component {
                     {...this.props}/>
 
                 <div className='panel-right-nav'>
-                    <div className='top-nav' />
-                    <ActionNavigation actions={[() => {}, () => {}, () => {}, () => {}, () => {}]} action_names={['Manage Teaching Assistants', 'Sync Repositories', 'Run Tests', 'Academic Dishonesty Report']}/>
+                    <div className='top-nav'>
+                        <div className='course-repository-info'>
+                            <h4>Last Sync:</h4>
+                            <h4>Last Test Ran:</h4>
+                        </div>
+                    </div>
+                    <ActionNavigation actions={[
+                        () => { history.push('/manage-tas') },
+                        () => { },
+                        () => {},
+                        () => { history.push('/course-dishonesty') }
+                    ]}
+                    action_names={[
+                        'Manage Teaching Assistants',
+                        'Sync Repositories',
+                        'Run Tests',
+                        'Academic Dishonesty Report'
+                    ]}/>
+
                 </div>
 
                 <CourseModal show={ this.state.show_course_options }

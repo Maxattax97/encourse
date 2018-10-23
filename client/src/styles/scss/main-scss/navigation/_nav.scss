@@ -2,7 +2,26 @@
 @import "../definitions";
 
 .top-nav {
+  position:relative;
   @include set-rem-safe(height, 4rem);
+}
+
+.back-nav {
+  img {
+    @include set-size-rem-safe(1.5rem, 1.5rem);
+    @include set-rem-safe(margin-top, 1.25rem);
+    float: right;
+  }
+
+  h3 {
+    @include set-rem-safe(margin-top, 1.35rem);
+    float:right;
+  }
+}
+
+.course-repository-info {
+  position:absolute;
+  bottom:5px;
 }
 
 .side-nav-left {

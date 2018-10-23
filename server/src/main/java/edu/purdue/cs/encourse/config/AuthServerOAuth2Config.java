@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
@@ -41,7 +42,8 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
 
     @Bean
     public TokenStore tokenStore() {
-        return new JdbcTokenStore(dataSource);
+        JdbcTokenStore tokenStore = new JdbcTokenStore(dataSource);
+        return tokenStore;
     }
 
     @Bean
@@ -61,7 +63,13 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        endpoints.tokenStore(tokenStore()).authenticationManager(authenticationManager).userDetailsService(userDetailsService);
+        DefaultTokenServices tokenServices = new DefaultTokenServices();
+        tokenServices.setTokenStore(tokenStore());
+        tokenServices.setSupportRefreshToken(true);
+        tokenServices.setAccessTokenValiditySeconds(3600);
+
+        endpoints.authenticationManager(authenticationManager).userDetailsService(userDetailsService).tokenServices(tokenServices);
+        //endpoints.tokenStore(tokenStore()).authenticationManager(authenticationManager).userDetailsService(userDetailsService);
     }
 
 }

@@ -40,15 +40,15 @@ class ProjectNavigation extends Component {
     };
 
     openProjectOptions = () => {
-        history.push(`/projects`)
+        history.push('/projects')
     };
 
     render() {
         return (
-            <div className="projects-nav-container">
+            <div className="project-nav-container">
                 <div className="panel-left-nav">
-                    <div className="projects-nav side-nav-left">
-                        <div className={ `top-nav svg-icon float-height${ this.props.backClick ? ' action' : '' }` } onClick={ this.props.backClick }>
+                    <div className="list-nav side-nav-left">
+                        <div className={ `top-nav back-nav svg-icon float-height${ this.props.backClick ? ' action' : '' }` } onClick={ this.props.backClick }>
                             <h3>
                                 { this.props.back }
                             </h3>
@@ -57,7 +57,7 @@ class ProjectNavigation extends Component {
                             }
                         </div>
                         <Card component={
-                            <div className="projects-container">
+                            <div className="list-container">
                                 <Title onClick={ this.openProjectOptions } header={ <h3 className='header'>Projects</h3> } icon={ settings }/>
                                 <div className="h3 break-line header"/>
                                 <div className='text-list'>
@@ -66,13 +66,13 @@ class ProjectNavigation extends Component {
                                         this.props.projects.map((project, index) =>
                                             <div key={ project.id }
                                                 onClick={ () => this.changeProject(project.id, index) }
-                                                className={ `action${this.props.currentProjectIndex === index && !this.state.new_project ? ' projects-highlight' : ''}` }>
+                                                className={ `action${this.props.currentProjectIndex === index && !this.state.new_project ? ' list-highlight' : ''}` }>
                                                 <h4>
                                                     { project.project_name }
                                                 </h4>
                                             </div>)
                                     }
-                                    <div className={ `projects-new action svg-icon${this.state.new_project ? ' projects-highlight' : ''}` } onClick={ this.openProjectOptions }>
+                                    <div className={ `list-new action svg-icon${this.state.new_project ? ' list-highlight' : ''}` } onClick={ this.openProjectOptions }>
                                         <img className='svg-icon' src={ plus.icon } alt={ plus.alt_text } />
                                     </div>
                                 </div>
@@ -80,17 +80,6 @@ class ProjectNavigation extends Component {
                         } />
                     </div>
                 </div>
-
-                <ProjectModal show={ this.state.show_project_options }
-                    close={ () => this.toggleProjectOptions(false) }
-                    projects={ this.props.projects }
-                    current_project={ this.props.currentProjectIndex }
-                    new_project={ this.state.new_project }
-                    toggleProjectOptions={ this.toggleProjectOptions }/>
-
-                <div className={ `modal-overlay${ this.state.show_project_options ? ' show' : '' }` }
-                    style={ this.state.show_project_options ? { } : { 'display': 'none' } }
-                    onClick={ () => this.toggleProjectOptions(false) } />
             </div>
         )
     }
