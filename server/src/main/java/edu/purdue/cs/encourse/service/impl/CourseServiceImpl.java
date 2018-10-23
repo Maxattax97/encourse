@@ -383,7 +383,24 @@ public class CourseServiceImpl implements CourseService {
     }
 
     public JSONArray filterStudentData(@NonNull JSONArray studentsJSON, @NonNull List<String> parameters, @NonNull List<List<String>> values) {
-        return null;
+        JSONArray filtered = new JSONArray();
+        List<JSONObject> jsonList = new ArrayList<>();
+        for(Object obj : studentsJSON) {
+            jsonList.add((JSONObject)obj);
+        }
+        for(int i = 0; i < parameters.size(); i++) {
+            List<JSONObject> tempList = new ArrayList<>();
+            for(int j = 0; j < values.get(i).size(); j++) {
+                for(JSONObject obj : jsonList) {
+                    if(obj.get(parameters.get(i)).equals(values.get(i).get(j))) {
+                        tempList.add(obj);
+                    }
+                }
+            }
+            jsonList = tempList;
+        }
+        filtered.addAll(jsonList);
+        return filtered;
     }
 
     /** Retrieves basic data for all projects in the course **/
