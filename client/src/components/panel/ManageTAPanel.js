@@ -56,7 +56,7 @@ class ManageTAPanel extends Component {
                     data={ [ 1, 2 ] }
                     iterator={ (index) =>
                         index === 1 ?
-                            <div>
+                            <div key={index}>
                                 <h4 className="header">
                                          Name
                                 </h4>

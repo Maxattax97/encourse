@@ -59,8 +59,8 @@ class CourseModal extends Component {
                             <h4 className="header" key={5}>
                                    Repositories Update Interval
                             </h4>,
-                            <input type="number" className="h3-size" value={this.state.interval} onChange={this.onChange} name="interval" ref="interval" key={5}/>,
-                            <div className="modal-buttons float-height" key={6}>
+                            <input type="number" className="h3-size" value={this.state.interval} onChange={this.onChange} name="interval" ref="interval" key={6}/>,
+                            <div className="modal-buttons float-height" key={7}>
                                 <div className="svg-icon action" onClick={ this.saveSettings }>
                                     <img className='svg-icon' src={ checkmark.icon } alt={ checkmark.alt_text } />
                                 </div>

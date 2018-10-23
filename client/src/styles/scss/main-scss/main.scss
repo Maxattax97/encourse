@@ -81,6 +81,18 @@ h6.header {
   @include set-rem-safe(font-size, 1.33rem);
 }
 
+.h4-size {
+  @include set-rem-safe(font-size, 1rem);
+}
+
+.h5-size {
+  @include set-rem-safe(font-size, .83rem);
+}
+
+.h6-size {
+  @include set-rem-safe(font-size, .67rem);
+}
+
 .float-height:after {
   content: "";
   display: block;
