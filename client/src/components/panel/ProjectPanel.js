@@ -33,7 +33,20 @@ class ProjectPanel extends Component {
 
                 <div className='panel-right-nav'>
                     <div className='top-nav' />
-                    <ActionNavigation actions={[() => {}, () => {}, () => {}, () => {}, () => {}]} action_names={['Save Changes', 'Revert Changes', 'Delete Project']}/>
+                    <ActionNavigation actions={[
+                        () => {},
+                        () => {},
+                        () => {},
+                        () => {},
+                        () => {}
+                    ]}
+                    action_names={[
+                        'Add New Project',
+                        'Upload Test Zip',
+                        'Save Changes',
+                        'Revert Changes',
+                        'Remove Project'
+                    ]}/>
                 </div>
 
                 <div className='panel-center-content'>

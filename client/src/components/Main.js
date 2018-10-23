@@ -12,6 +12,9 @@ import StudentPanel from './panel/StudentPanel'
 import AdminPanel from './panel/AdminPanel'
 import PreferencePanel from './panel/PreferencePanel'
 import ProjectPanel from './panel/ProjectPanel'
+import ManageTAPanel from './panel/ManageTAPanel'
+import CourseDishonestyPanel from './panel/CourseDishonestyPanel'
+import StudentDishonestyPanel from './panel/StudentDishonestyPanel'
 
 class Main extends Component {
 
@@ -40,6 +43,15 @@ class Main extends Component {
                             }/>
                             <Route path="/projects" render={(navProps) =>
                                 <ProjectPanel {...navProps} />
+                            }/>
+                            <Route path="/manage-tas" render={(navProps) =>
+                                <ManageTAPanel {...navProps} />
+                            }/>
+                            <Route path="/course-dishonesty" render={(navProps) =>
+                                <CourseDishonestyPanel {...navProps} />
+                            }/>
+                            <Route path="/student-dishonetsy" render={(navProps) =>
+                                <StudentDishonestyPanel {...navProps}/>
                             }/>
                             <Route path="/settings" render={(/* navProps */) =>
                                 <PreferencePanel />
