@@ -52,7 +52,12 @@ class CoursePanel extends Component {
                     {...this.props}/>
 
                 <div className='panel-right-nav'>
-                    <div className='top-nav' />
+                    <div className='top-nav'>
+                        <div className='course-repository-info'>
+                            <h4>Last Sync:</h4>
+                            <h4>Last Test Ran:</h4>
+                        </div>
+                    </div>
                     <ActionNavigation actions={[
                         () => { history.push('/manage-tas') },
                         () => { },

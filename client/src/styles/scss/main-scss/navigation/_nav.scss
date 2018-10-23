@@ -2,7 +2,13 @@
 @import "../definitions";
 
 .top-nav {
+  position:relative;
   @include set-rem-safe(height, 4rem);
+}
+
+.course-repository-info {
+  position:absolute;
+  bottom:5px;
 }
 
 .side-nav-left {
