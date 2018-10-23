@@ -3,18 +3,14 @@ import { connect } from 'react-redux'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import ActionNavigation from '../navigation/ActionNavigation'
 import CommitHistory from './util/CommitHistory'
+import TANavigation from '../navigation/TANavigation'
 
 class ManageTAPanel extends React.Component {
     render() {
-        return (<div className="manage-ta-panel">
-            <ProjectNavigation
-                info={ this.props.projects }
-                back="Course"
-                backClick={ this.back }
-                onModalBlur={ (blur) => this.setState({modal_blur : blur ? ' blur' : ''}) }
-                { ...this.props }/>
+        return (<div className='manage-ta-panel'>
+            <TANavigation/>
 
-            <div className="panel-right-nav">
+            <div className='panel-right-nav'>
                 <div className='top-nav' />
                 <ActionNavigation actions={[
                     () => {},
