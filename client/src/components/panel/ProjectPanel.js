@@ -26,7 +26,7 @@ class ProjectPanel extends Component {
     render() {
         return (
             <div className='panel-projects'>
-                <ProjectNavigation onModalBlur={(blur) => this.setState({modal_blur : blur ? ' blur' : ''})}
+                <ProjectNavigation
                     back="Course"
                     backClick={ this.back }
                     {...this.props}/>

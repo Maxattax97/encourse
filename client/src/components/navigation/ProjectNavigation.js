@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-import ProjectModal from '../modal/ProjectModal'
 import {getClassProjects, setCurrentProject} from '../../redux/actions/index'
 import connect from 'react-redux/es/connect/connect'
 import {Title, Card} from '../Helpers'
