@@ -45,6 +45,7 @@ def select_best(all_files: list):
     # eprint("Selected top files: {}".format(top_files))
     return top_files[:3]
 
+
 def remove_shared_commits(students):
     """Removes data for uninformative commits 
         
@@ -62,28 +63,40 @@ def remove_shared_commits(students):
     for day_0, day_1, day_2 in zip(student_0, student_1, student_2):
         should_remove = True
 
-        #Series of checks for each value
+        # Series of checks for each value
         if day_0["date"] != day_1["date"] or day_1["date"] != day_2["date"]:
             eprint("date mismatch")
             should_remove = False
         if day_0["files"] != day_1["files"] or day_1["files"] != day_2["files"]:
             eprint("files mismatch")
             should_remove = False
-        if day_0["time_spent"] != day_1["time_spent"] or day_1["time_spent"] != day_2["time_spent"]:
+        if (
+            day_0["time_spent"] != day_1["time_spent"]
+            or day_1["time_spent"] != day_2["time_spent"]
+        ):
             eprint("time_spent mismatch")
             should_remove = False
-        if day_0["additions"] != day_1["additions"] or day_1["additions"] != day_2["additions"]:
+        if (
+            day_0["additions"] != day_1["additions"]
+            or day_1["additions"] != day_2["additions"]
+        ):
             eprint("additions mismatch")
             should_remove = False
-        if day_0["deletions"] != day_1["deletions"] or day_1["deletions"] != day_2["deletions"]:
+        if (
+            day_0["deletions"] != day_1["deletions"]
+            or day_1["deletions"] != day_2["deletions"]
+        ):
             eprint("deletions mismatch")
             should_remove = False
-        if day_0["commit_count"] != day_1["commit_count"] or day_1["commit_count"] != day_2["commit_count"]:
+        if (
+            day_0["commit_count"] != day_1["commit_count"]
+            or day_1["commit_count"] != day_2["commit_count"]
+        ):
             eprint("commit_count mismatch")
             should_remove = False
 
         if should_remove:
-            removal_count+=1
+            removal_count += 1
         else:
             break
         print(removal_count)
@@ -94,7 +107,6 @@ def remove_shared_commits(students):
             data = students[name].pop(0)
             print(data)
     print("students: {}".format(students))
-
 
     return students
 

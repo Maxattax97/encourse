@@ -7,21 +7,20 @@ from helper import time_string
 from helper import daterange
 from helper import date_string
 from helper import eprint
-from daily_git_data import get_daily_commit_data as get_progress
 from start_end import commit_data
+from past_progress import past_progress
 
 
 def extract_changes(commit_data):
     """Extracts additions and deletions from commit data
 
     **Args**:
-        **commit_data** (dict): A list of dictionaries containing commit data,
+        **commit_data** (dict): A list of dictionaries containing historical progress,
         each with the following form: ::
 
             {
                 "date": datetime,
-                "additions": int,
-                "deletions": int
+                "progress": int,
             }
 
     **Returns**:
@@ -30,8 +29,7 @@ def extract_changes(commit_data):
 
             {
                 "date1": {
-                    "additions": int,
-                    "deletions": int
+                    "progress": int,
                 }
                 ...
             }
@@ -39,15 +37,12 @@ def extract_changes(commit_data):
     """
     new_data = {}
     for info in commit_data:
-        new_entry = {}
-        new_entry["additions"] = info["additions"]
-        new_entry["deletions"] = info["deletions"]
         date = date_string(info["date"])
-        new_data[date] = new_entry
+        new_data[date] = info["progress"]
     return new_data
 
 
-def jsonify(commit_data, times):
+def jsonify(progress_data, times):
     """Convert data to json for /progress endpoint
 
     Converts the data to a list of dictionaries. One dictionary is
@@ -60,8 +55,7 @@ def jsonify(commit_data, times):
             
             {
                 "date1": {
-                    "additions": datetime,
-                    "deletions": int (seconds),
+                    "progress": int,
                 },
                 ...
             }
@@ -79,41 +73,44 @@ def jsonify(commit_data, times):
     """
     daily_data = []
     # Create date range using times file
+    print(times)
     date1 = datetime.strptime(times[0], "%Y-%m-%d").date()
     date2 = datetime.strptime(times[1], "%Y-%m-%d").date()
     dates = daterange(date1, date2)
     progress = 0
+    print(progress_data)
 
     # Fill each date with comulative progress
     for day in dates:
         day = date_string(day)
         new_entry = {}
         new_entry["date"] = day
-        if day in commit_data:
-            progress += commit_data[day]["additions"] - commit_data[day]["deletions"]
+        if day in progress_data:
+            progress = progress_data[day]
         new_entry["progress"] = progress
+        print(day)
         daily_data.append(new_entry)
 
     # Convert progress to a percentage by divding by the final total
-    for item in daily_data:
-        item["progress"] = round(item["progress"] / progress * 100)
+    # for item in daily_data:
+    #    item["progress"] = round(item["progress"] / progress * 100)
     return daily_data
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("logfile", help="path to commit log file")
-    parser.add_argument("timefile", help="path to commit time file")
+    parser.add_argument("progressfile", help="path to historic progress file")
+    parser.add_argument("timefile", help="path to time file")
     parser.add_argument("name", help="user name")
     parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
     args = parser.parse_args()
 
-    commit_data_file = open(args.logfile, "r")
+    progress_file = open(args.progressfile, "r")
     commit_times_file = open(args.timefile, "r")
     student_id = args.name
 
-    data = get_progress(commit_data_file)
+    data = past_progress(progress_file)
     individual_data = data[student_id]
     # print("\n")
     reformatted_data = extract_changes(individual_data)

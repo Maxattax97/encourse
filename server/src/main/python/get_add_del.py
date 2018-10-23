@@ -89,7 +89,7 @@ def jsonify_data(commit_data, times) -> json:
             total_del += commit_data[day]["deletions"]
         new_entry["additions"] = total_add
         new_entry["deletions"] = total_del
-        
+
         daily_data.append(new_entry)
     return json.dumps(daily_data)
 
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     reformatted_data = reformat(individual_data)
 
     commit_times = commit_data(commit_times_file)
-    #eprint(commit_times)
+    # eprint(commit_times)
     individual_commit_times = commit_times[student_id]
 
     api_json = jsonify_data(reformatted_data, individual_commit_times)
