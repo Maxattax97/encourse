@@ -9,7 +9,6 @@ import SectionPreview from './util/SectionPreview'
 import connect from 'react-redux/es/connect/connect'
 import url from '../../server'
 import {getSectionsData, getStudentPreviews, getTeachingAssistants} from '../../redux/actions'
-import teachingAssistant from '../../redux/reducers/teaching_assistant'
 
 class ManageTAPanel extends Component {
 
@@ -17,22 +16,23 @@ class ManageTAPanel extends Component {
         super(props)
 
         this.state = {
-            teaching_assistants: [
-                /*{
-                    name: 'Killian Le Clainche',
+            /*teaching_assistants: [
+                {
+                    first_name: 'Killian',
+                    last_name: 'Le Clainche'
                     id: 'kleclain',
                     assignment_type: 2,
                     students: [],
                     sections: []
                 },
                 {
-                    name: 'Jordan',
+                    first_name: 'Jordan',
                     id: 'jmbuck',
                     assignment_type: 1,
                     students: ['heo1', 'heo2', 'heo3'],
                     sections: ['0']
-                }*/
-            ],
+                }
+            ],*/
             current_ta: 0,
             assignment_type: 2,
             students: [],
