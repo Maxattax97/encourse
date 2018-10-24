@@ -101,12 +101,11 @@ class CoursePanel extends Component {
                             data={ this.props.students }
                             className='course-students'
                             iterator={ (student) =>
-                                <Card key={ student.id }
-                                    onClick={ () => this.showStudentPanel(student) } >
-
-                                    <StudentPreview student={ student } projectID={ this.props.currentProjectId }
-                                        setCurrentProject={ this.props.setCurrentProject } />
-                                </Card> } />
+                                <StudentPreview key={ student.id }
+                                    student={ student }
+                                    projectID={ this.props.currentProjectId }
+                                    onClick={ () => this.showStudentPanel(student) }/>
+                            } />
                     </div>
                 </div>
             </div>

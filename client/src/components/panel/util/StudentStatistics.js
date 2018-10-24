@@ -127,17 +127,15 @@ class StudentStatistics extends Component {
             <div className="student-stats-container">
                 <h3 className='header'>Statistics</h3>
                 <div className="h3 break-line header" />
-                <div className='text-list'>
-                    {
-                        this.state.formattedData &&
-                        this.state.formattedData.map &&
-                        this.state.formattedData.map((stat)  =>
-                            <div key={stat.stat_name} className="student-stat  float-height">
-                                <h5>{stat.stat_name}</h5>
-                                <h5>{stat.stat_value}</h5>
-                            </div>)
-                    }
-                </div>
+                {
+                    this.state.formattedData &&
+                    this.state.formattedData.map &&
+                    this.state.formattedData.map((stat)  =>
+                        <div key={stat.stat_name} className="stat float-height">
+                            <h5>{stat.stat_name}</h5>
+                            <h5>{stat.stat_value}</h5>
+                        </div>)
+                }
             </div>
         )
     }
