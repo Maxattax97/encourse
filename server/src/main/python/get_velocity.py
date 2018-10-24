@@ -38,6 +38,10 @@ def jsonify(
     date2 = datetime.strptime(times[1], "%Y-%m-%d").date()
     dates = daterange(date1, date2)
 
+    visible_data = {date_string(x["date"]): x for x in visible_data}
+    hidden_data = {date_string(x["date"]): x for x in hidden_data}
+    daily_data = {date_string(x["date"]): x for x in daily_data}
+
     velocity_data = []
 
     for day in dates:
