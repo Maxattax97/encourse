@@ -40,13 +40,11 @@ def jsonify(git_data, student=None):
     """
     # Create complete copy. Copy module may be removed in the future
     data = copy.deepcopy(git_data)
-    print(data)
     for student in data:
         student_data = data[student]
         for day in student_data:
             day["date"] = date_string(day["date"])
             day["time_spent"] = time_string(day["time_spent"])
-    eprint(data)
     if student:
         return json.dumps(data[student])
     return json.dumps(data)
