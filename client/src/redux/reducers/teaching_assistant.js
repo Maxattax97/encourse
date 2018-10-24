@@ -1,5 +1,4 @@
 function teachingAssistant(state = {}, action) {
-    //TODO: get rid of isFinished
     switch(action.type) {
     case 'GET_TEACHING_ASSISTANTS':
         return Object.assign({}, state, {

@@ -80,7 +80,7 @@ class ClassTestCasePercentDone extends Component {
         if (nextProps.data === null) {
             this.setState({ formattedData: this.getDefaultData(nextProps) })
         }
-        if (!this.props.isFinished && nextProps.isFinished) {
+        if (this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -156,7 +156,6 @@ const mapStateToProps = (state) => {
     return {
         data: state.course && state.course.getTestBarGraphData ? state.course.getTestBarGraphData : null,
         isLoading: state.course ? state.course.getTestBarGraphIsLoading : false,
-        isFinished: state.course ? state.course.getTestBarGraphIsFinished : false,
     }
 }
 

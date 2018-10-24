@@ -37,7 +37,7 @@ class ProgressPerCommit extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(!this.props.isFinished && nextProps.isFinished) {
+        if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -101,7 +101,6 @@ const mapStateToProps = (state) => {
     return {
         // data: state.student && state.student.getCommitFrequencyData ? state.student.getCommitFrequencyData : null,
         // isLoading: state.student ? state.student.getCommitFrequencyIsLoading : false,
-        // isFinished: state.student ? state.student.getCommitFrequencyIsFinished : false,
     }
 }
 

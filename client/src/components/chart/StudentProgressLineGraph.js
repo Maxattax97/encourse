@@ -32,7 +32,7 @@ class StudentProgressLineGraph extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(!this.props.isFinished && nextProps.isFinished) {
+        if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -132,7 +132,6 @@ const mapStateToProps = (state) => {
     return {
         data: state.student && state.student.getProgressLineData ? state.student.getProgressLineData : null,
         isLoading: state.student ? state.student.getProgressLineIsLoading : false,
-        isFinished: state.student ? state.student.getProgressLineIsFinished : false,
     }
 }
 

@@ -96,7 +96,7 @@ class StudentStatistics extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(!this.props.isFinished && nextProps.isFinished) {
+        if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.stats) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -146,7 +146,6 @@ const mapStateToProps = (state) => {
     return {
         stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : [],
         isLoading: state.student ? state.student.getStatisticsIsLoading : true,
-        isFinished: state.student ? state.student.getStatisticsIsFinished : false,
     }
 }
 

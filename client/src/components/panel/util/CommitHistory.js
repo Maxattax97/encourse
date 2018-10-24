@@ -22,7 +22,7 @@ class CommitHistory extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(!this.props.isFinished && nextProps.isFinished) {
+        if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -90,7 +90,6 @@ const mapStateToProps = (state) => {
     return {
         commits: state.student && state.student.getCommitHistoryData ? state.student.getCommitHistoryData : [],
         isLoading: state.student ? state.student.getCommitHistoryIsLoading : true,
-        isFinished: state.student ? state.student.getCommitHistoryIsFinished : false,
     }
 }
 
