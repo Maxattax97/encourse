@@ -66,7 +66,7 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
         DefaultTokenServices tokenServices = new DefaultTokenServices();
         tokenServices.setTokenStore(tokenStore());
         tokenServices.setSupportRefreshToken(true);
-        tokenServices.setAccessTokenValiditySeconds(3600);
+        tokenServices.setAccessTokenValiditySeconds(3600 * 12);
 
         endpoints.authenticationManager(authenticationManager).userDetailsService(userDetailsService).tokenServices(tokenServices);
         //endpoints.tokenStore(tokenStore()).authenticationManager(authenticationManager).userDetailsService(userDetailsService);

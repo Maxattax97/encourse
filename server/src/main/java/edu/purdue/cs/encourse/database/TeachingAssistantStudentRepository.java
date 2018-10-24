@@ -11,4 +11,5 @@ public interface TeachingAssistantStudentRepository extends CrudRepository<Teach
     List<TeachingAssistantStudent> findByIdTeachingAssistantIDAndIdCourseID(@NonNull String teachingAssistantID, @NonNull String courseID);
     List<TeachingAssistantStudent> findByIdStudentID(@NonNull String studentID);
     TeachingAssistantStudent findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(@NonNull String teachingAssistantID, @NonNull String studentID, @NonNull String courseID);
+    //TeachingAssistantStudent findByTeachingAssistantIDAndStudentID(@NonNull String teachingAssistantID, @NonNull String studentID);
 }

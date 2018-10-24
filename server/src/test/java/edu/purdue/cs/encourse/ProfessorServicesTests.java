@@ -79,11 +79,11 @@ public class ProfessorServicesTests {
         studentProjectRepository.deleteAll();
         teachingAssistantStudentRepository.deleteAll();
         assertEquals(0, adminService.addAccount("1", "rravind","Student", "One",
-                "Student", null, "rravind@purdue.edu"));
+                "STUDENT", null, "rravind@purdue.edu"));
         assertEquals(0, adminService.addAccount("2", "grr", "Gustavo", "Rodriguez-Rivera",
-                "Professor", null, "grr@purdue.edu"));
+                "PROFESSOR", null, "grr@purdue.edu"));
         assertEquals(0, adminService.addAccount("3", "dwyork", "Student", "Two",
-                "Student", null, "dwyork@purdue.edu"));
+                "STUDENT", null, "dwyork@purdue.edu"));
         assertEquals(0, adminService.addAccount("4", "dkrolopp", "Daniel", "Krolopp",
                 "TA", "J", "dkrolopp@purdue.edu"));
         sect1 = adminService.addSection("12345", "Fall2018", "cs250", "Hardware", "Lab1", "MWF 12:30 - 1:20");
@@ -164,7 +164,7 @@ public class ProfessorServicesTests {
         assertEquals(1, projects.size());
         assertEquals(proj1.getProjectIdentifier(), projects.get(0).getProjectIdentifier());
         assertEquals(0, adminService.addAccount("10", "hayc", "Student", "Three",
-                "Student", null, "dwyork@purdue.edu"));
+                "STUDENT", null, "dwyork@purdue.edu"));
         assertEquals(0, adminService.registerStudentToSection("hayc", sect1.getSectionIdentifier()));
         projects = studentProjectRepository.findByIdStudentID("10");
         assertEquals(0, projects.size());

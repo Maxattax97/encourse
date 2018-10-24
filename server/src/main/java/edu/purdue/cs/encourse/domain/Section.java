@@ -13,7 +13,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "SECTION")
 public class Section {
-    /** courseID + semester + sectionType form the primary key **/
+    /** Randomly generated String **/
     @Id
     private String sectionIdentifier;
 
