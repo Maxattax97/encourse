@@ -57,6 +57,9 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private StudentProjectDateRepository studentProjectDateRepository;
 
+    @Autowired
+    private TeachingAssistantCourseRepository teachingAssistantCourseRepository;
+
     public User addUser(@NonNull String userName, @NonNull String password, @NonNull String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled) {
         Authority auth = authorityRepository.findDistinctByName(authority);
         if (auth == null) {
@@ -384,18 +387,14 @@ public class AdminServiceImpl implements AdminService {
     }
 
     public int assignProfessorToCourse(@NonNull String userName, @NonNull String courseID, @NonNull String semester) {
-        System.out.println("INSIDE ASSIGNMENTS");
         Professor professor = professorRepository.findByUserName(userName);
         if(professor == null) {
             return -1;
         }
-        System.out.println("PROFESSOR NOT NULL");
         if(sectionRepository.findByCourseID(courseID).isEmpty()) {
             return -2;
         }
-        System.out.println("SECTION IS NOT EMPTY");
         ProfessorCourse assignment = new ProfessorCourse(professor.getUserID(), courseID, semester);
-        System.out.println("ASSIGNMENT: " + assignment);
         if(professorCourseRepository.save(assignment) == null) {
             return -3;
         }
@@ -438,6 +437,19 @@ public class AdminServiceImpl implements AdminService {
         if(accountRepository.save(teachingAssistant) == null) {
             return -4;
         }
+        return 0;
+    }
+
+    public int assignTeachingAssistantToCourse(@NonNull String userName, @NonNull String courseID, @NonNull String semester) {
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userName);
+        if(teachingAssistant == null) {
+            return -1;
+        }
+        if(sectionRepository.findByCourseID(courseID).isEmpty()) {
+            return -2;
+        }
+        TeachingAssistantCourse assignment = new TeachingAssistantCourse(teachingAssistant.getUserID(), courseID, semester);
+        teachingAssistantCourseRepository.save(assignment);
         return 0;
     }
 

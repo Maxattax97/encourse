@@ -92,24 +92,6 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         if (OBFUSCATE) {
             command += " -O";
         }
-        /*File file= new File (tailFilePath, "tail.txt");
-        FileWriter tailWriter;
-        try {
-            if (file.exists())
-            {
-                tailWriter = new FileWriter(file,true);
-            }
-            else
-            {
-                file.createNewFile();
-                tailWriter = new FileWriter(file);
-            }
-
-            String arr[] = command.split(" ", 3);
-            tailWriter.write(arr[0] + arr[1]);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
         System.out.println(command);
         JSONReturnable json = null;
         try {
@@ -206,7 +188,8 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
     }
 
     public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA) {
-        if(!projectRepository.existsByProjectIdentifier(projectID)) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
             return new JSONReturnable(-1, null);
         }
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
@@ -217,7 +200,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         if(student == null) {
             return new JSONReturnable(-3, null);
         }
-        TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdStudentIDAndIdTeachingAssistantID(teachingAssistant.getUserID(), student.getUserID());
+        TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(teachingAssistant.getUserID(), student.getUserID(), project.getCourseID());
         if(assignment == null) {
             return new JSONReturnable(-4, null);
         }
@@ -348,11 +331,15 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
 
     public JSONReturnable getAssignmentsProgress(@NonNull String projectID, @NonNull String userNameTA) {
         JSONReturnable json = null;
-        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
-        if(teachingAssistant == null) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
             return new JSONReturnable(-1, null);
         }
-        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID(teachingAssistant.getUserID());
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
+        if(teachingAssistant == null) {
+            return new JSONReturnable(-2, null);
+        }
+        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests_TA.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests_TA.txt";
         try {
@@ -383,7 +370,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             visibleWriter.close();
             hiddenWriter.close();
         } catch (IOException e) {
-            json = new JSONReturnable(-2, null);
+            json = new JSONReturnable(-3, null);
         }
 
         if (DEBUG) {
@@ -401,11 +388,15 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
 
     public JSONReturnable getAssignmentsTestSummary(@NonNull String projectID, @NonNull String userNameTA) {
         JSONReturnable json = null;
-        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
-        if(teachingAssistant == null) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
             return new JSONReturnable(-1, null);
         }
-        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID(teachingAssistant.getUserID());
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
+        if(teachingAssistant == null) {
+            return new JSONReturnable(-2, null);
+        }
+        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests_TA.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests_TA.txt";
         try {
@@ -437,7 +428,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             hiddenWriter.close();
         }
         catch(IOException e) {
-            json = new JSONReturnable(-1, null);
+            json = new JSONReturnable(-3, null);
         }
 
         if (DEBUG) {
@@ -491,14 +482,12 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         if(sections.isEmpty()) {
             return null;
         }
-        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID(teachingAssistant.getUserID());
+        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
         String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_counts_TA.txt";
         for(TeachingAssistantStudent s : assignments) {
             Student student = studentRepository.findByUserID(s.getStudentID());
-            if(studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID()) != null) {
-                String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-                executeBashScript("countCommits.sh " + destPath + " " + fileName + " " + student.getUserName());
-            }
+            String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
+            executeBashScript("countCommits.sh " + destPath + " " + fileName + " " + student.getUserName());
         }
         return fileName;
     }
@@ -516,14 +505,12 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         if(sections.isEmpty()) {
             return null;
         }
-        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID(teachingAssistant.getUserID());
+        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
         String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_countsByDay_TA.txt";
         for(TeachingAssistantStudent s : assignments) {
             Student student = studentRepository.findByUserID(s.getStudentID());
-            if(studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID()) != null) {
-                String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-                executeBashScript("countCommitsByDay.sh " + destPath + " " + fileName + " " + student.getUserName());
-            }
+            String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
+            executeBashScript("countCommitsByDay.sh " + destPath + " " + fileName + " " + student.getUserName());
         }
         return fileName;
     }
@@ -541,7 +528,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         if(student == null) {
             return null;
         }
-        TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdStudentIDAndIdTeachingAssistantID(student.getUserID(), teachingAssistant.getUserID());
+        TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(teachingAssistant.getUserID(), student.getUserID(), project.getCourseID());
         if(assignment == null) {
             return null;
         }
@@ -573,14 +560,12 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         if(sections.isEmpty()) {
             return null;
         }
-        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID(teachingAssistant.getUserID());
+        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
         String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_commitInfo_TA.txt";
         for(TeachingAssistantStudent s : assignments) {
             Student student = studentRepository.findByUserID(s.getStudentID());
-            if(studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID()) != null) {
-                String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-                executeBashScript("listCommitsByTime.sh " + destPath + " " + fileName + " " + student.getUserName());
-            }
+            String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
+            executeBashScript("listCommitsByTime.sh " + destPath + " " + fileName + " " + student.getUserName());
         }
         return fileName;
     }
@@ -598,7 +583,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         if(student == null) {
             return null;
         }
-        TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdStudentIDAndIdTeachingAssistantID(student.getUserID(), teachingAssistant.getUserID());
+        TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(teachingAssistant.getUserID(), student.getUserID(), project.getCourseID());
         if(assignment == null) {
             return null;
         }
