@@ -62,7 +62,7 @@ class StudentPanel extends Component {
     clear = () => this.props.clearStudent()
 
     componentDidMount = () => {
-        if(!this.props.projects) {
+        if(this.props.projects.length === 0) {
             //TODO: remove classid and semester hardcoding
             this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`)
         }
