@@ -27,10 +27,8 @@ class CoursePanel extends Component {
     componentDidMount = () => {
         //TODO: clear class projects/student previews to account for multiple classes
         //TODO: Add course ID functionality for multiple classes
-        this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`,
-            {'Authorization': `Bearer ${this.props.token}`})
-        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`,
-            {'Authorization': `Bearer ${this.props.token}`})
+        this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`)
+        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`)
     }
 
     showStudentPanel = (student) => {

@@ -1,5 +1,8 @@
 import url from '../server'
 
+let refreshing = false
+let requests = []
+
 export default function refreshMiddleware() {
     return ({ dispatch, getState }) => next => (action) => {
         
@@ -17,8 +20,9 @@ export default function refreshMiddleware() {
         if(!tokens || !tokens.refresh_token) {
             return request(null, dispatch, true);
         }
-        if (tokens && tokens.refresh_token && refreshThreshold > tokens.expires_at) {
-            console.log('expiring token')
+        if (!refreshing && tokens && tokens.refresh_token && refreshThreshold > tokens.expires_at) {
+            requests.push(request)
+            refreshing = true
             let form = new FormData()
             form.append('grant_type', 'refresh_token')
             form.append('refresh_token', tokens.refresh_token)
@@ -37,13 +41,22 @@ export default function refreshMiddleware() {
             })
             .then((data) => {
                 dispatch({ type: 'LOG_IN_DATA_SUCCESS', data })
-                request(data.access_token, dispatch, false)
+                refreshing = false
+                for(let queuedRequest of requests) {
+                    queuedRequest(data.access_token, dispatch, false)
+                }
+                requests = []
             })
             .catch((error) => {
                 console.log('refresh token error', error)
+                refreshing = false
+                requests = []
                 //TODO: add error action for refresh
             })
+        } else if (refreshing) {
+            requests.push(request)
+        } else {
+            return request(tokens.access_token, dispatch, false);
         }
-        return request(tokens.access_token, dispatch, false);
     }
 }
