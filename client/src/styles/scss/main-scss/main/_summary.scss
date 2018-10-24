@@ -1,3 +1,5 @@
+@import "../helpers";
+
 .summary-container {
   .float-height {
     > div {
@@ -16,6 +18,21 @@
   .cols-2 {
     > div {
       width: 50%;
+    }
+  }
+
+  .summary-preview {
+      position: relative;
+      @include set-rem-safe(height, 7.5rem);
+      margin: 5.5px;
+
+    .preview-content {
+      margin-bottom: 10px;
+
+      h5 {
+        margin-bottom: 5px;
+        display:block;
+      }
     }
   }
 }
