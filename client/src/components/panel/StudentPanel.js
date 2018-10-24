@@ -5,6 +5,8 @@ import {Card, Summary} from '../Helpers'
 import StudentProgressLineGraph from '../chart/StudentProgressLineGraph'
 import CodeChangesChart from '../chart/CodeChangesChart'
 import CommitFrequencyHistogram from '../chart/CommitFrequencyHistogram'
+import ProgressPerTime from '../chart/ProgressPerTime'
+import ProgressPerCommit from '../chart/ProgressPerCommit'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import StudentStatistics from './util/StudentStatistics'
 import CommitHistory from './util/CommitHistory'
@@ -111,7 +113,9 @@ class StudentPanel extends Component {
                             data={ [
                                 <StudentProgressLineGraph projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={1}/>,
                                 <CodeChangesChart projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={2}/>,
-                                <CommitFrequencyHistogram projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={3}/>
+                                <CommitFrequencyHistogram projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={3}/>,
+                                <ProgressPerTime projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={4}/>,
+                                <ProgressPerCommit projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={5}/>,
                             ] }
                             className='charts'
                             iterator={ (chart) =>

@@ -30,6 +30,9 @@ public class StudentSection {
     public String getSectionIdentifier() {
         return id.getSectionIdentifier();
     }
+
+    @Override
+    public String toString() { return getStudentID() + " | " + getSectionIdentifier(); }
 }
 
 @Getter

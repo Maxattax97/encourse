@@ -62,17 +62,17 @@ public class AdminServicesTests {
         sectionRepository.deleteAll();
         studentSectionRepository.deleteAll();
         assertEquals(0, adminService.addAccount("1", "reed226","William", "Reed",
-                "Admin", "J", "reed226@purdue.edu"));
+                "ADMIN", "J", "reed226@purdue.edu"));
         assertEquals(0, adminService.addAccount("2", "grr", "Gustavo", "Rodriguez-Rivera",
-                "Professor", null, "grr@purdue.edu"));
+                "PROFESSOR", null, "grr@purdue.edu"));
         assertEquals(0, adminService.addAccount("3", "kleclain", "Killian", "LeClainche",
-                "Student", "A", "kleclain@purdue.edu"));
+                "STUDENT", "A", "kleclain@purdue.edu"));
         assertEquals(0, adminService.addAccount("4", "dkrolopp", "Daniel", "Krolopp",
                 "TA", "J", "dkrolopp@purdue.edu"));
         assertEquals(0, adminService.addAccount("5", "buckmast", "Jordan", "Buckmaster",
-                "Student", "M", "buckmast@purdue.edu"));
-        sect1 = adminService.addSection("1234", "Fall2018", "cs250", "Hardware", "Lab1");
-        sect2 = adminService.addSection("1235", "Fall2018", "cs250", "Hardware", "Lab2");
+                "STUDENT", "M", "buckmast@purdue.edu"));
+        sect1 = adminService.addSection("1234", "Fall2018", "cs250", "Hardware", "Lab1", "MWF 12:30 - 1:20");
+        sect2 = adminService.addSection("1235", "Fall2018", "cs250", "Hardware", "Lab2", "MWF 12:30 - 1:20");
     }
 
     @After

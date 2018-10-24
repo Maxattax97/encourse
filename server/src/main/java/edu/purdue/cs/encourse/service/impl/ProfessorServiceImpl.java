@@ -77,6 +77,9 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Autowired
     private TeachingAssistantCourseRepository teachingAssistantCourseRepository;
 
+    @Autowired
+    private TeachingAssistantSectionRepository teachingAssistantSectionRepository;
+
     private int executeBashScript(@NonNull String command) {
         try {
             Process process = Runtime.getRuntime().exec("./src/main/bash/" + command + " 2> /dev/null");
@@ -1153,35 +1156,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
     }
 
-    /** Makes a new assignment between teaching assistant and student. Can have multiple students assigned to same TA
-     or multiple TAs assigned to the same student **/
-    public int assignTeachingAssistantToStudent(@NonNull String teachAssistUserName, @NonNull String studentUserName, @NonNull String courseID, @NonNull String semester) {
-        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
-        if(teachingAssistant == null) {
-            return -1;
-        }
-        Student student = studentRepository.findByUserName(studentUserName);
-        if(student == null) {
-            return -2;
-        }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
-        if(sections.isEmpty()) {
-            return -3;
-        }
-        TeachingAssistantCourse check = teachingAssistantCourseRepository.findByIdTeachingAssistantIDAndIdSemesterAndIdCourseID(teachingAssistant.getUserID(), semester, courseID);
-        if(check == null) {
-            return -4;
-        }
-        TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(teachingAssistant.getUserID(), student.getUserID(), courseID);
-        if(assignment != null) {
-            return -5;
-        }
-        assignment = new TeachingAssistantStudent(teachingAssistant.getUserID(), student.getUserID(), courseID);
-        teachingAssistantStudentRepository.save(assignment);
-        return 0;
-    }
-
-    /** Assigns a TA to all students in a section with one command. **/
+    /** Assigns a TA to a section in the course. Does not include assignments to students within section **/
     public int assignTeachingAssistantToSection(@NonNull String teachAssistUserName, @NonNull String sectionID) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
         if(teachingAssistant == null) {
@@ -1195,45 +1170,94 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(check == null) {
             return -3;
         }
-        List<StudentSection> studentSections = studentSectionRepository.findByIdSectionIdentifier(section.getSectionIdentifier());
-        for(StudentSection t : studentSections) {
-            TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(teachingAssistant.getUserID(), t.getStudentID(), section.getCourseID());
+        TeachingAssistantSection assignment = teachingAssistantSectionRepository.findByIdTeachingAssistantIDAndIdSectionID(teachingAssistant.getUserID(), sectionID);
+        if(assignment != null) {
+            return -4;
+        }
+        assignment = new TeachingAssistantSection(teachingAssistant.getUserID(), sectionID);
+        teachingAssistantSectionRepository.save(assignment);
+        return 0;
+    }
+
+    /** Assigns a TA to a student in a section that they TA for **/
+    public int assignTeachingAssistantToStudentInSection(@NonNull String teachAssistUserName, @NonNull String studentUserName, @NonNull String sectionID) {
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
+        if(teachingAssistant == null) {
+            return -1;
+        }
+        Student student = studentRepository.findByUserName(studentUserName);
+        if(student == null) {
+            return -2;
+        }
+        TeachingAssistantSection check = teachingAssistantSectionRepository.findByIdTeachingAssistantIDAndIdSectionID(teachingAssistant.getUserID(), sectionID);
+        if(check == null) {
+            return -3;
+        }
+        Section section = sectionRepository.findBySectionIdentifier(sectionID);
+        if(section == null) {
+            return -4;
+        }
+        TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(teachingAssistant.getUserID(), student.getUserID(), section.getCourseID());
+        if(assignment != null) {
+            return -5;
+        }
+        assignment = new TeachingAssistantStudent(teachingAssistant.getUserID(), student.getUserID(), section.getCourseID());
+        teachingAssistantStudentRepository.save(assignment);
+        return 0;
+    }
+
+    /** Assigns a TA to all students in a course with one command. **/
+    public int assignTeachingAssistantToAllStudentsInSection(@NonNull String teachAssistUserName, @NonNull String sectionID) {
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
+        if(teachingAssistant == null) {
+            return -1;
+        }
+        TeachingAssistantSection check = teachingAssistantSectionRepository.findByIdTeachingAssistantIDAndIdSectionID(teachingAssistant.getUserID(), sectionID);
+        if(check == null) {
+            return -2;
+        }
+        Section section = sectionRepository.findBySectionIdentifier(sectionID);
+        if(section == null) {
+            return -3;
+        }
+        List<StudentSection> studentSections = studentSectionRepository.findByIdSectionIdentifier(sectionID);
+        for(StudentSection s : studentSections) {
+            TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(teachingAssistant.getUserID(), s.getStudentID(), section.getCourseID());
             if (assignment == null) {
-                assignment = new TeachingAssistantStudent(teachingAssistant.getUserID(), t.getStudentID(), section.getCourseID());
+                assignment = new TeachingAssistantStudent(teachingAssistant.getUserID(), s.getStudentID(), section.getCourseID());
                 teachingAssistantStudentRepository.save(assignment);
             }
         }
         return 0;
     }
 
-    /** Assigns a TA to all students in a course with one command. **/
-    public int assignTeachingAssistantToAllStudents(@NonNull String teachAssistUserName, @NonNull String courseID, @NonNull String semester) {
-        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
-        if(teachingAssistant == null) {
-            return -1;
+    public JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID) {
+        List<TeachingAssistantCourse> teachingAssistants = teachingAssistantCourseRepository.findByIdSemesterAndIdCourseID(semester, courseID);
+        if(teachingAssistants.isEmpty()) {
+            return null;
         }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
-        if(sections.isEmpty()) {
-            return -2;
-        }
-        TeachingAssistantCourse check = teachingAssistantCourseRepository.findByIdTeachingAssistantIDAndIdSemesterAndIdCourseID(teachingAssistant.getUserID(), semester, courseID);
-        if(check == null) {
-            return -3;
-        }
-        for(Section s : sections) {
-            List<StudentSection> studentSections = studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
-            for(StudentSection t : studentSections) {
-                TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(teachingAssistant.getUserID(), t.getStudentID(), courseID);
-                if (assignment == null) {
-                    assignment = new TeachingAssistantStudent(teachingAssistant.getUserID(), t.getStudentID(), courseID);
-                    teachingAssistantStudentRepository.save(assignment);
-                }
+        JSONArray teachingAssistantsJSON = new JSONArray();
+        for(TeachingAssistantCourse t : teachingAssistants) {
+            TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(t.getTeachingAssistantID());
+            JSONObject teachingAssistantJSON = new JSONObject();
+            List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), courseID);
+            List<String> studentIDs = new ArrayList<>();
+            for(TeachingAssistantStudent a : assignments) {
+                studentIDs.add(a.getStudentID());
             }
+            List<TeachingAssistantSection> sections = teachingAssistantSectionRepository.findByIdTeachingAssistantID(t.getTeachingAssistantID());
+            List<String> sectionIDs = new ArrayList<>();
+            for(TeachingAssistantSection s : sections) {
+                sectionIDs.add(s.getSectionID());
+            }
+            teachingAssistantJSON.put("first_name", teachingAssistant.getFirstName());
+            teachingAssistantJSON.put("last_name", teachingAssistant.getLastName());
+            teachingAssistantJSON.put("id", teachingAssistant.getUserName());
+            teachingAssistantJSON.put("assignment_type", 0);
+            teachingAssistantJSON.put("students", studentIDs);
+            teachingAssistantJSON.put("sections", sectionIDs);
+            teachingAssistantsJSON.add(teachingAssistantJSON);
         }
-        return 0;
-    }
-
-    public JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA) {
-        return null;
+        return teachingAssistantsJSON;
     }
 }

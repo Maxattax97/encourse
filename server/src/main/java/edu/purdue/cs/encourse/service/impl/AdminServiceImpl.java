@@ -104,17 +104,17 @@ public class AdminServiceImpl implements AdminService {
                     break;
                 case Account.Role_Names.TA:
                     List<TeachingAssistantStudent> teachingAssistantStudents = teachingAssistantStudentRepository.findByIdTeachingAssistantID(sentRequest.getUserID());
-                    if (teachingAssistantStudents.contains(account)) {
-                        hasAuth = true;
-                        break;
+                    for (TeachingAssistantStudent tas: teachingAssistantStudents) {
+                        if (tas.getStudentID().contentEquals(account.getUserID())) {
+                            hasAuth = true;
+                            break;
+                        }
                     }
                     break;
                 case Account.Role_Names.PROFESSOR:
 
                     List<StudentSection> studentSections = studentSectionRepository.findByIdStudentID(account.getUserID());
                     List<ProfessorCourse> professorCourses = professorCourseRepository.findByIdProfessorID(sentRequest.getUserID());
-                    System.out.println(studentSections);
-                    System.out.println(professorCourses);
 
                     for (StudentSection ss: studentSections) {
                         Section section = sectionRepository.findBySectionIdentifier(ss.getSectionIdentifier());
@@ -359,9 +359,9 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public Section addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType) {
+    public Section addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType, @NonNull String timeSlot) {
         System.out.println("ADDING SECTION");
-        Section section = new Section(CRN, semester, courseID, courseTitle, sectionType);
+        Section section = new Section(CRN, semester, courseID, courseTitle, sectionType, timeSlot);
         if(sectionRepository.existsBySectionIdentifier(section.getSectionIdentifier())) {
             return null;
         }

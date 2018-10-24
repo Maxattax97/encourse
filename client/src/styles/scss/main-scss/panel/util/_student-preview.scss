@@ -1,20 +1,5 @@
 @import "../../helpers";
 
-.student-preview {
-  position: relative;
-  @include set-rem-safe(height, 7.5rem);
-  margin: 5.5px;
-}
-
-.student-preview-commits {
-  margin-bottom: 10px;
-
-  h5 {
-    margin-bottom: 5px;
-    display:block;
-  }
-}
-
 .student-preview-progress {
   position: relative;
 

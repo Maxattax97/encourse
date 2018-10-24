@@ -8,28 +8,40 @@ div.action {
   }
 }
 
-div.action:hover {
+div.action:not(.card):hover {
   h1, h2, h3, h4, h5, h6 {
     color: $hover-color;
     padding-left: 3px;
   }
 }
 
-div.action:hover img.svg-icon {
+div.action:not(.card):hover img.svg-icon {
   filter: $icon-hover-color;
 }
 
-div.action:hover {
+div.action:not(.card):hover {
   svg polygon, svg path {
     fill: #1f1f1f;
   }
+}
+
+div.action.card:hover .component {
+  background-color: #F0F0F0;
+}
+
+div.action.card.selected .component {
+  background-color: #E0E0E0;
+}
+
+div.action.card.selected:hover .component {
+  background-color: #D0D0D0;
 }
 
 div.action.radio-selected {
   color: $hover-color;
   padding-left: 3px;
 
-  svg {
+  svg.icon {
     @include set-size-rem-safe(1rem, 1rem);
     margin: 0 3px;
 

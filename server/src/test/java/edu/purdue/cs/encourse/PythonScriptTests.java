@@ -56,9 +56,9 @@ public class PythonScriptTests {
                 return;
             }
             assertEquals(0, adminService.addAccount("1", "reed226","William", "Reed",
-                    "Admin", "J", "reed226@purdue.edu"));
+                    "ADMIN", "J", "reed226@purdue.edu"));
             assertEquals(0, adminService.addAccount("2", "grr", "Gustavo", "Rodriguez-Rivera",
-                    "Professor", null, "grr@purdue.edu"));
+                    "PROFESSOR", null, "grr@purdue.edu"));
             proj1 = professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src",
                     "9/10/2018", "9/24/2018", 0);
 

@@ -30,6 +30,8 @@ public class TeachingAssistantStudent {
     public String getStudentID() {
         return id.getStudentID();
     }
+
+    public String getCourseID() { return id.getCourseID(); }
 }
 
 @Getter

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.purdue.cs.encourse.database.TeachingAssistantStudentRepository;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.ProjectTestScript;
+import edu.purdue.cs.encourse.domain.relations.TeachingAssistantStudent;
 import edu.purdue.cs.encourse.service.*;
 import edu.purdue.cs.encourse.service.impl.UserDetailsServiceImpl;
 import org.json.simple.JSONObject;
@@ -44,6 +45,8 @@ public class WriteController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private TeachingAssistantStudentRepository teachingAssistantStudentRepository;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/section", method = RequestMethod.POST, consumes = "application/json")
@@ -59,7 +62,8 @@ public class WriteController {
             String courseID = (String) json.get("courseID");
             String courseTitle = (String) json.get("courseTitle");
             String sectionType = (String) json.get("sectionType");
-            result = adminService.addSection(CRN, semester, courseID, courseTitle, sectionType);
+            String timeSlot = (String) json.get("timeSlot");
+            result = adminService.addSection(CRN, semester, courseID, courseTitle, sectionType, timeSlot);
             if (userName != null && !userName.isEmpty()) {
                 adminService.assignProfessorToCourse(userName, courseID, semester);
             }
@@ -76,6 +80,16 @@ public class WriteController {
                                                                 @RequestParam(name = "courseID") String courseID,
                                                                 @RequestParam(name = "semester") String semester) {
         int result = adminService.assignProfessorToCourse(userName, courseID, semester);
+        HttpStatus status = (result == 0)? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
+        return new ResponseEntity<>(result, status);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @RequestMapping(value = "/add/TAToCourse", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> addTAToCourse(@RequestParam(name = "userName") String userName,
+                                                         @RequestParam(name = "courseID") String courseID,
+                                                         @RequestParam(name = "semester") String semester) {
+        int result = adminService.assignTeachingAssistantToCourse(userName, courseID, semester);
         HttpStatus status = (result == 0)? HttpStatus.OK : HttpStatus.NOT_MODIFIED;
         return new ResponseEntity<>(result, status);
     }
@@ -119,8 +133,7 @@ public class WriteController {
     // TODO: Endpoint changed. Account for change on frontend
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/studentsToTA", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> addStudentsToTA(@RequestParam(name = "courseID") String courseID,
-                                                           @RequestParam(name = "semester") String semester,
+    public @ResponseBody ResponseEntity<?> addStudentsToTA(@RequestParam(name = "sectionID") String sectionID,
                                                            @RequestBody String body) {
         List<String> errors = new ArrayList<>();
         Map<String, List<String>> map = new HashMap<>();
@@ -144,7 +157,11 @@ public class WriteController {
                     errors.add("Student " + userName + " could not be found");
                     continue;
                 }
-                professorService.assignTeachingAssistantToStudent(key, userName, courseID, semester);
+
+                int result = professorService.assignTeachingAssistantToStudentInSection(key, userName, sectionID);
+                if (result != 0) {
+                    errors.add("Result: " + result + " from student " + userName);
+                }
             }
         }
         if (errors.isEmpty()) {

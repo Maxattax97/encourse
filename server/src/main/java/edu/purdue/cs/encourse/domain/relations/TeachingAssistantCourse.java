@@ -23,7 +23,7 @@ public class TeachingAssistantCourse {
 
     }
 
-    public String getProfessorID() {
+    public String getTeachingAssistantID() {
         return id.getTeachingAssistantID();
     }
 
@@ -42,7 +42,7 @@ class TeachingAssistantCourseID implements Serializable {
     /** Key for the professor's account **/
     private String teachingAssistantID;
 
-    /** Name and semester of course being taught by professor **/
+    /** Course and semester TA is assigned to **/
     private String courseID;
     private String semester;
 
