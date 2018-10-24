@@ -71,8 +71,8 @@ public class AdminServicesTests {
                 "TA", "J", "dkrolopp@purdue.edu"));
         assertEquals(0, adminService.addAccount("5", "buckmast", "Jordan", "Buckmaster",
                 "Student", "M", "buckmast@purdue.edu"));
-        sect1 = adminService.addSection("1234", "Fall2018", "cs250", "Hardware", "Lab1");
-        sect2 = adminService.addSection("1235", "Fall2018", "cs250", "Hardware", "Lab2");
+        sect1 = adminService.addSection("1234", "Fall2018", "cs250", "Hardware", "Lab1", "MWF 12:30 - 1:20");
+        sect2 = adminService.addSection("1235", "Fall2018", "cs250", "Hardware", "Lab2", "MWF 12:30 - 1:20");
     }
 
     @After

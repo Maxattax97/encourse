@@ -59,7 +59,8 @@ public class WriteController {
             String courseID = (String) json.get("courseID");
             String courseTitle = (String) json.get("courseTitle");
             String sectionType = (String) json.get("sectionType");
-            result = adminService.addSection(CRN, semester, courseID, courseTitle, sectionType);
+            String timeSlot = (String) json.get("timeSlot");
+            result = adminService.addSection(CRN, semester, courseID, courseTitle, sectionType, timeSlot);
             if (userName != null && !userName.isEmpty()) {
                 adminService.assignProfessorToCourse(userName, courseID, semester);
             }

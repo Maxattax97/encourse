@@ -32,6 +32,9 @@ public class Section {
     /** Use courseID or courseTitle to group together sections of the same course **/
     private String courseTitle;
 
+    /** Time that section meets during the week, Format is "D H:MM - H:MM", where D is M, T, W, R, or F **/
+    private String timeSlot;
+
     /** Path to the directory that contains repositories **/
     /** Format of course hub : "/sourcecontrol/{COURSEID}/{SEMESTER} **/
     @Setter
@@ -41,13 +44,14 @@ public class Section {
     @Setter
     private String remotePath;
 
-    public Section(String CRN, String semester, String courseID, String courseTitle, String sectionType) {
+    public Section(String CRN, String semester, String courseID, String courseTitle, String sectionType, String timeSlot) {
         this.sectionIdentifier = UUID.randomUUID().toString();
         this.CRN = CRN;
         this.semester = semester;
         this.courseID = courseID;
         this.courseTitle = courseTitle;
         this.sectionType = sectionType;
+        this.timeSlot = timeSlot;
     }
 
     public Section() {
