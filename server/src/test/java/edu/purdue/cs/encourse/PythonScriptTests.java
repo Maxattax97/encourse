@@ -149,4 +149,14 @@ public class PythonScriptTests {
             jsonReturn = professorService.getCommitCounts(projectID, studentID);
             assertEquals("Failed to generate git commit count data", 1, jsonReturn.errorCode);
         }
+
+        @Test
+        public void testCommitVelocity() {
+            String projectID = DEBUG ? "cs252" : proj1.getProjectIdentifier();
+            String studentID = "cutz";
+            JSONReturnable jsonReturn = null;
+            System.out.println("=============================  Commit Velocity Test    ============================\n");
+            jsonReturn = professorService.getCommitCounts(projectID, studentID);
+            assertEquals("Failed to generate git commit count data", 1, jsonReturn.errorCode);
+        }
 }

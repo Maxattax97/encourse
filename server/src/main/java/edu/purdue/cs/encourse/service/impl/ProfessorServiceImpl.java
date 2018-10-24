@@ -374,7 +374,60 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName) {
+        String visibleTestFile;
+        String hiddenTestFile;
+        String dailyCountsFile;
+        if (DEBUG) {
+            visibleTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
+            hiddenTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
+            dailyCountsFile = "src/main/python/test_datasets/sampleCountsDay.txt";
+        } else {
+            dailyCountsFile = countStudentCommitsByDay(projectID, userName);
+            if (!projectRepository.existsByProjectIdentifier(projectID)) {
+                return new JSONReturnable(-1, null);
+            }
+            Student student = studentRepository.findByUserName(userName);
+            if (student == null) {
+                return new JSONReturnable(-2, null);
+            }
+            List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+            visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestDates.txt";
+            hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestDates.txt";
+            try {
+                BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+                BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+                visibleWriter.write("Start " + userName + "\n");
+                hiddenWriter.write("Start " + userName + "\n");
+                for (StudentProjectDate d : projectDates) {
+                    visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
+                    hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
+                }
+                visibleWriter.write("End " + userName + "\n");
+                hiddenWriter.write("End " + userName + "\n");
+                visibleWriter.close();
+                hiddenWriter.close();
+            }
+            catch(IOException e) {
+                return new JSONReturnable(-3, null);
+            }
+        }
+
+        String pyPath = pythonPath + "get_individual_progress.py";
+        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + dailyCountsFile + " " + userName;
+        JSONReturnable json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
+    public JSONReturnable getCommitVelocity(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
+        String commitLogFile = listStudentCommitsByTime(projectID, userName);
+        if(dailyCountsFile == null) {
+            return new JSONReturnable(-1, null);
+        }
+        if(commitLogFile == null) {
+            return new JSONReturnable(-2, null);
+        }
         if(!projectRepository.existsByProjectIdentifier(projectID)) {
             return new JSONReturnable(-1, null);
         }
@@ -406,12 +459,14 @@ public class ProfessorServiceImpl implements ProfessorService {
         catch(IOException e) {
             return new JSONReturnable(-3, null);
         }
-        // TODO: @Ryan adjust python command if needed
-        String pyPath = pythonPath + "get_individual_progress.py";
-        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + userName;
+
+        String pyPath = pythonPath + "get_velocity.py";
+        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
+
+
     }
 
     public JSONReturnable getClassProgress(@NonNull String projectID) {
