@@ -10,7 +10,6 @@ from helper import eprint
 from start_end import commit_data
 from past_progress import past_progress
 from daily_git_data import get_daily_commit_data as commit_list
-from get_individual_progress import extract_progress
 
 
 def jsonify(
@@ -77,11 +76,9 @@ if __name__ == "__main__":
 
     visible_data = past_progress(visible_file)
     individual_visible_data = visible_data[student_id]
-    reformatted_visible_data = extract_progress(individual_visible_data)
 
     hidden_data = past_progress(hidden_file)
     individual_hidden_data = hidden_data[student_id]
-    reformatted_hidden_data = extract_progress(individual_hidden_data)
 
     daily_data = commit_list(
         commit_log_file, max_change=args.limit, timeout=args.timeout
@@ -91,7 +88,7 @@ if __name__ == "__main__":
     individual_commit_times = commit_times[student_id]
 
     api_formatted_data = jsonify(
-        reformatted_visible_data, reformatted_hidden_data, individual_commit_times, individual_commit_times
+        individual_visible_data, individual_hidden_data, daily_data, individual_commit_times
     )
     api_json = json.dumps(api_formatted_data)
     print(api_json)
