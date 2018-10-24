@@ -68,7 +68,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             adminService.addUser("reed226", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
             adminService.addUser("sullil96", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
 
-            Section section = adminService.addSection("1001", "Fall2018", "cs252", "Systems Programming", "LE1");
+            Section section = adminService.addSection("1001", "Fall2018", "cs252", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
             adminService.assignProfessorToCourse("grr", "cs252", "Fall2018");
 
             try {

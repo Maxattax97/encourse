@@ -1172,7 +1172,27 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    public JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA) {
-        return null;
+    public JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID) {
+        List<TeachingAssistantCourse> teachingAssistants = teachingAssistantCourseRepository.findByIdSemesterAndIdCourseID(semester, courseID);
+        if(teachingAssistants.isEmpty()) {
+            return null;
+        }
+        JSONArray teachingAssistantsJSON = new JSONArray();
+        for(TeachingAssistantCourse t : teachingAssistants) {
+            TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(t.getTeachingAssistantID());
+            JSONObject teachingAssistantJSON = new JSONObject();
+            List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), courseID);
+            List<String> studentIDs = new ArrayList<>();
+            for(TeachingAssistantStudent a : assignments) {
+                studentIDs.add(a.getStudentID());
+            }
+            teachingAssistantJSON.put("first_name", teachingAssistant.getFirstName());
+            teachingAssistantJSON.put("last_name", teachingAssistant.getLastName());
+            teachingAssistantJSON.put("id", teachingAssistant.getUserName());
+            //teachingAssistantJSON.put("assignment_type", teachingAssistant.getUserName());
+            teachingAssistantJSON.put("students", studentIDs);
+            //teachingAssistantsJSON.add("sections", teachingAssistantJSON);
+        }
+        return teachingAssistantsJSON;
     }
 }
