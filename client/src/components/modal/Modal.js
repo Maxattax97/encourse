@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 
-import { Card } from '../Helpers'
-import { x } from '../../helpers/icons'
+import {Card, XIcon} from '../Helpers'
 
 class Modal extends Component {
 
@@ -14,7 +13,7 @@ class Modal extends Component {
                             {this.props.children}
                         </div>
                         <div className="action svg-icon exit-nav" onClick={ this.props.onClose || this.props.onExit } key={2}>
-                            <img className='svg-icon' src={ x.icon } alt={ x.alt_text } />
+                            <XIcon/>
                         </div>
                     </Card>
                 </div>

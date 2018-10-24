@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {plus} from '../../helpers/icons'
+
 import {Card, Title, BackIcon} from '../Helpers'
 
 class TANavigation extends Component {

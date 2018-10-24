@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 
-import {Title} from '../../Helpers'
-import {plus, search, trash} from '../../../helpers/icons'
+import {PlusIcon, SearchIcon, Title, TrashIcon} from '../../Helpers'
 
 class ProjectTestList extends Component {
 
@@ -75,10 +74,10 @@ class ProjectTestList extends Component {
                                         <div className='test-actions'>
                                             <input type="file" onChange={(ev) => this.uploadFile(ev)} ref={ index } style={{display: 'none'}}/>
                                             <div className='svg-icon action'  onClick={ () => this.setState({ index }, () => document.getElementById('script-upload').click()) }>
-                                                <img className='svg-icon' src={ search.icon } alt={ search.alt_text } />
+                                                <SearchIcon/>
                                             </div>
                                             <div className='svg-icon action'  onClick={ () => this.removeTestScript(index) }>
-                                                <img className='svg-icon' src={ trash.icon } alt={ trash.alt_text } />
+                                                <TrashIcon/>
                                             </div>
                                         </div>
                                     </td>
@@ -88,7 +87,7 @@ class ProjectTestList extends Component {
                     </tbody>
                 </table>
                 <div className="scripts-new action svg-icon" onClick={ this.addTestScript }>
-                    <img className='svg-icon' src={ plus.icon } alt={ plus.alt_text } />
+                    <PlusIcon/>
                 </div>
             </div>
         )

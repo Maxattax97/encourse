@@ -48,7 +48,7 @@ class CommitHistory extends Component {
     render() {
         return (
             <div className="commits-container side-nav-right">
-                <Card component={
+                <Card>
                     <div className='commits'>
                         <Title header={ <h3 className='header'>History</h3> }/>
                         <div className="h3 break-line header" />
@@ -56,7 +56,7 @@ class CommitHistory extends Component {
                             {
                                 this.state.formattedData &&
                                 this.state.formattedData.map((commit) =>
-                                    <Card key={commit.date} component={
+                                    <Card key={commit.date}>
                                         <div className="student-commit-container">
                                             <h5>
                                                 { commit.date }
@@ -74,12 +74,12 @@ class CommitHistory extends Component {
                                                 }
                                             </ul>
                                         </div>
-                                    } />
+                                    </Card>
                                 )
                             }
                         </div>
                     </div>
-                } />
+                </Card>
             </div>
         )
     }

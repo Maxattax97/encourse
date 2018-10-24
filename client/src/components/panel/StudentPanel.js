@@ -114,12 +114,20 @@ class StudentPanel extends Component {
                                 <CommitFrequencyHistogram projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={3}/>
                             ] }
                             className='charts'
-                            iterator={ (chart) => <Card key={ chart.key } component={ chart } /> } />
+                            iterator={ (chart) =>
+                                <Card key={ chart.key } >
+                                    {chart }
+                                </Card>
+                            }/>
 
                         <div className="h1 break-line" />
                         <div className="student-stats-comments float-height">
-                            <Card component={ <StudentStatistics projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/> } />
-                            <Card component={ <StudentFeedback/> } />
+                            <Card>
+                                <StudentStatistics projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>
+                            </Card>
+                            <Card>
+                                <StudentFeedback/>
+                            </Card>
                         </div>
                     </div>
                 </div>
