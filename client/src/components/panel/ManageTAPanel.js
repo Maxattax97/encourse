@@ -7,7 +7,6 @@ import {Summary, Title, CheckmarkIcon} from '../Helpers'
 import {history} from '../../redux/store'
 import StudentAssignPreview from './util/StudentAssignPreview'
 import SectionPreview from './util/SectionPreview'
-import connect from 'react-redux/es/connect/connect'
 import url from '../../server'
 import {getSectionsData, getStudentPreviews, getTeachingAssistants} from '../../redux/actions'
 
