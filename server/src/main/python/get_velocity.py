@@ -38,7 +38,28 @@ def jsonify(
     date2 = datetime.strptime(times[1], "%Y-%m-%d").date()
     dates = daterange(date1, date2)
 
-    return {}
+    velocity_data = []
+
+    for day in dates:
+        day = date_string(day)
+        new_entry = {}
+        new_entry["date"] = day
+
+        new_entry["progress"] = 0
+        new_entry["timeSpent"] = 0
+        new_entry["commitCount"] = 0
+
+        if day in visible_data:
+            new_entry["progress"] = visible_data[day]["progress"]
+        if day in hidden_data:
+            new_entry["progress"] = hidden_data[day]["progress"]
+        if day in daily_data:
+            new_entry["timeSpent"] = daily_data[day]["time_spent"]
+            new_entry["commitCount"] = daily_data[day]["commit_count"]
+
+        velocity_data.append(new_entry)
+
+    return json.dumps(velocity_data)
 
 
 if __name__ == "__main__":
@@ -83,12 +104,13 @@ if __name__ == "__main__":
     daily_data = commit_list(
         commit_log_file, max_change=args.limit, timeout=args.timeout
     )
+    individual_daily_data = daily_data[student_id]
 
     commit_times = commit_data(commit_times_file)
     individual_commit_times = commit_times[student_id]
 
     api_formatted_data = jsonify(
-        individual_visible_data, individual_hidden_data, daily_data, individual_commit_times
+        individual_visible_data, individual_hidden_data, individual_daily_data, individual_commit_times
     )
     api_json = json.dumps(api_formatted_data)
     print(api_json)
