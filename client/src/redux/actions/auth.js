@@ -7,13 +7,6 @@ export function logInHasError(hasError) {
     }
 }
 
-export function logInIsLoading(isLoading) {
-    return {
-        type: 'LOG_IN_IS_LOADING',
-        isLoading
-    }
-}
-
 export function logInDataSuccess(data) {
     return {
         type: 'LOG_IN_DATA_SUCCESS',
@@ -22,20 +15,13 @@ export function logInDataSuccess(data) {
 }
 
 export const logIn = genericDispatch(
-    logInHasError, logInIsLoading, logInDataSuccess, 'POST'
+    'LOG_IN', logInHasError, logInDataSuccess, 'POST'
 )
 
 export function logOutHasError(hasError) {
     return {
-        type: 'CHANGE_PASSWORD_HAS_ERROR',
+        type: 'LOG_OUT_HAS_ERROR',
         hasError
-    }
-}
-
-export function logOutIsLoading(isLoading) {
-    return {
-        type: 'LOG_OUT_IS_LOADING',
-        isLoading
     }
 }
 
@@ -47,20 +33,13 @@ export function logOutDataSuccess(data) {
 }
 
 export const logOut = genericDispatch(
-    logOutHasError, logOutIsLoading, logOutDataSuccess, 'GET'
+    'LOG_OUT', logOutHasError, logOutDataSuccess, 'GET'
 )
 
 export function changePasswordHasError(hasError) {
     return {
         type: 'CHANGE_PASSWORD_HAS_ERROR',
         hasError
-    }
-}
-
-export function changePasswordIsLoading(isLoading) {
-    return {
-        type: 'CHANGE_PASSWORD_IS_LOADING',
-        isLoading
     }
 }
 
@@ -72,5 +51,5 @@ export function changePasswordDataSuccess(data) {
 }
 
 export const changePassword = genericDispatch(
-    changePasswordHasError, changePasswordIsLoading, changePasswordDataSuccess, 'GET'
+    'CHANGE_PASSWORD', changePasswordHasError, changePasswordDataSuccess, 'GET'
 )

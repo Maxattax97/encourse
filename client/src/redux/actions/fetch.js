@@ -1,12 +1,15 @@
 /* eslint no-console: off */
 
 export default function genericDispatch(type, hasError, success, method) {
-    return function specificDispatch(url, headers, body, extra) {
+    return function specificDispatch(url, headers = {}, body, extra) {
         return {
             type,
-            request: (tokens, dispatch) => {
+            request: (accessToken, dispatch, auth) => {
                     if(typeof dispatch !== 'function') return
-                    fetch(url, { headers, method, body, mode: 'cors'})
+                    const authorization = auth ? `Basic ${btoa('encourse-client:encourse-password')}` : `Bearer ${accessToken}` 
+                    fetch(url, { headers:  
+                        { 'Authorization': authorization,
+                          ...headers }, method, body, mode: 'cors'})
                     .then((response) => {
                         if (!response.ok) {
                             throw Error(response.status + ' ' + response.statusText)

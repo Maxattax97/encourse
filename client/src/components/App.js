@@ -5,19 +5,12 @@ import { connect } from 'react-redux'
 import '../styles/css/login.css'
 import Login from './Login'
 import Main from './Main'
-import { logOutClient } from '../redux/actions'
 
 class App extends Component {
 
     loggedIn = () => {
         return this.props.token != null
     };
-
-    componentWillReceiveProps(nextProps) {
-        if(nextProps.logOutHasError) {
-            nextProps.logOut()
-        }
-    }
 
     render() {
         return (
@@ -42,14 +35,7 @@ class App extends Component {
 const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
-        logOutHasError: state.auth ? state.auth.logOutHasError : false,
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        logOut: () => dispatch(logOutClient())
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default connect(mapStateToProps, null)(App)
