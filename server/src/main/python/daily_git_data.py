@@ -58,7 +58,7 @@ def remove_shared_commits(students):
     # Compare among the first 3 students
     keys = list(students.keys())
     if len(keys) < 3:
-        return
+        return students
     student_0 = students[keys[0]]
     student_1 = students[keys[1]]
     student_2 = students[keys[2]]
