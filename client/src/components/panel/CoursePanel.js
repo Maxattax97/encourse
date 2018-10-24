@@ -27,10 +27,8 @@ class CoursePanel extends Component {
     componentDidMount = () => {
         //TODO: clear class projects/student previews to account for multiple classes
         //TODO: Add course ID functionality for multiple classes
-        this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`,
-            {'Authorization': `Bearer ${this.props.token}`})
-        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`,
-            {'Authorization': `Bearer ${this.props.token}`})
+        this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`)
+        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`)
     }
 
     showStudentPanel = (student) => {
@@ -59,8 +57,8 @@ class CoursePanel extends Component {
                     </div>
                     <ActionNavigation actions={[
                         () => { history.push('/manage-tas') },
-                        () => { },
-                        () => {},
+                        () => {  },
+                        () => {  },
                         () => { history.push('/course-dishonesty') }
                     ]}
                     action_names={[
@@ -118,7 +116,7 @@ const mapStateToProps = (state) => {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : 0
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
 

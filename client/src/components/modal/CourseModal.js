@@ -36,8 +36,7 @@ class CourseModal extends Component {
         }
         for(let project of this.props.projects) {
             // console.log(project)
-            this.props.modifyProject(`${url}/api/modify/project?projectID=${project.id}&field=testRate&value=${this.state.interval}`,
-                {'Authorization': `Bearer ${this.props.token}`})
+            this.props.modifyProject(`${url}/api/modify/project?projectID=${project.id}&field=testRate&value=${this.state.interval}`)
         }    
     };
 
