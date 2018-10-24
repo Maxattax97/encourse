@@ -5,7 +5,7 @@ class SectionPreview extends Component {
 
     render() {
         return (
-            <Card onClick={this.props.onClick}>
+            <Card onClick={this.props.onClick} className={this.props.isSelected ? 'action selected' : 'action'}>
                 <div className="summary-preview">
                     <div className="title">
                         <h4>{this.props.section.name}</h4>

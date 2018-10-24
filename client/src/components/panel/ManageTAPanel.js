@@ -48,13 +48,14 @@ class ManageTAPanel extends Component {
                     name: 'Jordan',
                     id: 'jmbuck',
                     assignment_type: 1,
-                    students: ['heo1', 'heo2', 'heo3']
+                    students: ['heo1', 'heo2', 'heo3'],
+                    sections: ['0']
                 }
             ],
             current_ta: 0,
             assignment_type: 2,
-            students: ['hello1', 'hello2'],
-            sections: ['0', '1']
+            students: ['hello1', 'hello2', 'hello3'],
+            sections: ['0', '2']
         }
     }
 
@@ -62,11 +63,24 @@ class ManageTAPanel extends Component {
         history.push('/course')
     }
 
+    toggleSection = (id) => {
+        if(this.state.sections.includes(id))
+            this.state.sections.splice(this.state.sections.indexOf(id), 1)
+        else
+            this.state.sections.push(id)
+
+        this.setState({ sections: this.state.sections })
+    }
+
     changed = () => {
         const ta = this.state.teaching_assistants[this.state.current_ta]
+
+        console.log(this.state.assignment_type !== ta.assignment_type, this.state.students.length < ta.students.length, this.state.students.filter(student => !ta.students.includes(student)).length > 0)
         return this.state.assignment_type !== ta.assignment_type ||
             this.state.students.length < ta.students.length ||
-            this.state.students.filter(student => !ta.students.includes(student)).length > 0
+            this.state.students.filter(student => !ta.students.includes(student)).length > 0 ||
+            this.state.sections.length < ta.sections.length ||
+            this.state.sections.filter(section => !ta.sections.includes(section)).length > 0
     }
 
     discard = () => {
@@ -114,7 +128,10 @@ class ManageTAPanel extends Component {
                         data={this.state.all_sections}
                         iterator={(section) =>
                             current_ta ?
-                                <SectionPreview key={section.id} section={section} />
+                                <SectionPreview key={section.id}
+                                    section={section}
+                                    onClick={ () => this.toggleSection(section.id)}
+                                    isSelected={this.state.sections.includes(section.id)}/>
                                 : null
                         }
                     />
@@ -173,8 +190,8 @@ class ManageTAPanel extends Component {
                                 </div>
                                 <Summary columns={ 5 }
                                     data={ this.state.students }
-                                    iterator={(index) =>
-                                        <StudentAssignPreview key={index}/>
+                                    iterator={(student) =>
+                                        <StudentAssignPreview student={student}/>
                                     } />
                             </div>
 

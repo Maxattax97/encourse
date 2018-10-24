@@ -6,7 +6,7 @@ class StudentPreview extends Component {
     render() {
         const percent = this.props.isHidden ? this.props.student.hiddenGrades[this.props.projectID] : this.props.student.grades[this.props.projectID]
         return (
-            <Card onClick={this.props.onClick}>
+            <Card onClick={this.props.onClick} className='action'>
                 <div className="summary-preview">
                     <div className="title">
                         <h4>{this.props.student.first_name}</h4>
