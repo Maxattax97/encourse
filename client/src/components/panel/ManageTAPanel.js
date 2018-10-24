@@ -2,10 +2,13 @@ import React, { Component } from 'react'
 
 import ActionNavigation from '../navigation/ActionNavigation'
 import TANavigation from '../navigation/TANavigation'
-import {Summary, Title, Card, CheckmarkIcon} from '../Helpers'
+import {Summary, Title, CheckmarkIcon} from '../Helpers'
 import {history} from '../../redux/store'
 import StudentAssignPreview from './util/StudentAssignPreview'
 import SectionPreview from './util/SectionPreview'
+import connect from 'react-redux/es/connect/connect'
+import url from '../../server'
+import {getSectionsData, getStudentPreviews, getTeachingAssistants} from '../../redux/actions'
 
 class ManageTAPanel extends Component {
 
@@ -13,50 +16,61 @@ class ManageTAPanel extends Component {
         super(props)
 
         this.state = {
-            all_sections: [
+            /*teaching_assistants: [
                 {
-                    name: 'Section 1',
-                    id: '0',
-                    time: 'F 3:30 - 5:20',
-                    students: 27,
-                    teaching_assistants: 2
-                },
-                {
-                    name: 'Section 2',
-                    id: '1',
-                    time: 'W 3:30 - 5:20',
-                    students: 24,
-                    teaching_assistants: 3
-                },
-                {
-                    name: 'Section 3',
-                    id: '2',
-                    time: 'W 1:30 - 3:20',
-                    students: 21,
-                    teaching_assistants: 1
-                }
-            ],
-            teaching_assistants: [
-                {
-                    name: 'Killian Le Clainche',
+                    first_name: 'Killian',
+                    last_name: 'Le Clainche'
                     id: 'kleclain',
                     assignment_type: 2,
-                    students: ['hello1', 'hello2', 'hello3'],
-                    sections: ['0', '2']
+                    students: [],
+                    sections: []
                 },
                 {
-                    name: 'Jordan',
+                    first_name: 'Jordan',
                     id: 'jmbuck',
                     assignment_type: 1,
                     students: ['heo1', 'heo2', 'heo3'],
                     sections: ['0']
                 }
-            ],
+            ],*/
             current_ta: 0,
             assignment_type: 2,
-            students: ['hello1', 'hello2', 'hello3'],
-            sections: ['0', '2']
+            students: [],
+            sections: [],
+            student_search: ''
         }
+    }
+
+    componentDidMount = () => {
+        //TODO: clear class projects/student previews to account for multiple classes
+        //TODO: Add course ID functionality for multiple classes
+        this.props.getSectionsData(`${url}/api/sectionsData?courseID=cs252&semester=Fall2018`)
+        this.props.getTeachingAssistants(`${url}/api/teachingAssistantsData?courseID=cs252&semester=Fall2018`)
+        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`)
+    }
+
+    onChange = (event) => {
+        this.setState({ [event.target.name]: event.target.value })
+    };
+
+    submitStudentSearch = (event) => {
+        if(event.key === 'Enter') {
+            if(this.props.students.find(e => e.id === this.state.student_search))
+                this.state.students.push(this.state.student_search)
+            this.setState({ 'student_search': '', students: this.state.students })
+        }
+    }
+
+    changeTA = (index) => {
+        //this.state.students = [].concat(this.props.teaching_assistants[index].students)
+        this.state.sections = [].concat(this.props.teaching_assistants[index].sections)
+
+        this.setState({
+            assignment_type: this.props.teaching_assistants[index].assignment_type,
+            students: this.state.students,
+            sections: this.state.sections,
+            current_ta: index
+        })
     }
 
     back = () => {
@@ -72,10 +86,20 @@ class ManageTAPanel extends Component {
         this.setState({ sections: this.state.sections })
     }
 
-    changed = () => {
-        const ta = this.state.teaching_assistants[this.state.current_ta]
+    toggleStudent = (id) => {
+        if(this.state.students.includes(id))
+            this.state.students.splice(this.state.students.indexOf(id), 1)
+        else
+            this.state.students.push(id)
 
-        console.log(this.state.assignment_type !== ta.assignment_type, this.state.students.length < ta.students.length, this.state.students.filter(student => !ta.students.includes(student)).length > 0)
+        this.setState({ students: this.state.students })
+    }
+
+    changed = () => {
+        const ta = this.props.teaching_assistants[this.state.current_ta]
+        if(!ta)
+            return false
+
         return this.state.assignment_type !== ta.assignment_type ||
             this.state.students.length < ta.students.length ||
             this.state.students.filter(student => !ta.students.includes(student)).length > 0 ||
@@ -84,13 +108,13 @@ class ManageTAPanel extends Component {
     }
 
     discard = () => {
-        this.state.students = []
-
-        this.state.teaching_assistants[this.state.current_ta].students.forEach(student => this.state.students.push(student))
+        this.state.students = [].concat(this.props.teaching_assistants[this.state.current_ta].students)
+        this.state.sections = [].concat(this.props.teaching_assistants[this.state.current_ta].sections)
 
         this.setState({
-            assignment_type: this.state.teaching_assistants[this.state.current_ta].assignment_type,
-            students: this.state.students
+            assignment_type: this.props.teaching_assistants[this.state.current_ta].assignment_type,
+            students: this.state.students,
+            sections: this.state.sections
         })
     }
 
@@ -99,13 +123,47 @@ class ManageTAPanel extends Component {
     }
 
     render() {
-        const current_ta = this.state.teaching_assistants[this.state.current_ta] ? this.state.teaching_assistants[this.state.current_ta] : false
+        const current_ta = this.props.teaching_assistants[this.state.current_ta] ? this.props.teaching_assistants[this.state.current_ta] : false
+
+        if(!current_ta)
+            return (
+                <div className='manage-ta-panel'>
+                    <TANavigation
+                        back="Course"
+                        backClick={ this.back }
+                        teaching_assistants={ this.props.teaching_assistants }
+                        current_ta={ this.state.current_ta }
+                        change={ this.changeTA }/>
+
+                    <div className='panel-right-nav'>
+                        <div className='top-nav' />
+                        <ActionNavigation
+                            actions={[
+                                this.discard,
+                                this.save
+                            ]}
+                            action_names={[
+                                (this.changed() ? '*' : '') + 'Discard Changes',
+                                (this.changed() ? '*' : '') + 'Save Changes'
+                            ]} />
+                    </div>
+
+                    <div className="panel-center-content">
+                        <Title header={ <h1 className='header'>CS252 - Teaching Assistants</h1> } />
+                        <div className='h1 break-line header' />
+
+                    </div>
+                </div>
+            )
 
         return (
             <div className='manage-ta-panel'>
                 <TANavigation
                     back="Course"
-                    backClick={ this.back }/>
+                    backClick={ this.back }
+                    teaching_assistants={ this.props.teaching_assistants }
+                    current_ta={ this.state.current_ta }
+                    change={ this.changeTA }/>
 
                 <div className='panel-right-nav'>
                     <div className='top-nav' />
@@ -121,11 +179,11 @@ class ManageTAPanel extends Component {
                 </div>
 
                 <div className="panel-center-content">
-                    <Title header={ <h1 className='header'>CS252 - Teaching Assistants{current_ta ? ' - ' + current_ta.name : ''}</h1> } />
+                    <Title header={ <h1 className='header'>CS252 - Teaching Assistants - { `${current_ta.first_name} ${current_ta.last_name}` }</h1> } />
                     <div className='h1 break-line header' />
                     <Summary header={<h3 className='header'>Assigning Sections</h3>}
                         columns={5}
-                        data={this.state.all_sections}
+                        data={this.props.sections}
                         iterator={(section) =>
                             current_ta ?
                                 <SectionPreview key={section.id}
@@ -184,22 +242,34 @@ class ManageTAPanel extends Component {
                                     <div className='float-height cols-5'>
                                         <div>
                                             <h4 className='header'>Student ID</h4>
-                                            <input type="text" className="h3-size" value={this.state.name} onChange={this.onChange} name="name" ref="name" autoComplete="off"/>
+                                            <input type="text" className="h3-size" value={this.state.student_search} onChange={this.onChange} onKeyPress={this.submitStudentSearch} name="student_search" autoComplete="off"/>
                                         </div>
                                     </div>
                                 </div>
                                 <Summary columns={ 5 }
                                     data={ this.state.students }
                                     iterator={(student) =>
-                                        <StudentAssignPreview student={student}/>
+                                        <StudentAssignPreview key={student} student={this.props.students.find(e => e.id === student)} isSelected={true}/>
                                     } />
                             </div>
 
                             : this.state.assignment_type === 1 ?
                                 <div className='student-selection-list'>
+                                    <Summary columns={ 5 }
+                                        data={ this.props.students.filter(student => student.sections.filter(id => this.state.sections.includes(id)).length > 0) }
+                                        iterator={(student) =>
+                                            <StudentAssignPreview key={student.id} onClick={() => this.toggleStudent(student.id)} student={student} isSelected={this.state.students.includes(student.id)}/>
+                                        } />
                                 </div>
 
-                                : null
+                                :
+                                <div className='student-selection-list'>
+                                    <Summary columns={ 5 }
+                                        data={ this.props.students.filter(student => student.sections.filter(id => this.state.sections.includes(id)).length > 0) }
+                                        iterator={(student) =>
+                                            <StudentAssignPreview key={student.id} student={student} isSelected={true}/>
+                                        } />
+                                </div>
                     }
 
                 </div>
@@ -208,4 +278,22 @@ class ManageTAPanel extends Component {
     }
 }
 
-export default ManageTAPanel
+const mapStateToProps = (state) => {
+    return {
+        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
+        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
+        sections: state.course && state.course.getSectionsData ? state.course.getSectionsData : [],
+        teaching_assistants: state.teachingAssistant && state.teachingAssistant.getTeachingAssistants ? state.teachingAssistant.getTeachingAssistants : []
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
+        getSectionsData: (url, headers, body) => dispatch(getSectionsData(url, headers, body)),
+        getTeachingAssistants: (url, headers, body) => dispatch(getTeachingAssistants(url, headers, body))
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(ManageTAPanel)

@@ -8,18 +8,18 @@ import { getCommitFrequency } from '../../redux/actions'
 import url from '../../server'
 
 const defaultData = [
-    {date: moment('2018-09-16').valueOf(), progress: 0, estimatedWorkTime: 0, commitCount: 0},
-    {date: moment('2018-09-17').valueOf(), progress: 0, estimatedWorkTime: 0, commitCount: 0},
-    {date: moment('2018-09-18').valueOf(), progress: 0, estimatedWorkTime: 0, commitCount: 0},
-    {date: moment('2018-09-19').valueOf(), progress: 0, estimatedWorkTime: 2, commitCount: 50},
-    {date: moment('2018-09-20').valueOf(), progress: 0, estimatedWorkTime: 2, commitCount: 50},
-    {date: moment('2018-09-21').valueOf(), progress: 10, estimatedWorkTime: 2, commitCount: 50},
-    {date: moment('2018-09-22').valueOf(), progress: 0, estimatedWorkTime: 5, commitCount: 120},
-    {date: moment('2018-09-23').valueOf(), progress: 0, estimatedWorkTime: 1, commitCount: 30},
-    {date: moment('2018-09-24').valueOf(), progress: 20, estimatedWorkTime: 2, commitCount: 100},
-    {date: moment('2018-09-25').valueOf(), progress: 10, estimatedWorkTime: 2, commitCount: 50},
-    {date: moment('2018-09-26').valueOf(), progress: 50, estimatedWorkTime: 7, commitCount: 200},
-    {date: moment('2018-09-27').valueOf(), progress: 10, estimatedWorkTime: 3, commitCount: 50},
+    {date: moment('2018-09-16').valueOf(), progress: 0, timeSpent: 0, commitCount: 0},
+    {date: moment('2018-09-17').valueOf(), progress: 0, timeSpent: 0, commitCount: 0},
+    {date: moment('2018-09-18').valueOf(), progress: 0, timeSpent: 0, commitCount: 0},
+    {date: moment('2018-09-19').valueOf(), progress: 0, timeSpent: 2, commitCount: 50},
+    {date: moment('2018-09-20').valueOf(), progress: 0, timeSpent: 2, commitCount: 50},
+    {date: moment('2018-09-21').valueOf(), progress: 10, timeSpent: 2, commitCount: 50},
+    {date: moment('2018-09-22').valueOf(), progress: 0, timeSpent: 5, commitCount: 120},
+    {date: moment('2018-09-23').valueOf(), progress: 0, timeSpent: 1, commitCount: 30},
+    {date: moment('2018-09-24').valueOf(), progress: 20, timeSpent: 2, commitCount: 100},
+    {date: moment('2018-09-25').valueOf(), progress: 10, timeSpent: 2, commitCount: 50},
+    {date: moment('2018-09-26').valueOf(), progress: 50, timeSpent: 7, commitCount: 200},
+    {date: moment('2018-09-27').valueOf(), progress: 10, timeSpent: 3, commitCount: 50},
 ]
 
 class ProgressPerTime extends Component {
@@ -78,7 +78,7 @@ class ProgressPerTime extends Component {
                     <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
                         <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Time</text>
                         <CartesianGrid/>
-                        <XAxis dataKey="estimatedWorkTime" type="number">
+                        <XAxis dataKey="timeSpent" type="number">
                             <Label offset={-15} position="insideBottom">
                                 Estimated Time worked
                             </Label>

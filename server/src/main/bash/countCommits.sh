@@ -7,5 +7,5 @@
 DIRECTORY="$(pwd)"
 cd "$1"
 printf "$3 " >> "${DIRECTORY}/$2"
-git log --pretty=format:%ad | wc -l >> "${DIRECTORY}/$2"
+git log --perl-regexp --author='^((?!CS252).*)$' --pretty=format:%ad | wc -l >> "${DIRECTORY}/$2"
 cd "${DIRECTORY}"

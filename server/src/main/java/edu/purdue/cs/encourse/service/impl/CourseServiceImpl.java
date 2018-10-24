@@ -1,10 +1,7 @@
 package edu.purdue.cs.encourse.service.impl;
 
 import edu.purdue.cs.encourse.database.*;
-import edu.purdue.cs.encourse.domain.Professor;
-import edu.purdue.cs.encourse.domain.Project;
-import edu.purdue.cs.encourse.domain.Section;
-import edu.purdue.cs.encourse.domain.Student;
+import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.CourseService;
 import lombok.NonNull;
@@ -167,12 +164,22 @@ public class CourseServiceImpl implements CourseService {
         for(Section s : sections) {
             JSONObject sectionJSON = new JSONObject();
             List<StudentSection> assignedStudents = studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            List<String> students = new ArrayList<>();
+            for(StudentSection a : assignedStudents) {
+                Student student = studentRepository.findByUserID(a.getStudentID());
+                students.add(student.getUserName());
+            }
             List<TeachingAssistantSection> assignedTeachingAssistants = teachingAssistantSectionRepository.findByIdSectionID(s.getSectionIdentifier());
+            List<String> teachingAssistants = new ArrayList<>();
+            for(TeachingAssistantSection a : assignedTeachingAssistants) {
+                TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(a.getTeachingAssistantID());
+                teachingAssistants.add(teachingAssistant.getUserName());
+            }
             sectionJSON.put("name", s.getSectionType());
             sectionJSON.put("id", s.getSectionIdentifier());
             sectionJSON.put("time", s.getTimeSlot());
-            sectionJSON.put("students", assignedStudents.size());
-            sectionJSON.put("teaching_assistants", assignedTeachingAssistants.size());
+            sectionJSON.put("students", students);
+            sectionJSON.put("teaching_assistants", teachingAssistants);
             sectionsJSON.add(sectionJSON);
         }
         return sectionsJSON;
@@ -203,10 +210,23 @@ public class CourseServiceImpl implements CourseService {
                         commitCounts.put(p.getProjectIdentifier(), p.getCommitCount());
                         timeSpent.put(p.getProjectIdentifier(), p.getTotalTimeSpent());
                     }
+                    List<StudentSection> assignedSections = studentSectionRepository.findByIdStudentID(student.getUserID());
+                    List<String> sectionStrings = new ArrayList<>();
+                    for(StudentSection a : assignedSections) {
+                        sectionStrings.add(a.getSectionIdentifier());
+                    }
+                    List<TeachingAssistantStudent> assignedTeachingAssistants = teachingAssistantStudentRepository.findByIdStudentID(student.getUserID());
+                    List<String> teachingAssistants = new ArrayList<>();
+                    for(TeachingAssistantStudent a : assignedTeachingAssistants) {
+                        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(a.getTeachingAssistantID());
+                        teachingAssistants.add(teachingAssistant.getUserName());
+                    }
                     JSONObject studentJSON = new JSONObject();
                     studentJSON.put("first_name", student.getFirstName());
                     studentJSON.put("last_name", student.getLastName());
                     studentJSON.put("id", student.getUserName());
+                    studentJSON.put("sections", sectionStrings);
+                    studentJSON.put("teaching_assistants", teachingAssistants);
                     studentJSON.put("grades", grades);
                     studentJSON.put("hiddenGrades", grades);
                     studentJSON.put("commitCounts", commitCounts);
