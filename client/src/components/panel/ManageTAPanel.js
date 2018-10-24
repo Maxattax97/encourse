@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
 import ActionNavigation from '../navigation/ActionNavigation'
 import TANavigation from '../navigation/TANavigation'
@@ -280,10 +281,9 @@ class ManageTAPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
         sections: state.course && state.course.getSectionsData ? state.course.getSectionsData : [],
-        teaching_assistants: state.teachingAssistant && state.teachingAssistant.getTeachingAssistants ? state.teachingAssistant.getTeachingAssistants : []
+        teaching_assistants: state.teachingAssistant && state.teachingAssistant.getTeachingAssistantsData ? state.teachingAssistant.getTeachingAssistantsData : []
     }
 }
 

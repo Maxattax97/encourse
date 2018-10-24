@@ -12,7 +12,7 @@ function teachingAssistant(state = {}, action) {
         })
     case 'GET_TEACHING_ASSISTANTS_SUCCESS':
         return Object.assign({}, state, {
-            getTeachingAssistants: action.data,
+            getTeachingAssistantsData: action.data,
             getTeachingAssistantsIsLoading: false,
         })
     default:
