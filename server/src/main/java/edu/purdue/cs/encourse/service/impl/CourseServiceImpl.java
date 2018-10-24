@@ -210,10 +210,23 @@ public class CourseServiceImpl implements CourseService {
                         commitCounts.put(p.getProjectIdentifier(), p.getCommitCount());
                         timeSpent.put(p.getProjectIdentifier(), p.getTotalTimeSpent());
                     }
+                    List<StudentSection> assignedSections = studentSectionRepository.findByIdStudentID(student.getUserID());
+                    List<String> sectionStrings = new ArrayList<>();
+                    for(StudentSection a : assignedSections) {
+                        sectionStrings.add(a.getSectionIdentifier());
+                    }
+                    List<TeachingAssistantStudent> assignedTeachingAssistants = teachingAssistantStudentRepository.findByIdStudentID(student.getUserID());
+                    List<String> teachingAssistants = new ArrayList<>();
+                    for(TeachingAssistantStudent a : assignedTeachingAssistants) {
+                        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(a.getTeachingAssistantID());
+                        teachingAssistants.add(teachingAssistant.getUserName());
+                    }
                     JSONObject studentJSON = new JSONObject();
                     studentJSON.put("first_name", student.getFirstName());
                     studentJSON.put("last_name", student.getLastName());
                     studentJSON.put("id", student.getUserName());
+                    studentJSON.put("sections", sectionStrings);
+                    studentJSON.put("teaching_assistants", teachingAssistants);
                     studentJSON.put("grades", grades);
                     studentJSON.put("hiddenGrades", grades);
                     studentJSON.put("commitCounts", commitCounts);

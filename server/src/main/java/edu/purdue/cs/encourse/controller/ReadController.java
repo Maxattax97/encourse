@@ -54,6 +54,17 @@ public class ReadController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/teachingAssistantsData", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getTeachingAssistantData(@RequestParam(name = "courseID") String courseID,
+                                                                    @RequestParam(name = "semester") String semester) {
+        JSONArray json = professorService.getTeachingAssistantData(semester, courseID);
+        if (json == null) {
+            return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/projectsData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getProjectData(@RequestParam(name = "courseID") String courseID,
                                                           @RequestParam(name = "semester") String semester) {
