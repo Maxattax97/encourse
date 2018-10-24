@@ -26,12 +26,14 @@ def commit_data(time_file, exclude=None):
             }
 
     """
+    if not exclude:
+        exclude = 0
     line = time_file.readline()
     line = line.lstrip(" ").rstrip("\n")
     users = {}
     current_name = ""
     previous_words = []
-	countdown = exclude
+    countdown = exclude
     while line != "":
         # print(line)
         words = line.split(" ")
@@ -41,17 +43,17 @@ def commit_data(time_file, exclude=None):
             line = time_file.readline()
             line = line.lstrip(" ").rstrip("\n")
             words = line.split(" ")
-			if countdown == 0:
-				users[current_name] = (line.split(" ")[1], 0)
-			countdown -= 1
+            if countdown == 0:
+                users[current_name] = (line.split(" ")[1], 0)
+            countdown -= 1
         elif words[0] == "End":
             # Update the user's final time
             if current_name != "" and previous_words != []:
                 users[current_name] = (users[current_name][0], previous_words[1])
-		else:
-			if countdown == 0:
-				users[current_name] = (line.split(" ")[1], 0)
-			countdown -= 1
+        else:
+            if countdown == 0:
+                users[current_name] = (line.split(" ")[1], 0)
+            countdown -= 1
 
         line = time_file.readline()
         line = line.lstrip(" ").rstrip("\n")
