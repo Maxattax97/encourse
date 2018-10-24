@@ -65,7 +65,9 @@ class ClassProgressHistogram extends Component {
     }
 
     fetch = (props) => {
-        props.getData(`${url}/api/classProgress?projectID=${props.projectID}`)
+        if(props.projectID) {
+            props.getData(`${url}/api/classProgress?projectID=${props.projectID}`)
+        }    
     }
 
     formatApiData = (udata) => {

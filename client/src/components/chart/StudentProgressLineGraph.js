@@ -41,7 +41,9 @@ class StudentProgressLineGraph extends Component {
     }
 
     fetch = (props) => {
-        props.getData(`${url}/api/progress?projectID=${props.projectID}&userName=${props.id}`)
+        if(props.projectID) {
+            props.getData(`${url}/api/progress?projectID=${props.projectID}&userName=${props.id}`)
+        }      
     }
 
 

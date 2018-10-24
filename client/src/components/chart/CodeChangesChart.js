@@ -42,7 +42,9 @@ class CodeChangesChart extends Component {
     }
 
     fetch = (props) => {
-        props.getData(`${url}/api/diffs?projectID=${props.projectID}&userName=${props.id}`)
+        if(props.projectID) {
+            props.getData(`${url}/api/diffs?projectID=${props.projectID}&userName=${props.id}`)
+        } 
     }
 
     dateFormatter = (date) => {
