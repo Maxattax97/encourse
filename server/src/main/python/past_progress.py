@@ -1,5 +1,6 @@
 import sys
 from datetime import datetime
+from helper import eprint
 
 
 def past_progress(time_file):

@@ -325,6 +325,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName) {
+        String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
         if(!projectRepository.existsByProjectIdentifier(projectID)) {
             return new JSONReturnable(-1, null);
         }
@@ -335,6 +336,10 @@ public class ProfessorServiceImpl implements ProfessorService {
         List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestDates.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestDates.txt";
+        if (DEBUG) {
+            visibleTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
+            hiddenTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
+        }
         try {
             BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
             BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));

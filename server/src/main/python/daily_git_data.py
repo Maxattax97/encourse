@@ -1,5 +1,6 @@
 import sys
 from helper import is_number as is_number
+from helper import eprint
 from datetime import datetime
 from datetime import timedelta
 
@@ -99,14 +100,13 @@ def remove_shared_commits(students):
             removal_count += 1
         else:
             break
-        print(removal_count)
 
-    print("students: {}".format(students))
+    eprint("students: {}".format(students))
     for name in students:
         for i in range(removal_count):
             data = students[name].pop(0)
-            print(data)
-    print("students: {}".format(students))
+            eprint(data)
+    eprint("students: {}".format(students))
 
     return students
 
@@ -184,7 +184,7 @@ def get_daily_commit_data(progress_file, max_change=None, timeout=None):
         elif expect_time == True:  # New Data/Time/Code tuple
             expect_time = False
             if len(words) != 3:
-                print("Expected date, time, and code. Found: {}".format(words))
+                eprint("Expected date, time, and code. Found: {}".format(words))
             date = words[0]
             time = words[1]  # Unused
             code = words[2]  # Unused
@@ -229,7 +229,7 @@ def get_daily_commit_data(progress_file, max_change=None, timeout=None):
             daily_commit_count += 1
         else:  # New Addition/Deletion/File tuple
             if len(words) != 3:
-                print("Unknown line format with words {}".format(words))
+                eprint("Unknown line format with words {}".format(words))
                 continue
             additions = int(words[0]) if is_number(words[0]) else 0
             deletions = int(words[1]) if is_number(words[1]) else 0
