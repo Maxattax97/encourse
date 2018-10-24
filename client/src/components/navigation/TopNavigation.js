@@ -5,6 +5,7 @@ import { history } from '../../redux/store'
 import { logOut } from '../../redux/actions/index'
 import url from '../../server'
 import {settings, logout} from '../../helpers/icons'
+import {LogoutIcon, SettingsIcon} from '../Helpers'
 
 class TopNavigation extends Component {
 
@@ -22,10 +23,10 @@ class TopNavigation extends Component {
                         if(this.props.path === '/settings') history.push('/course')
                         else history.push('/settings')
                     }}>
-                        <img src={ settings.icon } alt={ settings.alt_text } />
+                        <SettingsIcon/>
                     </div>
                     <div className="action" onClick={() => this.logOut()}>
-                        <img src={ logout.icon } alt={ logout.alt_text } />
+                        <LogoutIcon/>
                     </div>
                 </div>
                 <div className="nav-title" onClick={ () => history.push('/course')}>

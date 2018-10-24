@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 
 import {getClassProjects, setCurrentProject} from '../../redux/actions/index'
 import connect from 'react-redux/es/connect/connect'
-import {Title, Card} from '../Helpers'
-import {back, settings, plus} from '../../helpers/icons'
+import {Title, Card, BackIcon, SettingsIcon, PlusIcon} from '../Helpers'
 import {history} from '../../redux/store'
 
 class ProjectNavigation extends Component {
@@ -52,12 +51,12 @@ class ProjectNavigation extends Component {
                                 { this.props.back }
                             </h3>
                             {
-                                this.props.backClick ? <img className='svg-icon' src={ back.icon } alt={ back.alt_text } /> : null
+                                this.props.backClick ? <BackIcon/> : null
                             }
                         </div>
-                        <Card component={
+                        <Card>
                             <div className="list-container">
-                                <Title onClick={ this.openProjectOptions } header={ <h3 className='header'>Projects</h3> } icon={ settings }/>
+                                <Title onClick={ this.openProjectOptions } header={ <h3 className='header'>Projects</h3> } icon={ <SettingsIcon/> }/>
                                 <div className="h3 break-line header"/>
                                 <div className='text-list'>
                                     {
@@ -72,11 +71,11 @@ class ProjectNavigation extends Component {
                                             </div>)
                                     }
                                     <div className={ `list-new action svg-icon${this.state.new_project ? ' list-highlight' : ''}` } onClick={ this.openProjectOptions }>
-                                        <img className='svg-icon' src={ plus.icon } alt={ plus.alt_text } />
+                                        <PlusIcon/>
                                     </div>
                                 </div>
                             </div>
-                        } />
+                        </Card>
                     </div>
                 </div>
             </div>

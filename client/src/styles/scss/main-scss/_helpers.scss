@@ -67,6 +67,13 @@
   transform: #{$str};
 }
 
+@mixin user-select($str) {
+  user-select: #{$str};
+  -webkit-user-select: #{$str};
+  -moz-user-select: #{$str};
+  -ms-user-select: #{$str};
+}
+
 @mixin float-height() {
   content: "";
   display: block;

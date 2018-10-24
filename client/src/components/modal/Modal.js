@@ -9,17 +9,14 @@ class Modal extends Component {
         return (
             <div className='modal' style={this.props.show ? {} : {display: 'none'}} onClick={ this.props.onExit }>
                 <div className={this.props.left ? 'modal-left' : this.props.right ? 'modal-right' : 'modal-center'} onClick={(e) => e.stopPropagation()}>
-                    <Card component={
-                        [
-                            <div className={'modal-container'} key={1}>
-                                {this.props.content}
-                            </div>,
-                            <div className="action svg-icon exit-nav" onClick={ this.props.onClose || this.props.onExit } key={2}>
-                                <img className='svg-icon' src={ x.icon } alt={ x.alt_text } />
-                            </div>
-                        ]
-
-                    } />
+                    <Card>
+                        <div className={'modal-container'} key={1}>
+                            {this.props.children}
+                        </div>
+                        <div className="action svg-icon exit-nav" onClick={ this.props.onClose || this.props.onExit } key={2}>
+                            <img className='svg-icon' src={ x.icon } alt={ x.alt_text } />
+                        </div>
+                    </Card>
                 </div>
             </div>
         )

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import {back, plus, settings} from '../../helpers/icons'
-import {Card, Title} from '../Helpers'
+import {plus} from '../../helpers/icons'
+import {Card, Title, BackIcon} from '../Helpers'
 
 class TANavigation extends Component {
 
@@ -15,10 +14,10 @@ class TANavigation extends Component {
                                 { this.props.back }
                             </h3>
                             {
-                                this.props.backClick ? <img className='svg-icon' src={ back.icon } alt={ back.alt_text } /> : null
+                                this.props.backClick ? <BackIcon /> : null
                             }
                         </div>
-                        <Card component={
+                        <Card>
                             <div className="list-container">
                                 <Title header={ <h3 className='header'>Teaching Assistants</h3> }/>
                                 <div className="h3 break-line header"/>
@@ -34,12 +33,9 @@ class TANavigation extends Component {
                                                 </h4>
                                             </div>)
                                     }
-                                    <div className={ `list-new action svg-icon` }>
-                                        <img className='svg-icon' src={ plus.icon } alt={ plus.alt_text } />
-                                    </div>
                                 </div>
                             </div>
-                        } />
+                        </Card>
                     </div>
                 </div>
             </div>

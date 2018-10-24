@@ -11,7 +11,7 @@ class ActionNavigation extends Component {
     render() {
         return (
             <div className='actions-container side-nav-right'>
-                <Card component={
+                <Card>
                     <div className='actions'>
                         <Title header={ <h3 className='header'>Actions</h3> } />
                         <div className="h3 break-line header" />
@@ -35,7 +35,7 @@ class ActionNavigation extends Component {
                             }
                         </div>
                     </div>
-                } />
+                </Card>
             </div>
         )
     }

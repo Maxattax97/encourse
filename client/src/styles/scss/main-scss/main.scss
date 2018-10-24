@@ -10,6 +10,7 @@
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
+  display:inline-block;
 }
 
 h1 {
@@ -71,6 +72,10 @@ h6 {
 h6.header {
   @include set-rem-safe(line-height, 1.34rem);
   @include set-rem-safe(height, 1.34rem);
+}
+
+.h1-size {
+  @include set-rem-safe(font-size, 2rem);
 }
 
 .h2-size {

@@ -8,6 +8,12 @@
       background-color: #F0F0F0;
     }
   }
+
+  .course-modal {
+    .modal-container {
+      width: 250px;
+    }
+  }
 }
 
 @import "util/student-preview";

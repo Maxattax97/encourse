@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import ActionNavigation from '../navigation/ActionNavigation'
 import TANavigation from '../navigation/TANavigation'
-import {Summary, Title} from '../Helpers'
+import {Summary, Title, CheckmarkIcon} from '../Helpers'
 
 class ManageTAPanel extends Component {
 
@@ -11,7 +11,8 @@ class ManageTAPanel extends Component {
 
         this.state = {
             teaching_assistants: [],
-            current_ta: -1
+            current_ta: -1,
+            assignment_type: 0
         }
     }
 
@@ -30,15 +31,11 @@ class ManageTAPanel extends Component {
                 <ActionNavigation
                     actions={[
                         () => {},
-                        () => {},
-                        () => {},
                         () => {}
                     ]}
                     action_names={[
-                        'Add New Teaching Assistant',
-                        'Save Changes',
-                        'Revert Changes',
-                        'Remove Teaching Assistant'
+                        'Discard Changes',
+                        'Save Changes'
                     ]} />
             </div>
 
@@ -68,18 +65,36 @@ class ManageTAPanel extends Component {
                                 <h4 className="header">
                                     Student Assignment Type
                                 </h4>
-                                <label className="h3-size">
-                                    <input type="radio" name="assignment_type" />
+                                <div className={this.state.assignment_type === 0 ? 'action radio-selected' : 'action'}
+                                    onClick={ () => this.setState({ assignment_type: 0 }) }>
+
                                     <h5 className="header">Assign students by career account</h5>
-                                </label>
-                                <label className="h3-size">
-                                    <input type="radio" name="assignment_type" />
-                                    <h5 className="header">Assign students by student card</h5>
-                                </label>
-                                <label className="h3-size">
-                                    <input type="radio" name="assignment_type" />
+                                    {
+                                        this.state.assignment_type === 0 ?
+                                            <CheckmarkIcon /> :
+                                            null
+                                    }
+                                </div>
+                                <div className={this.state.assignment_type === 1 ? 'action radio-selected' : 'action'}
+                                    onClick={ () => this.setState({ assignment_type: 1 }) }>
+
+                                    <h5 className="header">Assign students by selection</h5>
+                                    {
+                                        this.state.assignment_type === 1 ?
+                                            <CheckmarkIcon /> :
+                                            null
+                                    }
+                                </div>
+                                <div className={this.state.assignment_type === 2 ? 'action radio-selected' : 'action'}
+                                    onClick={ () => this.setState({ assignment_type: 2 }) }>
+
                                     <h5 className="header">Assign all students</h5>
-                                </label>
+                                    {
+                                        this.state.assignment_type === 2 ?
+                                            <CheckmarkIcon /> :
+                                            null
+                                    }
+                                </div>
                             </div> :
 
                             null
