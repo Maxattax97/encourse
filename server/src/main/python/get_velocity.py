@@ -43,20 +43,27 @@ def jsonify(
     daily_data = {date_string(x["date"]): x for x in daily_data}
 
     velocity_data = []
+    cumulative_progress = 0
+    min_progress = 0
 
     for day in dates:
         day = date_string(day)
         new_entry = {}
         new_entry["date"] = day
 
-        new_entry["progress"] = 0
+        # get cumulative progress
+        if day in visible_data:
+            cumulative_progress = visible_data[day]["progress"]
+        if day in hidden_data:
+            cumulative_progress = hidden_data[day]["progress"]
+
+        # calculate daily progress
+        new_entry["progress"] = cumulative_progress - min_progress
+        min_progress = max(min_progress, cumulative_progress)
+
+        # copy daily data
         new_entry["timeSpent"] = 0
         new_entry["commitCount"] = 0
-
-        if day in visible_data:
-            new_entry["progress"] = visible_data[day]["progress"]
-        if day in hidden_data:
-            new_entry["progress"] = hidden_data[day]["progress"]
         if day in daily_data:
             new_entry["timeSpent"] = daily_data[day]["time_spent"]
             new_entry["commitCount"] = daily_data[day]["commit_count"]
