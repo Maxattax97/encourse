@@ -10,6 +10,7 @@ from helper import eprint
 from start_end import commit_data
 from past_progress import past_progress
 from daily_git_data import get_daily_commit_data as commit_list
+from get_individual_progress import extract_progress
 
 
 def jsonify(
