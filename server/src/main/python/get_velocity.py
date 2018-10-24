@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
     visible_file = open(args.visiblefile, "r")
     hidden_file = open(args.hiddenfile, "r")
-    commit_log_file = open(args.hiddenfile, "r")
+    commit_log_file = open(args.logfile, "r")
     commit_times_file = open(args.timefile, "r")
     student_id = args.name
 
