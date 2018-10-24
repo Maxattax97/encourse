@@ -7,8 +7,7 @@
 }
 
 .back-nav {
-  img {
-    @include set-size-rem-safe(1.5rem, 1.5rem);
+  svg {
     @include set-rem-safe(margin-top, 1.25rem);
     float: right;
   }
@@ -83,14 +82,18 @@
       @include set-size-rem-safe(3rem, 3rem);
       padding: 8px;
       padding: .5rem;
-      img {
+      svg.icon {
         width: 100%;
         height: 100%;
+
+        path {
+          fill:white;
+        }
       }
     }
 
-    div:hover {
-      filter: opacity(85%);
+    div:hover svg.icon path {
+      fill: #ffffffcc;
     }
   }
 }

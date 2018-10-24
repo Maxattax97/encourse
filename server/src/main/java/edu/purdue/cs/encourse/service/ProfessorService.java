@@ -40,9 +40,13 @@ public interface ProfessorService {
 
     int pullAndTestAllProjects();
 
-    int assignTeachingAssistantToStudent(@NonNull String teachAssistUserName, @NonNull String studentUserName);
+    int assignTeachingAssistantToStudent(@NonNull String teachAssistUserName, @NonNull String studentUserName, @NonNull String courseID, @NonNull String semester);
+    int assignTeachingAssistantToSection(@NonNull String teachAssistUserName, @NonNull String sectionID);
+    int assignTeachingAssistantToAllStudents(@NonNull String teachAssistUserName, @NonNull String courseID, @NonNull String semester);
 
     int testPythonDirectory();
+
+    JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA);
 
     Project getProject(String projectID);
 }

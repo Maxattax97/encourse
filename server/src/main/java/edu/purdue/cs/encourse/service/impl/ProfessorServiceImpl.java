@@ -74,6 +74,9 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Autowired
     private StudentProjectTestRepository studentProjectTestRepository;
 
+    @Autowired
+    private TeachingAssistantCourseRepository teachingAssistantCourseRepository;
+
     private int executeBashScript(@NonNull String command) {
         try {
             Process process = Runtime.getRuntime().exec("./src/main/bash/" + command + " 2> /dev/null");
@@ -85,6 +88,52 @@ public class ProfessorServiceImpl implements ProfessorService {
             return -1;
         }
         return 0;
+    }
+
+    public JSONReturnable runPython(@NonNull String command) {
+        if (OBFUSCATE) {
+            command += " -O";
+        }
+        System.out.println(command);
+        JSONReturnable json = null;
+        try {
+            Process process = Runtime.getRuntime().exec(command);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String input = null;
+            String error = null;
+            while ((error = stdError.readLine()) != null) {
+                System.out.println(error);
+            }
+            while ((input = stdInput.readLine()) != null) {
+                JSONParser jsonParser = new JSONParser();
+                Object obj = null;
+                try {
+                    obj = jsonParser.parse(input);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    json =  new JSONReturnable(-3, null);
+                }
+                if (obj != null) {
+                    System.out.println(obj);
+                    JSONObject jsonObject = null;
+                    if (obj.getClass() == JSONObject.class) {
+                        jsonObject = (JSONObject)obj;
+                    } else if (obj.getClass() == JSONArray.class) {
+                        jsonObject = new JSONObject();
+                        JSONArray jsonArray = (JSONArray)obj;
+                        jsonObject.put("data", jsonArray);
+                    } else {
+                        json = new JSONReturnable(-4, null);
+                    }
+                    json = new JSONReturnable(1, jsonObject);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            json =  new JSONReturnable(-2, null);
+        }
+        return json;
     }
 
     private boolean isTakingCourse(@NonNull Student student, @NonNull Project project) {
@@ -1051,7 +1100,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     /** Makes a new assignment between teaching assistant and student. Can have multiple students assigned to same TA
      or multiple TAs assigned to the same student **/
-    public int assignTeachingAssistantToStudent(@NonNull String teachAssistUserName, @NonNull String studentUserName) {
+    public int assignTeachingAssistantToStudent(@NonNull String teachAssistUserName, @NonNull String studentUserName, @NonNull String courseID, @NonNull String semester) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
         if(teachingAssistant == null) {
             return -1;
@@ -1060,74 +1109,76 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(student == null) {
             return -2;
         }
-        TeachingAssistantStudent assignment = new TeachingAssistantStudent(teachingAssistant.getUserID(), student.getUserID());
-        if(teachingAssistantStudentRepository.save(assignment) == null) {
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
+        if(sections.isEmpty()) {
             return -3;
+        }
+        TeachingAssistantCourse check = teachingAssistantCourseRepository.findByIdTeachingAssistantIDAndIdSemesterAndIdCourseID(teachingAssistant.getUserID(), semester, courseID);
+        if(check == null) {
+            return -4;
+        }
+        TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(teachingAssistant.getUserID(), student.getUserID(), courseID);
+        if(assignment != null) {
+            return -5;
+        }
+        assignment = new TeachingAssistantStudent(teachingAssistant.getUserID(), student.getUserID(), courseID);
+        teachingAssistantStudentRepository.save(assignment);
+        return 0;
+    }
+
+    /** Assigns a TA to all students in a section with one command. **/
+    public int assignTeachingAssistantToSection(@NonNull String teachAssistUserName, @NonNull String sectionID) {
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
+        if(teachingAssistant == null) {
+            return -1;
+        }
+        Section section = sectionRepository.findBySectionIdentifier(sectionID);
+        if(section == null) {
+            return -2;
+        }
+        TeachingAssistantCourse check = teachingAssistantCourseRepository.findByIdTeachingAssistantIDAndIdSemesterAndIdCourseID(teachingAssistant.getUserID(), section.getSemester(), section.getCourseID());
+        if(check == null) {
+            return -3;
+        }
+        List<StudentSection> studentSections = studentSectionRepository.findByIdSectionIdentifier(section.getSectionIdentifier());
+        for(StudentSection t : studentSections) {
+            TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(teachingAssistant.getUserID(), t.getStudentID(), section.getCourseID());
+            if (assignment == null) {
+                assignment = new TeachingAssistantStudent(teachingAssistant.getUserID(), t.getStudentID(), section.getCourseID());
+                teachingAssistantStudentRepository.save(assignment);
+            }
         }
         return 0;
     }
 
-    public JSONReturnable runPython(@NonNull String command) {
-        if (OBFUSCATE) {
-            command += " -O";
+    /** Assigns a TA to all students in a course with one command. **/
+    public int assignTeachingAssistantToAllStudents(@NonNull String teachAssistUserName, @NonNull String courseID, @NonNull String semester) {
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
+        if(teachingAssistant == null) {
+            return -1;
         }
-        /*File file= new File (tailFilePath, "tail.txt");
-        FileWriter tailWriter;
-        try {
-            if (file.exists())
-            {
-                tailWriter = new FileWriter(file,true);
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
+        if(sections.isEmpty()) {
+            return -2;
+        }
+        TeachingAssistantCourse check = teachingAssistantCourseRepository.findByIdTeachingAssistantIDAndIdSemesterAndIdCourseID(teachingAssistant.getUserID(), semester, courseID);
+        if(check == null) {
+            return -3;
+        }
+        for(Section s : sections) {
+            List<StudentSection> studentSections = studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            for(StudentSection t : studentSections) {
+                TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(teachingAssistant.getUserID(), t.getStudentID(), courseID);
+                if (assignment == null) {
+                    assignment = new TeachingAssistantStudent(teachingAssistant.getUserID(), t.getStudentID(), courseID);
+                    teachingAssistantStudentRepository.save(assignment);
+                }
             }
-            else
-            {
-                file.createNewFile();
-                tailWriter = new FileWriter(file);
-            }
+        }
+        return 0;
+    }
 
-            String arr[] = command.split(" ", 3);
-            tailWriter.write(arr[0] + arr[1]);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-        System.out.println(command);
-        JSONReturnable json = null;
-        try {
-            Process process = Runtime.getRuntime().exec(command);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String input = null;
-            String error = null;
-            while ((error = stdError.readLine()) != null) {
-                System.out.println(error);
-            }
-            while ((input = stdInput.readLine()) != null) {
-                JSONParser jsonParser = new JSONParser();
-                Object obj = null;
-                try {
-                    obj = jsonParser.parse(input);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    json =  new JSONReturnable(-3, null);
-                }
-                if (obj != null) {
-                    System.out.println(obj);
-                    JSONObject jsonObject = null;
-                    if (obj.getClass() == JSONObject.class) {
-                        jsonObject = (JSONObject)obj;
-                    } else if (obj.getClass() == JSONArray.class) {
-                        jsonObject = new JSONObject();
-                        JSONArray jsonArray = (JSONArray)obj;
-                        jsonObject.put("data", jsonArray);
-                    } else {
-                        json = new JSONReturnable(-4, null);
-                    }
-                    json = new JSONReturnable(1, jsonObject);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            json =  new JSONReturnable(-2, null);
-        }
-        return json;
+    public JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA) {
+        return null;
     }
 }

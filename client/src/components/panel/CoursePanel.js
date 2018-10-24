@@ -10,8 +10,7 @@ import ClassProgressHistogram from '../chart/ClassProgressHistogram'
 import ClassTestCasePercentDone from '../chart/ClassTestCasePercentDone'
 import ActionNavigation from '../navigation/ActionNavigation'
 import CourseModal from '../modal/CourseModal'
-import { Title, Summary, Card } from '../Helpers'
-import { settings } from '../../helpers/icons'
+import {Title, Summary, Card, SettingsIcon} from '../Helpers'
 
 import { fuzzing } from '../../fuzz'
 
@@ -81,7 +80,7 @@ class CoursePanel extends Component {
                     <div className={ `panel-course-content${this.state.modal_blur}` }>
                         <Title onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' }) }
                             header={ <h1 className='header'>CS252</h1> }
-                            icon={ settings } />
+                            icon={ <SettingsIcon/> } />
                         <div className='h1 break-line header' />
 
                         <Summary header={ <h3 className='header'>Course Charts Summary</h3> }
@@ -91,7 +90,9 @@ class CoursePanel extends Component {
                                 <ClassTestCasePercentDone projectID={this.props.currentProjectId} key={2}/>
                             ] }
                             className='charts'
-                            iterator={ (chart) => <Card key={ chart.key } component={ chart } /> } />
+                            iterator={ (chart) => <Card key={ chart.key }>
+                                {chart}
+                            </Card> } />
 
                         <div className='h1 break-line' />
 
@@ -101,11 +102,11 @@ class CoursePanel extends Component {
                             className='course-students'
                             iterator={ (student) =>
                                 <Card key={ student.id }
-                                    component={
-                                        <StudentPreview student={ student } projectID={ this.props.currentProjectId }
-                                            setCurrentProject={ this.props.setCurrentProject } />
-                                    }
-                                    onClick={ () => this.showStudentPanel(student) } /> } />
+                                    onClick={ () => this.showStudentPanel(student) } >
+
+                                    <StudentPreview student={ student } projectID={ this.props.currentProjectId }
+                                        setCurrentProject={ this.props.setCurrentProject } />
+                                </Card> } />
                     </div>
                 </div>
             </div>

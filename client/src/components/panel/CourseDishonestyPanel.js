@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import ActionNavigation from '../navigation/ActionNavigation'
-import CommitHistory from './util/CommitHistory'
 
-class CourseDishonestyPanel extends React.Component {
+class CourseDishonestyPanel extends Component {
     render() {
         return (<div className="class-dishonesty-panel">
             <ProjectNavigation

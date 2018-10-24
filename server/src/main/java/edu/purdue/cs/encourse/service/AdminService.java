@@ -41,6 +41,7 @@ public interface AdminService {
     int assignProfessorToCourse(@NonNull String userName, @NonNull String courseID, @NonNull String semester);
     int registerStudentToSection(@NonNull String userName, @NonNull String sectionID);
     int hireStudentAsTeachingAssistant(@NonNull String userName);
+    int assignTeachingAssistantToCourse(@NonNull String userName, @NonNull String courseID, @NonNull String semester);
 
     /** Services for authentication **/
     User addUser(@NonNull String userName, @NonNull String password, @NonNull String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled);

@@ -15,8 +15,8 @@ public class TeachingAssistantStudent {
     @EmbeddedId
     TeachingAssistantStudentID id;
 
-    public TeachingAssistantStudent(String teachingAssistantID, String studentID) {
-        this.id = new TeachingAssistantStudentID(teachingAssistantID, studentID);
+    public TeachingAssistantStudent(String teachingAssistantID, String studentID, String courseID) {
+        this.id = new TeachingAssistantStudentID(teachingAssistantID, studentID, courseID);
     }
 
     public TeachingAssistantStudent() {
@@ -41,9 +41,13 @@ class TeachingAssistantStudentID implements Serializable {
     /** Key used to identify the student **/
     private String studentID;
 
-    public TeachingAssistantStudentID(String teachingAssistantID, String studentID) {
+    /** Key used to identify the course **/
+    private String courseID;
+
+    public TeachingAssistantStudentID(String teachingAssistantID, String studentID, String courseID) {
         this.teachingAssistantID = teachingAssistantID;
         this.studentID = studentID;
+        this.courseID = courseID;
     }
 
     public TeachingAssistantStudentID() {

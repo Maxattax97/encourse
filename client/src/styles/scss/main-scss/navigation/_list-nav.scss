@@ -6,7 +6,7 @@
     background-image: linear-gradient(to right, #e8e8e800, #0057A755 100%);
   }
 
-  .list-new img {
+  .list-new svg.icon {
     @include set-size-rem-safe(1.25rem, 1.25rem);
   }
 }
