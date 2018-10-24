@@ -79,7 +79,7 @@ public class ReadController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/coursesData", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getProjectData(@RequestParam(name = "userName") String userName) {
+    public @ResponseBody ResponseEntity<?> getCourseData(@RequestParam(name = "userName") String userName) {
         if (hasPermissionOverAccount(userName)) {
             JSONArray json = courseService.getCourseData(userName);
 
@@ -90,6 +90,18 @@ public class ReadController {
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/sectionsData", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getSectionData(@RequestParam(name = "courseID") String courseID,
+                                                          @RequestParam(name = "semester") String semester) {
+        JSONArray json = courseService.getSectionData(semester, courseID);
+
+        if (json == null) {
+            return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
