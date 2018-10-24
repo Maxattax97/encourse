@@ -103,12 +103,9 @@ def remove_shared_commits(students):
         else:
             break
 
-    eprint("students: {}".format(students))
     for name in students:
         for i in range(removal_count):
             data = students[name].pop(0)
-            eprint(data)
-    eprint("students: {}".format(students))
 
     return students
 

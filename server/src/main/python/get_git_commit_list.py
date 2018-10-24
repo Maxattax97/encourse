@@ -40,6 +40,7 @@ def jsonify(git_data, student=None):
     """
     # Create complete copy. Copy module may be removed in the future
     data = copy.deepcopy(git_data)
+    print(data)
     for student in data:
         student_data = data[student]
         for day in student_data:
