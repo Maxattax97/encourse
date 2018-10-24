@@ -83,7 +83,7 @@ if __name__ == "__main__":
     reformatted_hidden_data = extract_progress(individual_hidden_data)
 
     daily_data = commit_list(
-        commit_log_file, max_change=args.limt, timeout=args.timeout
+        commit_log_file, max_change=args.limit, timeout=args.timeout
     )
 
     commit_times = commit_data(commit_times_file)
