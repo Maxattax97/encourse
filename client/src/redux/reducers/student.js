@@ -14,6 +14,20 @@ function student(state = {}, action) {
             getStatisticsData: null,
             getCommitHistoryData: null,
         })
+    case 'GET_STUDENT':
+        return Object.assign({}, state, {
+            getStudentIsLoading: true,
+        })
+    case 'GET_STUDENT_HAS_ERROR':
+        return Object.assign({}, state, {
+            getStudentHasError: action.hasError,
+            getStudentIsLoading: false,
+        })
+    case 'GET_STUDENT_DATA_SUCCESS':
+        return Object.assign({}, state, {
+            getStudentData: action.data,
+            getStudentIsLoading: false,
+        })
     case 'GET_PROGRESS_LINE':
         return Object.assign({}, state, {
             getProgressLineIsLoading: true,

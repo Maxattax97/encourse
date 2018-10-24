@@ -13,6 +13,24 @@ export function clearStudent() {
     }
 }
 
+export function getStudentHasError(hasError) {
+    return {
+        type: 'GET_STUDENT_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getStudentDataSuccess(data) {
+    return {
+        type: 'GET_STUDENT_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getStudent = genericDispatch(
+    'GET_STUDENT', getStudentHasError, getStudentDataSuccess, 'GET'
+)
+
 export function getProgressLineHasError(hasError) {
     return {
         type: 'GET_PROGRESS_LINE_HAS_ERROR',

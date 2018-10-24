@@ -11,7 +11,7 @@ import ProjectNavigation from '../navigation/ProjectNavigation'
 import StudentStatistics from './util/StudentStatistics'
 import CommitHistory from './util/CommitHistory'
 import { history } from '../../redux/store'
-import { getClassProjects, clearStudent } from '../../redux/actions/index'
+import { getStudent, clearStudent } from '../../redux/actions/index'
 import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 import StudentFeedback from './util/StudentFeedback'
@@ -62,9 +62,8 @@ class StudentPanel extends Component {
     clear = () => this.props.clearStudent()
 
     componentDidMount = () => {
-        if(this.props.projects.length === 0) {
-            //TODO: remove classid and semester hardcoding
-            this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`)
+        if(!this.props.currentStudent) {
+            this.props.getStudent(/*TODO: add individual student call for case that currentStudent isn't stored*/)
         }
     }
 
@@ -77,7 +76,6 @@ class StudentPanel extends Component {
             <div className="panel-student">
 
                 <ProjectNavigation
-                    info={ this.props.projects }
                     back="Course"
                     backClick={ this.back }
                     onModalBlur={ (blur) => this.setState({modal_blur : blur ? ' blur' : ''}) }
@@ -141,8 +139,6 @@ class StudentPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
-        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
         currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : 0
     }
@@ -150,7 +146,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getClassProjects: (url, headers, body) => dispatch(getClassProjects(url, headers, body)),
+        getStudent: (url, headers, body) => dispatch(getStudent(url, headers, body)),
         clearStudent: () => dispatch(clearStudent),
     }
 }
