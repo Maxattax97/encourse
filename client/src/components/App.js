@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import '../styles/css/login.css'
 import Login from './Login'
 import Main from './Main'
-import { setToken, logOutClient } from '../redux/actions'
+import { logOutClient } from '../redux/actions'
 
 class App extends Component {
 
@@ -16,13 +16,6 @@ class App extends Component {
     componentWillReceiveProps(nextProps) {
         if(nextProps.logOutHasError) {
             nextProps.logOut()
-        }
-    }
-
-    componentDidMount = () => {
-        if(localStorage.getItem('token') != null) {
-            let token = JSON.parse(localStorage.getItem('token'))
-            this.props.setToken(token)
         }
     }
 
@@ -55,7 +48,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setToken: (token) => dispatch(setToken(token)),
         logOut: () => dispatch(logOutClient())
     }
 }

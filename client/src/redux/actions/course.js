@@ -95,7 +95,7 @@ export function getTestBarGraphDataSuccess(data) {
 }
 
 export const getTestBarGraph = genericDispatch(
-    getTestBarGraphHasError, getTestBarGraphIsLoading, getTestBarGraphDataSuccess, 'GET'
+    'GET_TEST_BAR_GRAPH', getTestBarGraphHasError, getTestBarGraphDataSuccess, 'GET',
 )
 
 export function setDirectoryHasError(hasError) {

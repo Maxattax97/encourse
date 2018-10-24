@@ -33,6 +33,12 @@ function course(state = {}, action) {
             getTestBarGraphHasError: action.hasError,
             getTestBarGraphIsFinished: true
         })
+    case 'GET_TEST_BAR_GRAPH':
+        console.log('here')
+        return Object.assign({}, state, {
+            getTestBarGraphIsLoading: true,
+            getTestBarGraphIsFinished: false
+        })
     case 'GET_TEST_BAR_GRAPH_IS_LOADING':
         return Object.assign({}, state, {
             getTestBarGraphIsLoading: action.isLoading,

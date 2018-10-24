@@ -9,17 +9,18 @@ function auth(state = {}, action) {
             logInIsLoading: action.isLoading,
         })
     case 'LOG_IN_DATA_SUCCESS':
-        localStorage.setItem('token', JSON.stringify(action.data))
+        const expires_in = action.data.expires_in
+        const expires_at = Date.now() + expires_in*1000
         return Object.assign({}, state, {
-            logInData: action.data,
+            logInData: {...action.data, expires_at},
         })
     case 'LOG_OUT_HAS_ERROR':
         return Object.assign({}, state, {
             logOutHasError: action.hasError,
         })
     case 'LOG_OUT_IS_LOADING':
-        if(localStorage.getItem('token') != null) localStorage.removeItem('token')
         return Object.assign({}, state, {
+            logInData: null,
             logOutIsLoading: action.isLoading,
         })
     case 'LOG_OUT_DATA_SUCCESS':
@@ -37,16 +38,6 @@ function auth(state = {}, action) {
     case 'CHANGE_PASSWORD_DATA_SUCCESS':
         return Object.assign({}, state, {
             changePasswordData: action.data,
-        })
-    case 'SET_TOKEN':
-        return Object.assign({}, state, {
-            logInData: action.token,
-        })
-    case 'LOG_OUT':
-        if(localStorage.getItem('token') != null) localStorage.removeItem('token')
-        return Object.assign({}, state, {
-            logInData: null,
-            logOutHasError: false,
         })
     default:
         return state

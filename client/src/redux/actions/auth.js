@@ -1,12 +1,5 @@
 import genericDispatch from './fetch'
 
-export function setToken(token) {
-    return {
-        type: 'SET_TOKEN',
-        token
-    }
-}
-
 export function logInHasError(hasError) {
     return {
         type: 'LOG_IN_HAS_ERROR',
@@ -56,12 +49,6 @@ export function logOutDataSuccess(data) {
 export const logOut = genericDispatch(
     logOutHasError, logOutIsLoading, logOutDataSuccess, 'GET'
 )
-
-export function logOutClient() {
-    return {
-        type: 'LOG_OUT'
-    }
-}
 
 export function changePasswordHasError(hasError) {
     return {
