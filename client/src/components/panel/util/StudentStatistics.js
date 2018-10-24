@@ -105,8 +105,7 @@ class StudentStatistics extends Component {
     }
 
     fetch = (props) => {
-        props.getStatistics(`${url}/api/statistics?projectID=${props.projectID}&userName=${props.id}`,
-            {'Authorization': `Bearer ${props.token}`})
+        props.getStatistics(`${url}/api/statistics?projectID=${props.projectID}&userName=${props.id}`)
     }
 
     formatApiData = (udata) => {

@@ -10,27 +10,30 @@ function projects(state = {}, action) {
         return Object.assign({}, state, {
             isHidden: !state.isHidden,
         })
+    case 'GET_CLASS_PROJECTS':
+        return Object.assign({}, state, {
+            getClassProjectsIsLoading: true,
+        })
     case 'GET_CLASS_PROJECTS_HAS_ERROR':
         return Object.assign({}, state, {
             getClassProjectsHasError: action.hasError,
-        })
-    case 'GET_CLASS_PROJECTS_IS_LOADING':
-        return Object.assign({}, state, {
-            getClassProjectsIsLoading: action.isLoading,
+            getClassProjectsIsLoading: false,
         })
     case 'GET_CLASS_PROJECTS_DATA_SUCCESS':
         return Object.assign({}, state, {
             getClassProjectsData: action.data,
             currentProjectId: action.data[0].id,
             currentProjectIndex: 0,
+            getClassProjectsIsLoading: false,
+        })
+    case 'MODIFY_PROJECT':
+        return Object.assign({}, state, {
+            modifyProjectIsLoading: true,
         })
     case 'MODIFY_PROJECT_HAS_ERROR':
         return Object.assign({}, state, {
             modifyProjectHasError: action.hasError,
-        })
-    case 'MODIFY_PROJECT_IS_LOADING':
-        return Object.assign({}, state, {
-            modifyProjectIsLoading: action.isLoading,
+            modifyProjectIsLoading: false,
         })
     case 'MODIFY_PROJECT_DATA_SUCCESS': {
         let projects3 = [...state.getClassProjectsData]
@@ -46,15 +49,17 @@ function projects(state = {}, action) {
         return Object.assign({}, state, {
             modifyProjectData: action.data,
             getClassProjectsData: projects3,
+            modifyProjectIsLoading: false,
         })
     }
+    case 'ADD_PROJECT':
+        return Object.assign({}, state, {
+            addProjectIsLoading: true,
+        })
     case 'ADD_PROJECT_HAS_ERROR':
         return Object.assign({}, state, {
             addProjectHasError: action.hasError,
-        })
-    case 'ADD_PROJECT_IS_LOADING':
-        return Object.assign({}, state, {
-            addProjectIsLoading: action.isLoading,
+            addProjectIsLoading: false,
         })
     case 'ADD_PROJECT_DATA_SUCCESS': {
         let projects1 = [...state.getClassProjectsData]
@@ -71,16 +76,18 @@ function projects(state = {}, action) {
             addProjectData: action.data,
             getClassProjectsData: projects1,
             currentProjectIndex: projects1.length - 1,
-            currentProjectId: action.data.projectIdentifier
+            currentProjectId: action.data.projectIdentifier,
+            addProjectIsLoading: false,
         })
     }
+    case 'DELETE_PROJECT':
+        return Object.assign({}, state, {
+            deleteProjectIsLoading: true,
+        })
     case 'DELETE_PROJECT_HAS_ERROR':
         return Object.assign({}, state, {
             deleteProjectHasError: action.hasError,
-        })
-    case 'DELETE_PROJECT_IS_LOADING':
-        return Object.assign({}, state, {
-            deleteProjectIsLoading: action.isLoading,
+            deleteProjectIsLoading: false,
         })
     case 'DELETE_PROJECT_DATA_SUCCESS': {
         let projects2 = [...state.getClassProjectsData]
@@ -92,20 +99,23 @@ function projects(state = {}, action) {
             deleteProjectData: action.data,
             getClassProjectsData: projects2,
             currentProjectIndex,
-            currentProjectId: state.getClassProjectsData[currentProjectIndex].id
+            currentProjectId: state.getClassProjectsData[currentProjectIndex].id,
+            deleteProjectIsLoading: false,
         })
     }
+    case 'ADD_TEST':
+        return Object.assign({}, state, {
+            addTestIsLoading: true,
+        })
     case 'ADD_TEST_HAS_ERROR':
         return Object.assign({}, state, {
             addTestHasError: action.hasError,
-        })
-    case 'ADD_TEST_IS_LOADING':
-        return Object.assign({}, state, {
-            addTestIsLoading: action.isLoading,
+            addTestIsLoading: false,
         })
     case 'ADD_TEST_DATA_SUCCESS':
         return Object.assign({}, state, {
             addTestData: action.data,
+            addTestIsLoading: false,
         })
     default:
         return state

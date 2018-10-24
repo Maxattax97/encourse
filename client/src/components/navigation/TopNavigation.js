@@ -9,9 +9,7 @@ import {LogoutIcon, SettingsIcon} from '../Helpers'
 class TopNavigation extends Component {
 
     logOut = () => {
-        this.props.logOut(`${url}/api/logout`, {
-            'Authorization': `Bearer ${this.props.token}`
-        })
+        this.props.logOut(`${url}/api/logout`)
     }
 
     render() {

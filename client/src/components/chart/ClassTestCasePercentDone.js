@@ -93,8 +93,7 @@ class ClassTestCasePercentDone extends Component {
     }
 
     fetch = (props) => {
-        props.getData(`${url}/api/testSummary?projectID=${props.projectID}`,
-            {'Authorization': `Bearer ${props.token}`})
+        props.getData(`${url}/api/testSummary?projectID=${props.projectID}`)
     }
 
     formatApiData = (udata) => {

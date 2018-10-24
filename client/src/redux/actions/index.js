@@ -10,7 +10,6 @@ export {
 
 export {
     logIn, logOut, changePassword,
-    setToken, logOutClient
 } from './auth'
 
 export {

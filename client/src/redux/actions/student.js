@@ -20,13 +20,6 @@ export function getProgressLineHasError(hasError) {
     }
 }
 
-export function getProgressLineIsLoading(isLoading) {
-    return {
-        type: 'GET_PROGRESS_LINE_IS_LOADING',
-        isLoading
-    }
-}
-
 export function getProgressLineDataSuccess(data) {
     return {
         type: 'GET_PROGRESS_LINE_DATA_SUCCESS',
@@ -35,20 +28,13 @@ export function getProgressLineDataSuccess(data) {
 }
 
 export const getProgressLine = genericDispatch(
-    getProgressLineHasError, getProgressLineIsLoading, getProgressLineDataSuccess, 'GET'
+    'GET_PROGRESS_LINE', getProgressLineHasError, getProgressLineDataSuccess, 'GET'
 )
 
 export function getCodeFrequencyHasError(hasError) {
     return {
         type: 'GET_CODE_FREQUENCY_HAS_ERROR',
         hasError
-    }
-}
-
-export function getCodeFrequencyIsLoading(isLoading) {
-    return {
-        type: 'GET_CODE_FREQUENCY_IS_LOADING',
-        isLoading
     }
 }
 
@@ -60,20 +46,13 @@ export function getCodeFrequencyDataSuccess(data) {
 }
 
 export const getCodeFrequency = genericDispatch(
-    getCodeFrequencyHasError, getCodeFrequencyIsLoading, getCodeFrequencyDataSuccess, 'GET'
+    'GET_CODE_FREQUENCY', getCodeFrequencyHasError, getCodeFrequencyDataSuccess, 'GET'
 )
 
 export function getCommitFrequencyHasError(hasError) {
     return {
         type: 'GET_COMMIT_FREQUENCY_HAS_ERROR',
         hasError
-    }
-}
-
-export function getCommitFrequencyIsLoading(isLoading) {
-    return {
-        type: 'GET_COMMIT_FREQUENCY_IS_LOADING',
-        isLoading
     }
 }
 
@@ -85,20 +64,13 @@ export function getCommitFrequencyDataSuccess(data) {
 }
 
 export const getCommitFrequency = genericDispatch(
-    getCommitFrequencyHasError, getCommitFrequencyIsLoading, getCommitFrequencyDataSuccess, 'GET'
+    'GET_COMMIT_FREQUENCY', getCommitFrequencyHasError, getCommitFrequencyDataSuccess, 'GET'
 )
 
 export function getStatisticsHasError(hasError) {
     return {
         type: 'GET_STATISTICS_HAS_ERROR',
         hasError
-    }
-}
-
-export function getStatisticsIsLoading(isLoading) {
-    return {
-        type: 'GET_STATISTICS_IS_LOADING',
-        isLoading
     }
 }
 
@@ -110,20 +82,13 @@ export function getStatisticsDataSuccess(data) {
 }
 
 export const getStatistics = genericDispatch(
-    getStatisticsHasError, getStatisticsIsLoading, getStatisticsDataSuccess, 'GET'
+    'GET_STATISTICS', getStatisticsHasError, getStatisticsDataSuccess, 'GET'
 )
 
 export function getCommitHistoryHasError(hasError) {
     return {
         type: 'GET_COMMIT_HISTORY_HAS_ERROR',
         hasError
-    }
-}
-
-export function getCommitHistoryIsLoading(isLoading) {
-    return {
-        type: 'GET_COMMIT_HISTORY_IS_LOADING',
-        isLoading
     }
 }
 
@@ -135,5 +100,5 @@ export function getCommitHistoryDataSuccess(data) {
 }
 
 export const getCommitHistory = genericDispatch(
-    getCommitHistoryHasError, getCommitHistoryIsLoading, getCommitHistoryDataSuccess, 'GET'
+    'GET_COMMIT_HISTORY', getCommitHistoryHasError, getCommitHistoryDataSuccess, 'GET'
 )
