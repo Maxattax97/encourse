@@ -15,6 +15,20 @@ function course(state = {}, action) {
             getStudentPreviewsData: action.data,
             getStudentPreviewsIsLoading: false,
         })
+    case 'GET_SECTIONS_DATA':
+        return Object.assign({}, state, {
+            getSectionsDataIsLoading: true
+        })
+    case 'GET_SECTIONS_DATA_HAS_ERROR':
+        return Object.assign({}, state, {
+            getSectionsDataHasError: action.hasError,
+            getSectionsDataIsLoading: false
+        })
+    case 'GET_SECTIONS_DATA_SUCCESS':
+        return Object.assign({}, state, {
+            getSectionsData: action.data,
+            getSectionsDataIsLoading: false
+        })
     case 'GET_CLASS_PROGRESS':
         return Object.assign({}, state, {
             getClassProgressIsLoading: true,

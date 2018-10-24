@@ -57,8 +57,8 @@ class CoursePanel extends Component {
                     </div>
                     <ActionNavigation actions={[
                         () => { history.push('/manage-tas') },
-                        () => { },
-                        () => {},
+                        () => {  },
+                        () => {  },
                         () => { history.push('/course-dishonesty') }
                     ]}
                     action_names={[
