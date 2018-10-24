@@ -120,8 +120,7 @@ public class WriteController {
     // TODO: Endpoint changed. Account for change on frontend
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/studentsToTA", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> addStudentsToTA(@RequestParam(name = "courseID") String courseID,
-                                                           @RequestParam(name = "semester") String semester,
+    public @ResponseBody ResponseEntity<?> addStudentsToTA(@RequestParam(name = "sectionID") String sectionID,
                                                            @RequestBody String body) {
         List<String> errors = new ArrayList<>();
         Map<String, List<String>> map = new HashMap<>();
@@ -145,7 +144,7 @@ public class WriteController {
                     errors.add("Student " + userName + " could not be found");
                     continue;
                 }
-                professorService.assignTeachingAssistantToStudent(key, userName, courseID, semester);
+                professorService.assignTeachingAssistantToStudentInSection(key, userName, sectionID);
             }
         }
         if (errors.isEmpty()) {

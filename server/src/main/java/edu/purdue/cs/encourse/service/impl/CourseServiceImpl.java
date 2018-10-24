@@ -5,10 +5,7 @@ import edu.purdue.cs.encourse.domain.Professor;
 import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.Student;
-import edu.purdue.cs.encourse.domain.relations.ProfessorCourse;
-import edu.purdue.cs.encourse.domain.relations.ProjectTestScript;
-import edu.purdue.cs.encourse.domain.relations.StudentProject;
-import edu.purdue.cs.encourse.domain.relations.StudentSection;
+import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.CourseService;
 import lombok.NonNull;
 import org.json.simple.JSONArray;
@@ -55,6 +52,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private TeachingAssistantStudentRepository teachingAssistantStudentRepository;
+
+    @Autowired
+    private TeachingAssistantSectionRepository teachingAssistantSectionRepository;
 
     private int executeBashScript(@NonNull String command) {
         try {
@@ -158,6 +158,24 @@ public class CourseServiceImpl implements CourseService {
             coursesJSON.add(courseJSON);
         }
         return coursesJSON;
+    }
+
+    /** Gets all sections for a particular course **/
+    public JSONArray getSectionData(@NonNull String semester, @NonNull String courseID) {
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
+        JSONArray sectionsJSON = new JSONArray();
+        for(Section s : sections) {
+            JSONObject sectionJSON = new JSONObject();
+            List<StudentSection> assignedStudents = studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            List<TeachingAssistantSection> assignedTeachingAssistants = teachingAssistantSectionRepository.findByIdSectionID(s.getSectionIdentifier());
+            sectionJSON.put("section_type", s.getSectionType());
+            sectionJSON.put("time_slot", s.getTimeSlot());
+            sectionJSON.put("id", s.getSectionIdentifier());
+            sectionJSON.put("number_student", assignedStudents.size());
+            sectionJSON.put("number_TA", assignedTeachingAssistants.size());
+            sectionsJSON.add(sectionJSON);
+        }
+        return sectionsJSON;
     }
 
     /** Retrieves basic data for all students in course, including name, userName, and simple project info **/

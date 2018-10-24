@@ -91,7 +91,9 @@ public class ProfessorServicesTests {
                 "9/10/2018", "9/24/2018", 0);
         assertEquals(0, adminService.registerStudentToSection("dwyork", sect1.getSectionIdentifier()));
         assertEquals(0, adminService.registerStudentToSection("rravind", sect1.getSectionIdentifier()));
+        assertEquals(0, adminService.assignTeachingAssistantToCourse("dkrolopp", "cs250", "Fall2018"));
         assertEquals(0, professorService.assignProject(proj1.getProjectIdentifier()));
+        assertEquals(0, professorService.assignTeachingAssistantToSection("dkrolopp", sect1.getSectionIdentifier()));
     }
 
     @After
@@ -141,14 +143,14 @@ public class ProfessorServicesTests {
 
     @Test
     public void testAssigningTeachingAssistant() {
-        assertEquals(0, professorService.assignTeachingAssistantToStudent("dkrolopp", "rravind", "cs250", "Fall2018"));
+        assertEquals(0, professorService.assignTeachingAssistantToStudentInSection("dkrolopp", "rravind", sect1.getSectionIdentifier()));
         List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID("4");
         assertEquals(1, assignments.size());
         assertEquals("1", assignments.get(0).getStudentID());
-        assertEquals(0, professorService.assignTeachingAssistantToStudent("dkrolopp", "dwyork", "cs250", "Fall2018"));
+        assertEquals(0, professorService.assignTeachingAssistantToStudentInSection("dkrolopp", "dwyork", sect1.getSectionIdentifier()));
         assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID("4");
         assertEquals(2, assignments.size());
-        assertEquals(0, professorService.assignTeachingAssistantToStudent("dkrolopp", "dwyork", "cs250", "Fall2018"));
+        assertEquals(0, professorService.assignTeachingAssistantToStudentInSection("dkrolopp", "dwyork", sect1.getSectionIdentifier()));
         assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID("4");
         assertEquals(2, assignments.size());
     }
