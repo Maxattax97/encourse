@@ -33,7 +33,7 @@ class CodeChangesChart extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(!this.props.isFinished && nextProps.isFinished) {
+        if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -42,8 +42,9 @@ class CodeChangesChart extends Component {
     }
 
     fetch = (props) => {
-        props.getData(`${url}/api/diffs?projectID=${props.projectID}&userName=${props.id}`,
-            {'Authorization': `Bearer ${props.token}`})
+        if(props.projectID) {
+            props.getData(`${url}/api/diffs?projectID=${props.projectID}&userName=${props.id}`)
+        } 
     }
 
     dateFormatter = (date) => {
@@ -93,9 +94,10 @@ class CodeChangesChart extends Component {
 
     render() {
         return (
-            <div className="chart-container">
+            !this.props.isLoading
+            ? <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 0, bottom: 25}}>
+                    <AreaChart data={this.state.formattedData} margin={{top: 40, right: 35, left: 0, bottom: 25}}>
                         <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Lines of Code Added/Deleted</text>
                         <CartesianGrid strokeDasharray="3 3"/>
                         <XAxis type="number" dataKey="date" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
@@ -105,20 +107,19 @@ class CodeChangesChart extends Component {
                         <Tooltip labelFormatter={this.dateFormatter}/>
                         <Area type="monotone" dataKey="additions" stroke="none" fill="green" />
                         <Area type="monotone" dataKey="deletions" stroke="none" fill="red" />
-                        <Brush dataKey="date" height={20} stroke="#8884d8" />
+                        <Brush dataKey="date" height={20} stroke="#8884d8" tickFormatter={this.dateFormatter}/>
                     </AreaChart>
                 </ResponsiveContainer>
             </div>
+            : <div>{/* TODO: add spinner */}Loading</div>
         )
     }
 }
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.student && state.student.getCodeFrequencyData ? state.student.getCodeFrequencyData : null,
         isLoading: state.student ? state.student.getCodeFrequencyIsLoading : false,
-        isFinished: state.student ? state.student.getCodeFrequencyIsFinished : false,
     }
 }
 

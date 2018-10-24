@@ -1,5 +1,6 @@
 export { 
-    getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory,
+    getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, 
+    getSectionsData, 
 } from './course' 
 
 export {
@@ -10,15 +11,19 @@ export {
 
 export {
     logIn, logOut, changePassword,
-    setToken, logOutClient
 } from './auth'
 
 export {
     setCurrentStudent, clearStudent,
-    getProgressLine, getCodeFrequency, getCommitFrequency, getStatistics, getCommitHistory
+    getStudent, getProgressLine, getCodeFrequency, getCommitFrequency, getStatistics,
+    getCommitHistory, getProgressPerTime, getProgressPerCommit,
 } from './student'
 
 export {
     getCourses, addCourse, modifyCourse, removeCourse, 
     getAccounts, addAccount, modifyAccount, removeAccount,
 } from './admin'
+
+export {
+    getTeachingAssistants
+} from './teaching_assistant'

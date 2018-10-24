@@ -4,6 +4,10 @@ import {Card, Title, BackIcon} from '../Helpers'
 
 class TANavigation extends Component {
 
+    changeTA = (index) => {
+        this.props.change(index)
+    }
+
     render() {
         return (
             <div className="ta-nav-container">
@@ -18,23 +22,26 @@ class TANavigation extends Component {
                             }
                         </div>
                         <Card>
-                            <div className="list-container">
+                            { !this.props.isLoading
+                            ? <div className="list-container">
                                 <Title header={ <h3 className='header'>Teaching Assistants</h3> }/>
                                 <div className="h3 break-line header"/>
                                 <div className='text-list'>
                                     {
                                         this.props.teaching_assistants &&
-                                        this.props.teaching_assistants.map((project, index) =>
-                                            <div key={ project.id }
-                                                onClick={ () => this.changeProject(project.id, index) }
-                                                className={ `action${this.props.currentProjectIndex === index && !this.state.new_project ? ' list-highlight' : ''}` }>
+                                        this.props.teaching_assistants.map((ta, index) =>
+                                            <div key={ ta.id }
+                                                onClick={ () => this.changeTA(index) }
+                                                className={ `action${this.props.current_ta === index ? ' list-highlight' : ''}` }>
                                                 <h4>
-                                                    { project.project_name }
+                                                    { `${ta.first_name} ${ta.last_name}` }
                                                 </h4>
                                             </div>)
                                     }
                                 </div>
                             </div>
+                            : <div>{/* TODO: add spinner */}Loading</div>}
+                            }
                         </Card>
                     </div>
                 </div>

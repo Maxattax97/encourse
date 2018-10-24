@@ -21,15 +21,9 @@ class AccountPreview extends Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
-    }
-}
-
 const mapDispatchToProps = (/* dispatch */) => {
     return {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AccountPreview)
+export default connect(null, mapDispatchToProps)(AccountPreview)

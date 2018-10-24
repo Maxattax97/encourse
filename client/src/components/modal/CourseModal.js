@@ -36,8 +36,7 @@ class CourseModal extends Component {
         }
         for(let project of this.props.projects) {
             // console.log(project)
-            this.props.modifyProject(`${url}/api/modify/project?projectID=${project.id}&field=testRate&value=${this.state.interval}`,
-                {'Authorization': `Bearer ${this.props.token}`})
+            this.props.modifyProject(`${url}/api/modify/project?projectID=${project.id}&field=testRate&value=${this.state.interval}`)
         }    
     };
 
@@ -77,7 +76,6 @@ class CourseModal extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         directory_list: state.course && state.course.getDirectoryListData ? state.course.getDirectoryListData : [],
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
     }

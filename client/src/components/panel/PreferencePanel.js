@@ -35,12 +35,10 @@ class PreferencePanel extends Component {
 
     componentDidMount = () => {
         if(this.props.courses.length === 0) {
-            this.props.getCourses(`${url}/api/sections`,
-                {'Authorization': `Bearer ${this.props.token}`})
+            this.props.getCourses(`${url}/api/sections`)
         }
         if(this.props.accounts.length === 0) {
-            this.props.getAccounts(`${url}/api/accounts`,
-                {'Authorization': `Bearer ${this.props.token}`})
+            this.props.getAccounts(`${url}/api/accounts`)
         }
     }
 
@@ -124,7 +122,7 @@ class PreferencePanel extends Component {
         if(this.state.current_course === -1) {
             //Add course
             this.props.addCourse(`${url}/api/add/section?userName=${this.state.professor}`,
-                {'Authorization': `Bearer ${this.props.token}`,
+                {
                     'Content-Type': 'application/json'}, JSON.stringify({
                     CRN: this.state.crn,
                     semester: this.state.semester,
@@ -142,7 +140,7 @@ class PreferencePanel extends Component {
         if(this.state.current_account === -1) {
             //Add account
             this.props.addAccount(`${url}/api/add/account`,
-                {'Authorization': `Bearer ${this.props.token}`,
+                {
                     'Content-Type': 'application/json'}, JSON.stringify({
                     userID: this.state.id,
                     userName: this.state.username,
@@ -154,7 +152,7 @@ class PreferencePanel extends Component {
         } else {
             //Edit account
             this.props.modifyAccount(`${url}/api/modify/account?userName=${this.state.username}`,
-                {'Authorization': `Bearer ${this.props.token}`,
+                {
                     'Content-Type': 'application/json'}, JSON.stringify({
                     userID: this.state.id,
                     userName: this.state.username,
@@ -169,15 +167,13 @@ class PreferencePanel extends Component {
 
     deleteCourse = () => {
         //TODO!: add endpoint
-        this.props.removeCourse(`${url}/api/delete/user`,
-            {'Authorization': `Bearer ${this.props.token}`})
+        this.props.removeCourse(`${url}/api/delete/user`)
 
         this.resetOptions()
     };
 
     deleteAccount = () => {
-        this.props.removeAccount(`${url}/api/delete/user?userName=${this.state.username}`,
-            {'Authorization': `Bearer ${this.props.token}`})
+        this.props.removeAccount(`${url}/api/delete/user?userName=${this.state.username}`)
 
         this.resetOptions()
     };
@@ -333,7 +329,6 @@ class PreferencePanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         courses: state.admin && state.admin.getCoursesData ? state.admin.getCoursesData : [],
         accounts: state.admin && state.admin.getAccountsData ? state.admin.getAccountsData : []
     }
