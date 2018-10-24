@@ -18,6 +18,7 @@ const store = createStore(connectRouter(history)(rootReducer),
         ...getLocalStorageState('logInData', 'auth'),
         ...getLocalStorageState('currentProjectId', 'projects'),
         ...getLocalStorageState('currentProjectIndex', 'projects'),
+        ...getLocalStorageState('currentStudent', 'student'),
     }, 
     enhancers)
 
@@ -40,6 +41,7 @@ store.subscribe(() => {
     setLocalStorageState(state, 'logInData', JSON.stringify((state.auth || {}).logInData))
     setLocalStorageState(state, 'currentProjectId', JSON.stringify((state.projects || {}).currentProjectId))
     setLocalStorageState(state, 'currentProjectIndex', JSON.stringify((state.projects || {}).currentProjectIndex))
+    setLocalStorageState(state, 'currentStudent', JSON.stringify((state.student || {}).currentStudent))
 })
 
 if(module.hot) {

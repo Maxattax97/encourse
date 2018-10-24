@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { getStatistics } from '../../../redux/actions/index'
+import { getStatistics } from '../../../redux/actions'
 import url from '../../../server'
 
 const defaultData = [
@@ -105,7 +105,9 @@ class StudentStatistics extends Component {
     }
 
     fetch = (props) => {
-        props.getStatistics(`${url}/api/statistics?projectID=${props.projectID}&userName=${props.id}`)
+        if(props.projectID) {
+            props.getStatistics(`${url}/api/statistics?projectID=${props.projectID}&userName=${props.id}`)
+        }
     }
 
     formatApiData = (udata) => {

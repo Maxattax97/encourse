@@ -95,7 +95,7 @@ class StudentPanel extends Component {
                         'Run Tests',
                         'Academic Dishonesty Report'
                     ]} />
-                    <CommitHistory projectID={this.props.currentProjectID} id={this.props.currentStudent.id} />
+                    <CommitHistory projectID={this.props.currentProjectId} id={this.props.currentStudent.id} />
                 </div>
 
                 <div className="panel-center-content">
@@ -110,11 +110,11 @@ class StudentPanel extends Component {
                         <Summary header={ <h3 className='header'>Student Charts</h3> }
                             columns={ 2 }
                             data={ [
-                                <StudentProgressLineGraph projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={1}/>,
-                                <CodeChangesChart projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={2}/>,
-                                <CommitFrequencyHistogram projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={3}/>,
-                                <ProgressPerTime projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={4}/>,
-                                <ProgressPerCommit projectID={this.props.currentProjectID} id={this.props.currentStudent.id} key={5}/>,
+                                <StudentProgressLineGraph projectID={this.props.currentProjectId} id={this.props.currentStudent.id} key={1}/>,
+                                <CodeChangesChart projectID={this.props.currentProjectId} id={this.props.currentStudent.id} key={2}/>,
+                                <CommitFrequencyHistogram projectID={this.props.currentProjectId} id={this.props.currentStudent.id} key={3}/>,
+                                <ProgressPerTime projectID={this.props.currentProjectId} id={this.props.currentStudent.id} key={4}/>,
+                                <ProgressPerCommit projectID={this.props.currentProjectId} id={this.props.currentStudent.id} key={5}/>,
                             ] }
                             className='charts'
                             iterator={ (chart) =>
@@ -126,7 +126,7 @@ class StudentPanel extends Component {
                         <div className="h1 break-line" />
                         <div className="student-stats-comments float-height">
                             <Card>
-                                <StudentStatistics projectID={this.props.currentProjectID} id={this.props.currentStudent.id}/>
+                                <StudentStatistics projectID={this.props.currentProjectId} id={this.props.currentStudent.id}/>
                             </Card>
                             <Card>
                                 <StudentFeedback/>
@@ -144,7 +144,7 @@ const mapStateToProps = (state) => {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
         currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
-        currentProjectID: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : 0
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : 0
     }
 }
 
