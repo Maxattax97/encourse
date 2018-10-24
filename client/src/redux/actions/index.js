@@ -14,7 +14,8 @@ export {
 
 export {
     setCurrentStudent, clearStudent,
-    getProgressLine, getCodeFrequency, getCommitFrequency, getStatistics, getCommitHistory
+    getProgressLine, getCodeFrequency, getCommitFrequency, getStatistics, getCommitHistory,
+    getProgressVelocity,
 } from './student'
 
 export {

@@ -99,6 +99,23 @@ function student(state = {}, action) {
             getCommitHistoryIsFinished: true,
             getCommitHistoryIsLoading: false,
         })
+    case 'GET_PROGRESS_VELOCITY':
+        return Object.assign({}, state, {
+            getProgressVelocityIsLoading: true,
+            getProgressVelocityIsFinished: false,
+        })
+    case 'GET_PROGRESS_VELOCITY_HAS_ERROR':
+        return Object.assign({}, state, {
+            getProgressVelocityHasError: action.hasError,
+            getProgressVelocityIsFinished: true,
+            getProgressVelocityIsLoading: false,
+        })
+    case 'GET_PROGRESS_VELOCITY_DATA_SUCCESS':
+        return Object.assign({}, state, {
+            getProgressVelocityData: action.data,
+            getProgressVelocityIsFinished: true,
+            getProgressVelocityIsLoading: false,
+        })
     default:
         return state
     }

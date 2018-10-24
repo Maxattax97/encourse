@@ -9,6 +9,7 @@ function auth(state = {}, action) {
             logInHasError: action.hasError,
             logInIsLoading: false,
         })
+    case 'SET_TOKENS':
     case 'LOG_IN_DATA_SUCCESS':
         const expires_in = action.data.expires_in
         const expires_at = Date.now() + expires_in*1000

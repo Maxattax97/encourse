@@ -3,6 +3,7 @@
 export default function genericDispatch(type, hasError, success, method) {
     return function specificDispatch(url, headers = {}, body, extra) {
         return {
+            type,
             request: (accessToken, dispatch, auth) => {
                     if(typeof dispatch !== 'function') return
                     dispatch({ type })

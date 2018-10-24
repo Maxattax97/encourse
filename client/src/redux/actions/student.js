@@ -85,20 +85,20 @@ export const getStatistics = genericDispatch(
     'GET_STATISTICS', getStatisticsHasError, getStatisticsDataSuccess, 'GET'
 )
 
-export function getCommitHistoryHasError(hasError) {
+export function getProgressVelocityHasError(hasError) {
     return {
-        type: 'GET_COMMIT_HISTORY_HAS_ERROR',
+        type: 'GET_PROGRESS_VELOCITY_HAS_ERROR',
         hasError
     }
 }
 
-export function getCommitHistoryDataSuccess(data) {
+export function getProgressVelocityDataSuccess(data) {
     return {
-        type: 'GET_COMMIT_HISTORY_DATA_SUCCESS',
+        type: 'GET_PROGRESS_VELOCITY_DATA_SUCCESS',
         data
     }
 }
 
-export const getCommitHistory = genericDispatch(
-    'GET_COMMIT_HISTORY', getCommitHistoryHasError, getCommitHistoryDataSuccess, 'GET'
+export const getProgressVelocity = genericDispatch(
+    'GET_PROGRESS_VELOCITY', getProgressVelocityHasError, getProgressVelocityDataSuccess, 'GET'
 )
