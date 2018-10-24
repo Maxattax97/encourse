@@ -21,13 +21,6 @@ export function getClassProjectsHasError(hasError) {
     }
 }
 
-export function getClassProjectsIsLoading(isLoading) {
-    return {
-        type: 'GET_CLASS_PROJECTS_IS_LOADING',
-        isLoading
-    }
-}
-
 export function getClassProjectsDataSuccess(data) {
     return {
         type: 'GET_CLASS_PROJECTS_DATA_SUCCESS',
@@ -36,20 +29,13 @@ export function getClassProjectsDataSuccess(data) {
 }
 
 export const getClassProjects = genericDispatch(
-    getClassProjectsHasError, getClassProjectsIsLoading, getClassProjectsDataSuccess, 'GET'
+    'GET_CLASS_PROJECTS', getClassProjectsHasError, getClassProjectsDataSuccess, 'GET'
 )
 
 export function addProjectHasError(hasError) {
     return {
         type: 'ADD_PROJECT_HAS_ERROR',
         hasError
-    }
-}
-
-export function addProjectIsLoading(isLoading) {
-    return {
-        type: 'ADD_PROJECT_IS_LOADING',
-        isLoading
     }
 }
 
@@ -61,20 +47,13 @@ export function addProjectDataSuccess(data) {
 }
 
 export const addProject = genericDispatch(
-    addProjectHasError, addProjectIsLoading, addProjectDataSuccess, 'POST'
+    'ADD_PROJECT', addProjectHasError, addProjectDataSuccess, 'POST'
 )
 
 export function deleteProjectHasError(hasError) {
     return {
         type: 'DELETE_PROJECT_HAS_ERROR',
         hasError
-    }
-}
-
-export function deleteProjectIsLoading(isLoading) {
-    return {
-        type: 'DELETE_PROJECT_IS_LOADING',
-        isLoading
     }
 }
 
@@ -86,20 +65,13 @@ export function deleteProjectDataSuccess(data) {
 }
 
 export const deleteProject = genericDispatch(
-    deleteProjectHasError, deleteProjectIsLoading, deleteProjectDataSuccess, 'DELETE'
+    'DELETE_PROJECT', deleteProjectHasError, deleteProjectDataSuccess, 'DELETE'
 )
 
 export function modifyProjectHasError(hasError) {
     return {
         type: 'MODIFY_PROJECT_HAS_ERROR',
         hasError
-    }
-}
-
-export function modifyProjectIsLoading(isLoading) {
-    return {
-        type: 'MODIFY_PROJECT_IS_LOADING',
-        isLoading
     }
 }
 
@@ -111,20 +83,13 @@ export function modifyProjectDataSuccess(data) {
 }
 
 export const modifyProject = genericDispatch(
-    modifyProjectHasError, modifyProjectIsLoading, modifyProjectDataSuccess, 'POST'
+    'MODIFY_PROJECT', modifyProjectHasError, modifyProjectDataSuccess, 'POST'
 )
 
 export function addTestHasError(hasError) {
     return {
         type: 'ADD_TEST_HAS_ERROR',
         hasError
-    }
-}
-
-export function addTestIsLoading(isLoading) {
-    return {
-        type: 'ADD_TEST_IS_LOADING',
-        isLoading
     }
 }
 
@@ -136,5 +101,5 @@ export function addTestDataSuccess(data) {
 }
 
 export const addTest = genericDispatch(
-    addTestHasError, addTestIsLoading, addTestDataSuccess, 'POST'
+    'ADD_TEST', addTestHasError, addTestDataSuccess, 'POST'
 )

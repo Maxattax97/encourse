@@ -60,8 +60,8 @@ def remove_shared_commits(students, count=None):
         for name in students:
             for i in range(min(count, len(students[name]))):
                 data = students[name].pop(0)
-                #eprint(name)
-                #eprint(data)
+                eprint(name)
+                eprint(data)
         return students
 
     keys = list(students.keys())

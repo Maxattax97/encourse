@@ -57,7 +57,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             adminService.addAccount("2", "kleclain", "Killian", "LeClainche", Account.Role_Names.ADMIN, "A", "kleclain@purdue.edu");
             adminService.addAccount("3", "lee2363", "Jarett", "Lee", Account.Role_Names.ADMIN, "B", "lee2363@purdue.edu");
             adminService.addAccount("4", "montgo38", "Shawn", "Montgomery", Account.Role_Names.ADMIN, "K", "montgo38@purdue.edu");
-            adminService.addAccount("5", "reed226", "William", "Reed", Account.Role_Names.ADMIN, "J", "reed226@purdue.edu");
+            adminService.addAccount("5", "reed226", "William", "Reed", Account.Role_Names.TA, "J", "reed226@purdue.edu");
             adminService.addAccount("6", "sullil96", "Ryan", "Sullivan", Account.Role_Names.ADMIN, "P", "sulli196@purdue.edu");
 
             adminService.addUser("grr", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "PROFESSOR", false, false, false, true);
@@ -65,17 +65,19 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             adminService.addUser("kleclain", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
             adminService.addUser("lee2363", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
             adminService.addUser("montgo38", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
-            adminService.addUser("reed226", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
+            adminService.addUser("reed226", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "TA", false, false, false, true);
             adminService.addUser("sullil96", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
 
             Section section = adminService.addSection("1001", "Fall2018", "cs252", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
             adminService.assignProfessorToCourse("grr", "cs252", "Fall2018");
+            adminService.assignTeachingAssistantToCourse("reed226", "cs252", "Fall2018");
+            professorService.assignTeachingAssistantToSection("reed226", section.getSectionIdentifier());
 
             try {
                 BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/students.txt"));
                 String student = null;
                 int count = 1;
-                while((student = fileReader.readLine()) != null && count <= 100) {
+                while((student = fileReader.readLine()) != null && count <= 10) {
                     if(student.equals("grr")) {
                         continue;
                     }
@@ -83,6 +85,9 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                     adminService.addAccount(Integer.toString(100 + count), student, "Student", student,
                             Account.Role_Names.STUDENT, null, student + "@purdue.edu");
                     adminService.registerStudentToSection(student, section.getSectionIdentifier());
+                    if(count == 5) {
+                        professorService.assignTeachingAssistantToAllStudentsInSection("reed226", section.getSectionIdentifier());
+                    }
                     count++;
                 }
             }

@@ -7,13 +7,6 @@ export function getCoursesHasError(hasError) {
     }
 }
 
-export function getCoursesIsLoading(isLoading) {
-    return {
-        type: 'GET_COURSES_IS_LOADING',
-        isLoading
-    }
-}
-
 export function getCoursesDataSuccess(data) {
     return {
         type: 'GET_COURSES_DATA_SUCCESS',
@@ -22,20 +15,13 @@ export function getCoursesDataSuccess(data) {
 }
 
 export const getCourses = genericDispatch(
-    getCoursesHasError, getCoursesIsLoading, getCoursesDataSuccess, 'GET'
+    'GET_COURSES', getCoursesHasError, getCoursesDataSuccess, 'GET'
 )
 
 export function addCourseHasError(hasError) {
     return {
         type: 'ADD_COURSE_HAS_ERROR',
         hasError
-    }
-}
-
-export function addCourseIsLoading(isLoading) {
-    return {
-        type: 'ADD_COURSE_IS_LOADING',
-        isLoading
     }
 }
 
@@ -47,20 +33,13 @@ export function addCourseDataSuccess(data) {
 }
 
 export const addCourse = genericDispatch(
-    addCourseHasError, addCourseIsLoading, addCourseDataSuccess, 'POST'
+   'ADD_COURSE', addCourseHasError, addCourseDataSuccess, 'POST'
 )
 
 export function modifyCourseHasError(hasError) {
     return {
         type: 'MODIFY_COURSE_HAS_ERROR',
         hasError
-    }
-}
-
-export function modifyCourseIsLoading(isLoading) {
-    return {
-        type: 'MODIFY_COURSE_IS_LOADING',
-        isLoading
     }
 }
 
@@ -72,20 +51,13 @@ export function modifyCourseDataSuccess(data) {
 }
 
 export const modifyCourse = genericDispatch(
-    modifyCourseHasError, modifyCourseIsLoading, modifyCourseDataSuccess, 'POST'
+    'MODIFY_COURSE', modifyCourseHasError, modifyCourseDataSuccess, 'POST'
 )
 
 export function removeCourseHasError(hasError) {
     return {
         type: 'REMOVE_COURSE_HAS_ERROR',
         hasError
-    }
-}
-
-export function removeCourseIsLoading(isLoading) {
-    return {
-        type: 'REMOVE_COURSE_IS_LOADING',
-        isLoading
     }
 }
 
@@ -97,20 +69,13 @@ export function removeCourseDataSuccess(data) {
 }
 
 export const removeCourse = genericDispatch(
-    removeCourseHasError, removeCourseIsLoading, removeCourseDataSuccess, 'DELETE'
+    'REMOVE_COURSE', removeCourseHasError, removeCourseDataSuccess, 'DELETE'
 )
 
 export function getAccountsHasError(hasError) {
     return {
         type: 'GET_ACCOUNTS_HAS_ERROR',
         hasError
-    }
-}
-
-export function getAccountsIsLoading(isLoading) {
-    return {
-        type: 'GET_ACCOUNTS_IS_LOADING',
-        isLoading
     }
 }
 
@@ -122,20 +87,13 @@ export function getAccountsDataSuccess(data) {
 }
 
 export const getAccounts = genericDispatch(
-    getAccountsHasError, getAccountsIsLoading, getAccountsDataSuccess, 'GET'
+    'GET_ACCOUNTS', getAccountsHasError, getAccountsDataSuccess, 'GET'
 )
 
 export function addAccountHasError(hasError) {
     return {
         type: 'ADD_ACCOUNT_HAS_ERROR',
         hasError
-    }
-}
-
-export function addAccountIsLoading(isLoading) {
-    return {
-        type: 'ADD_ACCOUNT_IS_LOADING',
-        isLoading
     }
 }
 
@@ -147,20 +105,13 @@ export function addAccountDataSuccess(data) {
 }
 
 export const addAccount = genericDispatch(
-    addAccountHasError, addAccountIsLoading, addAccountDataSuccess, 'POST'
+    'ADD_ACCOUNT', addAccountHasError, addAccountDataSuccess, 'POST'
 )
 
 export function modifyAccountHasError(hasError) {
     return {
         type: 'MODIFY_ACCOUNT_HAS_ERROR',
         hasError
-    }
-}
-
-export function modifyAccountIsLoading(isLoading) {
-    return {
-        type: 'MODIFY_ACCOUNT_IS_LOADING',
-        isLoading
     }
 }
 
@@ -172,20 +123,13 @@ export function modifyAccountDataSuccess(data) {
 }
 
 export const modifyAccount = genericDispatch(
-    modifyAccountHasError, modifyAccountIsLoading, modifyAccountDataSuccess, 'POST'
+    'MODIFY_ACCOUNT', modifyAccountHasError, modifyAccountDataSuccess, 'POST'
 )
 
 export function removeAccountHasError(hasError) {
     return {
         type: 'REMOVE_ACCOUNT_HAS_ERROR',
         hasError
-    }
-}
-
-export function removeAccountIsLoading(isLoading) {
-    return {
-        type: 'REMOVE_ACCOUNT_IS_LOADING',
-        isLoading
     }
 }
 
@@ -197,5 +141,5 @@ export function removeAccountDataSuccess(data) {
 }
 
 export const removeAccount = genericDispatch(
-    removeAccountHasError, removeAccountIsLoading, removeAccountDataSuccess, 'DELETE'
+    'REMOVE_ACCOUNT', removeAccountHasError, removeAccountDataSuccess, 'DELETE'
 )

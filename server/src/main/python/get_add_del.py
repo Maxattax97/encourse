@@ -78,6 +78,7 @@ def jsonify_data(commit_data, times) -> json:
     date1 = datetime.strptime(times[0], "%Y-%m-%d").date()
     date2 = datetime.strptime(times[1], "%Y-%m-%d").date()
     dates = daterange(date1, date2)
+    foundCommit = False
     total_add = 0
     total_del = 0
     for day in dates:
@@ -87,6 +88,9 @@ def jsonify_data(commit_data, times) -> json:
         if day in commit_data:
             total_add += commit_data[day]["additions"]
             total_del += commit_data[day]["deletions"]
+            foundCommit = True
+        elif foundCommit == False:
+            continue
         new_entry["additions"] = total_add
         new_entry["deletions"] = total_del
 
@@ -117,7 +121,7 @@ if __name__ == "__main__":
 
     reformatted_data = reformat(individual_data)
 
-    commit_times = commit_data(commit_times_file)
+    commit_times = commit_data(commit_times_file, exclude=1)
     # eprint(commit_times)
     individual_commit_times = commit_times[student_id]
 
