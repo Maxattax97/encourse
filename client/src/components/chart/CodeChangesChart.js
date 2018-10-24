@@ -94,7 +94,8 @@ class CodeChangesChart extends Component {
 
     render() {
         return (
-            <div className="chart-container">
+            !this.props.isLoading
+            ? <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={this.state.formattedData} margin={{top: 40, right: 35, left: 0, bottom: 25}}>
                         <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Lines of Code Added/Deleted</text>
@@ -110,6 +111,7 @@ class CodeChangesChart extends Component {
                     </AreaChart>
                 </ResponsiveContainer>
             </div>
+            : <div>{/* TODO: add spinner */}Loading</div>
         )
     }
 }

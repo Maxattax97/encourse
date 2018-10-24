@@ -74,7 +74,8 @@ class ProgressPerTime extends Component {
 
     render() {
         return (
-            <div className="chart-container">
+            !this.props.isLoading
+            ? <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                     <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
                         <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Time</text>
@@ -94,6 +95,7 @@ class ProgressPerTime extends Component {
                     </ScatterChart>
                 </ResponsiveContainer>
             </div>
+            : <div>{/* TODO: add spinner */}Loading</div>
         )
     }
 }

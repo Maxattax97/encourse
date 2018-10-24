@@ -53,7 +53,8 @@ class CommitHistory extends Component {
                     <div className='commits'>
                         <Title header={ <h3 className='header'>History</h3> }/>
                         <div className="h3 break-line header" />
-                        <div className="float-height card-overflow">
+                        { !this.props.isLoading
+                        ? <div className="float-height card-overflow">
                             {
                                 this.state.formattedData &&
                                 this.state.formattedData.map((commit) =>
@@ -79,6 +80,8 @@ class CommitHistory extends Component {
                                 )
                             }
                         </div>
+                        : <div>{/* TODO: add spinner */}Loading</div>
+                        }
                     </div>
                 </Card>
             </div>

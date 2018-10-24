@@ -1,5 +1,6 @@
 export { 
-    getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, getSectionsData
+    getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, 
+    getSectionsData, 
 } from './course' 
 
 export {

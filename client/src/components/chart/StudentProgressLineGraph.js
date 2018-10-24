@@ -103,7 +103,8 @@ class StudentProgressLineGraph extends Component {
 
     render() {
         return (
-            <div className="chart-container">
+            !this.props.isLoading
+            ? <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart className="chart" width={730} height={500} data={this.state.formattedData}
                         margin={{ top: 20, right: 35, left: 20, bottom: 20 }}>
@@ -124,6 +125,7 @@ class StudentProgressLineGraph extends Component {
                     </LineChart>
                 </ResponsiveContainer>
             </div>
+            : <div>{/* TODO: add spinner */}Loading</div>
         )
     }
 }

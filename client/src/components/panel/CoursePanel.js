@@ -93,6 +93,7 @@ class CoursePanel extends Component {
                         <Summary header={ <h3 className='header'>Students Summary</h3> }
                             columns={ 5 }
                             data={ this.props.students }
+                            isLoading={ this.props.isLoading }
                             className='course-students'
                             iterator={ (student) =>
                                 <StudentPreview key={ student.id }
@@ -110,7 +111,8 @@ class CoursePanel extends Component {
 const mapStateToProps = (state) => {
     return {
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        isLoading: state.course ? state.course.getStudentPreviewsIsLoading : false,
     }
 }
 

@@ -128,6 +128,8 @@ class StudentStatistics extends Component {
             <div className="student-stats-container">
                 <h3 className='header'>Statistics</h3>
                 <div className="h3 break-line header" />
+                { !this.props.isLoading
+                ? <div>
                 {
                     this.state.formattedData &&
                     this.state.formattedData.map &&
@@ -137,6 +139,8 @@ class StudentStatistics extends Component {
                             <h5>{stat.stat_value}</h5>
                         </div>)
                 }
+                </div>
+                : <div>{/* TODO: add spinner */}Loading</div>}
             </div>
         )
     }

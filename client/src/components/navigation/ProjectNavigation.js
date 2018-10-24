@@ -62,7 +62,8 @@ class ProjectNavigation extends Component {
                             }
                         </div>
                         <Card>
-                            <div className="list-container">
+                            { !this.props.isLoading
+                            ? <div className="list-container">
                                 <Title onClick={ this.openProjectOptions } header={ <h3 className='header'>Projects</h3> } icon={ <SettingsIcon/> }/>
                                 <div className="h3 break-line header"/>
                                 <div className='text-list'>
@@ -82,6 +83,7 @@ class ProjectNavigation extends Component {
                                     </div>
                                 </div>
                             </div>
+                            : <div>{/* TODO: add spinner */}Loading</div>}
                         </Card>
                     </div>
                 </div>
@@ -93,7 +95,8 @@ class ProjectNavigation extends Component {
 const mapStateToProps = (state) => {
     return {
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
-        currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0
+        currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
+        isLoading: state.projects ? state.projects.getClassProjectsIsLoading : false,
     }
 }
 

@@ -162,6 +162,7 @@ class ManageTAPanel extends Component {
                     back="Course"
                     backClick={ this.back }
                     teaching_assistants={ this.props.teaching_assistants }
+                    isLoading={ this.props.taIsLoading }
                     current_ta={ this.state.current_ta }
                     change={ this.changeTA }/>
 
@@ -184,6 +185,7 @@ class ManageTAPanel extends Component {
                     <Summary header={<h3 className='header'>Assigning Sections</h3>}
                         columns={5}
                         data={this.props.sections}
+                        isLoading={this.props.sectionsIsLoading}
                         iterator={(section) =>
                             current_ta ?
                                 <SectionPreview key={section.id}
@@ -248,6 +250,7 @@ class ManageTAPanel extends Component {
                                 </div>
                                 <Summary columns={ 5 }
                                     data={ this.state.students }
+                                    isLoading={this.props.studentsIsLoading}
                                     iterator={(student) =>
                                         <StudentAssignPreview key={student} student={this.props.students.find(e => e.id === student)} isSelected={true}/>
                                     } />
@@ -257,6 +260,7 @@ class ManageTAPanel extends Component {
                                 <div className='student-selection-list'>
                                     <Summary columns={ 5 }
                                         data={ this.props.students.filter(student => student.sections.filter(id => this.state.sections.includes(id)).length > 0) }
+                                        isLoading={this.props.studentsIsLoading}
                                         iterator={(student) =>
                                             <StudentAssignPreview key={student.id} onClick={() => this.toggleStudent(student.id)} student={student} isSelected={this.state.students.includes(student.id)}/>
                                         } />
@@ -266,6 +270,7 @@ class ManageTAPanel extends Component {
                                 <div className='student-selection-list'>
                                     <Summary columns={ 5 }
                                         data={ this.props.students.filter(student => student.sections.filter(id => this.state.sections.includes(id)).length > 0) }
+                                        isLoading={this.props.studentsIsLoading}
                                         iterator={(student) =>
                                             <StudentAssignPreview key={student.id} student={student} isSelected={true}/>
                                         } />
@@ -282,7 +287,10 @@ const mapStateToProps = (state) => {
     return {
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
         sections: state.course && state.course.getSectionsData ? state.course.getSectionsData : [],
-        teaching_assistants: state.teachingAssistant && state.teachingAssistant.getTeachingAssistantsData ? state.teachingAssistant.getTeachingAssistantsData : []
+        teaching_assistants: state.teachingAssistant && state.teachingAssistant.getTeachingAssistantsData ? state.teachingAssistant.getTeachingAssistantsData : [],
+        sectionsIsLoading: state.course ? state.course.getSectionsIsLoading : false,
+        taIsLoading: state.teachingAssistant ? state.teachingAssistant.getTeachingAssistantsIsLoading : false,
+        studentsIsLoading: state.course ? state.course.getStudentPreviewsIsLoading : false,
     }
 }
 

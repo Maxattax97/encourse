@@ -122,7 +122,8 @@ class ClassTestCasePercentDone extends Component {
 
     render() {
         return (
-            <div className="chart-container">
+            !this.props.isLoading 
+            ? <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart
                         data={this.state.formattedData}
@@ -148,6 +149,7 @@ class ClassTestCasePercentDone extends Component {
                     </ComposedChart>
                 </ResponsiveContainer>
             </div>
+            : <div>{/* TODO: add spinner */}Loading</div>
         )
     }
 }
