@@ -34,6 +34,10 @@ public class ProfessorCourse {
     public String getSemester() {
         return id.getSemester();
     }
+
+    @Override
+    public String toString() { return getProfessorID() + " | " + getSemester() + " | " + getCourseID(); }
+
 }
 
 @Getter

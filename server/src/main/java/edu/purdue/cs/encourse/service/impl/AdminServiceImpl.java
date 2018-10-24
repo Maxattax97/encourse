@@ -104,17 +104,17 @@ public class AdminServiceImpl implements AdminService {
                     break;
                 case Account.Role_Names.TA:
                     List<TeachingAssistantStudent> teachingAssistantStudents = teachingAssistantStudentRepository.findByIdTeachingAssistantID(sentRequest.getUserID());
-                    if (teachingAssistantStudents.contains(account)) {
-                        hasAuth = true;
-                        break;
+                    for (TeachingAssistantStudent tas: teachingAssistantStudents) {
+                        if (tas.getStudentID().contentEquals(account.getUserID())) {
+                            hasAuth = true;
+                            break;
+                        }
                     }
                     break;
                 case Account.Role_Names.PROFESSOR:
 
                     List<StudentSection> studentSections = studentSectionRepository.findByIdStudentID(account.getUserID());
                     List<ProfessorCourse> professorCourses = professorCourseRepository.findByIdProfessorID(sentRequest.getUserID());
-                    System.out.println(studentSections);
-                    System.out.println(professorCourses);
 
                     for (StudentSection ss: studentSections) {
                         Section section = sectionRepository.findBySectionIdentifier(ss.getSectionIdentifier());
