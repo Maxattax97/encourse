@@ -109,8 +109,7 @@ if __name__ == "__main__":
     commit_times = commit_data(commit_times_file)
     individual_commit_times = commit_times[student_id]
 
-    api_formatted_data = jsonify(
+    api_json = jsonify(
         individual_visible_data, individual_hidden_data, individual_daily_data, individual_commit_times
     )
-    api_json = json.dumps(api_formatted_data)
     print(api_json)
