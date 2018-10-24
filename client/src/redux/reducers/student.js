@@ -98,19 +98,33 @@ function student(state = {}, action) {
             getCommitHistoryData: action.data,
             getCommitHistoryIsLoading: false,
         })
-    case 'GET_PROGRESS_VELOCITY':
+    case 'GET_PROGRESS_PER_TIME':
         return Object.assign({}, state, {
-            getProgressVelocityIsLoading: true,
+            getProgressPerTimeIsLoading: true,
         })
-    case 'GET_PROGRESS_VELOCITY_HAS_ERROR':
+    case 'GET_PROGRESS_PER_TIME_HAS_ERROR':
         return Object.assign({}, state, {
-            getProgressVelocityHasError: action.hasError,
-            getProgressVelocityIsLoading: false,
+            getProgressPerTimeHasError: action.hasError,
+            getProgressPerTimeIsLoading: false,
         })
-    case 'GET_PROGRESS_VELOCITY_DATA_SUCCESS':
+    case 'GET_PROGRESS_PER_TIME_DATA_SUCCESS':
         return Object.assign({}, state, {
-            getProgressVelocityData: action.data,
-            getProgressVelocityIsLoading: false,
+            getProgressPerTimeData: action.data,
+            getProgressPerTimeIsLoading: false,
+        })
+    case 'GET_PROGRESS_PER_COMMIT':
+        return Object.assign({}, state, {
+            getProgressPerCommitIsLoading: true,
+        })
+    case 'GET_PROGRESS_PER_COMMIT_HAS_ERROR':
+        return Object.assign({}, state, {
+            getProgressPerCommitHasError: action.hasError,
+            getProgressPerCommitIsLoading: false,
+        })
+    case 'GET_PROGRESS_PER_COMMIT_DATA_SUCCESS':
+        return Object.assign({}, state, {
+            getProgressPerCommitData: action.data,
+            getProgressPerCommitIsLoading: false,
         })
     default:
         return state

@@ -4,7 +4,7 @@ import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label, Bru
 import moment from 'moment'
 import { connect } from 'react-redux'
 
-import { getCommitFrequency } from '../../redux/actions'
+import { getProgressPerCommit } from '../../redux/actions'
 import url from '../../server'
 
 const defaultData = [
@@ -46,7 +46,9 @@ class ProgressPerCommit extends Component {
     }
 
     fetch = (props) => {
-        //TODO: add fetch
+        if(props.projectID) {
+            props.getData(/*TODO: add url*/)
+        }   
     }
 
     dateFormatter = (date) => {
@@ -99,16 +101,15 @@ class ProgressPerCommit extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        // data: state.student && state.student.getCommitFrequencyData ? state.student.getCommitFrequencyData : null,
-        // isLoading: state.student ? state.student.getCommitFrequencyIsLoading : false,
+        data: state.student && state.student.getProgressPerCommitData ? state.student.getProgressPerCommitData : null,
+        isLoading: state.student ? state.student.getProgressPerCommitIsLoading : false,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getData: (url, headers, body) => dispatch(getCommitFrequency(url, headers, body)),
+        getData: (url, headers, body) => dispatch(getProgressPerCommit(url, headers, body)),
     }
 }
 
-export { ProgressPerCommit }
 export default connect(mapStateToProps, mapDispatchToProps)(ProgressPerCommit)
