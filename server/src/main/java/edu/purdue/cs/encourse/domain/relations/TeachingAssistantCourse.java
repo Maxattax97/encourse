@@ -23,7 +23,7 @@ public class TeachingAssistantCourse {
 
     }
 
-    public String getProfessorID() {
+    public String getTeachingAssistantID() {
         return id.getTeachingAssistantID();
     }
 
