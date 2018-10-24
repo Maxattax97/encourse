@@ -10,7 +10,7 @@ import ClassProgressHistogram from '../chart/ClassProgressHistogram'
 import ClassTestCasePercentDone from '../chart/ClassTestCasePercentDone'
 import ActionNavigation from '../navigation/ActionNavigation'
 import CourseModal from '../modal/CourseModal'
-import { Title, Summary, Card } from '../Helpers'
+import {Title, Summary, Card, SettingsIcon} from '../Helpers'
 import { settings } from '../../helpers/icons'
 
 import { fuzzing } from '../../fuzz'
@@ -52,8 +52,25 @@ class CoursePanel extends Component {
                     {...this.props}/>
 
                 <div className='panel-right-nav'>
-                    <div className='top-nav' />
-                    <ActionNavigation actions={[() => {}, () => {}, () => {}, () => {}, () => {}]} action_names={['Manage Teaching Assistants', 'Sync Repositories', 'Run Tests', 'Academic Dishonesty Report']}/>
+                    <div className='top-nav'>
+                        <div className='course-repository-info'>
+                            <h4>Last Sync:</h4>
+                            <h4>Last Test Ran:</h4>
+                        </div>
+                    </div>
+                    <ActionNavigation actions={[
+                        () => { history.push('/manage-tas') },
+                        () => { },
+                        () => {},
+                        () => { history.push('/course-dishonesty') }
+                    ]}
+                    action_names={[
+                        'Manage Teaching Assistants',
+                        'Sync Repositories',
+                        'Run Tests',
+                        'Academic Dishonesty Report'
+                    ]}/>
+
                 </div>
 
                 <CourseModal show={ this.state.show_course_options }
@@ -64,7 +81,7 @@ class CoursePanel extends Component {
                     <div className={ `panel-course-content${this.state.modal_blur}` }>
                         <Title onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' }) }
                             header={ <h1 className='header'>CS252</h1> }
-                            icon={ settings } />
+                            icon={ <SettingsIcon/> } />
                         <div className='h1 break-line header' />
 
                         <Summary header={ <h3 className='header'>Course Charts Summary</h3> }
@@ -74,7 +91,9 @@ class CoursePanel extends Component {
                                 <ClassTestCasePercentDone projectID={this.props.currentProjectId} key={2}/>
                             ] }
                             className='charts'
-                            iterator={ (chart) => <Card key={ chart.key } component={ chart } /> } />
+                            iterator={ (chart) => <Card key={ chart.key }>
+                                {chart}
+                            </Card> } />
 
                         <div className='h1 break-line' />
 
@@ -84,11 +103,11 @@ class CoursePanel extends Component {
                             className='course-students'
                             iterator={ (student) =>
                                 <Card key={ student.id }
-                                    component={
-                                        <StudentPreview student={ student } projectID={ this.props.currentProjectId }
-                                            setCurrentProject={ this.props.setCurrentProject } />
-                                    }
-                                    onClick={ () => this.showStudentPanel(student) } /> } />
+                                    onClick={ () => this.showStudentPanel(student) } >
+
+                                    <StudentPreview student={ student } projectID={ this.props.currentProjectId }
+                                        setCurrentProject={ this.props.setCurrentProject } />
+                                </Card> } />
                     </div>
                 </div>
             </div>

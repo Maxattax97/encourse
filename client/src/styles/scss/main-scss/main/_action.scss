@@ -1,4 +1,5 @@
 @import "../definitions";
+@import "../helpers";
 
 div.action {
   cursor: pointer;
@@ -10,10 +11,30 @@ div.action {
 div.action:hover {
   h1, h2, h3, h4, h5, h6 {
     color: $hover-color;
-    padding: 0 3px;
+    padding-left: 3px;
   }
 }
 
 div.action:hover img.svg-icon {
   filter: $icon-hover-color;
+}
+
+div.action:hover {
+  svg polygon, svg path {
+    fill: #1f1f1f;
+  }
+}
+
+div.action.radio-selected {
+  color: $hover-color;
+  padding-left: 3px;
+
+  svg {
+    @include set-size-rem-safe(1rem, 1rem);
+    margin: 0 3px;
+
+    polygon, path {
+      fill: #4caf50;
+    }
+  }
 }

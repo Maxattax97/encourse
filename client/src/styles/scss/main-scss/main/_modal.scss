@@ -10,7 +10,7 @@
 
   cursor: pointer;
 
-  img {
+  svg.icon {
     position:absolute;
     top: .5em;
     left: .5em;
@@ -21,7 +21,7 @@
   }
 }
 
-.exit-nav:hover img {
+.exit-nav:hover svg.icon {
   filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
 }
 
@@ -63,7 +63,7 @@
   width: calc(100% + 40px);
   width: calc(100% + 2rem + 8px);
 
-  img {
+  svg.icon {
     @include set-size-rem-safe(1.5rem, 1.5rem);
     display:block;
     filter: $icon-color;
@@ -77,7 +77,7 @@
 
 .modal-overlay {
   position:fixed;
-  top: 3em;
+  @include set-rem-safe(top, 3rem);
   bottom: 0;
   left: 0;
   right: 0;

@@ -26,14 +26,27 @@ class ProjectPanel extends Component {
     render() {
         return (
             <div className='panel-projects'>
-                <ProjectNavigation onModalBlur={(blur) => this.setState({modal_blur : blur ? ' blur' : ''})}
+                <ProjectNavigation
                     back="Course"
                     backClick={ this.back }
                     {...this.props}/>
 
                 <div className='panel-right-nav'>
                     <div className='top-nav' />
-                    <ActionNavigation actions={[() => {}, () => {}, () => {}, () => {}, () => {}]} action_names={['Save Changes', 'Revert Changes', 'Delete Project']}/>
+                    <ActionNavigation actions={[
+                        () => {},
+                        () => {},
+                        () => {},
+                        () => {},
+                        () => {}
+                    ]}
+                    action_names={[
+                        'Add New Project',
+                        'Upload Test Zip',
+                        'Save Changes',
+                        'Revert Changes',
+                        'Remove Project'
+                    ]}/>
                 </div>
 
                 <div className='panel-center-content'>

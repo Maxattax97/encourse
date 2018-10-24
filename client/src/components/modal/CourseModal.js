@@ -47,26 +47,24 @@ class CourseModal extends Component {
             <div className="course-modal">
                 <Modal center
                     show={ this.props.show }
-                    onExit={ this.props.close }
-                    content={
-                        [
-                            <Title header={<h2 className='header'>Course Settings</h2> } key={1}/>,
-                            <div className="h2 break-line header" key={2}/>,
-                            <h4 className="header" key={3}>
-                                   Student Repositories Directory
-                            </h4>,
-                            <input type="text" className="h3-size" value={this.props.courseID} onChange={this.onChange} name="name" autoComplete="off" key={4}/>,
-                            <h4 className="header" key={5}>
-                                   Repositories Update Interval
-                            </h4>,
-                            <input type="number" className="h3-size" value={this.state.interval} onChange={this.onChange} name="interval" ref="interval" key={5}/>,
-                            <div className="modal-buttons float-height" key={6}>
-                                <div className="svg-icon action" onClick={ this.saveSettings }>
-                                    <img className='svg-icon' src={ checkmark.icon } alt={ checkmark.alt_text } />
-                                </div>
-                            </div>
-                        ]
-                    } />
+                    onExit={ this.props.close }>
+
+                    <Title header={<h2 className='header'>Course Settings</h2> } key={1}/>
+                    <div className="h2 break-line header" key={2}/>
+                    <h4 className="header" key={3}>
+                        Student Repositories Directory
+                    </h4>
+                    <input type="text" className="h3-size" value={this.props.courseID} onChange={this.onChange} name="name" autoComplete="off" key={4}/>
+                    <h4 className="header" key={5}>
+                        Repositories Update Interval
+                    </h4>
+                    <input type="number" className="h3-size" value={this.state.interval} onChange={this.onChange} name="interval" ref="interval" key={6}/>
+                    <div className="modal-buttons float-height" key={7}>
+                        <div className="svg-icon action" onClick={ this.saveSettings }>
+                            <img className='svg-icon' src={ checkmark.icon } alt={ checkmark.alt_text } />
+                        </div>
+                    </div>
+                </Modal>
 
 
                 <div className={`modal-overlay${ this.props.show ? ' show' : '' }`}

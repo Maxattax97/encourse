@@ -10,6 +10,7 @@
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
+  display:inline-block;
 }
 
 h1 {
@@ -73,12 +74,28 @@ h6.header {
   @include set-rem-safe(height, 1.34rem);
 }
 
+.h1-size {
+  @include set-rem-safe(font-size, 2rem);
+}
+
 .h2-size {
   @include set-rem-safe(font-size, 1.5rem);
 }
 
 .h3-size {
   @include set-rem-safe(font-size, 1.33rem);
+}
+
+.h4-size {
+  @include set-rem-safe(font-size, 1rem);
+}
+
+.h5-size {
+  @include set-rem-safe(font-size, .83rem);
+}
+
+.h6-size {
+  @include set-rem-safe(font-size, .67rem);
 }
 
 .float-height:after {
@@ -108,7 +125,7 @@ input {
 
 @import "navigation/actions-nav";
 @import "navigation/nav";
-@import "navigation/project-nav";
+@import "navigation/list-nav";
 
 @import "panel/course";
 @import "panel/project";
