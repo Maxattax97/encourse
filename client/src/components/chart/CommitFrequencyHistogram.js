@@ -101,7 +101,6 @@ class CommitHistoryHistogram extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.student && state.student.getCommitFrequencyData ? state.student.getCommitFrequencyData : null,
         isLoading: state.student ? state.student.getCommitFrequencyIsLoading : false,
         isFinished: state.student ? state.student.getCommitFrequencyIsFinished : false,

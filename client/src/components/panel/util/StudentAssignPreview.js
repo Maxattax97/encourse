@@ -25,7 +25,6 @@ class StudentAssignPreview extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         sections: state.course && state.course.getSectionsData ? state.course.getSectionsData : [],
         teaching_assistants: state.teachingAssistant && state.teachingAssistant.getTeachingAssistants ? state.teachingAssistant.getTeachingAssistants : []
     }

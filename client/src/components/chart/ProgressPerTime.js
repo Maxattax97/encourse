@@ -46,8 +46,7 @@ class ProgressPerTime extends Component {
     }
 
     fetch = (props) => {
-        // props.getData(`${url}/api/commitCount?projectID=${props.projectID}&userName=${props.id}`,
-        //     {'Authorization': `Bearer ${props.token}`})
+       //TODO: add fetch
     }
 
     dateFormatter = (date) => {

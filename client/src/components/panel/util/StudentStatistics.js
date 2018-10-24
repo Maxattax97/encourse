@@ -144,7 +144,6 @@ class StudentStatistics extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : [],
         isLoading: state.student ? state.student.getStatisticsIsLoading : true,
         isFinished: state.student ? state.student.getStatisticsIsFinished : false,

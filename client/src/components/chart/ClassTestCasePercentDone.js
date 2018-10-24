@@ -154,7 +154,6 @@ class ClassTestCasePercentDone extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.course && state.course.getTestBarGraphData ? state.course.getTestBarGraphData : null,
         isLoading: state.course ? state.course.getTestBarGraphIsLoading : false,
         isFinished: state.course ? state.course.getTestBarGraphIsFinished : false,

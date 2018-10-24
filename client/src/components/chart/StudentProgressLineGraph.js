@@ -130,7 +130,6 @@ class StudentProgressLineGraph extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.student && state.student.getProgressLineData ? state.student.getProgressLineData : null,
         isLoading: state.student ? state.student.getProgressLineIsLoading : false,
         isFinished: state.student ? state.student.getProgressLineIsFinished : false,

@@ -46,8 +46,7 @@ class ProgressPerCommit extends Component {
     }
 
     fetch = (props) => {
-        // props.getData(`${url}/api/commitCount?projectID=${props.projectID}&userName=${props.id}`,
-        //     {'Authorization': `Bearer ${props.token}`})
+        //TODO: add fetch
     }
 
     dateFormatter = (date) => {
@@ -100,7 +99,6 @@ class ProgressPerCommit extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        // token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         // data: state.student && state.student.getCommitFrequencyData ? state.student.getCommitFrequencyData : null,
         // isLoading: state.student ? state.student.getCommitFrequencyIsLoading : false,
         // isFinished: state.student ? state.student.getCommitFrequencyIsFinished : false,

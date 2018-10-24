@@ -88,7 +88,6 @@ class CommitHistory extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         commits: state.student && state.student.getCommitHistoryData ? state.student.getCommitHistoryData : [],
         isLoading: state.student ? state.student.getCommitHistoryIsLoading : true,
         isFinished: state.student ? state.student.getCommitHistoryIsFinished : false,

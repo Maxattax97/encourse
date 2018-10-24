@@ -116,7 +116,6 @@ class CodeChangesChart extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.student && state.student.getCodeFrequencyData ? state.student.getCodeFrequencyData : null,
         isLoading: state.student ? state.student.getCodeFrequencyIsLoading : false,
         isFinished: state.student ? state.student.getCodeFrequencyIsFinished : false,

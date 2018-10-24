@@ -127,7 +127,6 @@ class ClassProgressHistogram extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
         isLoading: state.course ? state.course.getClassProgressIsLoading : false,
         isFinished: state.course ? state.course.getClassProgressIsFinished : false,
