@@ -1192,6 +1192,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             teachingAssistantJSON.put("first_name", teachingAssistant.getFirstName());
             teachingAssistantJSON.put("last_name", teachingAssistant.getLastName());
             teachingAssistantJSON.put("id", teachingAssistant.getUserName());
+            teachingAssistantJSON.put("assignment_type", 0);
             teachingAssistantJSON.put("students", studentIDs);
             teachingAssistantJSON.put("sections", sectionIDs);
             teachingAssistantsJSON.add(teachingAssistantJSON);

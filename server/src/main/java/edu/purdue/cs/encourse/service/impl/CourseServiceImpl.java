@@ -168,11 +168,11 @@ public class CourseServiceImpl implements CourseService {
             JSONObject sectionJSON = new JSONObject();
             List<StudentSection> assignedStudents = studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
             List<TeachingAssistantSection> assignedTeachingAssistants = teachingAssistantSectionRepository.findByIdSectionID(s.getSectionIdentifier());
-            sectionJSON.put("section_type", s.getSectionType());
-            sectionJSON.put("time_slot", s.getTimeSlot());
+            sectionJSON.put("name", s.getSectionType());
             sectionJSON.put("id", s.getSectionIdentifier());
-            sectionJSON.put("number_student", assignedStudents.size());
-            sectionJSON.put("number_TA", assignedTeachingAssistants.size());
+            sectionJSON.put("time", s.getTimeSlot());
+            sectionJSON.put("students", assignedStudents.size());
+            sectionJSON.put("teaching_assistants", assignedTeachingAssistants.size());
             sectionsJSON.add(sectionJSON);
         }
         return sectionsJSON;
