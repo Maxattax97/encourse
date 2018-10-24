@@ -146,10 +146,15 @@ public class CourseServiceImpl implements CourseService {
         for(ProfessorCourse c : courses) {
             JSONObject courseJSON = new JSONObject();
             List<Section> sections = sectionRepository.findByCourseID(c.getCourseID());
+            List<String> sectionIDs = new ArrayList<>();
+            for(Section s : sections) {
+                sectionIDs.add(s.getSectionIdentifier());
+            }
             courseJSON.put("course_number", c.getCourseID());
             courseJSON.put("course_name", sections.get(0).getCourseID());
             courseJSON.put("semester", c.getSemester());
             courseJSON.put("id", professor.getUserName());
+            courseJSON.put("sections", sectionIDs);
             coursesJSON.add(courseJSON);
         }
         return coursesJSON;

@@ -23,24 +23,3 @@
     width:100%;
   }
 }
-
-.student-stats-container {
-
-  div.student-stat {
-    padding: 8px 0 8px 8px;
-
-    h5:first-child {
-      width:auto;
-      float:left;
-    }
-
-    h5:nth-child(2) {
-      width: auto;
-      float:right;
-    }
-  }
-
-  div.student-stat:nth-child(2n) {
-    padding-bottom: 16px;
-  }
-}

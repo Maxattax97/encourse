@@ -46,7 +46,7 @@ public interface ProfessorService {
 
     int testPythonDirectory();
 
-    JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA);
+    JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID);
 
     Project getProject(String projectID);
 }

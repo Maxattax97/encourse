@@ -359,9 +359,9 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public Section addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType) {
+    public Section addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType, @NonNull String timeSlot) {
         System.out.println("ADDING SECTION");
-        Section section = new Section(CRN, semester, courseID, courseTitle, sectionType);
+        Section section = new Section(CRN, semester, courseID, courseTitle, sectionType, timeSlot);
         if(sectionRepository.existsBySectionIdentifier(section.getSectionIdentifier())) {
             return null;
         }
