@@ -7,7 +7,6 @@ import '../styles/css/base.css'
 import '../styles/css/main.css'
 import Navbar from './navigation/TopNavigation'
 import CoursePanel from './panel/CoursePanel'
-import ProjectModal from './modal/ProjectModal'
 import StudentPanel from './panel/StudentPanel'
 import AdminPanel from './panel/AdminPanel'
 import PreferencePanel from './panel/PreferencePanel'
@@ -29,9 +28,6 @@ class Main extends Component {
                                 //determine logic for course panel, student panel, or admin panel. For now, use course panel
                                 return <Redirect to="/course"/>
                             }}/>
-                            <Route path="/project-settings" render={(navProps) =>
-                                <ProjectModal {...navProps} />
-                            } />
                             <Route path="/course" render={(navProps) =>
                                 <CoursePanel {...navProps} />
                             }/>

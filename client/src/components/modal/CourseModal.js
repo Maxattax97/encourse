@@ -5,8 +5,7 @@ import Modal from './Modal'
 // import deleteIcon from '../../img/trash.svg'
 import { setDirectory, modifyProject } from '../../redux/actions'
 import url from '../../server'
-import {Title} from '../Helpers'
-import {checkmark} from '../../helpers/icons'
+import {CheckmarkIcon, Title} from '../Helpers'
 
 class CourseModal extends Component {
 
@@ -61,7 +60,7 @@ class CourseModal extends Component {
                     <input type="number" className="h3-size" value={this.state.interval} onChange={this.onChange} name="interval" ref="interval" key={6}/>
                     <div className="modal-buttons float-height" key={7}>
                         <div className="svg-icon action" onClick={ this.saveSettings }>
-                            <img className='svg-icon' src={ checkmark.icon } alt={ checkmark.alt_text } />
+                            <CheckmarkIcon/>
                         </div>
                     </div>
                 </Modal>

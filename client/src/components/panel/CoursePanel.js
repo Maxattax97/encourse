@@ -11,7 +11,6 @@ import ClassTestCasePercentDone from '../chart/ClassTestCasePercentDone'
 import ActionNavigation from '../navigation/ActionNavigation'
 import CourseModal from '../modal/CourseModal'
 import {Title, Summary, Card, SettingsIcon} from '../Helpers'
-import { settings } from '../../helpers/icons'
 
 import { fuzzing } from '../../fuzz'
 

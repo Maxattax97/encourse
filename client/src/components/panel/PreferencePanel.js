@@ -1,12 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { Card } from '../Helpers'
-import plusIcon from '../../resources/plus.svg'
+import {Card, CheckmarkIcon, PlusIcon} from '../Helpers'
 import CoursePreview from './util/CoursePreview'
 import AccountPreview from './util/AccountPreview'
 import Modal from '../modal/Modal'
-import checkmarkIcon from '../../resources/checkmark.svg'
 import {
     addCourse,
     addAccount,
@@ -127,7 +125,7 @@ class PreferencePanel extends Component {
             //Add course
             this.props.addCourse(`${url}/api/add/section?userName=${this.state.professor}`,
                 {'Authorization': `Bearer ${this.props.token}`,
-                'Content-Type': 'application/json'}, JSON.stringify({
+                    'Content-Type': 'application/json'}, JSON.stringify({
                     CRN: this.state.crn,
                     semester: this.state.semester,
                     courseID: this.state.number,
@@ -145,7 +143,7 @@ class PreferencePanel extends Component {
             //Add account
             this.props.addAccount(`${url}/api/add/account`,
                 {'Authorization': `Bearer ${this.props.token}`,
-                'Content-Type': 'application/json'}, JSON.stringify({
+                    'Content-Type': 'application/json'}, JSON.stringify({
                     userID: this.state.id,
                     userName: this.state.username,
                     firstName: this.state.first_name,
@@ -157,7 +155,7 @@ class PreferencePanel extends Component {
             //Edit account
             this.props.modifyAccount(`${url}/api/modify/account?userName=${this.state.username}`,
                 {'Authorization': `Bearer ${this.props.token}`,
-                'Content-Type': 'application/json'}, JSON.stringify({
+                    'Content-Type': 'application/json'}, JSON.stringify({
                     userID: this.state.id,
                     userName: this.state.username,
                     firstName: this.state.first_name,
@@ -196,7 +194,7 @@ class PreferencePanel extends Component {
                         <h1 className="break-line title" />
                         <div className="panel-course-students float-height">
                             <div className="title float-height" onClick={ () => this.setState({ show_course_options: true, current_course: -1, modal_blur: ' blur' }) }>
-                                <img src={ plusIcon } alt="Add Course"/>
+                                <PlusIcon/>
                                 <h3>Courses</h3>
                             </div>
                             {
@@ -210,7 +208,7 @@ class PreferencePanel extends Component {
                         <h2 className="break-line" />
                         <div className="panel-course-students float-height">
                             <div className="title float-height" onClick={ () => this.setState({ show_account_options: true, current_account: -1, modal_blur: ' blur' }) }>
-                                <img src={ plusIcon } alt="Add Account"/>
+                                <PlusIcon/>
                                 <h3>Accounts</h3>
                             </div>
                             {
@@ -267,7 +265,7 @@ class PreferencePanel extends Component {
                                     </div>
 
                                     <div className="project-options-add" onClick={ this.saveCourse }>
-                                        <img src={ checkmarkIcon } />
+                                        <CheckmarkIcon/>
                                     </div>
                                 </div>
                             </div>
@@ -319,7 +317,7 @@ class PreferencePanel extends Component {
                                     </div>
 
                                     <div className="project-options-add" onClick={ this.saveAccount }>
-                                        <img src={ checkmarkIcon } />
+                                        <CheckmarkIcon/>
                                     </div>
                                 </div>
                             </div>
@@ -337,8 +335,7 @@ const mapStateToProps = (state) => {
     return {
         token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         courses: state.admin && state.admin.getCoursesData ? state.admin.getCoursesData : [],
-        accounts: state.admin && state.admin.getAccountsData ? state.admin.getAccountsData : [],
-        courses: state.admin && state.admin.getCoursesData ? state.admin.getCoursesData : [],
+        accounts: state.admin && state.admin.getAccountsData ? state.admin.getAccountsData : []
     }
 }
 

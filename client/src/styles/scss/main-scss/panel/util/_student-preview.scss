@@ -2,7 +2,7 @@
 
 .student-preview {
   position: relative;
-  @include set-size-rem-safe(10rem, 7.5rem);
+  @include set-rem-safe(height, 7.5rem);
   margin: 5.5px;
 }
 
@@ -11,6 +11,7 @@
 
   h5 {
     margin-bottom: 5px;
+    display:block;
   }
 }
 

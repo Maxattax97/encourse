@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import { history } from '../../redux/store'
 import { logOut } from '../../redux/actions/index'
 import url from '../../server'
-import {settings, logout} from '../../helpers/icons'
 import {LogoutIcon, SettingsIcon} from '../Helpers'
 
 class TopNavigation extends Component {
