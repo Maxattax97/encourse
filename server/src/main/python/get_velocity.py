@@ -121,6 +121,9 @@ if __name__ == "__main__":
     individual_commit_times = commit_times[student_id]
 
     api_json = jsonify(
-        individual_visible_data, individual_hidden_data, individual_daily_data, individual_commit_times
+        individual_visible_data,
+        individual_hidden_data,
+        individual_daily_data,
+        individual_commit_times,
     )
     print(api_json)
