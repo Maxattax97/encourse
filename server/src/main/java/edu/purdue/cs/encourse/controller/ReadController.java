@@ -299,27 +299,7 @@ public class ReadController {
         List<String> errors = new ArrayList<>();
         List<String> correct = new ArrayList<>();
 
-        /* TODO: RYAN if it is only student specific delete from here -------- */
         JSONReturnable returnJson = null;
-        Iterator iter = getUserAuthorities().iterator();
-        while (iter.hasNext()) {
-            String auth = ((Authority) iter.next()).getAuthority();
-            if (auth.contentEquals(Account.Role_Names.PROFESSOR)) {
-                break;
-            } else if (auth.contentEquals(Account.Role_Names.TA) && userNames == null) {
-                /* TODO: RYAN put velocity for taService here if it isn't student specific
-                returnJson = taService.getAssignmentsVelocity(projectID, getUserFromAuth().getUsername());
-                */
-                if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(getUserFromAuth().getUsername() + "'s students do not have content");
-                    break;
-                }
-                String json = returnJson.jsonObject.toJSONString();
-                correct.add(json);
-                break;
-            }
-        }
-        /* TODO: to here ----------------------------------------------------- */
 
         if (userNames == null) {
             userNames = new ArrayList<>();
@@ -327,18 +307,14 @@ public class ReadController {
 
         for (String userName: userNames) {
             if (hasPermissionOverAccount(userName)) {
-                iter = getUserAuthorities().iterator();
+                Iterator iter = getUserAuthorities().iterator();
                 while (iter.hasNext()) {
                     String auth = ((Authority) iter.next()).getAuthority();
                     if (auth.contentEquals(Account.Role_Names.PROFESSOR)) {
-                        /* TODO: RYAN put student specific velocity for professorService here
-                        returnJson = professorService.getStudentVelocity(projectID, userName);
-                        */
+                        returnJson = professorService.getCommitVelocity(projectID, userName);
                         break;
                     } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        /* TODO: RYAN put student specific velocity for taService here
-                        returnJson = taService.getStudentVelocity(projectID, userName, getUserFromAuth().getUsername());
-                        */
+                        returnJson = null;
                         break;
                     }
                 }

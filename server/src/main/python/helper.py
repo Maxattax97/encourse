@@ -55,7 +55,7 @@ def daterange(start, end):
         and end (inclusive)
 
     """
-    for n in range(int((end - start).days)):
+    for n in range(int((end - start).days) + 1):
         yield start + timedelta(n)
 
 

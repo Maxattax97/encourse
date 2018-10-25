@@ -8,10 +8,10 @@ mkdir -p $1
 cd $1
 ls $2 | while read t; do
     printf "${t}:"
-    $($2/${t})
+    $($2/${t}) &> /dev/null
     if [ $? -eq 0 ]
-    then printf "P;"
-    else printf "F;"
+        then printf "P;"
+        else printf "F;"
     fi
 done
 cd "${DIRECTORY}"
