@@ -34,7 +34,7 @@ describe('<ClassProgressHistogram />', () => {
                 { '0-50%': 5 },
                 { '50-100%': 10 },
             ],
-            isFinished: true,
+            isLoading: false,
         })
         await new Promise(resolve => process.nextTick(resolve))
         wrapper.update()
@@ -42,7 +42,7 @@ describe('<ClassProgressHistogram />', () => {
         expect(formatApiDataSpy).toHaveBeenCalledTimes(1)
 
         wrapper.setProps({
-            isFinished: false,
+            isLoading: true,
         })
         await new Promise(resolve => process.nextTick(resolve))
         wrapper.update()
@@ -53,7 +53,7 @@ describe('<ClassProgressHistogram />', () => {
                 { '0-50%': 10 },
                 { '50-100%': 5 },
             ],
-            isFinished: true,
+            isLoading: false,
         })
         await new Promise(resolve => process.nextTick(resolve))
         wrapper.update()

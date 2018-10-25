@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
-import {getClassProjects, setCurrentProject} from '../../redux/actions/index'
-import connect from 'react-redux/es/connect/connect'
-import {Title, Card, BackIcon, SettingsIcon, PlusIcon} from '../Helpers'
-import {history} from '../../redux/store'
+import { getClassProjects, setCurrentProject } from '../../redux/actions'
+import { Title, Card, BackIcon, SettingsIcon, PlusIcon } from '../Helpers'
+import { history } from '../../redux/store'
+import url from '../../server'
 
 class ProjectNavigation extends Component {
 
@@ -16,6 +17,12 @@ class ProjectNavigation extends Component {
         }
     }
 
+    componentDidMount = () => {
+        if(this.props.projects.length === 0) {
+            //TODO: remove classid and semester hardcoding
+            this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`)
+        }
+    }
     toggleProjectOptions = (mode) => {
         this.setState({ show_project_options: mode, new_project: this.props.projects.length === 0 && mode })
 
@@ -55,7 +62,8 @@ class ProjectNavigation extends Component {
                             }
                         </div>
                         <Card>
-                            <div className="list-container">
+                            { !this.props.isLoading
+                            ? <div className="list-container">
                                 <Title onClick={ this.openProjectOptions } header={ <h3 className='header'>Projects</h3> } icon={ <SettingsIcon/> }/>
                                 <div className="h3 break-line header"/>
                                 <div className='text-list'>
@@ -75,6 +83,7 @@ class ProjectNavigation extends Component {
                                     </div>
                                 </div>
                             </div>
+                            : <div>{/* TODO: add spinner */}Loading</div>}
                         </Card>
                     </div>
                 </div>
@@ -86,7 +95,8 @@ class ProjectNavigation extends Component {
 const mapStateToProps = (state) => {
     return {
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
-        currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0
+        currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
+        isLoading: state.projects ? state.projects.getClassProjectsIsLoading : false,
     }
 }
 
