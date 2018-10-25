@@ -1112,9 +1112,11 @@ public class ProfessorServiceImpl implements ProfessorService {
         int code = 0;
         for(Project project : projectRepository.findAll()) {
             if(project.getTestRate() > 0 && project.getTestCount() <= 0) {
+                System.out.println("Pulling project " + project.getProjectName());
                 if (pullProjects(project.getProjectIdentifier()) < 0) {
                     code -= 1;
                 }
+                System.out.println("Testing project " + project.getProjectName());
                 if (runTestall(project.getProjectIdentifier()) < 0) {
                     code -= 1;
                 }

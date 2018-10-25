@@ -187,6 +187,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             for(Project p : projects) {
                 if(p.getProjectName().equals("Shell")) {
                     p.setTestRate(4);
+                    p.setTestCount(0);
                 }
             }
         }
