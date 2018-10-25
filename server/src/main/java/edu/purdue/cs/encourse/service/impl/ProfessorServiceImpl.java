@@ -981,11 +981,12 @@ public class ProfessorServiceImpl implements ProfessorService {
                 if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
                     code = -5;
                 }
-                TestExecuter tester = new TestExecuter(testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
+                TestExecuter tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
                 Thread thread = new Thread(tester);
                 thread.start();
                 Thread.sleep(5000);
                 thread.interrupt();
+                executeBashScript("killProcesses.sh " + project.getCourseID());
                 String visibleResult = tester.getVisibleResult();
                 String hiddenResult = tester.getHiddenResult();
                 if(visibleResult == null) {
