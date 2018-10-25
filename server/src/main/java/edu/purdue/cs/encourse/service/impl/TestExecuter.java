@@ -27,12 +27,12 @@ public class TestExecuter implements Runnable {
     @Override
     public void run() {
         try {
-            String command = "\"/home/" + courseAccount + "/testall.sh " + testingDirectory + " " + testCaseDirectory + "\"";
-            Process process = Runtime.getRuntime().exec("./src/main/bash/runCommandAsCourseAccount.sh " + courseAccount + " " + command  + " 2> /dev/null");
+            String command = "/home/" + courseAccount + "/testall.sh " + testingDirectory + " " + testCaseDirectory;
+            Process process = Runtime.getRuntime().exec("./src/main/bash/runTestallAsCourseAccount.sh " + courseAccount + " " + command  + " 2> /dev/null");
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             visibleResult = stdInput.readLine();
-            command = "\"/home/" + courseAccount + "/testall.sh " + testingDirectory + " " + hiddenTestCaseDirectory + "\"";
-            process = Runtime.getRuntime().exec("./src/main/bash/runCommandAsCourseAccount.sh " + courseAccount + " " + command  + " 2> /dev/null");
+            command = "/home/" + courseAccount + "/testall.sh " + testingDirectory + " " + hiddenTestCaseDirectory;
+            process = Runtime.getRuntime().exec("./src/main/bash/runTestallAsCourseAccount.sh " + courseAccount + " " + command  + " 2> /dev/null");
             stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             hiddenResult = stdInput.readLine();
         }
