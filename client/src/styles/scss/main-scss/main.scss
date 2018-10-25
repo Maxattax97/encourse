@@ -110,6 +110,13 @@ input {
   font-family: "Raleway", "Rhodium Libre", sans-serif;
 }
 
+.loading svg {
+  position:absolute;
+  top: 50%;
+  left: 50%;
+  @include transform(translate(-50%, 0))
+}
+
 @import "main/action";
 @import "main/breakline";
 @import "main/card";

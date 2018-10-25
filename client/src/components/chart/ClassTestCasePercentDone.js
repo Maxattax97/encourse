@@ -3,6 +3,7 @@ import { ComposedChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Label, 
 import { connect } from 'react-redux'
 import { getTestBarGraph } from '../../redux/actions'
 import url from '../../server'
+import {LoadingIcon} from '../Helpers'
 
 const toPercent = (decimal, fixed = 0) => {
     return `${(decimal * 100).toFixed(fixed)}%`
@@ -122,34 +123,37 @@ class ClassTestCasePercentDone extends Component {
 
     render() {
         return (
-            !this.props.isLoading 
-            ? <div className="chart-container">
-                <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart
-                        data={this.state.formattedData}
-                        margin={{top: 5, right: 30, left: 30, bottom: 35}}
-                    >
-                        <CartesianGrid/>
-                        <XAxis dataKey="testName" type="category">
-                            <Label offset={-10} position="insideBottom">
+            this.props.isLoading !== undefined && !this.props.isLoading
+                ? <div className="chart-container">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <ComposedChart
+                            data={this.state.formattedData}
+                            margin={{top: 5, right: 30, left: 30, bottom: 35}}
+                        >
+                            <CartesianGrid/>
+                            <XAxis dataKey="testName" type="category">
+                                <Label offset={-10} position="insideBottom">
                                 Test Case
-                            </Label>
-                        </XAxis>
-                        <YAxis tickFormatter={toPercent} domain={[0, 1]}>
-                            <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+                                </Label>
+                            </XAxis>
+                            <YAxis tickFormatter={toPercent} domain={[0, 1]}>
+                                <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                                 % of Class
-                            </Label>
-                        </YAxis>
-                        <Tooltip/>
-                        <Bar dataKey="percent">
-                            {this.state.formattedData.map((entry, index) => (
-                                <Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#8884d8' }/>
-                            ))}
-                        </Bar>
-                    </ComposedChart>
-                </ResponsiveContainer>
-            </div>
-            : <div>{/* TODO: add spinner */}Loading</div>
+                                </Label>
+                            </YAxis>
+                            <Tooltip/>
+                            <Bar dataKey="percent">
+                                {this.state.formattedData.map((entry, index) => (
+                                    <Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#8884d8' }/>
+                                ))}
+                            </Bar>
+                        </ComposedChart>
+                    </ResponsiveContainer>
+                </div>
+                :
+                <div className='chart-container loading'>
+                    <LoadingIcon/>
+                </div>
         )
     }
 }
