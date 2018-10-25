@@ -10,7 +10,7 @@ import ClassProgressHistogram from '../chart/ClassProgressHistogram'
 import ClassTestCasePercentDone from '../chart/ClassTestCasePercentDone'
 import ActionNavigation from '../navigation/ActionNavigation'
 import CourseModal from '../modal/CourseModal'
-import {Title, Summary, Card, SettingsIcon} from '../Helpers'
+import {Title, Summary, Card, SettingsIcon,LoadingIcon} from '../Helpers'
 
 import { fuzzing } from '../../fuzz'
 

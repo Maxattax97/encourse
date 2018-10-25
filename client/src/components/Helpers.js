@@ -148,3 +148,21 @@ export class XIcon extends Component {
         )
     }
 }
+
+export class LoadingIcon extends Component {
+    render() {
+        return (
+            <SVG className={this.props.className ? 'icon ' + this.props.className : 'icon'}>
+                <path d='M16.161 4.135c-6.604 0-11.957 5.354-11.957 11.957h2.604c0-5.165 4.188-9.354 9.354-9.354V4.135z'>
+                    <animateTransform attributeType="xml"
+                        attributeName="transform"
+                        type="rotate"
+                        from="0 16 16"
+                        to="360 16 16"
+                        dur="0.6s"
+                        repeatCount="indefinite"/>
+                </path>
+            </SVG>
+        )
+    }
+}
