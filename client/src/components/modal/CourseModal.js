@@ -76,7 +76,6 @@ class CourseModal extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         directory_list: state.course && state.course.getDirectoryListData ? state.course.getDirectoryListData : [],
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
     }

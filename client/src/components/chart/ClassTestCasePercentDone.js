@@ -80,7 +80,7 @@ class ClassTestCasePercentDone extends Component {
         if (nextProps.data === null) {
             this.setState({ formattedData: this.getDefaultData(nextProps) })
         }
-        if (!this.props.isFinished && nextProps.isFinished) {
+        if (this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -93,7 +93,9 @@ class ClassTestCasePercentDone extends Component {
     }
 
     fetch = (props) => {
-        props.getData(`${url}/api/testSummary?projectID=${props.projectID}`)
+        if(props.projectID) {
+            props.getData(`${url}/api/testSummary?projectID=${props.projectID}`)
+        }   
     }
 
     formatApiData = (udata) => {
@@ -120,7 +122,8 @@ class ClassTestCasePercentDone extends Component {
 
     render() {
         return (
-            <div className="chart-container">
+            !this.props.isLoading 
+            ? <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart
                         data={this.state.formattedData}
@@ -146,16 +149,15 @@ class ClassTestCasePercentDone extends Component {
                     </ComposedChart>
                 </ResponsiveContainer>
             </div>
+            : <div>{/* TODO: add spinner */}Loading</div>
         )
     }
 }
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.course && state.course.getTestBarGraphData ? state.course.getTestBarGraphData : null,
         isLoading: state.course ? state.course.getTestBarGraphIsLoading : false,
-        isFinished: state.course ? state.course.getTestBarGraphIsFinished : false,
     }
 }
 

@@ -15,11 +15,11 @@ class SectionPreview extends Component {
                     <div className="preview-content">
                         <div className="stat float-height">
                             <h5>Students</h5>
-                            <h5>{this.props.section.students}</h5>
+                            <h5>{this.props.section.students.length}</h5>
                         </div>
                         <div className="stat float-height">
                             <h5>TAs</h5>
-                            <h5>{this.props.section.teaching_assistants}</h5>
+                            <h5>{this.props.section.teaching_assistants.length}</h5>
                         </div>
                     </div>
                 </div>

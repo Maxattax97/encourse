@@ -22,8 +22,9 @@ function projects(state = {}, action) {
     case 'GET_CLASS_PROJECTS_DATA_SUCCESS':
         return Object.assign({}, state, {
             getClassProjectsData: action.data,
-            currentProjectId: action.data[0].id,
-            currentProjectIndex: 0,
+            currentProjectId: state.currentProjectId === null || state.currentProjectId === undefined ? 
+                                action.data[0].id : state.currentProjectId,
+            currentProjectIndex: isNaN(state.currentProjectIndex) ? 0 : state.currentProjectIndex,
             getClassProjectsIsLoading: false,
         })
     case 'MODIFY_PROJECT':

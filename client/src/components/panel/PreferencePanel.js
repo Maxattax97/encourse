@@ -329,7 +329,6 @@ class PreferencePanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         courses: state.admin && state.admin.getCoursesData ? state.admin.getCoursesData : [],
         accounts: state.admin && state.admin.getAccountsData ? state.admin.getAccountsData : []
     }

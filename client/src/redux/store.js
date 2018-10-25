@@ -13,24 +13,35 @@ const enhancers = compose(
     window.devToolsExtension ? window.devToolsExtension() : f => f
 )
 
-const store = createStore(connectRouter(history)(rootReducer), {...getAuthState()}, enhancers)
+const store = createStore(connectRouter(history)(rootReducer), 
+    {
+        ...getLocalStorageState('logInData', 'auth'),
+        ...getLocalStorageState('currentProjectId', 'projects'),
+        ...getLocalStorageState('currentProjectIndex', 'projects'),
+        ...getLocalStorageState('currentStudent', 'student'),
+    }, 
+    enhancers)
 
-function setAuthState(state) {
+function setLocalStorageState(state, key, value) {
     try {
-        localStorage.setItem('state.auth.logInData', JSON.stringify((state.auth || {}).logInData))
+        localStorage.setItem(key, value)
     } catch (err) { return undefined }
 }
 
-function getAuthState() {
+function getLocalStorageState(key, parentObject) {
     try {
-      const logInData = JSON.parse(localStorage.getItem('state.auth.logInData')) || undefined;
+      const value = JSON.parse(localStorage.getItem(key)) || undefined;
 
-      return { auth: { logInData } }
+      return { [parentObject]: { [key]: value } }
     } catch (err) { return undefined; }
 }
   
 store.subscribe(() => {
-    setAuthState(store.getState())
+    let state = store.getState()
+    setLocalStorageState(state, 'logInData', JSON.stringify((state.auth || {}).logInData))
+    setLocalStorageState(state, 'currentProjectId', JSON.stringify((state.projects || {}).currentProjectId))
+    setLocalStorageState(state, 'currentProjectIndex', JSON.stringify((state.projects || {}).currentProjectIndex))
+    setLocalStorageState(state, 'currentStudent', JSON.stringify((state.student || {}).currentStudent))
 })
 
 if(module.hot) {
