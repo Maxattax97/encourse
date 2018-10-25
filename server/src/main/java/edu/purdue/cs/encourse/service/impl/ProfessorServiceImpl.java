@@ -1244,7 +1244,8 @@ public class ProfessorServiceImpl implements ProfessorService {
             List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), courseID);
             List<String> studentIDs = new ArrayList<>();
             for(TeachingAssistantStudent a : assignments) {
-                studentIDs.add(a.getStudentID());
+                Student student = studentRepository.findByUserID(a.getStudentID());
+                studentIDs.add(student.getUserName());
             }
             List<TeachingAssistantSection> sections = teachingAssistantSectionRepository.findByIdTeachingAssistantID(t.getTeachingAssistantID());
             List<String> sectionIDs = new ArrayList<>();
