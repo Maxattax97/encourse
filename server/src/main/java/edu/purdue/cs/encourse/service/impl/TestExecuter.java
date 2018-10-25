@@ -15,10 +15,10 @@ public class TestExecuter implements Runnable {
     private String testingDirectory;
     private String testCaseDirectory;
     private String hiddenTestCaseDirectory;
-    private String courseID;
+    private String courseAccount;
 
     public TestExecuter(String courseID, String testingDirectory, String testCaseDirectory, String hiddenTestCaseDirectory) {
-        this.courseID = courseID;
+        this.courseAccount = courseID + "-account";
         this.testingDirectory = testingDirectory;
         this.testCaseDirectory = testCaseDirectory;
         this.hiddenTestCaseDirectory = hiddenTestCaseDirectory;
@@ -27,12 +27,12 @@ public class TestExecuter implements Runnable {
     @Override
     public void run() {
         try {
-            String command = "/home/" + courseID + "/testall.sh " + testingDirectory + " " + testCaseDirectory + " 2> /dev/null";
-            Process process = Runtime.getRuntime().exec("./src/main/bash/runCommandAsCourseAccount.sh " + courseID + " " + command);
+            String command = "/home/" + courseAccount + "/testall.sh " + testingDirectory + " " + testCaseDirectory + " 2> /dev/null";
+            Process process = Runtime.getRuntime().exec("./src/main/bash/runCommandAsCourseAccount.sh " + courseAccount + " " + command);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             visibleResult = stdInput.readLine();
-            command = "/home/" + courseID + "/testall.sh " + testingDirectory + " " + hiddenTestCaseDirectory + " 2> /dev/null";
-            process = Runtime.getRuntime().exec("./src/main/bash/runCommandAsCourseAccount.sh " + courseID + " " + command);
+            command = "/home/" + courseAccount + "/testall.sh " + testingDirectory + " " + hiddenTestCaseDirectory + " 2> /dev/null";
+            process = Runtime.getRuntime().exec("./src/main/bash/runCommandAsCourseAccount.sh " + courseAccount + " " + command);
             stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             hiddenResult = stdInput.readLine();
         }
