@@ -32,7 +32,7 @@ class StudentProgressLineGraph extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(!this.props.isFinished && nextProps.isFinished) {
+        if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -103,7 +103,8 @@ class StudentProgressLineGraph extends Component {
 
     render() {
         return (
-            <div className="chart-container">
+            !this.props.isLoading
+            ? <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart className="chart" width={730} height={500} data={this.state.formattedData}
                         margin={{ top: 20, right: 35, left: 20, bottom: 20 }}>
@@ -124,16 +125,15 @@ class StudentProgressLineGraph extends Component {
                     </LineChart>
                 </ResponsiveContainer>
             </div>
+            : <div>{/* TODO: add spinner */}Loading</div>
         )
     }
 }
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.student && state.student.getProgressLineData ? state.student.getProgressLineData : null,
         isLoading: state.student ? state.student.getProgressLineIsLoading : false,
-        isFinished: state.student ? state.student.getProgressLineIsFinished : false,
     }
 }
 

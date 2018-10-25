@@ -22,7 +22,8 @@ class TANavigation extends Component {
                             }
                         </div>
                         <Card>
-                            <div className="list-container">
+                            { !this.props.isLoading
+                            ? <div className="list-container">
                                 <Title header={ <h3 className='header'>Teaching Assistants</h3> }/>
                                 <div className="h3 break-line header"/>
                                 <div className='text-list'>
@@ -39,6 +40,8 @@ class TANavigation extends Component {
                                     }
                                 </div>
                             </div>
+                            : <div>{/* TODO: add spinner */}Loading</div>}
+                            }
                         </Card>
                     </div>
                 </div>

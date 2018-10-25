@@ -37,7 +37,6 @@ class TopNavigation extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         path: state.router && state.router.location ? state.router.location.pathname : null,
     }
 }

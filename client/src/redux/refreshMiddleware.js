@@ -6,14 +6,17 @@ let requests = []
 export default function refreshMiddleware() {
     return ({ dispatch, getState }) => next => (action) => {
         
-        const { request } = action
-
+        const { request, type } = action
+     
         if (!request) {
             return next(action)
         }
 
         const tokens = getState().auth.logInData
 
+        if(request && type === 'LOG_OUT') {
+            dispatch({ type })
+        }
         // 5 minutes from now
         const refreshThreshold = Date.now() + 300000
 
@@ -40,7 +43,7 @@ export default function refreshMiddleware() {
                 return response.json()
             })
             .then((data) => {
-                dispatch({ type: 'LOG_IN_DATA_SUCCESS', data })
+                dispatch({ type: 'SET_TOKENS', data })
                 refreshing = false
                 for(let queuedRequest of requests) {
                     queuedRequest(data.access_token, dispatch, false)
