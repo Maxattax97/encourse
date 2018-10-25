@@ -19,7 +19,8 @@ export class Summary extends Component {
 
     render() {
         return (
-            <div className={ `summary ${this.props.className ? this.props.className : ''}` }>
+            !this.props.isLoading 
+            ? <div className={ `summary ${this.props.className ? this.props.className : ''}` }>
                 { this.props.header ? this.props.header : null }
                 { this.props.data && this.props.data.map && this.props.iterator ?
                     <div className='summary-container'>
@@ -28,6 +29,7 @@ export class Summary extends Component {
                         </div>
                     </div> : null }
             </div>
+            : <div>{/* TODO: add spinner */}Loading</div>
         )
     }
 }

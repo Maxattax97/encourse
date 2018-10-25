@@ -22,7 +22,7 @@ class CommitHistory extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(!this.props.isFinished && nextProps.isFinished) {
+        if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -53,7 +53,8 @@ class CommitHistory extends Component {
                     <div className='commits'>
                         <Title header={ <h3 className='header'>History</h3> }/>
                         <div className="h3 break-line header" />
-                        <div className="float-height card-overflow">
+                        { !this.props.isLoading
+                        ? <div className="float-height card-overflow">
                             {
                                 this.state.formattedData &&
                                 this.state.formattedData.map((commit) =>
@@ -79,6 +80,8 @@ class CommitHistory extends Component {
                                 )
                             }
                         </div>
+                        : <div>{/* TODO: add spinner */}Loading</div>
+                        }
                     </div>
                 </Card>
             </div>
@@ -88,10 +91,8 @@ class CommitHistory extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         commits: state.student && state.student.getCommitHistoryData ? state.student.getCommitHistoryData : [],
         isLoading: state.student ? state.student.getCommitHistoryIsLoading : true,
-        isFinished: state.student ? state.student.getCommitHistoryIsFinished : false,
     }
 }
 

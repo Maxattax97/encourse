@@ -45,16 +45,10 @@ class Login extends Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
-    }
-}
-
 const mapDispatchToProps = (dispatch) => {
     return {
         logIn: (url, headers, body) => dispatch(logIn(url, headers, body))
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login)
+export default connect(null, mapDispatchToProps)(Login)

@@ -12,19 +12,24 @@ export default function genericDispatch(type, hasError, success, method) {
                         { 'Authorization': authorization,
                           ...headers }, method, body, mode: 'cors'})
                     .then((response) => {
-                        if (!response.ok) {
+                        if (!response.ok || response.status === 204) {
                             throw Error(response.status + ' ' + response.statusText)
                         }
                         return response
                     })
                     .then((response) => {
-                        return response.json()
+                        const contentType = response.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                          return response.json()
+                        } else {
+                          return response.text()
+                        }
                     })
                     .then((data) => {
                         dispatch(success(data, extra))
                     })
                     .catch((error) => {
-                        console.log(error)
+                        console.log(url, '\n', error)
                         dispatch(hasError(true))
                     })
                 }

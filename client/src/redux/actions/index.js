@@ -1,5 +1,6 @@
 export { 
-    getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, getSectionsData
+    getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, 
+    getSectionsData, 
 } from './course' 
 
 export {
@@ -14,8 +15,8 @@ export {
 
 export {
     setCurrentStudent, clearStudent,
-    getProgressLine, getCodeFrequency, getCommitFrequency, getStatistics, getCommitHistory,
-    getProgressVelocity,
+    getStudent, getProgressLine, getCodeFrequency, getCommitFrequency, getStatistics,
+    getCommitHistory, getProgressPerTime, getProgressPerCommit,
 } from './student'
 
 export {

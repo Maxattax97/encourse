@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import url from '../../server'
-import { getStudentPreviews, getClassProjects, setCurrentProject, setCurrentStudent } from '../../redux/actions/index'
+import { getStudentPreviews, setCurrentProject, setCurrentStudent } from '../../redux/actions/index'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import StudentPreview from './util/StudentPreview'
 import ClassProgressHistogram from '../chart/ClassProgressHistogram'
@@ -25,14 +25,10 @@ class CoursePanel extends Component {
     }
 
     componentDidMount = () => {
-        //TODO: clear class projects/student previews to account for multiple classes
-        //TODO: Add course ID functionality for multiple classes
-        this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`)
         this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`)
     }
 
     showStudentPanel = (student) => {
-        //TODO: move this setCurrentStudent to StudentPanel, store all students in an array in redux
         this.props.setCurrentStudent(student)
         if (fuzzing) {
             // NOTE: we don't even use the student id in the url
@@ -97,6 +93,7 @@ class CoursePanel extends Component {
                         <Summary header={ <h3 className='header'>Students Summary</h3> }
                             columns={ 5 }
                             data={ this.props.students }
+                            isLoading={ this.props.isLoading }
                             className='course-students'
                             iterator={ (student) =>
                                 <StudentPreview key={ student.id }
@@ -113,17 +110,15 @@ class CoursePanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
-        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        isLoading: state.course ? state.course.getStudentPreviewsIsLoading : false,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
-        getClassProjects: (url, headers, body) => dispatch(getClassProjects(url, headers, body)),
         setCurrentProject: (id, index) => dispatch(setCurrentProject(id, index)),
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
     }

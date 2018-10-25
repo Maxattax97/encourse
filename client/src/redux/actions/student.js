@@ -13,6 +13,24 @@ export function clearStudent() {
     }
 }
 
+export function getStudentHasError(hasError) {
+    return {
+        type: 'GET_STUDENT_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getStudentDataSuccess(data) {
+    return {
+        type: 'GET_STUDENT_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getStudent = genericDispatch(
+    'GET_STUDENT', getStudentHasError, getStudentDataSuccess, 'GET'
+)
+
 export function getProgressLineHasError(hasError) {
     return {
         type: 'GET_PROGRESS_LINE_HAS_ERROR',
@@ -103,20 +121,38 @@ export const getCommitHistory = genericDispatch(
     'GET_COMMIT_HISTORY', getCommitHistoryHasError, getCommitHistoryDataSuccess, 'GET'
 )
 
-export function getProgressVelocityHasError(hasError) {
+export function getProgressPerTimeHasError(hasError) {
     return {
-        type: 'GET_PROGRESS_VELOCITY_HAS_ERROR',
+        type: 'GET_PROGRESS_PER_TIME_HAS_ERROR',
         hasError
     }
 }
 
-export function getProgressVelocityDataSuccess(data) {
+export function getProgressPerTimeDataSuccess(data) {
     return {
-        type: 'GET_PROGRESS_VELOCITY_DATA_SUCCESS',
+        type: 'GET_PROGRESS_PER_TIME_DATA_SUCCESS',
         data
     }
 }
 
-export const getProgressVelocity = genericDispatch(
-    'GET_PROGRESS_VELOCITY', getProgressVelocityHasError, getProgressVelocityDataSuccess, 'GET'
+export const getProgressPerTime = genericDispatch(
+    'GET_PROGRESS_PER_TIME', getProgressPerTimeHasError, getProgressPerTimeDataSuccess, 'GET'
+)
+
+export function getProgressPerCommitHasError(hasError) {
+    return {
+        type: 'GET_PROGRESS_PER_COMMIT_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getProgressPerCommitDataSuccess(data) {
+    return {
+        type: 'GET_PROGRESS_PER_COMMIT_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getProgressPerCommit = genericDispatch(
+    'GET_PROGRESS_PER_COMMIT', getProgressPerCommitHasError, getProgressPerCommitDataSuccess, 'GET'
 )

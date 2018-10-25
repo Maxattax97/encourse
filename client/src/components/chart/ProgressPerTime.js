@@ -4,7 +4,7 @@ import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label, Bru
 import moment from 'moment'
 import { connect } from 'react-redux'
 
-import { getProgressVelocity } from '../../redux/actions'
+import { getProgressPerTime } from '../../redux/actions'
 import url from '../../server'
 
 const defaultData = [
@@ -37,7 +37,7 @@ class ProgressPerTime extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(!this.props.isFinished && nextProps.isFinished) {
+        if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -46,8 +46,9 @@ class ProgressPerTime extends Component {
     }
 
     fetch = (props) => {
-        // props.getData(`${url}/api/commitCount?projectID=${props.projectID}&userName=${props.id}`,
-        //     {'Authorization': `Bearer ${props.token}`})
+        if(props.projectID) {
+            props.getData(/*TODO: add url*/)
+        }  
     }
 
     dateFormatter = (date) => {
@@ -73,7 +74,8 @@ class ProgressPerTime extends Component {
 
     render() {
         return (
-            <div className="chart-container">
+            !this.props.isLoading
+            ? <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                     <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
                         <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Time</text>
@@ -93,23 +95,22 @@ class ProgressPerTime extends Component {
                     </ScatterChart>
                 </ResponsiveContainer>
             </div>
+            : <div>{/* TODO: add spinner */}Loading</div>
         )
     }
 }
 
 const mapStateToProps = (state) => {
     return {
-        data: state.student && state.student.getCommitFrequencyData ? state.student.getCommitFrequencyData : null,
-        isLoading: state.student ? state.student.getCommitFrequencyIsLoading : false,
-        isFinished: state.student ? state.student.getCommitFrequencyIsFinished : false,
+        data: state.student && state.student.getProgressPerTimeData ? state.student.getProgressPerTimeData : null,
+        isLoading: state.student ? state.student.getProgressPerTimeIsLoading : false,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getData: (url, headers, body) => dispatch(getProgressVelocity(url, headers, body)),
+        getData: (url, headers, body) => dispatch(getProgressPerTime(url, headers, body)),
     }
 }
 
-export { ProgressPerTime }
 export default connect(mapStateToProps, mapDispatchToProps)(ProgressPerTime)
