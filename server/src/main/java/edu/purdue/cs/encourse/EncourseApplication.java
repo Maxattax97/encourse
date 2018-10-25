@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class, JmxAutoConfiguration.class })
 /** Leave this commented until we begin running the server continuously **/
-//@EnableScheduling
+@EnableScheduling
 public class EncourseApplication {
     public static void main(String[] args) {
         SpringApplication.run(EncourseApplication.class, args);

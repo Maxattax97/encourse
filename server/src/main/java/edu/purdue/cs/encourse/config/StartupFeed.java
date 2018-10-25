@@ -43,6 +43,9 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
     
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
@@ -177,6 +180,14 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             for(StudentProject p : projects) {
                 Student student = studentRepository.findByUserID(p.getStudentID());
                 professorService.getStatistics(p.getProjectIdentifier(), student.getUserName());
+            }
+        }
+        else {
+            List<Project> projects = projectRepository.findBySemesterAndCourseID("Fall2018", "cs252");
+            for(Project p : projects) {
+                if(p.getProjectName().equals("Shell")) {
+                    p.setTestRate(4);
+                }
             }
         }
     }
