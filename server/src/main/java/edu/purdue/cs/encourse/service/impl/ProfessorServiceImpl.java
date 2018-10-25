@@ -923,7 +923,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 TestExecuter tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
                 Thread thread = new Thread(tester);
                 thread.start();
-                Thread.sleep(10000);
+                Thread.sleep(5000);
                 thread.interrupt();
                 executeBashScript("killProcesses.sh " + project.getCourseID());
                 String visibleResult = tester.getVisibleResult();
