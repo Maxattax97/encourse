@@ -19,9 +19,8 @@ export class Summary extends Component {
 
     render() {
         return (
-            !this.props.isLoading 
-            ? <div className={ `summary ${this.props.className ? this.props.className : ''}` }>
-                { this.props.header ? this.props.header : null }
+            <div className={ `summary ${this.props.className ? this.props.className : ''}` }>
+                { this.props.children }
                 { this.props.data && this.props.data.map && this.props.iterator ?
                     <div className='summary-container'>
                         <div className={`float-height cols-${this.props.columns ? this.props.columns : '2'}`}>
@@ -29,7 +28,62 @@ export class Summary extends Component {
                         </div>
                     </div> : null }
             </div>
-            : <div>{/* TODO: add spinner */}Loading</div>
+        )
+    }
+}
+
+export class Filter extends Component {
+
+    constructor(props) {
+        super(props)
+    }
+
+    componentDidMount() {
+        if(this.props.offClick) {
+            document.addEventListener('mousedown', this.clickEvent)
+        }
+    }
+
+    componentWillUnmount() {
+        if(this.props.offClick) {
+            document.removeEventListener('mousedown', this.clickEvent)
+        }
+    }
+
+    setFilterRef = (node) => {
+        this.filter = node
+    }
+
+    clickEvent = (event) => {
+        if(this.filter && this.props.offClick && !this.filter.contains(event.target)) {
+            this.props.offClick()
+        }
+    }
+
+    render() {
+        return (
+            <div className='filter'>
+                <div ref={ this.setFilterRef } className='filter-container'>
+                    { this.props.children }
+                </div>
+            </div>
+        )
+    }
+}
+
+export class Dropdown extends Component {
+    render() {
+        return (
+            <div className='dropdown'>
+                <div className='dropdown-toggle' onClick={ this.props.onClick }>
+                    { this.props.header }
+                    <DropdownIcon/>
+                </div>
+                <ul className='dropdown-menu'
+                    style={ this.props.show ? null : { display: 'none' } }>
+                    { this.props.children }
+                </ul>
+            </div>
         )
     }
 }
@@ -39,7 +93,7 @@ export class Card extends Component {
         return (
             <div className={ this.props.className ? 'card ' + this.props.className : 'card' } onClick={ this.props.onClick || (() => {}) }>
                 <div className="component">
-                    {this.props.children}
+                    { this.props.children }
                 </div>
             </div>
         )
@@ -64,6 +118,16 @@ export class BackIcon extends Component {
         return (
             <SVG className={ this.props.className ? 'icon ' + this.props.className : 'icon' }>
                 <polygon points="22,8.025 19.98125,6 10,16 10,16 10,16 19.98125,26 22,23.975 14.04375,16" />
+            </SVG>
+        )
+    }
+}
+
+export class DropdownIcon extends Component {
+    render() {
+        return (
+            <SVG className={ this.props.className ? 'icon ' + this.props.className : 'icon'}>
+                <polygon transform="rotate(-90 16,16) " points="22,8.025 19.98125,6 10,16 10,16 10,16 19.98125,26 22,23.975 14.04375,16" />
             </SVG>
         )
     }

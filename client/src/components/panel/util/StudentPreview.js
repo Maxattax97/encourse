@@ -14,7 +14,7 @@ class StudentPreview extends Component {
                     </div>
                     <div className="h4 break-line header" />
                     <div className="preview-content">
-                        <h5>Time: {this.props.student.timeSpent[this.props.projectID]}</h5>
+                        <h5>Time: {this.props.student.timeSpent[this.props.projectID]} hours</h5>
                         <h5>Commits: {this.props.student.commitCounts[this.props.projectID]}</h5>
                     </div>
                     <div className="student-preview-progress">

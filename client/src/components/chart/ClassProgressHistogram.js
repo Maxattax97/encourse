@@ -6,8 +6,8 @@ import { getClassProgress } from '../../redux/actions'
 import url from '../../server'
 import {LoadingIcon} from '../Helpers'
 
-const toPercent = (decimal, fixed = 0) => {
-    return `${(decimal * 100).toFixed(fixed)}%`
+const toPercent = (decimal, fixed = 2) => {
+    return `${(decimal).toFixed(fixed)}`
 }
 
 const defaultData = [
@@ -110,12 +110,12 @@ class ClassProgressHistogram extends Component {
                             <CartesianGrid/>
                             <XAxis dataKey="progressBin" type="category">
                                 <Label offset={-10} position="insideBottom">
-                                % Completion
+                                    Total
                                 </Label>
                             </XAxis>
                             <YAxis tickFormatter={toPercent} domain={[0, 1]}>
                                 <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
-                                % of Class
+                                    Students
                                 </Label>
                             </YAxis>
                             <Tooltip/>

@@ -10,7 +10,7 @@ import ClassProgressHistogram from '../chart/ClassProgressHistogram'
 import ClassTestCasePercentDone from '../chart/ClassTestCasePercentDone'
 import ActionNavigation from '../navigation/ActionNavigation'
 import CourseModal from '../modal/CourseModal'
-import {Title, Summary, Card, SettingsIcon, LoadingIcon} from '../Helpers'
+import {Title, Summary, Card, SettingsIcon, Filter, Dropdown} from '../Helpers'
 
 import { fuzzing } from '../../fuzz'
 
@@ -20,7 +20,10 @@ class CoursePanel extends Component {
         super(props)
 
         this.state = {
-            modal_blur: ''
+            modal_blur: '',
+            sort_students_by: 0,
+            filter_students_by: 0,
+            display_students_menu: 0
         }
     }
 
@@ -77,7 +80,7 @@ class CoursePanel extends Component {
                             icon={ <SettingsIcon/> } />
                         <div className='h1 break-line header' />
 
-                        <Summary header={ <h3 className='header'>Course Charts Summary</h3> }
+                        <Summary
                             columns={ 2 }
                             data={ [
                                 <ClassProgressHistogram projectID={this.props.currentProjectId} key={1}/>,
@@ -88,14 +91,103 @@ class CoursePanel extends Component {
                                 {
                                     chart
                                 }
-                            </Card> } />
+                            </Card> } >
+                            <h3 className='header'>Course Charts Summary</h3>
+                        </Summary>
 
                         <div className='h1 break-line' />
 
-                        <Summary header={ <h3 className='header'>Students Summary</h3> }
+                        <h3 className='header'>Students Summary</h3>
+                        {
+                            this.props.students && this.props.students.length > 0 ?
+                                <Filter offClick={ () => this.setState({ display_students_menu: 0 }) }>
+                                    <Dropdown header={<h5>Sort by Name</h5>}
+                                        onClick={ () => this.setState({ display_students_menu: 1 }) }
+                                        show={ this.state.display_students_menu === 1 }>
+                                        <li>
+                                            Name
+                                        </li>
+                                        <li>
+                                            Time
+                                        </li>
+                                        <li>
+                                            Commits
+                                        </li>
+                                        <li>
+                                            Progress
+                                        </li>
+                                    </Dropdown>
+                                    <Dropdown header={<h5>In Ascending Order</h5>}
+                                        onClick={ () => this.setState({ display_students_menu: 2 }) }
+                                        show={ this.state.display_students_menu === 2 }>
+                                        <li>
+                                            In Ascending Order
+                                        </li>
+                                        <li>
+                                            In Descending Order
+                                        </li>
+                                    </Dropdown>
+                                    <Dropdown header={<h5>Any commits</h5>}
+                                        onClick={ () => this.setState({ display_students_menu: 3 }) }
+                                        show={ this.state.display_students_menu === 3 }>
+                                        <li>
+                                            Any commits
+                                        </li>
+                                        <li>{/*TODO: Pull dynamic commit count filtering*/}
+                                            1 - 10 commits
+                                        </li>
+                                        <li>
+                                            11 - 25 commits
+                                        </li>
+                                        <li>
+                                            26 - 100 commits
+                                        </li>
+                                        <li>
+                                            101 - 300 commits
+                                        </li>
+                                        <li>
+                                            301 - 500 commits
+                                        </li>
+                                    </Dropdown>
+                                    <Dropdown header={<h5>Any time</h5>}
+                                        onClick={ () => this.setState({ display_students_menu: 4 }) }
+                                        show={ this.state.display_students_menu === 4 }>
+                                        <li>
+                                            Any time
+                                        </li>
+                                        <li>{/*TODO: Pull dynamic time filtering*/}
+                                            1 - 3 hours
+                                        </li>
+                                        <li>
+                                            4 - 8 hours
+                                        </li>
+                                        <li>
+                                            8+ hours
+                                        </li>
+                                    </Dropdown>
+                                    <Dropdown header={<h5>Any progress</h5>}
+                                        onClick={ () => this.setState({ display_students_menu: 5 }) }
+                                        show={ this.state.display_students_menu === 5 }>
+                                        <li>
+                                            Any progress
+                                        </li>
+                                        <li>{/*TODO: Pull dynamic progress filtering*/}
+                                            0% - 25%
+                                        </li>
+                                        <li>
+                                            26% - 50%
+                                        </li>
+                                        <li>
+                                            51% - 100%
+                                        </li>
+                                    </Dropdown>
+                                </Filter>
+                                :
+                                null
+                        }
+                        <Summary
                             columns={ 5 }
                             data={ this.props.students }
-                            isLoading={ this.props.isLoading }
                             className='course-students'
                             iterator={ (student) =>
                                 <StudentPreview key={ student.id }

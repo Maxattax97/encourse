@@ -15,10 +15,6 @@ div.action:not(.card):hover {
   }
 }
 
-div.action:not(.card):hover img.svg-icon {
-  filter: $icon-hover-color;
-}
-
 div.action:not(.card):hover {
   svg polygon, svg path {
     fill: #1f1f1f;
