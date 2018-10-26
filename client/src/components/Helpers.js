@@ -38,32 +38,10 @@ export class Filter extends Component {
         super(props)
     }
 
-    componentDidMount() {
-        if(this.props.offClick) {
-            document.addEventListener('mousedown', this.clickEvent)
-        }
-    }
-
-    componentWillUnmount() {
-        if(this.props.offClick) {
-            document.removeEventListener('mousedown', this.clickEvent)
-        }
-    }
-
-    setFilterRef = (node) => {
-        this.filter = node
-    }
-
-    clickEvent = (event) => {
-        if(this.filter && this.props.offClick && !this.filter.contains(event.target)) {
-            this.props.offClick()
-        }
-    }
-
     render() {
         return (
             <div className='filter'>
-                <div ref={ this.setFilterRef } className='filter-container'>
+                <div className='filter-container'>
                     { this.props.children }
                 </div>
             </div>
@@ -72,16 +50,49 @@ export class Filter extends Component {
 }
 
 export class Dropdown extends Component {
+
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            show : false
+        }
+    }
+
+    componentDidMount() {
+        document.addEventListener('mousedown', this.clickEvent)
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.clickEvent)
+    }
+
+    setDropdownRef = (node) => {
+        this.dropdown = node
+    }
+
+    clickEvent = (event) => {
+        if(this.dropdown && this.state.show && !this.dropdown.contains(event.target)) {
+            this.setState({ show: false })
+        }
+    }
+
     render() {
         return (
-            <div className='dropdown'>
-                <div className='dropdown-toggle' onClick={ this.props.onClick }>
+            <div ref={ this.setDropdownRef } className='dropdown'>
+                <div className='dropdown-toggle' onClick={ () => this.setState({ show: !this.state.show }) }>
                     { this.props.header }
                     <DropdownIcon/>
                 </div>
                 <ul className={ 'dropdown-menu ' + ( this.props.rightAnchor ? 'dropdown-menu-right' : 'dropdown-menu-left' ) }
-                    style={ this.props.show ? null : { display: 'none' } }>
-                    { this.props.children }
+                    style={ this.state.show ? null : { display: 'none' } }>
+                    {
+                        React.Children.map(this.props.children, (child, index) =>
+                            <li className='action' onClick={ () => this.props.onClick(index) }>
+                                { child }
+                            </li>
+                        )
+                    }
                 </ul>
             </div>
         )

@@ -102,85 +102,54 @@ class CoursePanel extends Component {
                         <h3 className='header'>Students Summary</h3>
                         {
                             this.props.students && this.props.students.length > 0 ?
-                                <Filter offClick={ () => this.setState({ display_students_menu: 0 }) }>
+                                <Filter>
                                     <Dropdown header={<h5>Sort by Name</h5>}
-                                        onClick={ () => this.setState({ display_students_menu: 1 }) }
-                                        show={ this.state.display_students_menu === 1 }
+                                        onClick={ (index) => {}}
                                         leftAnchor>
-                                        <li className='action'>
-                                            <h5>Sort by Name</h5>
-                                        </li>
-                                        <li className='action'>
-                                            <h5>Sort by Hours</h5>
-                                        </li>
-                                        <li className='action'>
-                                            <h5>Sort by Commits</h5>
-                                        </li>
-                                        <li className='action'>
-                                            <h5>Sort by Progress</h5>
-                                        </li>
+
+                                        <h5>Sort by Name</h5>
+                                        <h5>Sort by Hours</h5>
+                                        <h5>Sort by Commits</h5>
+                                        <h5>Sort by Progress</h5>
                                     </Dropdown>
-                                    <Dropdown header={<h5>In Ascending Order</h5>}
-                                        onClick={ () => this.setState({ display_students_menu: 2 }) }
-                                        show={ this.state.display_students_menu === 2 }
-                                        leftAnchor>
-                                        <li className='action'>
-                                            <h5>In Ascending Order</h5>
-                                        </li>
-                                        <li className='action'>
-                                            <h5>In Descending Order</h5>
-                                        </li>
+                                    <Dropdown header={<h5>Ascending Order</h5>}
+                                        onClick={ (index) => {}}
+                                        rightAnchor>
+
+                                        <h5>Ascending Order</h5>
+                                        <h5>Descending Order</h5>
                                     </Dropdown>
                                     <Dropdown header={<h5>Any Commits</h5>}
-                                        onClick={ () => this.setState({ display_students_menu: 3 }) }
-                                        show={ this.state.display_students_menu === 3 }
+                                        onClick={ (index) => {}}
                                         rightAnchor>
-                                        <li className='action'>
-                                            <h5>Any Commits</h5>
-                                        </li>
+                                        <h5>Any Commits</h5>
                                         {
                                             this.state.commit_ranges.map(range =>
-                                                <li className='action' key={range}>
-                                                    <h5>
-                                                        {range} Commits
-                                                    </h5>
-                                                </li>
+                                                <h5 key={range}>
+                                                    {range} Commits
+                                                </h5>
                                             )
                                         }
                                     </Dropdown>
                                     <Dropdown header={<h5>Any Hours</h5>}
-                                        onClick={ () => this.setState({ display_students_menu: 4 }) }
-                                        show={ this.state.display_students_menu === 4 }
+                                        onClick={ (index) => {}}
                                         rightAnchor>
-                                        <li className='action'>
-                                            <h5>Any Hours</h5>
-                                        </li>
+                                        <h5>Any Hours</h5>
                                         {
                                             this.state.time_ranges.map(range =>
-                                                <li className='action' key={range}>
-                                                    <h5>
-                                                        {range} Hours
-                                                    </h5>
-                                                </li>
+                                                <h5 key={range}>
+                                                    {range} Hours
+                                                </h5>
                                             )
                                         }
                                     </Dropdown>
                                     <Dropdown header={<h5>Any Progress</h5>}
-                                        onClick={ () => this.setState({ display_students_menu: 5 }) }
-                                        show={ this.state.display_students_menu === 5 }
+                                        onClick={ (index) => {}}
                                         rightAnchor>
-                                        <li className='action'>
-                                            <h5>Any Progress</h5>
-                                        </li>
-                                        <li className='action'>
-                                            <h5>0 - 25% Progress</h5>
-                                        </li>
-                                        <li className='action'>
-                                            <h5>26 - 50% Progress</h5>
-                                        </li>
-                                        <li className='action'>
-                                            <h5>51 - 100% Progress</h5>
-                                        </li>
+                                        <h5>Any Progress</h5>
+                                        <h5>0 - 25% Progress</h5>
+                                        <h5>26 - 50% Progress</h5>
+                                        <h5>51 - 100% Progress</h5>
                                     </Dropdown>
                                 </Filter>
                                 :
