@@ -182,7 +182,8 @@ class ManageTAPanel extends Component {
                 <div className="panel-center-content">
                     <Title header={ <h1 className='header'>CS252 - Teaching Assistants - { `${current_ta.first_name} ${current_ta.last_name}` }</h1> } />
                     <div className='h1 break-line header' />
-                    <Summary header={<h3 className='header'>Assigning Sections</h3>}
+                    <h3 className='header'>Assigning Sections</h3>
+                    <Summary
                         columns={5}
                         data={this.props.sections}
                         isLoading={this.props.sectionsIsLoading}

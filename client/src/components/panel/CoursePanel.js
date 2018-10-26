@@ -23,7 +23,9 @@ class CoursePanel extends Component {
             modal_blur: '',
             sort_students_by: 0,
             filter_students_by: 0,
-            display_students_menu: 0
+            display_students_menu: 0,
+            commit_ranges: ['1 - 10', '11 - 25', '26 - 100', '101 - 500', '500+'],
+            time_ranges: ['1 - 5', '6 - 10', '11 - 25', '26+']
         }
     }
 
@@ -103,82 +105,81 @@ class CoursePanel extends Component {
                                 <Filter offClick={ () => this.setState({ display_students_menu: 0 }) }>
                                     <Dropdown header={<h5>Sort by Name</h5>}
                                         onClick={ () => this.setState({ display_students_menu: 1 }) }
-                                        show={ this.state.display_students_menu === 1 }>
-                                        <li>
-                                            Name
+                                        show={ this.state.display_students_menu === 1 }
+                                        leftAnchor>
+                                        <li className='action'>
+                                            <h5>Sort by Name</h5>
                                         </li>
-                                        <li>
-                                            Time
+                                        <li className='action'>
+                                            <h5>Sort by Hours</h5>
                                         </li>
-                                        <li>
-                                            Commits
+                                        <li className='action'>
+                                            <h5>Sort by Commits</h5>
                                         </li>
-                                        <li>
-                                            Progress
+                                        <li className='action'>
+                                            <h5>Sort by Progress</h5>
                                         </li>
                                     </Dropdown>
                                     <Dropdown header={<h5>In Ascending Order</h5>}
                                         onClick={ () => this.setState({ display_students_menu: 2 }) }
-                                        show={ this.state.display_students_menu === 2 }>
-                                        <li>
-                                            In Ascending Order
+                                        show={ this.state.display_students_menu === 2 }
+                                        leftAnchor>
+                                        <li className='action'>
+                                            <h5>In Ascending Order</h5>
                                         </li>
-                                        <li>
-                                            In Descending Order
+                                        <li className='action'>
+                                            <h5>In Descending Order</h5>
                                         </li>
                                     </Dropdown>
-                                    <Dropdown header={<h5>Any commits</h5>}
+                                    <Dropdown header={<h5>Any Commits</h5>}
                                         onClick={ () => this.setState({ display_students_menu: 3 }) }
-                                        show={ this.state.display_students_menu === 3 }>
-                                        <li>
-                                            Any commits
+                                        show={ this.state.display_students_menu === 3 }
+                                        rightAnchor>
+                                        <li className='action'>
+                                            <h5>Any Commits</h5>
                                         </li>
-                                        <li>{/*TODO: Pull dynamic commit count filtering*/}
-                                            1 - 10 commits
-                                        </li>
-                                        <li>
-                                            11 - 25 commits
-                                        </li>
-                                        <li>
-                                            26 - 100 commits
-                                        </li>
-                                        <li>
-                                            101 - 300 commits
-                                        </li>
-                                        <li>
-                                            301 - 500 commits
-                                        </li>
+                                        {
+                                            this.state.commit_ranges.map(range =>
+                                                <li className='action' key={range}>
+                                                    <h5>
+                                                        {range} Commits
+                                                    </h5>
+                                                </li>
+                                            )
+                                        }
                                     </Dropdown>
-                                    <Dropdown header={<h5>Any time</h5>}
+                                    <Dropdown header={<h5>Any Hours</h5>}
                                         onClick={ () => this.setState({ display_students_menu: 4 }) }
-                                        show={ this.state.display_students_menu === 4 }>
-                                        <li>
-                                            Any time
+                                        show={ this.state.display_students_menu === 4 }
+                                        rightAnchor>
+                                        <li className='action'>
+                                            <h5>Any Hours</h5>
                                         </li>
-                                        <li>{/*TODO: Pull dynamic time filtering*/}
-                                            1 - 3 hours
-                                        </li>
-                                        <li>
-                                            4 - 8 hours
-                                        </li>
-                                        <li>
-                                            8+ hours
-                                        </li>
+                                        {
+                                            this.state.time_ranges.map(range =>
+                                                <li className='action' key={range}>
+                                                    <h5>
+                                                        {range} Hours
+                                                    </h5>
+                                                </li>
+                                            )
+                                        }
                                     </Dropdown>
-                                    <Dropdown header={<h5>Any progress</h5>}
+                                    <Dropdown header={<h5>Any Progress</h5>}
                                         onClick={ () => this.setState({ display_students_menu: 5 }) }
-                                        show={ this.state.display_students_menu === 5 }>
-                                        <li>
-                                            Any progress
+                                        show={ this.state.display_students_menu === 5 }
+                                        rightAnchor>
+                                        <li className='action'>
+                                            <h5>Any Progress</h5>
                                         </li>
-                                        <li>{/*TODO: Pull dynamic progress filtering*/}
-                                            0% - 25%
+                                        <li className='action'>
+                                            <h5>0 - 25% Progress</h5>
                                         </li>
-                                        <li>
-                                            26% - 50%
+                                        <li className='action'>
+                                            <h5>26 - 50% Progress</h5>
                                         </li>
-                                        <li>
-                                            51% - 100%
+                                        <li className='action'>
+                                            <h5>51 - 100% Progress</h5>
                                         </li>
                                     </Dropdown>
                                 </Filter>

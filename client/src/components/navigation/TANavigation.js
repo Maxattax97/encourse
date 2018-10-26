@@ -23,12 +23,12 @@ class TANavigation extends Component {
                         </div>
                         <Card>
                             { !this.props.isLoading
-                            ? <div className="list-container">
-                                <Title header={ <h3 className='header'>Teaching Assistants</h3> }/>
-                                <div className="h3 break-line header"/>
-                                <div className='text-list'>
-                                    {
-                                        this.props.teaching_assistants &&
+                                ? <div className="list-container">
+                                    <Title header={ <h3 className='header'>Teaching Assistants</h3> }/>
+                                    <div className="h3 break-line header"/>
+                                    <div className='text-list'>
+                                        {
+                                            this.props.teaching_assistants &&
                                         this.props.teaching_assistants.map((ta, index) =>
                                             <div key={ ta.id }
                                                 onClick={ () => this.changeTA(index) }
@@ -37,11 +37,10 @@ class TANavigation extends Component {
                                                     { `${ta.first_name} ${ta.last_name}` }
                                                 </h4>
                                             </div>)
-                                    }
+                                        }
+                                    </div>
                                 </div>
-                            </div>
-                            : <div>{/* TODO: add spinner */}Loading</div>}
-                            }
+                                : <div>{/* TODO: add spinner */}Loading</div>}
                         </Card>
                     </div>
                 </div>

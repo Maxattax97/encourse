@@ -30,12 +30,45 @@
   .dropdown-menu {
     position:absolute;
     top: 100%;
-    @include set-rem-safe(left, .625rem);
     @include set-rem-safe(min-width, 10rem);
     z-index: 1;
     background:#fff;
     border: 1px #d6d6d6 solid;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .16);
+
+    li {
+      list-style: none outside none;
+      outline: none;
+      width: 100%;
+      @include set-rem-safe(padding-top, .25rem);
+      @include set-rem-safe(padding-bottom, .25rem);
+    }
+
+    li:after {
+      @include float-height();
+    }
+  }
+
+  .dropdown-menu-left {
+    li {
+      @include set-rem-safe(padding-left, .625rem);
+
+      * {
+        float:left;
+      }
+    }
+  }
+
+  .dropdown-menu-right {
+    left: 100%;
+    @include transform(translate(-100%, 0));
+
+    li {
+      @include set-rem-safe(padding-right, .625rem);
+      * {
+        float:right;
+      }
+    }
   }
 
 }

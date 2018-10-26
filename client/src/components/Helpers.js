@@ -79,7 +79,7 @@ export class Dropdown extends Component {
                     { this.props.header }
                     <DropdownIcon/>
                 </div>
-                <ul className='dropdown-menu'
+                <ul className={ 'dropdown-menu ' + ( this.props.rightAnchor ? 'dropdown-menu-right' : 'dropdown-menu-left' ) }
                     style={ this.props.show ? null : { display: 'none' } }>
                     { this.props.children }
                 </ul>
