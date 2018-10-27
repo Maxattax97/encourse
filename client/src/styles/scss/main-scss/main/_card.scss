@@ -3,29 +3,25 @@
 
 .card {
   position:relative;
-  height: auto;
   width: 100%;
 }
 
 .component {
   width: 100%;
-  height: auto;
   @include set-rem-safe(padding, 1rem);
-  background-color: $card-color;
-  border-radius: 2px;
-  border: 1px #d6d6d6 solid;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, .16);
+  border: 1px $card-border-color solid;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, .16);
 }
 
-.card-overflow {
+.overflow {
   overflow-y: scroll;
   overflow-x: hidden;
 }
 
-.card-overflow::-webkit-scrollbar {
+.overflow::-webkit-scrollbar {
   width: 8px;
 }
 
-.card-overflow::-webkit-scrollbar-thumb {
+.overflow::-webkit-scrollbar-thumb {
   background: #666;
 }

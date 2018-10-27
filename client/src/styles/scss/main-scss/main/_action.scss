@@ -22,7 +22,7 @@ div.action:not(.card):hover {
 }
 
 div.action.card:hover .component {
-  background-color: #F0F0F0;
+  box-shadow: 0 0 8px rgba(0, 0, 0, .33);
 }
 
 div.action.card.selected .component {

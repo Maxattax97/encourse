@@ -53,6 +53,12 @@ class CoursePanel extends Component {
     };
 
     render() {
+
+        const chartList = [
+            <ClassProgressHistogram projectID={this.props.currentProjectId} key={1}/>,
+            <ClassTestCasePercentDone projectID={this.props.currentProjectId} key={2}/>
+        ]
+
         return (
             <div className='panel-course'>
                 <ProjectNavigation onModalBlur={ (blur) => this.setState({modal_blur : blur ? ' blur' : ''}) }
@@ -91,19 +97,14 @@ class CoursePanel extends Component {
                             icon={ <SettingsIcon/> } />
                         <div className='h1 break-line header' />
 
+                        <h3 className='header'>Course Charts Summary</h3>
                         <Summary
                             columns={ 2 }
-                            data={ [
-                                <ClassProgressHistogram projectID={this.props.currentProjectId} key={1}/>,
-                                <ClassTestCasePercentDone projectID={this.props.currentProjectId} key={2}/>
-                            ] }
+                            data={ chartList }
                             className='charts'
                             iterator={ (chart) => <Card key={ chart.key }>
-                                {
-                                    chart
-                                }
+                                { chart }
                             </Card> } >
-                            <h3 className='header'>Course Charts Summary</h3>
                         </Summary>
 
                         <div className='h1 break-line' />
