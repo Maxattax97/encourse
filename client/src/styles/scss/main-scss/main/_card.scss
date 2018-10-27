@@ -12,7 +12,8 @@
   height: auto;
   @include set-rem-safe(padding, 1rem);
   background-color: $card-color;
-  border-radius: 4px;
+  border-radius: 2px;
+  border: 1px #d6d6d6 solid;
   box-shadow: 0 2px 4px rgba(0, 0, 0, .16);
 }
 

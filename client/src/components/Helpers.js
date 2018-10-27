@@ -88,7 +88,10 @@ export class Dropdown extends Component {
                     style={ this.state.show ? null : { display: 'none' } }>
                     {
                         React.Children.map(this.props.children, (child, index) =>
-                            <li className='action' onClick={ () => this.props.onClick(index) }>
+                            <li className='action' onClick={ () => {
+                                this.props.onClick(index)
+                                this.setState({ show: false })
+                            } }>
                                 { child }
                             </li>
                         )
