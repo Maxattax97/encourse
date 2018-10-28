@@ -13,13 +13,12 @@ export default function genericDispatch(type, hasError, success, method) {
                           ...headers }, method, body, mode: 'cors'})
                     .then((response) => {
                         if (!response.ok || response.status === 204) {
-                            console.log(response.text())
                             throw Error(response.status + ' ' + response.statusText + ' ')
                         }
                         return response
                     })
                     .then((response) => {
-                        return response.json()
+                        if(response.type !== 'basic') return response.json()
                     })
                     .then((data) => {
                         dispatch(success(data, extra))
