@@ -165,13 +165,13 @@ public class ReadController {
                 }
 
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(userName + " does not have content");
+                    errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
                 String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
-                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
         }
         if (errors.isEmpty()) {
@@ -202,13 +202,13 @@ public class ReadController {
                 }
 
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(userName + " does not have content");
+                    errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
                 String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
-                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
         }
         if (errors.isEmpty()) {
@@ -239,13 +239,13 @@ public class ReadController {
                 }
 
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(userName + " does not have content");
+                    errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
                 String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
-                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
         }
         if (errors.isEmpty()) {
@@ -276,13 +276,13 @@ public class ReadController {
                 }
 
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(userName + " does not have content");
+                    errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
                 String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
-                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
         }
         if (errors.isEmpty()) {
@@ -320,13 +320,13 @@ public class ReadController {
                 }
 
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(userName + " does not have content");
+                    errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
                 String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
-                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
         }
         if (errors.isEmpty()) {
@@ -352,7 +352,7 @@ public class ReadController {
             } else if (auth.contentEquals(Account.Role_Names.TA) && userNames == null) {
                 returnJson = taService.getAssignmentsProgress(projectID, getUserFromAuth().getUsername());
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(getUserFromAuth().getUsername() + "'s students do not have content");
+                    errors.add("\"" + getUserFromAuth().getUsername() + "'s students do not have content" + "\"");
                     break;
                 }
                 String json = returnJson.jsonObject.toJSONString();
@@ -379,13 +379,13 @@ public class ReadController {
                 }
 
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(userName + " does not have content");
+                    errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
                 String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
-                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
         }
         if (errors.isEmpty()) {
