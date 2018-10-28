@@ -89,9 +89,7 @@ class CoursePanel extends Component {
                 <div className='panel-center-content'>
 
                     <div className='panel-course-content'>
-                        <Title onClick={ () => {
-                            this.props.setModalState(1)
-                        } }>
+                        <Title onClick={ () => this.props.setModalState(1) }>
                             <h1 className='header'>CS252</h1>
                             <SettingsIcon/>
                         </Title>
