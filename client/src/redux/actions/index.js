@@ -1,5 +1,6 @@
 export { 
-    getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, getSectionsData
+    getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, 
+    getSectionsData, 
 } from './course' 
 
 export {
@@ -14,7 +15,8 @@ export {
 
 export {
     setCurrentStudent, clearStudent,
-    getProgressLine, getCodeFrequency, getCommitFrequency, getStatistics, getCommitHistory
+    getStudent, getProgressLine, getCodeFrequency, getCommitFrequency, getStatistics,
+    getCommitHistory, getProgressPerTime, getProgressPerCommit,
 } from './student'
 
 export {
@@ -25,3 +27,7 @@ export {
 export {
     getTeachingAssistants
 } from './teaching_assistant'
+
+export {
+    setModalState
+} from './modal'

@@ -1,29 +1,28 @@
+@import "../helpers";
 @import "../definitions";
 
 .card {
   position:relative;
-  height: auto;
   width: 100%;
 }
 
 .component {
   width: 100%;
-  height: auto;
-  padding: 16px;
-  background-color: $card-color;
-  border-radius: 4px;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, .25);
+  @include set-rem-safe(padding, 1rem);
+  border: 1px $card-border-color solid;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, .16);
+  background: #fbfbfb;
 }
 
-.card-overflow {
+.overflow {
   overflow-y: scroll;
   overflow-x: hidden;
 }
 
-.card-overflow::-webkit-scrollbar {
+.overflow::-webkit-scrollbar {
   width: 8px;
 }
 
-.card-overflow::-webkit-scrollbar-thumb {
+.overflow::-webkit-scrollbar-thumb {
   background: #666;
 }

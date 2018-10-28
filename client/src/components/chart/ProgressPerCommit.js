@@ -4,8 +4,9 @@ import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label, Bru
 import moment from 'moment'
 import { connect } from 'react-redux'
 
-import { getCommitFrequency } from '../../redux/actions'
+import { getProgressPerCommit } from '../../redux/actions'
 import url from '../../server'
+import {LoadingIcon} from '../Helpers'
 
 const defaultData = [
     {date: moment('2018-09-16').valueOf(), progress: 0, timeSpent: 0, commitCount: 0},
@@ -37,7 +38,7 @@ class ProgressPerCommit extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(!this.props.isFinished && nextProps.isFinished) {
+        if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -46,8 +47,9 @@ class ProgressPerCommit extends Component {
     }
 
     fetch = (props) => {
-        // props.getData(`${url}/api/commitCount?projectID=${props.projectID}&userName=${props.id}`,
-        //     {'Authorization': `Bearer ${props.token}`})
+        if(props.projectID) {
+            props.getData(/*TODO: add url*/)
+        }   
     }
 
     dateFormatter = (date) => {
@@ -74,44 +76,46 @@ class ProgressPerCommit extends Component {
 
     render() {
         return (
-            <div className="chart-container">
-                <ResponsiveContainer width="100%" height="100%">
-                    <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
-                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Commit</text>
-                        <CartesianGrid/>
-                        <XAxis dataKey="commitCount" type="number">
-                            <Label offset={-15} position="insideBottom">
+            this.props.isLoading !== undefined && !this.props.isLoading
+                ? <div className="chart-container">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
+                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Commit</text>
+                            <CartesianGrid/>
+                            <XAxis dataKey="commitCount" type="number">
+                                <Label offset={-15} position="insideBottom">
                                 Commit count worked
-                            </Label>
-                        </XAxis>
-                        <YAxis dataKey="progress" type="number">
-                            <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+                                </Label>
+                            </XAxis>
+                            <YAxis dataKey="progress" type="number">
+                                <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                                 Progress
-                            </Label>
-                        </YAxis>
-                        <Tooltip labelFormatter={this.dateFormatter} animationDuration={500}/>
-                        <Scatter type="number" fill="#8884d8"/>
-                    </ScatterChart>
-                </ResponsiveContainer>
-            </div>
+                                </Label>
+                            </YAxis>
+                            <Tooltip labelFormatter={this.dateFormatter} animationDuration={500}/>
+                            <Scatter type="number" fill="#8884d8"/>
+                        </ScatterChart>
+                    </ResponsiveContainer>
+                </div>
+                :
+                <div className='chart-container loading'>
+                    <LoadingIcon/>
+                </div>
         )
     }
 }
 
 const mapStateToProps = (state) => {
     return {
-        // token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
-        // data: state.student && state.student.getCommitFrequencyData ? state.student.getCommitFrequencyData : null,
-        // isLoading: state.student ? state.student.getCommitFrequencyIsLoading : false,
-        // isFinished: state.student ? state.student.getCommitFrequencyIsFinished : false,
+        data: state.student && state.student.getProgressPerCommitData ? state.student.getProgressPerCommitData : null,
+        isLoading: state.student ? state.student.getProgressPerCommitIsLoading : false,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getData: (url, headers, body) => dispatch(getCommitFrequency(url, headers, body)),
+        getData: (url, headers, body) => dispatch(getProgressPerCommit(url, headers, body)),
     }
 }
 
-export { ProgressPerCommit }
 export default connect(mapStateToProps, mapDispatchToProps)(ProgressPerCommit)

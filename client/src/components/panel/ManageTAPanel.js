@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
 import ActionNavigation from '../navigation/ActionNavigation'
 import TANavigation from '../navigation/TANavigation'
@@ -6,7 +7,6 @@ import {Summary, Title, CheckmarkIcon} from '../Helpers'
 import {history} from '../../redux/store'
 import StudentAssignPreview from './util/StudentAssignPreview'
 import SectionPreview from './util/SectionPreview'
-import connect from 'react-redux/es/connect/connect'
 import url from '../../server'
 import {getSectionsData, getStudentPreviews, getTeachingAssistants} from '../../redux/actions'
 
@@ -149,7 +149,9 @@ class ManageTAPanel extends Component {
                     </div>
 
                     <div className="panel-center-content">
-                        <Title header={ <h1 className='header'>CS252 - Teaching Assistants</h1> } />
+                        <Title>
+                            <h1 className='header'>CS252 - Teaching Assistants</h1>
+                        </Title>
                         <div className='h1 break-line header' />
 
                     </div>
@@ -162,6 +164,7 @@ class ManageTAPanel extends Component {
                     back="Course"
                     backClick={ this.back }
                     teaching_assistants={ this.props.teaching_assistants }
+                    isLoading={ this.props.taIsLoading }
                     current_ta={ this.state.current_ta }
                     change={ this.changeTA }/>
 
@@ -179,11 +182,14 @@ class ManageTAPanel extends Component {
                 </div>
 
                 <div className="panel-center-content">
-                    <Title header={ <h1 className='header'>CS252 - Teaching Assistants - { `${current_ta.first_name} ${current_ta.last_name}` }</h1> } />
+                    <h1 className='header'>CS252 - Teaching Assistants - { `${current_ta.first_name} ${current_ta.last_name}` }</h1>
                     <div className='h1 break-line header' />
-                    <Summary header={<h3 className='header'>Assigning Sections</h3>}
+
+                    <h3 className='header'>Assigning Sections to {current_ta.first_name} {current_ta.last_name}</h3>
+                    <Summary
                         columns={5}
                         data={this.props.sections}
+                        isLoading={this.props.sectionsIsLoading}
                         iterator={(section) =>
                             current_ta ?
                                 <SectionPreview key={section.id}
@@ -195,14 +201,14 @@ class ManageTAPanel extends Component {
                     />
 
                     <div className='h2 break-line header' />
-                    <h3 className='header'>Assigning Students</h3>
+                    <h3 className='header'>Assigning Students to {current_ta.first_name} {current_ta.last_name}</h3>
                     <div className='summary-container'>
                         <div className='float-height cols-2'>
                             <div>
                                 <div className={this.state.assignment_type === 0 ? 'action radio-selected' : 'action'}
                                     onClick={ () => this.setState({ assignment_type: 0 }) }>
 
-                                    <h5 className="header">Assign by career account</h5>
+                                    <h5 className="header">From Purdue Career Account</h5>
                                     {
                                         this.state.assignment_type === 0 ?
                                             <CheckmarkIcon /> :
@@ -212,7 +218,7 @@ class ManageTAPanel extends Component {
                                 <div className={this.state.assignment_type === 1 ? 'action radio-selected' : 'action'}
                                     onClick={ () => this.setState({ assignment_type: 1 }) }>
 
-                                    <h5 className="header">Assign by selection</h5>
+                                    <h5 className="header">From student summary cards</h5>
                                     {
                                         this.state.assignment_type === 1 ?
                                             <CheckmarkIcon /> :
@@ -222,7 +228,7 @@ class ManageTAPanel extends Component {
                                 <div className={this.state.assignment_type === 2 ? 'action radio-selected' : 'action'}
                                     onClick={ () => this.setState({ assignment_type: 2 }) }>
 
-                                    <h5 className="header">Assign all students</h5>
+                                    <h5 className="header">From all students in assigned sections</h5>
                                     {
                                         this.state.assignment_type === 2 ?
                                             <CheckmarkIcon /> :
@@ -241,13 +247,14 @@ class ManageTAPanel extends Component {
                                 <div className='summary-container'>
                                     <div className='float-height cols-5'>
                                         <div>
-                                            <h4 className='header'>Student ID</h4>
+                                            <h4 className='header'>Student Career Account</h4>
                                             <input type="text" className="h3-size" value={this.state.student_search} onChange={this.onChange} onKeyPress={this.submitStudentSearch} name="student_search" autoComplete="off"/>
                                         </div>
                                     </div>
                                 </div>
                                 <Summary columns={ 5 }
                                     data={ this.state.students }
+                                    isLoading={this.props.studentsIsLoading}
                                     iterator={(student) =>
                                         <StudentAssignPreview key={student} student={this.props.students.find(e => e.id === student)} isSelected={true}/>
                                     } />
@@ -257,6 +264,7 @@ class ManageTAPanel extends Component {
                                 <div className='student-selection-list'>
                                     <Summary columns={ 5 }
                                         data={ this.props.students.filter(student => student.sections.filter(id => this.state.sections.includes(id)).length > 0) }
+                                        isLoading={this.props.studentsIsLoading}
                                         iterator={(student) =>
                                             <StudentAssignPreview key={student.id} onClick={() => this.toggleStudent(student.id)} student={student} isSelected={this.state.students.includes(student.id)}/>
                                         } />
@@ -266,6 +274,7 @@ class ManageTAPanel extends Component {
                                 <div className='student-selection-list'>
                                     <Summary columns={ 5 }
                                         data={ this.props.students.filter(student => student.sections.filter(id => this.state.sections.includes(id)).length > 0) }
+                                        isLoading={this.props.studentsIsLoading}
                                         iterator={(student) =>
                                             <StudentAssignPreview key={student.id} student={student} isSelected={true}/>
                                         } />
@@ -280,10 +289,12 @@ class ManageTAPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
         sections: state.course && state.course.getSectionsData ? state.course.getSectionsData : [],
-        teaching_assistants: state.teachingAssistant && state.teachingAssistant.getTeachingAssistants ? state.teachingAssistant.getTeachingAssistants : []
+        teaching_assistants: state.teachingAssistant && state.teachingAssistant.getTeachingAssistantsData ? state.teachingAssistant.getTeachingAssistantsData : [],
+        sectionsIsLoading: state.course ? state.course.getSectionsIsLoading : false,
+        taIsLoading: state.teachingAssistant ? state.teachingAssistant.getTeachingAssistantsIsLoading : false,
+        studentsIsLoading: state.course ? state.course.getStudentPreviewsIsLoading : false,
     }
 }
 

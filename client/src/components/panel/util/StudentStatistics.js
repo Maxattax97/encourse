@@ -1,21 +1,21 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { getStatistics } from '../../../redux/actions/index'
+import { getStatistics } from '../../../redux/actions'
 import url from '../../../server'
 
 const defaultData = [
     {
         stat_name: 'Estimated Time Spent',
-        stat_value: '5 hours'
+        stat_value: '0 hours'
     },
     {
         stat_name: 'Additions',
-        stat_value: '103'
+        stat_value: '0'
     },
     {
         stat_name: 'Deletions',
-        stat_value: '3415'
+        stat_value: '0'
     },
 ]
 
@@ -25,68 +25,6 @@ class StudentStatistics extends Component {
         super(props)
 
         this.state = {
-            stats: [
-                {
-                    stat_name: 'Estimated Time Spent',
-                    stat_value: '5 hours'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '103'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '3415'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '`35'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '1234'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '123'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '5342'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '213'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '76'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '123'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '567'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '43'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '123'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '45'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '36'
-                }
-            ],
             formattedData: [],
         }
     }
@@ -96,7 +34,7 @@ class StudentStatistics extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(!this.props.isFinished && nextProps.isFinished) {
+        if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.stats) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -105,7 +43,9 @@ class StudentStatistics extends Component {
     }
 
     fetch = (props) => {
-        props.getStatistics(`${url}/api/statistics?projectID=${props.projectID}&userName=${props.id}`)
+        if(props.projectID) {
+            props.getStatistics(`${url}/api/statistics?projectID=${props.projectID}&userName=${props.id}`)
+        }
     }
 
     formatApiData = (udata) => {
@@ -126,6 +66,8 @@ class StudentStatistics extends Component {
             <div className="student-stats-container">
                 <h3 className='header'>Statistics</h3>
                 <div className="h3 break-line header" />
+                { !this.props.isLoading
+                ? <div>
                 {
                     this.state.formattedData &&
                     this.state.formattedData.map &&
@@ -135,6 +77,8 @@ class StudentStatistics extends Component {
                             <h5>{stat.stat_value}</h5>
                         </div>)
                 }
+                </div>
+                : <div>{/* TODO: add spinner */}Loading</div>}
             </div>
         )
     }
@@ -142,10 +86,8 @@ class StudentStatistics extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : [],
-        isLoading: state.student ? state.student.getStatisticsIsLoading : true,
-        isFinished: state.student ? state.student.getStatisticsIsFinished : false,
+        isLoading: state.student ? state.student.getStatisticsIsLoading : false,
     }
 }
 

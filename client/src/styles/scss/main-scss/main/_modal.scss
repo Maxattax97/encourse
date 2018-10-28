@@ -15,14 +15,9 @@
     top: .5em;
     left: .5em;
     z-index: 2;
-    filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(66%);
     width: 1.5em;
     height: 1.5em;
   }
-}
-
-.exit-nav:hover svg.icon {
-  filter: invert(88%) sepia(1%) saturate(2264%) hue-rotate(2deg) brightness(87%) contrast(97%) opacity(90%);
 }
 
 .modal {
@@ -66,7 +61,6 @@
   svg.icon {
     @include set-size-rem-safe(1.5rem, 1.5rem);
     display:block;
-    filter: $icon-color;
   }
 
   div {
@@ -77,7 +71,7 @@
 
 .modal-overlay {
   position:fixed;
-  @include set-rem-safe(top, 3rem);
+  top: 0;
   bottom: 0;
   left: 0;
   right: 0;
@@ -93,5 +87,5 @@
 
 .modal-overlay.show {
   z-index: 100;
-  background-color:rgba(black, .2);
+  background-color:rgba(white, .66);
 }

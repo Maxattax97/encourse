@@ -122,7 +122,7 @@ public class ReadController {
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
             String auth = ((Authority) iter.next()).getAuthority();
-            if (auth.contentEquals(Account.Role_Names.PROFESSOR)) {
+            if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                 returnJson = professorService.getTestSummary(projectID);
                 break;
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
@@ -155,7 +155,7 @@ public class ReadController {
                 Iterator iter = getUserAuthorities().iterator();
                 while (iter.hasNext()) {
                     String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR)) {
+                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                         returnJson = professorService.getCommitList(projectID, userName);
                         break;
                     } else if (auth.contentEquals(Account.Role_Names.TA)) {
@@ -165,13 +165,13 @@ public class ReadController {
                 }
 
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(userName + " does not have content");
+                    errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
                 String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
-                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
         }
         if (errors.isEmpty()) {
@@ -192,7 +192,7 @@ public class ReadController {
                 Iterator iter = getUserAuthorities().iterator();
                 while (iter.hasNext()) {
                     String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR)) {
+                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                         returnJson = professorService.getCommitCounts(projectID, userName);
                         break;
                     } else if (auth.contentEquals(Account.Role_Names.TA)) {
@@ -202,13 +202,13 @@ public class ReadController {
                 }
 
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(userName + " does not have content");
+                    errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
                 String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
-                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
         }
         if (errors.isEmpty()) {
@@ -229,7 +229,7 @@ public class ReadController {
                 Iterator iter = getUserAuthorities().iterator();
                 while (iter.hasNext()) {
                     String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR)) {
+                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                         returnJson = professorService.getStatistics(projectID, userName);
                         break;
                     } else if (auth.contentEquals(Account.Role_Names.TA)) {
@@ -239,13 +239,13 @@ public class ReadController {
                 }
 
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(userName + " does not have content");
+                    errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
                 String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
-                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
         }
         if (errors.isEmpty()) {
@@ -266,7 +266,7 @@ public class ReadController {
                 Iterator iter = getUserAuthorities().iterator();
                 while (iter.hasNext()) {
                     String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR)) {
+                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                         returnJson = professorService.getAdditionsAndDeletions(projectID, userName);
                         break;
                     } else if (auth.contentEquals(Account.Role_Names.TA)) {
@@ -276,13 +276,13 @@ public class ReadController {
                 }
 
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(userName + " does not have content");
+                    errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
                 String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
-                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
         }
         if (errors.isEmpty()) {
@@ -310,7 +310,7 @@ public class ReadController {
                 Iterator iter = getUserAuthorities().iterator();
                 while (iter.hasNext()) {
                     String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR)) {
+                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                         returnJson = professorService.getCommitVelocity(projectID, userName);
                         break;
                     } else if (auth.contentEquals(Account.Role_Names.TA)) {
@@ -320,13 +320,13 @@ public class ReadController {
                 }
 
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(userName + " does not have content");
+                    errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
                 String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
-                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
         }
         if (errors.isEmpty()) {
@@ -347,12 +347,12 @@ public class ReadController {
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
             String auth = ((Authority) iter.next()).getAuthority();
-            if (auth.contentEquals(Account.Role_Names.PROFESSOR)) {
+            if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                 break;
             } else if (auth.contentEquals(Account.Role_Names.TA) && userNames == null) {
                 returnJson = taService.getAssignmentsProgress(projectID, getUserFromAuth().getUsername());
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(getUserFromAuth().getUsername() + "'s students do not have content");
+                    errors.add("\"" + getUserFromAuth().getUsername() + "'s students do not have content" + "\"");
                     break;
                 }
                 String json = returnJson.jsonObject.toJSONString();
@@ -369,7 +369,7 @@ public class ReadController {
                 iter = getUserAuthorities().iterator();
                 while (iter.hasNext()) {
                     String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR)) {
+                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                         returnJson = professorService.getStudentProgress(projectID, userName);
                         break;
                     } else if (auth.contentEquals(Account.Role_Names.TA)) {
@@ -379,13 +379,13 @@ public class ReadController {
                 }
 
                 if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add(userName + " does not have content");
+                    errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
                 String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
-                errors.add(getUserFromAuth().getUsername() + " does not have access over " + userName);
+                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
         }
         if (errors.isEmpty()) {

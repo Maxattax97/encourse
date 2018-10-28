@@ -4,9 +4,10 @@ import { connect } from 'react-redux'
 
 import { getClassProgress } from '../../redux/actions'
 import url from '../../server'
+import {LoadingIcon} from '../Helpers'
 
-const toPercent = (decimal, fixed = 0) => {
-    return `${(decimal * 100).toFixed(fixed)}%`
+const toPercent = (decimal, fixed = 2) => {
+    return `${(decimal).toFixed(fixed)}`
 }
 
 const defaultData = [
@@ -56,7 +57,7 @@ class ClassProgressHistogram extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(!this.props.isFinished && nextProps.isFinished) {
+        if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.projectID !== this.props.projectID) {
@@ -65,7 +66,9 @@ class ClassProgressHistogram extends Component {
     }
 
     fetch = (props) => {
-        props.getData(`${url}/api/classProgress?projectID=${props.projectID}`)
+        if(props.projectID) {
+            props.getData(`${url}/api/classProgress?projectID=${props.projectID}`)
+        }    
     }
 
     formatApiData = (udata) => {
@@ -96,39 +99,42 @@ class ClassProgressHistogram extends Component {
 
     render() {
         return (
-            <div className="chart-container">
-                <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart
-                        data={this.state.formattedData}
-                        margin={{top: 5, right: 30, left: 30, bottom: 35}}
-                        barCategoryGap={0}
-                    >
-                        <CartesianGrid/>
-                        <XAxis dataKey="progressBin" type="category">
-                            <Label offset={-10} position="insideBottom">
-                                % Completion
-                            </Label>
-                        </XAxis>
-                        <YAxis tickFormatter={toPercent} domain={[0, 1]}>
-                            <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
-                                % of Class
-                            </Label>
-                        </YAxis>
-                        <Tooltip/>
-                        <Bar dataKey="percent" fill="#8884d8"/>
-                    </ComposedChart>
-                </ResponsiveContainer>
-            </div>
+            this.props.isLoading !== undefined && !this.props.isLoading
+                ? <div className="chart-container">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <ComposedChart
+                            data={this.state.formattedData}
+                            margin={{top: 5, right: 30, left: 30, bottom: 35}}
+                            barCategoryGap={0}
+                        >
+                            <CartesianGrid/>
+                            <XAxis dataKey="progressBin" type="category">
+                                <Label offset={-10} position="insideBottom">
+                                    Total
+                                </Label>
+                            </XAxis>
+                            <YAxis tickFormatter={toPercent} domain={[0, 1]}>
+                                <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+                                    Students
+                                </Label>
+                            </YAxis>
+                            <Tooltip/>
+                            <Bar dataKey="percent" fill="#8884d8"/>
+                        </ComposedChart>
+                    </ResponsiveContainer>
+                </div>
+                :
+                <div className='chart-container loading'>
+                    <LoadingIcon/>
+                </div>
         )
     }
 }
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.logInData ? state.auth.logInData.access_token : null,
         data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
         isLoading: state.course ? state.course.getClassProgressIsLoading : false,
-        isFinished: state.course ? state.course.getClassProgressIsFinished : false,
     }
 }
 

@@ -15,8 +15,10 @@ public class TestExecuter implements Runnable {
     private String testingDirectory;
     private String testCaseDirectory;
     private String hiddenTestCaseDirectory;
+    private String courseAccount;
 
-    public TestExecuter(String testingDirectory, String testCaseDirectory, String hiddenTestCaseDirectory) {
+    public TestExecuter(String courseID, String testingDirectory, String testCaseDirectory, String hiddenTestCaseDirectory) {
+        this.courseAccount = courseID + "-account";
         this.testingDirectory = testingDirectory;
         this.testCaseDirectory = testCaseDirectory;
         this.hiddenTestCaseDirectory = hiddenTestCaseDirectory;
@@ -25,10 +27,12 @@ public class TestExecuter implements Runnable {
     @Override
     public void run() {
         try {
-            Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + " " + testCaseDirectory + " 2> /dev/null");
+            String command = "/home/" + courseAccount + "/testall.sh " + testingDirectory + " " + testCaseDirectory;
+            Process process = Runtime.getRuntime().exec("./src/main/bash/runTestallAsCourseAccount.sh " + courseAccount + " " + command  + " 2> /dev/null");
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             visibleResult = stdInput.readLine();
-            process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + " " + hiddenTestCaseDirectory + " 2> /dev/null");
+            command = "/home/" + courseAccount + "/testall.sh " + testingDirectory + " " + hiddenTestCaseDirectory;
+            process = Runtime.getRuntime().exec("./src/main/bash/runTestallAsCourseAccount.sh " + courseAccount + " " + command  + " 2> /dev/null");
             stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             hiddenResult = stdInput.readLine();
         }
