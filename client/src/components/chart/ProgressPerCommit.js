@@ -48,7 +48,7 @@ class ProgressPerCommit extends Component {
 
     fetch = (props) => {
         if(props.projectID) {
-            props.getData(/*TODO: add url*/)
+            props.getData(`${url}/api/velocity?projectID=${props.projectID}&userName=${props.id}`)
         }   
     }
 
