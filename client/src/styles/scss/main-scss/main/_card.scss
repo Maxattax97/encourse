@@ -15,14 +15,20 @@
 }
 
 .overflow {
-  overflow-y: scroll;
+  overflow-y: hidden;
   overflow-x: hidden;
+  width: calc(100% - 8px);
 }
 
-.overflow::-webkit-scrollbar {
+.overflow:hover {
+  width: 100%;
+  overflow-y: scroll;
+}
+
+.overflow:hover::-webkit-scrollbar {
   width: 8px;
 }
 
-.overflow::-webkit-scrollbar-thumb {
+.overflow:hover::-webkit-scrollbar-thumb {
   background: #666;
 }
