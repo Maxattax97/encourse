@@ -1,0 +1,79 @@
+@import "../definitions";
+@import "../helpers";
+
+.dropdown {
+  color: $hover-color;
+  display: inline-block;
+  position: relative;
+
+  .dropdown-toggle {
+    cursor: pointer;
+    padding: 6px 12px;
+    padding: .375rem .75rem;
+
+    h1,h2,h3,h4,h5,h6 {
+      cursor: pointer;
+    }
+
+    svg {
+      cursor: pointer;
+      position:absolute;
+      top: 50%;
+      @include transform(translate(0, -40%));
+    }
+
+    h5 + svg {
+      @include set-size-rem-safe(.83rem, .83rem);
+    }
+  }
+
+  .dropdown-menu {
+    position:absolute;
+    top: 100%;
+    @include set-rem-safe(min-width, 10rem);
+    z-index: 1;
+    background:#fff;
+    border: 1px #d6d6d6 solid;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .16);
+
+    li {
+      list-style: none outside none;
+      outline: none;
+      width: 100%;
+      padding: 4px 10px;
+      padding: .25rem .625rem;
+    }
+
+    li:after {
+      @include float-height();
+    }
+  }
+
+  .dropdown-menu-left {
+    li {
+      * {
+        float:left;
+      }
+    }
+  }
+
+  .dropdown-menu-right {
+    left: 100%;
+    @include transform(translate(-100%, 0));
+
+    li {
+      * {
+        float:right;
+      }
+    }
+  }
+
+}
+
+.dropdown .dropdown-toggle:hover {
+  color:#1f1f1f;
+
+  svg polygon, svg path {
+    fill: #1f1f1f;
+  }
+}

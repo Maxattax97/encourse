@@ -10,17 +10,31 @@ import ClassProgressHistogram from '../chart/ClassProgressHistogram'
 import ClassTestCasePercentDone from '../chart/ClassTestCasePercentDone'
 import ActionNavigation from '../navigation/ActionNavigation'
 import CourseModal from '../modal/CourseModal'
-import {Title, Summary, Card, SettingsIcon} from '../Helpers'
+import {Title, Summary, Card, SettingsIcon, Filter, Dropdown} from '../Helpers'
 
 import { fuzzing } from '../../fuzz'
 
 class CoursePanel extends Component {
 
+    sort_by_ranges = ['Name', 'Hours', 'Commits', 'Progress']
+    order_ranges = ['Ascending', 'Descending']
+    commit_ranges = ['Any', '1 - 10', '11 - 25', '26 - 100', '101 - 500', '500+']
+    time_ranges = ['Any', '1 - 5', '6 - 10', '11 - 25', '26+']
+    progress_ranges = ['Any', '0 - 25%', '26 - 50%', '51 - 75%', '76 - 100%']
+
     constructor(props) {
         super(props)
 
         this.state = {
-            modal_blur: ''
+            modal_blur: '',
+            sort_students_by: 0,
+            filter_students_by: 0,
+            display_students_menu: 0,
+            sort_by: 0,
+            order_by: 0,
+            commit_filter: 0,
+            hour_filter: 0,
+            progress_filter: 0
         }
     }
 
@@ -39,6 +53,12 @@ class CoursePanel extends Component {
     };
 
     render() {
+
+        const chartList = [
+            <ClassProgressHistogram projectID={this.props.currentProjectId} key={1}/>,
+            <ClassTestCasePercentDone projectID={this.props.currentProjectId} key={2}/>
+        ]
+
         return (
             <div className='panel-course'>
                 <ProjectNavigation onModalBlur={ (blur) => this.setState({modal_blur : blur ? ' blur' : ''}) }
@@ -77,23 +97,85 @@ class CoursePanel extends Component {
                             icon={ <SettingsIcon/> } />
                         <div className='h1 break-line header' />
 
-                        <Summary header={ <h3 className='header'>Course Charts Summary</h3> }
+                        <h3 className='header'>Course Charts Summary</h3>
+                        <Summary
                             columns={ 2 }
-                            data={ [
-                                <ClassProgressHistogram projectID={this.props.currentProjectId} key={1}/>,
-                                <ClassTestCasePercentDone projectID={this.props.currentProjectId} key={2}/>
-                            ] }
+                            data={ chartList }
                             className='charts'
                             iterator={ (chart) => <Card key={ chart.key }>
-                                {chart}
-                            </Card> } />
+                                { chart }
+                            </Card> } >
+                        </Summary>
 
                         <div className='h1 break-line' />
 
-                        <Summary header={ <h3 className='header'>Students Summary</h3> }
+                        <h3 className='header'>Students Summary</h3>
+                        {
+                            this.props.students && this.props.students.length > 0 ?
+                                <Filter>
+                                    <Dropdown header={<h5>Sort by { this.sort_by_ranges[this.state.sort_by] }</h5>}
+                                        onClick={ (index) => { this.setState({ sort_by: index }) }}
+                                        leftAnchor>
+
+                                        {
+                                            this.sort_by_ranges.map(range =>
+                                                <h5 key={range}>
+                                                    Sort by {range}
+                                                </h5>
+                                            )
+                                        }
+                                    </Dropdown>
+                                    <Dropdown header={<h5>{ this.order_ranges[this.state.order_by] } Order</h5>}
+                                        onClick={ (index) => { this.setState({ order_by: index }) }}
+                                        rightAnchor>
+                                        {
+                                            this.order_ranges.map(range =>
+                                                <h5 key={range}>
+                                                    {range} Order
+                                                </h5>
+                                            )
+                                        }
+                                    </Dropdown>
+                                    <Dropdown header={<h5>{ this.commit_ranges[this.state.commit_filter] } Commits</h5>}
+                                        onClick={ (index) => { this.setState({ commit_filter: index }) }}
+                                        rightAnchor>
+                                        {
+                                            this.commit_ranges.map(range =>
+                                                <h5 key={range}>
+                                                    {range} Commits
+                                                </h5>
+                                            )
+                                        }
+                                    </Dropdown>
+                                    <Dropdown header={<h5>{ this.time_ranges[this.state.hour_filter] } Hours</h5>}
+                                        onClick={ (index) => { this.setState({ hour_filter: index }) }}
+                                        rightAnchor>
+                                        {
+                                            this.time_ranges.map(range =>
+                                                <h5 key={range}>
+                                                    {range} Hours
+                                                </h5>
+                                            )
+                                        }
+                                    </Dropdown>
+                                    <Dropdown header={<h5>{ this.progress_ranges[this.state.progress_filter] } Progress</h5>}
+                                        onClick={ (index) => { this.setState({ progress_filter: index }) }}
+                                        rightAnchor>
+                                        {
+                                            this.progress_ranges.map(range =>
+                                                <h5 key={range}>
+                                                    {range} Progress
+                                                </h5>
+                                            )
+                                        }
+                                    </Dropdown>
+                                </Filter>
+                                :
+                                null
+                        }
+                        <Summary
                             columns={ 5 }
                             data={ this.props.students }
-                            isLoading={ this.props.isLoading }
                             className='course-students'
                             iterator={ (student) =>
                                 <StudentPreview key={ student.id }
@@ -111,8 +193,7 @@ class CoursePanel extends Component {
 const mapStateToProps = (state) => {
     return {
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
-        isLoading: state.course ? state.course.getStudentPreviewsIsLoading : false,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
 

@@ -12,7 +12,6 @@ import StudentStatistics from './util/StudentStatistics'
 import CommitHistory from './util/CommitHistory'
 import { history } from '../../redux/store'
 import { getStudent, clearStudent } from '../../redux/actions/index'
-import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 import StudentFeedback from './util/StudentFeedback'
 
@@ -23,36 +22,6 @@ class StudentPanel extends Component {
         super(props)
 
         this.state = {
-            current_project : 2,
-            projects : [
-                {
-                    name: 'My Malloc',
-                    source_name: 'lab1-src',
-                    created_date: '09-01-18',
-                    due_date: '09-08-18',
-                    test_script: true,
-                    hidden_test_script: true,
-                    id: 1 //id would be preferable for unique identification
-                },
-                {
-                    name: 'Lab 2',
-                    source_name: 'lab2-src',
-                    created_date: '09-01-18',
-                    due_date: '09-08-18',
-                    test_script: true,
-                    hidden_test_script: true,
-                    id: 2
-                },
-                {
-                    name: 'Shell Project',
-                    source_name: 'lab3-src',
-                    created_date: '09-01-18',
-                    due_date: '09-08-18',
-                    test_script: true,
-                    hidden_test_script: true,
-                    id: 3
-                }
-            ],
             modal_blur: ''
         }
     }
@@ -105,7 +74,7 @@ class StudentPanel extends Component {
                         </h1>
                         <div className="h1 break-line header" />
 
-                        <Summary header={ <h3 className='header'>Student Charts</h3> }
+                        <Summary
                             columns={ 2 }
                             data={ [
                                 <StudentProgressLineGraph projectID={this.props.currentProjectId} id={this.props.currentStudent.id} key={1}/>,
@@ -117,9 +86,11 @@ class StudentPanel extends Component {
                             className='charts'
                             iterator={ (chart) =>
                                 <Card key={ chart.key } >
-                                    {chart }
+                                    { chart }
                                 </Card>
-                            }/>
+                            }>
+                            <h3 className='header'>Student Charts</h3>
+                        </Summary>
 
                         <div className="h1 break-line" />
                         <div className="student-stats-comments float-height">

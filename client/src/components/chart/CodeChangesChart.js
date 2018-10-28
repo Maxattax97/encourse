@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 
 import { getCodeFrequency } from '../../redux/actions'
 import url from '../../server'
+import {LoadingIcon} from '../Helpers'
 
 const defaultData = [
     {date: moment('9/9/2018').valueOf(), additions: 0, deletions: -0},
@@ -94,24 +95,27 @@ class CodeChangesChart extends Component {
 
     render() {
         return (
-            !this.props.isLoading
-            ? <div className="chart-container">
-                <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={this.state.formattedData} margin={{top: 40, right: 35, left: 0, bottom: 25}}>
-                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Lines of Code Added/Deleted</text>
-                        <CartesianGrid strokeDasharray="3 3"/>
-                        <XAxis type="number" dataKey="date" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
-                            <Label position="insideBottom" offset={-15} value="Date"/>
-                        </XAxis>
-                        <YAxis/>
-                        <Tooltip labelFormatter={this.dateFormatter}/>
-                        <Area type="monotone" dataKey="additions" stroke="none" fill="green" />
-                        <Area type="monotone" dataKey="deletions" stroke="none" fill="red" />
-                        <Brush dataKey="date" height={20} stroke="#8884d8" tickFormatter={this.dateFormatter}/>
-                    </AreaChart>
-                </ResponsiveContainer>
-            </div>
-            : <div>{/* TODO: add spinner */}Loading</div>
+            this.props.isLoading !== undefined && !this.props.isLoading
+                ? <div className="chart-container">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={this.state.formattedData} margin={{top: 40, right: 35, left: 0, bottom: 25}}>
+                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Lines of Code Added/Deleted</text>
+                            <CartesianGrid strokeDasharray="3 3"/>
+                            <XAxis type="number" dataKey="date" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
+                                <Label position="insideBottom" offset={-15} value="Date"/>
+                            </XAxis>
+                            <YAxis/>
+                            <Tooltip labelFormatter={this.dateFormatter}/>
+                            <Area type="monotone" dataKey="additions" stroke="none" fill="green" />
+                            <Area type="monotone" dataKey="deletions" stroke="none" fill="red" />
+                            <Brush dataKey="date" height={20} stroke="#8884d8" tickFormatter={this.dateFormatter}/>
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </div>
+                :
+                <div className='chart-container loading'>
+                    <LoadingIcon/>
+                </div>
         )
     }
 }

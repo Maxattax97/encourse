@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 
 import { getProgressPerCommit } from '../../redux/actions'
 import url from '../../server'
+import {LoadingIcon} from '../Helpers'
 
 const defaultData = [
     {date: moment('2018-09-16').valueOf(), progress: 0, timeSpent: 0, commitCount: 0},
@@ -75,28 +76,31 @@ class ProgressPerCommit extends Component {
 
     render() {
         return (
-            !this.props.isLoading 
-            ? <div className="chart-container">
-                <ResponsiveContainer width="100%" height="100%">
-                    <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
-                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Commit</text>
-                        <CartesianGrid/>
-                        <XAxis dataKey="commitCount" type="number">
-                            <Label offset={-15} position="insideBottom">
+            this.props.isLoading !== undefined && !this.props.isLoading
+                ? <div className="chart-container">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
+                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Commit</text>
+                            <CartesianGrid/>
+                            <XAxis dataKey="commitCount" type="number">
+                                <Label offset={-15} position="insideBottom">
                                 Commit count worked
-                            </Label>
-                        </XAxis>
-                        <YAxis dataKey="progress" type="number">
-                            <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+                                </Label>
+                            </XAxis>
+                            <YAxis dataKey="progress" type="number">
+                                <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                                 Progress
-                            </Label>
-                        </YAxis>
-                        <Tooltip labelFormatter={this.dateFormatter} animationDuration={500}/>
-                        <Scatter type="number" fill="#8884d8"/>
-                    </ScatterChart>
-                </ResponsiveContainer>
-            </div>
-            : <div>{/* TODO: add spinner */}Loading</div>
+                                </Label>
+                            </YAxis>
+                            <Tooltip labelFormatter={this.dateFormatter} animationDuration={500}/>
+                            <Scatter type="number" fill="#8884d8"/>
+                        </ScatterChart>
+                    </ResponsiveContainer>
+                </div>
+                :
+                <div className='chart-container loading'>
+                    <LoadingIcon/>
+                </div>
         )
     }
 }
