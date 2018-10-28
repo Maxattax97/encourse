@@ -64,7 +64,10 @@ class ProjectNavigation extends Component {
                         <Card>
                             { !this.props.isLoading
                                 ? <div className="list-container">
-                                    <Title onClick={ this.openProjectOptions } header={ <h3 className='header'>Projects</h3> } icon={ <SettingsIcon/> }/>
+                                    <Title onClick={ this.openProjectOptions }>
+                                        <h3 className='header'>Projects</h3>
+                                        <SettingsIcon/>
+                                    </Title>
                                     <div className="h3 break-line header"/>
                                     <div className='text-list'>
                                         {

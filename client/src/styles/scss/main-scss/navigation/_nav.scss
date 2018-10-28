@@ -46,7 +46,6 @@
   left: 0;
   width:100%;
   @include set-rem-safe(height, 3rem);
-  z-index: 100;
   background: #1f1e1c;
 
   .nav-title {
@@ -58,7 +57,7 @@
     text-align: center;
     margin: auto;
     font-family: "Rhodium Libre", serif;
-    z-index: 101;
+    z-index: 1;
 
     .nav-en {
       cursor:pointer;
@@ -75,7 +74,7 @@
     position:relative;
 
     @include set-rem-safe(width, 6rem);
-    z-index: 102;
+    z-index: 2;
 
     div {
       float:left;

@@ -71,7 +71,7 @@
 
 .modal-overlay {
   position:fixed;
-  @include set-rem-safe(top, 3rem);
+  top: 0;
   bottom: 0;
   left: 0;
   right: 0;
@@ -87,5 +87,5 @@
 
 .modal-overlay.show {
   z-index: 100;
-  background-color:rgba(black, .2);
+  background-color:rgba(white, .66);
 }

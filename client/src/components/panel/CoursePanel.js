@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import url from '../../server'
-import { getStudentPreviews, setCurrentProject, setCurrentStudent } from '../../redux/actions/index'
+import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState} from '../../redux/actions/index'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import StudentPreview from './util/StudentPreview'
 import ClassProgressHistogram from '../chart/ClassProgressHistogram'
@@ -26,7 +26,6 @@ class CoursePanel extends Component {
         super(props)
 
         this.state = {
-            modal_blur: '',
             sort_students_by: 0,
             filter_students_by: 0,
             display_students_menu: 0,
@@ -61,8 +60,7 @@ class CoursePanel extends Component {
 
         return (
             <div className='panel-course'>
-                <ProjectNavigation onModalBlur={ (blur) => this.setState({modal_blur : blur ? ' blur' : ''}) }
-                    {...this.props}/>
+                <ProjectNavigation {...this.props} />
 
                 <div className='panel-right-nav'>
                     <div className='top-nav'>
@@ -86,15 +84,17 @@ class CoursePanel extends Component {
 
                 </div>
 
-                <CourseModal show={ this.state.show_course_options }
-                    close={ () => this.setState({ show_course_options: false, modal_blur: '' }) }/>
+                <CourseModal id={1}/>
 
                 <div className='panel-center-content'>
 
-                    <div className={ `panel-course-content${this.state.modal_blur}` }>
-                        <Title onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' }) }
-                            header={ <h1 className='header'>CS252</h1> }
-                            icon={ <SettingsIcon/> } />
+                    <div className='panel-course-content'>
+                        <Title onClick={ () => {
+                            this.props.setModalState(1)
+                        } }>
+                            <h1 className='header'>CS252</h1>
+                            <SettingsIcon/>
+                        </Title>
                         <div className='h1 break-line header' />
 
                         <h3 className='header'>Course Charts Summary</h3>
@@ -202,6 +202,7 @@ const mapDispatchToProps = (dispatch) => {
         getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
         setCurrentProject: (id, index) => dispatch(setCurrentProject(id, index)),
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
+        setModalState: (id) => dispatch(setModalState(id)),
     }
 }
 

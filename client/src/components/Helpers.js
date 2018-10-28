@@ -4,8 +4,7 @@ export class Title extends Component {
     render() {
         return (
             <div className={ `title${this.props.onClick ? ' action' : ''}` } onClick={ this.props.onClick || null }>
-                { this.props.header }
-                { this.props.icon ? this.props.icon : null }
+                { this.props.children }
             </div>
         )
     }

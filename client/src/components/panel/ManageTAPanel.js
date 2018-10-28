@@ -149,7 +149,9 @@ class ManageTAPanel extends Component {
                     </div>
 
                     <div className="panel-center-content">
-                        <Title header={ <h1 className='header'>CS252 - Teaching Assistants</h1> } />
+                        <Title>
+                            <h1 className='header'>CS252 - Teaching Assistants</h1>
+                        </Title>
                         <div className='h1 break-line header' />
 
                     </div>
@@ -180,9 +182,10 @@ class ManageTAPanel extends Component {
                 </div>
 
                 <div className="panel-center-content">
-                    <Title header={ <h1 className='header'>CS252 - Teaching Assistants - { `${current_ta.first_name} ${current_ta.last_name}` }</h1> } />
+                    <h1 className='header'>CS252 - Teaching Assistants - { `${current_ta.first_name} ${current_ta.last_name}` }</h1>
                     <div className='h1 break-line header' />
-                    <h3 className='header'>Assigning Sections</h3>
+
+                    <h3 className='header'>Assigning Sections to {current_ta.first_name} {current_ta.last_name}</h3>
                     <Summary
                         columns={5}
                         data={this.props.sections}
@@ -198,14 +201,14 @@ class ManageTAPanel extends Component {
                     />
 
                     <div className='h2 break-line header' />
-                    <h3 className='header'>Assigning Students</h3>
+                    <h3 className='header'>Assigning Students to {current_ta.first_name} {current_ta.last_name}</h3>
                     <div className='summary-container'>
                         <div className='float-height cols-2'>
                             <div>
                                 <div className={this.state.assignment_type === 0 ? 'action radio-selected' : 'action'}
                                     onClick={ () => this.setState({ assignment_type: 0 }) }>
 
-                                    <h5 className="header">Assign by career account</h5>
+                                    <h5 className="header">From Purdue Career Account</h5>
                                     {
                                         this.state.assignment_type === 0 ?
                                             <CheckmarkIcon /> :
@@ -215,7 +218,7 @@ class ManageTAPanel extends Component {
                                 <div className={this.state.assignment_type === 1 ? 'action radio-selected' : 'action'}
                                     onClick={ () => this.setState({ assignment_type: 1 }) }>
 
-                                    <h5 className="header">Assign by selection</h5>
+                                    <h5 className="header">From student summary cards</h5>
                                     {
                                         this.state.assignment_type === 1 ?
                                             <CheckmarkIcon /> :
@@ -225,7 +228,7 @@ class ManageTAPanel extends Component {
                                 <div className={this.state.assignment_type === 2 ? 'action radio-selected' : 'action'}
                                     onClick={ () => this.setState({ assignment_type: 2 }) }>
 
-                                    <h5 className="header">Assign all students</h5>
+                                    <h5 className="header">From all students in assigned sections</h5>
                                     {
                                         this.state.assignment_type === 2 ?
                                             <CheckmarkIcon /> :
@@ -244,7 +247,7 @@ class ManageTAPanel extends Component {
                                 <div className='summary-container'>
                                     <div className='float-height cols-5'>
                                         <div>
-                                            <h4 className='header'>Student ID</h4>
+                                            <h4 className='header'>Student Career Account</h4>
                                             <input type="text" className="h3-size" value={this.state.student_search} onChange={this.onChange} onKeyPress={this.submitStudentSearch} name="student_search" autoComplete="off"/>
                                         </div>
                                     </div>

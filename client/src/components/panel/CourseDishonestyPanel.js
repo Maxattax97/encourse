@@ -40,15 +40,11 @@ class CourseDishonestyPanel extends Component {
             <div className='panel-center-content'>
 
                 <div className='panel-course-report'>
-                    <Title
-                        header={ <h1 className='header'>CS252 - Academic Dishonesty Report</h1> }
-                        icon={ <SettingsIcon/> } />
+                    <Title>
+                        <h1 className='header'>CS252 - Academic Dishonesty Report</h1>
+                        <SettingsIcon/>
+                    </Title>
                     <div className='h1 break-line header' />
-
-                    <h3 className='header'>Metrics</h3>
-
-
-                    <div className='h1 break-line' />
 
                     <h3 className='header'>Course Charts Summary</h3>
                     <Summary

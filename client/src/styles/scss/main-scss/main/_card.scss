@@ -11,6 +11,7 @@
   @include set-rem-safe(padding, 1rem);
   border: 1px $card-border-color solid;
   box-shadow: 1px 2px 3px rgba(0, 0, 0, .16);
+  background: #fbfbfb;
 }
 
 .overflow {
