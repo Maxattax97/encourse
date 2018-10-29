@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import Modal from './Modal'
-// import deleteIcon from '../../img/trash.svg'
-import { setDirectory, modifyProject } from '../../redux/actions'
-import url from '../../server'
-import {CheckmarkIcon, Title} from '../Helpers'
+import {setDirectory, modifyProject} from '../../../redux/actions/index'
+import url from '../../../server'
+import {CheckmarkIcon, Modal} from '../../Helpers'
 
 class CourseModal extends Component {
 
@@ -43,31 +41,23 @@ class CourseModal extends Component {
     render() {
         return (
             <div className="course-modal">
-                <Modal center
-                    show={ this.props.show }
-                    onExit={ this.props.close }>
-
-                    <Title header={<h2 className='header'>Course Settings</h2> } key={1}/>
-                    <div className="h2 break-line header" key={2}/>
-                    <h4 className="header" key={3}>
+                <Modal center id={this.props.id}>
+                    <h2 className='header'>Course Settings</h2>
+                    <div className="h2 break-line header"/>
+                    <h4 className="header">
                         Student Repositories Directory
                     </h4>
-                    <input type="text" className="h3-size" value={this.props.courseID} onChange={this.onChange} name="name" autoComplete="off" key={4}/>
-                    <h4 className="header" key={5}>
+                    <input type="text" className="h3-size" value={this.props.courseID} name="name" autoComplete="off"/>
+                    <h4 className="header">
                         Repositories Update Interval
                     </h4>
-                    <input type="number" className="h3-size" value={this.state.interval} onChange={this.onChange} name="interval" ref="interval" key={6}/>
-                    <div className="modal-buttons float-height" key={7}>
+                    <input type="number" className="h3-size" value={this.state.interval} onChange={this.onChange} name="interval" ref="interval"/>
+                    <div className="modal-buttons float-height">
                         <div className="svg-icon action" onClick={ this.saveSettings }>
                             <CheckmarkIcon/>
                         </div>
                     </div>
                 </Modal>
-
-
-                <div className={`modal-overlay${ this.props.show ? ' show' : '' }`}
-                    style={ this.props.show ? { } : { 'display': 'none' } }
-                    onClick={ this.props.close } />
             </div>
         )
     }

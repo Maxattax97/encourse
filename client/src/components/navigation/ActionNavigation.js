@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { toggleHidden } from '../../redux/actions'
-import {Title, Card} from '../Helpers'
+import {Card} from '../Helpers'
 
 class ActionNavigation extends Component {
 
@@ -13,7 +13,7 @@ class ActionNavigation extends Component {
             <div className='actions-container side-nav-right'>
                 <Card>
                     <div className='actions'>
-                        <Title header={ <h3 className='header'>Actions</h3> } />
+                        <h3 className='header'>Actions</h3>
                         <div className="h3 break-line header" />
                         <div className="text-list">
                             {

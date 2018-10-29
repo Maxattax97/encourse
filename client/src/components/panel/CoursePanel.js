@@ -3,26 +3,15 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import url from '../../server'
-import { getStudentPreviews, setCurrentProject, setCurrentStudent } from '../../redux/actions/index'
+import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState} from '../../redux/actions/index'
 import ProjectNavigation from '../navigation/ProjectNavigation'
-import StudentPreview from './util/StudentPreview'
-import ClassProgressHistogram from '../chart/ClassProgressHistogram'
-import ClassTestCasePercentDone from '../chart/ClassTestCasePercentDone'
+import {CourseModal, StudentPreview, CourseCharts, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
-import CourseModal from '../modal/CourseModal'
-import {Title, Summary, Card, SettingsIcon} from '../Helpers'
+import {Title, SettingsIcon} from '../Helpers'
 
 import { fuzzing } from '../../fuzz'
 
 class CoursePanel extends Component {
-
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            modal_blur: ''
-        }
-    }
 
     componentDidMount = () => {
         this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`)
@@ -39,10 +28,10 @@ class CoursePanel extends Component {
     };
 
     render() {
+
         return (
             <div className='panel-course'>
-                <ProjectNavigation onModalBlur={ (blur) => this.setState({modal_blur : blur ? ' blur' : ''}) }
-                    {...this.props}/>
+                <ProjectNavigation {...this.props} />
 
                 <div className='panel-right-nav'>
                     <div className='top-nav'>
@@ -66,41 +55,25 @@ class CoursePanel extends Component {
 
                 </div>
 
-                <CourseModal show={ this.state.show_course_options }
-                    close={ () => this.setState({ show_course_options: false, modal_blur: '' }) }/>
+                <CourseModal id={1}/>
 
                 <div className='panel-center-content'>
 
-                    <div className={ `panel-course-content${this.state.modal_blur}` }>
-                        <Title onClick={ () => this.setState({ show_course_options: true, modal_blur: ' blur' }) }
-                            header={ <h1 className='header'>CS252</h1> }
-                            icon={ <SettingsIcon/> } />
+                    <div className='panel-course-content'>
+                        <Title onClick={ () => this.props.setModalState(1) }>
+                            <h1 className='header'>CS252</h1>
+                            <SettingsIcon/>
+                        </Title>
                         <div className='h1 break-line header' />
 
-                        <Summary header={ <h3 className='header'>Course Charts Summary</h3> }
-                            columns={ 2 }
-                            data={ [
-                                <ClassProgressHistogram projectID={this.props.currentProjectId} key={1}/>,
-                                <ClassTestCasePercentDone projectID={this.props.currentProjectId} key={2}/>
-                            ] }
-                            className='charts'
-                            iterator={ (chart) => <Card key={ chart.key }>
-                                {chart}
-                            </Card> } />
+                        <h3 className='header'>Course Charts Summary</h3>
+
+                        <CourseCharts/>
 
                         <div className='h1 break-line' />
 
-                        <Summary header={ <h3 className='header'>Students Summary</h3> }
-                            columns={ 5 }
-                            data={ this.props.students }
-                            isLoading={ this.props.isLoading }
-                            className='course-students'
-                            iterator={ (student) =>
-                                <StudentPreview key={ student.id }
-                                    student={ student }
-                                    projectID={ this.props.currentProjectId }
-                                    onClick={ () => this.showStudentPanel(student) }/>
-                            } />
+                        <h3 className='header'>Students Summary</h3>
+                        <CourseStudentFilter />
                     </div>
                 </div>
             </div>
@@ -111,8 +84,7 @@ class CoursePanel extends Component {
 const mapStateToProps = (state) => {
     return {
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
-        isLoading: state.course ? state.course.getStudentPreviewsIsLoading : false,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
 
@@ -121,6 +93,7 @@ const mapDispatchToProps = (dispatch) => {
         getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
         setCurrentProject: (id, index) => dispatch(setCurrentProject(id, index)),
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
+        setModalState: (id) => dispatch(setModalState(id)),
     }
 }
 

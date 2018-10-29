@@ -90,6 +90,8 @@ def jsonify(visible_data, hidden_data, times):
         if day in hidden_data:
             hidden = hidden_data[day]
         total = (hidden + visible) / 2.0
+        if hidden == 0:
+            total = visible
         new_entry["visible"] = visible
         new_entry["hidden"] = hidden
         new_entry["progress"] = int(total)
@@ -128,7 +130,7 @@ if __name__ == "__main__":
     individual_hidden_data = hidden_data[student_id]
     reformatted_hidden_data = extract_progress(individual_hidden_data)
 
-    commit_times = commit_data(commit_times_file)
+    commit_times = commit_data(commit_times_file, exclude=1)
     individual_commit_times = commit_times[student_id]
 
     api_formatted_data = jsonify(

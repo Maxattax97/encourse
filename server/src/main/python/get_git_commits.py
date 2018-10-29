@@ -70,7 +70,8 @@ if __name__ == "__main__":
     commit_data_file = open(args.logfile, "r")
     student_id = args.name
 
-    data = commit_list(commit_data_file)[student_id]
+    commit_data = commit_list(commit_data_file)
+    data = commit_data[student_id]
 
     formatted_data = jsonify(data)
     print(formatted_data)

@@ -3,6 +3,7 @@ import { ComposedChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Label, 
 import { connect } from 'react-redux'
 import { getTestBarGraph } from '../../redux/actions'
 import url from '../../server'
+import {LoadingIcon} from '../Helpers'
 
 const toPercent = (decimal, fixed = 0) => {
     return `${(decimal * 100).toFixed(fixed)}%`
@@ -83,18 +84,18 @@ class ClassTestCasePercentDone extends Component {
         if (this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
-        if (nextProps.projectID !== this.props.projectID) {
+        if (nextProps.currentProjectId !== this.props.currentProjectId) {
             this.fetch(nextProps)
         }
     }
 
     getDefaultData = (props) => {
-        return (props && props.projectID || this.props.projectID) == 'cs252 Fall2018: MyMalloc' ? defaultData1 : defaultData2
+        return (props && props.currentProjectId || this.props.currentProjectId) == 'cs252 Fall2018: MyMalloc' ? defaultData1 : defaultData2
     }
 
     fetch = (props) => {
-        if(props.projectID) {
-            props.getData(`${url}/api/testSummary?projectID=${props.projectID}`)
+        if(props.currentProjectId) {
+            props.getData(`${url}/api/testSummary?projectID=${props.currentProjectId}`)
         }   
     }
 
@@ -122,34 +123,37 @@ class ClassTestCasePercentDone extends Component {
 
     render() {
         return (
-            !this.props.isLoading 
-            ? <div className="chart-container">
-                <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart
-                        data={this.state.formattedData}
-                        margin={{top: 5, right: 30, left: 30, bottom: 35}}
-                    >
-                        <CartesianGrid/>
-                        <XAxis dataKey="testName" type="category">
-                            <Label offset={-10} position="insideBottom">
+            this.props.isLoading !== undefined && !this.props.isLoading
+                ? <div className="chart-container">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <ComposedChart
+                            data={this.state.formattedData}
+                            margin={{top: 5, right: 30, left: 30, bottom: 35}}
+                        >
+                            <CartesianGrid/>
+                            <XAxis dataKey="testName" type="category">
+                                <Label offset={-10} position="insideBottom">
                                 Test Case
-                            </Label>
-                        </XAxis>
-                        <YAxis tickFormatter={toPercent} domain={[0, 1]}>
-                            <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+                                </Label>
+                            </XAxis>
+                            <YAxis tickFormatter={toPercent} domain={[0, 1]}>
+                                <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                                 % of Class
-                            </Label>
-                        </YAxis>
-                        <Tooltip/>
-                        <Bar dataKey="percent">
-                            {this.state.formattedData.map((entry, index) => (
-                                <Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#8884d8' }/>
-                            ))}
-                        </Bar>
-                    </ComposedChart>
-                </ResponsiveContainer>
-            </div>
-            : <div>{/* TODO: add spinner */}Loading</div>
+                                </Label>
+                            </YAxis>
+                            <Tooltip/>
+                            <Bar dataKey="percent">
+                                {this.state.formattedData.map((entry, index) => (
+                                    <Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#8884d8' }/>
+                                ))}
+                            </Bar>
+                        </ComposedChart>
+                    </ResponsiveContainer>
+                </div>
+                :
+                <div className='chart-container loading'>
+                    <LoadingIcon/>
+                </div>
         )
     }
 }
@@ -158,6 +162,7 @@ const mapStateToProps = (state) => {
     return {
         data: state.course && state.course.getTestBarGraphData ? state.course.getTestBarGraphData : null,
         isLoading: state.course ? state.course.getTestBarGraphIsLoading : false,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
 

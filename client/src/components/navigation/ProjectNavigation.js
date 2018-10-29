@@ -63,12 +63,15 @@ class ProjectNavigation extends Component {
                         </div>
                         <Card>
                             { !this.props.isLoading
-                            ? <div className="list-container">
-                                <Title onClick={ this.openProjectOptions } header={ <h3 className='header'>Projects</h3> } icon={ <SettingsIcon/> }/>
-                                <div className="h3 break-line header"/>
-                                <div className='text-list'>
-                                    {
-                                        this.props.projects &&
+                                ? <div className="list-container">
+                                    <Title onClick={ this.openProjectOptions }>
+                                        <h3 className='header'>Projects</h3>
+                                        <SettingsIcon/>
+                                    </Title>
+                                    <div className="h3 break-line header"/>
+                                    <div className='text-list'>
+                                        {
+                                            this.props.projects &&
                                         this.props.projects.map((project, index) =>
                                             <div key={ project.id }
                                                 onClick={ () => this.changeProject(project.id, index) }
@@ -77,13 +80,10 @@ class ProjectNavigation extends Component {
                                                     { project.project_name }
                                                 </h4>
                                             </div>)
-                                    }
-                                    <div className={ `list-new action svg-icon${this.state.new_project ? ' list-highlight' : ''}` } onClick={ this.openProjectOptions }>
-                                        <PlusIcon/>
+                                        }
                                     </div>
                                 </div>
-                            </div>
-                            : <div>{/* TODO: add spinner */}Loading</div>}
+                                : <div>{/* TODO: add spinner */}Loading</div>}
                         </Card>
                     </div>
                 </div>

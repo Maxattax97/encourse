@@ -50,7 +50,7 @@ class ProjectPanel extends Component {
                 </div>
 
                 <div className='panel-center-content'>
-                    <Title header={ <h1 className='header'>CS252 - Projects</h1> } />
+                    <h1 className='header'>CS252 - Projects</h1>
                     <div className='h1 break-line header' />
 
                     <Summary header={ <h3 className='header'>{this.props.projects && this.props.projects[this.props.current_project_index] ? `${this.props.projects[this.props.current_project_index].project_name} - ` : 'New - '}Properties</h3> }

@@ -47,7 +47,7 @@ def select_best(all_files: list):
     return top_files[:3]
 
 
-def remove_shared_commits(students):
+def remove_shared_commits(students, count=None):
     """Removes data for uninformative commits 
         
         Removes the first n commits from each student, where n are initial project 
@@ -56,7 +56,17 @@ def remove_shared_commits(students):
     
     """
     # Compare among the first 3 students
+    if count: 
+        for name in students:
+            for i in range(min(count, len(students[name]))):
+                data = students[name].pop(0)
+                eprint(name)
+                eprint(data)
+        return students
+
     keys = list(students.keys())
+    if len(keys) < 3:
+        return students
     student_0 = students[keys[0]]
     student_1 = students[keys[1]]
     student_2 = students[keys[2]]
@@ -101,12 +111,9 @@ def remove_shared_commits(students):
         else:
             break
 
-    eprint("students: {}".format(students))
     for name in students:
         for i in range(removal_count):
             data = students[name].pop(0)
-            eprint(data)
-    eprint("students: {}".format(students))
 
     return students
 
