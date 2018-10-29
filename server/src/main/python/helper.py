@@ -59,6 +59,9 @@ def daterange(start, end):
         yield start + timedelta(n)
 
 
+def times_from_dailydata(data):
+    eprint(data)
+
 def eprint(*args, **kwargs):
     """A duplicate of the python print method that instead prints to standard error"""
     print(*args, file=sys.stderr, **kwargs)

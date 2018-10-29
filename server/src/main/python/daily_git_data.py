@@ -185,6 +185,7 @@ def get_daily_commit_data(progress_file, max_change=None, timeout=None):
             expect_time = False
             if len(words) != 3:
                 eprint("Expected date, time, and code. Found: {}".format(words))
+                continue
             date = words[0]
             time = words[1]  # Unused
             code = words[2]  # Unused
@@ -228,9 +229,10 @@ def get_daily_commit_data(progress_file, max_change=None, timeout=None):
             previous_time = time
             daily_commit_count += 1
         else:  # New Addition/Deletion/File tuple
-            if len(words) != 3:
+            if len(words) < 3:
                 eprint("Unknown line format with words {}".format(words))
                 continue
+            words = [words[0]] + [words[1]] + [" ".join(words[2:])]
             additions = int(words[0]) if is_number(words[0]) else 0
             deletions = int(words[1]) if is_number(words[1]) else 0
 
@@ -245,5 +247,4 @@ def get_daily_commit_data(progress_file, max_change=None, timeout=None):
                 daily_files[file_path] = additions - deletions
             daily_additions += additions
             daily_deletions += deletions
-    students = remove_shared_commits(students)
     return students
