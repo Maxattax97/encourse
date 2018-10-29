@@ -1013,7 +1013,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 }
                 if(hiddenGrade > p.getBestHiddenGrade()) {
                     p.setBestHiddenGrade(hiddenGrade);
-                    studentProjectRepository.save(p);
+                    p = studentProjectRepository.save(p);
                     updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
                 }
             }
@@ -1027,7 +1027,6 @@ public class ProfessorServiceImpl implements ProfessorService {
     /** Runs testall for a single student, which is quicker if the professor or TA wants to manually run testall for a student **/
     /** TODO: @reed Fix this once runTestall is finalized **/
     public int runTestallForStudent(@NonNull String projectID, @NonNull String userName) {
-        /*
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return -1;
@@ -1040,64 +1039,72 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(student == null) {
             return -3;
         }
-        String date = LocalDate.now().toString();
-        List<StudentProject> projects = studentProjectRepository.findByIdStudentID(student.getUserID());
-        boolean hasProject = false;
-        for(StudentProject p : projects) {
-            if(p.getProjectIdentifier().equals(projectID)) {
-                List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdDateAndIdStudentID(date, p.getStudentID());
-                String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName() + "/" + testDir;
-                String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
-                String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
-                try {
-                    Process process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + " " + testCaseDirectory + " 2> /dev/null");
-                    BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    String visibleResult = stdInput.readLine();
-                    process = Runtime.getRuntime().exec("./src/main/bash/testall.sh " + testingDirectory + "/" + testDir + " " + hiddenTestCaseDirectory + " 2> /dev/null");
-                    stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    String hiddenResult = stdInput.readLine();
-                    double visibleGrade = parseProgressForProject(projectID, visibleResult);
-                    double hiddenGrade = parseProgressForProject(projectID, hiddenResult);
-                    boolean exists = false;
-                    for(StudentProjectDate d : projectDates) {
-                        if(d.getProjectIdentifier().equals(p.getProjectIdentifier())) {
-                            if(visibleGrade > parseProgressForProject(projectID, d.getDateVisibleGrade())) {
-                                d.setDateVisibleGrade(visibleResult);
-                                d = studentProjectDateRepository.save(d);
-                            }
-                            if(hiddenGrade > parseProgressForProject(projectID, d.getDateHiddenGrade())) {
-                                d.setDateHiddenGrade(hiddenResult);
-                                studentProjectDateRepository.save(d);
-                            }
-                            exists = true;
-                            break;
-                        }
-                    }
-                    if(!exists) {
-                        StudentProjectDate projectDate = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleResult, hiddenResult);
-                        studentProjectDateRepository.save(projectDate);
-                    }
-                    if(visibleGrade > parseProgressForProject(projectID, p.getBestVisibleGrade())) {
-                        p.setBestVisibleGrade(visibleResult);
-                        p = studentProjectRepository.save(p);
-                    }
-                    if(hiddenGrade > parseProgressForProject(projectID, p.getBestHiddenGrade())) {
-                        p.setBestHiddenGrade(hiddenResult);
-                        studentProjectRepository.save(p);
-                    }
-                    hasProject = true;
-                    break;
-                }
-                catch(Exception e) {
-                    return -4;
-                }
-            }
+        String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
+        String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
+        String makefilePath = sections.get(0).getCourseHub() + "/makefiles/" + project.getRepoName() + "/Makefile";
+        File directory = new File(testCaseDirectory);
+        if(!directory.isDirectory() || directory.listFiles().length == 0) {
+            return -4;
         }
-        if(!hasProject) {
+        File file = new File(makefilePath);
+        if(!file.exists()) {
             return -5;
         }
-        return 0;
-        */
+        String date = LocalDate.now().toString();
+        StudentProject studentProject = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+        if(studentProject == null) {
+            return -6;
+        }
+        StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
+        String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName();
+        try {
+            if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
+                return -7;
+            }
+            TestExecuter tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
+            Thread thread = new Thread(tester);
+            thread.start();
+            Thread.sleep(5000);
+            thread.interrupt();
+            executeBashScript("killProcesses.sh " + project.getCourseID());
+            String visibleResult = tester.getVisibleResult();
+            String hiddenResult = tester.getHiddenResult();
+            if(visibleResult == null) {
+                visibleResult = "";
+            }
+            if(hiddenResult == null) {
+                hiddenResult = "";
+            }
+            double visibleGrade = parseProgressForProject(projectID, visibleResult);
+            double hiddenGrade = parseProgressForProject(projectID, hiddenResult);
+            if(projectDate == null) {
+                StudentProjectDate d = new StudentProjectDate(studentProject.getStudentID(), studentProject.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
+                studentProjectDateRepository.save(d);
+            }
+            else {
+                if(visibleGrade > projectDate.getDateVisibleGrade()) {
+                    projectDate.setDateVisibleGrade(visibleGrade);
+                    studentProjectDateRepository.save(projectDate);
+                }
+                if(hiddenGrade > projectDate.getDateHiddenGrade()) {
+                    projectDate.setDateHiddenGrade(hiddenGrade);
+                    studentProjectDateRepository.save(projectDate);
+                }
+            }
+            if(visibleGrade > studentProject.getBestVisibleGrade()) {
+                studentProject.setBestVisibleGrade(visibleGrade);
+                studentProject = studentProjectRepository.save(studentProject);
+                updateTestResults(visibleResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), false);
+            }
+            if(hiddenGrade > studentProject.getBestHiddenGrade()) {
+                studentProject.setBestHiddenGrade(hiddenGrade);
+                studentProject = studentProjectRepository.save(studentProject);
+                updateTestResults(hiddenResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), true);
+            }
+        }
+        catch(Exception e) {
+            return -8;
+        }
         return 0;
     }
 
@@ -1106,10 +1113,13 @@ public class ProfessorServiceImpl implements ProfessorService {
         for(Project project : projectRepository.findAll()) {
             if(project.getTestRate() > 0 && project.getTestCount() <= 0) {
                 System.out.println("Pulling project " + project.getProjectName());
-                if (pullProjects(project.getProjectIdentifier()) < 0) {
-                }
+                pullProjects(project.getProjectIdentifier());
                 System.out.println("Testing project " + project.getProjectName());
-                if (runTestall(project.getProjectIdentifier()) < 0) {
+                runTestall(project.getProjectIdentifier());
+                List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(project.getProjectIdentifier());
+                for(StudentProject p : projects) {
+                    Student student = studentRepository.findByUserID(p.getStudentID());
+                    getStatistics(p.getProjectIdentifier(), student.getUserName());
                 }
                 project.setTestCount(project.getTestRate() - 1);
             }
