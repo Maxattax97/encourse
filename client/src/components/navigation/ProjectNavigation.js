@@ -23,25 +23,10 @@ class ProjectNavigation extends Component {
             this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`)
         }
     }
-    toggleProjectOptions = (mode) => {
-        this.setState({ show_project_options: mode, new_project: this.props.projects.length === 0 && mode })
-
-        this.props.onModalBlur(mode)
-    };
 
     changeProject = (project_id, project_index) => {
         this.setState({ new_project: false })
         this.props.setCurrentProject(project_id, project_index)
-    };
-
-    handleNewProject = () => {
-        if(this.state.show_project_options && this.state.new_project) {
-            return
-        }
-        else {
-            this.setState({ show_project_options: true, new_project: true })
-            this.props.onModalBlur(true)
-        }
     };
 
     openProjectOptions = () => {
@@ -50,28 +35,18 @@ class ProjectNavigation extends Component {
 
     render() {
         return (
-            <div className="project-nav-container">
-                <div className="panel-left-nav">
-                    <div className="list-nav side-nav-left">
-                        <div className={ `top-nav back-nav svg-icon float-height${ this.props.backClick ? ' action' : '' }` } onClick={ this.props.backClick }>
-                            <h3>
-                                { this.props.back }
-                            </h3>
-                            {
-                                this.props.backClick ? <BackIcon/> : null
-                            }
-                        </div>
-                        <Card>
-                            { !this.props.isLoading
-                                ? <div className="list-container">
-                                    <Title onClick={ this.openProjectOptions }>
-                                        <h3 className='header'>Projects</h3>
-                                        <SettingsIcon/>
-                                    </Title>
-                                    <div className="h3 break-line header"/>
-                                    <div className='text-list'>
-                                        {
-                                            this.props.projects &&
+            <div className="list-nav side-nav-left">
+                <Card>
+                    { !this.props.isLoading
+                        ? <div className="list-container">
+                            <Title onClick={ this.openProjectOptions }>
+                                <h3 className='header'>Projects</h3>
+                                <SettingsIcon/>
+                            </Title>
+                            <div className="h3 break-line header"/>
+                            <div className='text-list'>
+                                {
+                                    this.props.projects &&
                                         this.props.projects.map((project, index) =>
                                             <div key={ project.id }
                                                 onClick={ () => this.changeProject(project.id, index) }
@@ -80,13 +55,11 @@ class ProjectNavigation extends Component {
                                                     { project.project_name }
                                                 </h4>
                                             </div>)
-                                        }
-                                    </div>
-                                </div>
-                                : <div>{/* TODO: add spinner */}Loading</div>}
-                        </Card>
-                    </div>
-                </div>
+                                }
+                            </div>
+                        </div>
+                        : <div>Loading</div>}
+                </Card>
             </div>
         )
     }

@@ -96,6 +96,21 @@ export class Filter extends Component {
     }
 }
 
+export class BackNav extends Component {
+    render() {
+        return (
+            <div className={ `top-nav back-nav svg-icon float-height${ this.props.backClick ? ' action' : '' }` } onClick={ this.props.backClick }>
+                <h3>
+                    { this.props.back }
+                </h3>
+                {
+                    this.props.backClick ? <BackIcon/> : null
+                }
+            </div>
+        )
+    }
+}
+
 export class Dropdown extends Component {
 
     constructor(props) {

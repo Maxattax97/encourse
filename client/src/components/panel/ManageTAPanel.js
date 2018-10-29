@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import ActionNavigation from '../navigation/ActionNavigation'
 import TANavigation from '../navigation/TANavigation'
-import {Summary, Title, CheckmarkIcon} from '../Helpers'
+import {Summary, Title, CheckmarkIcon, BackNav} from '../Helpers'
 import {history} from '../../redux/store'
 import StudentAssignPreview from './util/StudentAssignPreview'
 import SectionPreview from './util/SectionPreview'
@@ -125,27 +125,36 @@ class ManageTAPanel extends Component {
     render() {
         const current_ta = this.props.teaching_assistants[this.state.current_ta] ? this.props.teaching_assistants[this.state.current_ta] : false
 
+
+        const action_names = [
+            (this.changed() ? '*' : '') + 'Discard Changes',
+            (this.changed() ? '*' : '') + 'Save Changes'
+        ]
+
+        const actions = [
+            this.discard,
+            this.save
+        ]
+
         if(!current_ta)
             return (
                 <div className='manage-ta-panel'>
-                    <TANavigation
-                        back="Course"
-                        backClick={ this.back }
-                        teaching_assistants={ this.props.teaching_assistants }
-                        current_ta={ this.state.current_ta }
-                        change={ this.changeTA }/>
+
+                    <div className='panel-left-nav'>
+                        <BackNav back='Course' backClick={ this.back }/>
+                        <ActionNavigation
+                            actions={ actions }
+                            action_names={ action_names } />
+
+                        <TANavigation
+                            teaching_assistants={ this.props.teaching_assistants }
+                            isLoading={ this.props.taIsLoading }
+                            current_ta={ this.state.current_ta }
+                            change={ this.changeTA }/>
+                    </div>
 
                     <div className='panel-right-nav'>
                         <div className='top-nav' />
-                        <ActionNavigation
-                            actions={[
-                                this.discard,
-                                this.save
-                            ]}
-                            action_names={[
-                                (this.changed() ? '*' : '') + 'Discard Changes',
-                                (this.changed() ? '*' : '') + 'Save Changes'
-                            ]} />
                     </div>
 
                     <div className="panel-center-content">
@@ -160,25 +169,22 @@ class ManageTAPanel extends Component {
 
         return (
             <div className='manage-ta-panel'>
-                <TANavigation
-                    back="Course"
-                    backClick={ this.back }
-                    teaching_assistants={ this.props.teaching_assistants }
-                    isLoading={ this.props.taIsLoading }
-                    current_ta={ this.state.current_ta }
-                    change={ this.changeTA }/>
+
+                <div className='panel-left-nav'>
+                    <BackNav back='Course' backClick={ this.back }/>
+                    <ActionNavigation
+                        actions={ actions }
+                        action_names={ action_names } />
+
+                    <TANavigation
+                        teaching_assistants={ this.props.teaching_assistants }
+                        isLoading={ this.props.taIsLoading }
+                        current_ta={ this.state.current_ta }
+                        change={ this.changeTA }/>
+                </div>
 
                 <div className='panel-right-nav'>
                     <div className='top-nav' />
-                    <ActionNavigation
-                        actions={[
-                            this.discard,
-                            this.save
-                        ]}
-                        action_names={[
-                            (this.changed() ? '*' : '') + 'Discard Changes',
-                            (this.changed() ? '*' : '') + 'Save Changes'
-                        ]} />
                 </div>
 
                 <div className="panel-center-content">

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import {Card, Summary} from '../Helpers'
+import {BackNav, Card, Summary} from '../Helpers'
 import StudentProgressLineGraph from '../chart/StudentProgressLineGraph'
 import CodeChangesChart from '../chart/CodeChangesChart'
 import CommitFrequencyHistogram from '../chart/CommitFrequencyHistogram'
@@ -41,27 +41,31 @@ class StudentPanel extends Component {
     };
 
     render() {
+
+        const action_names = [
+            'View Hidden Tests',
+            'Run Tests',
+            'Academic Dishonesty Report'
+        ]
+
+        const actions = [
+            () => {},
+            () => {},
+            () => {}
+        ]
+
         return (
             <div className="panel-student">
 
-                <ProjectNavigation
-                    back="Course"
-                    backClick={ this.back }
-                    onModalBlur={ (blur) => this.setState({modal_blur : blur ? ' blur' : ''}) }
-                    { ...this.props }/>
+                <div className='panel-left-nav'>
+                    <BackNav back="Course"
+                        backClick={ this.back }/>
+                    <ActionNavigation actions={ actions } action_names={ action_names }/>
+                    <ProjectNavigation/>
+                </div>
 
                 <div className="panel-right-nav">
                     <div className='top-nav' />
-                    <ActionNavigation actions={[
-                        () => {},
-                        () => {},
-                        () => {}
-                    ]}
-                    action_names={[
-                        'View Hidden Tests',
-                        'Run Tests',
-                        'Academic Dishonesty Report'
-                    ]} />
                     <CommitHistory projectID={this.props.currentProjectId} id={this.props.currentStudent.id} />
                 </div>
 
