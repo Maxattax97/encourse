@@ -39,7 +39,7 @@ public interface ProfessorService {
     int runTestall(@NonNull String projectID);
     int runTestallForStudent(@NonNull String projectID, @NonNull String userName);
 
-    int pullAndTestAllProjects();
+    void pullAndTestAllProjects();
 
     int assignTeachingAssistantToSection(@NonNull String teachAssistUserName, @NonNull String sectionID);
     int assignTeachingAssistantToStudentInSection(@NonNull String teachAssistUserName, @NonNull String studentUserName, @NonNull String sectionID);

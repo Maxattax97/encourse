@@ -58,8 +58,10 @@ def remove_shared_commits(students, count=None):
     # Compare among the first 3 students
     if count: 
         for name in students:
-            for i in range(count):
+            for i in range(min(count, len(students[name]))):
                 data = students[name].pop(0)
+                eprint(name)
+                eprint(data)
         return students
 
     keys = list(students.keys())
@@ -250,5 +252,5 @@ def get_daily_commit_data(progress_file, max_change=None, timeout=None):
                 daily_files[file_path] = additions - deletions
             daily_additions += additions
             daily_deletions += deletions
-    students = remove_shared_commits(students, count=2)
+    students = remove_shared_commits(students, count=1)
     return students
