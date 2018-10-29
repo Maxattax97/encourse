@@ -1,6 +1,8 @@
 from daily_git_data import get_daily_commit_data as daily_data
 from past_progress import past_progress
 from get_velocity import jsonify as velocity
+from helper import eprint
+from helper import times_from_dailydata as times
 
 import argparse
 
@@ -36,19 +38,17 @@ if __name__ == "__main__":
     visible_progress = past_progress(visible_file)
     hidden_progress = past_progress(hidden_file)
 
-    daily_data = commit_list(
+    git_data = daily_data(
         commit_log_file, max_change=args.limit, timeout=args.timeout
     )
 
-    for student in data.keys():
-        student_data = data[student]
+    for student in git_data.keys():
+        student_data = git_data[student]
+        student_progress = visible_progress[student]
+        student_hidden = hidden_progress[student]
         startend = times(student_data)
+        eprint(student_data)
+        eprint(startend)
 
-        velocity_data = velocity(student_data, progress_file)
-
-    api_json = jsonify(
-        individual_visible_data,
-        individual_daily_data,
-        startend,
-        hidden_scores=individual_hidden_data,
-    )
+        velocity_data = velocity(student_progress, student_data, startend, hidden_scores=student_hidden)
+        eprint(velocity_data)
