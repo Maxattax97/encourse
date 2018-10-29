@@ -52,3 +52,4 @@ if __name__ == "__main__":
 
         velocity_data = velocity(student_progress, student_data, startend, hidden_scores=student_hidden)
         eprint(velocity_data)
+    print({})
