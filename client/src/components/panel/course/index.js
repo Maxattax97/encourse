@@ -1,4 +1,8 @@
 export {
+    default as CourseCharts
+} from './CourseCharts'
+
+export {
     default as CourseModal
 } from './CourseModal'
 

@@ -60,14 +60,14 @@ class ClassProgressHistogram extends Component {
         if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
-        if (nextProps.projectID !== this.props.projectID) {
+        if (nextProps.currentProjectId !== this.props.currentProjectId) {
             this.fetch(nextProps)
         }
     }
 
     fetch = (props) => {
-        if(props.projectID) {
-            props.getData(`${url}/api/classProgress?projectID=${props.projectID}`)
+        if(props.currentProjectId) {
+            props.getData(`${url}/api/classProgress?projectID=${props.currentProjectId}`)
         }    
     }
 
@@ -135,6 +135,7 @@ const mapStateToProps = (state) => {
     return {
         data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
         isLoading: state.course ? state.course.getClassProgressIsLoading : false,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
 

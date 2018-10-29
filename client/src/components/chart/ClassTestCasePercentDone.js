@@ -84,18 +84,18 @@ class ClassTestCasePercentDone extends Component {
         if (this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
-        if (nextProps.projectID !== this.props.projectID) {
+        if (nextProps.currentProjectId !== this.props.currentProjectId) {
             this.fetch(nextProps)
         }
     }
 
     getDefaultData = (props) => {
-        return (props && props.projectID || this.props.projectID) == 'cs252 Fall2018: MyMalloc' ? defaultData1 : defaultData2
+        return (props && props.currentProjectId || this.props.currentProjectId) == 'cs252 Fall2018: MyMalloc' ? defaultData1 : defaultData2
     }
 
     fetch = (props) => {
-        if(props.projectID) {
-            props.getData(`${url}/api/testSummary?projectID=${props.projectID}`)
+        if(props.currentProjectId) {
+            props.getData(`${url}/api/testSummary?projectID=${props.currentProjectId}`)
         }   
     }
 
@@ -162,6 +162,7 @@ const mapStateToProps = (state) => {
     return {
         data: state.course && state.course.getTestBarGraphData ? state.course.getTestBarGraphData : null,
         isLoading: state.course ? state.course.getTestBarGraphIsLoading : false,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
 
