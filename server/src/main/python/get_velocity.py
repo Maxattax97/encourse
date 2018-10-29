@@ -7,13 +7,14 @@ from helper import time_string
 from helper import daterange
 from helper import date_string
 from helper import eprint
+from helper import times_from_dailydata as times
 from start_end import commit_data
 from past_progress import past_progress
 from daily_git_data import get_daily_commit_data as commit_list
 
 
 def jsonify(
-    visible_data, hidden_data, daily_data, times, max_velocity=None, max_rate=None
+    scores, daily_data, times, hidden_scores=None, max_velocity=None, max_rate=None
 ):
     """Convert data to json for /velocity endpoint
 
@@ -38,8 +39,8 @@ def jsonify(
     date2 = datetime.strptime(times[1], "%Y-%m-%d").date()
     dates = daterange(date1, date2)
 
-    visible_data = {date_string(x["date"]): x for x in visible_data}
-    hidden_data = {date_string(x["date"]): x for x in hidden_data}
+    scores = {date_string(x["date"]): x for x in scores}
+    hidden_scores = {date_string(x["date"]): x for x in hidden_scores}
     daily_data = {date_string(x["date"]): x for x in daily_data}
 
     velocity_data = []
@@ -52,10 +53,10 @@ def jsonify(
         new_entry["date"] = day
 
         # get cumulative progress
-        if day in visible_data:
-            cumulative_progress = visible_data[day]["progress"]
-        if day in hidden_data:
-            cumulative_progress = hidden_data[day]["progress"]
+        if day in scores:
+            cumulative_progress = scores[day]["progress"]
+        if day in hidden_scores:
+            cumulative_progress = hidden_scores[day]["progress"]
 
         # calculate daily progress
         new_entry["progress"] = cumulative_progress - min_progress
@@ -82,7 +83,6 @@ if __name__ == "__main__":
         "hiddenfile", help="path to historic progress file for hidden test cases"
     )
     parser.add_argument("logfile", help="path to log file")
-    parser.add_argument("timefile", help="path to time file")
     parser.add_argument("name", help="user name")
     parser.add_argument("-t", "--timeout", help="time spent timeout")
     parser.add_argument("-l", "--limit", help="ignore file changes above limit")
@@ -103,7 +103,6 @@ if __name__ == "__main__":
     visible_file = open(args.visiblefile, "r")
     hidden_file = open(args.hiddenfile, "r")
     commit_log_file = open(args.logfile, "r")
-    commit_times_file = open(args.timefile, "r")
     student_id = args.name
 
     visible_data = past_progress(visible_file)
@@ -117,10 +116,12 @@ if __name__ == "__main__":
     )
     individual_daily_data = daily_data[student_id]
 
-    commit_times = commit_data(commit_times_file)
-    individual_commit_times = commit_times[student_id]
+    startend = times(individual_daily_data)
 
     api_json = jsonify(
-        individual_visible_data, individual_hidden_data, individual_daily_data, individual_commit_times
+        individual_visible_data,
+        individual_daily_data,
+        startend,
+        hidden_scores=individual_hidden_data,
     )
     print(api_json)

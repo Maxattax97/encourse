@@ -157,6 +157,15 @@ public class PythonScriptTests {
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Commit Velocity Test    ============================\n");
             jsonReturn = professorService.getCommitCounts(projectID, studentID);
-            assertEquals("Failed to generate git commit count data", 1, jsonReturn.errorCode);
+            assertEquals("Failed to generate commit velocity data", 1, jsonReturn.errorCode);
+        }
+
+        @Test
+        public void testClassCheating() {
+            String projectID = DEBUG ? "cs252" : proj1.getProjectIdentifier();
+            JSONReturnable jsonReturn = null;
+            System.out.println("=============================  Class Cheating Test    ============================\n");
+            jsonReturn = professorService.getClassCheating(projectID);
+            assertEquals("Failed to generate class cheating report", 1, jsonReturn.errorCode);
         }
 }

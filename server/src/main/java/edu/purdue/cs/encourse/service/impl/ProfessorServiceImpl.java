@@ -657,6 +657,30 @@ public class ProfessorServiceImpl implements ProfessorService {
         return json;
     }
 
+    public JSONReturnable getClassCheating(@NonNull String projectID) {
+        String commitLogFile = "";
+        String visibleTestFile = "";
+        String hiddenTestFile = "";
+
+        //TODO: Jordan create files here
+        // The commit log should contain every student
+        // The progress files should be the same format as the in getStudentProgress, but should contain
+        // data for every student
+
+        if (DEBUG){
+            commitLogFile = pythonPath + "/test_datasets/sampleCommitList.txt";
+            visibleTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
+            hiddenTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
+        }
+
+        String pyPath = pythonPath + "get_class_cheating.py";
+        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -l 1000";
+        JSONReturnable json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
+
     public JSONReturnable getCommitCounts(@NonNull String projectID, @NonNull String userName) {
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
         if(commitLogFile == null) {
