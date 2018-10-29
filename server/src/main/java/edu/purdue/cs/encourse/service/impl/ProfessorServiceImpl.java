@@ -1107,7 +1107,6 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Pulls and tests every project in the database on one hour intervals **/
-    @Scheduled(fixedDelay = 1000)
     public void pullAndTestAllProjects() {
         for(Project project : projectRepository.findAll()) {
             if(project.getTestRate() > 0 && project.getTestCount() <= 0) {
