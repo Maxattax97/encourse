@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Card } from '../../Helpers'
 
-class StudentPreview extends Component {
+class CourseStudentSummary extends Component {
     render() {
         const percent = this.props.isHidden ? this.props.student.hiddenGrades[this.props.projectID] : this.props.student.grades[this.props.projectID]
         return (
@@ -37,4 +37,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, null)(StudentPreview)
+export default connect(mapStateToProps, null)(CourseStudentSummary)

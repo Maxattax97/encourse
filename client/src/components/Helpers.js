@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import {setModalState} from '../redux/actions'
+import connect from 'react-redux/es/connect/connect'
 
 export class Title extends Component {
     render() {
@@ -9,6 +11,52 @@ export class Title extends Component {
         )
     }
 }
+
+export class Card extends Component {
+    render() {
+        return (
+            <div className={ this.props.className ? 'card ' + this.props.className : 'card' } onClick={ this.props.onClick || (() => {}) }>
+                <div className="component">
+                    { this.props.children }
+                </div>
+            </div>
+        )
+    }
+}
+
+class ModalClass extends Component {
+
+    render() {
+        return (
+            <div className='modal' style={this.props.currentModal === this.props.id ? {} : {display: 'none'}} onClick={ this.props.closeModal }>
+                <div className={this.props.left ? 'modal-left' : this.props.right ? 'modal-right' : 'modal-center'} onClick={(e) => e.stopPropagation()}>
+                    <Card>
+                        <div className={'modal-container'}>
+                            {this.props.children}
+                        </div>
+                        <div className="action svg-icon exit-nav" onClick={ this.props.closeModal }>
+                            <XIcon/>
+                        </div>
+                    </Card>
+                </div>
+            </div>
+        )
+    }
+
+    static mapStateToProps = (state) => {
+        return {
+            currentModal: state.modal && state.modal.getCurrentModal ? state.modal.getCurrentModal : 0,
+        }
+    }
+
+    static mapDispatchToProps = (dispatch) => {
+        return {
+            closeModal: () => dispatch(setModalState(0)),
+        }
+    }
+}
+
+export const Modal = connect(ModalClass.mapStateToProps, ModalClass.mapDispatchToProps)(ModalClass)
 
 export class Summary extends Component {
 
@@ -96,18 +144,6 @@ export class Dropdown extends Component {
                         )
                     }
                 </ul>
-            </div>
-        )
-    }
-}
-
-export class Card extends Component {
-    render() {
-        return (
-            <div className={ this.props.className ? 'card ' + this.props.className : 'card' } onClick={ this.props.onClick || (() => {}) }>
-                <div className="component">
-                    { this.props.children }
-                </div>
             </div>
         )
     }

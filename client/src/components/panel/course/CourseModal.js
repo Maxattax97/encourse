@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import Modal from './Modal'
-// import deleteIcon from '../../img/trash.svg'
-import {setDirectory, modifyProject, setModalState} from '../../redux/actions'
-import url from '../../server'
-import {CheckmarkIcon, Title} from '../Helpers'
+import {setDirectory, modifyProject} from '../../../redux/actions/index'
+import url from '../../../server'
+import {CheckmarkIcon, Modal} from '../../Helpers'
 
 class CourseModal extends Component {
 
