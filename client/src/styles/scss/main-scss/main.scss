@@ -11,6 +11,7 @@
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
   display:inline-block;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1 {
@@ -110,11 +111,20 @@ input {
   font-family: "Raleway", "Rhodium Libre", sans-serif;
 }
 
+.loading svg {
+  position:absolute;
+  top: 50%;
+  left: 50%;
+  @include transform(translate(-50%, 0))
+}
+
 @import "main/action";
 @import "main/breakline";
 @import "main/card";
 @import "main/chart";
+@import "main/dropdown";
 @import "main/exit";
+@import "main/filter";
 @import "main/image";
 @import "main/list";
 @import "main/modal";

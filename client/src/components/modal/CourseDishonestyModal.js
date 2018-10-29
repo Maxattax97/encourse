@@ -1,13 +1,10 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-
-import Modal from './Modal'
-// import deleteIcon from '../../img/trash.svg'
-import {setDirectory, modifyProject, setModalState} from '../../redux/actions'
+import {Component} from 'react'
 import url from '../../server'
-import {CheckmarkIcon, Title} from '../Helpers'
+import Modal from './Modal'
+import {CheckmarkIcon} from '../Helpers'
+import React from 'react'
 
-class CourseModal extends Component {
+class CourseDishonestyModal extends Component {
 
     constructor(props) {
         super(props)
@@ -37,7 +34,7 @@ class CourseModal extends Component {
         for(let project of this.props.projects) {
             // console.log(project)
             this.props.modifyProject(`${url}/api/modify/project?projectID=${project.id}&field=testRate&value=${this.state.interval}`)
-        }    
+        }
     };
 
     render() {
@@ -66,18 +63,4 @@ class CourseModal extends Component {
 
 }
 
-const mapStateToProps = (state) => {
-    return {
-        directory_list: state.course && state.course.getDirectoryListData ? state.course.getDirectoryListData : [],
-        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
-    }
-}
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        setDirectory: (url, headers, body) => dispatch(setDirectory(url, headers, body)),
-        modifyProject: (url, headers, body) => dispatch(modifyProject(url, headers, body)),
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(CourseModal)
+export default CourseDishonestyModal

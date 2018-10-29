@@ -3,6 +3,8 @@ import { Route, Redirect, Switch } from 'react-router'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
+import { setModalState } from '../redux/actions'
+
 import '../styles/css/base.css'
 import '../styles/css/main.css'
 import Navbar from './navigation/TopNavigation'
@@ -23,6 +25,10 @@ class Main extends Component {
                 <Navbar />
                 <div className="panel">
                     <div className="panel-container">
+                        <div className={'modal-overlay' + ( this.props.isModalFocused ? ' show' : '' )}
+                            style={ this.props.isModalFocused ? { } : { 'display': 'none' } }
+                            onClick={ this.props.closeModal }
+                        />
                         <Switch>
                             <Route path="/panel" render={(/* navProps */) => {
                                 //determine logic for course panel, student panel, or admin panel. For now, use course panel
@@ -62,12 +68,16 @@ class Main extends Component {
     }
 }
 
-const mapStateToProps = (/* state */) => {
-    return { }
+const mapStateToProps = (state) => {
+    return {
+        isModalFocused: state.modal && state.modal.isModalFocused ? state.modal.isModalFocused : false,
+    }
 }
 
-const mapDispatchToProps = (/* dispatch */) => {
-    return { }
+const mapDispatchToProps = (dispatch) => {
+    return {
+        closeModal: () => dispatch(setModalState(0)),
+    }
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main))

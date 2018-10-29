@@ -41,3 +41,6 @@ temp/
 
 ### Temporary Files ###
 /src/main/temp/
+
+### Configuration
+config.txt

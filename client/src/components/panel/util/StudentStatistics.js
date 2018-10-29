@@ -7,15 +7,15 @@ import url from '../../../server'
 const defaultData = [
     {
         stat_name: 'Estimated Time Spent',
-        stat_value: '5 hours'
+        stat_value: '0 hours'
     },
     {
         stat_name: 'Additions',
-        stat_value: '103'
+        stat_value: '0'
     },
     {
         stat_name: 'Deletions',
-        stat_value: '3415'
+        stat_value: '0'
     },
 ]
 
@@ -25,68 +25,6 @@ class StudentStatistics extends Component {
         super(props)
 
         this.state = {
-            stats: [
-                {
-                    stat_name: 'Estimated Time Spent',
-                    stat_value: '5 hours'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '103'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '3415'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '`35'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '1234'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '123'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '5342'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '213'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '76'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '123'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '567'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '43'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '123'
-                },
-                {
-                    stat_name: 'Additions',
-                    stat_value: '45'
-                },
-                {
-                    stat_name: 'Deletions',
-                    stat_value: '36'
-                }
-            ],
             formattedData: [],
         }
     }
@@ -149,7 +87,7 @@ class StudentStatistics extends Component {
 const mapStateToProps = (state) => {
     return {
         stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : [],
-        isLoading: state.student ? state.student.getStatisticsIsLoading : true,
+        isLoading: state.student ? state.student.getStatisticsIsLoading : false,
     }
 }
 

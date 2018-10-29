@@ -27,3 +27,7 @@ export {
 export {
     getTeachingAssistants
 } from './teaching_assistant'
+
+export {
+    setModalState
+} from './modal'
