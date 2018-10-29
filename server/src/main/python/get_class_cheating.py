@@ -5,6 +5,89 @@ from helper import eprint
 from helper import times_from_dailydata as times
 
 import argparse
+import json
+import statistics
+
+
+def is_suspicious(student_stats, class_stats):
+    """For each statistic in **class_stats** determine whether the student is within one
+    standard deviation above the mean. If the student is outside of the standard 
+    deviation for every statistic, flag them as suspicious.
+    """
+
+    if len(student_stats.keys()) < 1 or len(class_stats) < 1:
+        # Return False if no statistics are available
+        return False
+    for stat in student_stats:
+        if stat in class_stats:
+            upper_threshold = class_stats[stat]["mean"] + class_stats[stat]["stdev"]
+            value = student_stats[stat]
+            if value < upper_threshold:
+                # The student was within the safe threshold for at least one statistic
+                return False
+    return True
+
+
+def jsonify(git_data, test_progress, hidden_progress=None):
+    velocity_averages = []
+    rate_averages = []
+    student_stats = {}
+    for student in git_data.keys():
+        student_data = git_data[student]
+        student_progress = test_progress[student]
+        student_hidden = hidden_progress[student]
+        startend = times(student_data)
+        eprint(student_data)
+        eprint(startend)
+
+        velocity_data = json.loads(velocity(student_progress, student_data, startend, hidden_scores=student_hidden))
+        eprint(velocity_data)
+
+        progress = 0.0
+        time_spent = 0.0
+        commit_count = 0.0
+        for day in velocity_data:
+            eprint(day)
+            progress += day["progress"]
+            time_spent += day["time_spent"]
+            commit_count += day["commit_count"]
+
+        # Convert time_spent from seconds to hours 
+        time_spent /= 3600
+        velocity_averages.append(progress/time_spent)
+        rate_averages.append(progress/commit_count)
+
+        student_stats[student] = {
+            "rate": progress/commit_count,
+            "velocity": progress/time_spent
+        }
+
+    # Find the mean and population standard deviation of velocity measures
+    velocity_mean = statistics.mean(velocity_averages)
+    velocity_stdev = statistics.pstdev(velocity_averages)
+    eprint("Velocity Average: {}".format(velocity_mean))
+    eprint("Velocity Standard Deviation: {}".format(velocity_stdev))
+
+    # Find the mean and population standard deviation of rate measures
+    rate_mean = statistics.mean(rate_averages)
+    rate_stdev = statistics.pstdev(rate_averages)
+    eprint("Rate Average: {}".format(rate_mean))
+    eprint("Rate Standard Deviation: {}".format(rate_stdev))
+
+    class_stats = {
+        "rate": {
+            "mean": rate_mean,
+            "stdev": rate_stdev
+        },
+        "velocity": {
+            "mean": velocity_mean,
+            "stdev": velocity_stdev
+        }
+    }
+
+    suspicious_students = [s for s in student_stats if is_suspicious(student_stats[s], class_stats) ]
+
+    return json.dumps(suspicious_students)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -42,14 +125,6 @@ if __name__ == "__main__":
         commit_log_file, max_change=args.limit, timeout=args.timeout
     )
 
-    for student in git_data.keys():
-        student_data = git_data[student]
-        student_progress = visible_progress[student]
-        student_hidden = hidden_progress[student]
-        startend = times(student_data)
-        eprint(student_data)
-        eprint(startend)
+    api_json = jsonify(git_data, visible_progress, hidden_progress=hidden_progress)
 
-        velocity_data = velocity(student_progress, student_data, startend, hidden_scores=student_hidden)
-        eprint(velocity_data)
-    print({})
+    print(api_json)
