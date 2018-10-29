@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import { connect } from 'react-redux'
 
-import { getClassProgress } from '../../redux/actions'
-import url from '../../server'
-import {LoadingIcon} from '../Helpers'
+import { getClassProgress } from '../../../../redux/actions/index'
+import url from '../../../../server'
+import {LoadingIcon} from '../../../Helpers'
 
 const toPercent = (decimal, fixed = 2) => {
     return `${(decimal).toFixed(fixed)}`
@@ -43,7 +43,7 @@ const defaultData = [
     }
 ]
 
-class ClassProgressHistogram extends Component {
+class CourseCompletionProgress extends Component {
     constructor(props) {
         super(props)
 
@@ -145,5 +145,5 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export { ClassProgressHistogram }
-export default connect(mapStateToProps, mapDispatchToProps)(ClassProgressHistogram)
+export { CourseCompletionProgress }
+export default connect(mapStateToProps, mapDispatchToProps)(CourseCompletionProgress)

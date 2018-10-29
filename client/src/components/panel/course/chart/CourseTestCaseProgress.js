@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { ComposedChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import { connect } from 'react-redux'
-import { getTestBarGraph } from '../../redux/actions'
-import url from '../../server'
-import {LoadingIcon} from '../Helpers'
+import { getTestBarGraph } from '../../../../redux/actions/index'
+import url from '../../../../server'
+import {LoadingIcon} from '../../../Helpers'
 
 const toPercent = (decimal, fixed = 0) => {
     return `${(decimal * 100).toFixed(fixed)}%`
@@ -64,7 +64,7 @@ const defaultData2 = [
     },
 ]
 
-class ClassTestCasePercentDone extends Component {
+class CourseTestCaseProgress extends Component {
     constructor(props) {
         super(props)
 
@@ -172,4 +172,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClassTestCasePercentDone)
+export default connect(mapStateToProps, mapDispatchToProps)(CourseTestCaseProgress)

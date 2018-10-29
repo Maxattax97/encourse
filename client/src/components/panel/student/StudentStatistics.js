@@ -1,23 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { getStatistics } from '../../../redux/actions'
+import { getStatistics } from '../../../redux/actions/index'
 import url from '../../../server'
-
-const defaultData = [
-    {
-        stat_name: 'Estimated Time Spent',
-        stat_value: '0 hours'
-    },
-    {
-        stat_name: 'Additions',
-        stat_value: '0'
-    },
-    {
-        stat_name: 'Deletions',
-        stat_value: '0'
-    },
-]
 
 class StudentStatistics extends Component {
 
@@ -35,30 +20,31 @@ class StudentStatistics extends Component {
 
     componentWillReceiveProps(nextProps) {
         if(this.props.isLoading && !nextProps.isLoading) {
-            this.setState({ formattedData: this.formatApiData(nextProps.stats) })
+            const data = this.formatApiData(nextProps.stats)
+            if(data)
+                this.setState({ formattedData: data })
         }
-        if (nextProps.projectID !== this.props.projectID) {
+        if (nextProps.currentProjectId !== this.props.currentProjectId) {
             this.fetch(nextProps)
         }
     }
 
     fetch = (props) => {
-        if(props.projectID) {
-            props.getStatistics(`${url}/api/statistics?projectID=${props.projectID}&userName=${props.id}`)
+        if(props.currentProjectId) {
+            props.getStatistics(`${url}/api/statistics?projectID=${props.currentProjectId}&userName=${props.currentStudent.id}`)
         }
     }
 
     formatApiData = (udata) => {
         if (!udata || !udata.data) {
-            return defaultData
+            return null
         }
         const data = udata.data
         if (!data) {
-            return defaultData
+            return null
         }
-        const formattedData = data.slice()
 
-        return formattedData
+        return data.slice()
     }
 
     render() {
@@ -66,19 +52,16 @@ class StudentStatistics extends Component {
             <div className="student-stats-container">
                 <h3 className='header'>Statistics</h3>
                 <div className="h3 break-line header" />
-                { !this.props.isLoading
-                ? <div>
                 {
-                    this.state.formattedData &&
-                    this.state.formattedData.map &&
-                    this.state.formattedData.map((stat)  =>
-                        <div key={stat.stat_name} className="stat float-height">
-                            <h5>{stat.stat_name}</h5>
-                            <h5>{stat.stat_value}</h5>
-                        </div>)
+                    !this.props.isLoading && this.state.formattedData && this.state.formattedData.map ?
+                        this.state.formattedData.map((stat)  =>
+                            <div key={stat.stat_name} className="stat float-height">
+                                <h5>{stat.stat_name}</h5>
+                                <h5>{stat.stat_value}</h5>
+                            </div>
+                        )
+                        : <div>{/* TODO: add spinner */}Loading</div>
                 }
-                </div>
-                : <div>{/* TODO: add spinner */}Loading</div>}
             </div>
         )
     }
@@ -86,6 +69,8 @@ class StudentStatistics extends Component {
 
 const mapStateToProps = (state) => {
     return {
+        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
         stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : [],
         isLoading: state.student ? state.student.getStatisticsIsLoading : false,
     }

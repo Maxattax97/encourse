@@ -4,9 +4,9 @@ import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label, Bru
 import moment from 'moment'
 import { connect } from 'react-redux'
 
-import { getProgressPerCommit } from '../../redux/actions'
-import url from '../../server'
-import {LoadingIcon} from '../Helpers'
+import { getProgressPerTime } from '../../../../redux/actions/index'
+import url from '../../../../server'
+import {LoadingIcon} from '../../../Helpers'
 
 const defaultData = [
     {date: moment('2018-09-16').valueOf(), progress: 0, timeSpent: 0, commitCount: 0},
@@ -23,7 +23,7 @@ const defaultData = [
     {date: moment('2018-09-27').valueOf(), progress: 10, timeSpent: 3, commitCount: 50},
 ]
 
-class ProgressPerCommit extends Component {
+class StudentVelocityPerTime extends Component {
 
     constructor(props) {
         super(props)
@@ -41,15 +41,15 @@ class ProgressPerCommit extends Component {
         if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
-        if (nextProps.projectID !== this.props.projectID) {
+        if (nextProps.currentProjectId !== this.props.currentProjectId) {
             this.fetch(nextProps)
         }
     }
 
     fetch = (props) => {
-        if(props.projectID) {
-            props.getData(`${url}/api/velocity?projectID=${props.projectID}&userName=${props.id}`)
-        }   
+        if(props.currentProjectId) {
+            props.getData(`${url}/api/velocity?projectID=${props.currentProjectId}&userName=${props.currentStudent.id}`)
+        }  
     }
 
     dateFormatter = (date) => {
@@ -68,7 +68,6 @@ class ProgressPerCommit extends Component {
 
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf()
-            entry.timeSpent = parseInt(entry.timeSpent / 60)
         }
 
         return data
@@ -80,11 +79,11 @@ class ProgressPerCommit extends Component {
                 ? <div className="chart-container">
                     <ResponsiveContainer width="100%" height="100%">
                         <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
-                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Commit</text>
+                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Time</text>
                             <CartesianGrid/>
-                            <XAxis dataKey="commitCount" type="number">
+                            <XAxis dataKey="timeSpent" type="number">
                                 <Label offset={-15} position="insideBottom">
-                                Commit count worked
+                                Estimated Time worked
                                 </Label>
                             </XAxis>
                             <YAxis dataKey="progress" type="number">
@@ -107,15 +106,17 @@ class ProgressPerCommit extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        data: state.student && state.student.getProgressPerCommitData ? state.student.getProgressPerCommitData : null,
-        isLoading: state.student ? state.student.getProgressPerCommitIsLoading : false,
+        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        data: state.student && state.student.getProgressPerTimeData ? state.student.getProgressPerTimeData : null,
+        isLoading: state.student ? state.student.getProgressPerTimeIsLoading : false,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getData: (url, headers, body) => dispatch(getProgressPerCommit(url, headers, body)),
+        getData: (url, headers, body) => dispatch(getProgressPerTime(url, headers, body)),
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProgressPerCommit)
+export default connect(mapStateToProps, mapDispatchToProps)(StudentVelocityPerTime)

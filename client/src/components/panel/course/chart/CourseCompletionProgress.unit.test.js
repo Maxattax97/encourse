@@ -1,7 +1,7 @@
 import React from 'react'
 import Enzyme, { mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
-import { ClassProgressHistogram } from './ClassProgressHistogram'
+import { CourseCompletionProgress } from './CourseCompletionProgress'
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -11,7 +11,7 @@ function setup() {
         token: null
     }
 
-    const wrapper = mount(<ClassProgressHistogram {...props} />)
+    const wrapper = mount(<CourseCompletionProgress {...props} />)
 
     return {
         props,
@@ -19,7 +19,7 @@ function setup() {
     }
 }
 
-describe('<ClassProgressHistogram />', () => {
+describe('<CourseCompletionProgress />', () => {
     it('render()', () => {
         setup()
     })

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {Card, Summary} from '../../Helpers'
-import ClassProgressHistogram from '../../chart/ClassProgressHistogram'
-import ClassTestCasePercentDone from '../../chart/ClassTestCasePercentDone'
+import ClassProgressHistogram from './chart/CourseCompletionProgress'
+import ClassTestCasePercentDone from './chart/CourseTestCaseProgress'
 
 class CourseCharts extends Component {
     render() {
