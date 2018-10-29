@@ -124,6 +124,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 25);
             professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test10.sh",
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 30);
+            professorService.runTestall(malloc.getProjectIdentifier());
 
             professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_input", false, 2);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_output", false, 2);
@@ -168,6 +169,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             professorService.addTestScript(shell.getProjectIdentifier(), "wildcards7", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_tilde", false, 2);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_robustness", false, 10);
+            professorService.runTestall(shell.getProjectIdentifier());
 
             List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(malloc.getProjectIdentifier());
             for(StudentProject p : projects) {
