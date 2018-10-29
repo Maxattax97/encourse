@@ -7,6 +7,7 @@ import { fuzzing } from '../../fuzz'
 
 import { getProgressLine } from '../../redux/actions'
 import url from '../../server'
+import {LoadingIcon} from '../Helpers'
 
 const defaultData = [
     {date: moment('9/10/18').valueOf(), progress: 0},
@@ -103,29 +104,32 @@ class StudentProgressLineGraph extends Component {
 
     render() {
         return (
-            !this.props.isLoading
-            ? <div className="chart-container">
-                <ResponsiveContainer width="100%" height="100%">
-                    <LineChart className="chart" width={730} height={500} data={this.state.formattedData}
-                        margin={{ top: 20, right: 35, left: 20, bottom: 20 }}>
-                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Student Progress Over Time (Incomplete)</text>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" type="number" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
-                            <Label value="Date" position="bottom" />
-                        </XAxis>
-                        <YAxis>
-                            <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+            this.props.isLoading !== undefined && !this.props.isLoading
+                ? <div className="chart-container">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <LineChart className="chart" width={730} height={500} data={this.state.formattedData}
+                            margin={{ top: 20, right: 35, left: 20, bottom: 20 }}>
+                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Student Progress Over Time (Incomplete)</text>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="date" type="number" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
+                                <Label value="Date" position="bottom" />
+                            </XAxis>
+                            <YAxis>
+                                <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                             % Completion
-                            </Label>
-                        </YAxis>
-                        <Tooltip labelFormatter={this.dateFormatter}/>
-                        <Legend verticalAlign="top"/>
-                        <Line type="monotone" dataKey="progress" stroke="#8884d8" />
-                        <Brush dataKey="date" height={20} stroke="#8884d8" tickFormatter={this.dateFormatter}/>
-                    </LineChart>
-                </ResponsiveContainer>
-            </div>
-            : <div>{/* TODO: add spinner */}Loading</div>
+                                </Label>
+                            </YAxis>
+                            <Tooltip labelFormatter={this.dateFormatter}/>
+                            <Legend verticalAlign="top"/>
+                            <Line type="monotone" dataKey="progress" stroke="#8884d8" />
+                            <Brush dataKey="date" height={20} stroke="#8884d8" tickFormatter={this.dateFormatter}/>
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+                :
+                <div className='chart-container loading'>
+                    <LoadingIcon/>
+                </div>
         )
     }
 }

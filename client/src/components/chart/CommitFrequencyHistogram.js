@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 
 import { getCommitFrequency } from '../../redux/actions'
 import url from '../../server'
+import {LoadingIcon} from '../Helpers'
 
 const defaultData = [
     {date: moment('2018-09-16').valueOf(), count: 0},
@@ -74,29 +75,32 @@ class CommitHistoryHistogram extends Component {
 
     render() {
         return (
-            !this.props.isLoading
-            ? <div className="chart-container">
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={this.state.formattedData} margin={{top: 40, right: 35, left: 20, bottom: 30}}>
-                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Commit Frequency</text>
-                        <CartesianGrid/>
-                        <XAxis dataKey="date" tickFormatter={this.dateFormatter}>
-                            <Label offset={-15} position="insideBottom">
+            this.props.isLoading !== undefined && !this.props.isLoading
+                ? <div className="chart-container">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={this.state.formattedData} margin={{top: 40, right: 35, left: 20, bottom: 30}}>
+                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Commit Frequency</text>
+                            <CartesianGrid/>
+                            <XAxis dataKey="date" tickFormatter={this.dateFormatter}>
+                                <Label offset={-15} position="insideBottom">
                                 Commits
-                            </Label>
-                        </XAxis>
-                        <YAxis>
-                            <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+                                </Label>
+                            </XAxis>
+                            <YAxis>
+                                <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                                 Date
-                            </Label>
-                        </YAxis>
-                        <Tooltip labelFormatter={this.dateFormatter} animationDuration={500}/>
-                        <Bar dataKey="count" fill="#8884d8"/>
-                        <Brush dataKey="date" height={20} stroke="#8884d8" tickFormatter={this.dateFormatter} onChange={this.props.setBrush}/>
-                    </BarChart>
-                </ResponsiveContainer>
-            </div>
-            : <div>{/* TODO: add spinner */}Loading</div>
+                                </Label>
+                            </YAxis>
+                            <Tooltip labelFormatter={this.dateFormatter} animationDuration={500}/>
+                            <Bar dataKey="count" fill="#8884d8"/>
+                            <Brush dataKey="date" height={20} stroke="#8884d8" tickFormatter={this.dateFormatter} onChange={this.props.setBrush}/>
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+                :
+                <div className='chart-container loading'>
+                    <LoadingIcon/>
+                </div>
         )
     }
 }

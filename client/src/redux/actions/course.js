@@ -38,7 +38,7 @@ export function getStudentPreviewsDataSuccess(data) {
 }
 
 export const getStudentPreviews = genericDispatch(
-   'GET_STUDENT_PREVIEWS', getStudentPreviewsHasError, getStudentPreviewsDataSuccess, 'GET'
+    'GET_STUDENT_PREVIEWS', getStudentPreviewsHasError, getStudentPreviewsDataSuccess, 'GET'
 )
 
 export function getSectionsDataError(hasError) {

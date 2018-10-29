@@ -92,7 +92,7 @@ class CommitHistory extends Component {
 const mapStateToProps = (state) => {
     return {
         commits: state.student && state.student.getCommitHistoryData ? state.student.getCommitHistoryData : [],
-        isLoading: state.student ? state.student.getCommitHistoryIsLoading : true,
+        isLoading: state.student ? state.student.getCommitHistoryIsLoading : false,
     }
 }
 

@@ -19,9 +19,8 @@ export class Summary extends Component {
 
     render() {
         return (
-            !this.props.isLoading 
-            ? <div className={ `summary ${this.props.className ? this.props.className : ''}` }>
-                { this.props.header ? this.props.header : null }
+            <div className={ `summary ${this.props.className ? this.props.className : ''}` }>
+                { this.props.children }
                 { this.props.data && this.props.data.map && this.props.iterator ?
                     <div className='summary-container'>
                         <div className={`float-height cols-${this.props.columns ? this.props.columns : '2'}`}>
@@ -29,7 +28,76 @@ export class Summary extends Component {
                         </div>
                     </div> : null }
             </div>
-            : <div>{/* TODO: add spinner */}Loading</div>
+        )
+    }
+}
+
+export class Filter extends Component {
+
+    constructor(props) {
+        super(props)
+    }
+
+    render() {
+        return (
+            <div className='filter'>
+                <div className='filter-container'>
+                    { this.props.children }
+                </div>
+            </div>
+        )
+    }
+}
+
+export class Dropdown extends Component {
+
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            show : false
+        }
+    }
+
+    componentDidMount() {
+        document.addEventListener('mousedown', this.clickEvent)
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.clickEvent)
+    }
+
+    setDropdownRef = (node) => {
+        this.dropdown = node
+    }
+
+    clickEvent = (event) => {
+        if(this.dropdown && this.state.show && !this.dropdown.contains(event.target)) {
+            this.setState({ show: false })
+        }
+    }
+
+    render() {
+        return (
+            <div ref={ this.setDropdownRef } className='dropdown'>
+                <div className='dropdown-toggle' onClick={ () => this.setState({ show: !this.state.show }) }>
+                    { this.props.header }
+                    <DropdownIcon/>
+                </div>
+                <ul className={ 'dropdown-menu ' + ( this.props.rightAnchor ? 'dropdown-menu-right' : 'dropdown-menu-left' ) }
+                    style={ this.state.show ? null : { display: 'none' } }>
+                    {
+                        React.Children.map(this.props.children, (child, index) =>
+                            <li className='action' onClick={ () => {
+                                this.props.onClick(index)
+                                this.setState({ show: false })
+                            } }>
+                                { child }
+                            </li>
+                        )
+                    }
+                </ul>
+            </div>
         )
     }
 }
@@ -39,7 +107,7 @@ export class Card extends Component {
         return (
             <div className={ this.props.className ? 'card ' + this.props.className : 'card' } onClick={ this.props.onClick || (() => {}) }>
                 <div className="component">
-                    {this.props.children}
+                    { this.props.children }
                 </div>
             </div>
         )
@@ -64,6 +132,16 @@ export class BackIcon extends Component {
         return (
             <SVG className={ this.props.className ? 'icon ' + this.props.className : 'icon' }>
                 <polygon points="22,8.025 19.98125,6 10,16 10,16 10,16 19.98125,26 22,23.975 14.04375,16" />
+            </SVG>
+        )
+    }
+}
+
+export class DropdownIcon extends Component {
+    render() {
+        return (
+            <SVG className={ this.props.className ? 'icon ' + this.props.className : 'icon'}>
+                <polygon transform="rotate(-90 16,16) " points="22,8.025 19.98125,6 10,16 10,16 10,16 19.98125,26 22,23.975 14.04375,16" />
             </SVG>
         )
     }
@@ -146,6 +224,24 @@ export class XIcon extends Component {
         return (
             <SVG className={this.props.className ? 'icon ' + this.props.className : 'icon'}>
                 <path d="M32 4.667 27.333 0 16 11.333 4.667 0 0 4.667 11.333 16 0 27.333 4.667 32 16 20.667 27.333 32 32 27.333 20.667 16z"/>
+            </SVG>
+        )
+    }
+}
+
+export class LoadingIcon extends Component {
+    render() {
+        return (
+            <SVG className={this.props.className ? 'icon ' + this.props.className : 'icon'}>
+                <path d='M16.161 4.135c-6.604 0-11.957 5.354-11.957 11.957h2.604c0-5.165 4.188-9.354 9.354-9.354V4.135z'>
+                    <animateTransform attributeType="xml"
+                        attributeName="transform"
+                        type="rotate"
+                        from="0 16 16"
+                        to="360 16 16"
+                        dur="0.6s"
+                        repeatCount="indefinite"/>
+                </path>
             </SVG>
         )
     }

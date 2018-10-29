@@ -11,7 +11,7 @@
   .cols-5 {
 
     > div {
-      width: 227px;
+      @include set-rem-safe(width, 14.1875rem);
     }
   }
 

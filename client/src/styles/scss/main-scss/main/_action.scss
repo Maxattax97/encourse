@@ -1,7 +1,7 @@
 @import "../definitions";
 @import "../helpers";
 
-div.action {
+.action {
   cursor: pointer;
   * {
     cursor: pointer;
@@ -15,10 +15,6 @@ div.action:not(.card):hover {
   }
 }
 
-div.action:not(.card):hover img.svg-icon {
-  filter: $icon-hover-color;
-}
-
 div.action:not(.card):hover {
   svg polygon, svg path {
     fill: #1f1f1f;
@@ -26,7 +22,7 @@ div.action:not(.card):hover {
 }
 
 div.action.card:hover .component {
-  background-color: #F0F0F0;
+  box-shadow: 0 0 8px rgba(0, 0, 0, .33);
 }
 
 div.action.card.selected .component {
@@ -49,4 +45,12 @@ div.action.radio-selected {
       fill: #4caf50;
     }
   }
+}
+
+li.action {
+  color: $hover-color;
+}
+
+li.action:hover {
+  color: #1f1f1f;
 }
