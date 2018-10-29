@@ -8,9 +8,10 @@ public class Scheduler {
     @Autowired
     ProfessorService professorService;
 
-    @Scheduled(fixedRate = 1000)
+    /** Pulls and tests all projects ready to be synchronized every hour **/
+    @Scheduled(fixedRate = 3600000)
     public void pullAndTestAllProjects() {
-        System.out.println("\n\n\nScheduled Task Running\n\n\n");
+        System.out.println("Scheduled Task Running");
         professorService.pullAndTestAllProjects();
     }
 }

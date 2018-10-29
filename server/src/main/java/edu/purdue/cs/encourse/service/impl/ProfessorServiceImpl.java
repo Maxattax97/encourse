@@ -6,15 +6,11 @@ import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.ProfessorService;
 import edu.purdue.cs.encourse.util.ConfigurationManager;
 import edu.purdue.cs.encourse.util.JSONReturnable;
-import org.aspectj.weaver.patterns.IfPointcut;
-import org.codehaus.jackson.map.util.JSONPObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jackson.JsonObjectDeserializer;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -31,7 +27,6 @@ public class ProfessorServiceImpl implements ProfessorService {
     public final static String NAME = "ProfessorService";
     private final static String pythonPath = "src/main/python/";
     private final static String tailFilePath = "src/main/temp/";
-    private final static int RATE = 3600000;
     private final static Boolean DEBUG = ConfigurationManager.getInstance().debug;
     private final static Boolean OBFUSCATE = false;
 
