@@ -1107,18 +1107,15 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Pulls and tests every project in the database on one hour intervals **/
-    @Scheduled(fixedDelay = RATE)
-    public int pullAndTestAllProjects() {
-        int code = 0;
+    @Scheduled(fixedDelay = 1000)
+    public void pullAndTestAllProjects() {
         for(Project project : projectRepository.findAll()) {
             if(project.getTestRate() > 0 && project.getTestCount() <= 0) {
                 System.out.println("Pulling project " + project.getProjectName());
                 if (pullProjects(project.getProjectIdentifier()) < 0) {
-                    code -= 1;
                 }
                 System.out.println("Testing project " + project.getProjectName());
                 if (runTestall(project.getProjectIdentifier()) < 0) {
-                    code -= 1;
                 }
                 project.setTestCount(project.getTestRate() - 1);
             }
@@ -1126,7 +1123,6 @@ public class ProfessorServiceImpl implements ProfessorService {
                 project.setTestCount(project.getTestCount() - 1);
             }
         }
-        return code;
     }
 
     public int testPythonDirectory() {
