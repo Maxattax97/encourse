@@ -40,6 +40,17 @@ class CoursePanel extends Component {
                     <ProjectNavigation/>
                 </div>
 
+                <div className='panel-right-nav'>
+                    <div className='top-nav'>
+                        <div>
+                            <h4>Last Sync:</h4>
+                        </div>
+                        <div>
+                            <h4>Last Test Ran:</h4>
+                        </div>
+                    </div>
+                </div>
+
                 <CourseModal id={1}/>
 
                 <div className='panel-center-content'>
