@@ -187,6 +187,61 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         }
     }
 
+    private void createTestFiles(String visibleTestFile, String hiddenTestFile, List<StudentProject> projects) throws IOException {
+        BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+        BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+        for (StudentProject p : projects) {
+            Student student = studentRepository.findByUserID(p.getStudentID());
+            StringBuilder builder = new StringBuilder();
+            builder.append(student.getUserName());
+            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), false);
+            for (StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
+            }
+            String visibleTestResult = builder.toString();
+            builder = new StringBuilder();
+            builder.append(student.getUserName());
+            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), true);
+            for (StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
+            }
+            String hiddenTestResult = builder.toString();
+            visibleWriter.write(visibleTestResult + "\n");
+            hiddenWriter.write(hiddenTestResult + "\n");
+        }
+        visibleWriter.close();
+        hiddenWriter.close();
+    }
+
+    private void createTestFilesTA(String visibleTestFile, String hiddenTestFile, List<TeachingAssistantStudent> assignments, String projectID) throws IOException {
+        BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+        BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+        for (TeachingAssistantStudent s : assignments) {
+            Student student = studentRepository.findByUserID(s.getStudentID());
+            if(studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID()) == null) {
+                continue;
+            }
+            StringBuilder builder = new StringBuilder();
+            builder.append(student.getUserName());
+            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(projectID, student.getUserID(), false);
+            for (StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
+            }
+            String visibleTestResult = builder.toString();
+            builder = new StringBuilder();
+            builder.append(student.getUserName());
+            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(projectID, student.getUserID(), true);
+            for (StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
+            }
+            String hiddenTestResult = builder.toString();
+            visibleWriter.write(visibleTestResult + "\n");
+            hiddenWriter.write(hiddenTestResult + "\n");
+        }
+        visibleWriter.close();
+        hiddenWriter.close();
+    }
+
     public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
@@ -343,34 +398,9 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests_TA.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests_TA.txt";
         try {
-            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-            for (TeachingAssistantStudent s : assignments) {
-                Student student = studentRepository.findByUserID(s.getStudentID());
-                if(studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID()) == null) {
-                    continue;
-                }
-                StringBuilder builder = new StringBuilder();
-                builder.append(student.getUserName());
-                List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(projectID, student.getUserID(), false);
-                for (StudentProjectTest t : testResults) {
-                    builder.append(";").append(t.getTestResultString());
-                }
-                String visibleTestResult = builder.toString();
-                builder = new StringBuilder();
-                builder.append(student.getUserName());
-                testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(projectID, student.getUserID(), true);
-                for (StudentProjectTest t : testResults) {
-                    builder.append(";").append(t.getTestResultString());
-                }
-                String hiddenTestResult = builder.toString();
-                visibleWriter.write(visibleTestResult + "\n");
-                hiddenWriter.write(hiddenTestResult + "\n");
-            }
-            visibleWriter.close();
-            hiddenWriter.close();
+            createTestFilesTA(visibleTestFile, hiddenTestFile, assignments, projectID);
         } catch (IOException e) {
-            json = new JSONReturnable(-3, null);
+            return new JSONReturnable(-3, null);
         }
 
         if (DEBUG) {
@@ -400,35 +430,59 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests_TA.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests_TA.txt";
         try {
-            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-            for (TeachingAssistantStudent s : assignments) {
-                Student student = studentRepository.findByUserID(s.getStudentID());
-                if(studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID()) == null) {
-                    continue;
-                }
-                StringBuilder builder = new StringBuilder();
-                builder.append(student.getUserName());
-                List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(projectID, student.getUserID(), false);
-                for (StudentProjectTest t : testResults) {
-                    builder.append(";").append(t.getTestResultString());
-                }
-                String visibleTestResult = builder.toString();
-                builder = new StringBuilder();
-                builder.append(student.getUserName());
-                testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(projectID, student.getUserID(), true);
-                for (StudentProjectTest t : testResults) {
-                    builder.append(";").append(t.getTestResultString());
-                }
-                String hiddenTestResult = builder.toString();
-                visibleWriter.write(visibleTestResult + "\n");
-                hiddenWriter.write(hiddenTestResult + "\n");
-            }
-            visibleWriter.close();
-            hiddenWriter.close();
+            createTestFilesTA(visibleTestFile, hiddenTestFile, assignments, projectID);
         }
         catch(IOException e) {
-            json = new JSONReturnable(-3, null);
+            return new JSONReturnable(-3, null);
+        }
+
+        if (DEBUG) {
+            visibleTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
+            hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
+        }
+
+        // TODO: Check that test results work as expected
+        String pyPath = pythonPath + "get_test_summary.py";
+        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
+        json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
+    public JSONReturnable getAnonymousClassProgress(@NonNull String projectID) {
+        JSONReturnable json = null;
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        try {
+            createTestFiles(visibleTestFile, hiddenTestFile, projects);
+        } catch (IOException e) {
+            return new JSONReturnable(-1, null);
+        }
+
+        if (DEBUG) {
+            visibleTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
+            hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
+        }
+
+        // TODO: Check that test results work as expected
+        String pyPath = pythonPath + "get_class_progress.py";
+        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
+        json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
+    public JSONReturnable getAnonymousTestSummary(@NonNull String projectID) {
+        JSONReturnable json = null;
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        try {
+            createTestFiles(visibleTestFile, hiddenTestFile, projects);
+        }
+        catch(IOException e) {
+            return new JSONReturnable(-1, null);
         }
 
         if (DEBUG) {
