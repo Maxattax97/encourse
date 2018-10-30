@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {history} from '../../redux/store'
-import {Card, SettingsIcon, Summary, Title} from '../Helpers'
+import {BackNav, Card, SettingsIcon, Summary, Title} from '../Helpers'
 import CourseDishonestyModal from '../modal/CourseDishonestyModal'
 import {getStudentPreviews, setCurrentStudent, setModalState} from '../../redux/actions'
 import connect from 'react-redux/es/connect/connect'
@@ -18,7 +18,22 @@ class CourseDishonestyPanel extends Component {
 
         ]
 
+        const action_names = [
+            'Sync Repositories',
+            'Run Tests'
+        ]
+
+        const actions = [
+            () => {  },
+            () => {  },
+        ]
+
         return (<div className="class-dishonesty-panel">
+
+            <div className='panel-left-nav'>
+                <BackNav back='Course' backClick={ this.back }/>
+                <ActionNavigation actions={ actions } action_names={ action_names }/>
+            </div>
 
             <div className='panel-right-nav'>
                 <div className='top-nav'>
@@ -27,17 +42,6 @@ class CourseDishonestyPanel extends Component {
                         <h4>Last Test Ran:</h4>
                     </div>
                 </div>
-                <ActionNavigation actions={[
-                    () => { history.push('/manage-tas') },
-                    () => {  },
-                    () => {  },
-                    () => { history.push('/course-dishonesty') }
-                ]}
-                action_names={[
-                    'Sync Repositories',
-                    'Run Tests'
-                ]}/>
-
             </div>
 
 

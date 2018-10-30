@@ -10,7 +10,7 @@ class ActionNavigation extends Component {
 
     render() {
         return (
-            <div className='actions-container side-nav-right'>
+            <div className='list-nav side-nav-left'>
                 <Card>
                     <div className='actions'>
                         <h3 className='header'>Actions</h3>

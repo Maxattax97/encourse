@@ -20,16 +20,19 @@ public interface TeachingAssistantService {
     JSONReturnable getAssignmentsProgress(@NonNull String projectID, @NonNull String userNameTA);
     JSONReturnable getAssignmentsTestSummary(@NonNull String projectID, @NonNull String userNameTA);
 
+    JSONReturnable getAssignmentsCheating(@NonNull String projectID, @NonNull String userNameTA);
+
+    JSONReturnable getAnonymousClassProgress(@NonNull String projectID);
+    JSONReturnable getAnonymousTestSummary(@NonNull String projectID);
+
     String countAllCommits(@NonNull String projectID, @NonNull String userNameTA);
     String countAllCommitsByDay(@NonNull String projectID, @NonNull String userNameTA);
     String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
     String listAllCommitsByTime(@NonNull String projectID, @NonNull String userNameTA);
     String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
 
-    int runTestallForStudent(@NonNull String projectID, @NonNull String userNameStudent);
+    int runTestallForStudent(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
 
     JSONArray getStudentData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA);
-    JSONArray getProjectData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA);
-
-    Project getProject(String projectID);
+    JSONArray getCourseData(@NonNull String userNameTA);
 }

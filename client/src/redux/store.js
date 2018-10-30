@@ -25,15 +25,20 @@ const store = createStore(connectRouter(history)(rootReducer),
 function setLocalStorageState(state, key, value) {
     try {
         localStorage.setItem(key, value)
-    } catch (err) { return undefined }
+    } catch (err) {
+        console.log(err)
+        return undefined
+    }
 }
 
 function getLocalStorageState(key, parentObject) {
     try {
-      const value = JSON.parse(localStorage.getItem(key)) || undefined;
-
-      return { [parentObject]: { [key]: value } }
-    } catch (err) { return undefined; }
+        const value = JSON.parse(localStorage.getItem(key)) || undefined
+        return { [parentObject]: { [key]: value } }
+    } catch (err) {
+        console.log(err)
+        return undefined
+    }
 }
   
 store.subscribe(() => {

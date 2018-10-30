@@ -1,8 +1,22 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {Card, Summary, Title} from '../../Helpers'
+import {fuzzing} from '../../../fuzz'
+import {history} from '../../../redux/store'
+import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState} from '../../../redux/actions'
 
 class CourseStudentSummary extends Component {
+
+    showStudentPanel = (student) => {
+        this.props.setCurrentStudent(student)
+        if (fuzzing) {
+            // NOTE: we don't even use the student id in the url
+            history.push('/student/student')
+        } else {
+            history.push(`/student/${student.id}`)
+        }
+    };
+
     render() {
         return (
             <Summary
@@ -10,7 +24,7 @@ class CourseStudentSummary extends Component {
                 data={ this.props.students }
                 className='course-students'
                 iterator={ (student) =>
-                    <Card onClick={this.props.onClick} className='action'>
+                    <Card onClick={() => this.showStudentPanel(student)} className='action' key={student.id}>
                         <div className="summary-preview">
                             <Title>
                                 <h4>{ student.first_name }</h4>
@@ -44,4 +58,11 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, null)(CourseStudentSummary)
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
+        setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CourseStudentSummary)

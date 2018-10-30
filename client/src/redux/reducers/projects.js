@@ -23,7 +23,7 @@ function projects(state = {}, action) {
         return Object.assign({}, state, {
             getClassProjectsData: action.data,
             currentProjectId: state.currentProjectId === null || state.currentProjectId === undefined ? 
-                                action.data[0].id : state.currentProjectId,
+                action.data[0].id : state.currentProjectId,
             currentProjectIndex: isNaN(state.currentProjectIndex) ? 0 : state.currentProjectIndex,
             getClassProjectsIsLoading: false,
         })
@@ -99,7 +99,7 @@ function projects(state = {}, action) {
         return Object.assign({}, state, {
             deleteProjectData: action.data,
             getClassProjectsData: projects2,
-            currentProjectIndex,
+            currentProjectIndex: currentProjectIndex,
             currentProjectId: state.getClassProjectsData[currentProjectIndex].id,
             deleteProjectIsLoading: false,
         })

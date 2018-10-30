@@ -46,7 +46,7 @@ public class ReadController {
     @RequestMapping(value = "/studentsData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentData(@RequestParam(name = "courseID") String courseID,
                                                           @RequestParam(name = "semester") String semester) {
-        JSONArray json = courseService.getStudentData(semester, courseID);
+        JSONArray json = professorService.getStudentData(semester, courseID);
         if (json == null) {
             return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
         }
@@ -92,7 +92,7 @@ public class ReadController {
     @RequestMapping(value = "/coursesData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getCourseData(@RequestParam(name = "userName") String userName) {
         if (hasPermissionOverAccount(userName)) {
-            JSONArray json = courseService.getCourseData(userName);
+            JSONArray json = professorService.getCourseData(userName);
 
             if (json == null) {
                 return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);

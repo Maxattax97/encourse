@@ -4,11 +4,11 @@ import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label, Bru
 import moment from 'moment'
 import { connect } from 'react-redux'
 
-import { getProgressPerTime } from '../../redux/actions'
-import url from '../../server'
-import {LoadingIcon} from '../Helpers'
+import { getProgressPerCommit } from '../../../../redux/actions/index'
+import url from '../../../../server'
+import {LoadingIcon} from '../../../Helpers'
 
-const defaultData = [
+/*const defaultData = [
     {date: moment('2018-09-16').valueOf(), progress: 0, timeSpent: 0, commitCount: 0},
     {date: moment('2018-09-17').valueOf(), progress: 0, timeSpent: 0, commitCount: 0},
     {date: moment('2018-09-18').valueOf(), progress: 0, timeSpent: 0, commitCount: 0},
@@ -21,15 +21,15 @@ const defaultData = [
     {date: moment('2018-09-25').valueOf(), progress: 10, timeSpent: 2, commitCount: 50},
     {date: moment('2018-09-26').valueOf(), progress: 50, timeSpent: 7, commitCount: 200},
     {date: moment('2018-09-27').valueOf(), progress: 10, timeSpent: 3, commitCount: 50},
-]
+]*/
 
-class ProgressPerTime extends Component {
+class StudentVelocityPerCommit extends Component {
 
     constructor(props) {
         super(props)
 
         this.state = {
-            formattedData: defaultData,
+            formattedData: [],
         }
     }
 
@@ -39,17 +39,20 @@ class ProgressPerTime extends Component {
 
     componentWillReceiveProps = (nextProps) => {
         if(this.props.isLoading && !nextProps.isLoading) {
-            this.setState({ formattedData: this.formatApiData(nextProps.data) })
+            const data = this.formatApiData(nextProps.data)
+
+            if(data)
+                this.setState({ formattedData: data })
         }
-        if (nextProps.projectID !== this.props.projectID) {
+
+        if (nextProps.currentProjectId !== this.props.currentProjectId)
             this.fetch(nextProps)
-        }
     }
 
     fetch = (props) => {
-        if(props.projectID) {
-            props.getData(`${url}/api/velocity?projectID=${props.projectID}&userName=${props.id}`)
-        }  
+        if(props.currentProjectId) {
+            props.getData(`${url}/api/velocity?projectID=${props.currentProjectId}&userName=${props.currentStudent.id}`)
+        }   
     }
 
     dateFormatter = (date) => {
@@ -58,16 +61,17 @@ class ProgressPerTime extends Component {
 
     formatApiData = (udata) => {
         if (!udata) {
-            return defaultData
+            return null
         }
         let data = udata.data
 
         if (!data || data.length === 0) {
-            return defaultData
+            return null
         }
 
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf()
+            entry.timeSpent = parseInt(entry.timeSpent / 60)
         }
 
         return data
@@ -75,15 +79,15 @@ class ProgressPerTime extends Component {
 
     render() {
         return (
-            this.props.isLoading !== undefined && !this.props.isLoading
+            this.props.isLoading !== undefined && !this.props.isLoading && this.state.formattedData.length > 0
                 ? <div className="chart-container">
                     <ResponsiveContainer width="100%" height="100%">
                         <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
-                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Time</text>
+                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Commit</text>
                             <CartesianGrid/>
-                            <XAxis dataKey="timeSpent" type="number">
+                            <XAxis dataKey="commitCount" type="number">
                                 <Label offset={-15} position="insideBottom">
-                                Estimated Time worked
+                                Commit count worked
                                 </Label>
                             </XAxis>
                             <YAxis dataKey="progress" type="number">
@@ -106,15 +110,17 @@ class ProgressPerTime extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        data: state.student && state.student.getProgressPerTimeData ? state.student.getProgressPerTimeData : null,
-        isLoading: state.student ? state.student.getProgressPerTimeIsLoading : false,
+        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        data: state.student && state.student.getProgressPerCommitData ? state.student.getProgressPerCommitData : null,
+        isLoading: state.student ? state.student.getProgressPerCommitIsLoading : false,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getData: (url, headers, body) => dispatch(getProgressPerTime(url, headers, body)),
+        getData: (url, headers, body) => dispatch(getProgressPerCommit(url, headers, body)),
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProgressPerTime)
+export default connect(mapStateToProps, mapDispatchToProps)(StudentVelocityPerCommit)

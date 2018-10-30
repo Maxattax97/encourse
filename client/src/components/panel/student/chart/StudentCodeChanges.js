@@ -3,9 +3,9 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Label, Brush, Re
 import moment from 'moment'
 import { connect } from 'react-redux'
 
-import { getCodeFrequency } from '../../redux/actions'
-import url from '../../server'
-import {LoadingIcon} from '../Helpers'
+import { getCodeFrequency } from '../../../../redux/actions/index'
+import url from '../../../../server'
+import {LoadingIcon} from '../../../Helpers'
 
 const defaultData = [
     {date: moment('9/9/2018').valueOf(), additions: 0, deletions: -0},
@@ -20,7 +20,7 @@ const defaultData = [
     {date: moment('9/18/2018').valueOf(), additions: 0, deletions: -0},
 ]
 
-class CodeChangesChart extends Component {
+class StudentCodeChanges extends Component {
     constructor(props) {
         super(props)
 
@@ -37,14 +37,14 @@ class CodeChangesChart extends Component {
         if(this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
-        if (nextProps.projectID !== this.props.projectID) {
+        if (nextProps.currentProjectId !== this.props.currentProjectId) {
             this.fetch(nextProps)
         }
     }
 
     fetch = (props) => {
-        if(props.projectID) {
-            props.getData(`${url}/api/diffs?projectID=${props.projectID}&userName=${props.id}`)
+        if(props.currentProjectId) {
+            props.getData(`${url}/api/diffs?projectID=${props.currentProjectId}&userName=${props.currentStudent.id}`)
         } 
     }
 
@@ -122,6 +122,8 @@ class CodeChangesChart extends Component {
 
 const mapStateToProps = (state) => {
     return {
+        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
         data: state.student && state.student.getCodeFrequencyData ? state.student.getCodeFrequencyData : null,
         isLoading: state.student ? state.student.getCodeFrequencyIsLoading : false,
     }
@@ -133,4 +135,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CodeChangesChart)
+export default connect(mapStateToProps, mapDispatchToProps)(StudentCodeChanges)

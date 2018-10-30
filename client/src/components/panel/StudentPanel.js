@@ -1,30 +1,15 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import {Card, Summary} from '../Helpers'
-import StudentProgressLineGraph from '../chart/StudentProgressLineGraph'
-import CodeChangesChart from '../chart/CodeChangesChart'
-import CommitFrequencyHistogram from '../chart/CommitFrequencyHistogram'
-import ProgressPerTime from '../chart/ProgressPerTime'
-import ProgressPerCommit from '../chart/ProgressPerCommit'
+import {BackNav, Card} from '../Helpers'
 import ProjectNavigation from '../navigation/ProjectNavigation'
-import StudentStatistics from './util/StudentStatistics'
-import CommitHistory from './util/CommitHistory'
 import { history } from '../../redux/store'
 import { getStudent, clearStudent } from '../../redux/actions/index'
 import ActionNavigation from '../navigation/ActionNavigation'
-import StudentFeedback from './util/StudentFeedback'
+import {StudentFeedback, StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
 
 
 class StudentPanel extends Component {
-
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            modal_blur: ''
-        }
-    }
 
     componentWillMount = () => this.clear()
     componentWillUnmount = () => this.clear()
@@ -41,32 +26,36 @@ class StudentPanel extends Component {
     };
 
     render() {
+
+        const action_names = [
+            'View Hidden Tests',
+            'Run Tests',
+            'Academic Dishonesty Report'
+        ]
+
+        const actions = [
+            () => {},
+            () => {},
+            () => {}
+        ]
+
         return (
             <div className="panel-student">
 
-                <ProjectNavigation
-                    back="Course"
-                    backClick={ this.back }
-                    onModalBlur={ (blur) => this.setState({modal_blur : blur ? ' blur' : ''}) }
-                    { ...this.props }/>
+                <div className='panel-left-nav'>
+                    <BackNav back="Course"
+                        backClick={ this.back }/>
+                    <ActionNavigation actions={ actions } action_names={ action_names }/>
+                    <ProjectNavigation/>
+                </div>
 
                 <div className="panel-right-nav">
                     <div className='top-nav' />
-                    <ActionNavigation actions={[
-                        () => {},
-                        () => {},
-                        () => {}
-                    ]}
-                    action_names={[
-                        'View Hidden Tests',
-                        'Run Tests',
-                        'Academic Dishonesty Report'
-                    ]} />
-                    <CommitHistory projectID={this.props.currentProjectId} id={this.props.currentStudent.id} />
+                    <StudentCommitHistory />
                 </div>
 
                 <div className="panel-center-content">
-                    <div className={ `panel-student-content${this.state.modal_blur}` }>
+                    <div className='panel-student-content'>
                         <h1 className='header'>
                             {
                                 `CS252 - ${this.props.currentStudent ? `${this.props.currentStudent.first_name} ${this.props.currentStudent.last_name}` : ''}`
@@ -74,28 +63,13 @@ class StudentPanel extends Component {
                         </h1>
                         <div className="h1 break-line header" />
 
-                        <Summary
-                            columns={ 2 }
-                            data={ [
-                                <StudentProgressLineGraph projectID={this.props.currentProjectId} id={this.props.currentStudent.id} key={1}/>,
-                                <CodeChangesChart projectID={this.props.currentProjectId} id={this.props.currentStudent.id} key={2}/>,
-                                <CommitFrequencyHistogram projectID={this.props.currentProjectId} id={this.props.currentStudent.id} key={3}/>,
-                                <ProgressPerTime projectID={this.props.currentProjectId} id={this.props.currentStudent.id} key={4}/>,
-                                <ProgressPerCommit projectID={this.props.currentProjectId} id={this.props.currentStudent.id} key={5}/>,
-                            ] }
-                            className='charts'
-                            iterator={ (chart) =>
-                                <Card key={ chart.key } >
-                                    { chart }
-                                </Card>
-                            }>
-                            <h3 className='header'>Student Charts</h3>
-                        </Summary>
+                        <h3 className='header'>Student Charts</h3>
+                        <StudentCharts />
 
                         <div className="h1 break-line" />
                         <div className="student-stats-comments float-height">
                             <Card>
-                                <StudentStatistics projectID={this.props.currentProjectId} id={this.props.currentStudent.id}/>
+                                <StudentStatistics/>
                             </Card>
                             <Card>
                                 <StudentFeedback/>
@@ -110,8 +84,7 @@ class StudentPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : 0
+        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined
     }
 }
 

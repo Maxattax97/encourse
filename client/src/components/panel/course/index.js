@@ -13,3 +13,8 @@ export {
 export {
     default as StudentPreview
 } from './CourseStudentSummary'
+
+export {
+    CourseCompletionProgress,
+    CourseTestCaseProgress
+} from './chart'
