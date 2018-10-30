@@ -188,6 +188,33 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
     }
 
+    private int createTestFiles(String visibleTestFile, String hiddenTestFile, List<StudentProject> projects) throws IOException {
+        BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+        BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+        for (StudentProject p : projects) {
+            Student student = studentRepository.findByUserID(p.getStudentID());
+            StringBuilder builder = new StringBuilder();
+            builder.append(student.getUserName());
+            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), false);
+            for (StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
+            }
+            String visibleTestResult = builder.toString();
+            builder = new StringBuilder();
+            builder.append(student.getUserName());
+            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), true);
+            for (StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
+            }
+            String hiddenTestResult = builder.toString();
+            visibleWriter.write(visibleTestResult + "\n");
+            hiddenWriter.write(hiddenTestResult + "\n");
+        }
+        visibleWriter.close();
+        hiddenWriter.close();
+        return 0;
+    }
+
     /** Adds a new project to the database, which needs to be done before cloning the project in the course hub **/
     public Project addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate) {
         Project project = new Project(courseID, semester, projectName, repoName, startDate, dueDate, testRate);
@@ -473,31 +500,9 @@ public class ProfessorServiceImpl implements ProfessorService {
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
         try {
-            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-            for (StudentProject p : projects) {
-                Student student = studentRepository.findByUserID(p.getStudentID());
-                StringBuilder builder = new StringBuilder();
-                builder.append(student.getUserName());
-                List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), false);
-                for (StudentProjectTest t : testResults) {
-                    builder.append(";").append(t.getTestResultString());
-                }
-                String visibleTestResult = builder.toString();
-                builder = new StringBuilder();
-                builder.append(student.getUserName());
-                testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), true);
-                for (StudentProjectTest t : testResults) {
-                    builder.append(";").append(t.getTestResultString());
-                }
-                String hiddenTestResult = builder.toString();
-                visibleWriter.write(visibleTestResult + "\n");
-                hiddenWriter.write(hiddenTestResult + "\n");
-            }
-            visibleWriter.close();
-            hiddenWriter.close();
+            createTestFiles(visibleTestFile, hiddenTestFile, projects);
         } catch (IOException e) {
-            json = new JSONReturnable(-1, null);
+            return new JSONReturnable(-1, null);
         }
 
         if (DEBUG) {
@@ -519,32 +524,10 @@ public class ProfessorServiceImpl implements ProfessorService {
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
         try {
-            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-            for (StudentProject p : projects) {
-                Student student = studentRepository.findByUserID(p.getStudentID());
-                StringBuilder builder = new StringBuilder();
-                builder.append(student.getUserName());
-                List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), false);
-                for(StudentProjectTest t : testResults) {
-                    builder.append(";").append(t.getTestResultString());
-                }
-                String visibleTestResult = builder.toString();
-                builder = new StringBuilder();
-                builder.append(student.getUserName());
-                testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), true);
-                for(StudentProjectTest t : testResults) {
-                    builder.append(";").append(t.getTestResultString());
-                }
-                String hiddenTestResult = builder.toString();
-                visibleWriter.write(visibleTestResult + "\n");
-                hiddenWriter.write(hiddenTestResult + "\n");
-            }
-            visibleWriter.close();
-            hiddenWriter.close();
+            createTestFiles(visibleTestFile, hiddenTestFile, projects);
         }
         catch(IOException e) {
-            json = new JSONReturnable(-1, null);
+            return new JSONReturnable(-1, null);
         }
 
         if (DEBUG) {
@@ -658,14 +641,18 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public JSONReturnable getClassCheating(@NonNull String projectID) {
-        String commitLogFile = "";
-        String visibleTestFile = "";
-        String hiddenTestFile = "";
-
-        //TODO: Jordan create files here
-        // The commit log should contain every student
-        // The progress files should be the same format as the in getStudentProgress, but should contain
-        // data for every student
+        String commitLogFile = listAllCommitsByTime(projectID);
+        if(commitLogFile == null) {
+            return new JSONReturnable(-1, null);
+        }
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        try {
+            createTestFiles(visibleTestFile, hiddenTestFile, projects);
+        } catch (IOException e) {
+            return new JSONReturnable(-2, null);
+        }
 
         if (DEBUG){
             commitLogFile = pythonPath + "/test_datasets/sampleCommitList.txt";
@@ -1049,7 +1036,6 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /** Runs testall for a single student, which is quicker if the professor or TA wants to manually run testall for a student **/
-    /** TODO: @reed Fix this once runTestall is finalized **/
     public int runTestallForStudent(@NonNull String projectID, @NonNull String userName) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {

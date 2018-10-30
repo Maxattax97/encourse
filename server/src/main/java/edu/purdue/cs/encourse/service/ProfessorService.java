@@ -40,7 +40,7 @@ public interface ProfessorService {
     int assignTeachingAssistantToSection(@NonNull String teachAssistUserName, @NonNull String sectionID);
     int assignTeachingAssistantToStudentInSection(@NonNull String teachAssistUserName, @NonNull String studentUserName, @NonNull String sectionID);
     int modifyTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String field, @NonNull String value);
-    int pullAndTestAllProjects();
+    void pullAndTestAllProjects();
     int runTestall(@NonNull String projectID);
     int runTestallForStudent(@NonNull String projectID, @NonNull String userName);
     JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID);
