@@ -6,6 +6,8 @@ import java.nio.Buffer;
 public class ConfigurationManager {
     private static ConfigurationManager sharedInstance = null;
     public Boolean debug = false;
+    public final static String ßuserID = "cutz";
+    public final static String projectID = "cs252";
 
     private ConfigurationManager() {
         File configFile = new File("src/config.txt");
