@@ -17,11 +17,11 @@ public interface ProfessorService {
     int deleteProject(@NonNull String projectID);
     int modifyProject(@NonNull String projectID, @NonNull String field, String value);
     int pullProjects(@NonNull String projectID);
+    int updateStudentInformation(@NonNull String projectID, @NonNull String userName);
     Project addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate);
     Project getProject(String projectID);
 
     JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getClassCheating(@NonNull String projectID);
     JSONReturnable getClassProgress(@NonNull String projectID);
     JSONReturnable getCommitCounts(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userName);
@@ -29,6 +29,8 @@ public interface ProfessorService {
     JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getTestSummary(@NonNull String projectID);
+
+    JSONReturnable getClassCheating(@NonNull String projectID);
 
     String countAllCommits(@NonNull String projectID);
     String countAllCommitsByDay(@NonNull String projectID);

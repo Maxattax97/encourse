@@ -397,6 +397,87 @@ public class ProfessorServiceImpl implements ProfessorService {
         return code;
     }
 
+    public int updateStudentInformation(@NonNull String projectID, @NonNull String userName) {
+        String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
+        String commitLogFile = listStudentCommitsByTime(projectID, userName);
+        if(dailyCountsFile == null) {
+            return -1;
+        }
+        if(commitLogFile == null) {
+            return -2;
+        }
+        String testResult = null;
+        if (DEBUG) {
+            testResult = "cutz;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0";
+        } else {
+            Student student = studentRepository.findByUserName(userName);
+            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+            StringBuilder builder = new StringBuilder();
+            builder.append(student.getUserName());
+            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), false);
+            for(StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
+            }
+            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), true);
+            for(StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
+            }
+            testResult = builder.toString();
+        }
+        String pyPath = pythonPath + "get_statistics.py";
+        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
+        JSONReturnable json = runPython(command);
+        if(json == null || json.getJsonObject() == null) {
+            return 0;
+        }
+        if (DEBUG) {
+            executeBashScript("cleanDirectory.sh src/main/temp");
+            return 0;
+        }
+        Student student = studentRepository.findByUserName(userName);
+        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+        JSONArray array = (JSONArray)json.getJsonObject().get("data");
+        for(int i = 0; i < array.size(); i++) {
+            JSONObject data = (JSONObject)array.get(i);
+            if (data.get("stat_name").equals("End Date")) {
+                project.setMostRecentCommitDate(data.get("stat_value").toString());
+            }
+            else if (data.get("stat_name").equals("Additions")) {
+                try {
+                    project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setTotalLinesAdded(0);
+                }
+            }
+            else if (data.get("stat_name").equals("Deletions")) {
+                try {
+                    project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setTotalLinesRemoved(0);
+                }
+            } else if (data.get("stat_name").equals("Commit Count")) {
+                try {
+                    project.setCommitCount(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setCommitCount(0);
+                }
+            }
+            else if (data.get("stat_name").equals("Estimated Time Spent")) {
+                try {
+                    project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
+                } catch (NumberFormatException e) {
+                    project.setTotalTimeSpent(0.0);
+                }
+            }
+        }
+        studentProjectRepository.save(project);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return 0;
+    }
+
     public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName) {
         String visibleTestFile;
         String hiddenTestFile;
@@ -595,46 +676,6 @@ public class ProfessorServiceImpl implements ProfessorService {
             executeBashScript("cleanDirectory.sh src/main/temp");
             return json;
         }
-        Student student = studentRepository.findByUserName(userName);
-        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-        JSONArray array = (JSONArray)json.getJsonObject().get("data");
-        for(int i = 0; i < array.size(); i++) {
-            JSONObject data = (JSONObject)array.get(i);
-            if (data.get("stat_name").equals("End Date")) {
-                project.setMostRecentCommitDate(data.get("stat_value").toString());
-            }
-            else if (data.get("stat_name").equals("Additions")) {
-                try {
-                    project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setTotalLinesAdded(0);
-                }
-            }
-            else if (data.get("stat_name").equals("Deletions")) {
-                try {
-                    project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setTotalLinesRemoved(0);
-                }
-            } else if (data.get("stat_name").equals("Commit Count")) {
-                try {
-                    project.setCommitCount(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setCommitCount(0);
-                }
-            }
-            else if (data.get("stat_name").equals("Estimated Time Spent")) {
-                try {
-                    project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
-                } catch (NumberFormatException e) {
-                    project.setTotalTimeSpent(0.0);
-                }
-            }
-        }
-        studentProjectRepository.save(project);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
@@ -1128,7 +1169,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(project.getProjectIdentifier());
                 for(StudentProject p : projects) {
                     Student student = studentRepository.findByUserID(p.getStudentID());
-                    getStatistics(p.getProjectIdentifier(), student.getUserName());
+                    updateStudentInformation(p.getProjectIdentifier(), student.getUserName());
                 }
                 project.setTestCount(project.getTestRate() - 1);
             }

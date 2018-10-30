@@ -340,52 +340,11 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             executeBashScript("cleanDirectory.sh src/main/temp");
             return json;
         }
-        Student student = studentRepository.findByUserName(userNameStudent);
-        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-        JSONArray array = (JSONArray)json.getJsonObject().get("data");
-        for(int i = 0; i < array.size(); i++) {
-            JSONObject data = (JSONObject)array.get(i);
-            if (data.get("stat_name").equals("End Date")) {
-                project.setMostRecentCommitDate(data.get("stat_value").toString());
-            }
-            else if (data.get("stat_name").equals("Additions")) {
-                try {
-                    project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setTotalLinesAdded(0);
-                }
-            }
-            else if (data.get("stat_name").equals("Deletions")) {
-                try {
-                    project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setTotalLinesRemoved(0);
-                }
-            } else if (data.get("stat_name").equals("Commit Count")) {
-                try {
-                    project.setCommitCount(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setCommitCount(0);
-                }
-            }
-            else if (data.get("stat_name").equals("Estimated Time Spent")) {
-                try {
-                    project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
-                } catch (NumberFormatException e) {
-                    project.setTotalTimeSpent(0.0);
-                }
-            }
-        }
-        studentProjectRepository.save(project);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
     public JSONReturnable getAssignmentsProgress(@NonNull String projectID, @NonNull String userNameTA) {
-        JSONReturnable json = null;
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
@@ -408,16 +367,14 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
         }
 
-        // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_class_progress.py";
         String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
-        json = runPython(command);
+        JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
     public JSONReturnable getAssignmentsTestSummary(@NonNull String projectID, @NonNull String userNameTA) {
-        JSONReturnable json = null;
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
@@ -441,10 +398,44 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
         }
 
-        // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_test_summary.py";
         String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
-        json = runPython(command);
+        JSONReturnable json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
+    public JSONReturnable getAssignmentsCheating(@NonNull String projectID, @NonNull String userNameTA) {
+        String commitLogFile = listAllCommitsByTime(projectID, userNameTA);
+        if(commitLogFile == null) {
+            return new JSONReturnable(-1, null);
+        }
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return new JSONReturnable(-2, null);
+        }
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
+        if(teachingAssistant == null) {
+            return new JSONReturnable(-3, null);
+        }
+        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        try {
+            createTestFilesTA(visibleTestFile, hiddenTestFile, assignments, projectID);
+        } catch (IOException e) {
+            return new JSONReturnable(-4, null);
+        }
+
+        if (DEBUG){
+            commitLogFile = pythonPath + "/test_datasets/sampleCommitList.txt";
+            visibleTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
+            hiddenTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
+        }
+
+        String pyPath = pythonPath + "get_class_cheating.py";
+        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -l 1000";
+        JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }

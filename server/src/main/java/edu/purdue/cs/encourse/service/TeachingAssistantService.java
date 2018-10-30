@@ -20,6 +20,8 @@ public interface TeachingAssistantService {
     JSONReturnable getAssignmentsProgress(@NonNull String projectID, @NonNull String userNameTA);
     JSONReturnable getAssignmentsTestSummary(@NonNull String projectID, @NonNull String userNameTA);
 
+    JSONReturnable getAssignmentsCheating(@NonNull String projectID, @NonNull String userNameTA);
+
     JSONReturnable getAnonymousClassProgress(@NonNull String projectID);
     JSONReturnable getAnonymousTestSummary(@NonNull String projectID);
 

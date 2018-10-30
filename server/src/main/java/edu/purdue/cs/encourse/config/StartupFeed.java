@@ -174,12 +174,12 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(malloc.getProjectIdentifier());
             for(StudentProject p : projects) {
                 Student student = studentRepository.findByUserID(p.getStudentID());
-                professorService.getStatistics(p.getProjectIdentifier(), student.getUserName());
+                professorService.updateStudentInformation(p.getProjectIdentifier(), student.getUserName());
             }
             projects = studentProjectRepository.findByIdProjectIdentifier(shell.getProjectIdentifier());
             for(StudentProject p : projects) {
                 Student student = studentRepository.findByUserID(p.getStudentID());
-                professorService.getStatistics(p.getProjectIdentifier(), student.getUserName());
+                professorService.updateStudentInformation(p.getProjectIdentifier(), student.getUserName());
             }
         }
         else {
