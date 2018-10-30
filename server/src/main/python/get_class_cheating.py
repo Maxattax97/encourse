@@ -37,17 +37,13 @@ def jsonify(git_data, test_progress, hidden_progress=None):
         student_progress = test_progress[student]
         student_hidden = hidden_progress[student]
         startend = times(student_data)
-        eprint(student_data)
-        eprint(startend)
 
         velocity_data = json.loads(velocity(student_progress, student_data, startend, hidden_scores=student_hidden))
-        eprint(velocity_data)
 
         progress = 0.0
         time_spent = 0.0
         commit_count = 0.0
         for day in velocity_data:
-            eprint(day)
             progress += day["progress"]
             time_spent += day["time_spent"]
             commit_count += day["commit_count"]

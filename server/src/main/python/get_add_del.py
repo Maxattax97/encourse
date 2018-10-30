@@ -121,7 +121,7 @@ if __name__ == "__main__":
 
     reformatted_data = reformat(individual_data)
 
-    commit_times = commit_data(commit_times_file, exclude=1)
+    commit_times = commit_data(commit_times_file)
     # eprint(commit_times)
     individual_commit_times = commit_times[student_id]
 
