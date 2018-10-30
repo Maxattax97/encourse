@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import {Card, CheckmarkIcon, PlusIcon} from '../Helpers'
-import CoursePreview from './util/CoursePreview'
-import AccountPreview from './util/AccountPreview'
+import CoursePreview from './admin/CoursePreview'
+import AccountPreview from './admin/AccountPreview'
 import Modal from '../modal/Modal'
 import {
     addCourse,
