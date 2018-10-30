@@ -8,6 +8,7 @@ import lombok.NonNull;
 import org.json.simple.JSONArray;
 
 import java.io.File;
+import java.util.List;
 
 public interface ProfessorService {
 
@@ -19,7 +20,6 @@ public interface ProfessorService {
     int pullProjects(@NonNull String projectID);
     int updateStudentInformation(@NonNull String projectID, @NonNull String userName);
     Project addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate);
-    Project getProject(String projectID);
 
     JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getClassProgress(@NonNull String projectID);
@@ -45,11 +45,12 @@ public interface ProfessorService {
     void pullAndTestAllProjects();
     int runTestall(@NonNull String projectID);
     int runTestallForStudent(@NonNull String projectID, @NonNull String userName);
-    JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID);
     ProjectTestScript addTestScript(@NonNull String projectID, @NonNull String testName, boolean isHidden, double points);
     ProjectTestScript uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents, boolean isHidden, double points);
 
     int testPythonDirectory();
 
-
+    JSONArray getCourseData(@NonNull String userName);
+    JSONArray getStudentData(@NonNull String semester, @NonNull String courseID);
+    JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID);
 }

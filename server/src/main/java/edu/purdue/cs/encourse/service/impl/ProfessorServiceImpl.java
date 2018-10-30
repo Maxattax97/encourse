@@ -314,10 +314,6 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    public Project getProject(@NonNull String projectID) {
-        return projectRepository.findByProjectIdentifier(projectID);
-    }
-
     /** Runs a bash script to initially clone every student's git repository. Each university should supply its own
      bash script, since repo locations will vary **/
     public int cloneProjects(@NonNull String projectID){
@@ -1282,6 +1278,98 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
         }
         return 0;
+    }
+
+    /** Gets all courses that a professor supervises **/
+    public JSONArray getCourseData(@NonNull String userName) {
+        Professor professor = professorRepository.findByUserName(userName);
+        if(professor == null) {
+            return null;
+        }
+        List<ProfessorCourse> courses = professorCourseRepository.findByIdProfessorID(professor.getUserID());
+        if(courses.isEmpty()) {
+            return null;
+        }
+        JSONArray coursesJSON = new JSONArray();
+        for(ProfessorCourse c : courses) {
+            JSONObject courseJSON = new JSONObject();
+            List<Section> sections = sectionRepository.findByCourseID(c.getCourseID());
+            List<String> sectionIDs = new ArrayList<>();
+            for(Section s : sections) {
+                sectionIDs.add(s.getSectionIdentifier());
+            }
+            courseJSON.put("course_number", c.getCourseID());
+            courseJSON.put("course_name", sections.get(0).getCourseID());
+            courseJSON.put("semester", c.getSemester());
+            courseJSON.put("id", professor.getUserName());
+            courseJSON.put("sections", sectionIDs);
+            coursesJSON.add(courseJSON);
+        }
+        return coursesJSON;
+    }
+
+    /** Retrieves basic data for all students in course, including name, userName, and simple project info **/
+    public JSONArray getStudentData(@NonNull String semester, @NonNull String courseID) {
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
+        if(sections.isEmpty()) {
+            return null;
+        }
+        List<String> completedStudents = new ArrayList<>();
+        JSONArray studentsJSON = new JSONArray();
+        for(Section section : sections) {
+            List<StudentSection> studentSections = studentSectionRepository.findByIdSectionIdentifier(section.getSectionIdentifier());
+            for(StudentSection studentSection : studentSections) {
+                Student student = studentRepository.findByUserID(studentSection.getStudentID());
+                if(!(completedStudents.contains(student.getUserID()))) {
+                    completedStudents.add(student.getUserID());
+                    List<StudentProject> studentProjects = studentProjectRepository.findByIdStudentID(student.getUserID());
+                    Map<String, Double> grades = new TreeMap<>();
+                    Map<String, Double> hiddenGrades = new TreeMap<>();
+                    Map<String, Integer> commitCounts = new TreeMap<>();
+                    Map<String, Double> timeSpent = new TreeMap<>();
+                    for(StudentProject p : studentProjects) {
+                        grades.put(p.getProjectIdentifier(), p.getBestVisibleGrade());
+                        hiddenGrades.put(p.getProjectIdentifier(), p.getBestHiddenGrade());
+                        commitCounts.put(p.getProjectIdentifier(), p.getCommitCount());
+                        timeSpent.put(p.getProjectIdentifier(), p.getTotalTimeSpent());
+                    }
+                    List<StudentSection> assignedSections = studentSectionRepository.findByIdStudentID(student.getUserID());
+                    List<String> sectionStrings = new ArrayList<>();
+                    for(StudentSection a : assignedSections) {
+                        sectionStrings.add(a.getSectionIdentifier());
+                    }
+                    List<TeachingAssistantStudent> assignedTeachingAssistants = teachingAssistantStudentRepository.findByIdStudentID(student.getUserID());
+                    List<String> teachingAssistants = new ArrayList<>();
+                    for(TeachingAssistantStudent a : assignedTeachingAssistants) {
+                        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(a.getTeachingAssistantID());
+                        teachingAssistants.add(teachingAssistant.getUserName());
+                    }
+                    JSONObject studentJSON = new JSONObject();
+                    studentJSON.put("first_name", student.getFirstName());
+                    studentJSON.put("last_name", student.getLastName());
+                    studentJSON.put("id", student.getUserName());
+                    studentJSON.put("sections", sectionStrings);
+                    studentJSON.put("teaching_assistants", teachingAssistants);
+                    studentJSON.put("grades", grades);
+                    studentJSON.put("hiddenGrades", grades);
+                    studentJSON.put("commitCounts", commitCounts);
+                    studentJSON.put("timeSpent", timeSpent);
+                    if (OBFUSCATE) {
+                        // RandomStringGenerator generator = new RandomStringGenerator.Builder()
+                        //        .withinRange('a', 'z').build();
+                        studentJSON.put("first_name", student.getFirstName());
+                        studentJSON.put("last_name", student.getLastName());
+                        studentJSON.put("id", student.getUserName());
+                        studentJSON.put("grades", grades);
+                        studentJSON.put("hiddenGrades", grades);
+                        studentJSON.put("commitCounts", commitCounts);
+                        studentJSON.put("timeSpent", timeSpent);
+                    }
+                    studentsJSON.add(studentJSON);
+                }
+            }
+        }
+        return studentsJSON;
     }
 
     public JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID) {
