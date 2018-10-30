@@ -20,6 +20,9 @@ public interface TeachingAssistantService {
     JSONReturnable getAssignmentsProgress(@NonNull String projectID, @NonNull String userNameTA);
     JSONReturnable getAssignmentsTestSummary(@NonNull String projectID, @NonNull String userNameTA);
 
+    JSONReturnable getAnonymousClassProgress(@NonNull String projectID);
+    JSONReturnable getAnonymousTestSummary(@NonNull String projectID);
+
     String countAllCommits(@NonNull String projectID, @NonNull String userNameTA);
     String countAllCommitsByDay(@NonNull String projectID, @NonNull String userNameTA);
     String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
