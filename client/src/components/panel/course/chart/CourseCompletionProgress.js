@@ -118,7 +118,7 @@ class CourseCompletionProgress extends Component {
                                     Students
                                 </Label>
                             </YAxis>
-                            <Tooltip/>
+                            <Tooltip formatter={(data) => toPercent(data)}/>
                             <Bar dataKey="percent" fill="#8884d8"/>
                         </ComposedChart>
                     </ResponsiveContainer>
