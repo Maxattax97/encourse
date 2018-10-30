@@ -46,21 +46,23 @@ public class ReadController {
     @RequestMapping(value = "/studentsData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentData(@RequestParam(name = "courseID") String courseID,
                                                           @RequestParam(name = "semester") String semester) {
-        JSONArray json = null;
+        JSONArray returnJson = null;
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
             String auth = ((Authority) iter.next()).getAuthority();
             if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                json = professorService.getStudentData(semester, courseID);
+                returnJson = professorService.getStudentData(semester, courseID);
                 break;
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                json = taService.getStudentData(semester, courseID, getUserFromAuth().getUsername());
+                returnJson = taService.getStudentData(semester, courseID, getUserFromAuth().getUsername());
                 break;
             }
         }
-        if (json == null) {
-            return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+
+        if (returnJson == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+        String json = returnJson.toJSONString();
         return new ResponseEntity<>(json, HttpStatus.OK);
 
         /*JSONArray json = professorService.getStudentData(semester, courseID);
@@ -105,19 +107,27 @@ public class ReadController {
         return new ResponseEntity<>(sections, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
     @RequestMapping(value = "/coursesData", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getCourseData(@RequestParam(name = "userName") String userName) {
-        if (hasPermissionOverAccount(userName)) {
-            JSONArray json = professorService.getCourseData(userName);
-
-            if (json == null) {
-                return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+    public @ResponseBody ResponseEntity<?> getCourseData() {
+                JSONArray returnJson = null;
+        Iterator iter = getUserAuthorities().iterator();
+        while (iter.hasNext()) {
+            String auth = ((Authority) iter.next()).getAuthority();
+            if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                returnJson = professorService.getCourseData(getUserFromAuth().getUsername());
+                break;
+            } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                returnJson = taService.getCourseData(getUserFromAuth().getUsername());
+                break;
             }
-            return new ResponseEntity<>(json, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+
+        if (returnJson == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        String json = returnJson.toJSONString();
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
