@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import url from '../../server'
-import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState} from '../../redux/actions/index'
+import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories} from '../../redux/actions/index'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import {CourseModal, CourseCharts, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
@@ -20,15 +20,21 @@ class CoursePanel extends Component {
 
         const action_names = [
             'Manage Teaching Assistants',
-            'Sync Repositories',
-            'Run Tests',
+            'Sync Project Repositories',
+            'Run Project Tests',
             'Academic Dishonesty Report'
         ]
 
         const actions = [
             () => { history.push('/manage-tas') },
-            () => {  },
-            () => {  },
+            () => {
+                if(this.props.currentProjectId)
+                    this.props.syncRepositories(`${url}/api/pull/project?projectID=${this.props.currentProjectId}`)
+            },
+            () => {
+                if(this.props.currentProjectId)
+                    this.props.runTests(`${url}/api/testall/project?projectID=${this.props.currentProjectId}`)
+            },
             () => { history.push('/course-dishonesty') }
         ]
 
@@ -44,10 +50,20 @@ class CoursePanel extends Component {
                 <div className='panel-right-nav'>
                     <div className='top-nav'>
                         <div>
-                            <h4>Last Sync:</h4>
+                            <h4>Last Sync: {
+                                this.props.projects && this.props.projects.length > 0 ?
+                                    this.props.projects[this.props.currentProjectIndex].last_sync
+                                    : null
+                            }
+                            </h4>
                         </div>
                         <div>
-                            <h4>Last Test Ran:</h4>
+                            <h4>Last Test Ran: {
+                                this.props.projects && this.props.projects.length > 0 ?
+                                    this.props.projects[this.props.currentProjectIndex].last_test
+                                    : null
+                            }
+                            </h4>
                         </div>
                     </div>
                     <CourseCommitHistory/>
@@ -70,12 +86,19 @@ class CoursePanel extends Component {
 
                         <div className='h1 break-line' />
 
-                        <h3 className='header'>Students Summary</h3>
                         <CourseStudentFilter />
                     </div>
                 </div>
             </div>
         )
+    }
+}
+
+const mapStateToProps = (state) => {
+    return {
+	    projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
+	    currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
+	    currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
 
@@ -85,7 +108,9 @@ const mapDispatchToProps = (dispatch) => {
         setCurrentProject: (id, index) => dispatch(setCurrentProject(id, index)),
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
         setModalState: (id) => dispatch(setModalState(id)),
+        runTests: (url, headers, body) => dispatch(runTests(url, headers, body)),
+        syncRepositories: (url, headers, body) => dispatch(syncRepositories(url, headers, body))
     }
 }
 
-export default connect(null, mapDispatchToProps)(CoursePanel)
+export default connect(mapStateToProps, mapDispatchToProps)(CoursePanel)

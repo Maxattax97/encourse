@@ -133,3 +133,39 @@ export function setDirectoryDataSuccess(data) {
 export const setDirectory = genericDispatch(
     'SET_DIRECTORY', setDirectoryHasError, setDirectoryDataSuccess, 'POST'
 )
+
+export function syncRepositoriesHasError(hasError) {
+    return {
+        type: 'SYNC_REPOSITORIES_HAS_ERROR',
+        hasError
+    }
+}
+
+export function syncRepositoriesSuccess(data) {
+    return {
+        type: 'SYNC_REPOSITORIES_SUCCESS',
+        data
+    }
+}
+
+export const syncRepositories = genericDispatch(
+	'SYNC_REPOSITORIES', syncRepositoriesHasError, syncRepositoriesSuccess, 'POST'
+)
+
+export function runTestsHasError(hasError) {
+    return {
+        type: 'RUN_TESTS_HAS_ERROR',
+        hasError
+    }
+}
+
+export function runTestsSuccess(data) {
+    return {
+        type: 'RUN_TESTS_SUCCESS',
+        data
+    }
+}
+
+export const runTests = genericDispatch(
+    'RUN_TESTS', runTestsHasError, runTestsSuccess, 'POST'
+)

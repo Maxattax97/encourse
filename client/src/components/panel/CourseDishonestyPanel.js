@@ -6,6 +6,7 @@ import CourseDishonestyModal from '../modal/CourseDishonestyModal'
 import {getStudentPreviews, setCurrentStudent, setModalState} from '../../redux/actions'
 import connect from 'react-redux/es/connect/connect'
 import StudentReportFilter from './course-dishonesty/StudentReportFilter'
+import CourseDishonestyCharts from "./course-dishonesty/CourseDishonestyCharts"
 
 class CourseDishonestyPanel extends Component {
 
@@ -14,10 +15,6 @@ class CourseDishonestyPanel extends Component {
     }
 
     render() {
-
-        const chartList = [
-
-        ]
 
         const action_names = [
             'Sync Repositories',
@@ -61,14 +58,7 @@ class CourseDishonestyPanel extends Component {
                     <div className='h1 break-line header' />
 
                     <h3 className='header'>Course Charts Summary</h3>
-                    <Summary
-                        columns={ 2 }
-                        data={ chartList }
-                        className='charts'
-                        iterator={ (chart) => <Card key={ chart.key }>
-                            { chart }
-                        </Card> } >
-                    </Summary>
+                    <CourseDishonestyCharts/>
 
                     <div className='h1 break-line' />
 
