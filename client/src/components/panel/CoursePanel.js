@@ -37,8 +37,8 @@ class CoursePanel extends Component {
 
                 <div className='panel-left-nav'>
                     <BackNav/>
-                    <ActionNavigation actions={ actions } action_names={ action_names }/>
                     <ProjectNavigation/>
+                    <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
 
                 <div className='panel-right-nav'>
