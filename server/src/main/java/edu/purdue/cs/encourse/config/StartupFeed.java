@@ -186,11 +186,9 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
         else {
             List<Project> projects = projectRepository.findBySemesterAndCourseID("Fall2018", "cs252");
             for(Project p : projects) {
-                if(p.getProjectName().equals("Shell")) {
-                    p.setTestRate(4);
-                    p.setTestCount(0);
-                    projectRepository.save(p);
-                }
+                p.setTestRate(4);
+                p.setTestCount(0);
+                projectRepository.save(p);
             }
         }
     }
