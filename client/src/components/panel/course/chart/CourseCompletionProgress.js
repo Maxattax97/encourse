@@ -110,16 +110,16 @@ class CourseCompletionProgress extends Component {
                             <CartesianGrid/>
                             <XAxis dataKey="progressBin" type="category">
                                 <Label offset={-10} position="insideBottom">
-                                    Total
+                                    Progress
                                 </Label>
                             </XAxis>
-                            <YAxis tickFormatter={toPercent} domain={[0, 1]}>
+                            <YAxis>
                                 <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                                     Students
                                 </Label>
                             </YAxis>
-                            <Tooltip formatter={(data) => toPercent(data)}/>
-                            <Bar dataKey="percent" fill="#8884d8"/>
+                            <Tooltip/>
+                            <Bar dataKey="count" fill="#8884d8"/>
                         </ComposedChart>
                     </ResponsiveContainer>
                 </div>
