@@ -166,7 +166,7 @@
 <span class="sd">            {</span>
 <span class="sd">                &quot;name1&quot;: {</span>
 <span class="sd">                   &quot;tests&quot;: {</span>
-<span class="sd">                        &quot;Test1&quot;: (&quot;P&quot; or &quot;F&quot;),</span>
+<span class="sd">                        &quot;Test1&quot;: (bool, int),</span>
 <span class="sd">                        ...</span>
 <span class="sd">                   },</span>
 <span class="sd">                   &quot;total&quot;: int (percentage)</span>
@@ -182,7 +182,7 @@
 <span class="sd">            </span>
 <span class="sd">            [</span>
 <span class="sd">                {</span>
-<span class="sd">                    &quot;name&quot;: str,</span>
+<span class="sd">                    &quot;testName&quot;: str,</span>
 <span class="sd">                    &quot;hidden&quot;: bool,</span>
 <span class="sd">                    &quot;score&quot;: int (percentage)</span>
 <span class="sd">                },</span>
@@ -195,28 +195,31 @@
     <span class="c1"># Collect scores for each test</span>
     <span class="k">for</span> <span class="n">student</span> <span class="ow">in</span> <span class="n">test_data</span><span class="p">:</span>
         <span class="n">info</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="n">student</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;tests&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">info</span><span class="p">:</span>
+            <span class="k">continue</span>
         <span class="n">test_scores</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;tests&quot;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">test_name</span> <span class="ow">in</span> <span class="n">test_scores</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">test_scores</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;P&quot;</span><span class="p">:</span>
+            <span class="n">passed</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="n">test_scores</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">passed</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">test_name</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
-                    <span class="n">tests</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="n">test_totals</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">tests</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">+=</span> <span class="n">score</span>
+                    <span class="n">test_totals</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">+=</span> <span class="n">score</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">tests</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-                    <span class="n">test_totals</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">tests</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
+                    <span class="n">test_totals</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">test_name</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
-                    <span class="n">test_totals</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">test_totals</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">+=</span> <span class="n">score</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">tests</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-                    <span class="n">test_totals</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">test_totals</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
     <span class="n">test_list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="c1"># Reformat into api format</span>
     <span class="k">for</span> <span class="n">test_name</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
         <span class="n">test_score</span> <span class="o">=</span> <span class="n">tests</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span>
         <span class="n">test_total</span> <span class="o">=</span> <span class="n">test_totals</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span>
         <span class="n">new_bar</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">new_bar</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_name</span> <span class="o">+</span> <span class="s2">&quot; H&quot;</span> <span class="k">if</span> <span class="n">hidden</span> <span class="k">else</span> <span class="n">test_name</span>
+        <span class="n">new_bar</span><span class="p">[</span><span class="s2">&quot;testName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_name</span> <span class="o">+</span> <span class="s2">&quot; H&quot;</span> <span class="k">if</span> <span class="n">hidden</span> <span class="k">else</span> <span class="n">test_name</span>
         <span class="n">new_bar</span><span class="p">[</span><span class="s2">&quot;hidden&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hidden</span>
         <span class="n">new_bar</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">test_score</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">test_total</span><span class="p">)</span>
         <span class="n">test_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_bar</span><span class="p">)</span>
@@ -227,7 +230,7 @@
     <span class="sd">&quot;&quot;&quot;Combines the visible and hidden test cases into a single json&quot;&quot;&quot;</span>
     <span class="n">visible</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">visible</span><span class="p">))</span>
     <span class="n">hidden</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">hidden</span><span class="p">))</span>
-    <span class="n">visible</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hidden</span><span class="p">)</span>
+    <span class="n">visible</span> <span class="o">+=</span> <span class="n">hidden</span>
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span></div>
 
 
@@ -247,6 +250,7 @@
 
     <span class="n">formatted_visible</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">visible_data</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">formatted_hidden</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">hidden_data</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
     <span class="n">api_json</span> <span class="o">=</span> <span class="n">merge_data</span><span class="p">(</span><span class="n">formatted_visible</span><span class="p">,</span> <span class="n">formatted_hidden</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">api_json</span><span class="p">)</span>
 </pre></div>

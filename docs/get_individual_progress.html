@@ -146,17 +146,16 @@
   <div class="section" id="module-get_individual_progress">
 <span id="get-individual-progress-module"></span><h1>get_individual_progress module<a class="headerlink" href="#module-get_individual_progress" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="get_individual_progress.extract_changes">
-<code class="descclassname">get_individual_progress.</code><code class="descname">extract_changes</code><span class="sig-paren">(</span><em>commit_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_individual_progress.html#extract_changes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_individual_progress.extract_changes" title="Permalink to this definition">¶</a></dt>
+<dt id="get_individual_progress.extract_progress">
+<code class="descclassname">get_individual_progress.</code><code class="descname">extract_progress</code><span class="sig-paren">(</span><em>progress_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_individual_progress.html#extract_progress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_individual_progress.extract_progress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts additions and deletions from commit data</p>
 <dl class="docutils">
 <dt><strong>Args</strong>:</dt>
-<dd><p class="first"><strong>commit_data</strong> (dict): A list of dictionaries containing commit data,
+<dd><p class="first"><strong>commit_data</strong> (dict): A list of dictionaries containing historical progress,
 each with the following form:</p>
 <div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
-    <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -166,8 +165,7 @@ each with the following form:</p>
 with the following form:</p>
 <div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;date1&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="o">...</span>
 <span class="p">}</span>
@@ -179,7 +177,7 @@ with the following form:</p>
 
 <dl class="function">
 <dt id="get_individual_progress.jsonify">
-<code class="descclassname">get_individual_progress.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>commit_data</em>, <em>times</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_individual_progress.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_individual_progress.jsonify" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">get_individual_progress.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>visible_data</em>, <em>hidden_data</em>, <em>times</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_individual_progress.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_individual_progress.jsonify" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert data to json for /progress endpoint</p>
 <p>Converts the data to a list of dictionaries. One dictionary is
 created per day. A dictionary is also created for each day in between
@@ -190,8 +188,7 @@ progress for that day are set to the same value as the previous day.</p>
 <dd><p class="first"><strong>commit_data</strong> (dict): A dictionary containing the git commit list:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;date1&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
-        <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">seconds</span><span class="p">),</span>
+        <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="o">...</span>
 <span class="p">}</span>

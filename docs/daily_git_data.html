@@ -176,6 +176,15 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="daily_git_data.remove_shared_commits">
+<code class="descclassname">daily_git_data.</code><code class="descname">remove_shared_commits</code><span class="sig-paren">(</span><em>students</em>, <em>count=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/daily_git_data.html#remove_shared_commits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#daily_git_data.remove_shared_commits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes data for uninformative commits</p>
+<p>Removes the first n commits from each student, where n are initial project 
+commits shared by all studetns. This ensures that all data is specific to
+the given student, rather than shared among the whole class.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="daily_git_data.select_best">
 <code class="descclassname">daily_git_data.</code><code class="descname">select_best</code><span class="sig-paren">(</span><em>all_files: list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/daily_git_data.html#select_best"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#daily_git_data.select_best" title="Permalink to this definition">¶</a></dt>
 <dd><p>Selects 3 best files</p>

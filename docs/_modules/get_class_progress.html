@@ -152,7 +152,7 @@
 <span class="kn">from</span> <span class="nn">start_end</span> <span class="k">import</span> <span class="n">commit_data</span>
 
 
-<div class="viewcode-block" id="jsonify"><a class="viewcode-back" href="../get_class_progress.html#get_class_progress.jsonify">[docs]</a><span class="k">def</span> <span class="nf">jsonify</span><span class="p">(</span><span class="n">test_data</span><span class="p">):</span>
+<div class="viewcode-block" id="jsonify"><a class="viewcode-back" href="../get_class_progress.html#get_class_progress.jsonify">[docs]</a><span class="k">def</span> <span class="nf">jsonify</span><span class="p">(</span><span class="n">visible_data</span><span class="p">,</span> <span class="n">hidden_data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Formats data for /classProgress endpoint</span>
 
 <span class="sd">    Converts information in **data** into an appropriately formatted json </span>
@@ -163,7 +163,7 @@
 
 <span class="sd">            {</span>
 <span class="sd">               &quot;name1&quot;: {</span>
-<span class="sd">                    &quot;Test1&quot;: (&quot;P&quot; or &quot;F&quot;),</span>
+<span class="sd">                    &quot;Test1&quot;: (bool, float),</span>
 <span class="sd">                    ...</span>
 <span class="sd">               },</span>
 <span class="sd">               ...</span>
@@ -183,6 +183,7 @@
 <span class="sd">        where each percentage bin contains a value 0 &lt;= int &lt;= 100</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">test_data</span> <span class="o">=</span> <span class="n">merge_inputs</span><span class="p">(</span><span class="n">visible_data</span><span class="p">,</span> <span class="n">hidden_data</span><span class="p">)</span>
     <span class="n">histogram_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;0-20%&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;20-40%&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;40-60%&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;60-80%&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;80-100%&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
     <span class="k">for</span> <span class="n">student</span> <span class="ow">in</span> <span class="n">test_data</span><span class="p">:</span>
         <span class="n">info</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="n">student</span><span class="p">]</span>
@@ -198,7 +199,20 @@
             <span class="n">histogram_data</span><span class="p">[</span><span class="s2">&quot;80-100%&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">histogram_data</span><span class="p">)</span></div>
 
-
+<div class="viewcode-block" id="merge_inputs"><a class="viewcode-back" href="../get_class_progress.html#get_class_progress.merge_inputs">[docs]</a><span class="k">def</span> <span class="nf">merge_inputs</span><span class="p">(</span><span class="n">visible</span><span class="p">,</span> <span class="n">hidden</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Merge test results per student from two input sources&quot;&quot;&quot;</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="n">visible</span>
+    <span class="c1"># Add hidden values to merged</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">hidden</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">hidden</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">merged</span><span class="p">:</span>
+            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;tests&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hidden</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;tests&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;tests&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hidden</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;tests&quot;</span><span class="p">]</span>
+    <span class="n">eprint</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">merged</span></div>
+        
 <div class="viewcode-block" id="merge_data"><a class="viewcode-back" href="../get_class_progress.html#get_class_progress.merge_data">[docs]</a><span class="k">def</span> <span class="nf">merge_data</span><span class="p">(</span><span class="n">visible</span><span class="p">,</span> <span class="n">hidden</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sums the values in **visible** and **hidden** for each bin&quot;&quot;&quot;</span>
     <span class="n">visible</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
@@ -206,7 +220,6 @@
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">visible</span><span class="p">:</span>
         <span class="n">visible</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+=</span> <span class="n">hidden</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span></div>
-
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
@@ -220,11 +233,9 @@
 
     <span class="n">visible_data</span> <span class="o">=</span> <span class="n">get_test_scores</span><span class="p">(</span><span class="n">visible_test_score_file</span><span class="p">)</span>
     <span class="n">hidden_data</span> <span class="o">=</span> <span class="n">get_test_scores</span><span class="p">(</span><span class="n">hidden_test_score_file</span><span class="p">)</span>
-    <span class="c1"># print(visible_data)</span>
 
-    <span class="n">formatted_visible</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">visible_data</span><span class="p">)</span>
-    <span class="n">formatted_hidden</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">hidden_data</span><span class="p">)</span>
-    <span class="n">api_json</span> <span class="o">=</span> <span class="n">merge_data</span><span class="p">(</span><span class="n">formatted_visible</span><span class="p">,</span> <span class="n">formatted_hidden</span><span class="p">)</span>
+    <span class="n">formatted_data</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">visible_data</span><span class="p">,</span> <span class="n">hidden_data</span><span class="p">)</span>
+    <span class="n">api_json</span> <span class="o">=</span> <span class="n">formatted_data</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">api_json</span><span class="p">)</span>
 </pre></div>
 

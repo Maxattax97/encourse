@@ -11,7 +11,7 @@ from test_completion import get_test_completion as get_test_scores
 from start_end import commit_data
 
 
-def jsonify(test_data):
+def jsonify(visible_data, hidden_data):
     """Formats data for /classProgress endpoint
 
     Converts information in **data** into an appropriately formatted json 
@@ -42,6 +42,7 @@ def jsonify(test_data):
         where each percentage bin contains a value 0 <= int <= 100
 
     """
+    test_data = merge_inputs(visible_data, hidden_data)
     histogram_data = {"0-20%": 0, "20-40%": 0, "40-60%": 0, "60-80%": 0, "80-100%": 0}
     for student in test_data:
         info = test_data[student]
@@ -57,7 +58,17 @@ def jsonify(test_data):
             histogram_data["80-100%"] += 1
     return json.dumps(histogram_data)
 
-
+def merge_inputs(visible, hidden):
+    """Merge test results per student from two input sources"""
+    merged = visible
+    # Add hidden values to merged
+    for key in hidden:
+        if key in merged:
+            merged[key]["tests"].update(hidden[key]["tests"])
+        else:
+            merged[key]["tests"] = hidden[key]["tests"]
+    return merged
+        
 def merge_data(visible, hidden):
     """Sums the values in **visible** and **hidden** for each bin"""
     visible = json.loads(visible)
@@ -65,7 +76,6 @@ def merge_data(visible, hidden):
     for key in visible:
         visible[key] += hidden[key]
     return json.dumps(visible)
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -79,9 +89,7 @@ if __name__ == "__main__":
 
     visible_data = get_test_scores(visible_test_score_file)
     hidden_data = get_test_scores(hidden_test_score_file)
-    # print(visible_data)
 
-    formatted_visible = jsonify(visible_data)
-    formatted_hidden = jsonify(hidden_data)
-    api_json = merge_data(formatted_visible, formatted_hidden)
+    formatted_data = jsonify(visible_data, hidden_data)
+    api_json = formatted_data
     print(api_json)

@@ -7,6 +7,7 @@ import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.Student;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.service.*;
+import edu.purdue.cs.encourse.util.ConfigurationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
@@ -80,7 +81,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/students.txt"));
                 String student = null;
                 int count = 1;
-                while((student = fileReader.readLine()) != null && count <= 10) {
+                while((student = fileReader.readLine()) != null && count <= ConfigurationManager.getInstance().limit) {
                     if(student.equals("grr")) {
                         continue;
                     }

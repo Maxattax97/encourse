@@ -33,7 +33,6 @@ def commit_data(time_file):
     current_name = ""
     previous_words = []
     while line != "":
-        # print(line)
         words = line.split(" ")
         if words[0] == "Start":
             # Update the current user
@@ -46,8 +45,6 @@ def commit_data(time_file):
             # Update the user's final time
             if current_name != "" and previous_words != []:
                 users[current_name] = (users[current_name][0], previous_words[1])
-        else:
-            users[current_name] = (line.split(" ")[1], 0)
 
         line = time_file.readline()
         line = line.lstrip(" ").rstrip("\n")

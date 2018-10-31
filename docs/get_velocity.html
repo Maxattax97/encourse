@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>get_test_completion module &mdash; Encourse  documentation</title>
+  <title>get_velocity module &mdash; Encourse  documentation</title>
   
 
   
@@ -78,7 +78,7 @@
             
               <!-- Local TOC -->
               <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">get_test_completion module</a></li>
+<li><a class="reference internal" href="#">get_velocity module</a></li>
 </ul>
 </div>
             
@@ -124,13 +124,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>get_test_completion module</li>
+      <li>get_velocity module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/get_test_completion.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/get_velocity.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -143,8 +143,27 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="get-test-completion-module">
-<h1>get_test_completion module<a class="headerlink" href="#get-test-completion-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-get_velocity">
+<span id="get-velocity-module"></span><h1>get_velocity module<a class="headerlink" href="#module-get_velocity" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="get_velocity.jsonify">
+<code class="descclassname">get_velocity.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>scores</em>, <em>daily_data</em>, <em>times</em>, <em>hidden_scores=None</em>, <em>max_velocity=None</em>, <em>max_rate=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_velocity.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_velocity.jsonify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert data to json for /velocity endpoint</p>
+<p>Converts the data to a mapping of students to their respective daily velocities. 
+Each student is flagged as suspicious if their progress per hour exceeds 
+<strong>max_velocity</strong>, or if their progress per commit exceeds <strong>max_rate</strong>
+A dictionary is also created for each day in between the first and last date, 
+even if there is no data for that date. In that case, both velocity and rate 
+for that day are set zero.</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><strong>daily_data</strong> (dict): A dictionary containing the git commit list:
+<strong>times</strong> (str, str): A tuple of start and end dates of the form “mm-dd-yyyy”</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd>json: A json dictionary</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 

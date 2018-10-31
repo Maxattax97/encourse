@@ -561,7 +561,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         String pyPath = pythonPath + "get_velocity.py";
-        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
+        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -581,8 +581,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         if (DEBUG) {
-            visibleTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
+            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
+            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
         }
 
         // TODO: Check that test results work as expected
@@ -606,8 +606,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         if (DEBUG) {
-            visibleTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
+            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
+            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
         }
 
         // TODO: Check that test results work as expected
