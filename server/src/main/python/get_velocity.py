@@ -63,11 +63,11 @@ def jsonify(
         min_progress = max(min_progress, cumulative_progress)
 
         # copy daily data
-        new_entry["timeSpent"] = 0
-        new_entry["commitCount"] = 0
+        new_entry["time_spent"] = 0
+        new_entry["commit_count"] = 0
         if day in daily_data:
-            new_entry["timeSpent"] = daily_data[day]["time_spent"]
-            new_entry["commitCount"] = daily_data[day]["commit_count"]
+            new_entry["time_spent"] = daily_data[day]["time_spent"]
+            new_entry["commit_count"] = daily_data[day]["commit_count"]
 
         velocity_data.append(new_entry)
 

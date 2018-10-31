@@ -283,7 +283,7 @@ public class WriteController {
         } catch (ParseException e) {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
-        Project p = professorService.getProject(projectID);
+        Project p = courseService.getProject(projectID);
         return new ResponseEntity<>(p, HttpStatus.OK);
     }
 

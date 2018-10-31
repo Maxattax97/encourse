@@ -71,6 +71,9 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
     private TeachingAssistantStudentRepository teachingAssistantStudentRepository;
 
     @Autowired
+    private TeachingAssistantCourseRepository teachingAssistantCourseRepository;
+
+    @Autowired
     private ProjectTestScriptRepository projectTestScriptRepository;
 
     @Autowired
@@ -340,52 +343,11 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             executeBashScript("cleanDirectory.sh src/main/temp");
             return json;
         }
-        Student student = studentRepository.findByUserName(userNameStudent);
-        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-        JSONArray array = (JSONArray)json.getJsonObject().get("data");
-        for(int i = 0; i < array.size(); i++) {
-            JSONObject data = (JSONObject)array.get(i);
-            if (data.get("stat_name").equals("End Date")) {
-                project.setMostRecentCommitDate(data.get("stat_value").toString());
-            }
-            else if (data.get("stat_name").equals("Additions")) {
-                try {
-                    project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setTotalLinesAdded(0);
-                }
-            }
-            else if (data.get("stat_name").equals("Deletions")) {
-                try {
-                    project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setTotalLinesRemoved(0);
-                }
-            } else if (data.get("stat_name").equals("Commit Count")) {
-                try {
-                    project.setCommitCount(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setCommitCount(0);
-                }
-            }
-            else if (data.get("stat_name").equals("Estimated Time Spent")) {
-                try {
-                    project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
-                } catch (NumberFormatException e) {
-                    project.setTotalTimeSpent(0.0);
-                }
-            }
-        }
-        studentProjectRepository.save(project);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
     public JSONReturnable getAssignmentsProgress(@NonNull String projectID, @NonNull String userNameTA) {
-        JSONReturnable json = null;
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
@@ -408,16 +370,14 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
         }
 
-        // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_class_progress.py";
         String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
-        json = runPython(command);
+        JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
     public JSONReturnable getAssignmentsTestSummary(@NonNull String projectID, @NonNull String userNameTA) {
-        JSONReturnable json = null;
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
@@ -441,10 +401,44 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
         }
 
-        // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_test_summary.py";
         String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
-        json = runPython(command);
+        JSONReturnable json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
+    public JSONReturnable getAssignmentsCheating(@NonNull String projectID, @NonNull String userNameTA) {
+        String commitLogFile = listAllCommitsByTime(projectID, userNameTA);
+        if(commitLogFile == null) {
+            return new JSONReturnable(-1, null);
+        }
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return new JSONReturnable(-2, null);
+        }
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
+        if(teachingAssistant == null) {
+            return new JSONReturnable(-3, null);
+        }
+        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        try {
+            createTestFilesTA(visibleTestFile, hiddenTestFile, assignments, projectID);
+        } catch (IOException e) {
+            return new JSONReturnable(-4, null);
+        }
+
+        if (DEBUG){
+            commitLogFile = pythonPath + "/test_datasets/sampleCommitList.txt";
+            visibleTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
+            hiddenTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
+        }
+
+        String pyPath = pythonPath + "get_class_cheating.py";
+        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -l 1000";
+        JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
@@ -657,19 +651,100 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
 
     }
 
-    public int runTestallForStudent(@NonNull String projectID, @NonNull String userNameStudent) {
+    public int runTestallForStudent(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA) {
         return 0;
     }
 
-    public JSONArray getStudentData(@NonNull String semester, @NonNull String courseID, @NonNull String userName) {
-        return null;
+    public JSONArray getStudentData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA) {
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
+        if(sections.isEmpty()) {
+            return null;
+        }
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
+        if(teachingAssistant == null) {
+            return null;
+        }
+        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), courseID);
+        List<String> completedStudents = new ArrayList<>();
+        JSONArray studentsJSON = new JSONArray();
+        for(TeachingAssistantStudent assignment : assignments) {
+            Student student = studentRepository.findByUserID(assignment.getStudentID());
+            if(!(completedStudents.contains(student.getUserID()))) {
+                completedStudents.add(student.getUserID());
+                List<StudentProject> studentProjects = studentProjectRepository.findByIdStudentID(student.getUserID());
+                Map<String, Double> grades = new TreeMap<>();
+                Map<String, Double> hiddenGrades = new TreeMap<>();
+                Map<String, Integer> commitCounts = new TreeMap<>();
+                Map<String, Double> timeSpent = new TreeMap<>();
+                for (StudentProject p : studentProjects) {
+                    grades.put(p.getProjectIdentifier(), p.getBestVisibleGrade());
+                    hiddenGrades.put(p.getProjectIdentifier(), p.getBestHiddenGrade());
+                    commitCounts.put(p.getProjectIdentifier(), p.getCommitCount());
+                    timeSpent.put(p.getProjectIdentifier(), p.getTotalTimeSpent());
+                }
+                List<StudentSection> assignedSections = studentSectionRepository.findByIdStudentID(student.getUserID());
+                List<String> sectionStrings = new ArrayList<>();
+                for (StudentSection a : assignedSections) {
+                    sectionStrings.add(a.getSectionIdentifier());
+                }
+                List<TeachingAssistantStudent> assignedTeachingAssistants = teachingAssistantStudentRepository.findByIdStudentID(student.getUserID());
+                List<String> teachingAssistants = new ArrayList<>();
+                for (TeachingAssistantStudent a : assignedTeachingAssistants) {
+                    TeachingAssistant teachingAssistantAssigned = teachingAssistantRepository.findByUserID(a.getTeachingAssistantID());
+                    teachingAssistants.add(teachingAssistantAssigned.getUserName());
+                }
+                JSONObject studentJSON = new JSONObject();
+                studentJSON.put("first_name", student.getFirstName());
+                studentJSON.put("last_name", student.getLastName());
+                studentJSON.put("id", student.getUserName());
+                studentJSON.put("sections", sectionStrings);
+                studentJSON.put("teaching_assistants", teachingAssistants);
+                studentJSON.put("grades", grades);
+                studentJSON.put("hiddenGrades", grades);
+                studentJSON.put("commitCounts", commitCounts);
+                studentJSON.put("timeSpent", timeSpent);
+                if (OBFUSCATE) {
+                    // RandomStringGenerator generator = new RandomStringGenerator.Builder()
+                    //        .withinRange('a', 'z').build();
+                    studentJSON.put("first_name", student.getFirstName());
+                    studentJSON.put("last_name", student.getLastName());
+                    studentJSON.put("id", student.getUserName());
+                    studentJSON.put("grades", grades);
+                    studentJSON.put("hiddenGrades", grades);
+                    studentJSON.put("commitCounts", commitCounts);
+                    studentJSON.put("timeSpent", timeSpent);
+                }
+                studentsJSON.add(studentJSON);
+            }
+        }
+        return studentsJSON;
     }
 
-    public JSONArray getProjectData(@NonNull String semester, @NonNull String courseID, @NonNull String userName) {
-        return null;
-    }
-
-    public Project getProject(String projectID) {
-        return null;
+    /** Gets all courses that a teaching assistant works for **/
+    public JSONArray getCourseData(@NonNull String userNameTA) {
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
+        if(teachingAssistant == null) {
+            return null;
+        }
+        List<TeachingAssistantCourse> courses = teachingAssistantCourseRepository.findByIdTeachingAssistantID(teachingAssistant.getUserID());
+        if(courses.isEmpty()) {
+            return null;
+        }
+        JSONArray coursesJSON = new JSONArray();
+        for(TeachingAssistantCourse c : courses) {
+            JSONObject courseJSON = new JSONObject();
+            List<Section> sections = sectionRepository.findByCourseID(c.getCourseID());
+            List<String> sectionIDs = new ArrayList<>();
+            for(Section s : sections) {
+                sectionIDs.add(s.getSectionIdentifier());
+            }
+            courseJSON.put("course_number", c.getCourseID());
+            courseJSON.put("course_name", sections.get(0).getCourseID());
+            courseJSON.put("semester", c.getSemester());
+            courseJSON.put("id", teachingAssistant.getUserName());
+            courseJSON.put("sections", sectionIDs);
+            coursesJSON.add(courseJSON);
+        }
+        return coursesJSON;
     }
 }

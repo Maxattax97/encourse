@@ -28,6 +28,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     private final static String pythonPath = "src/main/python/";
     private final static String tailFilePath = "src/main/temp/";
     private final static Boolean DEBUG = ConfigurationManager.getInstance().debug;
+    private final static String pythonCommand = DEBUG ? "/anaconda3/bin/python" : "python3";
     private final static Boolean OBFUSCATE = false;
 
     /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
@@ -89,31 +90,28 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public JSONReturnable runPython(@NonNull String command) {
-        if (OBFUSCATE) {
-            command += " -O";
-        }
         System.out.println(command);
         JSONReturnable json = null;
         try {
             Process process = Runtime.getRuntime().exec(command);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String input = null;
+            String output = null;
             String error = null;
             while ((error = stdError.readLine()) != null) {
-                System.out.println(error);
+                System.out.println("Error: " + error);
             }
-            while ((input = stdInput.readLine()) != null) {
+            while ((output = stdInput.readLine()) != null) {
+                System.out.println("Output: " + output);
                 JSONParser jsonParser = new JSONParser();
                 Object obj = null;
                 try {
-                    obj = jsonParser.parse(input);
+                    obj = jsonParser.parse(output);
                 } catch (ParseException e) {
                     e.printStackTrace();
                     json =  new JSONReturnable(-3, null);
                 }
                 if (obj != null) {
-                    System.out.println(obj);
                     JSONObject jsonObject = null;
                     if (obj.getClass() == JSONObject.class) {
                         jsonObject = (JSONObject)obj;
@@ -131,6 +129,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             e.printStackTrace();
             json =  new JSONReturnable(-2, null);
         }
+        System.out.println("JSON: " + json.getJsonObject().toJSONString());
         return json;
     }
 
@@ -314,10 +313,6 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    public Project getProject(@NonNull String projectID) {
-        return projectRepository.findByProjectIdentifier(projectID);
-    }
-
     /** Runs a bash script to initially clone every student's git repository. Each university should supply its own
      bash script, since repo locations will vary **/
     public int cloneProjects(@NonNull String projectID){
@@ -397,6 +392,87 @@ public class ProfessorServiceImpl implements ProfessorService {
         return code;
     }
 
+    public int updateStudentInformation(@NonNull String projectID, @NonNull String userName) {
+        String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
+        String commitLogFile = listStudentCommitsByTime(projectID, userName);
+        if(dailyCountsFile == null) {
+            return -1;
+        }
+        if(commitLogFile == null) {
+            return -2;
+        }
+        String testResult = null;
+        if (DEBUG) {
+            testResult = "cutz;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0";
+        } else {
+            Student student = studentRepository.findByUserName(userName);
+            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+            StringBuilder builder = new StringBuilder();
+            builder.append(student.getUserName());
+            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), false);
+            for(StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
+            }
+            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), true);
+            for(StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
+            }
+            testResult = builder.toString();
+        }
+        String pyPath = pythonPath + "get_statistics.py";
+        String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
+        JSONReturnable json = runPython(command);
+        if(json == null || json.getJsonObject() == null) {
+            return 0;
+        }
+        if (DEBUG) {
+            executeBashScript("cleanDirectory.sh src/main/temp");
+            return 0;
+        }
+        Student student = studentRepository.findByUserName(userName);
+        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+        JSONArray array = (JSONArray)json.getJsonObject().get("data");
+        for(int i = 0; i < array.size(); i++) {
+            JSONObject data = (JSONObject)array.get(i);
+            if (data.get("stat_name").equals("End Date")) {
+                project.setMostRecentCommitDate(data.get("stat_value").toString());
+            }
+            else if (data.get("stat_name").equals("Additions")) {
+                try {
+                    project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setTotalLinesAdded(0);
+                }
+            }
+            else if (data.get("stat_name").equals("Deletions")) {
+                try {
+                    project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setTotalLinesRemoved(0);
+                }
+            } else if (data.get("stat_name").equals("Commit Count")) {
+                try {
+                    project.setCommitCount(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setCommitCount(0);
+                }
+            }
+            else if (data.get("stat_name").equals("Estimated Time Spent")) {
+                try {
+                    project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
+                } catch (NumberFormatException e) {
+                    project.setTotalTimeSpent(0.0);
+                }
+            }
+        }
+        studentProjectRepository.save(project);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return 0;
+    }
+
     public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName) {
         String visibleTestFile;
         String hiddenTestFile;
@@ -437,7 +513,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         String pyPath = pythonPath + "get_individual_progress.py";
-        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + dailyCountsFile + " " + userName;
+        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -485,7 +561,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         String pyPath = pythonPath + "get_velocity.py";
-        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
+        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -501,7 +577,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         try {
             createTestFiles(visibleTestFile, hiddenTestFile, projects);
         } catch (IOException e) {
-            return new JSONReturnable(-1, null);
+            json = new JSONReturnable(-1, null);
         }
 
         if (DEBUG) {
@@ -511,7 +587,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
         // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_class_progress.py";
-        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
+        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
         json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -526,7 +602,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             createTestFiles(visibleTestFile, hiddenTestFile, projects);
         }
         catch(IOException e) {
-            return new JSONReturnable(-1, null);
+            json = new JSONReturnable(-1, null);
         }
 
         if (DEBUG) {
@@ -536,7 +612,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
         // TODO: Check that test results work as expected
         String pyPath = pythonPath + "get_test_summary.py";
-        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
+        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
         json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -552,7 +628,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
         String pyPath = pythonPath + "get_add_del.py";
-        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " -l 200";
+        String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " -l 200";
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -586,63 +662,18 @@ public class ProfessorServiceImpl implements ProfessorService {
             testResult = builder.toString();
         }
         String pyPath = pythonPath + "get_statistics.py";
-        String command = "python3 " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
+        String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);
-        if(json == null || json.getJsonObject() == null) {
-            return json;
-        }
-        if (DEBUG) {
-            executeBashScript("cleanDirectory.sh src/main/temp");
-            return json;
-        }
-        Student student = studentRepository.findByUserName(userName);
-        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-        JSONArray array = (JSONArray)json.getJsonObject().get("data");
-        for(int i = 0; i < array.size(); i++) {
-            JSONObject data = (JSONObject)array.get(i);
-            if (data.get("stat_name").equals("End Date")) {
-                project.setMostRecentCommitDate(data.get("stat_value").toString());
-            }
-            else if (data.get("stat_name").equals("Additions")) {
-                try {
-                    project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setTotalLinesAdded(0);
-                }
-            }
-            else if (data.get("stat_name").equals("Deletions")) {
-                try {
-                    project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setTotalLinesRemoved(0);
-                }
-            } else if (data.get("stat_name").equals("Commit Count")) {
-                try {
-                    project.setCommitCount(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setCommitCount(0);
-                }
-            }
-            else if (data.get("stat_name").equals("Estimated Time Spent")) {
-                try {
-                    project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
-                } catch (NumberFormatException e) {
-                    project.setTotalTimeSpent(0.0);
-                }
-            }
-        }
-        studentProjectRepository.save(project);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
 
     public JSONReturnable getClassCheating(@NonNull String projectID) {
+        JSONReturnable json = null;
+
         String commitLogFile = listAllCommitsByTime(projectID);
         if(commitLogFile == null) {
-            return new JSONReturnable(-1, null);
+            json = new JSONReturnable(-1, null);
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
@@ -650,7 +681,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         try {
             createTestFiles(visibleTestFile, hiddenTestFile, projects);
         } catch (IOException e) {
-            return new JSONReturnable(-2, null);
+            json = new JSONReturnable(-2, null);
         }
 
         if (DEBUG){
@@ -658,10 +689,13 @@ public class ProfessorServiceImpl implements ProfessorService {
             visibleTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
             hiddenTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
         }
+        else if (json != null) {
+            return json;
+        }
 
         String pyPath = pythonPath + "get_class_cheating.py";
-        String command = "python3 " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -l 1000";
-        JSONReturnable json = runPython(command);
+        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -l 1000";
+        json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
@@ -673,7 +707,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-2, null);
         }
         String pyPath = pythonPath + "get_git_commits.py";
-        String command = "python3 " + pyPath + " " + commitLogFile + " " + userName;
+        String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
 
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -686,7 +720,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-1, null);
         }
         String pyPath = pythonPath + "get_git_commit_list.py";
-        String command = "python3 " + pyPath + " " + commitLogFile + " " + userName;
+        String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -1128,7 +1162,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(project.getProjectIdentifier());
                 for(StudentProject p : projects) {
                     Student student = studentRepository.findByUserID(p.getStudentID());
-                    getStatistics(p.getProjectIdentifier(), student.getUserName());
+                    updateStudentInformation(p.getProjectIdentifier(), student.getUserName());
                 }
                 project.setTestCount(project.getTestRate() - 1);
             }
@@ -1147,7 +1181,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
         try {
             // Run `python hello.py testData.txt` at correct directory
-            Process process = Runtime.getRuntime().exec("python3 " + filePath + " " + dataFilePath);
+            Process process = Runtime.getRuntime().exec(pythonCommand + " " + filePath + " " + dataFilePath);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String input = null;
@@ -1241,6 +1275,98 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
         }
         return 0;
+    }
+
+    /** Gets all courses that a professor supervises **/
+    public JSONArray getCourseData(@NonNull String userName) {
+        Professor professor = professorRepository.findByUserName(userName);
+        if(professor == null) {
+            return null;
+        }
+        List<ProfessorCourse> courses = professorCourseRepository.findByIdProfessorID(professor.getUserID());
+        if(courses.isEmpty()) {
+            return null;
+        }
+        JSONArray coursesJSON = new JSONArray();
+        for(ProfessorCourse c : courses) {
+            JSONObject courseJSON = new JSONObject();
+            List<Section> sections = sectionRepository.findByCourseID(c.getCourseID());
+            List<String> sectionIDs = new ArrayList<>();
+            for(Section s : sections) {
+                sectionIDs.add(s.getSectionIdentifier());
+            }
+            courseJSON.put("course_number", c.getCourseID());
+            courseJSON.put("course_name", sections.get(0).getCourseID());
+            courseJSON.put("semester", c.getSemester());
+            courseJSON.put("id", professor.getUserName());
+            courseJSON.put("sections", sectionIDs);
+            coursesJSON.add(courseJSON);
+        }
+        return coursesJSON;
+    }
+
+    /** Retrieves basic data for all students in course, including name, userName, and simple project info **/
+    public JSONArray getStudentData(@NonNull String semester, @NonNull String courseID) {
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
+        if(sections.isEmpty()) {
+            return null;
+        }
+        List<String> completedStudents = new ArrayList<>();
+        JSONArray studentsJSON = new JSONArray();
+        for(Section section : sections) {
+            List<StudentSection> studentSections = studentSectionRepository.findByIdSectionIdentifier(section.getSectionIdentifier());
+            for(StudentSection studentSection : studentSections) {
+                Student student = studentRepository.findByUserID(studentSection.getStudentID());
+                if(!(completedStudents.contains(student.getUserID()))) {
+                    completedStudents.add(student.getUserID());
+                    List<StudentProject> studentProjects = studentProjectRepository.findByIdStudentID(student.getUserID());
+                    Map<String, Double> grades = new TreeMap<>();
+                    Map<String, Double> hiddenGrades = new TreeMap<>();
+                    Map<String, Integer> commitCounts = new TreeMap<>();
+                    Map<String, Double> timeSpent = new TreeMap<>();
+                    for(StudentProject p : studentProjects) {
+                        grades.put(p.getProjectIdentifier(), p.getBestVisibleGrade());
+                        hiddenGrades.put(p.getProjectIdentifier(), p.getBestHiddenGrade());
+                        commitCounts.put(p.getProjectIdentifier(), p.getCommitCount());
+                        timeSpent.put(p.getProjectIdentifier(), p.getTotalTimeSpent());
+                    }
+                    List<StudentSection> assignedSections = studentSectionRepository.findByIdStudentID(student.getUserID());
+                    List<String> sectionStrings = new ArrayList<>();
+                    for(StudentSection a : assignedSections) {
+                        sectionStrings.add(a.getSectionIdentifier());
+                    }
+                    List<TeachingAssistantStudent> assignedTeachingAssistants = teachingAssistantStudentRepository.findByIdStudentID(student.getUserID());
+                    List<String> teachingAssistants = new ArrayList<>();
+                    for(TeachingAssistantStudent a : assignedTeachingAssistants) {
+                        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(a.getTeachingAssistantID());
+                        teachingAssistants.add(teachingAssistant.getUserName());
+                    }
+                    JSONObject studentJSON = new JSONObject();
+                    studentJSON.put("first_name", student.getFirstName());
+                    studentJSON.put("last_name", student.getLastName());
+                    studentJSON.put("id", student.getUserName());
+                    studentJSON.put("sections", sectionStrings);
+                    studentJSON.put("teaching_assistants", teachingAssistants);
+                    studentJSON.put("grades", grades);
+                    studentJSON.put("hiddenGrades", grades);
+                    studentJSON.put("commitCounts", commitCounts);
+                    studentJSON.put("timeSpent", timeSpent);
+                    if (OBFUSCATE) {
+                        // RandomStringGenerator generator = new RandomStringGenerator.Builder()
+                        //        .withinRange('a', 'z').build();
+                        studentJSON.put("first_name", student.getFirstName());
+                        studentJSON.put("last_name", student.getLastName());
+                        studentJSON.put("id", student.getUserName());
+                        studentJSON.put("grades", grades);
+                        studentJSON.put("hiddenGrades", grades);
+                        studentJSON.put("commitCounts", commitCounts);
+                        studentJSON.put("timeSpent", timeSpent);
+                    }
+                    studentsJSON.add(studentJSON);
+                }
+            }
+        }
+        return studentsJSON;
     }
 
     public JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID) {
