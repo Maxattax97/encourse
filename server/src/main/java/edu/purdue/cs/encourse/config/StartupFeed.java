@@ -101,11 +101,11 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
 
             courseService.setSectionRemotePaths("Fall2018", "cs252", "/homes/cs252/sourcecontrol/work");
             courseService.setDirectory("Fall2018", "cs252");
-            Project malloc = professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/27/2018", "9/10/2018", 0);
+            //Project malloc = professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/27/2018", "9/10/2018", 0);
             Project shell = professorService.addProject("cs252", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
-            professorService.assignProject(malloc.getProjectIdentifier());
+            //professorService.assignProject(malloc.getProjectIdentifier());
             professorService.assignProject(shell.getProjectIdentifier());
-            professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test1.sh",
+            /*professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test1.sh",
                     "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 5);
             professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test2.sh",
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
@@ -125,7 +125,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 25);
             professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test10.sh",
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 30);
-            professorService.runTestall(malloc.getProjectIdentifier());
+            professorService.runTestall(malloc.getProjectIdentifier());*/
 
             professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_input", false, 2);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_output", false, 2);
@@ -172,12 +172,12 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             professorService.addTestScript(shell.getProjectIdentifier(), "test_robustness", false, 10);
             professorService.runHistoricTestall(shell.getProjectIdentifier());
 
-            List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(malloc.getProjectIdentifier());
+            /*List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(malloc.getProjectIdentifier());
             for(StudentProject p : projects) {
                 Student student = studentRepository.findByUserID(p.getStudentID());
                 professorService.updateStudentInformation(p.getProjectIdentifier(), student.getUserName());
-            }
-            projects = studentProjectRepository.findByIdProjectIdentifier(shell.getProjectIdentifier());
+            }*/
+            List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(shell.getProjectIdentifier());
             for(StudentProject p : projects) {
                 Student student = studentRepository.findByUserID(p.getStudentID());
                 professorService.updateStudentInformation(p.getProjectIdentifier(), student.getUserName());
