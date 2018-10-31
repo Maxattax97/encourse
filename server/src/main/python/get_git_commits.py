@@ -41,6 +41,7 @@ def jsonify(commit_data):
     new_data = []
     date1 = commit_data[0]["date"]
     date2 = commit_data[len(commit_data) - 1]["date"]
+    date2 = datetime.now().date()
     dates = daterange(date1, date2)
 
     # Create a list of dictionaries for each date between the first and last

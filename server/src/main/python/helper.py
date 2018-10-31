@@ -59,8 +59,11 @@ def daterange(start, end):
         yield start + timedelta(n)
 
 
-def times_from_dailydata(data):
+def times_from_dailydata(data, include_today=None):
     """Generate a start and end time from commit daily commit log data"""
+    if include_today:
+        dates.append(datetime.now().date())
+
     dates = []
     for entry in data:
         if "date" in entry:
