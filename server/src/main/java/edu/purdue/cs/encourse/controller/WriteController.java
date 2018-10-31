@@ -315,6 +315,20 @@ public class WriteController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/testall/project", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> testProject(@RequestParam(name = "projectID") String projectID) {
+
+        int result = professorService.runTestall(projectID);
+        if (result == 0) {
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } else if (result == -1) {
+            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     private User getUserFromAuth() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return ((User)securityContext.getAuthentication().getPrincipal());
