@@ -1,6 +1,6 @@
 from daily_git_data import get_daily_commit_data as daily_data
 from past_progress import past_progress
-from get_velocity import jsonify as velocity
+from get_velocity import jsonify as get_velocity
 from helper import eprint
 from helper import times_from_dailydata as times
 
@@ -38,7 +38,7 @@ def jsonify(git_data, test_progress, hidden_progress=None):
         student_hidden = hidden_progress[student]
         startend = times(student_data)
 
-        velocity_data = json.loads(velocity(student_progress, student_data, startend, hidden_scores=student_hidden))
+        velocity_data = json.loads(get_velocity(student_progress, student_data, startend, hidden_scores=student_hidden))
 
         progress = 0.0
         time_spent = 0.0
@@ -82,8 +82,29 @@ def jsonify(git_data, test_progress, hidden_progress=None):
     }
 
     suspicious_students = [s for s in student_stats if is_suspicious(student_stats[s], class_stats) ]
+    suspicious_students = student_stats
 
-    return json.dumps(suspicious_students)
+    # Convert statistics into a single suspciousness score
+    student_list = []
+    for student in suspicious_students:
+        student_stats = suspicious_students[student]
+        rate = student_stats["rate"]
+        velocity = student_stats["velocity"]
+
+        # Convert rate to standard normal
+        std_rate = (rate - rate_mean) / rate_stdev
+        std_velocity = (velocity - velocity_mean) / velocity_stdev
+        
+        #Standardize combined metric (mean = 0, stdev = 2)
+        score = (std_rate + std_velocity) / 2
+
+        # Add student to the list
+        student_list.append({
+            "id": student,
+            "score": score
+        })
+        
+    return json.dumps(student_list)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

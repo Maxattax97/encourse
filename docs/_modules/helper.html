@@ -196,8 +196,19 @@
 <span class="sd">        and end (inclusive)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">days</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">days</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="k">yield</span> <span class="n">start</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="times_from_dailydata"><a class="viewcode-back" href="../helper.html#helper.times_from_dailydata">[docs]</a><span class="k">def</span> <span class="nf">times_from_dailydata</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate a start and end time from commit daily commit log data&quot;&quot;&quot;</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;date&quot;</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">:</span>
+            <span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">])</span>
+
+    <span class="n">dates</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">date_string</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">date_string</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span></div>
 
 
 <div class="viewcode-block" id="eprint"><a class="viewcode-back" href="../helper.html#helper.eprint">[docs]</a><span class="k">def</span> <span class="nf">eprint</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>

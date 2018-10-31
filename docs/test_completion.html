@@ -153,8 +153,8 @@
 <dt><strong>Args</strong>:</dt>
 <dd><p class="first"><strong>test_file</strong> (file): A specially formatted file containing test data
 The following is a sample of one of these files:</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name1</span><span class="p">;</span><span class="n">Test1</span><span class="p">:</span><span class="n">P</span><span class="p">;</span><span class="n">Test2</span><span class="p">:</span><span class="n">P</span><span class="p">;</span><span class="n">Test3</span><span class="p">:</span><span class="n">P</span><span class="p">;</span><span class="n">Test4</span><span class="p">:</span><span class="n">P</span><span class="p">;</span><span class="n">Test5</span><span class="p">:</span><span class="n">P</span>
-<span class="n">name2</span><span class="p">;</span><span class="n">Test1</span><span class="p">:</span><span class="n">F</span><span class="p">;</span><span class="n">Test2</span><span class="p">:</span><span class="n">F</span><span class="p">;</span><span class="n">Test3</span><span class="p">:</span><span class="n">P</span><span class="p">;</span><span class="n">Test4</span><span class="p">:</span><span class="n">P</span><span class="p">;</span><span class="n">Test5</span><span class="p">:</span><span class="n">P</span>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name1</span><span class="p">;</span><span class="n">Test1</span><span class="p">:</span><span class="n">P</span><span class="p">:</span><span class="mf">1.0</span><span class="p">;</span><span class="n">Test2</span><span class="p">:</span><span class="n">P</span><span class="p">:</span><span class="mf">0.5</span><span class="p">;</span><span class="n">Test3</span><span class="p">:</span><span class="n">P</span><span class="p">:</span><span class="mf">3.0</span><span class="p">;</span><span class="n">Test4</span><span class="p">:</span><span class="n">P</span><span class="p">:</span><span class="mf">1.0</span><span class="p">;</span><span class="n">Test5</span><span class="p">:</span><span class="n">P</span><span class="p">:</span><span class="mf">2.0</span>
+<span class="n">name2</span><span class="p">;</span><span class="n">Test1</span><span class="p">:</span><span class="n">F</span><span class="p">:</span><span class="mf">1.0</span><span class="p">;</span><span class="n">Test2</span><span class="p">:</span><span class="n">F</span><span class="p">:</span><span class="mf">0.5</span><span class="p">;</span><span class="n">Test3</span><span class="p">:</span><span class="n">P</span><span class="p">:</span><span class="mf">3.0</span><span class="p">;</span><span class="n">Test4</span><span class="p">:</span><span class="n">P</span><span class="p">:</span><span class="mf">1.0</span><span class="p">;</span><span class="n">Test5</span><span class="p">:</span><span class="n">P</span><span class="p">:</span><span class="mf">2.0</span>
 </pre></div>
 </div>
 </dd>
@@ -164,7 +164,7 @@ The dictionary has the following format:</p>
 <div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">{</span>
        <span class="s2">&quot;tests&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;Test1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span> <span class="ow">or</span> <span class="s2">&quot;F&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;Test1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
             <span class="o">...</span>
        <span class="p">},</span>
        <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">percentage</span><span class="p">)</span>
@@ -195,7 +195,7 @@ The dictionary has the following format:</p>
 <div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">{</span>
        <span class="s2">&quot;tests&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;Test1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span> <span class="ow">or</span> <span class="s2">&quot;F&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;Test1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
             <span class="o">...</span>
        <span class="p">},</span>
        <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">percentage</span><span class="p">)</span>

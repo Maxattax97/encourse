@@ -147,7 +147,7 @@
 <span id="get-class-progress-module"></span><h1>get_class_progress module<a class="headerlink" href="#module-get_class_progress" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="get_class_progress.jsonify">
-<code class="descclassname">get_class_progress.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>test_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_class_progress.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_class_progress.jsonify" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">get_class_progress.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>visible_data</em>, <em>hidden_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_class_progress.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_class_progress.jsonify" title="Permalink to this definition">¶</a></dt>
 <dd><p>Formats data for /classProgress endpoint</p>
 <p>Converts information in <strong>data</strong> into an appropriately formatted json 
 for the /classProgress endpoint</p>
@@ -156,7 +156,7 @@ for the /classProgress endpoint</p>
 <dd><p class="first"><strong>data</strong> (dict): A dictionary of the following format:</p>
 <div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;Test1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span> <span class="ow">or</span> <span class="s2">&quot;F&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;Test1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
         <span class="o">...</span>
    <span class="p">},</span>
    <span class="o">...</span>
@@ -184,6 +184,12 @@ for the /classProgress endpoint</p>
 <dt id="get_class_progress.merge_data">
 <code class="descclassname">get_class_progress.</code><code class="descname">merge_data</code><span class="sig-paren">(</span><em>visible</em>, <em>hidden</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_class_progress.html#merge_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_class_progress.merge_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sums the values in <strong>visible</strong> and <strong>hidden</strong> for each bin</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="get_class_progress.merge_inputs">
+<code class="descclassname">get_class_progress.</code><code class="descname">merge_inputs</code><span class="sig-paren">(</span><em>visible</em>, <em>hidden</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_class_progress.html#merge_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_class_progress.merge_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge test results per student from two input sources</p>
 </dd></dl>
 
 </div>

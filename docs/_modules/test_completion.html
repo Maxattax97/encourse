@@ -151,8 +151,8 @@
 <span class="sd">        **test_file** (file): A specially formatted file containing test data</span>
 <span class="sd">        The following is a sample of one of these files: ::</span>
 <span class="sd">            </span>
-<span class="sd">            name1;Test1:P;Test2:P;Test3:P;Test4:P;Test5:P</span>
-<span class="sd">            name2;Test1:F;Test2:F;Test3:P;Test4:P;Test5:P</span>
+<span class="sd">            name1;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0</span>
+<span class="sd">            name2;Test1:F:1.0;Test2:F:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0</span>
 
 <span class="sd">    **Returns**:</span>
 <span class="sd">        dict: A dictionary mapping students to their respective test data.</span>
@@ -161,7 +161,7 @@
 <span class="sd">            {</span>
 <span class="sd">                &quot;name1&quot;: {</span>
 <span class="sd">                   &quot;tests&quot;: {</span>
-<span class="sd">                        &quot;Test1&quot;: (&quot;P&quot; or &quot;F&quot;),</span>
+<span class="sd">                        &quot;Test1&quot;: (bool, float),</span>
 <span class="sd">                        ...</span>
 <span class="sd">                   },</span>
 <span class="sd">                   &quot;total&quot;: int (percentage)</span>
@@ -177,6 +177,7 @@
         <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">))</span>
 
         <span class="n">words</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+        <span class="c1"># eprint(words)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">words</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]:</span>
             <span class="k">continue</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -185,14 +186,18 @@
         <span class="n">test_score</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">tests</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-            <span class="n">test</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
-            <span class="c1"># print(test,score)</span>
-            <span class="n">tests</span><span class="p">[</span><span class="n">test</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
-            <span class="k">if</span> <span class="n">score</span> <span class="o">==</span> <span class="s2">&quot;P&quot;</span><span class="p">:</span>
-                <span class="n">test_score</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">total_score</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">test</span><span class="p">,</span> <span class="n">passed</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+            <span class="n">passed</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">passed</span> <span class="o">==</span> <span class="s2">&quot;P&quot;</span> <span class="k">else</span> <span class="kc">False</span>
+            <span class="c1"># eprint(test, passed, score)</span>
+            <span class="n">tests</span><span class="p">[</span><span class="n">test</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">passed</span><span class="p">:</span>
+                <span class="n">test_score</span> <span class="o">+=</span> <span class="n">score</span>
+            <span class="n">total_score</span> <span class="o">+=</span> <span class="n">score</span>
         <span class="k">if</span> <span class="n">total_score</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;tests&quot;</span><span class="p">:</span> <span class="n">tests</span><span class="p">,</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+            <span class="c1"># eprint(&quot;no tests&quot;)</span>
+            <span class="n">students</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;tests&quot;</span><span class="p">:</span> <span class="n">tests</span><span class="p">,</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+            <span class="k">continue</span>
         <span class="n">students</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;tests&quot;</span><span class="p">:</span> <span class="n">tests</span><span class="p">,</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="n">test_score</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">total_score</span><span class="p">}</span>
     <span class="k">return</span> <span class="n">students</span></div>
 
@@ -213,7 +218,7 @@
 <span class="sd">            {</span>
 <span class="sd">                &quot;name1&quot;: {</span>
 <span class="sd">                   &quot;tests&quot;: {</span>
-<span class="sd">                        &quot;Test1&quot;: (&quot;P&quot; or &quot;F&quot;),</span>
+<span class="sd">                        &quot;Test1&quot;: (bool, float),</span>
 <span class="sd">                        ...</span>
 <span class="sd">                   },</span>
 <span class="sd">                   &quot;total&quot;: int (percentage)</span>
@@ -230,12 +235,14 @@
     <span class="n">test_score</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">tests</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-        <span class="n">test</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
-        <span class="c1"># eprint(test,score)</span>
-        <span class="n">tests</span><span class="p">[</span><span class="n">test</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
-        <span class="k">if</span> <span class="n">score</span> <span class="o">==</span> <span class="s2">&quot;P&quot;</span><span class="p">:</span>
-            <span class="n">test_score</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">total_score</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">test</span><span class="p">,</span> <span class="n">passed</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+        <span class="n">passed</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">passed</span> <span class="o">==</span> <span class="s2">&quot;P&quot;</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="c1"># print(test,score)</span>
+        <span class="n">tests</span><span class="p">[</span><span class="n">test</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">passed</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">passed</span><span class="p">:</span>
+            <span class="n">test_score</span> <span class="o">+=</span> <span class="n">score</span>
+        <span class="n">total_score</span> <span class="o">+=</span> <span class="n">score</span>
 
     <span class="k">if</span> <span class="n">total_score</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;tests&quot;</span><span class="p">:</span> <span class="n">tests</span><span class="p">,</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>

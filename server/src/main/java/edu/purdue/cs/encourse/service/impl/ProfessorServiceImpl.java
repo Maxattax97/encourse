@@ -581,8 +581,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         if (DEBUG) {
-            visibleTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
+            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
+            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
         }
 
         // TODO: Check that test results work as expected
@@ -606,8 +606,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         if (DEBUG) {
-            visibleTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleTestCases.txt";
+            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
+            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
         }
 
         // TODO: Check that test results work as expected

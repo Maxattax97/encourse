@@ -141,6 +141,7 @@
   <h1>Source code for daily_git_data</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">is_number</span> <span class="k">as</span> <span class="n">is_number</span>
+<span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">eprint</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">timedelta</span>
 
@@ -185,6 +186,77 @@
 
     <span class="c1"># eprint(&quot;Selected top files: {}&quot;.format(top_files))</span>
     <span class="k">return</span> <span class="n">top_files</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="remove_shared_commits"><a class="viewcode-back" href="../daily_git_data.html#daily_git_data.remove_shared_commits">[docs]</a><span class="k">def</span> <span class="nf">remove_shared_commits</span><span class="p">(</span><span class="n">students</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Removes data for uninformative commits </span>
+<span class="sd">        </span>
+<span class="sd">        Removes the first n commits from each student, where n are initial project </span>
+<span class="sd">        commits shared by all studetns. This ensures that all data is specific to</span>
+<span class="sd">        the given student, rather than shared among the whole class.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compare among the first 3 students</span>
+    <span class="k">if</span> <span class="n">count</span><span class="p">:</span> 
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">students</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">students</span><span class="p">[</span><span class="n">name</span><span class="p">]))):</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">students</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">eprint</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">eprint</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">students</span>
+
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">students</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">students</span>
+    <span class="n">student_0</span> <span class="o">=</span> <span class="n">students</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">student_1</span> <span class="o">=</span> <span class="n">students</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">student_2</span> <span class="o">=</span> <span class="n">students</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+    <span class="n">removal_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">day_0</span><span class="p">,</span> <span class="n">day_1</span><span class="p">,</span> <span class="n">day_2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">student_0</span><span class="p">,</span> <span class="n">student_1</span><span class="p">,</span> <span class="n">student_2</span><span class="p">):</span>
+        <span class="n">should_remove</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Series of checks for each value</span>
+        <span class="k">if</span> <span class="n">day_0</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day_1</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">day_1</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day_2</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]:</span>
+            <span class="n">eprint</span><span class="p">(</span><span class="s2">&quot;date mismatch&quot;</span><span class="p">)</span>
+            <span class="n">should_remove</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">day_0</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day_1</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">day_1</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day_2</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]:</span>
+            <span class="n">eprint</span><span class="p">(</span><span class="s2">&quot;files mismatch&quot;</span><span class="p">)</span>
+            <span class="n">should_remove</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">day_0</span><span class="p">[</span><span class="s2">&quot;time_spent&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day_1</span><span class="p">[</span><span class="s2">&quot;time_spent&quot;</span><span class="p">]</span>
+            <span class="ow">or</span> <span class="n">day_1</span><span class="p">[</span><span class="s2">&quot;time_spent&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day_2</span><span class="p">[</span><span class="s2">&quot;time_spent&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">eprint</span><span class="p">(</span><span class="s2">&quot;time_spent mismatch&quot;</span><span class="p">)</span>
+            <span class="n">should_remove</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">day_0</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day_1</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span>
+            <span class="ow">or</span> <span class="n">day_1</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day_2</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">eprint</span><span class="p">(</span><span class="s2">&quot;additions mismatch&quot;</span><span class="p">)</span>
+            <span class="n">should_remove</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">day_0</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day_1</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span>
+            <span class="ow">or</span> <span class="n">day_1</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day_2</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">eprint</span><span class="p">(</span><span class="s2">&quot;deletions mismatch&quot;</span><span class="p">)</span>
+            <span class="n">should_remove</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">day_0</span><span class="p">[</span><span class="s2">&quot;commit_count&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day_1</span><span class="p">[</span><span class="s2">&quot;commit_count&quot;</span><span class="p">]</span>
+            <span class="ow">or</span> <span class="n">day_1</span><span class="p">[</span><span class="s2">&quot;commit_count&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">day_2</span><span class="p">[</span><span class="s2">&quot;commit_count&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">eprint</span><span class="p">(</span><span class="s2">&quot;commit_count mismatch&quot;</span><span class="p">)</span>
+            <span class="n">should_remove</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">should_remove</span><span class="p">:</span>
+            <span class="n">removal_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">students</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">removal_count</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">students</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">students</span></div>
 
 
 <div class="viewcode-block" id="get_daily_commit_data"><a class="viewcode-back" href="../daily_git_data.html#daily_git_data.get_daily_commit_data">[docs]</a><span class="k">def</span> <span class="nf">get_daily_commit_data</span><span class="p">(</span><span class="n">progress_file</span><span class="p">,</span> <span class="n">max_change</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -260,7 +332,8 @@
         <span class="k">elif</span> <span class="n">expect_time</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># New Data/Time/Code tuple</span>
             <span class="n">expect_time</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Expected date, time, and code. Found: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">words</span><span class="p">))</span>
+                <span class="n">eprint</span><span class="p">(</span><span class="s2">&quot;Expected date, time, and code. Found: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">words</span><span class="p">))</span>
+                <span class="k">continue</span>
             <span class="n">date</span> <span class="o">=</span> <span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">time</span> <span class="o">=</span> <span class="n">words</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Unused</span>
             <span class="n">code</span> <span class="o">=</span> <span class="n">words</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># Unused</span>
@@ -304,9 +377,10 @@
             <span class="n">previous_time</span> <span class="o">=</span> <span class="n">time</span>
             <span class="n">daily_commit_count</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># New Addition/Deletion/File tuple</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unknown line format with words </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">words</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">eprint</span><span class="p">(</span><span class="s2">&quot;Unknown line format with words </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">words</span><span class="p">))</span>
                 <span class="k">continue</span>
+            <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">words</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="mi">2</span><span class="p">:])]</span>
             <span class="n">additions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">is_number</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">else</span> <span class="mi">0</span>
             <span class="n">deletions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">is_number</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">else</span> <span class="mi">0</span>
 
