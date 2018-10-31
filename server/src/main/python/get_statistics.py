@@ -10,6 +10,16 @@ from daily_git_data import get_daily_commit_data as commit_list
 from test_completion import get_test_completion as test_completion
 from test_completion import get_test_completion_string as test_completion_string
 
+priorities = {
+    "Start Date": 0,
+    "End Date": 1,
+    "Additions": 2,
+    "Deletions": 3,
+    "Commit Count": 4,
+    "Estimated Time Spent": 5,
+    "Current Test Score": 6,
+
+}
 
 def combine_statistics(dates, stats, tests):
     """Creates a list of statistics for each user
@@ -92,7 +102,7 @@ def combine_statistics(dates, stats, tests):
         array_data = []
         for stat_name in user_data:
             stat_value = user_data[stat_name]
-            array_data.append({"stat_name": stat_name, "stat_value": stat_value})
+            array_data.append({"stat_name": stat_name, "stat_value": stat_value, "index":priorities[stat_name]})
         data[user] = array_data
 
     return data
