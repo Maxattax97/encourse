@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { getClassProgress } from '../../../../redux/actions/index'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
+import CustomTooltipContent from './CustomTooltipContent';
 
 const toPercent = (decimal, fixed = 2) => {
     return `${(decimal).toFixed(fixed)}`
@@ -118,7 +119,7 @@ class CourseCompletionProgress extends Component {
                                     Students
                                 </Label>
                             </YAxis>
-                            <Tooltip/>
+                            <Tooltip content={<CustomTooltipContent />} />
                             <Bar dataKey="count" fill="#8884d8"/>
                         </ComposedChart>
                     </ResponsiveContainer>
