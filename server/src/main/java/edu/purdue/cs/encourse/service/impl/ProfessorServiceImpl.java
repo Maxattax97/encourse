@@ -1157,6 +1157,152 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
+    /** Runs a testall script using two commits out of every day that a student has worked **/
+    public int runHistoricTestall(@NonNull String projectID) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -1;
+        }
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
+            return -2;
+        }
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
+        String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
+        String makefilePath = sections.get(0).getCourseHub() + "/makefiles/" + project.getRepoName() + "/Makefile";
+        File directory = new File(testCaseDirectory);
+        if(!directory.isDirectory() || directory.listFiles().length == 0) {
+            return -3;
+        }
+        File file = new File(makefilePath);
+        if(!file.exists()) {
+            return -4;
+        }
+        String date = LocalDate.now().toString();
+        int code = 0;
+        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_gitHashes.txt";
+        for(StudentProject p : projects) {
+            Student student = studentRepository.findByUserID(p.getStudentID());
+            StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
+            String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName();
+            executeBashScript("listTestUpdateHistory.sh " + testingDirectory + " " + fileName);
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(fileName));
+                reader.readLine();
+                String line;
+                String commitDate = "";
+                while((line = reader.readLine()) != null && !line.equals("")) {
+                    String[] commitInfo = line.split(" ");
+                    if(commitInfo[1].equals(commitDate)) {
+                        continue;
+                    }
+                    commitDate = commitInfo[1];
+                    date = commitInfo[1];
+                    executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[0]);
+                    if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
+                        code = -5;
+                    }
+                    TestExecuter tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
+                    Thread thread = new Thread(tester);
+                    thread.start();
+                    Thread.sleep(5000);
+                    thread.interrupt();
+                    executeBashScript("killProcesses.sh " + project.getCourseID());
+                    String visibleResult = tester.getVisibleResult();
+                    String hiddenResult = tester.getHiddenResult();
+                    if(visibleResult == null) {
+                        visibleResult = "";
+                    }
+                    if(hiddenResult == null) {
+                        hiddenResult = "";
+                    }
+                    double visibleGrade = parseProgressForProject(projectID, visibleResult);
+                    double hiddenGrade = parseProgressForProject(projectID, hiddenResult);
+                    if(projectDate == null) {
+                        StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
+                        studentProjectDateRepository.save(d);
+                    }
+                    else {
+                        if(visibleGrade > projectDate.getDateVisibleGrade()) {
+                            projectDate.setDateVisibleGrade(visibleGrade);
+                            studentProjectDateRepository.save(projectDate);
+                        }
+                        if(hiddenGrade > projectDate.getDateHiddenGrade()) {
+                            projectDate.setDateHiddenGrade(hiddenGrade);
+                            studentProjectDateRepository.save(projectDate);
+                        }
+                    }
+                    if(visibleGrade > p.getBestVisibleGrade()) {
+                        p.setBestVisibleGrade(visibleGrade);
+                        p = studentProjectRepository.save(p);
+                        updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                    }
+                    if(hiddenGrade > p.getBestHiddenGrade()) {
+                        p.setBestHiddenGrade(hiddenGrade);
+                        p = studentProjectRepository.save(p);
+                        updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
+                    }
+                    line = reader.readLine();
+                    commitInfo = line.split(" ");
+                    date = commitInfo[1];
+                    executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[0]);
+                    if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
+                        code = -5;
+                    }
+                    tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
+                    thread = new Thread(tester);
+                    thread.start();
+                    Thread.sleep(5000);
+                    thread.interrupt();
+                    executeBashScript("killProcesses.sh " + project.getCourseID());
+                    visibleResult = tester.getVisibleResult();
+                    hiddenResult = tester.getHiddenResult();
+                    if(visibleResult == null) {
+                        visibleResult = "";
+                    }
+                    if(hiddenResult == null) {
+                        hiddenResult = "";
+                    }
+                    visibleGrade = parseProgressForProject(projectID, visibleResult);
+                    hiddenGrade = parseProgressForProject(projectID, hiddenResult);
+                    if(projectDate == null) {
+                        StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
+                        studentProjectDateRepository.save(d);
+                    }
+                    else {
+                        if(visibleGrade > projectDate.getDateVisibleGrade()) {
+                            projectDate.setDateVisibleGrade(visibleGrade);
+                            studentProjectDateRepository.save(projectDate);
+                        }
+                        if(hiddenGrade > projectDate.getDateHiddenGrade()) {
+                            projectDate.setDateHiddenGrade(hiddenGrade);
+                            studentProjectDateRepository.save(projectDate);
+                        }
+                    }
+                    if(visibleGrade > p.getBestVisibleGrade()) {
+                        p.setBestVisibleGrade(visibleGrade);
+                        p = studentProjectRepository.save(p);
+                        updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                    }
+                    if(hiddenGrade > p.getBestHiddenGrade()) {
+                        p.setBestHiddenGrade(hiddenGrade);
+                        p = studentProjectRepository.save(p);
+                        updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
+                    }
+                }
+                executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
+                executeBashScript("cleanDirectory.sh src/main/temp");
+            }
+            catch(Exception e) {
+                code = -6;
+            }
+        }
+        project.setTestDate(LocalDate.now().toString());
+        projectRepository.save(project);
+        return code;
+    }
+
     /** Pulls and tests every project in the database on one hour intervals **/
     public void pullAndTestAllProjects() {
         for(Project project : projectRepository.findAll()) {
@@ -1176,6 +1322,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 project.setTestCount(project.getTestCount() - 1);
             }
         }
+        executeBashScript("cleanDirectory.sh src/main/temp");
     }
 
     public int testPythonDirectory() {

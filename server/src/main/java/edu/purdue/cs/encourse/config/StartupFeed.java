@@ -170,7 +170,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             professorService.addTestScript(shell.getProjectIdentifier(), "wildcards7", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_tilde", false, 2);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_robustness", false, 10);
-            professorService.runTestall(shell.getProjectIdentifier());
+            professorService.runHistoricTestall(shell.getProjectIdentifier());
 
             List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(malloc.getProjectIdentifier());
             for(StudentProject p : projects) {
