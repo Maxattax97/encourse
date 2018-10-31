@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { getClassProgress } from '../../../../redux/actions/index'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
+import CustomTooltipContent from './CustomTooltipContent';
 
 const toPercent = (decimal, fixed = 2) => {
     return `${(decimal).toFixed(fixed)}`
@@ -110,16 +111,16 @@ class CourseCompletionProgress extends Component {
                             <CartesianGrid/>
                             <XAxis dataKey="progressBin" type="category">
                                 <Label offset={-10} position="insideBottom">
-                                    Total
+                                    Progress
                                 </Label>
                             </XAxis>
-                            <YAxis tickFormatter={toPercent} domain={[0, 1]}>
+                            <YAxis>
                                 <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                                     Students
                                 </Label>
                             </YAxis>
-                            <Tooltip/>
-                            <Bar dataKey="percent" fill="#8884d8"/>
+                            <Tooltip content={<CustomTooltipContent />} />
+                            <Bar dataKey="count" fill="#8884d8"/>
                         </ComposedChart>
                     </ResponsiveContainer>
                 </div>

@@ -8,6 +8,7 @@ import ProjectNavigation from '../navigation/ProjectNavigation'
 import {CourseModal, CourseCharts, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {Title, SettingsIcon, BackNav} from '../Helpers'
+import CourseCommitHistory from './course/CourseCommitHistory'
 
 class CoursePanel extends Component {
 
@@ -49,6 +50,7 @@ class CoursePanel extends Component {
                             <h4>Last Test Ran:</h4>
                         </div>
                     </div>
+                    <CourseCommitHistory/>
                 </div>
 
                 <CourseModal id={1}/>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ComposedChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
+import { ComposedChart, Bar, Brush, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import { connect } from 'react-redux'
 import { getTestBarGraph } from '../../../../redux/actions/index'
 import url from '../../../../server'
@@ -133,7 +133,7 @@ class CourseTestCaseProgress extends Component {
                             <CartesianGrid/>
                             <XAxis dataKey="testName" type="category">
                                 <Label offset={-10} position="insideBottom">
-                                Test Case
+                                {/*Test Case*/}
                                 </Label>
                             </XAxis>
                             <YAxis tickFormatter={toPercent} domain={[0, 1]}>
@@ -147,6 +147,7 @@ class CourseTestCaseProgress extends Component {
                                     <Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#8884d8' }/>
                                 ))}
                             </Bar>
+                            <Brush dataKey="testName" height={40} stroke="#8884d8"/>
                         </ComposedChart>
                     </ResponsiveContainer>
                 </div>
