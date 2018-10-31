@@ -15,8 +15,8 @@
 
   .card-select {
     position:absolute;
-    @include set-rem-safe(top, 1rem);
-    @include set-rem-safe(right, 1rem);
+    top: 0;
+    right: 0;
 
     display: none;
   }

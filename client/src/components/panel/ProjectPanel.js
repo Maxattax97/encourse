@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {Summary, Title} from '../Helpers'
+import {BackNav, Summary, Title} from '../Helpers'
 import {history} from '../../redux/store'
 import {getClassProjects, setCurrentProject} from '../../redux/actions'
 import connect from 'react-redux/es/connect/connect'
@@ -24,29 +24,30 @@ class ProjectPanel extends Component {
     };
 
     render() {
+
+        const action_names = [
+            'Add New Project',
+            'Upload Test Zip',
+            'Save Changes',
+            'Revert Changes',
+            'Remove Project'
+        ]
+
+        const actions = [
+            {},
+            {},
+            {},
+            {},
+            {}
+        ]
+
         return (
             <div className='panel-projects'>
-                <ProjectNavigation
-                    back="Course"
-                    backClick={ this.back }
-                    {...this.props}/>
 
-                <div className='panel-right-nav'>
-                    <div className='top-nav' />
-                    <ActionNavigation actions={[
-                        () => {},
-                        () => {},
-                        () => {},
-                        () => {},
-                        () => {}
-                    ]}
-                    action_names={[
-                        'Add New Project',
-                        'Upload Test Zip',
-                        'Save Changes',
-                        'Revert Changes',
-                        'Remove Project'
-                    ]}/>
+                <div className='panel-left-nav'>
+                    <BackNav back='Course' backClick={ this.back }/>
+                    <ProjectNavigation/>
+                    <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
 
                 <div className='panel-center-content'>

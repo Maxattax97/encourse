@@ -28,7 +28,7 @@ class StudentPanel extends Component {
     render() {
 
         const action_names = [
-            'View Hidden Tests',
+            'Sync Repository',
             'Run Tests',
             'Academic Dishonesty Report'
         ]

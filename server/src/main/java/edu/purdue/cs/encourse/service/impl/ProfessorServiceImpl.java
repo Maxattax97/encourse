@@ -391,6 +391,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
             return -6;
         }
+        project.setSyncDate(LocalDate.now().toString());
+        projectRepository.save(project);
         return code;
     }
 
@@ -1067,6 +1069,8 @@ public class ProfessorServiceImpl implements ProfessorService {
                 code = -6;
             }
         }
+        project.setTestDate(LocalDate.now().toString());
+        projectRepository.save(project);
         return code;
     }
 
