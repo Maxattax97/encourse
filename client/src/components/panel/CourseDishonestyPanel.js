@@ -20,12 +20,14 @@ class CourseDishonestyPanel extends Component {
 
         const action_names = [
             'Sync Repositories',
-            'Run Tests'
+            'Run Tests',
+            'Share Results'
         ]
 
         const actions = [
             () => {  },
             () => {  },
+            () => {  }
         ]
 
         return (<div className="class-dishonesty-panel">
@@ -43,7 +45,6 @@ class CourseDishonestyPanel extends Component {
                     </div>
                 </div>
             </div>
-
 
             <CourseDishonestyModal id={1}/>
 
