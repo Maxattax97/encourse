@@ -54,7 +54,6 @@ class CourseStudentSummary extends Component {
             <Summary
                 columns={ 5 }
                 data={ this.props.students }
-                className='course-students'
                 iterator={ (student) =>
                     <Card className={ this.state.cards_selected[student.id] ? 'selected action' : 'action' } onClick={ () => this.clickStudentCard(student) } key={student.id}>
                         <div className="summary-preview">

@@ -5,7 +5,7 @@ import {BackNav, Card, SettingsIcon, Summary, Title} from '../Helpers'
 import CourseDishonestyModal from '../modal/CourseDishonestyModal'
 import {getStudentPreviews, setCurrentStudent, setModalState} from '../../redux/actions'
 import connect from 'react-redux/es/connect/connect'
-import StudentReportSummary from './course-dishonesty/StudentReportSummary'
+import StudentReportFilter from './course-dishonesty/StudentReportFilter'
 
 class CourseDishonestyPanel extends Component {
 
@@ -73,7 +73,7 @@ class CourseDishonestyPanel extends Component {
                     <div className='h1 break-line' />
 
                     <h3 className='header'>Students Summary</h3>
-                    <StudentReportSummary/>
+                    <StudentReportFilter/>
                 </div>
             </div>
         </div> )

@@ -21,7 +21,6 @@ class StudentReportSummary extends Component {
         return (
             <Summary columns={ 5 }
                 data={ this.props.students }
-                className='course-students-report'
                 iterator={ (student) =>
                     <Card className='action' onClick={ () => this.clickStudentCard(student) } key={student.id}>
                         <div className="summary-preview">
