@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {BackNav, Card, SettingsIcon, Summary, Title} from '../Helpers'
+import {BackNav} from '../Helpers'
 import {history} from '../../redux/store'
-import ProgressPerTime from './student/chart/StudentVelocityPerTime'
-import ProgressPerCommit from './student/chart/StudentVelocityPerCommit'
 import {clearStudent, getStudent} from '../../redux/actions'
+import StudentDishonestyCharts from "./student-dishonesty/StudentDishonestyCharts"
 
 class StudentDishonestyPanel extends Component {
 
@@ -14,11 +13,6 @@ class StudentDishonestyPanel extends Component {
     }
 
     render() {
-
-        const chartList = [
-            <ProgressPerTime key={1}/>,
-            <ProgressPerCommit key={2}/>,
-        ]
 
         const action_names = [
             'Sync Repository',
@@ -57,18 +51,7 @@ class StudentDishonestyPanel extends Component {
                         <div className='h1 break-line header' />
 
                         <h3 className='header'>Student Charts Summary</h3>
-                        <Summary
-                            columns={ 2 }
-                            className='charts'>
-                            {
-                                chartList.map((chart) =>
-                                    <Card key={ chart.key }>
-                                        { chart }
-                                    </Card>
-                                )
-                            }
-
-                        </Summary>
+                        <StudentDishonestyCharts/>
                     </div>
                 </div>
             </div>

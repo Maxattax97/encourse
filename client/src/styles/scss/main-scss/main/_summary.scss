@@ -24,7 +24,7 @@
   .summary-preview {
       position: relative;
       @include set-rem-safe(height, 7.5rem);
-      margin: 5.5px;
+      padding: 5.5px;
 
     .preview-content {
       margin-bottom: 10px;
