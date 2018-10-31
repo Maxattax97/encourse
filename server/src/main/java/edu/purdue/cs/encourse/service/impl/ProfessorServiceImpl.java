@@ -1194,12 +1194,12 @@ public class ProfessorServiceImpl implements ProfessorService {
                 String commitDate = "";
                 while((line = reader.readLine()) != null && !line.equals("")) {
                     String[] commitInfo = line.split(" ");
-                    if(commitInfo[1].equals(commitDate)) {
+                    if(commitInfo[2].equals(commitDate)) {
                         continue;
                     }
-                    commitDate = commitInfo[1];
-                    date = commitInfo[1];
-                    executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[0]);
+                    commitDate = commitInfo[2];
+                    date = commitInfo[2];
+                    executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
                     if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
                         code = -5;
                     }
@@ -1245,8 +1245,8 @@ public class ProfessorServiceImpl implements ProfessorService {
                     }
                     line = reader.readLine();
                     commitInfo = line.split(" ");
-                    date = commitInfo[1];
-                    executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[0]);
+                    date = commitInfo[2];
+                    executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
                     if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
                         code = -5;
                     }
@@ -1292,7 +1292,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     }
                 }
                 executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
-                executeBashScript("cleanDirectory.sh src/main/temp");
+                reader.close();
             }
             catch(Exception e) {
                 code = -6;
