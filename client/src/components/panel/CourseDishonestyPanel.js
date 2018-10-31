@@ -39,8 +39,10 @@ class CourseDishonestyPanel extends Component {
 
             <div className='panel-right-nav'>
                 <div className='top-nav'>
-                    <div className='course-repository-info'>
+                    <div>
                         <h4>Last Sync:</h4>
+                    </div>
+                    <div>
                         <h4>Last Test Ran:</h4>
                     </div>
                 </div>

@@ -36,7 +36,7 @@ class StudentPanel extends Component {
         const actions = [
             () => {},
             () => {},
-            () => {}
+            () => { history.push('/student-dishonesty/' + this.props.currentStudent.id) }
         ]
 
         return (
@@ -50,7 +50,14 @@ class StudentPanel extends Component {
                 </div>
 
                 <div className="panel-right-nav">
-                    <div className='top-nav' />
+                    <div className='top-nav'>
+                        <div>
+                            <h4>Last Sync:</h4>
+                        </div>
+                        <div>
+                            <h4>Last Test Ran:</h4>
+                        </div>
+                    </div>
                     <StudentCommitHistory />
                 </div>
 

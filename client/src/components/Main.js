@@ -52,7 +52,7 @@ class Main extends Component {
                             <Route path="/course-dishonesty" render={(navProps) =>
                                 <CourseDishonestyPanel {...navProps} />
                             }/>
-                            <Route path="/student-dishonetsy" render={(navProps) =>
+                            <Route path="/student-dishonesty/:id" render={(navProps) =>
                                 <StudentDishonestyPanel {...navProps}/>
                             }/>
                             <Route path="/settings" render={(/* navProps */) =>

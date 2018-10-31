@@ -18,9 +18,7 @@ class StudentFeedback extends Component {
         const charts = [
             <StudentProgressLineGraph key={1}/>,
             <CodeChangesChart key={2}/>,
-            <CommitFrequencyHistogram key={3}/>,
-            <ProgressPerTime key={4}/>,
-            <ProgressPerCommit key={5}/>,
+            <CommitFrequencyHistogram key={3}/>
         ]
 
         return (
