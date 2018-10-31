@@ -58,6 +58,8 @@ public class CourseServiceImpl implements CourseService {
             Process process = Runtime.getRuntime().exec("./src/main/bash/" + command);
             StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
             Executors.newSingleThreadExecutor().submit(streamGobbler);
+            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), System.out::println);
+            Executors.newSingleThreadExecutor().submit(errorGobbler);
             process.waitFor();
         }
         catch(Exception e) {
