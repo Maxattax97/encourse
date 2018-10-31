@@ -63,8 +63,6 @@ def merge_inputs(visible, hidden):
     merged = visible
     # Add hidden values to merged
     for key in hidden:
-        print(key)
-        print(hidden[key])
         if key in merged:
             merged[key]["tests"].update(hidden[key]["tests"])
         else:
