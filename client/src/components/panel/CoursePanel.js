@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import url from '../../server'
-import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState} from '../../redux/actions/index'
+import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories} from '../../redux/actions/index'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import {CourseModal, CourseCharts, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
@@ -27,8 +27,14 @@ class CoursePanel extends Component {
 
         const actions = [
             () => { history.push('/manage-tas') },
-            () => {  },
-            () => {  },
+            () => {
+                if(this.props.currentProjectId)
+                    this.props.syncRepositories(`${url}/api/pull/project?projectID=${this.props.currentProjectId}`)
+            },
+            () => {
+                if(this.props.currentProjectId)
+                    this.props.runTests(`${url}/api/testall/project?projectID=${this.props.currentProjectId}`)
+            },
             () => { history.push('/course-dishonesty') }
         ]
 
@@ -70,12 +76,17 @@ class CoursePanel extends Component {
 
                         <div className='h1 break-line' />
 
-                        <h3 className='header'>Students Summary</h3>
                         <CourseStudentFilter />
                     </div>
                 </div>
             </div>
         )
+    }
+}
+
+const mapStateToProps = (state) => {
+    return {
+	    currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
 
@@ -85,7 +96,9 @@ const mapDispatchToProps = (dispatch) => {
         setCurrentProject: (id, index) => dispatch(setCurrentProject(id, index)),
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
         setModalState: (id) => dispatch(setModalState(id)),
+        runTests: (url, headers, body) => dispatch(runTests(url, headers, body)),
+        syncRepositories: (url, headers, body) => dispatch(syncRepositories(url, headers, body))
     }
 }
 
-export default connect(null, mapDispatchToProps)(CoursePanel)
+export default connect(mapStateToProps, mapDispatchToProps)(CoursePanel)
