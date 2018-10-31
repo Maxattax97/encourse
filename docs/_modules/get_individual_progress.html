@@ -148,21 +148,20 @@
 <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">daterange</span>
 <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">date_string</span>
 <span class="kn">from</span> <span class="nn">helper</span> <span class="k">import</span> <span class="n">eprint</span>
-<span class="kn">from</span> <span class="nn">daily_git_data</span> <span class="k">import</span> <span class="n">get_daily_commit_data</span> <span class="k">as</span> <span class="n">get_progress</span>
 <span class="kn">from</span> <span class="nn">start_end</span> <span class="k">import</span> <span class="n">commit_data</span>
+<span class="kn">from</span> <span class="nn">past_progress</span> <span class="k">import</span> <span class="n">past_progress</span>
 
 
-<div class="viewcode-block" id="extract_changes"><a class="viewcode-back" href="../get_individual_progress.html#get_individual_progress.extract_changes">[docs]</a><span class="k">def</span> <span class="nf">extract_changes</span><span class="p">(</span><span class="n">commit_data</span><span class="p">):</span>
+<div class="viewcode-block" id="extract_progress"><a class="viewcode-back" href="../get_individual_progress.html#get_individual_progress.extract_progress">[docs]</a><span class="k">def</span> <span class="nf">extract_progress</span><span class="p">(</span><span class="n">progress_data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extracts additions and deletions from commit data</span>
 
 <span class="sd">    **Args**:</span>
-<span class="sd">        **commit_data** (dict): A list of dictionaries containing commit data,</span>
+<span class="sd">        **commit_data** (dict): A list of dictionaries containing historical progress,</span>
 <span class="sd">        each with the following form: ::</span>
 
 <span class="sd">            {</span>
 <span class="sd">                &quot;date&quot;: datetime,</span>
-<span class="sd">                &quot;additions&quot;: int,</span>
-<span class="sd">                &quot;deletions&quot;: int</span>
+<span class="sd">                &quot;progress&quot;: int,</span>
 <span class="sd">            }</span>
 
 <span class="sd">    **Returns**:</span>
@@ -171,24 +170,20 @@
 
 <span class="sd">            {</span>
 <span class="sd">                &quot;date1&quot;: {</span>
-<span class="sd">                    &quot;additions&quot;: int,</span>
-<span class="sd">                    &quot;deletions&quot;: int</span>
+<span class="sd">                    &quot;progress&quot;: int,</span>
 <span class="sd">                }</span>
 <span class="sd">                ...</span>
 <span class="sd">            }</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">new_data</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">commit_data</span><span class="p">:</span>
-        <span class="n">new_entry</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span>
-        <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">progress_data</span><span class="p">:</span>
         <span class="n">date</span> <span class="o">=</span> <span class="n">date_string</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">])</span>
-        <span class="n">new_data</span><span class="p">[</span><span class="n">date</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_entry</span>
+        <span class="n">new_data</span><span class="p">[</span><span class="n">date</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;progress&quot;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">new_data</span></div>
 
 
-<div class="viewcode-block" id="jsonify"><a class="viewcode-back" href="../get_individual_progress.html#get_individual_progress.jsonify">[docs]</a><span class="k">def</span> <span class="nf">jsonify</span><span class="p">(</span><span class="n">commit_data</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
+<div class="viewcode-block" id="jsonify"><a class="viewcode-back" href="../get_individual_progress.html#get_individual_progress.jsonify">[docs]</a><span class="k">def</span> <span class="nf">jsonify</span><span class="p">(</span><span class="n">visible_data</span><span class="p">,</span> <span class="n">hidden_data</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert data to json for /progress endpoint</span>
 
 <span class="sd">    Converts the data to a list of dictionaries. One dictionary is</span>
@@ -201,8 +196,7 @@
 <span class="sd">            </span>
 <span class="sd">            {</span>
 <span class="sd">                &quot;date1&quot;: {</span>
-<span class="sd">                    &quot;additions&quot;: datetime,</span>
-<span class="sd">                    &quot;deletions&quot;: int (seconds),</span>
+<span class="sd">                    &quot;progress&quot;: int,</span>
 <span class="sd">                },</span>
 <span class="sd">                ...</span>
 <span class="sd">            }</span>
@@ -223,46 +217,66 @@
     <span class="n">date1</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
     <span class="n">date2</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
     <span class="n">dates</span> <span class="o">=</span> <span class="n">daterange</span><span class="p">(</span><span class="n">date1</span><span class="p">,</span> <span class="n">date2</span><span class="p">)</span>
-    <span class="n">progress</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">visible</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">hidden</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="c1"># Fill each date with comulative progress</span>
     <span class="k">for</span> <span class="n">day</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">:</span>
         <span class="n">day</span> <span class="o">=</span> <span class="n">date_string</span><span class="p">(</span><span class="n">day</span><span class="p">)</span>
         <span class="n">new_entry</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">day</span>
-        <span class="k">if</span> <span class="n">day</span> <span class="ow">in</span> <span class="n">commit_data</span><span class="p">:</span>
-            <span class="n">progress</span> <span class="o">+=</span> <span class="n">commit_data</span><span class="p">[</span><span class="n">day</span><span class="p">][</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">commit_data</span><span class="p">[</span><span class="n">day</span><span class="p">][</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span>
-        <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;progress&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">progress</span>
+        <span class="k">if</span> <span class="n">day</span> <span class="ow">in</span> <span class="n">visible_data</span><span class="p">:</span>
+            <span class="n">visible</span> <span class="o">=</span> <span class="n">visible_data</span><span class="p">[</span><span class="n">day</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">day</span> <span class="ow">in</span> <span class="n">hidden_data</span><span class="p">:</span>
+            <span class="n">hidden</span> <span class="o">=</span> <span class="n">hidden_data</span><span class="p">[</span><span class="n">day</span><span class="p">]</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="p">(</span><span class="n">hidden</span> <span class="o">+</span> <span class="n">visible</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="k">if</span> <span class="n">hidden</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="n">visible</span>
+        <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">visible</span>
+        <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;hidden&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hidden</span>
+        <span class="n">new_entry</span><span class="p">[</span><span class="s2">&quot;progress&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">total</span><span class="p">)</span>
         <span class="n">daily_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_entry</span><span class="p">)</span>
 
     <span class="c1"># Convert progress to a percentage by divding by the final total</span>
-    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">daily_data</span><span class="p">:</span>
-        <span class="n">item</span><span class="p">[</span><span class="s2">&quot;progress&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;progress&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">progress</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="c1"># for item in daily_data:</span>
+    <span class="c1">#    item[&quot;progress&quot;] = round(item[&quot;progress&quot;] / progress * 100)</span>
     <span class="k">return</span> <span class="n">daily_data</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;logfile&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to commit log file&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;timefile&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to commit time file&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;visiblefile&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to historic progress file for visible test cases&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;hiddenfile&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to historic progress file for hidden test cases&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;timefile&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to time file&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;user name&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-O&quot;</span><span class="p">,</span> <span class="s2">&quot;--obfuscate&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;obfuscate flag&quot;</span><span class="p">)</span>
 
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
-    <span class="n">commit_data_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">logfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">visible_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">visiblefile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">hidden_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">hiddenfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
     <span class="n">commit_times_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">timefile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
     <span class="n">student_id</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="n">data</span> <span class="o">=</span> <span class="n">get_progress</span><span class="p">(</span><span class="n">commit_data_file</span><span class="p">)</span>
-    <span class="n">individual_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">student_id</span><span class="p">]</span>
-    <span class="c1"># print(&quot;\n&quot;)</span>
-    <span class="n">reformatted_data</span> <span class="o">=</span> <span class="n">extract_changes</span><span class="p">(</span><span class="n">individual_data</span><span class="p">)</span>
+    <span class="n">visible_data</span> <span class="o">=</span> <span class="n">past_progress</span><span class="p">(</span><span class="n">visible_file</span><span class="p">)</span>
+    <span class="n">individual_visible_data</span> <span class="o">=</span> <span class="n">visible_data</span><span class="p">[</span><span class="n">student_id</span><span class="p">]</span>
+    <span class="n">reformatted_visible_data</span> <span class="o">=</span> <span class="n">extract_progress</span><span class="p">(</span><span class="n">individual_visible_data</span><span class="p">)</span>
+
+    <span class="n">hidden_data</span> <span class="o">=</span> <span class="n">past_progress</span><span class="p">(</span><span class="n">hidden_file</span><span class="p">)</span>
+    <span class="n">individual_hidden_data</span> <span class="o">=</span> <span class="n">hidden_data</span><span class="p">[</span><span class="n">student_id</span><span class="p">]</span>
+    <span class="n">reformatted_hidden_data</span> <span class="o">=</span> <span class="n">extract_progress</span><span class="p">(</span><span class="n">individual_hidden_data</span><span class="p">)</span>
 
     <span class="n">commit_times</span> <span class="o">=</span> <span class="n">commit_data</span><span class="p">(</span><span class="n">commit_times_file</span><span class="p">)</span>
     <span class="n">individual_commit_times</span> <span class="o">=</span> <span class="n">commit_times</span><span class="p">[</span><span class="n">student_id</span><span class="p">]</span>
 
-    <span class="n">api_formatted_data</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">reformatted_data</span><span class="p">,</span> <span class="n">individual_commit_times</span><span class="p">)</span>
+    <span class="n">api_formatted_data</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span>
+        <span class="n">reformatted_visible_data</span><span class="p">,</span> <span class="n">reformatted_hidden_data</span><span class="p">,</span> <span class="n">individual_commit_times</span>
+    <span class="p">)</span>
     <span class="n">api_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">api_formatted_data</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">api_json</span><span class="p">)</span>
 </pre></div>

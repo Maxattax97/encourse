@@ -211,7 +211,8 @@
     <span class="n">commit_data_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">logfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
     <span class="n">student_id</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="n">data</span> <span class="o">=</span> <span class="n">commit_list</span><span class="p">(</span><span class="n">commit_data_file</span><span class="p">)[</span><span class="n">student_id</span><span class="p">]</span>
+    <span class="n">commit_data</span> <span class="o">=</span> <span class="n">commit_list</span><span class="p">(</span><span class="n">commit_data_file</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">commit_data</span><span class="p">[</span><span class="n">student_id</span><span class="p">]</span>
 
     <span class="n">formatted_data</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">formatted_data</span><span class="p">)</span>
