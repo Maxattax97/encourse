@@ -561,7 +561,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         String pyPath = pythonPath + "get_velocity.py";
-        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + dailyCountsFile + " " + userName;
+        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
