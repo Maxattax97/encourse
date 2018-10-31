@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 
 import { getStatistics } from '../../../redux/actions/index'
 import url from '../../../server'
+import {LoadingIcon} from "../../Helpers"
 
 class StudentStatistics extends Component {
 
@@ -62,7 +63,10 @@ class StudentStatistics extends Component {
                                 <h5>{stat.stat_value}</h5>
                             </div>
                         )
-                        : <div>{/* TODO: add spinner */}Loading</div>
+                        :
+	                    <div className='loading'>
+		                    <LoadingIcon/>
+	                    </div>
                 }
             </div>
         )
