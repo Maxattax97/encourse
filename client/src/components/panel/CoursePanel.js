@@ -20,8 +20,8 @@ class CoursePanel extends Component {
 
         const action_names = [
             'Manage Teaching Assistants',
-            'Sync Repositories',
-            'Run Tests',
+            'Sync Project Repositories',
+            'Run Project Tests',
             'Academic Dishonesty Report'
         ]
 
@@ -50,10 +50,20 @@ class CoursePanel extends Component {
                 <div className='panel-right-nav'>
                     <div className='top-nav'>
                         <div>
-                            <h4>Last Sync:</h4>
+                            <h4>Last Sync: {
+                                this.props.projects && this.props.projects.length > 0 ?
+                                    this.props.projects[this.props.currentProjectIndex].last_sync
+                                    : null
+                            }
+                            </h4>
                         </div>
                         <div>
-                            <h4>Last Test Ran:</h4>
+                            <h4>Last Test Ran: {
+                                this.props.projects && this.props.projects.length > 0 ?
+                                    this.props.projects[this.props.currentProjectIndex].last_test
+                                    : null
+                            }
+                            </h4>
                         </div>
                     </div>
                     <CourseCommitHistory/>
@@ -86,6 +96,8 @@ class CoursePanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
+	    projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
+	    currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
 	    currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
