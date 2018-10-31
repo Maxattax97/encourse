@@ -5,5 +5,5 @@
 
 DIRECTORY="$(pwd)"
 cd "$1"
-git checkout "$2"
+git checkout -f "$2"
 cd "${DIRECTORY}"

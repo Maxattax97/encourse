@@ -1189,7 +1189,6 @@ public class ProfessorServiceImpl implements ProfessorService {
             executeBashScript("listTestUpdateHistory.sh " + testingDirectory + " " + fileName);
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(fileName));
-                reader.readLine();
                 String line;
                 String commitDate = "";
                 while((line = reader.readLine()) != null && !line.equals("")) {
