@@ -316,8 +316,8 @@ public class WriteController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    @RequestMapping(value = "/testall/project", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> testProject(@RequestParam(name = "projectID") String projectID) {
+    @RequestMapping(value = "/run/testall", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> runTestall(@RequestParam(name = "projectID") String projectID) {
 
         int result = professorService.runTestall(projectID);
         if (result == 0) {
