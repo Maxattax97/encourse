@@ -1,21 +1,53 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {Card, Summary, Title} from '../../Helpers'
+import {Card, Checkbox, CheckmarkIcon, Summary, Title} from '../../Helpers'
 import {fuzzing} from '../../../fuzz'
 import {history} from '../../../redux/store'
-import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState} from '../../../redux/actions'
+import {getStudentPreviews, setCurrentStudent} from '../../../redux/actions'
 
 class CourseStudentSummary extends Component {
 
-    showStudentPanel = (student) => {
-        this.props.setCurrentStudent(student)
-        if (fuzzing) {
-            // NOTE: we don't even use the student id in the url
-            history.push('/student/student')
-        } else {
-            history.push(`/student/${student.id}`)
+    constructor(props) {
+        super(props)
+
+        //TODO Jordan Buckmaster : Please move into props for other components to interact with these states
+        this.state = {
+            card_selected: false,
+            cards_selected: {}
         }
+    }
+
+    clickStudentCard = (student) => {
+        if(this.state.card_selected)
+            this.setState({ card_selected: false, cards_selected: {} })
+        else {
+            this.props.setCurrentStudent(student)
+            if (fuzzing) {
+                // NOTE: we don't even use the student id in the url
+                history.push('/student/student')
+            } else {
+                history.push(`/student/${student.id}`)
+            }
+        }
+
     };
+
+    clickStudentSelect = (event, student) => {
+        event.stopPropagation()
+
+        if(!this.state.cards_selected[student.id])
+            this.state.cards_selected[student.id] = true
+        else {
+            delete this.state.cards_selected[student.id]
+
+            if(Object.keys(this.state.cards_selected).length === 0) {
+                this.setState({ card_selected: false, cards_selected: {} })
+                return
+            }
+        }
+
+        this.setState({ card_selected: true, cards_selected: this.state.cards_selected })
+    }
 
     render() {
         return (
@@ -24,7 +56,7 @@ class CourseStudentSummary extends Component {
                 data={ this.props.students }
                 className='course-students'
                 iterator={ (student) =>
-                    <Card onClick={() => this.showStudentPanel(student)} className='action' key={student.id}>
+                    <Card className={ this.state.cards_selected[student.id] ? 'selected action' : 'action' } onClick={ () => this.clickStudentCard(student) } key={student.id}>
                         <div className="summary-preview">
                             <Title>
                                 <h4>{ student.first_name }</h4>
@@ -44,6 +76,13 @@ class CourseStudentSummary extends Component {
                                 </h6>
                             </div>
                         </div>
+                        <Checkbox className={ this.state.card_selected ? 'card-select selectable' : 'card-select' } onClick={ (e) => this.clickStudentSelect(e, student) }>
+                            {
+                                this.state.cards_selected[student.id] ?
+                                    <CheckmarkIcon/>
+                                    : null
+                            }
+                        </Checkbox>
                     </Card>
                 } />
         )

@@ -20,12 +20,14 @@ class CourseDishonestyPanel extends Component {
 
         const action_names = [
             'Sync Repositories',
-            'Run Tests'
+            'Run Tests',
+            'Share Results'
         ]
 
         const actions = [
             () => {  },
             () => {  },
+            () => {  }
         ]
 
         return (<div className="class-dishonesty-panel">
@@ -37,13 +39,14 @@ class CourseDishonestyPanel extends Component {
 
             <div className='panel-right-nav'>
                 <div className='top-nav'>
-                    <div className='course-repository-info'>
+                    <div>
                         <h4>Last Sync:</h4>
+                    </div>
+                    <div>
                         <h4>Last Test Ran:</h4>
                     </div>
                 </div>
             </div>
-
 
             <CourseDishonestyModal id={1}/>
 

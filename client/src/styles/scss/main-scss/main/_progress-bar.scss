@@ -1,5 +1,7 @@
+@import "../definitions";
+
 .progress-bar {
-  border: 1px solid #a4a4a4;
+  border: 1px solid $input-border-color;
   width: 100%;
   height: 1em;
   position: relative;
@@ -9,11 +11,5 @@
     width: 0;
     height: 100%;
     background: #4caf50;
-
-    -webkit-transition: width .33s ease;
-    -moz-transition: width .33s ease;
-    -ms-transition: width .33s ease;
-    -o-transition: width .33s ease;
-    transition: width .33s ease;
   }
 }
