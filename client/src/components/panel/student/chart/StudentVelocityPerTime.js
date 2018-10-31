@@ -55,6 +55,13 @@ class StudentVelocityPerTime extends Component {
     dateFormatter = (date) => {
         return moment(date).format('M-D')
     }
+    
+    customDateFormatter = (value, name, props) => {
+        if (name === 'date') {
+            return moment(value).format('M-D')
+        }
+        return value
+    }
 
     formatApiData = (udata) => {
         if (!udata) {
@@ -68,6 +75,9 @@ class StudentVelocityPerTime extends Component {
 
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf()
+            entry.timeSpent = parseInt(entry.time_spent / 1000)
+            // progress per time spent
+            entry.ppts = entry.timeSpent > 0 ? entry.progress / entry.timeSpent : 0
         }
 
         return data
@@ -79,19 +89,19 @@ class StudentVelocityPerTime extends Component {
                 ? <div className="chart-container">
                     <ResponsiveContainer width="100%" height="100%">
                         <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
-                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Time</text>
+                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Time Spent</text>
                             <CartesianGrid/>
-                            <XAxis dataKey="timeSpent" type="number">
+                            <XAxis dataKey="date" type="number" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
                                 <Label offset={-15} position="insideBottom">
-                                Estimated Time worked
+                                    Date
                                 </Label>
                             </XAxis>
-                            <YAxis dataKey="progress" type="number">
+                            <YAxis dataKey="ppts" type="number">
                                 <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
-                                Progress
+                                    Progress per Time Spent
                                 </Label>
                             </YAxis>
-                            <Tooltip labelFormatter={this.dateFormatter} animationDuration={500}/>
+                            <Tooltip formatter={this.customDateFormatter}/>
                             <Scatter type="number" fill="#8884d8"/>
                         </ScatterChart>
                     </ResponsiveContainer>
