@@ -10,8 +10,25 @@
   width: 100%;
   @include set-rem-safe(padding, 1rem);
   border: 1px $card-border-color solid;
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, .16);
   background: #fbfbfb;
+  position:relative;
+
+  .card-select {
+    position:absolute;
+    @include set-rem-safe(top, 1rem);
+    @include set-rem-safe(right, 1rem);
+
+    display: none;
+  }
+
+}
+
+.card:hover .card-select, .card .card-select.selectable {
+  display: block;
+}
+
+.card .card-select:hover > div {
+  border: 1px $input-border-color-hover solid;
 }
 
 .overflow {

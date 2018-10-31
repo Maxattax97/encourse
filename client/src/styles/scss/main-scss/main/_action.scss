@@ -22,15 +22,11 @@ div.action:not(.card):hover {
 }
 
 div.action.card:hover .component {
-  box-shadow: 0 0 8px rgba(0, 0, 0, .33);
+  border: 1px #679fff solid;
 }
 
 div.action.card.selected .component {
-  background-color: #E0E0E0;
-}
-
-div.action.card.selected:hover .component {
-  background-color: #D0D0D0;
+  background: rgb(232, 240, 254);
 }
 
 div.action.radio-selected {

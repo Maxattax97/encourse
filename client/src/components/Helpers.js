@@ -111,6 +111,21 @@ export class BackNav extends Component {
     }
 }
 
+export class Checkbox extends Component {
+
+    render() {
+        return (
+            <div className={ this.props.className ? 'checkbox ' + this.props.className : 'checkbox' } onClick={ this.props.onClick }>
+                <div className='checkbox-value'>
+                    {
+                        this.props.children
+                    }
+                </div>
+            </div>
+        )
+    }
+}
+
 export class Dropdown extends Component {
 
     constructor(props) {
