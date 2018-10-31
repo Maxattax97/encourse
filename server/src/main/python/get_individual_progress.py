@@ -130,7 +130,7 @@ if __name__ == "__main__":
     individual_hidden_data = hidden_data[student_id]
     reformatted_hidden_data = extract_progress(individual_hidden_data)
 
-    commit_times = commit_data(commit_times_file)
+    commit_times = commit_data(commit_times_file, include_today=True)
     individual_commit_times = commit_times[student_id]
 
     api_formatted_data = jsonify(
