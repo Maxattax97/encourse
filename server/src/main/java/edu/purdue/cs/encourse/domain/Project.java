@@ -40,6 +40,14 @@ public class Project {
     @Setter
     private int testCount;
 
+    /** Date project was last synced **/
+    @Setter
+    private String syncDate;
+
+    /** Date project was last tested **/
+    @Setter
+    private String testDate;
+
     public Project(String courseID, String semester, String projectName,
                    String repoName, String startDate, String dueDate, int testRate) {
         this.courseID = courseID;
