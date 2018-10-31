@@ -42,15 +42,32 @@ public class ReadController {
     @Autowired
     private TeachingAssistantService taService;
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
     @RequestMapping(value = "/studentsData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentData(@RequestParam(name = "courseID") String courseID,
                                                           @RequestParam(name = "semester") String semester) {
-        JSONArray json = professorService.getStudentData(semester, courseID);
+        JSONArray json = null;
+        Iterator iter = getUserAuthorities().iterator();
+        while (iter.hasNext()) {
+            String auth = ((Authority) iter.next()).getAuthority();
+            if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                json = professorService.getStudentData(semester, courseID);
+                break;
+            } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                json = taService.getStudentData(semester, courseID, getUserFromAuth().getUsername());
+                break;
+            }
+        }
         if (json == null) {
             return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(json, HttpStatus.OK);
+
+        /*JSONArray json = professorService.getStudentData(semester, courseID);
+        if (json == null) {
+            return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(json, HttpStatus.OK);*/
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
