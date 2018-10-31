@@ -45,8 +45,8 @@ class StudentPanel extends Component {
                 <div className='panel-left-nav'>
                     <BackNav back="Course"
                         backClick={ this.back }/>
-                    <ActionNavigation actions={ actions } action_names={ action_names }/>
                     <ProjectNavigation/>
+                    <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
 
                 <div className="panel-right-nav">
