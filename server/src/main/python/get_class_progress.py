@@ -67,7 +67,6 @@ def merge_inputs(visible, hidden):
             merged[key]["tests"].update(hidden[key]["tests"])
         else:
             merged[key]["tests"] = hidden[key]["tests"]
-    eprint(merged)
     return merged
         
 def merge_data(visible, hidden):
