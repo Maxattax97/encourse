@@ -44,6 +44,8 @@ class StudentStatistics extends Component {
             return null
         }
 
+        data.sort((d1, d2) => d1.index - d2.index)
+
         return data.slice()
     }
 
