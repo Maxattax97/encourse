@@ -61,13 +61,14 @@ class CourseDishonestyPanel extends Component {
                     <div className='h1 break-line header' />
 
                     <h3 className='header'>Course Charts Summary</h3>
-                    <Summary
-                        columns={ 2 }
-                        data={ chartList }
-                        className='charts'
-                        iterator={ (chart) => <Card key={ chart.key }>
-                            { chart }
-                        </Card> } >
+                    <Summary columns={ 2 } className='charts'>
+                        {
+                            chartList.map( (chart) =>
+	                            <Card key={ chart.key }>
+		                            { chart }
+	                            </Card>
+                            )
+                        }
                     </Summary>
 
                     <div className='h1 break-line' />

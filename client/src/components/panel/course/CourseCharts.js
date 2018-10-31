@@ -11,13 +11,14 @@ class CourseCharts extends Component {
         ]
 
         return (
-            <Summary
-                columns={ 2 }
-                data={ chartList }
-                className='charts'
-                iterator={ (chart) => <Card key={ chart.key }>
-                    { chart }
-                </Card> } >
+            <Summary columns={ 2 } className='charts'>
+                {
+                    chartList.map( (chart) =>
+	                    <Card key={ chart.key }>
+		                    { chart }
+	                    </Card>
+                    )
+                }
             </Summary>
         )
     }

@@ -22,15 +22,15 @@ class StudentFeedback extends Component {
         ]
 
         return (
-            <Summary
-                columns={ 2 }
-                data={ charts }
-                className='charts'
-                iterator={ (chart) =>
-                    <Card key={ chart.key } >
-                        { chart }
-                    </Card>
-                } />
+            <Summary columns={ 2 } className='charts'>
+                {
+                    charts.map( (chart) =>
+                        <Card key={ chart.key }>
+                            { chart }
+                        </Card>
+                    )
+                }
+            </Summary>
         )
     }
 }

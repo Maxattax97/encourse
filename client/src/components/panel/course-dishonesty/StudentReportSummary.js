@@ -19,22 +19,24 @@ class StudentReportSummary extends Component {
 
     render() {
         return (
-            <Summary columns={ 5 }
-                data={ this.props.students }
-                iterator={ (student) =>
-                    <Card className='action' onClick={ () => this.clickStudentCard(student) } key={student.id}>
-                        <div className="summary-preview">
-                            <Title>
-                                <h4>{ student.first_name }</h4>
-                                <h4>{ student.last_name }</h4>
-                            </Title>
-                            <div className="h4 break-line header" />
-                            <div className="preview-content">
-                                <h5>Score: { student.timeSpent[this.props.currentProjectId] }</h5>
-                            </div>
-                        </div>
-                    </Card>
-                } />
+            <Summary columns={ 5 }>
+                {
+                    this.props.students.map( (student) =>
+	                    <Card className='action' onClick={ () => this.clickStudentCard(student) } key={student.id}>
+		                    <div className="summary-preview">
+			                    <Title>
+				                    <h4>{ student.first_name }</h4>
+				                    <h4>{ student.last_name }</h4>
+			                    </Title>
+			                    <div className="h4 break-line header" />
+			                    <div className="preview-content">
+				                    <h5>Score: { student.timeSpent[this.props.currentProjectId] }</h5>
+			                    </div>
+		                    </div>
+	                    </Card>
+                    )
+                }
+            </Summary>
         )
     }
 }

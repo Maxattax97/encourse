@@ -192,19 +192,16 @@ class ManageTAPanel extends Component {
                     <div className='h1 break-line header' />
 
                     <h3 className='header'>Assigning Sections to {current_ta.first_name} {current_ta.last_name}</h3>
-                    <Summary
-                        columns={5}
-                        data={this.props.sections}
-                        isLoading={this.props.sectionsIsLoading}
-                        iterator={(section) =>
-                            current_ta ?
-                                <SectionPreview key={section.id}
-                                    section={section}
-                                    onClick={ () => this.toggleSection(section.id)}
-                                    isSelected={this.state.sections.includes(section.id)}/>
-                                : null
-                        }
-                    />
+                    <Summary columns={5} isLoading={this.props.sectionsIsLoading}>
+	                    {
+	                    	this.props.sections.map( (section) =>
+			                    <SectionPreview key={section.id}
+			                                    section={section}
+			                                    onClick={ () => this.toggleSection(section.id)}
+			                                    isSelected={this.state.sections.includes(section.id)}/>
+		                    )
+	                    }
+                    </Summary>
 
                     <div className='h2 break-line header' />
                     <h3 className='header'>Assigning Students to {current_ta.first_name} {current_ta.last_name}</h3>
@@ -258,32 +255,35 @@ class ManageTAPanel extends Component {
                                         </div>
                                     </div>
                                 </div>
-                                <Summary columns={ 5 }
-                                    data={ this.state.students }
-                                    isLoading={this.props.studentsIsLoading}
-                                    iterator={(student) =>
-                                        <StudentAssignPreview key={student} student={this.props.students.find(e => e.id === student)} isSelected={true}/>
-                                    } />
+                                <Summary columns={ 5 } isLoading={this.props.studentsIsLoading}>
+                                    {
+                                        this.state.students.map( (student) =>
+	                                        <StudentAssignPreview key={student} student={this.props.students.find(e => e.id === student)} isSelected={true}/>
+                                        )
+                                    }
+                                </Summary>
                             </div>
 
                             : this.state.assignment_type === 1 ?
                                 <div className='student-selection-list'>
-                                    <Summary columns={ 5 }
-                                        data={ this.props.students.filter(student => student.sections.filter(id => this.state.sections.includes(id)).length > 0) }
-                                        isLoading={this.props.studentsIsLoading}
-                                        iterator={(student) =>
-                                            <StudentAssignPreview key={student.id} onClick={() => this.toggleStudent(student.id)} student={student} isSelected={this.state.students.includes(student.id)}/>
-                                        } />
+                                    <Summary columns={ 5 } isLoading={this.props.studentsIsLoading}>
+                                        {
+	                                        this.props.students.filter(student => student.sections.filter(id => this.state.sections.includes(id)).length > 0).map( (student) =>
+		                                        <StudentAssignPreview key={student.id} onClick={() => this.toggleStudent(student.id)} student={student} isSelected={this.state.students.includes(student.id)}/>
+                                            )
+                                        }
+                                    </Summary>
                                 </div>
 
                                 :
                                 <div className='student-selection-list'>
-                                    <Summary columns={ 5 }
-                                        data={ this.props.students.filter(student => student.sections.filter(id => this.state.sections.includes(id)).length > 0) }
-                                        isLoading={this.props.studentsIsLoading}
-                                        iterator={(student) =>
-                                            <StudentAssignPreview key={student.id} student={student} isSelected={true}/>
-                                        } />
+                                    <Summary columns={ 5 } isLoading={this.props.studentsIsLoading}>
+                                        {
+	                                        this.props.students.filter(student => student.sections.filter(id => this.state.sections.includes(id)).length > 0).map( (student) =>
+		                                        <StudentAssignPreview key={student.id} student={student} isSelected={true}/>
+                                            )
+                                        }
+                                    </Summary>
                                 </div>
                     }
 

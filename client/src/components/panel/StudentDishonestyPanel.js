@@ -59,11 +59,15 @@ class StudentDishonestyPanel extends Component {
                         <h3 className='header'>Student Charts Summary</h3>
                         <Summary
                             columns={ 2 }
-                            data={ chartList }
-                            className='charts'
-                            iterator={ (chart) => <Card key={ chart.key }>
-                                { chart }
-                            </Card> } >
+                            className='charts'>
+                            {
+                                chartList.map((chart) =>
+                                    <Card key={ chart.key }>
+                                        { chart }
+                                    </Card>
+                                )
+                            }
+
                         </Summary>
                     </div>
                 </div>
