@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview: module code &mdash; Encourse  documentation</title>
+  <title>get_class_cheating module &mdash; Encourse  documentation</title>
   
 
   
@@ -24,13 +24,13 @@
 
   
 
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
 
   
-  <script src="../_static/js/modernizr.min.js"></script>
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -46,7 +46,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> Encourse
+            <a href="index.html" class="icon icon-home"> Encourse
           
 
           
@@ -59,7 +59,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -77,7 +77,10 @@
             
             
               <!-- Local TOC -->
-              <div class="local-toc"></div>
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">get_class_cheating module</a></li>
+</ul>
+</div>
             
           
         </div>
@@ -90,7 +93,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">Encourse</a>
+          <a href="index.html">Encourse</a>
         
       </nav>
 
@@ -119,12 +122,16 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Overview: module code</li>
+      <li>get_class_cheating module</li>
     
     
       <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/get_class_cheating.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -136,23 +143,23 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>All modules for which code is available</h1>
-<ul><li><a href="commit_counts.html">commit_counts</a></li>
-<li><a href="daily_git_data.html">daily_git_data</a></li>
-<li><a href="get_add_del.html">get_add_del</a></li>
-<li><a href="get_class_cheating.html">get_class_cheating</a></li>
-<li><a href="get_class_progress.html">get_class_progress</a></li>
-<li><a href="get_git_commit_list.html">get_git_commit_list</a></li>
-<li><a href="get_git_commits.html">get_git_commits</a></li>
-<li><a href="get_individual_progress.html">get_individual_progress</a></li>
-<li><a href="get_statistics.html">get_statistics</a></li>
-<li><a href="get_test_summary.html">get_test_summary</a></li>
-<li><a href="get_velocity.html">get_velocity</a></li>
-<li><a href="helper.html">helper</a></li>
-<li><a href="past_progress.html">past_progress</a></li>
-<li><a href="start_end.html">start_end</a></li>
-<li><a href="test_completion.html">test_completion</a></li>
-</ul>
+  <div class="section" id="module-get_class_cheating">
+<span id="get-class-cheating-module"></span><h1>get_class_cheating module<a class="headerlink" href="#module-get_class_cheating" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="get_class_cheating.is_suspicious">
+<code class="descclassname">get_class_cheating.</code><code class="descname">is_suspicious</code><span class="sig-paren">(</span><em>student_stats</em>, <em>class_stats</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_class_cheating.html#is_suspicious"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_class_cheating.is_suspicious" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each statistic in <strong>class_stats</strong> determine whether the student is within one
+standard deviation above the mean. If the student is outside of the standard 
+deviation for every statistic, flag them as suspicious.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="get_class_cheating.jsonify">
+<code class="descclassname">get_class_cheating.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>git_data</em>, <em>test_progress</em>, <em>hidden_progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/get_class_cheating.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#get_class_cheating.jsonify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
 
            </div>
            
@@ -187,7 +194,7 @@
     
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../',
+              URL_ROOT:'./',
               VERSION:'',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
@@ -196,14 +203,14 @@
               SOURCELINK_SUFFIX: '.txt'
           };
       </script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
     
 
   
 
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
