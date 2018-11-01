@@ -258,39 +258,41 @@ public class ReadController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/commitList", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
-                                                                  @RequestParam(name = "userName") List<String> userNames,
+                                                                  @RequestParam(name = "userName") String userName,
                                                                   @RequestParam(name = "page", defaultValue = "1", required = false) int page,
                                                                   @RequestParam(name = "size", defaultValue = "10", required = false) int size,
                                                                   @RequestParam(name = "sortBy", defaultValue = "date", required = false) String sortBy) {
         List<String> errors = new ArrayList<>();
         List<String> correct = new ArrayList<>();
         JSONReturnable returnJson = null;
-        for (String userName : userNames) {
-            if (hasPermissionOverAccount(userName)) {
-                Iterator iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        returnJson = professorService.getCommitList(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        returnJson = taService.getCommitList(projectID, userName, getUserFromAuth().getUsername());
-                        break;
-                    }
-                }
 
-                if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add("\"" + userName + " does not have content" + "\"");
-                    continue;
+        if (hasPermissionOverAccount(userName)) {
+            Iterator iter = getUserAuthorities().iterator();
+            while (iter.hasNext()) {
+                String auth = ((Authority) iter.next()).getAuthority();
+                if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                    returnJson = professorService.getCommitList(projectID, userName);
+                    break;
+                } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                    returnJson = taService.getCommitList(projectID, userName, getUserFromAuth().getUsername());
+                    break;
                 }
-                String json = returnJson.jsonObject.toJSONString();
-                correct.add(json);
-            } else {
-                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
+
+            if (returnJson == null || returnJson.jsonObject == null) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            String json = returnJson.jsonObject.toJSONString();
+            correct.add(json);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
         JSONArray json = (JSONArray) returnJson.getJsonObject().get("data");
+        if (json == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         List<JSONObject> jsonValues = new ArrayList<>();
         for (int i = 0; i < json.size(); i++) {
             JSONObject obj = (JSONObject) json.get(i);
