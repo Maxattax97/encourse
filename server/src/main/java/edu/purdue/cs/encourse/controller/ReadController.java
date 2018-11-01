@@ -7,6 +7,7 @@ import edu.purdue.cs.encourse.service.*;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -49,7 +50,7 @@ public class ReadController {
     public @ResponseBody ResponseEntity<?> getStudentData(@RequestParam(name = "courseID") String courseID,
                                                           @RequestParam(name = "semester") String semester,
                                                           @RequestParam(name = "page", defaultValue = "1", required = false) int page,
-                                                          @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                          @RequestParam(name = "size", defaultValue = "100", required = false) int size,
                                                           @RequestParam(name = "sortBy", defaultValue = "id", required = false) String sortBy,
                                                           @RequestParam(name = "projectID", required = false) String projectID,
                                                           @RequestParam(name = "userName", required = false) List<String> userNames) {
