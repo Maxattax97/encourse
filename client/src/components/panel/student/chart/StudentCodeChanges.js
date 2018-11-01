@@ -106,8 +106,8 @@ class StudentCodeChanges extends Component {
                             </XAxis>
                             <YAxis/>
                             <Tooltip labelFormatter={this.dateFormatter}/>
-                            <Area type="monotone" dataKey="additions" stroke="none" fill="green" />
-                            <Area type="monotone" dataKey="deletions" stroke="none" fill="red" />
+                            <Area name="deletions" type="monotone" dataKey="deletions" stroke="none" fill="red" />
+                            <Area name="additions" type="monotone" dataKey="additions" stroke="none" fill="green" />
                             <Brush dataKey="date" height={20} stroke="#8884d8" tickFormatter={this.dateFormatter}/>
                         </AreaChart>
                     </ResponsiveContainer>
