@@ -45,11 +45,8 @@ def jsonify(
 
     velocity_data = []
     cumulative_progress = 0
-<<<<<<< HEAD
-    prev_progress = 0
-=======
+
     max_progress = 0
->>>>>>> Add current date flag
 
     for day in dates:
         day = date_string(day)

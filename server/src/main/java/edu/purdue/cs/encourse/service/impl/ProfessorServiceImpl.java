@@ -702,17 +702,21 @@ public class ProfessorServiceImpl implements ProfessorService {
             for (StudentProject projectOne : projects) {
                 temp.remove(projectOne);
                 Student studentOne = studentRepository.findByUserID(projectOne.getStudentID());
+                String studentOnePath = (sections.get(0).getCourseHub() + "/" + studentOne.getUserName() + "/" + project.getRepoName());
+                Process process = Runtime.getRuntime().exec("./src/main/bash/listCommitHistoryByAuthor.sh " + studentOnePath + " CS252");
+                BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String hash = stdInput.readLine().split(" ")[1];
+                process.destroy();
                 StringBuilder builder = new StringBuilder();
                 builder.append(studentOne.getUserName()).append(":");
                 for (StudentProject projectTwo : temp) {
                     Student studentTwo = studentRepository.findByUserID(projectTwo.getStudentID());
                     builder.append(studentTwo.getUserName()).append(";");
-                    String studentOnePath = (sections.get(0).getCourseHub() + "/" + studentOne.getUserName() + "/" + project.getRepoName());
                     String studentTwoPath = (sections.get(0).getCourseHub() + "/" + studentTwo.getUserName() + "/" + project.getRepoName());
-                    Process process = Runtime.getRuntime().exec("./src/main/bash/tempscript.sh " + studentOnePath + " " + studentTwoPath);
-                    BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    process = Runtime.getRuntime().exec("./src/main/bash/calculateDiffScore.sh " + studentOnePath + " " + studentTwoPath + " " + hash);
+                    stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     String result = stdInput.readLine();
-                    process.waitFor();
+                    process.destroy();
                     builder.append(result).append("_");
                 }
                 writer.write(builder.toString() + "\n");
