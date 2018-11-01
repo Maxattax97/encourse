@@ -8,5 +8,6 @@ mkdir -p $1
 cd $1
 rm Makefile
 cp $2 $1
-make
+make clean
+make 2> /dev/null
 cd "${DIRECTORY}"
