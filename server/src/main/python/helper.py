@@ -36,7 +36,8 @@ def time_string(seconds):
         return "None"
     minutes, seconds = divmod(seconds, 60)
     if minutes < 60:
-        return "{} minutes".format(int(minutes))
+        return "1 hour"
+        #return "{} minutes".format(int(minutes))
     hours, minutes = divmod(minutes, 60)
     return "{} hours".format(int(hours))
 
