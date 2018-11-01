@@ -50,7 +50,7 @@ def past_progress(time_file):
                 users[current_name] = history
         else:
             eprint(words)
-            progress = int(float(words[1]))
+            progress = round(float(words[1]))
             date = datetime.strptime(words[0], "%Y-%m-%d").date()
             history.append({"date": date, "progress": progress})
 

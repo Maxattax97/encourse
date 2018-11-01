@@ -1191,8 +1191,10 @@ public class ProfessorServiceImpl implements ProfessorService {
                 BufferedReader reader = new BufferedReader(new FileReader(fileName));
                 String line;
                 String commitDate = "";
+                executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
                 while((line = reader.readLine()) != null && !line.equals("")) {
                     String[] commitInfo = line.split(" ");
+					System.out.println("Student: " + student.getUserName() + " Date: " + commitInfo[2]);
                     if(commitInfo[2].equals(commitDate)) {
                         continue;
                     }
