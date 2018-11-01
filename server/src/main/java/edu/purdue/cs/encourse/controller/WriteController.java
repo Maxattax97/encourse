@@ -129,12 +129,13 @@ public class WriteController {
         }
         return new ResponseEntity<>(student, HttpStatus.NOT_FOUND);
     }
-    
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/studentsToTA", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> addStudentsToTA(@RequestParam(name = "sectionID") String sectionID,
                                                            @RequestBody String body) {
         List<String> errors = new ArrayList<>();
+        List<String> correct = new ArrayList<>();
         Map<String, List<String>> map = new HashMap<>();
         try {
             JSONParser parser = new JSONParser();
@@ -159,12 +160,18 @@ public class WriteController {
 
                 int result = professorService.assignTeachingAssistantToStudentInSection(key, userName, sectionID);
                 if (result != 0) {
-                    errors.add("\"Result: " + result + " from student " + userName + "\"");
+                    if (result == -5) {
+                        correct.add("\"Student " + userName + " already assigned to TA\"");
+                    } else {
+                        errors.add("\"Result: " + result + " from student " + userName + "\"");
+                    }
+                } else {
+                    correct.add("\"Student " + userName + " assigned to TA\"");
                 }
             }
         }
         if (errors.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("{\"correct\": " + correct + "}", HttpStatus.OK);
         }
         return new ResponseEntity<>("{\"errors\": " + errors + "}", HttpStatus.NOT_MODIFIED);
     }
