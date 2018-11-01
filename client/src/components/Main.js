@@ -19,11 +19,31 @@ import StudentDishonestyPanel from './panel/StudentDishonestyPanel'
 
 class Main extends Component {
 
+    createPanelRef = (node) => {
+        this.panel = node
+
+        this.panel.addEventListener('scroll', (e) => {
+            if(e.scrollHeight - e.scrollTop === e.clientHeight && this.currentChild && this.currentChild.scrolledToBottom) {
+                this.currentChild.scrolledToBottom()
+            }
+        })
+    }
+
+    componentWillUnmount() {
+        if(this.panel)
+            this.panel.removeEventListener('scroll')
+    }
+
+    setChild = (node) => {
+        this.currentChild = node.getWrappedInstance()
+    }
+
     render() {
+
         return (
             <div className="main">
                 <Navbar />
-                <div className="panel">
+                <div className="panel" ref={ this.createPanelRef }>
                     <div className="panel-container">
                         <div className={'modal-overlay' + ( this.props.isModalFocused ? ' show' : '' )}
                             style={ this.props.isModalFocused ? { } : { 'display': 'none' } }
@@ -35,28 +55,28 @@ class Main extends Component {
                                 return <Redirect to="/course"/>
                             }}/>
                             <Route path="/course" render={(navProps) =>
-                                <CoursePanel {...navProps} />
+                                <CoursePanel ref={ this.setChild } {...navProps} />
                             }/>
                             <Route path="/student/:id" render={(navProps) =>
-                                <StudentPanel {...navProps} />
+                                <StudentPanel ref={ this.setChild } {...navProps} />
                             }/>
                             <Route path="/admin" render={(navProps) =>
-                                <AdminPanel {...navProps} />
+                                <AdminPanel ref={ this.setChild } {...navProps} />
                             }/>
                             <Route path="/projects" render={(navProps) =>
-                                <ProjectPanel {...navProps} />
+                                <ProjectPanel ref={ this.setChild } {...navProps} />
                             }/>
                             <Route path="/manage-tas" render={(navProps) =>
-                                <ManageTAPanel {...navProps} />
+                                <ManageTAPanel ref={ this.setChild } {...navProps} />
                             }/>
                             <Route path="/course-dishonesty" render={(navProps) =>
-                                <CourseDishonestyPanel {...navProps} />
+                                <CourseDishonestyPanel ref={ this.setChild } {...navProps} />
                             }/>
                             <Route path="/student-dishonesty/:id" render={(navProps) =>
-                                <StudentDishonestyPanel {...navProps}/>
+                                <StudentDishonestyPanel ref={ this.setChild } {...navProps}/>
                             }/>
                             <Route path="/settings" render={(/* navProps */) =>
-                                <PreferencePanel />
+                                <PreferencePanel ref={ this.setChild } />
                             }/>
                             <Route path='/' render={(/* navProps */) => <Redirect to="/panel" />}/>
                         </Switch>

@@ -14,6 +14,10 @@ class CourseDishonestyPanel extends Component {
         history.push('/course')
     }
 
+    scrolledToBottom = () => {
+
+    }
+
     render() {
 
         const action_names = [
@@ -84,4 +88,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CourseDishonestyPanel)
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(CourseDishonestyPanel)

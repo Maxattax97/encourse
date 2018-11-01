@@ -122,6 +122,10 @@ class ManageTAPanel extends Component {
 
     }
 
+    scrolledToBottom = () => {
+
+    }
+
     render() {
         const current_ta = this.props.teaching_assistants[this.state.current_ta] ? this.props.teaching_assistants[this.state.current_ta] : false
 
@@ -313,4 +317,4 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(ManageTAPanel)
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(ManageTAPanel)

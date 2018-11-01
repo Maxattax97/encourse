@@ -16,6 +16,10 @@ class CoursePanel extends Component {
         this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`)
     }
 
+    scrolledToBottom = () => {
+
+    }
+
     render() {
 
         const action_names = [
@@ -52,7 +56,7 @@ class CoursePanel extends Component {
                         <div>
                             <h4>Last Sync: {
                                 this.props.projects && this.props.projects.length > 0 ?
-                                    this.props.projects[this.props.currentProjectIndex].last_sync
+                                    this.props.projects[this.props.currentProjectIndex]
                                     : null
                             }
                             </h4>
@@ -60,7 +64,7 @@ class CoursePanel extends Component {
                         <div>
                             <h4>Last Test Ran: {
                                 this.props.projects && this.props.projects.length > 0 ?
-                                    this.props.projects[this.props.currentProjectIndex].last_test
+                                    this.props.projects[this.props.currentProjectIndex]
                                     : null
                             }
                             </h4>
@@ -113,4 +117,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CoursePanel)
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(CoursePanel)
