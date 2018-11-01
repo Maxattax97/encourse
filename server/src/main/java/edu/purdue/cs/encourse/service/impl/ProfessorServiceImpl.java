@@ -166,7 +166,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(maxPoints == 0.0) {
             return 0.0;
         }
-        return (earnedPoints / maxPoints) * 100;
+        return Math.round((earnedPoints / maxPoints) * 100);
     }
 
     private void updateTestResults(String result, String studentID, String projectID, boolean isHidden) {
