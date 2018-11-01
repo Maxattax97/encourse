@@ -2,6 +2,9 @@ import sys
 import argparse
 from helper import eprint
 
+def jsonify(arg):
+    pass
+
 
 def get_identical_count(time_file):
     """ Converts diff git project folder diff data to python dictionary
@@ -9,7 +12,7 @@ def get_identical_count(time_file):
     Uses git diff and diff to create a list comparing every user with every other user.
 
     **Args**:
-        **time_file** (file): A specially formatted file generated from a bash script.
+        **file** (file): A specially formatted file generated from a bash script.
         A small example of the formatting follows: ::
             
             user1:user2;55_user3;245_user4;60
@@ -18,7 +21,7 @@ def get_identical_count(time_file):
             user4:user1;60_user2;67_user3;90
 
     **Returns**:
-        dict: A dictionary that maps students to their progress at each recorded date.
+        dict: A dictionary that shows the similarity between two users.
         The dictionary is of the following form: ::
          
             {
