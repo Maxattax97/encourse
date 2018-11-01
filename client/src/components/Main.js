@@ -20,22 +20,27 @@ import StudentDishonestyPanel from './panel/StudentDishonestyPanel'
 class Main extends Component {
 
     createPanelRef = (node) => {
-        this.panel = node
+        if(node) {
+            this.panel = node
 
-        this.panel.addEventListener('scroll', (e) => {
-            if(e.scrollHeight - e.scrollTop === e.clientHeight && this.currentChild && this.currentChild.scrolledToBottom) {
-                this.currentChild.scrolledToBottom()
-            }
-        })
+            this.panel.addEventListener('scroll', this.scrollPanel)
+        }
+    }
+
+    scrollPanel = (e) => {
+        if(e.scrollHeight - e.scrollTop === e.clientHeight && this.currentChild && this.currentChild.scrolledToBottom) {
+            this.currentChild.scrolledToBottom()
+        }
     }
 
     componentWillUnmount() {
         if(this.panel)
-            this.panel.removeEventListener('scroll')
+            this.panel.removeEventListener('scroll', this.scrollPanel)
     }
 
     setChild = (node) => {
-        this.currentChild = node.getWrappedInstance()
+        if(node)
+            this.currentChild = node.getWrappedInstance()
     }
 
     render() {
