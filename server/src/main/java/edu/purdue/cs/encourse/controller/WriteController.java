@@ -46,7 +46,7 @@ public class WriteController {
     private EmailService emailService;
 
     @Autowired
-    private TeachingAssistantStudentRepository teachingAssistantStudentRepository;
+    private TeachingAssistantService taService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/section", method = RequestMethod.POST, consumes = "application/json")
@@ -130,12 +130,12 @@ public class WriteController {
         return new ResponseEntity<>(student, HttpStatus.NOT_FOUND);
     }
 
-    // TODO: Endpoint changed. Account for change on frontend
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/studentsToTA", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> addStudentsToTA(@RequestParam(name = "sectionID") String sectionID,
                                                            @RequestBody String body) {
         List<String> errors = new ArrayList<>();
+        List<String> correct = new ArrayList<>();
         Map<String, List<String>> map = new HashMap<>();
         try {
             JSONParser parser = new JSONParser();
@@ -146,7 +146,7 @@ public class WriteController {
                 map.put(key, names);
             }
         } catch (ParseException e) {
-            return new ResponseEntity<>("Could not parse body", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("{\"errors\": \"Could not parse body\"}", HttpStatus.BAD_REQUEST);
         }
 
         for (String key: map.keySet()) {
@@ -154,20 +154,26 @@ public class WriteController {
             for (String userName: map.get(key)) {
                 Student student = accountService.retrieveStudent(userName);
                 if (student == null) {
-                    errors.add("Student " + userName + " could not be found");
+                    errors.add("\"Student " + userName + " could not be found\"");
                     continue;
                 }
 
                 int result = professorService.assignTeachingAssistantToStudentInSection(key, userName, sectionID);
                 if (result != 0) {
-                    errors.add("Result: " + result + " from student " + userName);
+                    if (result == -5) {
+                        correct.add("\"Student " + userName + " already assigned to TA\"");
+                    } else {
+                        errors.add("\"Result: " + result + " from student " + userName + "\"");
+                    }
+                } else {
+                    correct.add("\"Student " + userName + " assigned to TA\"");
                 }
             }
         }
         if (errors.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("{\"correct\": " + correct + "}", HttpStatus.OK);
         }
-        return new ResponseEntity<>(errors, HttpStatus.NOT_MODIFIED);
+        return new ResponseEntity<>("{\"errors\": " + errors + "}", HttpStatus.NOT_MODIFIED);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
@@ -315,11 +321,17 @@ public class WriteController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    @RequestMapping(value = "/testall/project", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> testProject(@RequestParam(name = "projectID") String projectID) {
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
+    @RequestMapping(value = "/run/testall", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> testProject(@RequestParam(name = "projectID", required = false) String projectID,
+                                                       @RequestParam(name = "userName", required = false) String userName) {
 
-        int result = professorService.runTestall(projectID);
+        int result = -1;
+        if (projectID != null && userName == null) {
+            result = professorService.runTestall(projectID);
+        } else {
+            result = taService.runTestallForStudent(projectID, userName, getUserFromAuth().getUsername());
+        }
         if (result == 0) {
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else if (result == -1) {

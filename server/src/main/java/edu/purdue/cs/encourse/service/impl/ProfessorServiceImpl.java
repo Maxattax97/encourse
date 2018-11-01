@@ -129,9 +129,8 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            json =  new JSONReturnable(-2, null);
+            json = new JSONReturnable(-2, null);
         }
-        System.out.println("JSON: " + json.getJsonObject().toJSONString());
         return json;
     }
 
@@ -697,15 +696,32 @@ public class ProfessorServiceImpl implements ProfessorService {
         String diffsFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_codeDiffs.txt";
         List<StudentProject> temp = new ArrayList<StudentProject>(projects);
         // TODO: Bash scripts
-        for(StudentProject projectOne : projects) {
-            temp.remove(projectOne);
-            for(StudentProject projectTwo : temp) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(diffsFile));
+            for (StudentProject projectOne : projects) {
+                temp.remove(projectOne);
                 Student studentOne = studentRepository.findByUserID(projectOne.getStudentID());
-                Student studentTwo = studentRepository.findByUserID(projectTwo.getStudentID());
                 String studentOnePath = (sections.get(0).getCourseHub() + "/" + studentOne.getUserName() + "/" + project.getRepoName());
-                String studentTwoPath = (sections.get(0).getCourseHub() + "/" + studentTwo.getUserName() + "/" + project.getRepoName());
-                //executeBashScript();
+                Process process = Runtime.getRuntime().exec("./src/main/bash/listCommitHistoryByAuthor.sh " + studentOnePath + " CS252");
+                BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String hash = stdInput.readLine().split(" ")[1];
+                process.destroy();
+                StringBuilder builder = new StringBuilder();
+                builder.append(studentOne.getUserName()).append(":");
+                for (StudentProject projectTwo : temp) {
+                    Student studentTwo = studentRepository.findByUserID(projectTwo.getStudentID());
+                    builder.append(studentTwo.getUserName()).append(";");
+                    String studentTwoPath = (sections.get(0).getCourseHub() + "/" + studentTwo.getUserName() + "/" + project.getRepoName());
+                    process = Runtime.getRuntime().exec("./src/main/bash/calculateDiffScore.sh " + studentOnePath + " " + studentTwoPath + " " + hash);
+                    stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    String result = stdInput.readLine();
+                    process.destroy();
+                    builder.append(result).append("_");
+                }
+                writer.write(builder.toString() + "\n");
             }
+        } catch (Exception e) {
+            return new JSONReturnable(-4, null);
         }
 
         if (DEBUG){

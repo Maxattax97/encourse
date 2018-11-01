@@ -8,7 +8,7 @@ import {history} from '../../redux/store'
 import StudentAssignPreview from './manage-ta/StudentAssignPreview'
 import SectionPreview from './manage-ta/SectionPreview'
 import url from '../../server'
-import {getSectionsData, getStudentPreviews, getTeachingAssistants} from '../../redux/actions'
+import {getSectionsData, getStudentPreviews, getTeachingAssistants, submitStudents } from '../../redux/actions'
 
 class ManageTAPanel extends Component {
 
@@ -119,7 +119,14 @@ class ManageTAPanel extends Component {
     }
 
     save = () => {
-
+        const ta = this.props.teaching_assistants[this.state.current_ta].id
+   
+        //TODO: add variable semester and class id
+        for(let id of this.state.sections) {
+            this.props.submitStudents(`${url}/api/add/studentsToTA?sectionID=${id}`, JSON.stringify({
+                [ta]: this.state.students
+            }))
+        }
     }
 
     scrolledToBottom = () => {
@@ -312,7 +319,8 @@ const mapDispatchToProps = (dispatch) => {
     return {
         getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
         getSectionsData: (url, headers, body) => dispatch(getSectionsData(url, headers, body)),
-        getTeachingAssistants: (url, headers, body) => dispatch(getTeachingAssistants(url, headers, body))
+        getTeachingAssistants: (url, headers, body) => dispatch(getTeachingAssistants(url, headers, body)),
+        submitStudents: (url, body) => dispatch(submitStudents(url, null, body)),
     }
 }
 

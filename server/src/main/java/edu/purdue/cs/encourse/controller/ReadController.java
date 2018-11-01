@@ -7,6 +7,7 @@ import edu.purdue.cs.encourse.service.*;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -49,7 +50,7 @@ public class ReadController {
     public @ResponseBody ResponseEntity<?> getStudentData(@RequestParam(name = "courseID") String courseID,
                                                           @RequestParam(name = "semester") String semester,
                                                           @RequestParam(name = "page", defaultValue = "1", required = false) int page,
-                                                          @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                          @RequestParam(name = "size", defaultValue = "100", required = false) int size,
                                                           @RequestParam(name = "sortBy", defaultValue = "id", required = false) String sortBy,
                                                           @RequestParam(name = "projectID", required = false) String projectID,
                                                           @RequestParam(name = "userName", required = false) List<String> userNames) {
@@ -167,24 +168,58 @@ public class ReadController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/sections", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getAllSections() {
+    public @ResponseBody ResponseEntity<?> getAllSections(@RequestParam(name = "page", defaultValue = "1", required = false) int page,
+                                                          @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                          @RequestParam(name = "sortBy", defaultValue = "courseID", required = false) String sortBy) {
         List<Section> sections = adminService.findAllSections();
-        return new ResponseEntity<>(sections, HttpStatus.OK);
+            switch (sortBy) {
+                case "courseID":
+                default:
+                    sections.sort(Comparator.comparing(Section::getCourseID));
+                    break;
+            }
+
+            List<Section> sortedAndPagedJsonArray = new ArrayList<>();
+            for (int i = (page - 1) * size; i < sections.size(); i++) {
+                if (i >= page * size) {
+                    break;
+                }
+                sortedAndPagedJsonArray.add(sections.get(i));
+            }
+
+            JSONObject response = new JSONObject();
+            response.put("content", sortedAndPagedJsonArray);
+            response.put("totalPages", sections.size() / size + 1);
+            response.put("page", page);
+            response.put("totalSize", sections.size());
+            response.put("size", size);
+            response.put("elements", sortedAndPagedJsonArray.size());
+            response.put("sortedBy", sortBy);
+            response.put("last", (page >= sections.size() / size));
+            response.put("first", (page == 1));
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
     @RequestMapping(value = "/coursesData", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getCourseData(@RequestParam(name = "userName") String userName) {
-        if (hasPermissionOverAccount(userName)) {
-            JSONArray json = professorService.getCourseData(userName);
-
-            if (json == null) {
-                return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+    public @ResponseBody ResponseEntity<?> getCourseData() {
+        JSONArray returnJson = null;
+        Iterator<Authority> iter = getUserAuthorities().iterator();
+        while (iter.hasNext()) {
+            String auth = iter.next().getAuthority();
+            if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                returnJson = professorService.getCourseData(getUserFromAuth().getUsername());
+                break;
+            } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                returnJson = taService.getCourseData(getUserFromAuth().getUsername());
+                break;
             }
-            return new ResponseEntity<>(json, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        if (returnJson == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(returnJson, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
@@ -229,39 +264,41 @@ public class ReadController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/commitList", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
-                                                                  @RequestParam(name = "userName") List<String> userNames,
+                                                                  @RequestParam(name = "userName") String userName,
                                                                   @RequestParam(name = "page", defaultValue = "1", required = false) int page,
                                                                   @RequestParam(name = "size", defaultValue = "10", required = false) int size,
                                                                   @RequestParam(name = "sortBy", defaultValue = "date", required = false) String sortBy) {
         List<String> errors = new ArrayList<>();
         List<String> correct = new ArrayList<>();
         JSONReturnable returnJson = null;
-        for (String userName : userNames) {
-            if (hasPermissionOverAccount(userName)) {
-                Iterator iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        returnJson = professorService.getCommitList(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        returnJson = taService.getCommitList(projectID, userName, getUserFromAuth().getUsername());
-                        break;
-                    }
-                }
 
-                if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add("\"" + userName + " does not have content" + "\"");
-                    continue;
+        if (hasPermissionOverAccount(userName)) {
+            Iterator iter = getUserAuthorities().iterator();
+            while (iter.hasNext()) {
+                String auth = ((Authority) iter.next()).getAuthority();
+                if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                    returnJson = professorService.getCommitList(projectID, userName);
+                    break;
+                } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                    returnJson = taService.getCommitList(projectID, userName, getUserFromAuth().getUsername());
+                    break;
                 }
-                String json = returnJson.jsonObject.toJSONString();
-                correct.add(json);
-            } else {
-                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
+
+            if (returnJson == null || returnJson.jsonObject == null) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            String json = returnJson.jsonObject.toJSONString();
+            correct.add(json);
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
         JSONArray json = (JSONArray) returnJson.getJsonObject().get("data");
+        if (json == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         List<JSONObject> jsonValues = new ArrayList<>();
         for (int i = 0; i < json.size(); i++) {
             JSONObject obj = (JSONObject) json.get(i);
