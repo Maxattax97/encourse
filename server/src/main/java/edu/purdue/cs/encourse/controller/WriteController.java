@@ -129,8 +129,7 @@ public class WriteController {
         }
         return new ResponseEntity<>(student, HttpStatus.NOT_FOUND);
     }
-
-    // TODO: Endpoint changed. Account for change on frontend
+    
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/studentsToTA", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> addStudentsToTA(@RequestParam(name = "sectionID") String sectionID,
@@ -146,7 +145,7 @@ public class WriteController {
                 map.put(key, names);
             }
         } catch (ParseException e) {
-            return new ResponseEntity<>("Could not parse body", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("{\"errors\": \"Could not parse body\"}", HttpStatus.BAD_REQUEST);
         }
 
         for (String key: map.keySet()) {
@@ -154,20 +153,20 @@ public class WriteController {
             for (String userName: map.get(key)) {
                 Student student = accountService.retrieveStudent(userName);
                 if (student == null) {
-                    errors.add("Student " + userName + " could not be found");
+                    errors.add("\"Student " + userName + " could not be found\"");
                     continue;
                 }
 
                 int result = professorService.assignTeachingAssistantToStudentInSection(key, userName, sectionID);
                 if (result != 0) {
-                    errors.add("Result: " + result + " from student " + userName);
+                    errors.add("\"Result: " + result + " from student " + userName + "\"");
                 }
             }
         }
         if (errors.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(errors, HttpStatus.NOT_MODIFIED);
+        return new ResponseEntity<>("{\"errors\": " + errors + "}", HttpStatus.NOT_MODIFIED);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
