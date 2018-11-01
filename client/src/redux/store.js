@@ -26,7 +26,6 @@ function setLocalStorageState(state, key, value) {
     try {
         localStorage.setItem(key, value)
     } catch (err) {
-        console.log(err)
         return undefined
     }
 }
@@ -36,7 +35,6 @@ function getLocalStorageState(key, parentObject) {
         const value = JSON.parse(localStorage.getItem(key)) || undefined
         return { [parentObject]: { [key]: value } }
     } catch (err) {
-        console.log(err)
         return undefined
     }
 }

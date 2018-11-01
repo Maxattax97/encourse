@@ -156,3 +156,21 @@ export function getProgressPerCommitDataSuccess(data) {
 export const getProgressPerCommit = genericDispatch(
     'GET_PROGRESS_PER_COMMIT', getProgressPerCommitHasError, getProgressPerCommitDataSuccess, 'GET'
 )
+
+export function getDishonestyReportHasError(hasError) {
+    return {
+        type: 'GET_DISHONESTY_REPORT_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getDishonestyReportDataSuccess(data) {
+    return {
+        type: 'GET_DISHONESTY_REPORT_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getDishonestyReport = genericDispatch(
+    'GET_DISHONESTY_REPORT', getDishonestyReportHasError, getDishonestyReportDataSuccess, 'GET'
+)
