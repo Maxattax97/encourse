@@ -26,10 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -158,9 +155,36 @@ public class AuthController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/accounts", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getAccounts() {
+    public @ResponseBody ResponseEntity<?> getAccounts(@RequestParam(name = "page", defaultValue = "1", required = false) int page,
+                                                       @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                       @RequestParam(name = "sortBy", defaultValue = "userName", required = false) String sortBy) {
         List<Account> accounts = accountService.retrieveAllAccounts();
-        return new ResponseEntity<>(accounts, HttpStatus.OK);
+        switch (sortBy) {
+            case "userName":
+                accounts.sort(Comparator.comparing(Account::getUserName));
+                break;
+        }
+
+        List<Account> sortedAndPagedJsonArray = new ArrayList<>();
+        for (int i = (page - 1) * size; i < accounts.size(); i++) {
+            if (i >= page * size) {
+                break;
+            }
+            sortedAndPagedJsonArray.add(accounts.get(i));
+        }
+
+        JSONObject response = new JSONObject();
+        response.put("content", sortedAndPagedJsonArray);
+        response.put("totalPages", accounts.size() / size + 1);
+        response.put("page", page);
+        response.put("totalSize", accounts.size());
+        response.put("size", size);
+        response.put("elements", sortedAndPagedJsonArray.size());
+        response.put("sortedBy", sortBy);
+        response.put("last", (page >= accounts.size() / size));
+        response.put("first", (page == 1));
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")

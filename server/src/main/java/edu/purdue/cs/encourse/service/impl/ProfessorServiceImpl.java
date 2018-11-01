@@ -673,11 +673,17 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public JSONReturnable getClassCheating(@NonNull String projectID) {
-        JSONReturnable json = null;
-
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return new JSONReturnable(-1, null);
+        }
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
+            return new JSONReturnable(-2, null);
+        }
         String commitLogFile = listAllCommitsByTime(projectID);
         if(commitLogFile == null) {
-            json = new JSONReturnable(-1, null);
+            return new JSONReturnable(-3, null);
         }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
@@ -685,7 +691,21 @@ public class ProfessorServiceImpl implements ProfessorService {
         try {
             createTestFiles(visibleTestFile, hiddenTestFile, projects);
         } catch (IOException e) {
-            json = new JSONReturnable(-2, null);
+            return new JSONReturnable(-4, null);
+        }
+
+        String diffsFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_codeDiffs.txt";
+        List<StudentProject> temp = new ArrayList<StudentProject>(projects);
+        // TODO: Bash scripts
+        for(StudentProject projectOne : projects) {
+            temp.remove(projectOne);
+            for(StudentProject projectTwo : temp) {
+                Student studentOne = studentRepository.findByUserID(projectOne.getStudentID());
+                Student studentTwo = studentRepository.findByUserID(projectTwo.getStudentID());
+                String studentOnePath = (sections.get(0).getCourseHub() + "/" + studentOne.getUserName() + "/" + project.getRepoName());
+                String studentTwoPath = (sections.get(0).getCourseHub() + "/" + studentTwo.getUserName() + "/" + project.getRepoName());
+                //executeBashScript();
+            }
         }
 
         if (DEBUG){
@@ -693,13 +713,10 @@ public class ProfessorServiceImpl implements ProfessorService {
             visibleTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
             hiddenTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
         }
-        else if (json != null) {
-            return json;
-        }
 
         String pyPath = pythonPath + "get_class_cheating.py";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -l 1000";
-        json = runPython(command);
+        JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
