@@ -1184,13 +1184,13 @@ public class ProfessorServiceImpl implements ProfessorService {
         String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_gitHashes.txt";
         for(StudentProject p : projects) {
             Student student = studentRepository.findByUserID(p.getStudentID());
-            StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
             String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName();
             executeBashScript("listTestUpdateHistory.sh " + testingDirectory + " " + fileName);
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(fileName));
                 String line;
                 String commitDate = "";
+                executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
                 while((line = reader.readLine()) != null && !line.equals("")) {
                     String[] commitInfo = line.split(" ");
                     if(commitInfo[2].equals(commitDate)) {
@@ -1218,6 +1218,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     }
                     double visibleGrade = parseProgressForProject(projectID, visibleResult);
                     double hiddenGrade = parseProgressForProject(projectID, hiddenResult);
+                    StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
                     if(projectDate == null) {
                         StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
                         studentProjectDateRepository.save(d);
@@ -1265,6 +1266,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     }
                     visibleGrade = parseProgressForProject(projectID, visibleResult);
                     hiddenGrade = parseProgressForProject(projectID, hiddenResult);
+                    projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
                     if(projectDate == null) {
                         StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
                         studentProjectDateRepository.save(d);
@@ -1295,6 +1297,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
             catch(Exception e) {
                 code = -6;
+                executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             }
         }
         project.setTestDate(LocalDate.now().toString());
