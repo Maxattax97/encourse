@@ -72,7 +72,7 @@ class CourseDishonestyPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : []
+        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : []
     }
 }
 

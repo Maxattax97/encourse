@@ -74,30 +74,30 @@ function course(state = {}, action) {
 		return Object.assign({}, state, {
 			syncRepositoriesIsLoading: true
 		})
-        case 'SYNC_REPOSITORIES_HAS_ERROR':
-            return Object.assign({}, state, {
-                syncRepositoriesIsLoading: false,
-                syncRepositoriesHasError: action.hasError
-            })
-        case 'SYNC_REPOSITORIES_SUCCESS':
-            return Object.assign({}, state, {
-                syncRepositoriesData: action.data,
-                syncRepositoriesIsLoading: false
-            })
-	    case 'RUN_TESTS':
-		    return Object.assign({}, state, {
-			    runTestsIsLoading: true
-		    })
-	    case 'RUN_TESTS_HAS_ERROR':
-		    return Object.assign({}, state, {
-			    runTestsIsLoading: false,
-			    runTestsHasError: action.hasError
-		    })
-	    case 'RUN_TESTS_SUCCESS':
-		    return Object.assign({}, state, {
-			    runTestsData: action.data,
-			    runTestsIsLoading: false
-		    })
+    case 'SYNC_REPOSITORIES_HAS_ERROR':
+        return Object.assign({}, state, {
+            syncRepositoriesIsLoading: false,
+            syncRepositoriesHasError: action.hasError
+        })
+    case 'SYNC_REPOSITORIES_SUCCESS':
+        return Object.assign({}, state, {
+            syncRepositoriesData: action.data,
+            syncRepositoriesIsLoading: false
+        })
+    case 'RUN_TESTS':
+        return Object.assign({}, state, {
+            runTestsIsLoading: true
+        })
+    case 'RUN_TESTS_HAS_ERROR':
+        return Object.assign({}, state, {
+            runTestsIsLoading: false,
+            runTestsHasError: action.hasError
+        })
+    case 'RUN_TESTS_SUCCESS':
+        return Object.assign({}, state, {
+            runTestsData: action.data,
+            runTestsIsLoading: false
+        })
     default:
         return state
     }
