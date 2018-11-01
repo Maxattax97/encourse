@@ -122,6 +122,10 @@ class ManageTAPanel extends Component {
 
     }
 
+    scrolledToBottom = () => {
+
+    }
+
     render() {
         const current_ta = this.props.teaching_assistants[this.state.current_ta] ? this.props.teaching_assistants[this.state.current_ta] : false
 
@@ -295,7 +299,7 @@ class ManageTAPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
+        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : [],
         sections: state.course && state.course.getSectionsData ? state.course.getSectionsData : [],
         teaching_assistants: state.teachingAssistant && state.teachingAssistant.getTeachingAssistantsData ? state.teachingAssistant.getTeachingAssistantsData : [],
         sectionsIsLoading: state.course ? state.course.getSectionsIsLoading : false,
@@ -313,4 +317,4 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(ManageTAPanel)
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(ManageTAPanel)

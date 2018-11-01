@@ -127,7 +127,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 30);
             professorService.runTestall(malloc.getProjectIdentifier());*/
 
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_input", false, 2);
+            //professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_input", false, 2);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_output", false, 2);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_error", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_error2", false, 1);
@@ -139,28 +139,28 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             professorService.addTestScript(shell.getProjectIdentifier(), "test_pipes_redirect_out", false, 2);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_pipes_redirect_err", false, 2);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_background", false, 2);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_zombie", false, 1);
+            //professorService.addTestScript(shell.getProjectIdentifier(), "test_zombie", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_printenv", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_setenv", false, 0.5);
+            //professorService.addTestScript(shell.getProjectIdentifier(), "test_setenv", false, 0.5);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_unsetenv", false, 0.5);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_source", false, 2);
+            //professorService.addTestScript(shell.getProjectIdentifier(), "test_source", false, 2);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_cd1", false, 0.5);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_cd2", false, 0.5);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_cd3", false, 0.5);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_cd4", false, 0.5);
+            //professorService.addTestScript(shell.getProjectIdentifier(), "test_cd4", false, 0.5);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_parsing1", false, 0.5);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_parsing2", false, 0.5);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_quotes1", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_quotes2", false, 1);
+            //professorService.addTestScript(shell.getProjectIdentifier(), "test_quotes1", false, 1);
+            //professorService.addTestScript(shell.getProjectIdentifier(), "test_quotes2", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_escape", false, 2);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_subshell", false, 10);
+            //professorService.addTestScript(shell.getProjectIdentifier(), "test_subshell", false, 10);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_env_expand1", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_env_expand2", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_env_var_shell", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_env_var_dollar", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_env_var_question", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_env_var_bang", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_env_var_uscore", false, 1);
+            //professorService.addTestScript(shell.getProjectIdentifier(), "test_env_var_uscore", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_wildcards1", false, 3);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_wildcards2", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_wildcards3", false, 1);
@@ -168,8 +168,8 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             professorService.addTestScript(shell.getProjectIdentifier(), "test_wildcards5", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_wildcards6", false, 1);
             professorService.addTestScript(shell.getProjectIdentifier(), "test_wildcards7", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_tilde", false, 2);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_robustness", false, 10);
+            //professorService.addTestScript(shell.getProjectIdentifier(), "test_tilde", false, 2);
+            //professorService.addTestScript(shell.getProjectIdentifier(), "test_robustness", false, 10);
             professorService.runHistoricTestall(shell.getProjectIdentifier());
 
             /*List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(malloc.getProjectIdentifier());

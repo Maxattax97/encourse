@@ -126,6 +126,20 @@ function student(state = {}, action) {
             getProgressPerCommitData: action.data,
             getProgressPerCommitIsLoading: false,
         })
+    case 'GET_DISHONESTY_REPORT':
+        return Object.assign({}, state, {
+            getDishonestyReportIsLoading: true,
+        })
+    case 'GET_DISHONESTY_REPORT_HAS_ERROR':
+        return Object.assign({}, state, {
+            getDishonestyReportHasError: action.hasError,
+            getDishonestyReportIsLoading: false,
+        })
+    case 'GET_DISHONESTY_REPORT_DATA_SUCCESS':
+        return Object.assign({}, state, {
+            getDishonestyReportData: action.data,
+            getDishonestyReportIsLoading: false,
+        })
     default:
         return state
     }

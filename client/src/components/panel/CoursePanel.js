@@ -16,6 +16,10 @@ class CoursePanel extends Component {
         this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`)
     }
 
+    scrolledToBottom = () => {
+
+    }
+
     render() {
 
         const action_names = [
@@ -113,4 +117,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CoursePanel)
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(CoursePanel)

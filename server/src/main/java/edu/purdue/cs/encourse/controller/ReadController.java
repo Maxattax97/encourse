@@ -17,6 +17,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,29 +47,94 @@ public class ReadController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
     @RequestMapping(value = "/studentsData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentData(@RequestParam(name = "courseID") String courseID,
-                                                          @RequestParam(name = "semester") String semester) {
-        JSONArray json = null;
+                                                          @RequestParam(name = "semester") String semester,
+                                                          @RequestParam(name = "page", defaultValue = "1", required = false) int page,
+                                                          @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                          @RequestParam(name = "sortBy", defaultValue = "id", required = false) String sortBy,
+                                                          @RequestParam(name = "projectID", required = false) String projectID,
+                                                          @RequestParam(name = "userName", required = false) List<String> userNames) {
+        JSONArray returnJson = null;
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
             String auth = ((Authority) iter.next()).getAuthority();
             if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                json = professorService.getStudentData(semester, courseID);
+                returnJson = professorService.getStudentData(semester, courseID);
                 break;
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                json = taService.getStudentData(semester, courseID, getUserFromAuth().getUsername());
+                returnJson = taService.getStudentData(semester, courseID, getUserFromAuth().getUsername());
                 break;
             }
         }
-        if (json == null) {
-            return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+        if (returnJson == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(json, HttpStatus.OK);
 
-        /*JSONArray json = professorService.getStudentData(semester, courseID);
-        if (json == null) {
-            return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+        List<JSONObject> jsonValues = new ArrayList<>();
+        List<JSONObject> specifiedStudents = new ArrayList<>();
+        boolean specificStudent = false;
+        for (int i = 0; i < returnJson.size(); i++) {
+            JSONObject json = (JSONObject)returnJson.get(i);
+            if (userNames != null) {
+                if (userNames.contains(json.get("id"))) {
+                    specifiedStudents.add(json);
+                    specificStudent = true;
+                    continue;
+                }
+            }
+            jsonValues.add(json);
         }
-        return new ResponseEntity<>(json, HttpStatus.OK);*/
+        if (specificStudent) {
+            return new ResponseEntity<>(specifiedStudents, HttpStatus.OK);
+        }
+
+        Comparator<JSONObject> compare;
+        switch(sortBy) {
+            case "timeSpent":
+            case "grades":
+                if (projectID == null) {
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+                compare = (JSONObject a, JSONObject b) -> {
+                    JSONObject jsonA = (JSONObject) a.get(sortBy);
+                    JSONObject jsonB = (JSONObject) b.get(sortBy);
+
+                    double valA = ((Number)jsonA.get(projectID)).doubleValue();
+                    double valB = ((Number)jsonB.get(projectID)).doubleValue();
+                    return Double.compare(valA, valB);
+                };
+                break;
+            case "id":
+            default:
+                compare = (JSONObject a, JSONObject b) -> {
+                    String valA = (String) a.get(sortBy);
+                    String valB = (String) b.get(sortBy);
+                    return valA.compareTo(valB);
+                };
+                break;
+        }
+        jsonValues.sort(compare);
+
+        JSONArray sortedAndPagedJsonArray = new JSONArray();
+        page = (page > jsonValues.size() / size + 1) ? jsonValues.size() / size + 1 : page;
+        for (int i = (page - 1) * size; i < jsonValues.size(); i++) {
+            if (i >= page * size) {
+                break;
+            }
+            sortedAndPagedJsonArray.add(jsonValues.get(i));
+        }
+
+        JSONObject response = new JSONObject();
+        response.put("content", sortedAndPagedJsonArray);
+        response.put("totalPages", jsonValues.size() / size + 1);
+        response.put("page", page);
+        response.put("totalSize", jsonValues.size());
+        response.put("size", size);
+        response.put("elements", sortedAndPagedJsonArray.size());
+        response.put("sortedBy", sortBy);
+        response.put("last", (page >= jsonValues.size() / size));
+        response.put("first", (page == 1));
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
@@ -158,17 +225,19 @@ public class ReadController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-
-
+    //TODO: Update to consume list of students
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/commitList", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
-                                                                  @RequestParam(name = "userName") List<String> userNames) {
+                                                                  @RequestParam(name = "userName") List<String> userNames,
+                                                                  @RequestParam(name = "page", defaultValue = "1", required = false) int page,
+                                                                  @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                                  @RequestParam(name = "sortBy", defaultValue = "date", required = false) String sortBy) {
         List<String> errors = new ArrayList<>();
         List<String> correct = new ArrayList<>();
-        for (String userName: userNames) {
+        JSONReturnable returnJson = null;
+        for (String userName : userNames) {
             if (hasPermissionOverAccount(userName)) {
-                JSONReturnable returnJson = null;
                 Iterator iter = getUserAuthorities().iterator();
                 while (iter.hasNext()) {
                     String auth = ((Authority) iter.next()).getAuthority();
@@ -191,10 +260,73 @@ public class ReadController {
                 errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
         }
-        if (errors.isEmpty()) {
-            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
+
+        JSONArray json = (JSONArray) returnJson.getJsonObject().get("data");
+        List<JSONObject> jsonValues = new ArrayList<>();
+        for (int i = 0; i < json.size(); i++) {
+            JSONObject obj = (JSONObject) json.get(i);
+            jsonValues.add(obj);
         }
-        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
+
+        Comparator<JSONObject> compare;
+        switch (sortBy) {
+            case "date":
+                compare = (JSONObject a, JSONObject b) -> {
+                    String valA = (String) a.get(sortBy);
+                    String valB = (String) b.get(sortBy);
+                    Date parsedA;
+                    Date parsedB;
+                    try {
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+                        parsedA = format.parse(valA);
+                        parsedB = format.parse(valB);
+                    } catch (ParseException pe) {
+                        throw new IllegalArgumentException(pe);
+                    }
+                    return parsedA.compareTo(parsedB);
+                };
+                break;
+            case "commit_count":
+            case "additions":
+            case "deletions":
+                compare = (JSONObject a, JSONObject b) -> {
+                    long valA = (long) a.get(sortBy);
+                    long valB = (long) b.get(sortBy);
+                    return Long.compare(valA, valB);
+                };
+                break;
+            case "time_spent":
+            default:
+                compare = (JSONObject a, JSONObject b) -> {
+                    String valA = (String) a.get(sortBy);
+                    String valB = (String) b.get(sortBy);
+                    return valA.compareTo(valB);
+                };
+                break;
+        }
+        jsonValues.sort(compare);
+
+        JSONArray sortedAndPagedJsonArray = new JSONArray();
+        page = (page > jsonValues.size() / size + 1) ? jsonValues.size() / size + 1 : page;
+        for (int i = (page - 1) * size; i < jsonValues.size(); i++) {
+            if (i >= page * size) {
+                break;
+            }
+            sortedAndPagedJsonArray.add(jsonValues.get(i));
+        }
+
+        JSONObject response = new JSONObject();
+        response.put("content", sortedAndPagedJsonArray);
+        response.put("totalPages", jsonValues.size() / size + 1);
+        response.put("page", page);
+        response.put("totalSize", jsonValues.size());
+        response.put("size", size);
+        response.put("elements", sortedAndPagedJsonArray.size());
+        response.put("sortedBy", sortBy);
+        response.put("last", (page >= jsonValues.size() / size));
+        response.put("first", (page == 1));
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -424,6 +556,21 @@ public class ReadController {
         }
         String json = returnJson.jsonObject.toJSONString();
         return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/classCheating", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getClassCheating(@RequestParam(name = "projectID") String projectID) {
+        JSONReturnable returnJson = professorService.getClassCheating(projectID);
+        if (returnJson == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(returnJson, HttpStatus.OK);
+
+
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
