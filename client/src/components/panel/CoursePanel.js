@@ -55,7 +55,7 @@ class CoursePanel extends Component {
                     <div className='top-nav'>
                         <div>
                             <h4>Last Sync: {
-                                this.props.projects && this.props.projects.length > 0 ?
+                                this.props.projects && this.props.projects.length > 0 && this.props.projects[this.props.currentProjectIndex] ?
                                     this.props.projects[this.props.currentProjectIndex].last_sync
                                     : null
                             }
@@ -63,7 +63,7 @@ class CoursePanel extends Component {
                         </div>
                         <div>
                             <h4>Last Test Ran: {
-                                this.props.projects && this.props.projects.length > 0 ?
+                                this.props.projects && this.props.projects.length > 0  && this.props.projects[this.props.currentProjectIndex] ?
                                     this.props.projects[this.props.currentProjectIndex].last_test
                                     : null
                             }

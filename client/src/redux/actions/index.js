@@ -25,7 +25,7 @@ export {
 } from './admin'
 
 export {
-    getTeachingAssistants
+    getTeachingAssistants, submitStudents
 } from './teaching_assistant'
 
 export {
