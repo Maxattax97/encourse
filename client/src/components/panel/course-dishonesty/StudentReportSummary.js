@@ -45,7 +45,7 @@ class StudentReportSummary extends Component {
 const mapStateToProps = (state) => {
     return {
         isHidden: state.projects ? state.projects.isHidden : false,
-        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : [],
+        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : [],
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
