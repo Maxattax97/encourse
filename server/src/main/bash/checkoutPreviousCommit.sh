@@ -6,4 +6,5 @@
 DIRECTORY="$(pwd)"
 cd "$1"
 git checkout -f "$2"
+rm Makefile
 cd "${DIRECTORY}"

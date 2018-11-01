@@ -697,15 +697,28 @@ public class ProfessorServiceImpl implements ProfessorService {
         String diffsFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_codeDiffs.txt";
         List<StudentProject> temp = new ArrayList<StudentProject>(projects);
         // TODO: Bash scripts
-        for(StudentProject projectOne : projects) {
-            temp.remove(projectOne);
-            for(StudentProject projectTwo : temp) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(diffsFile));
+            for (StudentProject projectOne : projects) {
+                temp.remove(projectOne);
                 Student studentOne = studentRepository.findByUserID(projectOne.getStudentID());
-                Student studentTwo = studentRepository.findByUserID(projectTwo.getStudentID());
-                String studentOnePath = (sections.get(0).getCourseHub() + "/" + studentOne.getUserName() + "/" + project.getRepoName());
-                String studentTwoPath = (sections.get(0).getCourseHub() + "/" + studentTwo.getUserName() + "/" + project.getRepoName());
-                //executeBashScript();
+                StringBuilder builder = new StringBuilder();
+                builder.append(studentOne.getUserName()).append(":");
+                for (StudentProject projectTwo : temp) {
+                    Student studentTwo = studentRepository.findByUserID(projectTwo.getStudentID());
+                    builder.append(studentTwo.getUserName()).append(";");
+                    String studentOnePath = (sections.get(0).getCourseHub() + "/" + studentOne.getUserName() + "/" + project.getRepoName());
+                    String studentTwoPath = (sections.get(0).getCourseHub() + "/" + studentTwo.getUserName() + "/" + project.getRepoName());
+                    Process process = Runtime.getRuntime().exec("./src/main/bash/tempscript.sh " + studentOnePath + " " + studentTwoPath);
+                    BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    String result = stdInput.readLine();
+                    process.waitFor();
+                    builder.append(result).append("_");
+                }
+                writer.write(builder.toString() + "\n");
             }
+        } catch (Exception e) {
+            return new JSONReturnable(-4, null);
         }
 
         if (DEBUG){
