@@ -1300,12 +1300,12 @@ public class ProfessorServiceImpl implements ProfessorService {
         for(StudentProject p : projects) {
             Student student = studentRepository.findByUserID(p.getStudentID());
             String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName();
+            executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             executeBashScript("listTestUpdateHistory.sh " + testingDirectory + " " + fileName);
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(fileName));
                 String line;
                 String commitDate = "";
-                executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
                 while((line = reader.readLine()) != null && !line.equals("")) {
                     String[] commitInfo = line.split(" ");
 					System.out.println("Student: " + student.getUserName() + " Date: " + commitInfo[2]);
