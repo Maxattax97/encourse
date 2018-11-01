@@ -49,7 +49,8 @@ def past_progress(time_file):
             if current_name != "" and previous_words != []:
                 users[current_name] = history
         else:
-            progress = int(float(words[1]))
+            eprint(words)
+            progress = round(float(words[1]))
             date = datetime.strptime(words[0], "%Y-%m-%d").date()
             history.append({"date": date, "progress": progress})
 

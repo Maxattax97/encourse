@@ -4,6 +4,7 @@ import {Card, Checkbox, CheckmarkIcon, Summary, Title} from '../../Helpers'
 import {fuzzing} from '../../../fuzz'
 import {history} from '../../../redux/store'
 import {getStudentPreviews, setCurrentStudent} from '../../../redux/actions'
+import PreviewCard from "../common/PreviewCard"
 
 class CourseStudentSummary extends Component {
 
@@ -51,40 +52,38 @@ class CourseStudentSummary extends Component {
 
     render() {
         return (
-            <Summary
-                columns={ 5 }
-                data={ this.props.students }
-                className='course-students'
-                iterator={ (student) =>
-                    <Card className={ this.state.cards_selected[student.id] ? 'selected action' : 'action' } onClick={ () => this.clickStudentCard(student) } key={student.id}>
-                        <div className="summary-preview">
-                            <Title>
-                                <h4>{ student.first_name }</h4>
-                                <h4>{ student.last_name }</h4>
-                            </Title>
-                            <div className="h4 break-line header" />
-                            <div className="preview-content">
-                                <h5>Time: { student.timeSpent[this.props.currentProjectId] } hours</h5>
-                                <h5>Commits: { student.commitCounts[this.props.currentProjectId] }</h5>
-                            </div>
-                            <div className="student-preview-progress">
-                                <div className="progress-bar">
-                                    <div style={{width: (this.props.isHidden ? student.hiddenGrades[this.props.currentProjectId] : student.grades[this.props.currentProjectId]) + '%'}} />
-                                </div>
-                                <h6 className="progress-text">
-                                    {parseInt(this.props.isHidden ? student.hiddenGrades[this.props.currentProjectId] : student.grades[this.props.currentProjectId])}%
-                                </h6>
-                            </div>
-                        </div>
-                        <Checkbox className={ this.state.card_selected ? 'card-select selectable' : 'card-select' } onClick={ (e) => this.clickStudentSelect(e, student) }>
-                            {
-                                this.state.cards_selected[student.id] ?
-                                    <CheckmarkIcon/>
-                                    : null
-                            }
-                        </Checkbox>
-                    </Card>
-                } />
+            <Summary columns={ 5 }>
+                {
+                    this.props.students.map( (student) =>
+	                    <PreviewCard onClick={ () => this.clickStudentCard(student) } isSelected={ this.state.cards_selected[student.id] } key={ student.id }>
+		                    <Title>
+			                    <h4>{ student.first_name }</h4>
+			                    <h4>{ student.last_name }</h4>
+		                    </Title>
+		                    <div className="h4 break-line header" />
+		                    <div className="preview-content">
+			                    <h5>Time: { student.timeSpent[this.props.currentProjectId] } hours</h5>
+			                    <h5>Commits: { student.commitCounts[this.props.currentProjectId] }</h5>
+		                    </div>
+		                    <div className="student-preview-progress">
+			                    <div className="progress-bar">
+				                    <div style={{width: (this.props.isHidden ? student.hiddenGrades[this.props.currentProjectId] : student.grades[this.props.currentProjectId]) + '%'}} />
+			                    </div>
+			                    <h6 className="progress-text">
+				                    {parseInt(this.props.isHidden ? student.hiddenGrades[this.props.currentProjectId] : student.grades[this.props.currentProjectId])}%
+			                    </h6>
+		                    </div>
+		                    <Checkbox className={ this.state.card_selected ? 'card-select selectable' : 'card-select' } onClick={ (e) => this.clickStudentSelect(e, student) }>
+			                    {
+				                    this.state.cards_selected[student.id] ?
+					                    <CheckmarkIcon/>
+					                    : null
+			                    }
+		                    </Checkbox>
+	                    </PreviewCard>
+                    )
+                }
+            </Summary>
         )
     }
 }

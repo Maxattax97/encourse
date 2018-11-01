@@ -374,6 +374,8 @@ public class CourseServiceImpl implements CourseService {
             projectJSON.put("test_script", visibleTestScripts);
             projectJSON.put("hidden_test_script", hiddenTestScripts);
             projectJSON.put("id", p.getProjectIdentifier());
+            projectJSON.put("last_sync", p.getSyncDate());
+            projectJSON.put("last_test", p.getTestDate());
             projectsJSON.add(projectJSON);
         }
         return projectsJSON;

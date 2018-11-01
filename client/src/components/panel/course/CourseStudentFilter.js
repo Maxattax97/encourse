@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Dropdown, Filter} from '../../Helpers'
+import {Checkbox, Dropdown, Filter} from '../../Helpers'
 import connect from 'react-redux/es/connect/connect'
 import CourseStudentSummary from './CourseStudentSummary'
 
@@ -26,6 +26,7 @@ class CourseStudentFilter extends Component {
     render() {
         return (
             <div className='course-students'>
+                <h3 className='header'>Students Summary</h3>
                 {
                     this.props.students && this.props.students.length > 0 ?
                         <Filter>

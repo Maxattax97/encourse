@@ -1,6 +1,6 @@
 export { 
     getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, 
-    getSectionsData, 
+    getSectionsData, syncRepositories, runTests
 } from './course' 
 
 export {

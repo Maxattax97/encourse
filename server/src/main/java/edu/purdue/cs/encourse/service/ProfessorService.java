@@ -45,6 +45,7 @@ public interface ProfessorService {
     void pullAndTestAllProjects();
     int runTestall(@NonNull String projectID);
     int runTestallForStudent(@NonNull String projectID, @NonNull String userName);
+    int runHistoricTestall(@NonNull String projectID);
     ProjectTestScript addTestScript(@NonNull String projectID, @NonNull String testName, boolean isHidden, double points);
     ProjectTestScript uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents, boolean isHidden, double points);
 
