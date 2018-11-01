@@ -31,6 +31,8 @@ def is_suspicious(student_stats, class_stats):
 def jsonify(git_data, test_progress, hidden_progress=None):
     velocity_averages = []
     rate_averages = []
+    additions_averages = []
+    deletions_averages = []
     student_stats = {}
     for student in git_data.keys():
         student_data = git_data[student]
@@ -48,14 +50,24 @@ def jsonify(git_data, test_progress, hidden_progress=None):
             time_spent += day["time_spent"]
             commit_count += day["commit_count"]
 
+        additions = 0.0
+        deletions = 0.0
+        for day in student_data:
+            additions += day['additions']
+            deletions += day['deletions']
+
         # Convert time_spent from seconds to hours 
         time_spent /= 3600
         velocity_averages.append(progress/time_spent)
         rate_averages.append(progress/commit_count)
+        additions_averages.append(additions)
+        deletions_averages.append(deletions)
 
         student_stats[student] = {
             "rate": progress/commit_count,
-            "velocity": progress/time_spent
+            "velocity": progress/time_spent,
+            "additions": additions,
+            "deletions": deletions
         }
 
     # Find the mean and population standard deviation of velocity measures
@@ -69,6 +81,17 @@ def jsonify(git_data, test_progress, hidden_progress=None):
     rate_stdev = statistics.pstdev(rate_averages)
     eprint("Rate Average: {}".format(rate_mean))
     eprint("Rate Standard Deviation: {}".format(rate_stdev))
+    
+    # Find the mean and population standard deviation of addition and deletion metrics
+    additions_mean = statistics.mean(additions_averages)
+    additions_stdev = statistics.pstdev(additions_averages)
+    eprint("Additions Average: {}".format(additions_mean))
+    eprint("Additions Standard Deviation: {}".format(additions_stdev))
+    
+    deletions_mean = statistics.mean(deletions_averages)
+    deletions_stdev = statistics.pstdev(deletions_averages)
+    eprint("Deletions Average: {}".format(deletions_mean))
+    eprint("Deletions Standard Deviation: {}".format(deletions_stdev))
 
     class_stats = {
         "rate": {
@@ -78,6 +101,14 @@ def jsonify(git_data, test_progress, hidden_progress=None):
         "velocity": {
             "mean": velocity_mean,
             "stdev": velocity_stdev
+        },
+        "additions": {
+            "mean": additions_mean,
+            "stdev": additions_stdev
+        },
+        "deletions": {
+            "mean": deletions_mean,
+            "stdev": deletions_stdev
         }
     }
 
@@ -90,13 +121,17 @@ def jsonify(git_data, test_progress, hidden_progress=None):
         student_stats = suspicious_students[student]
         rate = student_stats["rate"]
         velocity = student_stats["velocity"]
+        additions = student_stats["additions"]
+        deletions = student_stats["deletions"]
 
         # Convert rate to standard normal
         std_rate = (rate - rate_mean) / rate_stdev
         std_velocity = (velocity - velocity_mean) / velocity_stdev
+        std_additions = (additions - additions_mean) / additions_stdev
+        std_deletions = (deletions - deletions_mean) / deletions_stdev
         
         #Standardize combined metric (mean = 0, stdev = 2)
-        score = (std_rate + std_velocity) / 2
+        score = (std_rate + std_velocity + std_additions/2 + std_deletions/2) / 3
 
         # Add student to the list
         student_list.append({

@@ -94,7 +94,7 @@ def jsonify(visible_data, hidden_data, times):
             total = visible
         new_entry["visible"] = visible
         new_entry["hidden"] = hidden
-        new_entry["progress"] = int(total)
+        new_entry["progress"] = round(total)
         daily_data.append(new_entry)
 
     # Convert progress to a percentage by divding by the final total

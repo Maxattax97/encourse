@@ -114,7 +114,7 @@ class StudentProgressPerDay extends Component {
                             <XAxis dataKey="date" type="number" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
                                 <Label value="Date" position="bottom" />
                             </XAxis>
-                            <YAxis>
+                            <YAxis domain={[0, 100]}>
                                 <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                             % Completion
                                 </Label>
