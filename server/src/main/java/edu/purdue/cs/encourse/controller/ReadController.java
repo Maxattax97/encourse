@@ -167,9 +167,37 @@ public class ReadController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/sections", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getAllSections() {
+    public @ResponseBody ResponseEntity<?> getAllSections(@RequestParam(name = "page", defaultValue = "1", required = false) int page,
+                                                          @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                          @RequestParam(name = "sortBy", defaultValue = "courseID", required = false) String sortBy) {
         List<Section> sections = adminService.findAllSections();
-        return new ResponseEntity<>(sections, HttpStatus.OK);
+            switch (sortBy) {
+                case "courseID":
+                default:
+                    sections.sort(Comparator.comparing(Section::getCourseID));
+                    break;
+            }
+
+            List<Section> sortedAndPagedJsonArray = new ArrayList<>();
+            for (int i = (page - 1) * size; i < sections.size(); i++) {
+                if (i >= page * size) {
+                    break;
+                }
+                sortedAndPagedJsonArray.add(sections.get(i));
+            }
+
+            JSONObject response = new JSONObject();
+            response.put("content", sortedAndPagedJsonArray);
+            response.put("totalPages", sections.size() / size + 1);
+            response.put("page", page);
+            response.put("totalSize", sections.size());
+            response.put("size", size);
+            response.put("elements", sortedAndPagedJsonArray.size());
+            response.put("sortedBy", sortBy);
+            response.put("last", (page >= sections.size() / size));
+            response.put("first", (page == 1));
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
