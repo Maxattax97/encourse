@@ -94,12 +94,17 @@ public class AuthController {
     /**
      * Changes the password in Account
      *
-     * @param  password password to update to
+     * @param  oldPassword password to reauthenticate
+     * @param  newPassword password to replace
      */
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/modify/password", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> modifyAccount(@RequestParam(name = "password") String password) {
-        userDetailsService.updatePassword(getUserFromAuth(), password);
+    public @ResponseBody ResponseEntity<?> modifyPassword(@RequestParam(name = "oldPassword") String oldPassword,
+                                                          @RequestParam(name = "newPassword") String newPassword) {
+        int result = userDetailsService.updatePassword(getUserFromAuth(), oldPassword, newPassword);
+        if (result == -1) {
+            return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
