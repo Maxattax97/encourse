@@ -140,7 +140,8 @@ const mapStateToProps = (state) => {
     return {
         // TODO map data to correct redux state
         // data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
-        isLoading: state.course ? state.course.getClassProgressIsLoading : false,
+        // isLoading: state.course ? state.course.getClassProgressIsLoading : false,
+        isLoading: false,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
