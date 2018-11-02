@@ -28,8 +28,7 @@ class Main extends Component {
     }
 
     scrollPanel = (e) => {
-        console.log('SCROLL: ', e.currentTarget.scrollHeight, e.currentTarget.scrollTop, e.currentTarget.clientHeight)
-        if(e.currentTarget.scrollHeight - e.currentTarget.scrollTop === e.currentTarget.clientHeight && this.currentChild && this.currentChild.scrolledToBottom) {
+        if(e.currentTarget.scrollHeight - e.currentTarget.scrollTop <= e.currentTarget.clientHeight && this.currentChild && this.currentChild.scrolledToBottom) {
             this.currentChild.scrolledToBottom()
         }
     }
