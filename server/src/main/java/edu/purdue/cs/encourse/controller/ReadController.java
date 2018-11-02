@@ -110,7 +110,7 @@ public class ReadController {
                 jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hours.length - 1] );
             } else {
                 jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() > hours[hour] ||
-                        ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < hours[hour - 1]);
+                                          ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hour - 1]);
             }
         }
 
@@ -119,7 +119,7 @@ public class ReadController {
                 jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progresses.length - 1] );
             } else {
                 jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() > progresses[progress] ||
-                        ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < progresses[progress - 1]);
+                                          ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progress - 1]);
             }
         }
 
