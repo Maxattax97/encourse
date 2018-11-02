@@ -382,42 +382,27 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             return new JSONReturnable(-3, null);
         }
         List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
-        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
-        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestsDates.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestsDates.txt";
         try {
-            createTestFilesTA(visibleTestFile, hiddenTestFile, assignments, projectID);
-        } catch (IOException e) {
-            return new JSONReturnable(-4, null);
-        }
-
-        String diffsFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_codeDiffs.txt";
-        List<TeachingAssistantStudent> temp = new ArrayList<>(assignments);
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(diffsFile));
-            for (TeachingAssistantStudent projectOne : assignments) {
-                temp.remove(projectOne);
-                Student studentOne = studentRepository.findByUserID(projectOne.getStudentID());
-                String studentOnePath = (sections.get(0).getCourseHub() + "/" + studentOne.getUserName() + "/" + project.getRepoName());
-                Process process = Runtime.getRuntime().exec("./src/main/bash/listCommitHistoryByAuthor.sh " + studentOnePath + " CS252");
-                BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String hash = stdInput.readLine().split(" ")[1];
-                process.destroy();
-                StringBuilder builder = new StringBuilder();
-                builder.append(studentOne.getUserName()).append(":");
-                for (TeachingAssistantStudent projectTwo : temp) {
-                    Student studentTwo = studentRepository.findByUserID(projectTwo.getStudentID());
-                    builder.append(studentTwo.getUserName()).append(";");
-                    String studentTwoPath = (sections.get(0).getCourseHub() + "/" + studentTwo.getUserName() + "/" + project.getRepoName());
-                    process = Runtime.getRuntime().exec("./src/main/bash/calculateDiffScore.sh " + studentOnePath + " " + studentTwoPath + " " + hash);
-                    stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    String result = stdInput.readLine();
-                    process.destroy();
-                    builder.append(result).append("_");
+            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+            for(TeachingAssistantStudent assignment : assignments) {
+                Student student = studentRepository.findByUserID(assignment.getStudentID());
+                List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+                visibleWriter.write("Start " + student.getUserName() + "\n");
+                hiddenWriter.write("Start " + student.getUserName() + "\n");
+                for (StudentProjectDate d : projectDates) {
+                    visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
+                    hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
                 }
-                writer.write(builder.toString() + "\n");
+                visibleWriter.write("End " + student.getUserName() + "\n");
+                hiddenWriter.write("End " + student.getUserName() + "\n");
             }
-        } catch (Exception e) {
-            return new JSONReturnable(-4, null);
+            visibleWriter.close();
+            hiddenWriter.close();
+        } catch (IOException e) {
+            return new JSONReturnable(-3, null);
         }
 
         if (DEBUG){
@@ -453,11 +438,25 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             return new JSONReturnable(-3, null);
         }
         List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
-        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestsDates.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestsDates.txt";
         try {
-            createTestFilesTA(visibleTestFile, hiddenTestFile, assignments, projectID);
+            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+            for(TeachingAssistantStudent assignment : assignments) {
+                Student student = studentRepository.findByUserID(assignment.getStudentID());
+                List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+                visibleWriter.write("Start " + student.getUserName() + "\n");
+                hiddenWriter.write("Start " + student.getUserName() + "\n");
+                for (StudentProjectDate d : projectDates) {
+                    visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
+                    hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
+                }
+                visibleWriter.write("End " + student.getUserName() + "\n");
+                hiddenWriter.write("End " + student.getUserName() + "\n");
+            }
+            visibleWriter.close();
+            hiddenWriter.close();
         } catch (IOException e) {
             return new JSONReturnable(-3, null);
         }
