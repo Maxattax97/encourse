@@ -68,7 +68,7 @@ const defaultData = [
     },
 ];
 
-class StudentIdenticalLines extends Component {
+class CourseIdenticalLinesChart extends Component {
     constructor(props) {
         super(props)
 
@@ -152,5 +152,5 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export { StudentIdenticalLines }
-export default connect(mapStateToProps, mapDispatchToProps)(StudentIdenticalLines)
+export { CourseIdenticalLinesChart }
+export default connect(mapStateToProps, mapDispatchToProps)(CourseIdenticalLinesChart)
