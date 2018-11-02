@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Card, Summary} from '../../Helpers'
+import {Summary} from '../../Helpers'
 
 class CourseDishonestyCharts extends Component {
 
