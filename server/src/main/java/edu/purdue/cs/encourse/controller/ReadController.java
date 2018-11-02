@@ -96,9 +96,9 @@ public class ReadController {
                 if (projectID == null) {
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
-                compare = (JSONObject a, JSONObject b) -> {
-                    JSONObject jsonA = (JSONObject) a.get(sortBy);
-                    JSONObject jsonB = (JSONObject) b.get(sortBy);
+                compare = (a, b) -> {
+                    TreeMap jsonA = (TreeMap) a.get(sortBy);
+                    TreeMap jsonB = (TreeMap) b.get(sortBy);
 
                     double valA = ((Number)jsonA.get(projectID)).doubleValue();
                     double valB = ((Number)jsonB.get(projectID)).doubleValue();
@@ -127,7 +127,7 @@ public class ReadController {
 
         JSONObject response = new JSONObject();
         response.put("content", sortedAndPagedJsonArray);
-        response.put("totalPages", jsonValues.size() / size + 1);
+        response.put("totalPages", jsonValues.size() / size + ((jsonValues.size() % size == 0) ? 0 : 1));
         response.put("page", page);
         response.put("totalSize", jsonValues.size());
         response.put("size", size);
@@ -190,7 +190,7 @@ public class ReadController {
 
             JSONObject response = new JSONObject();
             response.put("content", sortedAndPagedJsonArray);
-            response.put("totalPages", sections.size() / size + 1);
+            response.put("totalPages", sections.size() / size + ((sections.size() % size == 0) ? 0 : 1));
             response.put("page", page);
             response.put("totalSize", sections.size());
             response.put("size", size);
@@ -365,7 +365,7 @@ public class ReadController {
 
         JSONObject response = new JSONObject();
         response.put("content", sortedAndPagedJsonArray);
-        response.put("totalPages", jsonValues.size() / size + 1);
+        response.put("totalPages", jsonValues.size() / size + ((jsonValues.size() % size == 0) ? 0 : 1));
         response.put("page", page);
         response.put("totalSize", jsonValues.size());
         response.put("size", size);
@@ -753,7 +753,7 @@ public class ReadController {
 
         JSONObject response = new JSONObject();
         response.put("content", sortedAndPagedJsonArray);
-        response.put("totalPages", jsonValues.size() / size + 1);
+        response.put("totalPages", jsonValues.size() / size + ((jsonValues.size() % size == 0) ? 0 : 1));
         response.put("page", page);
         response.put("totalSize", jsonValues.size());
         response.put("size", size);

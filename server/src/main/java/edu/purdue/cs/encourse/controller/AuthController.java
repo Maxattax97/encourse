@@ -199,7 +199,7 @@ public class AuthController {
 
         JSONObject response = new JSONObject();
         response.put("content", sortedAndPagedJsonArray);
-        response.put("totalPages", accounts.size() / size + 1);
+        response.put("totalPages", accounts.size() / size + ((accounts.size() % size == 0) ? 0 : 1));
         response.put("page", page);
         response.put("totalSize", accounts.size());
         response.put("size", size);
