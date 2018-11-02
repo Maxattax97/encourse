@@ -92,6 +92,7 @@ public class ReadController {
         switch(sortBy) {
             case "timeSpent":
             case "grades":
+            case "commitCounts":
                 if (projectID == null) {
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
