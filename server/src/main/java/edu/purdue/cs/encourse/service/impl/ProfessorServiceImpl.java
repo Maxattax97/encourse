@@ -694,7 +694,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-4, null);
         }
 
-        String pyPath = pythonPath + "get_similarity.py";
+        String pyPath = pythonPath + "get_identical_count.py";
         String command = pythonCommand + " " + pyPath + " " + diffsFile;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
