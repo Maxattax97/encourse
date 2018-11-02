@@ -175,12 +175,12 @@ public class AuthController {
     }
 
     /**
-     * Adds new Account objects
+     * Retrieves all Account objects
      *
      * @param  page (not required : defaults to 1) page number requested for pagination
      * @param  size (not required : defaults to 10) number of elements in each page
      * @param  sortBy (not required : defaults to 'userName') field to sort by []
-     * @return      array of newly created accounts
+     * @return      array of accounts
      */
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/accounts", method = RequestMethod.GET)
@@ -216,6 +216,12 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /**
+     * Retrieves Account of current logged in User
+     *
+     * @param  userName (not required : defaults to current User) userName of Account to return
+     * @return      account
+     */
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/account", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getAccount(@RequestParam(name = "userName", required = false) String userName) {
@@ -229,7 +235,7 @@ public class AuthController {
         if (flag) {
             List<Account> accounts = new ArrayList<>();
             accounts.add(a);
-            return new ResponseEntity<>(accounts, HttpStatus.FOUND);
+            return new ResponseEntity<>(accounts, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
