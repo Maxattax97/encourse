@@ -1,12 +1,15 @@
 import React, { Component } from 'react'
-import {Summary} from '../../Helpers'
+import {Card, Summary} from '../../Helpers'
+import CourseIdenticalLines from "./chart/CourseIdenticalLines"
 
 class CourseDishonestyCharts extends Component {
 
 	render() {
 		return (
 			<Summary columns={ 2 } className='charts'>
-
+				<Card>
+					<CourseIdenticalLines/>
+				</Card>
 			</Summary>
 		)
 	}
