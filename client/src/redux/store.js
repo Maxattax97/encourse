@@ -15,11 +15,17 @@ const enhancers = compose(
 
 const store = createStore(connectRouter(history)(rootReducer), 
     {
-        ...getLocalStorageState('logInData', 'auth'),
-        ...getLocalStorageState('getAccountData', 'auth'),
-        ...getLocalStorageState('currentProjectId', 'projects'),
-        ...getLocalStorageState('currentProjectIndex', 'projects'),
-        ...getLocalStorageState('currentStudent', 'student'),
+        projects: {
+            ...getLocalStorageState('currentProjectId'),
+            ...getLocalStorageState('currentProjectIndex'),
+        },
+        auth: {
+            ...getLocalStorageState('logInData'),
+            ...getLocalStorageState('getAccountData'),
+        },
+        student: {
+            ...getLocalStorageState('currentStudent'),
+        },    
     }, 
     enhancers)
 
@@ -34,7 +40,7 @@ function setLocalStorageState(state, key, value) {
 function getLocalStorageState(key, parentObject) {
     try {
         const value = JSON.parse(localStorage.getItem(key)) || undefined
-        return { [parentObject]: { [key]: value } }
+        return { [key]: value } 
     } catch (err) {
         return undefined
     }

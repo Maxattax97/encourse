@@ -1,5 +1,6 @@
 function student(state = {}, action) {
-
+    let content
+    let contains
     switch(action.type) {
     case 'SET_CURRENT_STUDENT':
         return Object.assign({}, state, {
@@ -95,6 +96,18 @@ function student(state = {}, action) {
             getCommitHistoryIsLoading: false,
         })
     case 'GET_COMMIT_HISTORY_DATA_SUCCESS':
+        content = state.getCommitHistoryData ? [...state.getCommitHistoryData.content] : []
+        contains = false
+        for(let value of content) {
+            if(value.date === action.data.content[0].date) {
+                contains = true
+                break
+            }
+        }
+        if(!contains) {
+            content = content.concat(action.data.content)
+        } 
+        action.data.content = content;
         return Object.assign({}, state, {
             getCommitHistoryData: action.data,
             getCommitHistoryIsLoading: false,

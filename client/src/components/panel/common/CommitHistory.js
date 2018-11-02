@@ -14,7 +14,7 @@ class CommitHistory extends Component {
     }
 
     scrolledToBottom = (e) => {
-        if(e.currentTarget.scrollHeight - e.currentTarget.scrollTop <= e.currentTarget.clientHeight && this.props.onPaginate)
+        if(e.currentTarget.scrollHeight - e.currentTarget.scrollTop <= e.currentTarget.clientHeight+1 && this.props.onPaginate)
             this.props.onPaginate()
     }
 
