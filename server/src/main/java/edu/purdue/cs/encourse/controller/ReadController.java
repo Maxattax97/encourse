@@ -273,8 +273,6 @@ public class ReadController {
                                                                   @RequestParam(name = "page", defaultValue = "1", required = false) int page,
                                                                   @RequestParam(name = "size", defaultValue = "10", required = false) int size,
                                                                   @RequestParam(name = "sortBy", defaultValue = "date", required = false) String sortBy) {
-        List<String> errors = new ArrayList<>();
-        List<String> correct = new ArrayList<>();
         JSONReturnable returnJson = null;
 
         if (hasPermissionOverAccount(userName)) {
@@ -293,8 +291,6 @@ public class ReadController {
             if (returnJson == null || returnJson.jsonObject == null) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            String json = returnJson.jsonObject.toJSONString();
-            correct.add(json);
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -611,7 +607,6 @@ public class ReadController {
         if (returnJson == null || returnJson.jsonObject == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-//        return new ResponseEntity<>(returnJson.jsonObject.toJSONString(), HttpStatus.OK);
 
         JSONArray json = (JSONArray) returnJson.getJsonObject().get("data");
         List<JSONObject> jsonValues = new ArrayList<>();
