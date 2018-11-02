@@ -32,7 +32,7 @@ class StudentStatistics extends Component {
 
     fetch = (props) => {
         if(props.currentProjectId) {
-            props.getClassStatistics(`${url}/api/statistics?projectID=${props.currentProjectId}`)
+            props.getClassStatistics(`${url}/api/classStatistics?projectID=${props.currentProjectId}`)
         }
     }
 
