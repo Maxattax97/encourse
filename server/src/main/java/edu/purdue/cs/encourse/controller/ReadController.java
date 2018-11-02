@@ -585,18 +585,26 @@ public class ReadController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
     @RequestMapping(value = "/classCheating", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getClassCheating(@RequestParam(name = "projectID") String projectID) {
-        JSONReturnable returnJson = professorService.getClassCheating(projectID);
-        if (returnJson == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        JSONReturnable returnJson = null;
+        Iterator<Authority> iter = getUserAuthorities().iterator();
+        while (iter.hasNext()) {
+            String auth = iter.next().getAuthority();
+            if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                returnJson = professorService.getClassCheating(projectID);
+                break;
+            } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                returnJson = taService.getAssignmentsCheating(projectID, getUserFromAuth().getUsername());
+                break;
+            }
         }
-        if (returnJson.jsonObject == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(returnJson, HttpStatus.OK);
 
+        if (returnJson == null || returnJson.jsonObject == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(returnJson.jsonObject.toJSONString(), HttpStatus.OK);
 
     }
 
