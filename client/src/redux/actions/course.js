@@ -11,7 +11,7 @@ export function getStudentPreviewsHasError(hasError) {
 
 export function getStudentPreviewsDataSuccess(data) {
     if (fuzzing) {
-        for (let e of data) {
+        for (let e of data.content) {
             if (!realToFakeMapping[e.id]) {
                 const fake = {}
                 fake.id = getFakeUid()
