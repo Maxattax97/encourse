@@ -5,6 +5,7 @@ import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.StudentSection;
 import edu.purdue.cs.encourse.service.*;
 import edu.purdue.cs.encourse.util.JSONReturnable;
+import lombok.NonNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -315,30 +316,41 @@ public class ReadController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/commitList", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
-                                                                  @RequestParam(name = "userName") String userName,
+                                                                  @RequestParam(name = "userName", required = false) String userName,
                                                                   @RequestParam(name = "page", defaultValue = "1", required = false) int page,
                                                                   @RequestParam(name = "size", defaultValue = "10", required = false) int size,
                                                                   @RequestParam(name = "sortBy", defaultValue = "date", required = false) String sortBy) {
         JSONReturnable returnJson = null;
 
-        if (hasPermissionOverAccount(userName)) {
+        if (userName != null) {
+            if (hasPermissionOverAccount(userName)) {
+                Iterator iter = getUserAuthorities().iterator();
+                while (iter.hasNext()) {
+                    String auth = ((Authority) iter.next()).getAuthority();
+                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                        returnJson = professorService.getCommitList(projectID, userName);
+                        break;
+                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                        returnJson = taService.getCommitList(projectID, userName, getUserFromAuth().getUsername());
+                        break;
+                    }
+                }
+
+                if (returnJson == null || returnJson.jsonObject == null) {
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                }
+            } else {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        } else {
             Iterator iter = getUserAuthorities().iterator();
             while (iter.hasNext()) {
                 String auth = ((Authority) iter.next()).getAuthority();
                 if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                    returnJson = professorService.getCommitList(projectID, userName);
-                    break;
-                } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                    returnJson = taService.getCommitList(projectID, userName, getUserFromAuth().getUsername());
+                    returnJson = professorService.getClassCommitList(projectID);
                     break;
                 }
             }
-
-            if (returnJson == null || returnJson.jsonObject == null) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
         JSONArray json = (JSONArray) returnJson.getJsonObject().get("data");
