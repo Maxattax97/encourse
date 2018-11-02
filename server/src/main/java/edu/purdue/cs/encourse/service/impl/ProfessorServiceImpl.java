@@ -720,7 +720,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-3, null);
         }
         String pyPath = pythonPath + "get_class_statistics.py";
-        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
+        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
