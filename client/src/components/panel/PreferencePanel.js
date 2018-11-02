@@ -1,10 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import {Card, CheckmarkIcon, PlusIcon} from '../Helpers'
-import CoursePreview from './admin/CoursePreview'
-import AccountPreview from './admin/AccountPreview'
-import Modal from '../modal/Modal'
+import {BackNav} from '../Helpers'
 import {
     addCourse,
     addAccount,
@@ -12,10 +9,13 @@ import {
     getAccounts,
     modifyCourse,
     modifyAccount,
-    removeCourse, removeAccount
+    removeCourse, removeAccount, setModalState
 } from '../../redux/actions'
 import url from '../../server'
-import deleteIcon from '../../resources/trash.svg'
+import ActionNavigation from '../navigation/ActionNavigation'
+
+import { history } from '../../redux/store'
+import ChangePasswordModal from './preference/ChangePasswordModal'
 
 class PreferencePanel extends Component {
 
@@ -178,10 +178,31 @@ class PreferencePanel extends Component {
         this.resetOptions()
     };
 
+    back = () => {
+        history.push('/course')
+    }
+
     render() {
+
+        const action_names = [
+            'Change Password'
+        ]
+
+        const actions = [
+            () => this.props.setModalState(1)
+        ]
+
         return (
             <div className="panel-preference">
-                <div className="panel-left-nav"/>
+
+                <div className='panel-left-nav'>
+                    <BackNav back='Course' backClick={ this.back }/>
+                    <ActionNavigation actions={ actions } action_names={ action_names }/>
+                </div>
+
+                <ChangePasswordModal id={1}/>
+
+                {/*<div className="panel-left-nav"/>
                 <div className="panel-center-content">
                     <div className={`panel-preference-content${this.state.modal_blur}`}>
                         <div className="title">
@@ -321,7 +342,7 @@ class PreferencePanel extends Component {
                 </div>
 
                 <div className={`modal-overlay${ (this.state.show_course_options || this.state.show_account_options) ? ' show' : '' }`}
-                    onClick={ this.resetOptions } />
+                    onClick={ this.resetOptions } />*/}
             </div>
         )
     }
@@ -344,6 +365,7 @@ const mapDispatchToProps = (dispatch) => {
         removeAccount: (url, headers, body) => dispatch(removeAccount(url, headers, body)),
         getCourses: (url, headers, body) => dispatch(getCourses(url, headers, body)),
         getAccounts: (url, headers, body) => dispatch(getAccounts(url, headers, body)),
+        setModalState: (id) => dispatch(setModalState(id)),
     }
 }
 

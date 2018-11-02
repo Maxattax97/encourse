@@ -2,6 +2,27 @@ import React, { Component } from 'react'
 import {Card, LoadingIcon} from '../../Helpers'
 
 class CommitHistory extends Component {
+
+    setOverflowRef = (node) => {
+        if(this.overflow)
+            this.overflow.removeEventListener('scroll', this.scrolledToBottom)
+
+        this.overflow = node
+
+        if(this.overflow)
+            this.overflow.addEventListener('scroll', this.scrolledToBottom)
+    }
+
+    scrolledToBottom = (e) => {
+        if(e.currentTarget.scrollHeight - e.currentTarget.scrollTop <= e.currentTarget.clientHeight && this.props.onPaginate)
+            this.props.onPaginate()
+    }
+
+    componentWillUnmount() {
+        if(this.overflow)
+            this.overflow.removeEventListener('scroll', this.scrolledToBottom)
+    }
+
     render() {
         return (
             <div className='commits-container side-nav-right'>
@@ -11,7 +32,7 @@ class CommitHistory extends Component {
                         <div className="h3 break-line header" />
                         {
                             !this.props.isLoading && this.props.data ?
-                                <div className="float-height overflow">
+                                <div className="float-height overflow" ref={ this.setOverflowRef }>
                                     {
                                         this.props.data.map((commit) =>
                                             <Card key={ commit.date }>
