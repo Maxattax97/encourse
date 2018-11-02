@@ -908,6 +908,18 @@ public class ProfessorServiceImpl implements ProfessorService {
         return json;
     }
 
+    public JSONReturnable getClassCommitList(@NonNull String projectID) {
+        String commitLogFile = listAllCommitsByTime(projectID);
+        if(commitLogFile == null) {
+            return new JSONReturnable(-1, null);
+        }
+        String pyPath = pythonPath + "get_git_commit_list.py";
+        String command = pythonCommand + " " + pyPath + " " + commitLogFile;
+        JSONReturnable json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
     public JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userName) {
         String commitLogFile = listStudentCommitsByTime(projectID, userName);
         if(commitLogFile == null) {
