@@ -8,8 +8,12 @@ import lombok.NonNull;
 import org.json.simple.JSONArray;
 
 import java.io.File;
+import java.util.List;
 
 public interface TeachingAssistantService {
+
+    // TODO: @reed add security checks for TAs
+
     JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
     JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
     JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userNameStudent, @NonNull String userNameTA);
@@ -19,11 +23,10 @@ public interface TeachingAssistantService {
 
     JSONReturnable getAssignmentsProgress(@NonNull String projectID, @NonNull String userNameTA);
     JSONReturnable getAssignmentsTestSummary(@NonNull String projectID, @NonNull String userNameTA);
-
     JSONReturnable getAssignmentsCheating(@NonNull String projectID, @NonNull String userNameTA);
 
-    JSONReturnable getAnonymousClassProgress(@NonNull String projectID);
-    JSONReturnable getAnonymousTestSummary(@NonNull String projectID);
+    JSONReturnable getGroupProgress(@NonNull String projectID, List<String> userNames, @NonNull String userNameTA);
+    JSONReturnable getGroupTestSummary(@NonNull String projectID, List<String> userNames, @NonNull String userNameTA);
 
     String countAllCommits(@NonNull String projectID, @NonNull String userNameTA);
     String countAllCommitsByDay(@NonNull String projectID, @NonNull String userNameTA);

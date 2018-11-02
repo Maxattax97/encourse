@@ -596,6 +596,37 @@ public class ProfessorServiceImpl implements ProfessorService {
         return json;
     }
 
+    public JSONReturnable getGroupProgress(@NonNull String projectID, @NonNull List<String> userNames) {
+        JSONReturnable json = null;
+        List<StudentProject> projects = new ArrayList<>();
+        for(String userName: userNames) {
+            Student student = studentRepository.findByUserName(userName);
+            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+            if(project != null) {
+                projects.add(project);
+            }
+        }
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        try {
+            createTestFiles(visibleTestFile, hiddenTestFile, projects);
+        } catch (IOException e) {
+            json = new JSONReturnable(-1, null);
+        }
+
+        if (DEBUG) {
+            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
+            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
+        }
+
+        // TODO: Check that test results work as expected
+        String pyPath = pythonPath + "get_class_progress.py";
+        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
+        json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
     // TODO: JARETT DO PYTHON
     public JSONReturnable getClassStatistics(@NonNull String projectID) {
         String dailyCountsFile = countAllCommitsByDay(projectID);
@@ -632,13 +663,38 @@ public class ProfessorServiceImpl implements ProfessorService {
         catch(IOException e) {
             json = new JSONReturnable(-1, null);
         }
-
         if (DEBUG) {
             visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
             hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
         }
+        String pyPath = pythonPath + "get_test_summary.py";
+        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
+        json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
 
-        // TODO: Check that test results work as expected
+    public JSONReturnable getGroupTestSummary(@NonNull String projectID, @NonNull List<String> userNames) {
+        JSONReturnable json = null;
+        List<StudentProject> projects = new ArrayList<>();
+        for(String userName: userNames) {
+            Student student = studentRepository.findByUserName(userName);
+            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+            if(project != null) {
+                projects.add(project);
+            }
+        }
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        try {
+            createTestFiles(visibleTestFile, hiddenTestFile, projects);
+        } catch (IOException e) {
+            json = new JSONReturnable(-1, null);
+        }
+        if (DEBUG) {
+            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
+            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
+        }
         String pyPath = pythonPath + "get_test_summary.py";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
         json = runPython(command);
