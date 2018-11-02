@@ -19,6 +19,7 @@ export {
     setCurrentStudent, clearStudent, updateCommitsPage, resetCommitsPage,
     getStudent, getProgressLine, getCodeFrequency, getCommitFrequency, getStatistics,
     getCommitHistory, getProgressPerTime, getProgressPerCommit,
+    syncStudentRepository, runStudentTests
 } from './student'
 
 export {

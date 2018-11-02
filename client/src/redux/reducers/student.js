@@ -148,6 +148,34 @@ function student(state = {}, action) {
         return Object.assign({}, state, {
             commitsPage: 1,
         })
+    case 'SYNC_STUDENT_REPOSITORY':
+		return Object.assign({}, state, {
+			syncStudentRepositoryIsLoading: true
+		})
+    case 'SYNC_STUDENT_REPOSITORY_HAS_ERROR':
+        return Object.assign({}, state, {
+            syncStudentRepositoryIsLoading: false,
+            syncStudentRepositoryHasError: action.hasError
+        })
+    case 'SYNC_STUDENT_REPOSITORY_SUCCESS':
+        return Object.assign({}, state, {
+            syncStudentRepositoryData: action.data,
+            syncStudentRepositoryIsLoading: false
+        })
+    case 'RUN_STUDENT_TESTS':
+        return Object.assign({}, state, {
+            runStudentTestsIsLoading: true
+        })
+    case 'RUN_STUDENT_TESTS_HAS_ERROR':
+        return Object.assign({}, state, {
+            runStudentTestsIsLoading: false,
+            runStudentTestsHasError: action.hasError
+        })
+    case 'RUN_STUDENT_TESTS_SUCCESS':
+        return Object.assign({}, state, {
+            runStudentTestsData: action.data,
+            runStudentTestsIsLoading: false
+        })
     default:
         return state
     }
