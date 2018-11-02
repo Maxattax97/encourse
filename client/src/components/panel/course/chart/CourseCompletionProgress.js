@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import { connect } from 'react-redux'
 
-import { getClassProgress } from '../../../../redux/actions/index'
+import { getClassProgress, getClassProgressAnon } from '../../../../redux/actions/index'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
 import CustomTooltipContent from './CustomTooltipContent';
@@ -58,9 +58,15 @@ class StudentsCompletionProgress extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(this.props.isLoading && !nextProps.isLoading) {
-            this.setState({ formattedData: this.formatApiData(nextProps.data) })
-        }
+        if(!this.props.anon) {
+            if(this.props.isLoading && !nextProps.isLoading) {
+                this.setState({ formattedData: this.formatApiData(nextProps.data) })
+            }
+        } else {
+            if(this.props.isLoadingAnon && !nextProps.isLoadingAnon) {
+                this.setState({ formattedData: this.formatApiData(nextProps.data) })
+            }
+        }   
         if (nextProps.currentProjectId !== this.props.currentProjectId) {
             this.fetch(nextProps)
         }
@@ -68,7 +74,12 @@ class StudentsCompletionProgress extends Component {
 
     fetch = (props) => {
         if(props.currentProjectId) {
-            props.getData(`${url}/api/progress?projectID=${props.currentProjectId}`)
+            if(props.anon) {
+                props.getAnonData(`${url}/api/progress?projectID=${props.currentProjectId}&anonymous=true`)
+            } else {
+                props.getData(`${url}/api/progress?projectID=${props.currentProjectId}`)
+            }
+            
         }    
     }
 
@@ -136,13 +147,15 @@ const mapStateToProps = (state) => {
     return {
         data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
         isLoading: state.course ? state.course.getClassProgressIsLoading : false,
+        isLoadingAnon: state.course ? state.course.getClassProgressIsLoadingAnon : false,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getData: (url, headers, body) => dispatch(getClassProgress(url, headers, body))
+        getData: (url, headers, body) => dispatch(getClassProgress(url, headers, body)),
+        getAnonData: (url, headers, body) => dispatch(getClassProgressAnon(url, headers, body))
     }
 }
 
