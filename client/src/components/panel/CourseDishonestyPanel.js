@@ -9,6 +9,7 @@ import connect from 'react-redux/es/connect/connect'
 import StudentReportFilter from './course-dishonesty/StudentReportFilter'
 import CourseDishonestyCharts from './course-dishonesty/CourseDishonestyCharts'
 import SyncItem from './common/SyncItem'
+import ShareReportModal from './common/ShareReportModal'
 
 class CourseDishonestyPanel extends Component {
 
@@ -59,6 +60,10 @@ class CourseDishonestyPanel extends Component {
         this.setState({ filters: Object.assign({}, this.state.filters) })
     }
 
+    share = () => {
+        this.props.setModalState(2)
+    }
+
     render() {
 
         const action_names = [
@@ -70,7 +75,7 @@ class CourseDishonestyPanel extends Component {
         const actions = [
             () => {  },
             () => {  },
-            () => {  }
+            this.share
         ]
 
         return (
@@ -86,6 +91,7 @@ class CourseDishonestyPanel extends Component {
                 </div>
 
                 <CourseDishonestyModal id={1}/>
+                <ShareReportModal id={2} link={null}/>
 
                 <div className='panel-center-content'>
 

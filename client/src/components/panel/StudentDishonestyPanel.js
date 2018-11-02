@@ -3,10 +3,11 @@ import { connect } from 'react-redux'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {BackNav} from '../Helpers'
 import {history} from '../../redux/store'
-import {clearStudent, getStudent, syncStudentRepository, runStudentTests} from '../../redux/actions'
+import {clearStudent, getStudent, syncStudentRepository, runStudentTests, setModalState} from '../../redux/actions'
 import url from '../../server'
 import SyncItem from './common/SyncItem'
 import StudentDishonestyCharts from "./student-dishonesty/StudentDishonestyCharts"
+import ShareReportModal from "./common/ShareReportModal"
 
 class StudentDishonestyPanel extends Component {
 
@@ -18,6 +19,10 @@ class StudentDishonestyPanel extends Component {
 
     back = () => {
         history.goBack()
+    }
+
+    share = () => {
+        this.props.setModalState(1)
     }
 
     render() {
@@ -37,7 +42,7 @@ class StudentDishonestyPanel extends Component {
                 if(this.props.currentProjectId && this.props.currentStudent)
                     this.props.runStudentTests(`${url}/api/run/testall?projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
             },
-            () => {  }
+            this.share
         ]
 
         return (
@@ -50,6 +55,8 @@ class StudentDishonestyPanel extends Component {
                 <div className='panel-right-nav'>
                     <SyncItem />
                 </div>
+
+                <ShareReportModal id={1} link={null}/>
 
                 <div className='panel-center-content'>
 
@@ -79,6 +86,7 @@ const mapDispatchToProps = (dispatch) => {
         syncStudentRepository: (url, headers, body) => dispatch(syncStudentRepository(url, headers, body)),
         runStudentTests: (url, headers, body) => dispatch(runStudentTests(url, headers, body)),
         clearStudent: () => dispatch(clearStudent),
+	    setModalState: (id) => dispatch(setModalState(id)),
     }
 }
 
