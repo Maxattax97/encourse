@@ -22,7 +22,7 @@ public class Report {
     private String accountID;
 
     @Setter
-    private String commit;
+    private String expireDate;
 
     @Setter
     private String comments;

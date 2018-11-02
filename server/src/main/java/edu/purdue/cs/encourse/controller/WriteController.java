@@ -48,6 +48,12 @@ public class WriteController {
     @Autowired
     private TeachingAssistantService taService;
 
+    /**
+     * Create a new Section
+     *
+     * @param  userName (not required : defaults to the logged in user) userName of Professor assigned to section
+     * @param  body     http request body with Section
+     */
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/section", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity<?> addSection(@RequestParam(name = "userName", required = false) String userName,
@@ -74,6 +80,13 @@ public class WriteController {
         return new ResponseEntity<>((s != null)? s: result, (s != null)? HttpStatus.CREATED: HttpStatus.NOT_MODIFIED);
     }
 
+    /**
+     * Assign Professor to Section
+     *
+     * @param  userName userName of Professor
+     * @param  courseID identifier of course such as 'cs252'
+     * @param  semester identifier of semester such as 'Fall2018'
+     */
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/professorToCourse", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> addProfessorToCourse(@RequestParam(name = "userName") String userName,
@@ -84,6 +97,13 @@ public class WriteController {
         return new ResponseEntity<>(result, status);
     }
 
+    /**
+     * Assign TeachingAssistant to Section
+     *
+     * @param  userName userName of TeachingAssistant
+     * @param  courseID identifier of course such as 'cs252'
+     * @param  semester identifier of semester such as 'Fall2018'
+     */
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/TAToCourse", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> addTAToCourse(@RequestParam(name = "userName") String userName,
@@ -94,6 +114,12 @@ public class WriteController {
         return new ResponseEntity<>(result, status);
     }
 
+    /**
+     * Assign Student to Section
+     *
+     * @param  userName userName of Student
+     * @param  sectionID identifier of Section
+     */
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/studentToSection", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> addStudentToSection(@RequestParam(name = "userName") String userName,
@@ -103,6 +129,12 @@ public class WriteController {
         return new ResponseEntity<>(result, status);
     }
 
+    /**
+     * Assign a Project to a Student
+     *
+     * @param  userName userName of Student
+     * @param  projectID identifier of Project
+     */
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/studentToProject", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> addStudentToProject(@RequestParam(name = "projectID") String projectID,
@@ -117,6 +149,11 @@ public class WriteController {
         }
     }
 
+    /**
+     * Upgrade a Student Account to a TeachingAssistant Account
+     *
+     * @param  userName userName of Student
+     */
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/modify/studentToTA", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> modifyStudentToTA(@RequestParam(name = "userName") String userName) {
@@ -130,6 +167,12 @@ public class WriteController {
         return new ResponseEntity<>(student, HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Assign multiple Students to multiple TeachingAssistants
+     *
+     * @param  sectionID identifier of Section
+     * @param  body http request body map of Student userNames assigned to a TeachingAssistant
+     */
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/studentsToTA", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> addStudentsToTA(@RequestParam(name = "sectionID") String sectionID,
@@ -251,6 +294,11 @@ public class WriteController {
         }
     }
 
+    /**
+     * Create a new Project
+     *
+     * @param  json  http request body containing Project
+     */
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/project", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity<?> addProject(@RequestBody String json) {
@@ -269,6 +317,12 @@ public class WriteController {
         return new ResponseEntity<>((p != null)? p: result, (p != null)? HttpStatus.CREATED: HttpStatus.NOT_MODIFIED);
     }
 
+    /**
+     * Edit a Project
+     *
+     * @param  projectID identifier of project
+     * @param  body  http request body map of fields to values to update in Project
+     */
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/modify/project", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> modifyBulkProject(@RequestParam(name = "projectID") String projectID,
@@ -293,6 +347,11 @@ public class WriteController {
         return new ResponseEntity<>(p, HttpStatus.OK);
     }
 
+    /**
+     * Clone a Project
+     *
+     * @param  projectID  identifier of Project
+     */
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/clone/project", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> cloneProject(@RequestParam(name = "projectID") String projectID) {
@@ -307,11 +366,24 @@ public class WriteController {
         }
     }
 
+    /**
+     * Pull a Project
+     *
+     * @param  projectID identifier of Project
+     */
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/pull/project", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> pullProject(@RequestParam(name = "projectID") String projectID) {
+    public @ResponseBody ResponseEntity<?> pullProject(@RequestParam(name = "projectID") String projectID,
+                                                       @RequestParam(name = "userName", required = false) List<String> userNames) {
 
-        int result = professorService.pullProjects(projectID);
+        int result = -100;
+        if (userNames == null) {
+            result = professorService.pullProjects(projectID);
+        } else {
+            for (String userName: userNames) {
+                result = professorService.updateStudentInformation(projectID, userName);
+            }
+        }
         if (result == 0) {
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else if (result == -1) {
@@ -321,6 +393,13 @@ public class WriteController {
         }
     }
 
+    /**
+     * Runs the testall
+     *
+     * @param  projectID identifier of Project
+     * @param  userName (not required) userName of specific student to run testall for
+     * @param  historic  (not required) boolean requesting historic or not
+     */
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
     @RequestMapping(value = "/run/testall", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> testProject(@RequestParam(name = "projectID", required = false) String projectID,
