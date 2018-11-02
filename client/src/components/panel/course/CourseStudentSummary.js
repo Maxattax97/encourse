@@ -24,7 +24,6 @@ class CourseStudentSummary extends Component {
         else {
             this.props.setCurrentStudent(student)
             if (fuzzing) {
-                // NOTE: we don't even use the student id in the url
                 history.push('/student/student')
             } else {
                 history.push(`/student/${student.id}`)

@@ -9,7 +9,6 @@ class StudentReportSummary extends Component {
 
     clickStudentCard = (student) => {
         if (fuzzing) {
-            // NOTE: we don't even use the student id in the url
             history.push('/student-dishonesty/student')
         } else {
             history.push(`/student-dishonesty/${student.id}`)
