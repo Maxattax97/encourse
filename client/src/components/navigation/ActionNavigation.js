@@ -19,15 +19,15 @@ class ActionNavigation extends Component {
                             {
                                 this.props.action_names ?
                                     this.props.action_names.map((name, index) =>
-                                        <div className='action' key={index}>
-                                            <h4 onClick={ this.props.actions[index] }>
+                                        <div className='action' key={index} onClick={ this.props.actions[index] }>
+                                            <h4>
                                                 {name}
                                             </h4>
                                         </div>
                                     ) :
                                     this.props.actions.map((action, index) =>
-                                        <div className='action' key={index}>
-                                            <h4 onClick={ this.props.actions[index] }>
+                                        <div className='action' key={index} onClick={ this.props.actions[index] }>
+                                            <h4>
                                                 {this.action_names_default[index]}
                                             </h4>
                                         </div>

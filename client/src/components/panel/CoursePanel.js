@@ -12,12 +12,33 @@ import CourseCommitHistory from './course/CourseCommitHistory'
 
 class CoursePanel extends Component {
 
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            filters: {
+                sort_by: 0,
+                order_by: 0,
+                commit_filter: 0,
+                hour_filter: 0,
+                progress_filter: 0
+            }
+        }
+    }
+
     componentDidMount = () => {
         this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`)
     }
 
     scrolledToBottom = () => {
+        console.log('bottom')
+    }
 
+    changeFilter = (key, value) => {
+
+        this.state.filters[key] = value
+
+        this.setState({ filters: Object.assign({}, this.state.filters) })
     }
 
     render() {
@@ -90,7 +111,7 @@ class CoursePanel extends Component {
 
                         <div className='h1 break-line' />
 
-                        <CourseStudentFilter />
+                        <CourseStudentFilter onChange={ this.changeFilter } filters={ this.state.filters } />
                     </div>
                 </div>
             </div>

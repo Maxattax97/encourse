@@ -4,7 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Label, Brush, Resp
 import moment from 'moment'
 import { connect } from 'react-redux'
 
-import { getCommitFrequency } from '../../../../redux/actions/index'
+import { getCommitFrequency } from '../../../../redux/actions'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
 

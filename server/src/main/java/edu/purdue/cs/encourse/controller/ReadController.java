@@ -236,7 +236,8 @@ public class ReadController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/testSummary", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getTestSummary(@RequestParam(name = "projectID") String projectID) {
+    public @ResponseBody ResponseEntity<?> getTestSummary(@RequestParam(name = "projectID") String projectID,
+                                                          @RequestParam(name = "anonymous", defaultValue = "false", required = false) boolean anon) {
         JSONReturnable returnJson = null;
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
@@ -245,7 +246,11 @@ public class ReadController {
                 returnJson = professorService.getTestSummary(projectID);
                 break;
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                returnJson = taService.getAssignmentsTestSummary(projectID, getUserFromAuth().getUsername());
+                if (anon) {
+                    returnJson = taService.getAnonymousTestSummary(projectID);
+                } else {
+                    returnJson = taService.getAssignmentsTestSummary(projectID, getUserFromAuth().getUsername());
+                }
                 break;
             }
         }
@@ -268,8 +273,6 @@ public class ReadController {
                                                                   @RequestParam(name = "page", defaultValue = "1", required = false) int page,
                                                                   @RequestParam(name = "size", defaultValue = "10", required = false) int size,
                                                                   @RequestParam(name = "sortBy", defaultValue = "date", required = false) String sortBy) {
-        List<String> errors = new ArrayList<>();
-        List<String> correct = new ArrayList<>();
         JSONReturnable returnJson = null;
 
         if (hasPermissionOverAccount(userName)) {
@@ -288,8 +291,6 @@ public class ReadController {
             if (returnJson == null || returnJson.jsonObject == null) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            String json = returnJson.jsonObject.toJSONString();
-            correct.add(json);
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -567,8 +568,14 @@ public class ReadController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/classProgress", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID) {
-        JSONReturnable returnJson = professorService.getClassProgress(projectID);
+    public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
+                                                       @RequestParam(name = "anonymous", required = false, defaultValue = "false") boolean anon) {
+        JSONReturnable returnJson;
+        if (anon) {
+            returnJson = taService.getAnonymousClassProgress(projectID);
+        } else {
+            returnJson = professorService.getClassProgress(projectID);
+        }
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
@@ -579,18 +586,76 @@ public class ReadController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
     @RequestMapping(value = "/classCheating", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getClassCheating(@RequestParam(name = "projectID") String projectID) {
-        JSONReturnable returnJson = professorService.getClassCheating(projectID);
-        if (returnJson == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+    public @ResponseBody ResponseEntity<?> getClassCheating(@RequestParam(name = "projectID") String projectID,
+                                                            @RequestParam(name = "page", defaultValue = "1", required = false) int page,
+                                                            @RequestParam(name = "size", defaultValue = "100", required = false) int size,
+                                                            @RequestParam(name = "sortBy", defaultValue = "id", required = false) String sortBy) {
+        JSONReturnable returnJson = null;
+        Iterator<Authority> iter = getUserAuthorities().iterator();
+        while (iter.hasNext()) {
+            String auth = iter.next().getAuthority();
+            if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                returnJson = professorService.getClassCheating(projectID);
+                break;
+            } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                returnJson = taService.getAssignmentsCheating(projectID, getUserFromAuth().getUsername());
+                break;
+            }
         }
-        if (returnJson.jsonObject == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        if (returnJson == null || returnJson.jsonObject == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(returnJson, HttpStatus.OK);
 
+        JSONArray json = (JSONArray) returnJson.getJsonObject().get("data");
+        List<JSONObject> jsonValues = new ArrayList<>();
+        for (int i = 0; i < json.size(); i++) {
+            JSONObject obj = (JSONObject) json.get(i);
+            jsonValues.add(obj);
+        }
+
+        Comparator<JSONObject> compare;
+        switch(sortBy) {
+            case "id":
+                compare = (JSONObject a, JSONObject b) -> {
+                    String valA = (String) a.get(sortBy);
+                    String valB = (String) b.get(sortBy);
+                    return valA.compareTo(valB);
+                };
+                break;
+            case "score":
+            default:
+                compare = (JSONObject a, JSONObject b) -> {
+                    double valA = (double) a.get(sortBy);
+                    double valB = (double) b.get(sortBy);
+                    return Double.compare(valA, valB);
+                };
+                break;
+        }
+        jsonValues.sort(compare);
+
+        JSONArray sortedAndPagedJsonArray = new JSONArray();
+        page = (page > jsonValues.size() / size + 1) ? jsonValues.size() / size + 1 : page;
+        for (int i = (page - 1) * size; i < jsonValues.size(); i++) {
+            if (i >= page * size) {
+                break;
+            }
+            sortedAndPagedJsonArray.add(jsonValues.get(i));
+        }
+
+        JSONObject response = new JSONObject();
+        response.put("content", sortedAndPagedJsonArray);
+        response.put("totalPages", jsonValues.size() / size + 1);
+        response.put("page", page);
+        response.put("totalSize", jsonValues.size());
+        response.put("size", size);
+        response.put("elements", sortedAndPagedJsonArray.size());
+        response.put("sortedBy", sortBy);
+        response.put("last", (page >= jsonValues.size() / size));
+        response.put("first", (page == 1));
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
