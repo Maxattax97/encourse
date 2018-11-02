@@ -3,7 +3,7 @@ import ActionNavigation from '../navigation/ActionNavigation'
 import {history} from '../../redux/store'
 import {BackNav, SettingsIcon, Title} from '../Helpers'
 import CourseDishonestyModal from '../modal/CourseDishonestyModal'
-import {getStudentPreviews, setCurrentStudent, setModalState, getDishonestyReport} from '../../redux/actions'
+import {getStudentPreviews, setCurrentStudent, setModalState, getDishonestyReport, updateCourseDishonestyPage, resetCourseDishonestyPage} from '../../redux/actions'
 import url from '../../server'
 import connect from 'react-redux/es/connect/connect'
 import StudentReportFilter from './course-dishonesty/StudentReportFilter'
@@ -31,11 +31,29 @@ class CourseDishonestyPanel extends Component {
     }
 
     scrolledToBottom = () => {
-        console.log('bottom')
+        if(!this.props.last) {
+            this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}&page=${this.props.page + 1}`)
+            this.props.updateCourseDishonestyPage()
+        }
+    }
+
+    getSortBy = (value) => {
+        let id = value ? value : this.state.filters.sort_by
+        switch(id) {
+            case 0:
+                return 'id'
+            case 1:
+                return 'score' 
+        }
     }
 
     changeFilter = (key, value) => {
         this.state.filters[key] = value
+
+        if(key === 'sort_by') {
+            this.props.resetCourseDishonestyPage()
+            this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy(value)}&page=1`)
+        }
 
         this.setState({ filters: Object.assign({}, this.state.filters) })
     }
@@ -103,6 +121,8 @@ const mapStateToProps = (state) => {
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : [],
         report: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.content : [],
         currentProjectId: state.projects ? state.projects.currentProjectId : null,
+        page: state.course && state.course.dishonestyPage ? state.course.dishonestyPage : 1,
+        last: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.last : true,
     }
 }
 
@@ -112,6 +132,8 @@ const mapDispatchToProps = (dispatch) => {
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
         getDishonestyReport: (url, headers, body) => dispatch(getDishonestyReport(url, headers, body)),
         setModalState: (id) => dispatch(setModalState(id)),
+        updateCourseDishonestyPage: () => dispatch(updateCourseDishonestyPage()),
+        resetCourseDishonestyPage: () => dispatch(resetCourseDishonestyPage()),
     }
 }
 

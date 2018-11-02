@@ -1,4 +1,6 @@
 function course(state = {}, action) {
+    let content;
+    let contains;
     switch(action.type) {
     case 'GET_STUDENT_PREVIEWS':
         return Object.assign({}, state, {
@@ -10,8 +12,8 @@ function course(state = {}, action) {
             getStudentPreviewsIsLoading: false,
         })
     case 'GET_STUDENT_PREVIEWS_DATA_SUCCESS':
-        let content = state.getStudentPreviewsData ? [...state.getStudentPreviewsData.content] : []
-        let contains = false
+        content = state.getStudentPreviewsData ? [...state.getStudentPreviewsData.content] : []
+        contains = false
         for(let value of content) {
             if(value.id === action.data.content[0].id) {
                 contains = true
@@ -120,6 +122,18 @@ function course(state = {}, action) {
             getDishonestyReportIsLoading: false,
         })
     case 'GET_DISHONESTY_REPORT_DATA_SUCCESS':
+        content = state.getDishonestyReportData ? [...state.getDishonestyReportData.content] : []
+        contains = false
+        for(let value of content) {
+            if(value.id === action.data.content[0].id) {
+                contains = true
+                break
+            }
+        }
+        if(!contains) {
+            content = content.concat(action.data.content)
+        } 
+        action.data.content = content;
         return Object.assign({}, state, {
             getDishonestyReportData: action.data,
             getDishonestyReportIsLoading: false,
