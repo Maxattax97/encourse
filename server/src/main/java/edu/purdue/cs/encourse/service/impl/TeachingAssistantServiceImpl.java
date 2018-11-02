@@ -279,7 +279,6 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         catch(IOException e) {
             return new JSONReturnable(-5, null);
         }
-        // TODO: @Ryan adjust python command if needed
         String pyPath = pythonPath + "get_individual_progress.py";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + userNameStudent;
         JSONReturnable json = runPython(command);
