@@ -9,9 +9,18 @@ import json
 import statistics
 
 
+priorities = {
+    "Average Additions": 2,
+    "Average Deletions": 3,
+    "Average Commit Count": 4,
+    "Average Estimated Time Spent": 5,
+}
+
 def jsonify(git_data, test_progress, hidden_progress=None):
     velocity_averages = []
     rate_averages = []
+    commit_count_averages = []
+    time_spent_averages = []
     additions_averages = []
     deletions_averages = []
     student_stats = {}
@@ -41,12 +50,16 @@ def jsonify(git_data, test_progress, hidden_progress=None):
         time_spent /= 3600
         velocity_averages.append(progress/time_spent)
         rate_averages.append(progress/commit_count)
+        time_spent_averages.append(time_spent)
+        commit_count_averages.append(commit_count)
         additions_averages.append(additions)
         deletions_averages.append(deletions)
 
         student_stats[student] = {
             "rate": progress/commit_count,
             "velocity": progress/time_spent,
+            "commit_count": commit_count,
+            "time_spent": time_spent,
             "additions": additions,
             "deletions": deletions
         }
@@ -62,6 +75,18 @@ def jsonify(git_data, test_progress, hidden_progress=None):
     rate_stdev = statistics.pstdev(rate_averages)
     eprint("Rate Average: {}".format(rate_mean))
     eprint("Rate Standard Deviation: {}".format(rate_stdev))
+    
+    # Find the mean and population standard deviation of commit count
+    commit_count_mean = statistics.mean(commit_count_averages)
+    commit_count_stdev = statistics.pstdev(commit_count_averages)
+    # eprint("Rate Average: {}".format(commit_count_mean))
+    # eprint("Rate Standard Deviation: {}".format(commit_count_stdev))
+    
+    # Find the mean and population standard deviation of time spent
+    time_spent_mean = statistics.mean(time_spent_averages)
+    time_spent_stdev = statistics.pstdev(time_spent_averages)
+    # eprint("Rate Average: {}".format(time_spent_mean))
+    # eprint("Rate Standard Deviation: {}".format(time_spent_stdev))
     
     # Find the mean and population standard deviation of addition and deletion metrics
     additions_mean = statistics.mean(additions_averages)
@@ -83,6 +108,14 @@ def jsonify(git_data, test_progress, hidden_progress=None):
             "mean": velocity_mean,
             "stdev": velocity_stdev
         },
+        "time_spent": {
+            "mean": time_spent_mean,
+            "stdev": time_spent_stdev
+        },
+        "commit_count": {
+            "mean": commit_count_mean,
+            "stdev": commit_count_stdev
+        },
         "additions": {
             "mean": additions_mean,
             "stdev": additions_stdev
@@ -92,6 +125,29 @@ def jsonify(git_data, test_progress, hidden_progress=None):
             "stdev": deletions_stdev
         }
     }
+    
+    class_stats = [
+        {
+            "stat_name": "Average Additions",
+            "stat_value": class_stats["additions"].mean,
+            "index": 2,
+        }
+        {
+            "stat_name": "Average Deletions",
+            "stat_value": class_stats["deletions"].mean,
+            "index": 3,
+        }
+        {
+            "stat_name": "Average Commit Count",
+            "stat_value": class_stats["commit_count"].mean,
+            "index": 4,
+        }
+        {
+            "stat_name": "Average Estimated Time Spent",
+            "stat_value": class_stats["estimated_time_spent"].mean,
+            "index": 5,
+        }
+    ]
 
     return json.dumps(class_stats, indent=2)
 
