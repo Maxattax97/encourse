@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import {BackNav, Card} from '../Helpers'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import { history } from '../../redux/store'
-import { getStudent, clearStudent } from '../../redux/actions/index'
+import { getStudent, clearStudent, runStudentTests, syncStudentRepository } from '../../redux/actions/index'
 import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {StudentFeedback, StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
@@ -42,9 +42,15 @@ class StudentPanel extends Component {
         }
 
         const actions = [
-            () => {},
-            () => {},
-            studentDishonestyRedirect,
+            () => { 
+                if(this.props.currentProjectId && this.props.currentStudent)
+                    this.props.syncStudentRepository(`${url}/api/pull/project?projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
+            },
+            () => {
+                if(this.props.currentProjectId && this.props.currentStudent)
+                    this.props.runStudentTests(`${url}/api/run/testall?projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
+            },
+            studentDishonestyRedirect
         ]
 
         return (
@@ -92,13 +98,16 @@ class StudentPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined
+        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         getStudent: (url, headers, body) => dispatch(getStudent(url, headers, body)),
+        syncStudentRepository: (url, headers, body) => dispatch(syncStudentRepository(url, headers, body)),
+        runStudentTests: (url, headers, body) => dispatch(runStudentTests(url, headers, body)),
         clearStudent: () => dispatch(clearStudent),
     }
 }

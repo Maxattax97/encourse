@@ -597,7 +597,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
     
     // TODO JARETT and REED connect new calculateDiffScore.sh
-    public JSONReturnable getClassProgress(@NonNull String projectID) {
+    public JSONReturnable getDiffScore(@NonNull String projectID) {
         JSONReturnable json = null;
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
         // String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
@@ -650,6 +650,10 @@ public class ProfessorServiceImpl implements ProfessorService {
         json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
+    }
+
+    public JSONReturnable getClassSimilar(@NonNull String projectID) {
+        return null;
     }
 
     // NOTE: Not debugged

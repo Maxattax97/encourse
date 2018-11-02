@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {BackNav} from '../Helpers'
 import {history} from '../../redux/store'
-import {clearStudent, getStudent} from '../../redux/actions'
+import {clearStudent, getStudent, syncStudentRepository, runStudentTests} from '../../redux/actions'
 import url from '../../server'
 import SyncItem from './common/SyncItem'
 import StudentDishonestyCharts from "./student-dishonesty/StudentDishonestyCharts"
@@ -29,8 +29,14 @@ class StudentDishonestyPanel extends Component {
         ]
 
         const actions = [
-            () => {  },
-            () => {  },
+            () => { 
+                if(this.props.currentProjectId && this.props.currentStudent)
+                    this.props.syncStudentRepository(`${url}/api/pull/project?projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
+            },
+            () => {
+                if(this.props.currentProjectId && this.props.currentStudent)
+                    this.props.runStudentTests(`${url}/api/run/testall?projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
+            },
             () => {  }
         ]
 
@@ -62,13 +68,16 @@ class StudentDishonestyPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined
+        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         getStudent: (url, headers, body) => dispatch(getStudent(url, headers, body)),
+        syncStudentRepository: (url, headers, body) => dispatch(syncStudentRepository(url, headers, body)),
+        runStudentTests: (url, headers, body) => dispatch(runStudentTests(url, headers, body)),
         clearStudent: () => dispatch(clearStudent),
     }
 }
