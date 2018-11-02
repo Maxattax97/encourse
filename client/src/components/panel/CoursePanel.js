@@ -5,7 +5,7 @@ import { history } from '../../redux/store'
 import url from '../../server'
 import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories, updateStudentsPage, resetStudentsPage} from '../../redux/actions'
 import ProjectNavigation from '../navigation/ProjectNavigation'
-import {CourseModal, CourseCharts, CourseStatistics, CourseStudentFilter} from './course'
+import {CourseModal, CourseAnonCharts, CourseCharts, CourseStatistics, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
 import SyncItem from './common/SyncItem'
 import {Title, SettingsIcon, BackNav} from '../Helpers'
@@ -109,7 +109,11 @@ class CoursePanel extends Component {
                         <div className='h1 break-line header' />
 
                         <h3 className='header'>Course Charts Summary</h3>
+                        <CourseAnonCharts />
 
+	                    <div className='h1 break-line header' />
+
+	                    <h3 className='header'>Students Charts Summary</h3>
                         <CourseCharts/>
 
                         <div className='h1 break-line header' />
