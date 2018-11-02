@@ -849,8 +849,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         String diffsFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_codeDiffs.txt";
-        List<StudentProject> temp = new ArrayList<StudentProject>(projects);
-        // TODO: Bash scripts
+        List<StudentProject> temp = new ArrayList<>(projects);
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(diffsFile));
             for (StudentProject projectOne : projects) {
