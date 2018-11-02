@@ -13,7 +13,7 @@ export {
 } from './projects'
 
 export {
-    logIn, logOut, changePassword, getAccount
+    logIn, logOut, changePassword, getAccount, setLocation
 } from './auth'
 
 export {

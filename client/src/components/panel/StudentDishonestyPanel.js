@@ -44,7 +44,7 @@ class StudentDishonestyPanel extends Component {
             },
             this.share
         ]
-
+        //TODO: update currentStudent correctly
         return (
             <div className="student-dishonesty-panel">
                 <div className='panel-left-nav'>
@@ -61,7 +61,7 @@ class StudentDishonestyPanel extends Component {
                 <div className='panel-center-content'>
 
                     <div className='panel-student-report'>
-                        <h1 className='header'>CS252 - { /*this.props.currentStudent ? this.props.currentStudent.first_name :*/ '' } { /*this.props.currentStudent ? this.props.currentStudent.last_name :*/ '' } - Academic Dishonesty Report</h1>
+                        <h1 className='header'>CS252 - { this.props.currentStudent ? this.props.currentStudent.first_name : '' } { this.props.currentStudent ? this.props.currentStudent.last_name : '' } - Academic Dishonesty Report</h1>
                         <div className='h1 break-line header' />
 
                         <h3 className='header'>Student Charts Summary</h3>

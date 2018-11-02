@@ -25,7 +25,7 @@ class StudentReportSummary extends Component {
 	                    <Card className='action' onClick={ () => this.clickStudentCard(student) } key={student.id}>
 		                    <div className="summary-preview">
 			                    <Title>
-				                    <h4>{ /*student.id*/ }</h4>
+				                    <h4>{ student.id }</h4>
 			                    </Title>
 			                    <div className="h4 break-line header" />
 			                    <div className="preview-content">
@@ -45,7 +45,9 @@ const mapStateToProps = (state) => {
     return {
         isHidden: state.projects ? state.projects.isHidden : false,
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : [],
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        report: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.content : [],
+
     }
 }
 

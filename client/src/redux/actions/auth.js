@@ -71,3 +71,10 @@ export function getAccountDataSuccess(data) {
 export const getAccount = genericDispatch(
     'GET_ACCOUNT', getAccountHasError, getAccountDataSuccess, 'GET'
 )
+
+export function setLocation(location) {
+    return {
+        type: 'SET_LOCATION',
+        location
+    }
+}
