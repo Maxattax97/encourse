@@ -37,6 +37,10 @@ class StudentStatistics extends Component {
     }
 
     formatApiData = (udata) => {
+        if (!udata) {
+            return null
+        }
+        udata = udata[0]
         if (!udata || !udata.data) {
             return null
         }
