@@ -481,44 +481,28 @@ public class ReadController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/velocity", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getVelocity(@RequestParam(name = "projectID") String projectID,
-                                                       @RequestParam(name = "userName", required = false) List<String> userNames) {
-        List<String> errors = new ArrayList<>();
-        List<String> correct = new ArrayList<>();
-
+                                                       @RequestParam(name = "userName") String userName) {
         JSONReturnable returnJson = null;
-
-        if (userNames == null) {
-            userNames = new ArrayList<>();
-        }
-
-        for (String userName: userNames) {
-            if (hasPermissionOverAccount(userName)) {
-                Iterator iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        returnJson = professorService.getCommitVelocity(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        returnJson = null;
-                        break;
-                    }
+        if (hasPermissionOverAccount(userName)) {
+            Iterator iter = getUserAuthorities().iterator();
+            while (iter.hasNext()) {
+                String auth = ((Authority) iter.next()).getAuthority();
+                if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                    returnJson = professorService.getCommitVelocity(projectID, userName);
+                    break;
+                } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                    returnJson = null;
+                    break;
                 }
-
-                if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add("\"" + userName + " does not have content" + "\"");
-                    continue;
-                }
-                String json = returnJson.jsonObject.toJSONString();
-                correct.add(json);
-            } else {
-                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
             }
+
+            if (returnJson == null || returnJson.jsonObject == null) {
+                return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
         }
-        if (errors.isEmpty()) {
-            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
-        }
-        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(returnJson.jsonObject.toJSONString(), HttpStatus.OK);
     }
 
 
