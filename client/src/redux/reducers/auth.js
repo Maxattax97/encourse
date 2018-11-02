@@ -60,6 +60,10 @@ function auth(state = {}, action) {
             getAccountData: action.data,
             getAccountIsLoading: false,
         })
+    case 'SET_LOCATION':
+        return Object.assign({}, state, {
+            prevLocation: action.location,
+        })
     default:
         return state
     }

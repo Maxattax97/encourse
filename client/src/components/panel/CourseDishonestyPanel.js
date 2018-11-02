@@ -91,7 +91,7 @@ class CourseDishonestyPanel extends Component {
                 </div>
 
                 <CourseDishonestyModal id={1}/>
-                <ShareReportModal id={2} link={null}/>
+                <ShareReportModal id={2} link={window.location}/>
 
                 <div className='panel-center-content'>
 

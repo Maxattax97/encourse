@@ -40,10 +40,8 @@ class StudentStatistics extends Component {
         if (!udata || !udata.data) {
             return null
         }
+
         const data = udata.data
-        if (!data) {
-            return null
-        }
 
         data.sort((d1, d2) => d1.index - d2.index)
 
@@ -51,6 +49,8 @@ class StudentStatistics extends Component {
     }
 
     render() {
+        console.log(this.state.formattedData)
+
         return (
             <div className='summary'>
                 <div className='summary-container'>
@@ -81,8 +81,8 @@ const mapStateToProps = (state) => {
     return {
         currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
-        stats: state.student && state.student.getClassStatisticsData ? state.student.getClassStatisticsData : [],
-        isLoading: state.student ? state.student.getStatisticsIsLoading : false,
+        stats: state.course && state.course.getClassStatisticsData ? state.course.getClassStatisticsData : [],
+        isLoading: state.course ? state.course.getClassStatisticsIsLoading : false,
     }
 }
 

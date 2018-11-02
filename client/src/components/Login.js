@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import logo from '../resources/encourse-logo-large.png'
-import { logIn } from '../redux/actions'
+import { logIn, setLocation } from '../redux/actions'
+
 import url from '../server'
 
 class Login extends Component {
@@ -22,6 +23,10 @@ class Login extends Component {
         this.props.logIn(`${url}/oauth/token`, {
             'Authorization': `Basic ${btoa('encourse-client:encourse-password')}`,
         }, form)
+    }
+
+    componentDidMount = () => {
+        this.props.setLocation(this.props.location.state ? this.props.location.prevRoute : null)
     }
 
     render() {
@@ -47,7 +52,8 @@ class Login extends Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        logIn: (url, headers, body) => dispatch(logIn(url, headers, body))
+        logIn: (url, headers, body) => dispatch(logIn(url, headers, body)),
+        setLocation: (location) => dispatch(setLocation(location)),
     }
 }
 
