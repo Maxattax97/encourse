@@ -20,6 +20,7 @@ import StudentDishonestyPanel from './panel/StudentDishonestyPanel'
 class Main extends Component {
 
     createPanelRef = (node) => {
+        console.log('SET PANEL: ', node)
         if(node) {
             this.panel = node
 
@@ -28,6 +29,7 @@ class Main extends Component {
     }
 
     scrollPanel = (e) => {
+        console.log('SCROLL: ', e.currentTarget.scrollHeight - e.currentTarget.scrollTop === e.currentTarget.clientHeight, this.currentChild)
         if(e.currentTarget.scrollHeight - e.currentTarget.scrollTop === e.currentTarget.clientHeight && this.currentChild && this.currentChild.scrolledToBottom) {
             this.currentChild.scrolledToBottom()
         }
@@ -39,6 +41,7 @@ class Main extends Component {
     }
 
     setChild = (node) => {
+        console.log('SET CURRENT CHILD: ', node)
         if(node)
             this.currentChild = node.getWrappedInstance()
     }
