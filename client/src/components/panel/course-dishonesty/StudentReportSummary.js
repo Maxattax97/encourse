@@ -3,11 +3,12 @@ import { connect } from 'react-redux'
 import {Card, Summary, Title} from '../../Helpers'
 import {fuzzing} from '../../../fuzz'
 import {history} from '../../../redux/store'
-import {getStudentPreviews, setCurrentStudent} from '../../../redux/actions'
+import {getStudentPreviews, setCurrentStudent, clearStudent} from '../../../redux/actions'
 
 class StudentReportSummary extends Component {
 
     clickStudentCard = (student) => {
+        this.props.clearStudent()
         if (fuzzing) {
             history.push('/student-dishonesty/student')
         } else {
@@ -52,6 +53,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
+        clearStudent: () => dispatch(clearStudent),
     }
 }
 

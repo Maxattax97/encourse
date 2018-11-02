@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { getCommitHistory } from '../../../redux/actions/index'
+import { getCommitHistory, updateCommitsPage, resetCommitsPage } from '../../../redux/actions/index'
 import url from '../../../server'
 import CommitHistory from '../common/CommitHistory'
 
@@ -23,7 +23,7 @@ class StudentCommitHistory extends Component {
 
     componentWillReceiveProps(nextProps) {
         if(this.props.isLoading && !nextProps.isLoading) {
-            this.setState({ formattedData: this.formatApiData(nextProps.data) })
+            this.setState({ formattedData: this.formatApiData(nextProps.commits) })
         }
         if (nextProps.currentProjectId !== this.props.currentProjectId) {
             this.fetch(nextProps)
@@ -32,7 +32,8 @@ class StudentCommitHistory extends Component {
 
     fetch = (props) => {
         if(props.currentProjectId) {
-            props.getCommitHistory(`${url}/api/commitList?projectID=${props.currentProjectId}&userName=${props.currentStudent.id}`)
+            props.resetCommitsPage()
+            props.getCommitHistory(`${url}/api/commitList?&size=5&page=1&projectID=${props.currentProjectId}&userName=${props.currentStudent.id}`)
         }     
     }
 
@@ -40,14 +41,17 @@ class StudentCommitHistory extends Component {
         if (!udata) {
             return defaultData
         }
-        const data = udata.data
-        const formattedData = data.slice()
+        
+        const formattedData = udata.slice()
 
         return formattedData
     }
 
     scrolledToBottom = () => {
-        console.log('bottom')
+        if(!this.props.last) {
+            this.props.getCommitHistory(`${url}/api/commitList?&size=5&page=${this.props.page + 1}&projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
+            this.props.updateCommitsPage()
+        }
     }
 
     render() {
@@ -61,14 +65,18 @@ const mapStateToProps = (state) => {
     return {
         currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
-        commits: state.student && state.student.getCommitHistoryData ? state.student.getCommitHistoryData : [],
+        commits: state.student && state.student.getCommitHistoryData ? state.student.getCommitHistoryData.content : [],
         isLoading: state.student ? state.student.getCommitHistoryIsLoading : false,
+        page: state.student && state.student.commitsPage ? state.student.commitsPage : 1,
+        last: state.student && state.student.getCommitHistoryData ? state.student.getCommitHistoryData.last : true,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getCommitHistory: (url, headers, body) => dispatch(getCommitHistory(url, headers, body))
+        getCommitHistory: (url, headers, body) => dispatch(getCommitHistory(url, headers, body)),
+        updateCommitsPage: () => dispatch(updateCommitsPage()),
+        resetCommitsPage: () => dispatch(resetCommitsPage()),
     }
 }
 

@@ -2,6 +2,30 @@ import genericDispatch from './fetch'
 import { fuzzing, realToFakeMapping, fakeToRealMapping, getFakeUid } from '../../fuzz'
 import faker from 'faker'
 
+export function updateCourseDishonestyPage() {
+    return {
+        type: 'UPDATE_COURSE_DISHONESTY_PAGE'
+    }
+}
+
+export function resetCourseDishonestyPage() {
+    return {
+        type: 'RESET_COURSE_DISHONESTY_PAGE'
+    }
+}
+
+export function updateStudentsPage() {
+    return {
+        type: 'UPDATE_STUDENTS_PAGE'
+    }
+}
+
+export function resetStudentsPage() {
+    return {
+        type: 'RESET_STUDENTS_PAGE'
+    }
+}
+
 export function getStudentPreviewsHasError(hasError) {
     return {
         type: 'GET_STUDENT_PREVIEWS_HAS_ERROR',
@@ -186,4 +210,60 @@ export function getDishonestyReportDataSuccess(data) {
 
 export const getDishonestyReport = genericDispatch(
     'GET_DISHONESTY_REPORT', getDishonestyReportHasError, getDishonestyReportDataSuccess, 'GET'
+)
+
+export function getSimilarityPlotHasError(hasError) {
+    return {
+        type: 'GET_SIMILARITY_PLOT_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getSimilarityPlotDataSuccess(data) {
+    return {
+        type: 'GET_SIMILARITY_PLOT_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getSimilarityPlot = genericDispatch(
+    'GET_SIMILARITY_PLOT', getSimilarityPlotHasError, getSimilarityPlotDataSuccess, 'GET'
+)
+
+export function getClassStatisticsHasError(hasError) {
+    return {
+        type: 'GET_CLASS_STATISTICS_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getClassStatisticsDataSuccess(data) {
+    return {
+        type: 'GET_CLASS_STATISTICS_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getClassStatistics = genericDispatch(
+    'GET_CLASS_STATISTICS', getClassStatisticsHasError, getClassStatisticsDataSuccess, 'GET'
+)
+
+export function submitStudentsHasError(hasError) {
+    return {
+        type: 'SUBMIT_STUDENTS_HAS_ERROR',
+        hasError
+    }
+}
+
+export function submitStudentsSuccess(data, updates) {
+
+    return {
+        type: 'SUBMIT_STUDENTS_SUCCESS',
+        data,
+        updates,
+    }
+}
+
+export const submitStudents = genericDispatch(
+    'SUBMIT_STUDENTS', submitStudentsHasError, submitStudentsSuccess, 'POST'
 )

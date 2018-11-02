@@ -18,8 +18,8 @@ priorities = {
     "Commit Count": 4,
     "Estimated Time Spent": 5,
     "Current Test Score": 6,
-
 }
+
 
 def combine_statistics(dates, stats, tests):
     """Creates a list of statistics for each user
@@ -102,7 +102,13 @@ def combine_statistics(dates, stats, tests):
         array_data = []
         for stat_name in user_data:
             stat_value = user_data[stat_name]
-            array_data.append({"stat_name": stat_name, "stat_value": stat_value, "index":priorities[stat_name]})
+            array_data.append(
+                {
+                    "stat_name": stat_name,
+                    "stat_value": stat_value,
+                    "index": priorities[stat_name],
+                }
+            )
         data[user] = array_data
 
     return data

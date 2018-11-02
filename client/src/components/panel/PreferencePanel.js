@@ -179,7 +179,7 @@ class PreferencePanel extends Component {
     };
 
     back = () => {
-        history.push('/course')
+        history.goBack()
     }
 
     render() {
@@ -357,14 +357,14 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addCourse: (url, headers, body) => dispatch(addCourse(url, headers, body)),
-        addAccount: (url, headers, body) => dispatch(addAccount(url, headers, body)),
-        modifyCourse: (url, headers, body) => dispatch(modifyCourse(url, headers, body)),
-        modifyAccount: (url, headers, body) => dispatch(modifyAccount(url, headers, body)),
-        removeCourse: (url, headers, body) => dispatch(removeCourse(url, headers, body)),
-        removeAccount: (url, headers, body) => dispatch(removeAccount(url, headers, body)),
-        getCourses: (url, headers, body) => dispatch(getCourses(url, headers, body)),
-        getAccounts: (url, headers, body) => dispatch(getAccounts(url, headers, body)),
+        addCourse: (url, body) => dispatch(addCourse(url, null, body)),
+        addAccount: (url, body) => dispatch(addAccount(url, null, body)),
+        modifyCourse: (url, body) => dispatch(modifyCourse(url, null, body)),
+        modifyAccount: (url, body) => dispatch(modifyAccount(url, null, body)),
+        removeCourse: (url, body) => dispatch(removeCourse(url, null, body)),
+        removeAccount: (url, body) => dispatch(removeAccount(url, null, body)),
+        getCourses: (url, body) => dispatch(getCourses(url, null, body)),
+        getAccounts: (url, body) => dispatch(getAccounts(url, null, body)),
         setModalState: (id) => dispatch(setModalState(id)),
     }
 }

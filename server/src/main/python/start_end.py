@@ -30,8 +30,6 @@ def commit_data(time_file, include_today=None):
 
     """
 
-
-
     line = time_file.readline()
     line = line.lstrip(" ").rstrip("\n")
     users = {}

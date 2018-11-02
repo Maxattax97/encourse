@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import url from '../../server'
-import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories} from '../../redux/actions/index'
+import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories, updateStudentsPage, resetStudentsPage} from '../../redux/actions'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import {CourseModal, CourseCharts, CourseStatistics, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
@@ -27,18 +27,37 @@ class CoursePanel extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`)
+        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&projectID=${this.props.currentProjectId}`)
     }
 
     scrolledToBottom = () => {
-        console.log('bottom')
+        if(!this.props.last) {
+            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=${this.props.page + 1}&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}`)
+            this.props.updateStudentsPage()
+        }
+    }
+
+    getSortBy = (value) => {
+        let id = value ? value : this.state.filters.sort_by
+        switch(id) {
+            case 0:
+                return 'id'
+            case 1:
+                return 'timeSpent'
+            case 2:
+                return 'commitCounts'
+            case 3:
+                return 'grades'
+            
+        }
     }
 
     changeFilter = (key, value) => {
-
         this.state.filters[key] = value
-
-        this.setState({ filters: Object.assign({}, this.state.filters) })
+        this.setState({ filters: Object.assign({}, this.state.filters) }, () => {
+            this.props.resetStudentsPage()
+            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=1&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}&order=${this.state.filters.order_by}&commit=${this.state.filters.commit_filter}&progress=${this.state.filters.progress_filter}&hour=${this.state.filters.hour_filter}`)
+        })
     }
 
     render() {
@@ -58,7 +77,7 @@ class CoursePanel extends Component {
             },
             () => {
                 if(this.props.currentProjectId)
-                    this.props.runTests(`${url}/api/testall/project?projectID=${this.props.currentProjectId}`)
+                    this.props.runTests(`${url}/api/run/testall?projectID=${this.props.currentProjectId}`)
             },
             () => { history.push('/course-dishonesty') }
         ]
@@ -127,7 +146,9 @@ const mapStateToProps = (state) => {
     return {
 	    projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
 	    currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
-	    currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        page: state.course && state.course.studentsPage ? state.course.studentsPage : 1,
+        last: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.last : true,
     }
 }
 
@@ -138,7 +159,9 @@ const mapDispatchToProps = (dispatch) => {
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
         setModalState: (id) => dispatch(setModalState(id)),
         runTests: (url, headers, body) => dispatch(runTests(url, headers, body)),
-        syncRepositories: (url, headers, body) => dispatch(syncRepositories(url, headers, body))
+        syncRepositories: (url, headers, body) => dispatch(syncRepositories(url, headers, body)),
+        updateStudentsPage: () => dispatch(updateStudentsPage()),
+        resetStudentsPage: () => dispatch(resetStudentsPage()),
     }
 }
 

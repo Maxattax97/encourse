@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import {CheckmarkIcon, Modal} from '../../Helpers'
+import { changePassword, setModalState } from '../../../redux/actions'
+import url from '../../../server'
 
 class CourseModal extends Component {
 
@@ -20,7 +22,17 @@ class CourseModal extends Component {
     };
 
     saveSettings = () => {
-
+        const old = this.state.current_password
+        const password = this.state.new_password
+        const confirm = this.state.new_password_confirm
+        if(password === confirm) {
+            //TODO: add error feedback
+            this.props.setModalState()
+            this.props.changePassword(`${url}/api/modify/password?newPassword=${password}&oldPassword=${old}`)
+        } else {
+            //TODO: update UI
+            alert('Passwords do not match!')
+        }
     }
 
     render() {
@@ -55,7 +67,8 @@ class CourseModal extends Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        changePassword: (url, headers, body) => dispatch(changePassword(url, headers, body)),
+        setModalState: () => dispatch(setModalState()),
     }
 }
 

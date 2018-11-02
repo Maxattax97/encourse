@@ -1,4 +1,6 @@
 function course(state = {}, action) {
+    let content;
+    let contains;
     switch(action.type) {
     case 'GET_STUDENT_PREVIEWS':
         return Object.assign({}, state, {
@@ -10,6 +12,18 @@ function course(state = {}, action) {
             getStudentPreviewsIsLoading: false,
         })
     case 'GET_STUDENT_PREVIEWS_DATA_SUCCESS':
+        content = state.getStudentPreviewsData ? [...state.getStudentPreviewsData.content] : []
+        contains = false
+        for(let value of content) {
+            if(value.id === action.data.content[0].id) {
+                contains = true
+                break
+            }
+        }
+        if(!contains) {
+            content = content.concat(action.data.content)
+        } 
+        action.data.content = content;
         return Object.assign({}, state, {
             getStudentPreviewsData: action.data,
             getStudentPreviewsIsLoading: false,
@@ -108,9 +122,94 @@ function course(state = {}, action) {
             getDishonestyReportIsLoading: false,
         })
     case 'GET_DISHONESTY_REPORT_DATA_SUCCESS':
+        content = state.getDishonestyReportData ? [...state.getDishonestyReportData.content] : []
+        contains = false
+        for(let value of content) {
+            if(value.id === action.data.content[0].id) {
+                contains = true
+                break
+            }
+        }
+        if(!contains) {
+            content = content.concat(action.data.content)
+        } 
+        action.data.content = content;
         return Object.assign({}, state, {
             getDishonestyReportData: action.data,
             getDishonestyReportIsLoading: false,
+        })
+    case 'UPDATE_COURSE_DISHONESTY_PAGE':
+        return Object.assign({}, state, {
+            dishonestyPage: state.dishonestyPage ? state.dishonestyPage + 1 : 2,
+        })
+    case 'RESET_COURSE_DISHONESTY_PAGE':
+        return Object.assign({}, state, {
+            getDishonestyReportData: null,
+            dishonestyPage: 1,
+        })
+    case 'UPDATE_STUDENTS_PAGE':
+        return Object.assign({}, state, {
+            studentsPage: state.studentsPage ? state.studentsPage + 1 : 2,
+        })
+    case 'RESET_STUDENTS_PAGE':
+        return Object.assign({}, state, {
+            getStudentPreviewsData: null,
+            studentsPage: 1,
+        })
+    case 'GET_SIMILARITY_PLOT':
+        return Object.assign({}, state, {
+            getSimilarityPlotIsLoading: true,
+        })
+    case 'GET_SIMILARITY_PLOT_HAS_ERROR':
+        return Object.assign({}, state, {
+            getSimilarityPlotHasError: action.hasError,
+            getSimilarityPlotIsLoading: false,
+        })
+    case 'GET_SIMILARITY_PLOT_DATA_SUCCESS':
+        return Object.assign({}, state, {
+            getSimilarityPlotData: action.data,
+            getSimilarityPlotIsLoading: false,
+        })
+    case 'GET_CLASS_STATISTICS':
+        return Object.assign({}, state, {
+            getClassStatisticsIsLoading: true,
+        })
+    case 'GET_CLASS_STATISTICS_HAS_ERROR':
+        return Object.assign({}, state, {
+            getClassStatisticsHasError: action.hasError,
+            getClassStatisticsIsLoading: false,
+        })
+    case 'GET_CLASS_STATISTICS_DATA_SUCCESS':
+        return Object.assign({}, state, {
+            getClassStatisticsData: action.data,
+            getClassStatisticsIsLoading: false,
+        })
+    case 'SUBMIT_STUDENTS':
+        return Object.assign({}, state, {
+            submitStudentsIsLoading: true,
+        })
+    case 'SUBMIT_STUDENTS_HAS_ERROR':
+        return Object.assign({}, state, {
+            submitStudentsHasError: action.hasError,
+            submitStudentsIsLoading: false,
+        })
+    case 'SUBMIT_STUDENTS_SUCCESS':
+        let ta = action.updates.ta
+        let updatedStudents = action.updates.students
+        let students = {...state.getStudentPreviewsData}
+        for(let student of updatedStudents) {
+            for(let student2 of students.content) {
+                if(student === student2.id) {
+                    if(!student2.teaching_assistants.includes(ta)) {
+                        student2.teaching_assistants.push(ta)
+                    }
+                }
+            }
+        }
+        return Object.assign({}, state, {
+            submitStudentsData: action.data,
+            submitStudentsIsLoading: false,
+            getStudentPreviewsData: students,
         })
     default:
         return state

@@ -3,6 +3,7 @@ from datetime import date, timedelta
 import sys
 from datetime import datetime
 
+
 def is_number(string):
     """Returns true if a string can be converted to an int, false otherwise"""
     try:
@@ -37,7 +38,7 @@ def time_string(seconds):
     minutes, seconds = divmod(seconds, 60)
     if minutes < 60:
         return "1 hour"
-        #return "{} minutes".format(int(minutes))
+        # return "{} minutes".format(int(minutes))
     hours, minutes = divmod(minutes, 60)
     return "{} hours".format(int(hours))
 

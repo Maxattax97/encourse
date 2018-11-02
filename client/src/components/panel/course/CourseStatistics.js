@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { getStatistics } from '../../../redux/actions/index'
+import { getClassStatistics } from '../../../redux/actions/index'
 import url from '../../../server'
 import {LoadingIcon, Card} from '../../Helpers'
 
@@ -32,7 +32,7 @@ class StudentStatistics extends Component {
 
     fetch = (props) => {
         if(props.currentProjectId) {
-            props.getStatistics(`${url}/api/statistics?projectID=${props.currentProjectId}&userName=${props.currentStudent.id}`)
+            props.getClassStatistics(`${url}/api/statistics?projectID=${props.currentProjectId}`)
         }
     }
 
@@ -81,14 +81,14 @@ const mapStateToProps = (state) => {
     return {
         currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
-        stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : [],
+        stats: state.student && state.student.getClassStatisticsData ? state.student.getClassStatisticsData : [],
         isLoading: state.student ? state.student.getStatisticsIsLoading : false,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getStatistics: (url, headers, body) => dispatch(getStatistics(url, headers, body))
+        getClassStatistics: (url, headers, body) => dispatch(getClassStatistics(url, headers, body))
     }
 }
 

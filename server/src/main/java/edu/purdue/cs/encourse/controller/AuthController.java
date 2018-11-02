@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value="/api")
@@ -52,10 +51,16 @@ public class AuthController {
     private EmailService emailService;
 
 
-
+    /**
+     * Updates a field in Account
+     *
+     * @param  userName (not required : defaults to the logged in user) userName of account to be modified
+     * @param  body     http request body with specified field and value to update
+     * @return          updated Account
+     */
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/modify/account", method = RequestMethod.POST, consumes = "application/json")
-    public @ResponseBody ResponseEntity<?> modifyAccount(@RequestParam(name = "userName") String userName,
+    public @ResponseBody ResponseEntity<?> modifyAccount(@RequestParam(name = "userName", required = false) String userName,
                                                          @RequestBody String body) {
         List<String> errors = new ArrayList<>();
         try {
@@ -67,9 +72,9 @@ public class AuthController {
                 String val = (String) json.get(key);
                 int result;
                 if (key.contentEquals("role")) {
-                    result = adminService.modifyAuthority(userName, val);
+                    result = adminService.modifyAuthority((userName != null) ? userName : getUserFromAuth().getUsername(), val);
                 } else {
-                    result = adminService.modifyAccount(userName, key, val);
+                    result = adminService.modifyAccount((userName != null) ? userName : getUserFromAuth().getUsername(), key, val);
                 }
 
                 if (result != 0) {
@@ -86,13 +91,29 @@ public class AuthController {
         return new ResponseEntity<>(errors, HttpStatus.NOT_MODIFIED);
     }
 
+    /**
+     * Changes the password in Account
+     *
+     * @param  oldPassword password to re-authenticate
+     * @param  newPassword password to replace
+     */
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/modify/password", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> modifyAccount(@RequestParam(name = "password") String password) {
-        userDetailsService.updatePassword(getUserFromAuth(), password);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public @ResponseBody ResponseEntity<?> modifyPassword(@RequestParam(name = "oldPassword") String oldPassword,
+                                                          @RequestParam(name = "newPassword") String newPassword) {
+        int result = userDetailsService.updatePassword(getUserFromAuth(), oldPassword, newPassword);
+        if (result == -1) {
+            return new ResponseEntity<>("{}", HttpStatus.NOT_MODIFIED);
+        }
+        return new ResponseEntity<>("{}", HttpStatus.OK);
     }
 
+    /**
+     * Adds new Account objects
+     *
+     * @param  body http request body as an array of Account objects
+     * @return      array of newly created accounts
+     */
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/accounts", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody ResponseEntity<?> createAccountsBulk(@RequestBody String body) {
@@ -153,6 +174,14 @@ public class AuthController {
         return new ResponseEntity<>(account, HttpStatus.CREATED);
     }
 
+    /**
+     * Retrieves all Account objects
+     *
+     * @param  page (not required : defaults to 1) page number requested for pagination
+     * @param  size (not required : defaults to 10) number of elements in each page
+     * @param  sortBy (not required : defaults to 'userName') field to sort by []
+     * @return      array of accounts
+     */
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/accounts", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getAccounts(@RequestParam(name = "page", defaultValue = "1", required = false) int page,
@@ -175,7 +204,7 @@ public class AuthController {
 
         JSONObject response = new JSONObject();
         response.put("content", sortedAndPagedJsonArray);
-        response.put("totalPages", accounts.size() / size + 1);
+        response.put("totalPages", accounts.size() / size + ((accounts.size() % size == 0) ? 0 : 1));
         response.put("page", page);
         response.put("totalSize", accounts.size());
         response.put("size", size);
@@ -187,6 +216,12 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /**
+     * Retrieves Account of current logged in User
+     *
+     * @param  userName (not required : defaults to current User) userName of Account to return
+     * @return      account
+     */
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/account", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getAccount(@RequestParam(name = "userName", required = false) String userName) {
@@ -200,7 +235,7 @@ public class AuthController {
         if (flag) {
             List<Account> accounts = new ArrayList<>();
             accounts.add(a);
-            return new ResponseEntity<>(accounts, HttpStatus.FOUND);
+            return new ResponseEntity<>(accounts, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

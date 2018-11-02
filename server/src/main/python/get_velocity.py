@@ -55,7 +55,9 @@ def jsonify(
 
         # get cumulative progress
         if day in scores and day in hidden_scores:
-            cumulative_progress = (scores[day]["progress"] + hidden_scores[day]["progress"]) / 2
+            cumulative_progress = (
+                scores[day]["progress"] + hidden_scores[day]["progress"]
+            ) / 2
         elif day in scores:
             cumulative_progress = scores[day]["progress"]
         elif day in hidden_scores:

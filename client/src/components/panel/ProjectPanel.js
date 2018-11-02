@@ -20,7 +20,7 @@ class ProjectPanel extends Component {
     }
 
     back = () => {
-        history.push('/course')
+        history.goBack()
     };
 
     render() {

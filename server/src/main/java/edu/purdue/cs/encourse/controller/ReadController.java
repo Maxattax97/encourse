@@ -53,7 +53,11 @@ public class ReadController {
                                                           @RequestParam(name = "size", defaultValue = "100", required = false) int size,
                                                           @RequestParam(name = "sortBy", defaultValue = "id", required = false) String sortBy,
                                                           @RequestParam(name = "projectID", required = false) String projectID,
-                                                          @RequestParam(name = "userName", required = false) List<String> userNames) {
+                                                          @RequestParam(name = "userName", required = false) List<String> userNames,
+                                                          @RequestParam(name = "order", defaultValue = "0", required = false) int order,
+                                                          @RequestParam(name = "commit", defaultValue = "0", required = false) int commit,
+                                                          @RequestParam(name = "hours", defaultValue = "0", required = false) int hour,
+                                                          @RequestParam(name = "progress", defaultValue = "0", required = false) int progress) {
         JSONArray returnJson = null;
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
@@ -87,17 +91,50 @@ public class ReadController {
         if (specificStudent) {
             return new ResponseEntity<>(specifiedStudents, HttpStatus.OK);
         }
+        // Filtering
+        int[] commits = {0, 10, 25, 100, 500};
+        int[] hours = {0, 5, 10, 25};
+        int[] progresses = {0, 25, 50, 75};
 
+        if (commit != 0) {
+            if (commit >= commits.length) {
+                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commits.length - 1] );
+            } else {
+                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() > commits[commit] ||
+                                          ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commit - 1]);
+            }
+        }
+
+        if (hour != 0) {
+            if (hour >= hours.length) {
+                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hours.length - 1] );
+            } else {
+                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() > hours[hour] ||
+                                          ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hour - 1]);
+            }
+        }
+
+        if (progress != 0) {
+            if (progress >= progresses.length) {
+                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progresses.length - 1] );
+            } else {
+                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() > progresses[progress] ||
+                                          ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progress - 1]);
+            }
+        }
+
+        // Sorting
         Comparator<JSONObject> compare;
         switch(sortBy) {
             case "timeSpent":
             case "grades":
+            case "commitCounts":
                 if (projectID == null) {
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
-                compare = (JSONObject a, JSONObject b) -> {
-                    JSONObject jsonA = (JSONObject) a.get(sortBy);
-                    JSONObject jsonB = (JSONObject) b.get(sortBy);
+                compare = (a, b) -> {
+                    TreeMap jsonA = (TreeMap) a.get(sortBy);
+                    TreeMap jsonB = (TreeMap) b.get(sortBy);
 
                     double valA = ((Number)jsonA.get(projectID)).doubleValue();
                     double valB = ((Number)jsonB.get(projectID)).doubleValue();
@@ -113,7 +150,7 @@ public class ReadController {
                 };
                 break;
         }
-        jsonValues.sort(compare);
+        jsonValues.sort(order == 0 ? compare : compare.reversed());
 
         JSONArray sortedAndPagedJsonArray = new JSONArray();
         page = (page > jsonValues.size() / size + 1) ? jsonValues.size() / size + 1 : page;
@@ -126,7 +163,7 @@ public class ReadController {
 
         JSONObject response = new JSONObject();
         response.put("content", sortedAndPagedJsonArray);
-        response.put("totalPages", jsonValues.size() / size + 1);
+        response.put("totalPages", jsonValues.size() / size + ((jsonValues.size() % size == 0) ? 0 : 1));
         response.put("page", page);
         response.put("totalSize", jsonValues.size());
         response.put("size", size);
@@ -189,7 +226,7 @@ public class ReadController {
 
             JSONObject response = new JSONObject();
             response.put("content", sortedAndPagedJsonArray);
-            response.put("totalPages", sections.size() / size + 1);
+            response.put("totalPages", sections.size() / size + ((sections.size() % size == 0) ? 0 : 1));
             response.put("page", page);
             response.put("totalSize", sections.size());
             response.put("size", size);
@@ -237,19 +274,28 @@ public class ReadController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/testSummary", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getTestSummary(@RequestParam(name = "projectID") String projectID,
+                                                          @RequestParam(name = "userName", required = false) List<String> userNames,
                                                           @RequestParam(name = "anonymous", defaultValue = "false", required = false) boolean anon) {
         JSONReturnable returnJson = null;
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
             String auth = ((Authority) iter.next()).getAuthority();
             if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                returnJson = professorService.getTestSummary(projectID);
+                if (userNames != null) {
+                    returnJson = professorService.getGroupTestSummary(projectID, userNames);
+                } else {
+                    returnJson = professorService.getTestSummary(projectID);
+                }
                 break;
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
                 if (anon) {
                     returnJson = professorService.getTestSummary(projectID);
                 } else {
-                    returnJson = taService.getAssignmentsTestSummary(projectID, getUserFromAuth().getUsername());
+                    if (userNames != null) {
+                        returnJson = taService.getGroupTestSummary(projectID, userNames, getUserFromAuth().getUsername());
+                    } else {
+                        returnJson = taService.getAssignmentsTestSummary(projectID, getUserFromAuth().getUsername());
+                    }
                 }
                 break;
             }
@@ -355,7 +401,7 @@ public class ReadController {
 
         JSONObject response = new JSONObject();
         response.put("content", sortedAndPagedJsonArray);
-        response.put("totalPages", jsonValues.size() / size + 1);
+        response.put("totalPages", jsonValues.size() / size + ((jsonValues.size() % size == 0) ? 0 : 1));
         response.put("page", page);
         response.put("totalSize", jsonValues.size());
         response.put("size", size);
@@ -407,38 +453,114 @@ public class ReadController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStatistics(@RequestParam(name = "projectID") String projectID,
-                                                         @RequestParam(name = "userName") List<String> userNames) {
-        List<String> errors = new ArrayList<>();
-        List<String> correct = new ArrayList<>();
-        for (String userName: userNames) {
-            if (hasPermissionOverAccount(userName)) {
-                JSONReturnable returnJson = null;
-                Iterator iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        returnJson = professorService.getStatistics(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        returnJson = taService.getStatistics(projectID, userName, getUserFromAuth().getUsername());
+                                                         @RequestParam(name = "userName", required = false) List<String> userNames) {
+        JSONArray returnJson = new JSONArray();
+        Iterator iter = getUserAuthorities().iterator();
+        while (iter.hasNext()) {
+            String auth = ((Authority) iter.next()).getAuthority();
+            if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                if (userNames == null) {
+                    JSONReturnable curr = professorService.getClassStatistics(projectID);
+                    if (curr != null && curr.getJsonObject() != null) {
+                        returnJson.add(curr.getJsonObject());
+                    }
+                } else {
+                    if (userNames.size() == 1) {
+                        JSONReturnable curr = professorService.getStatistics(projectID, userNames.get(0));
+                        if (curr != null && curr.getJsonObject() != null) {
+                            returnJson.add(curr.getJsonObject());
+                        }
                         break;
                     }
+                    for (String userName: userNames) {
+                        JSONReturnable curr = professorService.getStatistics(projectID, userName);
+                        if (curr != null && curr.getJsonObject() != null) {
+                            JSONArray a = (JSONArray) curr.getJsonObject().get("data");
+                            JSONObject obj = new JSONObject();
+                            obj.put(userName, a);
+                            returnJson.add(obj);
+                        }
+                    }
                 }
-
-                if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add("\"" + userName + " does not have content" + "\"");
-                    continue;
+                break;
+            } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                if (userNames == null) {
+                    JSONReturnable curr = taService.getAssignmentsStatistics(projectID, getUserFromAuth().getUsername());
+                    if (curr != null && curr.getJsonObject() != null) {
+                        returnJson.add(curr.getJsonObject());
+                    }
+                } else {
+                    if (userNames.size() == 1) {
+                        JSONReturnable curr = professorService.getStatistics(projectID, userNames.get(0));
+                        if (curr != null && curr.getJsonObject() != null) {
+                            returnJson.add(curr.getJsonObject());
+                        }
+                        break;
+                    }
+                    for (String userName: userNames) {
+                        JSONReturnable curr = taService.getStatistics(projectID, userName, getUserFromAuth().getUsername());
+                        if (curr != null && curr.getJsonObject() != null) {
+                            JSONArray a = (JSONArray) curr.getJsonObject().get("data");
+                            JSONObject obj = new JSONObject();
+                            obj.put(userName, a);
+                            returnJson.add(obj);
+                        }
+                    }
                 }
-                String json = returnJson.jsonObject.toJSONString();
-                correct.add(json);
-            } else {
-                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
+                break;
             }
         }
-        if (errors.isEmpty()) {
-            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
+
+        if (returnJson.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(returnJson, HttpStatus.OK);
+
+//        List<String> errors = new ArrayList<>();
+//        List<String> correct = new ArrayList<>();
+//        for (String userName: userNames) {
+//            if (hasPermissionOverAccount(userName)) {
+//                JSONReturnable returnJson = null;
+//                Iterator iter = getUserAuthorities().iterator();
+//                while (iter.hasNext()) {
+//                    String auth = ((Authority) iter.next()).getAuthority();
+//                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+//                        returnJson = professorService.getStatistics(projectID, userName);
+//                        break;
+//                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
+//                        returnJson = taService.getStatistics(projectID, userName, getUserFromAuth().getUsername());
+//                        break;
+//                    }
+//                }
+//
+//                if (returnJson == null || returnJson.jsonObject == null) {
+//                    errors.add("\"" + userName + " does not have content" + "\"");
+//                    continue;
+//                }
+//                String json = returnJson.jsonObject.toJSONString();
+//                correct.add(json);
+//            } else {
+//                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
+//            }
+//        }
+//        if (errors.isEmpty()) {
+//            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/classStatistics", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getClassStatistics(@RequestParam(name = "projectID") String projectID) {
+        JSONReturnable returnJson = professorService.getClassStatistics(projectID);
+        if (returnJson == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        String json = returnJson.jsonObject.toJSONString();
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -511,60 +633,89 @@ public class ReadController {
     @RequestMapping(value = "/progress", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
                                                        @RequestParam(name = "userName", required = false) List<String> userNames) {
-        List<String> errors = new ArrayList<>();
-        List<String> correct = new ArrayList<>();
-
         JSONReturnable returnJson = null;
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
             String auth = ((Authority) iter.next()).getAuthority();
             if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                break;
-            } else if (auth.contentEquals(Account.Role_Names.TA) && userNames == null) {
-                returnJson = taService.getAssignmentsProgress(projectID, getUserFromAuth().getUsername());
-                if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add("\"" + getUserFromAuth().getUsername() + "'s students do not have content" + "\"");
-                    break;
+                if (userNames != null && userNames.size() == 1) {
+                    returnJson = professorService.getStudentProgress(projectID, userNames.get(0));
+                } else if (userNames != null) {
+                    returnJson = professorService.getGroupProgress(projectID, userNames);
+                } else {
+                    returnJson = professorService.getClassProgress(projectID);
                 }
-                String json = returnJson.jsonObject.toJSONString();
-                correct.add(json);
+                break;
+            } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                if (userNames != null && userNames.size() == 1) {
+                    returnJson = taService.getStudentProgress(projectID, userNames.get(0), getUserFromAuth().getUsername());
+                } else if (userNames != null) {
+                    returnJson = taService.getGroupProgress(projectID, userNames, getUserFromAuth().getUsername());
+                } else {
+                    returnJson = taService.getAssignmentsProgress(projectID, getUserFromAuth().getUsername());
+                }
                 break;
             }
         }
-        if (userNames == null) {
-            userNames = new ArrayList<>();
-        }
 
-        for (String userName: userNames) {
-            if (hasPermissionOverAccount(userName)) {
-                iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        returnJson = professorService.getStudentProgress(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        // TODO: Change this back once fixed
-                        returnJson = professorService.getStudentProgress(projectID, userName);
-                        //returnJson = taService.getStudentProgress(projectID, userName, getUserFromAuth().getUsername());
-                        break;
-                    }
-                }
+        if (returnJson == null || returnJson.getJsonObject() == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(returnJson.getJsonObject().toJSONString(), HttpStatus.OK);
 
-                if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add("\"" + userName + " does not have content" + "\"");
-                    continue;
-                }
-                String json = returnJson.jsonObject.toJSONString();
-                correct.add(json);
-            } else {
-                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
-            }
-        }
-        if (errors.isEmpty()) {
-            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
-        }
-        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
+//        List<String> errors = new ArrayList<>();
+//        List<String> correct = new ArrayList<>();
+//        JSONReturnable returnJson = null;
+//        Iterator iter = getUserAuthorities().iterator();
+//        while (iter.hasNext()) {
+//            String auth = ((Authority) iter.next()).getAuthority();
+//            if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+//                break;
+//            } else if (auth.contentEquals(Account.Role_Names.TA) && userNames == null) {
+//                returnJson = taService.getAssignmentsProgress(projectID, getUserFromAuth().getUsername());
+//                if (returnJson == null || returnJson.jsonObject == null) {
+//                    errors.add("\"" + getUserFromAuth().getUsername() + "'s students do not have content" + "\"");
+//                    break;
+//                }
+//                String json = returnJson.jsonObject.toJSONString();
+//                correct.add(json);
+//                break;
+//            }
+//        }
+//        if (userNames == null) {
+//            userNames = new ArrayList<>();
+//        }
+//
+//        for (String userName: userNames) {
+//            if (hasPermissionOverAccount(userName)) {
+//                iter = getUserAuthorities().iterator();
+//                while (iter.hasNext()) {
+//                    String auth = ((Authority) iter.next()).getAuthority();
+//                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+//                        //returnJson = professorService.getStudentProgress(projectID, userName);
+//                        break;
+//                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
+//                        // TODO: Change this back once fixed
+//                        //returnJson = professorService.getStudentProgress(projectID, userName);
+//                        //returnJson = taService.getStudentProgress(projectID, userName, getUserFromAuth().getUsername());
+//                        break;
+//                    }
+//                }
+//
+//                if (returnJson == null || returnJson.jsonObject == null) {
+//                    errors.add("\"" + userName + " does not have content" + "\"");
+//                    continue;
+//                }
+//                String json = returnJson.jsonObject.toJSONString();
+//                correct.add(json);
+//            } else {
+//                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
+//            }
+//        }
+//        if (errors.isEmpty()) {
+//            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
     }
 
 
@@ -658,7 +809,7 @@ public class ReadController {
 
         JSONObject response = new JSONObject();
         response.put("content", sortedAndPagedJsonArray);
-        response.put("totalPages", jsonValues.size() / size + 1);
+        response.put("totalPages", jsonValues.size() / size + ((jsonValues.size() % size == 0) ? 0 : 1));
         response.put("page", page);
         response.put("totalSize", jsonValues.size());
         response.put("size", size);

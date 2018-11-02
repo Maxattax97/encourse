@@ -68,7 +68,7 @@ class CourseCompletionProgress extends Component {
 
     fetch = (props) => {
         if(props.currentProjectId) {
-            props.getData(`${url}/api/classProgress?projectID=${props.currentProjectId}`)
+            props.getData(`${url}/api/progress?projectID=${props.currentProjectId}`)
         }    
     }
 

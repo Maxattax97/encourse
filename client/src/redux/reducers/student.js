@@ -1,5 +1,6 @@
 function student(state = {}, action) {
-
+    let content
+    let contains
     switch(action.type) {
     case 'SET_CURRENT_STUDENT':
         return Object.assign({}, state, {
@@ -26,6 +27,7 @@ function student(state = {}, action) {
     case 'GET_STUDENT_DATA_SUCCESS':
         return Object.assign({}, state, {
             getStudentData: action.data,
+            currentStudent: action.data,
             getStudentIsLoading: false,
         })
     case 'GET_PROGRESS_LINE':
@@ -94,6 +96,18 @@ function student(state = {}, action) {
             getCommitHistoryIsLoading: false,
         })
     case 'GET_COMMIT_HISTORY_DATA_SUCCESS':
+        content = state.getCommitHistoryData ? [...state.getCommitHistoryData.content] : []
+        contains = false
+        for(let value of content) {
+            if(value.date === action.data.content[0].date) {
+                contains = true
+                break
+            }
+        }
+        if(!contains) {
+            content = content.concat(action.data.content)
+        } 
+        action.data.content = content;
         return Object.assign({}, state, {
             getCommitHistoryData: action.data,
             getCommitHistoryIsLoading: false,
@@ -125,6 +139,14 @@ function student(state = {}, action) {
         return Object.assign({}, state, {
             getProgressPerCommitData: action.data,
             getProgressPerCommitIsLoading: false,
+        })
+    case 'UPDATE_COMMITS_PAGE':
+        return Object.assign({}, state, {
+            commitsPage: state.commitsPage ? state.commitsPage + 1 : 2,
+        })
+    case 'RESET_COMMITS_PAGE':
+        return Object.assign({}, state, {
+            commitsPage: 1,
         })
     default:
         return state

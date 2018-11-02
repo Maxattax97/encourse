@@ -4,12 +4,19 @@ import ActionNavigation from '../navigation/ActionNavigation'
 import {BackNav} from '../Helpers'
 import {history} from '../../redux/store'
 import {clearStudent, getStudent} from '../../redux/actions'
+import url from '../../server'
 import StudentDishonestyCharts from "./student-dishonesty/StudentDishonestyCharts"
 
 class StudentDishonestyPanel extends Component {
 
+    componentDidMount = () => {
+        if(!this.props.currentStudent) {
+            this.props.getStudent(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&userName=${this.props.match.params.id}`)
+        }
+    }
+
     back = () => {
-        history.push('/course')
+        history.goBack()
     }
 
     render() {
@@ -47,7 +54,7 @@ class StudentDishonestyPanel extends Component {
                 <div className='panel-center-content'>
 
                     <div className='panel-student-report'>
-                        <h1 className='header'>CS252 - { this.props.currentStudent.first_name } { this.props.currentStudent.last_name } - Academic Dishonesty Report</h1>
+                        <h1 className='header'>CS252 - { this.props.currentStudent ? this.props.currentStudent.first_name : '' } { this.props.currentStudent ? this.props.currentStudent.last_name : '' } - Academic Dishonesty Report</h1>
                         <div className='h1 break-line header' />
 
                         <h3 className='header'>Student Charts Summary</h3>
