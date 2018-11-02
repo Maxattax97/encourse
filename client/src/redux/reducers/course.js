@@ -170,6 +170,20 @@ function course(state = {}, action) {
             getSimilarityPlotData: action.data,
             getSimilarityPlotIsLoading: false,
         })
+    case 'GET_CLASS_STATISTICS':
+        return Object.assign({}, state, {
+            getClassStatisticsIsLoading: true,
+        })
+    case 'GET_CLASS_STATISTICS_HAS_ERROR':
+        return Object.assign({}, state, {
+            getClassStatisticsHasError: action.hasError,
+            getClassStatisticsIsLoading: false,
+        })
+    case 'GET_CLASS_STATISTICS_DATA_SUCCESS':
+        return Object.assign({}, state, {
+            getClassStatisticsData: action.data,
+            getClassStatisticsIsLoading: false,
+        })
     default:
         return state
     }

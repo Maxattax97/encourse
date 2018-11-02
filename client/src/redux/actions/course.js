@@ -206,6 +206,24 @@ export const getSimilarityPlot = genericDispatch(
     'GET_SIMILARITY_PLOT', getSimilarityPlotHasError, getSimilarityPlotDataSuccess, 'GET'
 )
 
+export function getClassStatisticsHasError(hasError) {
+    return {
+        type: 'GET_CLASS_STATISTICS_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getClassStatisticsDataSuccess(data) {
+    return {
+        type: 'GET_CLASS_STATISTICS_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getClassStatistics = genericDispatch(
+    'GET_CLASS_STATISTICS', getClassStatisticsHasError, getClassStatisticsDataSuccess, 'GET'
+)
+
 export function updateCourseDishonestyPage() {
     return {
         type: 'UPDATE_COURSE_DISHONESTY_PAGE'
