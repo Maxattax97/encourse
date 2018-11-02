@@ -8,7 +8,7 @@ import { getProgressPerCommit } from '../../../../redux/actions/index'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
 
-/*const defaultData = [
+const defaultData = [
     {date: moment('2018-09-16').valueOf(), progress: 0, timeSpent: 0, commitCount: 0},
     {date: moment('2018-09-17').valueOf(), progress: 0, timeSpent: 0, commitCount: 0},
     {date: moment('2018-09-18').valueOf(), progress: 0, timeSpent: 0, commitCount: 0},
@@ -21,7 +21,7 @@ import {LoadingIcon} from '../../../Helpers'
     {date: moment('2018-09-25').valueOf(), progress: 10, timeSpent: 2, commitCount: 50},
     {date: moment('2018-09-26').valueOf(), progress: 50, timeSpent: 7, commitCount: 200},
     {date: moment('2018-09-27').valueOf(), progress: 10, timeSpent: 3, commitCount: 50},
-]*/
+]
 
 class StudentVelocityPerCommit extends Component {
 
@@ -68,12 +68,12 @@ class StudentVelocityPerCommit extends Component {
 
     formatApiData = (udata) => {
         if (!udata) {
-            return null
+            return defaultData
         }
         let data = udata.data
 
         if (!data || data.length === 0) {
-            return null
+            return defaultData
         }
 
         for (let entry of data) {
@@ -88,7 +88,7 @@ class StudentVelocityPerCommit extends Component {
 
     render() {
         return (
-            this.props.isLoading !== undefined && !this.props.isLoading && this.state.formattedData.length > 0
+            this.props.isLoading !== undefined && !this.props.isLoading
                 ? <div className="chart-container">
                     <ResponsiveContainer width="100%" height="100%">
                         <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>

@@ -7,7 +7,6 @@ export default function refreshMiddleware() {
     return ({ dispatch, getState }) => next => (action) => {
         
         const { request, type } = action
-     
         if (!request) {
             return next(action)
         }

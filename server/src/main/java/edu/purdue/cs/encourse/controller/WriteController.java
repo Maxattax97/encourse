@@ -46,7 +46,7 @@ public class WriteController {
     private EmailService emailService;
 
     @Autowired
-    private TeachingAssistantStudentRepository teachingAssistantStudentRepository;
+    private TeachingAssistantService taService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/add/section", method = RequestMethod.POST, consumes = "application/json")
@@ -321,11 +321,34 @@ public class WriteController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    @RequestMapping(value = "/testall/project", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> testProject(@RequestParam(name = "projectID") String projectID) {
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
+    @RequestMapping(value = "/run/testall", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> testProject(@RequestParam(name = "projectID", required = false) String projectID,
+                                                       @RequestParam(name = "userName", required = false) String userName,
+                                                       @RequestParam(name = "historic", required = false, defaultValue = "false") boolean historic) {
 
-        int result = professorService.runTestall(projectID);
+        int result = -1;
+        if (historic) {
+            if (projectID != null) {
+                result = professorService.runHistoricTestall(projectID);
+            }
+        } else {
+            if (projectID != null && userName == null) {
+                result = professorService.runTestall(projectID);
+            } else if (projectID != null) {
+                Iterator<Authority> iter = getUserAuthorities().iterator();
+                while (iter.hasNext()) {
+                    String auth = iter.next().getAuthority();
+                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                        result = professorService.runTestallForStudent(projectID, userName);
+                        break;
+                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                        result = taService.runTestallForStudent(projectID, userName, getUserFromAuth().getUsername());
+                        break;
+                    }
+                }
+            }
+        }
         if (result == 0) {
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else if (result == -1) {
@@ -333,11 +356,16 @@ public class WriteController {
         } else {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
+
     }
 
     private User getUserFromAuth() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return ((User)securityContext.getAuthentication().getPrincipal());
+    }
+
+    private Collection<Authority> getUserAuthorities() {
+        return getUserFromAuth().getAuthorities();
     }
 
     private boolean hasPermissionOverAccount(String userName) {

@@ -129,9 +129,8 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            json =  new JSONReturnable(-2, null);
+            json = new JSONReturnable(-2, null);
         }
-        System.out.println("JSON: " + json.getJsonObject().toJSONString());
         return json;
     }
 

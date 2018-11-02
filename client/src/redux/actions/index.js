@@ -1,6 +1,6 @@
 export { 
     getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, 
-    getSectionsData, syncRepositories, runTests
+    getSectionsData, syncRepositories, runTests, getDishonestyReport,
 } from './course' 
 
 export {
@@ -16,7 +16,7 @@ export {
 export {
     setCurrentStudent, clearStudent,
     getStudent, getProgressLine, getCodeFrequency, getCommitFrequency, getStatistics,
-    getCommitHistory, getProgressPerTime, getProgressPerCommit, getDishonestyReport
+    getCommitHistory, getProgressPerTime, getProgressPerCommit,
 } from './student'
 
 export {
@@ -25,7 +25,7 @@ export {
 } from './admin'
 
 export {
-    getTeachingAssistants
+    getTeachingAssistants, submitStudents,
 } from './teaching_assistant'
 
 export {

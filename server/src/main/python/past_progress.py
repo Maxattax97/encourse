@@ -40,6 +40,7 @@ def past_progress(time_file):
     while line != "":
         # print(line)
         words = line.split(" ")
+        eprint(words)
         if words[0] == "Start":
             # Update the current user
             current_name = words[1]
