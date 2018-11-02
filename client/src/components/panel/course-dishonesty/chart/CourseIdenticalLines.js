@@ -92,7 +92,7 @@ class CourseIdenticalLinesChart extends Component {
     
     fetch = (props) => {
         if(props.currentProjectId) {
-            props.getData(/*TODO: Add endpoint*/)
+            props.getData(`${url}/api/classSimilar?projectID=${props.currentProjectId}`)
         }    
     }
 
