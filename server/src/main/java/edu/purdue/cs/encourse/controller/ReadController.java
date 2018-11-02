@@ -416,38 +416,82 @@ public class ReadController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStatistics(@RequestParam(name = "projectID") String projectID,
-                                                         @RequestParam(name = "userName") List<String> userNames) {
-        List<String> errors = new ArrayList<>();
-        List<String> correct = new ArrayList<>();
-        for (String userName: userNames) {
-            if (hasPermissionOverAccount(userName)) {
-                JSONReturnable returnJson = null;
-                Iterator iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        returnJson = professorService.getStatistics(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        returnJson = taService.getStatistics(projectID, userName, getUserFromAuth().getUsername());
-                        break;
+                                                         @RequestParam(name = "userName", required = false) List<String> userNames) {
+        JSONArray returnJson = new JSONArray();
+        Iterator iter = getUserAuthorities().iterator();
+        while (iter.hasNext()) {
+            String auth = ((Authority) iter.next()).getAuthority();
+            if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                if (userNames == null) {
+                    JSONReturnable curr = professorService.getClassStatistics(projectID);
+                    if (curr != null && curr.getJsonObject() != null) {
+                        returnJson.add(curr.getJsonObject());
+                    }
+                } else {
+                    JSONArray arr = new JSONArray();
+                    for (String userName: userNames) {
+                        JSONReturnable curr = professorService.getStatistics(projectID, userName);
+                        if (curr != null && curr.getJsonObject() != null) {
+                            arr.add(curr.getJsonObject());
+                        }
                     }
                 }
-
-                if (returnJson == null || returnJson.jsonObject == null) {
-                    errors.add("\"" + userName + " does not have content" + "\"");
-                    continue;
+                break;
+            } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                if (userNames == null) {
+                    JSONReturnable curr = taService.getAssignmentsStatistics(projectID, getUserFromAuth().getUsername());
+                    if (curr != null && curr.getJsonObject() != null) {
+                        returnJson.add(curr.getJsonObject());
+                    }
+                } else {
+                    JSONArray arr = new JSONArray();
+                    for (String userName: userNames) {
+                        JSONReturnable curr = taService.getStatistics(projectID, userName, getUserFromAuth().getUsername());
+                        if (curr != null && curr.getJsonObject() != null) {
+                            arr.add(curr.getJsonObject());
+                        }
+                    }
                 }
-                String json = returnJson.jsonObject.toJSONString();
-                correct.add(json);
-            } else {
-                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
+                break;
             }
         }
-        if (errors.isEmpty()) {
-            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
+
+        if (returnJson.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(returnJson, HttpStatus.OK);
+
+//        List<String> errors = new ArrayList<>();
+//        List<String> correct = new ArrayList<>();
+//        for (String userName: userNames) {
+//            if (hasPermissionOverAccount(userName)) {
+//                JSONReturnable returnJson = null;
+//                Iterator iter = getUserAuthorities().iterator();
+//                while (iter.hasNext()) {
+//                    String auth = ((Authority) iter.next()).getAuthority();
+//                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+//                        returnJson = professorService.getStatistics(projectID, userName);
+//                        break;
+//                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
+//                        returnJson = taService.getStatistics(projectID, userName, getUserFromAuth().getUsername());
+//                        break;
+//                    }
+//                }
+//
+//                if (returnJson == null || returnJson.jsonObject == null) {
+//                    errors.add("\"" + userName + " does not have content" + "\"");
+//                    continue;
+//                }
+//                String json = returnJson.jsonObject.toJSONString();
+//                correct.add(json);
+//            } else {
+//                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
+//            }
+//        }
+//        if (errors.isEmpty()) {
+//            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
