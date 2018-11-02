@@ -7,6 +7,10 @@ export {
 } from './CourseModal'
 
 export {
+    default as CourseStatistics
+} from './CourseStatistics'
+
+export {
     default as CourseStudentFilter
 } from './CourseStudentFilter'
 

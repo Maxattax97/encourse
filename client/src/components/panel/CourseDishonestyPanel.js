@@ -54,8 +54,6 @@ class CourseDishonestyPanel extends Component {
             () => {  }
         ]
 
-        console.log(this.state.filters)
-
         return (
             <div className="class-dishonesty-panel">
 
