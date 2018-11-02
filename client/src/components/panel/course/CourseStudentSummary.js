@@ -56,8 +56,8 @@ class CourseStudentSummary extends Component {
                     this.props.students.map( (student) =>
 	                    <PreviewCard onClick={ () => this.clickStudentCard(student) } isSelected={ this.state.cards_selected[student.id] } key={ student.id }>
 		                    <Title>
-			                    <h4>{ student.first_name }</h4>
-			                    <h4>{ student.last_name }</h4>
+			                    <h4>{ /*student.first_name*/ }</h4>
+			                    <h4>{ /*student.last_name*/ }</h4>
 		                    </Title>
 		                    <div className="h4 break-line header" />
 		                    <div className="preview-content">

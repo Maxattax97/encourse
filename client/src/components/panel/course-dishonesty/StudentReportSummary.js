@@ -25,7 +25,7 @@ class StudentReportSummary extends Component {
 	                    <Card className='action' onClick={ () => this.clickStudentCard(student) } key={student.id}>
 		                    <div className="summary-preview">
 			                    <Title>
-				                    <h4>{ student.id }</h4>
+				                    <h4>{ /*student.id*/ }</h4>
 			                    </Title>
 			                    <div className="h4 break-line header" />
 			                    <div className="preview-content">
