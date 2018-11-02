@@ -53,13 +53,11 @@ class CoursePanel extends Component {
     }
 
     changeFilter = (key, value) => {
-        console.log(key, value)
         this.state.filters[key] = value
-        if(key === 'sort_by') {
+        this.setState({ filters: Object.assign({}, this.state.filters) }, () => {
             this.props.resetStudentsPage()
-            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=1&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy(value)}`)
-        }
-        this.setState({ filters: Object.assign({}, this.state.filters) })
+            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=1&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}&order=${this.state.filters.order_by}&commit=${this.state.filters.commit_filter}&progress=${this.state.filters.progress_filter}&hour=${this.state.filters.hour_filter}`)
+        })
     }
 
     render() {
