@@ -179,7 +179,6 @@ public class AuthController {
      *
      * @param  page (not required : defaults to 1) page number requested for pagination
      * @param  size (not required : defaults to 10) number of elements in each page
-     * @param  sortBy (not required : defaults to 'userName') field to sort by []
      * @return      array of accounts
      */
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -241,6 +240,10 @@ public class AuthController {
         }
     }
 
+    /**
+     * Logs the current logged in User out
+     *
+     */
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> logout(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
