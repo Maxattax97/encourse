@@ -1,4 +1,8 @@
 export {
+    default as CourseAnonCharts
+} from './CourseAnonCharts'
+
+export {
     default as CourseCharts
 } from './CourseCharts'
 

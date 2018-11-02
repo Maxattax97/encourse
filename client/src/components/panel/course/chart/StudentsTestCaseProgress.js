@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { ComposedChart, Bar, Brush, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import { connect } from 'react-redux'
-import { getTestBarGraph, getTestBarGraphAnon } from '../../../../redux/actions/index'
+import { getTestBarGraph } from '../../../../redux/actions/index'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
 
@@ -78,15 +78,9 @@ class StudentsTestCaseProgress extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(!this.props.anon) {
-            if(this.props.isLoading && !nextProps.isLoading) {
-                this.setState({ formattedData: this.formatApiData(nextProps.data) })
-            }
-        } else {
-            if(this.props.isLoadingAnon && !nextProps.isLoadingAnon) {
-                this.setState({ formattedData: this.formatApiData(nextProps.data) })
-            }
-        }   
+        if (nextProps.data === null) {
+            this.setState({ formattedData: this.getDefaultData(nextProps) })
+        }
         if (this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
@@ -101,11 +95,7 @@ class StudentsTestCaseProgress extends Component {
 
     fetch = (props) => {
         if(props.currentProjectId) {
-            if(props.anon) {
-                props.getAnonData(`${url}/api/testSummary?projectID=${props.currentProjectId}&anonymous=true`)
-            } else {
-                props.getData(`${url}/api/testSummary?projectID=${props.currentProjectId}`)
-            }     
+            props.getData(`${url}/api/testSummary?projectID=${props.currentProjectId}`)
         }   
     }
 
@@ -173,15 +163,13 @@ const mapStateToProps = (state) => {
     return {
         data: state.course && state.course.getTestBarGraphData ? state.course.getTestBarGraphData : null,
         isLoading: state.course ? state.course.getTestBarGraphIsLoading : false,
-        issLoadingAnon: state.course ? state.course.getTestBarGraphIsLoadingAnon : false,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getData: (url, headers, body) => dispatch(getTestBarGraph(url, headers, body)),
-        getAnonData: (url, headers, body) => dispatch(getTestBarGraphAnon(url, headers, body)),
+        getData: (url, headers, body) => dispatch(getTestBarGraph(url, headers, body))
     }
 }
 
