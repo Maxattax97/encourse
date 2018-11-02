@@ -15,31 +15,31 @@ const defaultData = [
     {
         'progressBin': '0-20%',
         'order': 0,
-        'count': 10,
+        'count': 4,
         'percent': 0.625
     },
     {
         'progressBin': '20-40%',
         'order': 20,
-        'count': 3,
+        'count': 0,
         'percent': 0.1875
     },
     {
         'progressBin': '40-60%',
         'order': 40,
-        'count': 2,
+        'count': 4,
         'percent': 0.125
     },
     {
         'progressBin': '60-80%',
         'order': 60,
-        'count': 0,
+        'count': 7,
         'percent': 0
     },
     {
         'progressBin': '80-100%',
         'order': 80,
-        'count': 1,
+        'count': 5,
         'percent': 0.0625
     }
 ]
