@@ -3,7 +3,8 @@ import { Route, Redirect, Switch } from 'react-router'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import { setModalState } from '../redux/actions'
+import { setModalState, getAccount } from '../redux/actions'
+import url from '../server'
 
 import '../styles/css/base.css'
 import '../styles/css/main.css'
@@ -33,6 +34,12 @@ class Main extends Component {
     scrollPanel = (e) => {
         if(e.currentTarget.scrollHeight - e.currentTarget.scrollTop <= e.currentTarget.clientHeight+1 && this.currentChild && this.currentChild.scrolledToBottom)
             this.currentChild.scrolledToBottom()
+    }
+
+    componentDidMount = () => {
+        if(!this.props.account) {
+            this.props.getAccount(`${url}/api/account`)
+        }
     }
 
     componentWillUnmount() {
@@ -98,12 +105,14 @@ class Main extends Component {
 const mapStateToProps = (state) => {
     return {
         isModalFocused: state.modal && state.modal.isModalFocused ? state.modal.isModalFocused : false,
+        account: state.auth && state.auth.getAccountData ? state.auth.getAccountData : null,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         closeModal: () => dispatch(setModalState(0)),
+        getAccount: (url, headers, body) => dispatch(getAccount(url, headers, body)),
     }
 }
 
