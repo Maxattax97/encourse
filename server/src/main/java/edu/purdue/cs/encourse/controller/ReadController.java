@@ -465,6 +465,13 @@ public class ReadController {
                         returnJson.add(curr.getJsonObject());
                     }
                 } else {
+                    if (userNames.size() == 1) {
+                        JSONReturnable curr = professorService.getStatistics(projectID, userNames.get(0));
+                        if (curr != null && curr.getJsonObject() != null) {
+                            returnJson.add(curr.getJsonObject());
+                        }
+                        break;
+                    }
                     for (String userName: userNames) {
                         JSONReturnable curr = professorService.getStatistics(projectID, userName);
                         if (curr != null && curr.getJsonObject() != null) {
@@ -483,6 +490,13 @@ public class ReadController {
                         returnJson.add(curr.getJsonObject());
                     }
                 } else {
+                    if (userNames.size() == 1) {
+                        JSONReturnable curr = professorService.getStatistics(projectID, userNames.get(0));
+                        if (curr != null && curr.getJsonObject() != null) {
+                            returnJson.add(curr.getJsonObject());
+                        }
+                        break;
+                    }
                     for (String userName: userNames) {
                         JSONReturnable curr = taService.getStatistics(projectID, userName, getUserFromAuth().getUsername());
                         if (curr != null && curr.getJsonObject() != null) {
