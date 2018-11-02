@@ -46,9 +46,13 @@ class StudentCommitHistory extends Component {
         return formattedData
     }
 
+    scrolledToBottom = () => {
+        console.log('bottom')
+    }
+
     render() {
         return (
-            <CommitHistory isLoading={ this.props.isLoading } data={ this.state.formattedData } />
+            <CommitHistory isLoading={ this.props.isLoading } data={ this.state.formattedData } onPaginate={ this.scrolledToBottom }/>
         )
     }
 }

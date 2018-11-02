@@ -3,9 +3,14 @@ import { connect } from 'react-redux'
 import CommitHistory from '../common/CommitHistory'
 
 class CourseCommitHistory extends Component {
+
+    scrolledToBottom = () => {
+        console.log('bottom')
+    }
+
     render() {
         return (
-            <CommitHistory />
+            <CommitHistory onPaginate={ this.scrolledToBottom } />
         )
     }
 }

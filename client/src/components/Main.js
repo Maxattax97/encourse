@@ -20,11 +20,14 @@ import StudentDishonestyPanel from './panel/StudentDishonestyPanel'
 class Main extends Component {
 
     createPanelRef = (node) => {
-        if(node) {
-            this.panel = node
 
+        if(this.panel)
+            this.panel.removeEventListener('scroll', this.scrollPanel)
+
+        this.panel = node
+
+        if(this.panel)
             this.panel.addEventListener('scroll', this.scrollPanel)
-        }
     }
 
     scrollPanel = (e) => {
