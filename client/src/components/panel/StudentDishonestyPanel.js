@@ -5,6 +5,7 @@ import {BackNav} from '../Helpers'
 import {history} from '../../redux/store'
 import {clearStudent, getStudent} from '../../redux/actions'
 import url from '../../server'
+import SyncItem from './common/SyncItem'
 import StudentDishonestyCharts from "./student-dishonesty/StudentDishonestyCharts"
 
 class StudentDishonestyPanel extends Component {
@@ -41,14 +42,7 @@ class StudentDishonestyPanel extends Component {
                 </div>
 
                 <div className='panel-right-nav'>
-                    <div className='top-nav'>
-                        <div>
-                            <h4>Last Sync:</h4>
-                        </div>
-                        <div>
-                            <h4>Last Test Ran:</h4>
-                        </div>
-                    </div>
+                    <SyncItem />
                 </div>
 
                 <div className='panel-center-content'>

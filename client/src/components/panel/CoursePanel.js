@@ -7,6 +7,7 @@ import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState,
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import {CourseModal, CourseCharts, CourseStatistics, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
+import SyncItem from './common/SyncItem'
 import {Title, SettingsIcon, BackNav} from '../Helpers'
 import CourseCommitHistory from './course/CourseCommitHistory'
 
@@ -92,24 +93,7 @@ class CoursePanel extends Component {
                 </div>
 
                 <div className='panel-right-nav'>
-                    <div className='top-nav'>
-                        <div>
-                            <h4>Last Sync: {
-                                this.props.projects && this.props.projects.length > 0 && this.props.projects[this.props.currentProjectIndex] ?
-                                    this.props.projects[this.props.currentProjectIndex].last_sync
-                                    : null
-                            }
-                            </h4>
-                        </div>
-                        <div>
-                            <h4>Last Test Ran: {
-                                this.props.projects && this.props.projects.length > 0  && this.props.projects[this.props.currentProjectIndex] ?
-                                    this.props.projects[this.props.currentProjectIndex].last_test
-                                    : null
-                            }
-                            </h4>
-                        </div>
-                    </div>
+                    <SyncItem />
                     <CourseCommitHistory/>
                 </div>
 

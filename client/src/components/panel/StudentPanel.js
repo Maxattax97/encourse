@@ -8,6 +8,7 @@ import { getStudent, clearStudent } from '../../redux/actions/index'
 import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {StudentFeedback, StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
+import SyncItem from './common/SyncItem'
 import { fuzzing } from '../../fuzz'
 
 
@@ -57,14 +58,7 @@ class StudentPanel extends Component {
                 </div>
 
                 <div className="panel-right-nav">
-                    <div className='top-nav'>
-                        <div>
-                            <h4>Last Sync:</h4>
-                        </div>
-                        <div>
-                            <h4>Last Test Ran:</h4>
-                        </div>
-                    </div>
+                    <SyncItem />
                     <StudentCommitHistory />
                 </div>
 
