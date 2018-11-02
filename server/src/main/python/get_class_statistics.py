@@ -129,24 +129,24 @@ def jsonify(git_data, test_progress, hidden_progress=None):
     class_stats = [
         {
             "stat_name": "Average Additions",
-            "stat_value": class_stats["additions"].mean,
+            "stat_value": class_stats["additions"]["mean"],
             "index": 2,
-        }
+        },
         {
             "stat_name": "Average Deletions",
-            "stat_value": class_stats["deletions"].mean,
+            "stat_value": class_stats["deletions"]["mean"],
             "index": 3,
-        }
+        },
         {
             "stat_name": "Average Commit Count",
-            "stat_value": class_stats["commit_count"].mean,
+            "stat_value": class_stats["commit_count"]["mean"],
             "index": 4,
-        }
+        },
         {
             "stat_name": "Average Estimated Time Spent",
-            "stat_value": class_stats["estimated_time_spent"].mean,
+            "stat_value": class_stats["time_spent"]["mean"],
             "index": 5,
-        }
+        },
     ]
 
     return json.dumps(class_stats, indent=2)
