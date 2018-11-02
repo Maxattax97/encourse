@@ -247,7 +247,7 @@ public class ReadController {
                 break;
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
                 if (anon) {
-                    returnJson = taService.getAnonymousTestSummary(projectID);
+                    returnJson = professorService.getTestSummary(projectID);
                 } else {
                     returnJson = taService.getAssignmentsTestSummary(projectID, getUserFromAuth().getUsername());
                 }
@@ -570,11 +570,21 @@ public class ReadController {
     @RequestMapping(value = "/classProgress", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
                                                        @RequestParam(name = "anonymous", required = false, defaultValue = "false") boolean anon) {
-        JSONReturnable returnJson;
-        if (anon) {
-            returnJson = taService.getAnonymousClassProgress(projectID);
-        } else {
-            returnJson = professorService.getClassProgress(projectID);
+        JSONReturnable returnJson = null;
+        Iterator iter = getUserAuthorities().iterator();
+        while (iter.hasNext()) {
+            String auth = ((Authority) iter.next()).getAuthority();
+            if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                returnJson = professorService.getClassProgress(projectID);
+                break;
+            } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                if (anon) {
+                    returnJson = professorService.getClassProgress(projectID);
+                } else {
+                    returnJson = taService.getAssignmentsProgress(projectID, getUserFromAuth().getUsername());
+                }
+                break;
+            }
         }
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
