@@ -2,7 +2,7 @@ export {
     getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, 
     getSectionsData, syncRepositories, runTests, getDishonestyReport,
     updateCourseDishonestyPage, resetCourseDishonestyPage, updateStudentsPage,
-    resetStudentsPage, getSimilarityPlot, getClassStatistics
+    resetStudentsPage, getSimilarityPlot, getClassStatistics, submitStudents
 } from './course' 
 
 export {
@@ -27,7 +27,7 @@ export {
 } from './admin'
 
 export {
-    getTeachingAssistants, submitStudents,
+    getTeachingAssistants,
 } from './teaching_assistant'
 
 export {

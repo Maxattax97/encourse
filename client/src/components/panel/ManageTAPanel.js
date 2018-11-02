@@ -125,7 +125,7 @@ class ManageTAPanel extends Component {
         for(let id of this.state.sections) {
             this.props.submitStudents(`${url}/api/add/studentsToTA?sectionID=${id}`, JSON.stringify({
                 [ta]: this.state.students
-            }))
+            }), { ta, students: this.state.students })
         }
     }
 
@@ -325,7 +325,7 @@ const mapDispatchToProps = (dispatch) => {
         getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
         getSectionsData: (url, headers, body) => dispatch(getSectionsData(url, headers, body)),
         getTeachingAssistants: (url, headers, body) => dispatch(getTeachingAssistants(url, headers, body)),
-        submitStudents: (url, body) => dispatch(submitStudents(url, null, body)),
+        submitStudents: (url, body, data) => dispatch(submitStudents(url, null, body, data)),
         updateStudentsPage: () => dispatch(updateStudentsPage()),
         resetStudentsPage: () => dispatch(resetStudentsPage()),
     }

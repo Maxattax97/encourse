@@ -184,6 +184,33 @@ function course(state = {}, action) {
             getClassStatisticsData: action.data,
             getClassStatisticsIsLoading: false,
         })
+    case 'SUBMIT_STUDENTS':
+        return Object.assign({}, state, {
+            submitStudentsIsLoading: true,
+        })
+    case 'SUBMIT_STUDENTS_HAS_ERROR':
+        return Object.assign({}, state, {
+            submitStudentsHasError: action.hasError,
+            submitStudentsIsLoading: false,
+        })
+    case 'SUBMIT_STUDENTS_SUCCESS':
+        let ta = action.updates.ta
+        let updatedStudents = action.updates.students
+        let students = {...state.getStudentPreviewsData}
+        for(let student of updatedStudents) {
+            for(let student2 of students.content) {
+                if(student === student2.id) {
+                    if(!student2.teaching_assistants.includes(ta)) {
+                        student2.teaching_assistants.push(ta)
+                    }
+                }
+            }
+        }
+        return Object.assign({}, state, {
+            submitStudentsData: action.data,
+            submitStudentsIsLoading: false,
+            getStudentPreviewsData: students,
+        })
     default:
         return state
     }
