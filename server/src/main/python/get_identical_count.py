@@ -2,27 +2,28 @@ import sys
 import argparse
 from helper import eprint
 
+
 def jsonify(data):
     out = []
     bins = {}
     for username1, user_data in data.items():
         for username2, identical_count in user_data.items():
-            simularity_bin = identical_count // 10
-            
-            if simularity_bin not in bins:
-                bins[simularity_bin] = 0
-            bins[simularity_bin] += 1
-            
+            similarity_bin = identical_count // 10
+
+            if similarity_bin not in bins:
+                bins[similarity_bin] = 0
+            bins[similarity_bin] += 1
+
             item = {
-                'user1': username1,
-                'user2': username1,
-                'simularity': identical_count,
-                'simularity_bin': simularity_bin,
-                'height': bins[simularity_bin],
+                "user1": username1,
+                "user2": username1,
+                "similarity": identical_count,
+                "similarity_bin": similarity_bin,
+                "height": bins[similarity_bin],
             }
-            
+
             out.append(item)
-    
+
     return out
 
 
@@ -52,22 +53,23 @@ def get_identical_count(time_file):
             }
 
     """
-    
+
     data = {}
-    
+
     for line in time_file:
         line = line.lstrip(" ").rstrip("\n")
         username, other_users = line.split(":")
         data[username] = {}
-        
+
         other_users = other_users.split("_")
-        
+
         for other_user in other_users:
             other_username, identical_count = other_user.split(";")
             data[username][other_username] = int(identical_count)
 
     return data
-    
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
