@@ -429,11 +429,10 @@ public class ReadController {
                         returnJson.add(curr.getJsonObject());
                     }
                 } else {
-                    JSONArray arr = new JSONArray();
                     for (String userName: userNames) {
                         JSONReturnable curr = professorService.getStatistics(projectID, userName);
                         if (curr != null && curr.getJsonObject() != null) {
-                            arr.add(curr.getJsonObject());
+                            returnJson.add(curr.getJsonObject());
                         }
                     }
                 }
@@ -445,11 +444,10 @@ public class ReadController {
                         returnJson.add(curr.getJsonObject());
                     }
                 } else {
-                    JSONArray arr = new JSONArray();
                     for (String userName: userNames) {
                         JSONReturnable curr = taService.getStatistics(projectID, userName, getUserFromAuth().getUsername());
                         if (curr != null && curr.getJsonObject() != null) {
-                            arr.add(curr.getJsonObject());
+                            returnJson.add(curr.getJsonObject());
                         }
                     }
                 }
