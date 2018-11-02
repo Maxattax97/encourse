@@ -751,8 +751,8 @@ public class ReadController {
     
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/classSimilar", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
-                                                       @RequestParam(name = "anonymous", required = false, defaultValue = "false") boolean anon) {
+    public @ResponseBody ResponseEntity<?> getClassSimilar(@RequestParam(name = "projectID") String projectID,
+                                                           @RequestParam(name = "anonymous", required = false, defaultValue = "false") boolean anon) {
         JSONReturnable returnJson = null;
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
