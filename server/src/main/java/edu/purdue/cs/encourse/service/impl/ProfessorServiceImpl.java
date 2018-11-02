@@ -596,6 +596,31 @@ public class ProfessorServiceImpl implements ProfessorService {
         return json;
     }
 
+    // TODO: JARETT DO PYTHON
+    public JSONReturnable getClassStatistics(@NonNull String projectID) {
+        String dailyCountsFile = countAllCommitsByDay(projectID);
+        String commitLogFile = listAllCommitsByTime(projectID);
+        if(dailyCountsFile == null) {
+            return new JSONReturnable(-1, null);
+        }
+        if(commitLogFile == null) {
+            return new JSONReturnable(-2, null);
+        }
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        try {
+            createTestFiles(visibleTestFile, hiddenTestFile, projects);
+        } catch (IOException e) {
+            return new JSONReturnable(-3, null);
+        }
+        String pyPath = pythonPath + "get_statistics.py";
+        String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
+        JSONReturnable json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
     public JSONReturnable getTestSummary(@NonNull String projectID) {
         JSONReturnable json = null;
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
