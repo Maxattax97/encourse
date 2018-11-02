@@ -60,6 +60,18 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private TeachingAssistantCourseRepository teachingAssistantCourseRepository;
 
+    /**
+     * Adds user credentials and authorities for an account to the database
+     *
+     * @param userName of the account being added
+     * @param password encrypted credentials for account
+     * @param authority permission level for the account
+     * @param acc_expired indicates if account is currently active
+     * @param locked indicates if account can no longer log in
+     * @param cred_expired indicates if account login token is still active
+     * @param enabled indicates if account can log in to application
+     * @return user credentials created for account
+     */
     public User addUser(@NonNull String userName, @NonNull String password, @NonNull String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled) {
         Authority auth = authorityRepository.findDistinctByName(authority);
         if (auth == null) {
@@ -81,6 +93,17 @@ public class AdminServiceImpl implements AdminService {
         return user;
     }
 
+    /**
+     * Indicates if a user has permission to view another account
+     * Students can only view their own account
+     * Teaching assistants can only view students that they were assigned to
+     * Professors can view any student in courses that they are assigned to
+     * Administrators can view any account
+     *
+     * @param loggedIn credentials for user trying to view another account
+     * @param userName of the account being viewed
+     * @return true if user can view account, false otherwise
+     */
     public boolean hasPermissionOverAccount(User loggedIn, String userName) {
         Account account = accountRepository.findByUserName(userName);
         if (account == null) {
@@ -137,6 +160,13 @@ public class AdminServiceImpl implements AdminService {
         return hasAuth;
     }
 
+    /**
+     * Replaces an account with a new account with different permissions
+     *
+     * @param userName of the account being modified
+     * @param role permissions for the new account
+     * @return error code
+     */
     public int modifyAuthority(@NonNull String userName, String role) {
         Account a = accountRepository.findByUserName(userName);
         if (a == null) {
@@ -160,6 +190,18 @@ public class AdminServiceImpl implements AdminService {
         return result;
     }
 
+    /**
+     * Adds an account to the database, calling several private methods based on account type
+     *
+     * @param userID of account being added
+     * @param userName of account being added
+     * @param firstName of the user for the account
+     * @param lastName of the user for the account
+     * @param type subclass for the account
+     * @param middleInit of the user for the account, optional
+     * @param eduEmail assigned by the university, optional
+     * @return error code
+     */
     public int addAccount(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName,
                           @NonNull String type, String middleInit, String eduEmail) {
         int result;
@@ -173,7 +215,7 @@ public class AdminServiceImpl implements AdminService {
         return result;
     }
 
-    public int addStudent(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
+    private int addStudent(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
         Student student = new Student(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(student.getUserID())) {
             return -2;
@@ -187,7 +229,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int addTA(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
+    private int addTA(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
         TeachingAssistant teachingAssistant = new TeachingAssistant(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(teachingAssistant.getUserID())) {
             return -5;
@@ -201,7 +243,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int addProfessor(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
+    private int addProfessor(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
         Professor professor = new Professor(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(professor.getUserID())) {
             return -8;
@@ -215,7 +257,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int addAdmin(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
+    private int addAdmin(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
         CollegeAdmin admin = new CollegeAdmin(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(admin.getUserID())) {
             return -11;
@@ -229,6 +271,12 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Removes the account from database and all relations associated with it
+     *
+     * @param userName of the account being deleted
+     * @return error code
+     */
     public int deleteAccount(@NonNull String userName) {
         Account account = accountRepository.findByUserName(userName);
         if(account == null) {
@@ -246,7 +294,7 @@ public class AdminServiceImpl implements AdminService {
         return result;
     }
 
-    public int deleteStudent(@NonNull Account account){
+    private int deleteStudent(@NonNull Account account){
         Student student = studentRepository.findByUserID(account.getUserID());
         student.copyAccount(account);
         List<StudentProject> projects = studentProjectRepository.findByIdStudentID(student.getUserID());
@@ -269,7 +317,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int deleteTA(@NonNull Account account) {
+    private int deleteTA(@NonNull Account account) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(account.getUserID());
         teachingAssistant.copyAccount(account);
         List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID(teachingAssistant.getUserID());
@@ -280,7 +328,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int deleteProfessor(@NonNull Account account) {
+    private int deleteProfessor(@NonNull Account account) {
         Professor professor = professorRepository.findByUserID(account.getUserID());
         professor.copyAccount(account);
         List<ProfessorCourse> assignments = professorCourseRepository.findByIdProfessorID(professor.getUserID());
@@ -291,13 +339,22 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int deleteAdmin(@NonNull Account account) {
+    private int deleteAdmin(@NonNull Account account) {
         CollegeAdmin admin = adminRepository.findByUserID(account.getUserID());
         admin.copyAccount(account);
         adminRepository.delete(admin);
         return 0;
     }
 
+    /**
+     * Changes valid fields for an account
+     * Some fields, like userID, are not allowed to be changed
+     *
+     * @param userName of the account being modified
+     * @param field that is being modified for account
+     * @param value will be given to the selected field
+     * @return error code
+     */
     public int modifyAccount(@NonNull String userName, @NonNull String field, String value) {
         Account account = accountRepository.findByUserName(userName);
         if(account == null) {
@@ -323,7 +380,7 @@ public class AdminServiceImpl implements AdminService {
         return result;
     }
 
-    public int modifyStudent(@NonNull Account account, @NonNull String field, String value){
+    private int modifyStudent(@NonNull Account account, @NonNull String field, String value){
         Student student = studentRepository.findByUserID(account.getUserID());
         student.copyAccount(account);
         if(accountRepository.save(student) == null) {
@@ -332,7 +389,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int modifyTA(@NonNull Account account, @NonNull String field, String value) {
+    private int modifyTA(@NonNull Account account, @NonNull String field, String value) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(account.getUserID());
         teachingAssistant.copyAccount(account);
         if(accountRepository.save(teachingAssistant) == null) {
@@ -341,7 +398,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int modifyProfessor(@NonNull Account account, @NonNull String field, String value) {
+    private int modifyProfessor(@NonNull Account account, @NonNull String field, String value) {
         Professor professor = professorRepository.findByUserID(account.getUserID());
         professor.copyAccount(account);
         if(accountRepository.save(professor) == null) {
@@ -350,7 +407,7 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
-    public int modifyAdmin(@NonNull Account account, @NonNull String field, String value) {
+    private int modifyAdmin(@NonNull Account account, @NonNull String field, String value) {
         CollegeAdmin admin = adminRepository.findByUserID(account.getUserID());
         admin.copyAccount(account);
         if(accountRepository.save(admin) == null) {
