@@ -236,7 +236,8 @@ public class ReadController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/testSummary", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getTestSummary(@RequestParam(name = "projectID") String projectID) {
+    public @ResponseBody ResponseEntity<?> getTestSummary(@RequestParam(name = "projectID") String projectID,
+                                                          @RequestParam(name = "anonymous", defaultValue = "false", required = false) boolean anon) {
         JSONReturnable returnJson = null;
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
@@ -245,7 +246,11 @@ public class ReadController {
                 returnJson = professorService.getTestSummary(projectID);
                 break;
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                returnJson = taService.getAssignmentsTestSummary(projectID, getUserFromAuth().getUsername());
+                if (anon) {
+                    returnJson = taService.getAnonymousTestSummary(projectID);
+                } else {
+                    returnJson = taService.getAssignmentsTestSummary(projectID, getUserFromAuth().getUsername());
+                }
                 break;
             }
         }
