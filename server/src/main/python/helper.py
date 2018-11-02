@@ -1,7 +1,7 @@
 from __future__ import print_function
 from datetime import date, timedelta
 import sys
-
+from datetime import datetime
 
 def is_number(string):
     """Returns true if a string can be converted to an int, false otherwise"""
@@ -62,10 +62,10 @@ def daterange(start, end):
 
 def times_from_dailydata(data, include_today=None):
     """Generate a start and end time from commit daily commit log data"""
+    dates = []
     if include_today:
         dates.append(datetime.now().date())
 
-    dates = []
     for entry in data:
         if "date" in entry:
             dates.append(entry["date"])
