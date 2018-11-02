@@ -8,7 +8,7 @@ import {history} from '../../redux/store'
 import StudentAssignPreview from './manage-ta/StudentAssignPreview'
 import SectionPreview from './manage-ta/SectionPreview'
 import url from '../../server'
-import {getSectionsData, getStudentPreviews, getTeachingAssistants, submitStudents } from '../../redux/actions'
+import {getSectionsData, getStudentPreviews, getTeachingAssistants, submitStudents, updateStudentsPage, resetStudentsPage } from '../../redux/actions'
 
 class ManageTAPanel extends Component {
 
@@ -46,7 +46,7 @@ class ManageTAPanel extends Component {
         //TODO: Add course ID functionality for multiple classes
         this.props.getSectionsData(`${url}/api/sectionsData?courseID=cs252&semester=Fall2018`)
         this.props.getTeachingAssistants(`${url}/api/teachingAssistantsData?courseID=cs252&semester=Fall2018`)
-        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`)
+        this.props.getStudentPreviews(`${url}/api/studentsData?size=10&page=1&courseID=cs252&semester=Fall2018`)
     }
 
     onChange = (event) => {
@@ -130,7 +130,10 @@ class ManageTAPanel extends Component {
     }
 
     scrolledToBottom = () => {
-
+        if(!this.props.last) {
+            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=${this.props.page + 1}&projectID=${this.props.currentProjectId}`)
+            this.props.updateStudentsPage()
+        }
     }
 
     render() {
@@ -312,6 +315,8 @@ const mapStateToProps = (state) => {
         sectionsIsLoading: state.course ? state.course.getSectionsIsLoading : false,
         taIsLoading: state.teachingAssistant ? state.teachingAssistant.getTeachingAssistantsIsLoading : false,
         studentsIsLoading: state.course ? state.course.getStudentPreviewsIsLoading : false,
+        page: state.course && state.course.studentsPage ? state.course.studentsPage : 1,
+        last: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.last : true,
     }
 }
 
@@ -321,6 +326,8 @@ const mapDispatchToProps = (dispatch) => {
         getSectionsData: (url, headers, body) => dispatch(getSectionsData(url, headers, body)),
         getTeachingAssistants: (url, headers, body) => dispatch(getTeachingAssistants(url, headers, body)),
         submitStudents: (url, body) => dispatch(submitStudents(url, null, body)),
+        updateStudentsPage: () => dispatch(updateStudentsPage()),
+        resetStudentsPage: () => dispatch(resetStudentsPage()),
     }
 }
 
