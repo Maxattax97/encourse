@@ -595,6 +595,31 @@ public class ProfessorServiceImpl implements ProfessorService {
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }
+    
+    // TODO JARETT and REED connect new calculateDiffScore.sh
+    public JSONReturnable getClassProgress(@NonNull String projectID) {
+        JSONReturnable json = null;
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        // String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        // String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        // try {
+        //     createTestFiles(visibleTestFile, hiddenTestFile, projects);
+        // } catch (IOException e) {
+        //     json = new JSONReturnable(-1, null);
+        // }
+        // 
+        // if (DEBUG) {
+        //     visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
+        //     hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
+        // }
+
+        // TODO: Check that test results work as expected
+        String pyPath = pythonPath + "get_identical_count.py";
+        String command = pythonCommand + " " + pyPath + " " /* + File */;
+        json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
 
     public JSONReturnable getGroupProgress(@NonNull String projectID, @NonNull List<String> userNames) {
         JSONReturnable json = null;

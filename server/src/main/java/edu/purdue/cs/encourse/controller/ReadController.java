@@ -748,6 +748,36 @@ public class ReadController {
         String json = returnJson.jsonObject.toJSONString();
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
+    
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/classSimilar", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
+                                                       @RequestParam(name = "anonymous", required = false, defaultValue = "false") boolean anon) {
+        JSONReturnable returnJson = null;
+        Iterator iter = getUserAuthorities().iterator();
+        while (iter.hasNext()) {
+            String auth = ((Authority) iter.next()).getAuthority();
+            if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
+                returnJson = professorService.getClassSimilar(projectID);
+                break;
+            } else if (auth.contentEquals(Account.Role_Names.TA)) {
+                if (anon) {
+                    returnJson = professorService.getClassSimilar(projectID);
+                } else {
+                    returnJson = taService.getAssignmentsProgress(projectID, getUserFromAuth().getUsername());
+                }
+                break;
+            }
+        }
+        if (returnJson == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        String json = returnJson.jsonObject.toJSONString();
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
     @RequestMapping(value = "/classCheating", method = RequestMethod.GET)
