@@ -147,46 +147,6 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         return isTaking;
     }
 
-    private double parseProgressForProject(@NonNull String projectID, @NonNull String testOutput) {
-        String[] testResults = testOutput.split(";");
-        double earnedPoints = 0.0;
-        double maxPoints = 0.0;
-        for (String r : testResults) {
-            String testName = r.split(":")[0];
-            ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
-            if (testScript == null) {
-                continue;
-            }
-            maxPoints += testScript.getPointsWorth();
-            if (r.endsWith("P")) {
-                earnedPoints += testScript.getPointsWorth();
-            }
-        }
-        if (maxPoints == 0.0) {
-            return 0.0;
-        }
-        return (earnedPoints / maxPoints) * 100;
-    }
-
-    private void updateTestResults(String result, String studentID, String projectID, boolean isHidden) {
-        String[] testResults = result.split(";");
-        for (String s : testResults) {
-            String testName = s.split(":")[0];
-            String testScore = s.split(":")[1];
-            boolean isPassing = testScore.equals("P");
-            StudentProjectTest studentProjectTest =
-                    studentProjectTestRepository.findByIdProjectIdentifierAndIdTestScriptNameAndIdStudentID(projectID, testName, studentID);
-            if (studentProjectTest == null) {
-                ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
-                studentProjectTest = new StudentProjectTest(studentID, projectID, testName, isPassing, isHidden, testScript.getPointsWorth());
-                studentProjectTestRepository.save(studentProjectTest);
-            } else {
-                studentProjectTest.setPassing(isPassing);
-                studentProjectTestRepository.save(studentProjectTest);
-            }
-        }
-    }
-
     private void createTestFiles(String visibleTestFile, String hiddenTestFile, List<StudentProject> projects) throws IOException {
         BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
         BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
@@ -279,7 +239,6 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         catch(IOException e) {
             return new JSONReturnable(-5, null);
         }
-        // TODO: @Ryan adjust python command if needed
         String pyPath = pythonPath + "get_individual_progress.py";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + userNameStudent;
         JSONReturnable json = runPython(command);
@@ -435,6 +394,40 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
 
         String pyPath = pythonPath + "get_class_cheating.py";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -l 1000";
+        JSONReturnable json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
+    }
+
+    // TODO: JARETT DO PYTHON
+    public JSONReturnable getAssignmentsStatistics(@NonNull String projectID, @NonNull String userNameTA) {
+        String dailyCountsFile = countAllCommitsByDay(projectID, userNameTA);
+        String commitLogFile = listAllCommitsByTime(projectID, userNameTA);
+        if(dailyCountsFile == null) {
+            return new JSONReturnable(-1, null);
+        }
+        if(commitLogFile == null) {
+            return new JSONReturnable(-2, null);
+        }
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
+        if(teachingAssistant == null) {
+            return new JSONReturnable(-3, null);
+        }
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return new JSONReturnable(-3, null);
+        }
+        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        try {
+            createTestFilesTA(visibleTestFile, hiddenTestFile, assignments, projectID);
+        } catch (IOException e) {
+            return new JSONReturnable(-3, null);
+        }
+        String pyPath = pythonPath + "get_statistics.py";
+        String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;

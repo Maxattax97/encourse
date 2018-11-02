@@ -544,7 +544,9 @@ public class ReadController {
                         returnJson = professorService.getStudentProgress(projectID, userName);
                         break;
                     } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        returnJson = taService.getStudentProgress(projectID, userName, getUserFromAuth().getUsername());
+                        // TODO: Change this back once fixed
+                        returnJson = professorService.getStudentProgress(projectID, userName);
+                        //returnJson = taService.getStudentProgress(projectID, userName, getUserFromAuth().getUsername());
                         break;
                     }
                 }
