@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import url from '../../server'
-import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories, updateStudentsPage} from '../../redux/actions'
+import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories, updateStudentsPage, resetStudentsPage} from '../../redux/actions'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import {CourseModal, CourseCharts, CourseStatistics, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
@@ -27,21 +27,38 @@ class CoursePanel extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10`)
+        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&projectID=${this.props.currentProjectId}`)
     }
 
     scrolledToBottom = () => {
-        console.log('here')
         if(!this.props.last) {
-            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&page=${this.props.page + 1}&size=10`)
+            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=${this.props.page + 1}&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}`)
             this.props.updateStudentsPage()
         }
     }
 
+    getSortBy = (value) => {
+        let id = value ? value : this.state.filters.sort_by
+        switch(id) {
+            case 0:
+                return 'id'
+            case 1:
+                return 'timeSpent'
+            case 2:
+                return 'commitCounts'
+            case 3:
+                return 'grades'
+            
+        }
+    }
+
     changeFilter = (key, value) => {
-
+        console.log(key, value)
         this.state.filters[key] = value
-
+        if(key === 'sort_by') {
+            this.props.resetStudentsPage()
+            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=1&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy(value)}`)
+        }
         this.setState({ filters: Object.assign({}, this.state.filters) })
     }
 
@@ -146,6 +163,7 @@ const mapDispatchToProps = (dispatch) => {
         runTests: (url, headers, body) => dispatch(runTests(url, headers, body)),
         syncRepositories: (url, headers, body) => dispatch(syncRepositories(url, headers, body)),
         updateStudentsPage: () => dispatch(updateStudentsPage()),
+        resetStudentsPage: () => dispatch(resetStudentsPage()),
     }
 }
 

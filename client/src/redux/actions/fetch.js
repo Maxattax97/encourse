@@ -12,7 +12,6 @@ export default function genericDispatch(type, hasError, success, method) {
                         { 'Authorization': authorization,
                           ...headers }, method, body, mode: 'cors'})
                     .then((response) => {
-                        console.log(response.status)
                         if (!response.ok || response.status === 204) {
                             throw Error(response.status + ' ' + response.statusText + ' ')
                         }

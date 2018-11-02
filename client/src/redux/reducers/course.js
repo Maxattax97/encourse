@@ -130,6 +130,7 @@ function course(state = {}, action) {
         })
     case 'RESET_COURSE_DISHONESTY_PAGE':
         return Object.assign({}, state, {
+            getDishonestyReportData: null,
             dishonestyPage: 1,
         })
     case 'UPDATE_STUDENTS_PAGE':
@@ -138,6 +139,7 @@ function course(state = {}, action) {
         })
     case 'RESET_STUDENTS_PAGE':
         return Object.assign({}, state, {
+            getStudentPreviewsData: null,
             studentsPage: 1,
         })
     default:
