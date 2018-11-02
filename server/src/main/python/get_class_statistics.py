@@ -149,7 +149,7 @@ def jsonify(git_data, test_progress, hidden_progress=None):
         },
     ]
 
-    return json.dumps(class_stats, indent=2)
+    return json.dumps(class_stats)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
