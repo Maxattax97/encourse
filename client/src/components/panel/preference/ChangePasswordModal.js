@@ -26,6 +26,7 @@ class CourseModal extends Component {
         const password = this.state.new_password
         const confirm = this.state.new_password_confirm
         if(password === confirm) {
+            //TODO: add error feedback
             this.props.setModalState()
             this.props.changePassword(`${url}/api/modify/password?newPassword=${password}&oldPassword=${old}`)
         } else {

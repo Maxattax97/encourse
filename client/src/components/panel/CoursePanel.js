@@ -77,7 +77,7 @@ class CoursePanel extends Component {
             },
             () => {
                 if(this.props.currentProjectId)
-                    this.props.runTests(`${url}/api/testall/project?projectID=${this.props.currentProjectId}`)
+                    this.props.runTests(`${url}/api/run/testall?projectID=${this.props.currentProjectId}`)
             },
             () => { history.push('/course-dishonesty') }
         ]
