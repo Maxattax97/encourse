@@ -8,7 +8,6 @@ import {getStudentPreviews, setCurrentStudent} from '../../../redux/actions'
 class StudentReportSummary extends Component {
 
     clickStudentCard = (student) => {
-        this.props.setCurrentStudent(student)
         if (fuzzing) {
             // NOTE: we don't even use the student id in the url
             history.push('/student-dishonesty/student')
@@ -21,16 +20,16 @@ class StudentReportSummary extends Component {
         return (
             <Summary columns={ 5 }>
                 {
-                    this.props.students.map( (student) =>
+                    this.props.report && 
+                    this.props.report.map( (student) =>
 	                    <Card className='action' onClick={ () => this.clickStudentCard(student) } key={student.id}>
 		                    <div className="summary-preview">
 			                    <Title>
-				                    <h4>{ student.first_name }</h4>
-				                    <h4>{ student.last_name }</h4>
+				                    <h4>{ student.id }</h4>
 			                    </Title>
 			                    <div className="h4 break-line header" />
 			                    <div className="preview-content">
-				                    <h5>Score: { student.timeSpent[this.props.currentProjectId] }</h5>
+				                    <h5>Score: { student.score }</h5>
 			                    </div>
 		                    </div>
 	                    </Card>

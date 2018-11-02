@@ -21,7 +21,7 @@ class StudentReportFilter extends Component {
 		return (
 			<div className='course-students-report'>
 				{
-					this.props.students && this.props.students.length > 0 ?
+					this.props.report && this.props.report.length > 0 ?
 						<Filter>
 							<Dropdown header={<h5>Sort by { this.sort_by_ranges[this.state.sort_by] }</h5>}
 							          onClick={ (index) => { this.setState({ sort_by: index }) }}

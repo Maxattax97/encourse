@@ -17,7 +17,7 @@ class CoursePanel extends Component {
     }
 
     scrolledToBottom = () => {
-
+        console.log('bottom')
     }
 
     render() {

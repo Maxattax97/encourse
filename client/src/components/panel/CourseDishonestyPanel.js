@@ -3,7 +3,8 @@ import ActionNavigation from '../navigation/ActionNavigation'
 import {history} from '../../redux/store'
 import {BackNav, Card, SettingsIcon, Summary, Title} from '../Helpers'
 import CourseDishonestyModal from '../modal/CourseDishonestyModal'
-import {getStudentPreviews, setCurrentStudent, setModalState} from '../../redux/actions'
+import {getStudentPreviews, setCurrentStudent, setModalState, getDishonestyReport} from '../../redux/actions'
+import url from '../../server'
 import connect from 'react-redux/es/connect/connect'
 import StudentReportFilter from './course-dishonesty/StudentReportFilter'
 import CourseDishonestyCharts from "./course-dishonesty/CourseDishonestyCharts"
@@ -14,8 +15,12 @@ class CourseDishonestyPanel extends Component {
         history.push('/course')
     }
 
-    scrolledToBottom = () => {
+    componentDidMount = () => {
+        this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.currentProjectId}`)
+    }
 
+    scrolledToBottom = () => {
+        console.log('bottom')
     }
 
     render() {
@@ -67,7 +72,7 @@ class CourseDishonestyPanel extends Component {
                     <div className='h1 break-line' />
 
                     <h3 className='header'>Students Summary</h3>
-                    <StudentReportFilter/>
+                    <StudentReportFilter report={this.props.report}/>
                 </div>
             </div>
         </div> )
@@ -76,7 +81,9 @@ class CourseDishonestyPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : []
+        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : [],
+        report: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.content : [],
+        currentProjectId: state.projects ? state.projects.currentProjectId : null,
     }
 }
 
@@ -84,6 +91,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
+        getDishonestyReport: (url, headers, body) => dispatch(getDishonestyReport(url, headers, body)),
         setModalState: (id) => dispatch(setModalState(id)),
     }
 }
