@@ -373,9 +373,17 @@ public class WriteController {
      */
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/pull/project", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> pullProject(@RequestParam(name = "projectID") String projectID) {
+    public @ResponseBody ResponseEntity<?> pullProject(@RequestParam(name = "projectID") String projectID,
+                                                       @RequestParam(name = "userName", required = false) List<String> userNames) {
 
-        int result = professorService.pullProjects(projectID);
+        int result = -100;
+        if (userNames == null) {
+            result = professorService.pullProjects(projectID);
+        } else {
+            for (String userName: userNames) {
+                result = professorService.updateStudentInformation(projectID, userName);
+            }
+        }
         if (result == 0) {
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else if (result == -1) {
