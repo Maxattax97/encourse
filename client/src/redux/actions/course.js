@@ -267,3 +267,57 @@ export function submitStudentsSuccess(data, updates) {
 export const submitStudents = genericDispatch(
     'SUBMIT_STUDENTS', submitStudentsHasError, submitStudentsSuccess, 'POST'
 )
+
+export function getClassCommitHistoryHasError(hasError) {
+    return {
+        type: 'GET_CLASS_COMMIT_HISTORY_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getClassCommitHistoryDataSuccess(data) {
+    return {
+        type: 'GET_CLASS_COMMIT_HISTORY_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getClassCommitHistory = genericDispatch(
+    'GET_CLASS_COMMIT_HISTORY', getClassCommitHistoryHasError, getClassCommitHistoryDataSuccess, 'GET'
+)
+
+export function getClassProgressAnonHasError(hasError) {
+    return {
+        type: 'GE_CLASS_PROGRESS_ANON_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getClassProgressAnonDataSuccess(data) {
+    return {
+        type: 'GE_CLASS_PROGRESS_ANON_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getClassProgressAnon = genericDispatch(
+    'GE_CLASS_PROGRESS_ANON', getClassProgressAnonHasError, getClassProgressAnonDataSuccess, 'GET'
+)
+
+export function getTestBarGraphAnonHasError(hasError) {
+    return {
+        type: 'GET_TEST_BAR_GRAPH_ANON_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getTestBarGraphAnonDataSuccess(data) {
+    return {
+        type: 'GET_TEST_BAR_GRAPH_ANON_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getTestBarGraphAnon = genericDispatch(
+    'GET_TEST_BAR_GRAPH_ANON', getTestBarGraphAnonHasError, getTestBarGraphAnonDataSuccess, 'GET',
+)

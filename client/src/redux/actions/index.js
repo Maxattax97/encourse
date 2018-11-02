@@ -2,7 +2,8 @@ export {
     getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, 
     getSectionsData, syncRepositories, runTests, getDishonestyReport,
     updateCourseDishonestyPage, resetCourseDishonestyPage, updateStudentsPage,
-    resetStudentsPage, getSimilarityPlot, getClassStatistics, submitStudents
+    resetStudentsPage, getSimilarityPlot, getClassStatistics, submitStudents,
+    getClassCommitHistory, getClassProgressAnon, getTestBarGraphAnon,
 } from './course' 
 
 export {

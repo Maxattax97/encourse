@@ -211,6 +211,60 @@ function course(state = {}, action) {
             submitStudentsIsLoading: false,
             getStudentPreviewsData: students,
         })
+    case 'GET_CLASS_COMMIT_HISTORY':
+        return Object.assign({}, state, {
+            getClassCommitHistoryIsLoading: true,
+        })
+    case 'GET_CLASS_COMMIT_HISTORY_HAS_ERROR':
+        return Object.assign({}, state, {
+            getClassCommitHistoryHasError: action.hasError,
+            getClassCommitHistoryIsLoading: false,
+        })
+    case 'GET_CLASS_COMMIT_HISTORY_DATA_SUCCESS':
+        content = state.getClassCommitHistoryData ? [...state.getClassCommitHistoryData.content] : []
+        contains = false
+        for(let value of content) {
+            if(value.date === action.data.content[0].date) {
+                contains = true
+                break
+            }
+        }
+        if(!contains) {
+            content = content.concat(action.data.content)
+        } 
+        action.data.content = content;
+        return Object.assign({}, state, {
+            getClassCommitHistoryData: action.data,
+            getClassCommitHistoryIsLoading: false,
+        })
+    case 'GET_CLASS_PROGRESS_ANON':
+        return Object.assign({}, state, {
+            getClassProgressIsLoading: true,
+        })
+    case 'GET_CLASS_PROGRESS_ANON_HAS_ERROR':
+        return Object.assign({}, state, {
+            getClassProgressHasError: action.hasError,
+            getClassProgressIsLoading: false,
+        })
+    case 'GET_CLASS_PROGRESS_ANON_DATA_SUCCESS':
+        return Object.assign({}, state, {
+            getClassProgressData: action.data,
+            getClassProgressIsLoading: false
+        })
+    case 'GET_TEST_BAR_GRAPH_ANON':
+        return Object.assign({}, state, {
+            getTestBarGraphAnonIsLoading: true,
+        })
+    case 'GET_TEST_BAR_GRAPH_ANON_HAS_ERROR':
+        return Object.assign({}, state, {
+            getTestBarGraphAnonHasError: action.hasError,
+            getTestBarGraphAnonIsLoading: false,
+        })
+    case 'GET_TEST_BAR_GRAPH_ANON_DATA_SUCCESS':
+        return Object.assign({}, state, {
+            getTestBarGraphAnonData: action.data,
+            getTestBarGraphAnonIsLoading: false,
+        })
     default:
         return state
     }
