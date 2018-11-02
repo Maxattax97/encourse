@@ -94,7 +94,7 @@ public class AuthController {
     /**
      * Changes the password in Account
      *
-     * @param  oldPassword password to reauthenticate
+     * @param  oldPassword password to re-authenticate
      * @param  newPassword password to replace
      */
     @PreAuthorize("isAuthenticated()")
@@ -103,9 +103,9 @@ public class AuthController {
                                                           @RequestParam(name = "newPassword") String newPassword) {
         int result = userDetailsService.updatePassword(getUserFromAuth(), oldPassword, newPassword);
         if (result == -1) {
-            return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+            return new ResponseEntity<>("{}", HttpStatus.NOT_MODIFIED);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("{}", HttpStatus.OK);
     }
 
     /**
