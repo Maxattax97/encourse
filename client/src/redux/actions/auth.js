@@ -51,5 +51,5 @@ export function changePasswordDataSuccess(data) {
 }
 
 export const changePassword = genericDispatch(
-    'CHANGE_PASSWORD', changePasswordHasError, changePasswordDataSuccess, 'GET'
+    'CHANGE_PASSWORD', changePasswordHasError, changePasswordDataSuccess, 'POST'
 )
