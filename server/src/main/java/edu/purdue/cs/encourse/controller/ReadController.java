@@ -567,8 +567,14 @@ public class ReadController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/classProgress", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID) {
-        JSONReturnable returnJson = professorService.getClassProgress(projectID);
+    public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
+                                                       @RequestParam(name = "anonymous", required = false, defaultValue = "false") boolean anon) {
+        JSONReturnable returnJson;
+        if (anon) {
+            returnJson = taService.getAnonymousClassProgress(projectID);
+        } else {
+            returnJson = professorService.getClassProgress(projectID);
+        }
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
