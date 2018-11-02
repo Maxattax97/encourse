@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { ScatterChart, Scatter, Dot, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import { connect } from 'react-redux'
 
-import { getClassProgress } from '../../../../redux/actions/index'
+import { getSimilarityPlot } from '../../../../redux/actions'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
 // import CustomTooltipContent from './CustomTooltipContent';
@@ -92,8 +92,7 @@ class CourseIdenticalLinesChart extends Component {
     
     fetch = (props) => {
         if(props.currentProjectId) {
-            // TODO find endpoint
-            // props.getData(`${url}/api/classProgress?projectID=${props.currentProjectId}`)
+            props.getData(/*TODO: Add endpoint*/)
         }    
     }
 
@@ -138,8 +137,7 @@ class CourseIdenticalLinesChart extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        // TODO map data to correct redux state
-        // data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
+        data: state.course && state.course.getSimilarityPlotData ? state.course.getSimilarityPlotData : null,
         isLoading: state.course ? state.course.getClassProgressIsLoading : false,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
@@ -147,8 +145,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        // TODO map to correct dispatch
-        getData: (url, headers, body) => dispatch(getClassProgress(url, headers, body))
+        getData: (url, headers, body) => dispatch(getSimilarityPlot(url, headers, body))
     }
 }
 

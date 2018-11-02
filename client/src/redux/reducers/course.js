@@ -156,6 +156,20 @@ function course(state = {}, action) {
             getStudentPreviewsData: null,
             studentsPage: 1,
         })
+    case 'GET_SIMILARITY_PLOT':
+        return Object.assign({}, state, {
+            getSimilarityPlotIsLoading: true,
+        })
+    case 'GET_SIMILARITY_PLOT_HAS_ERROR':
+        return Object.assign({}, state, {
+            getSimilarityPlotHasError: action.hasError,
+            getSimilarityPlotIsLoading: false,
+        })
+    case 'GET_SIMILARITY_PLOT_DATA_SUCCESS':
+        return Object.assign({}, state, {
+            getSimilarityPlotData: action.data,
+            getSimilarityPlotIsLoading: false,
+        })
     default:
         return state
     }

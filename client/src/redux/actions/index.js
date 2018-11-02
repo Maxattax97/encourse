@@ -2,7 +2,7 @@ export {
     getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, 
     getSectionsData, syncRepositories, runTests, getDishonestyReport,
     updateCourseDishonestyPage, resetCourseDishonestyPage, updateStudentsPage,
-    resetStudentsPage,
+    resetStudentsPage, getSimilarityPlot
 } from './course' 
 
 export {
