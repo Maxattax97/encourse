@@ -7,6 +7,7 @@ import { history } from '../../redux/store'
 import { getStudent, clearStudent } from '../../redux/actions/index'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {StudentFeedback, StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
+import { fuzzing } from '../../fuzz'
 
 
 class StudentPanel extends Component {
@@ -33,10 +34,15 @@ class StudentPanel extends Component {
             'Academic Dishonesty Report'
         ]
 
+        let studentDishonestyRedirect = () => { history.push('/student-dishonesty/' + this.props.currentStudent.id) }
+        if (fuzzing) {
+            studentDishonestyRedirect = () => { history.push('/student-dishonesty/student') }
+        }
+
         const actions = [
             () => {},
             () => {},
-            () => { history.push('/student-dishonesty/' + this.props.currentStudent.id) }
+            studentDishonestyRedirect,
         ]
 
         return (
