@@ -321,16 +321,23 @@ public class WriteController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/run/testall", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> testProject(@RequestParam(name = "projectID", required = false) String projectID,
-                                                       @RequestParam(name = "userName", required = false) String userName) {
+                                                       @RequestParam(name = "userName", required = false) String userName,
+                                                       @RequestParam(name = "historic", required = false, defaultValue = "false") boolean historic) {
 
         int result = -1;
-        if (projectID != null && userName == null) {
-            result = professorService.runTestall(projectID);
+        if (historic) {
+            if (projectID != null) {
+                result = professorService.runHistoricTestall(projectID);
+            }
         } else {
-            result = taService.runTestallForStudent(projectID, userName, getUserFromAuth().getUsername());
+            if (projectID != null && userName == null) {
+                result = professorService.runTestall(projectID);
+            } else if (projectID != null) {
+                result = professorService.runTestallForStudent(projectID, userName);
+            }
         }
         if (result == 0) {
             return new ResponseEntity<>(result, HttpStatus.OK);
@@ -339,6 +346,7 @@ public class WriteController {
         } else {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
+
     }
 
     private User getUserFromAuth() {
