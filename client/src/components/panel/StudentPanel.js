@@ -5,6 +5,7 @@ import {BackNav, Card} from '../Helpers'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import { history } from '../../redux/store'
 import { getStudent, clearStudent } from '../../redux/actions/index'
+import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {StudentFeedback, StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
 
@@ -17,13 +18,13 @@ class StudentPanel extends Component {
 
     componentDidMount = () => {
         if(!this.props.currentStudent) {
-            this.props.getStudent(/*TODO: add individual student call for case that currentStudent isn't stored*/)
+            this.props.getStudent(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&userName=${this.props.match.params.id}`)
         }
     }
 
     back = () => {
-        history.push('/course')
-    };
+        history.goBack()
+    }
 
     render() {
 

@@ -23,7 +23,7 @@ class CourseDishonestyPanel extends Component {
     }
 
     back = () => {
-        history.push('/course')
+        history.goBack()
     }
 
     componentDidMount = () => {

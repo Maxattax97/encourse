@@ -26,6 +26,7 @@ function student(state = {}, action) {
     case 'GET_STUDENT_DATA_SUCCESS':
         return Object.assign({}, state, {
             getStudentData: action.data,
+            currentStudent: action.data,
             getStudentIsLoading: false,
         })
     case 'GET_PROGRESS_LINE':
@@ -125,6 +126,14 @@ function student(state = {}, action) {
         return Object.assign({}, state, {
             getProgressPerCommitData: action.data,
             getProgressPerCommitIsLoading: false,
+        })
+    case 'UPDATE_COMMITS_PAGE':
+        return Object.assign({}, state, {
+            commitsPage: state.commitsPage ? state.commitsPage + 1 : 2,
+        })
+    case 'RESET_COMMITS_PAGE':
+        return Object.assign({}, state, {
+            commitsPage: 1,
         })
     default:
         return state

@@ -31,7 +31,7 @@ class Main extends Component {
     }
 
     scrollPanel = (e) => {
-        if(e.currentTarget.scrollHeight - e.currentTarget.scrollTop <= e.currentTarget.clientHeight && this.currentChild && this.currentChild.scrolledToBottom)
+        if(e.currentTarget.scrollHeight - e.currentTarget.scrollTop <= e.currentTarget.clientHeight+1 && this.currentChild && this.currentChild.scrolledToBottom)
             this.currentChild.scrolledToBottom()
     }
 

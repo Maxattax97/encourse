@@ -74,7 +74,7 @@ class ManageTAPanel extends Component {
     }
 
     back = () => {
-        history.push('/course')
+        history.goBack()
     }
 
     toggleSection = (id) => {

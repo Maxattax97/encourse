@@ -179,7 +179,7 @@ class PreferencePanel extends Component {
     };
 
     back = () => {
-        history.push('/course')
+        history.goBack()
     }
 
     render() {

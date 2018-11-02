@@ -156,3 +156,15 @@ export function getProgressPerCommitDataSuccess(data) {
 export const getProgressPerCommit = genericDispatch(
     'GET_PROGRESS_PER_COMMIT', getProgressPerCommitHasError, getProgressPerCommitDataSuccess, 'GET'
 )
+
+export function updateCommitsPage() {
+    return {
+        type: 'UPDATE_COMMITS_PAGE'
+    }
+}
+
+export function resetCommitsPage() {
+    return {
+        type: 'RESET_COMMITS_PAGE'
+    }
+}

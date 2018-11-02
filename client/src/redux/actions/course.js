@@ -187,3 +187,27 @@ export function getDishonestyReportDataSuccess(data) {
 export const getDishonestyReport = genericDispatch(
     'GET_DISHONESTY_REPORT', getDishonestyReportHasError, getDishonestyReportDataSuccess, 'GET'
 )
+
+export function updateCourseDishonestyPage() {
+    return {
+        type: 'UPDATE_COURSE_DISHONESTY_PAGE'
+    }
+}
+
+export function resetCourseDishonestyPage() {
+    return {
+        type: 'RESET_COURSE_DISHONESTY_PAGE'
+    }
+}
+
+export function updateStudentsPage() {
+    return {
+        type: 'UPDATE_STUDENTS_PAGE'
+    }
+}
+
+export function resetStudentsPage() {
+    return {
+        type: 'RESET_STUDENTS_PAGE'
+    }
+}

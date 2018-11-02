@@ -1,6 +1,8 @@
 export { 
     getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, 
     getSectionsData, syncRepositories, runTests, getDishonestyReport,
+    updateCourseDishonestyPage, resetCourseDishonestyPage, updateStudentsPage,
+    resetStudentsPage,
 } from './course' 
 
 export {
@@ -14,7 +16,7 @@ export {
 } from './auth'
 
 export {
-    setCurrentStudent, clearStudent,
+    setCurrentStudent, clearStudent, updateCommitsPage, resetCommitsPage,
     getStudent, getProgressLine, getCodeFrequency, getCommitFrequency, getStatistics,
     getCommitHistory, getProgressPerTime, getProgressPerCommit,
 } from './student'

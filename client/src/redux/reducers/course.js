@@ -10,6 +10,18 @@ function course(state = {}, action) {
             getStudentPreviewsIsLoading: false,
         })
     case 'GET_STUDENT_PREVIEWS_DATA_SUCCESS':
+        let content = state.getStudentPreviewsData ? [...state.getStudentPreviewsData.content] : []
+        let contains = false
+        for(let value of content) {
+            if(value.id === action.data.content[0].id) {
+                contains = true
+                break
+            }
+        }
+        if(!contains) {
+            content = content.concat(action.data.content)
+        } 
+        action.data.content = content;
         return Object.assign({}, state, {
             getStudentPreviewsData: action.data,
             getStudentPreviewsIsLoading: false,
@@ -111,6 +123,22 @@ function course(state = {}, action) {
         return Object.assign({}, state, {
             getDishonestyReportData: action.data,
             getDishonestyReportIsLoading: false,
+        })
+    case 'UPDATE_COURSE_DISHONESTY_PAGE':
+        return Object.assign({}, state, {
+            dishonestyPage: state.dishonestyPage ? state.dishonestyPage + 1 : 2,
+        })
+    case 'RESET_COURSE_DISHONESTY_PAGE':
+        return Object.assign({}, state, {
+            dishonestyPage: 1,
+        })
+    case 'UPDATE_STUDENTS_PAGE':
+        return Object.assign({}, state, {
+            studentsPage: state.studentsPage ? state.studentsPage + 1 : 2,
+        })
+    case 'RESET_STUDENTS_PAGE':
+        return Object.assign({}, state, {
+            studentsPage: 1,
         })
     default:
         return state

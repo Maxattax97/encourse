@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import url from '../../server'
-import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories} from '../../redux/actions/index'
+import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories, updateStudentsPage} from '../../redux/actions'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import {CourseModal, CourseCharts, CourseStatistics, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
@@ -27,11 +27,15 @@ class CoursePanel extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`)
+        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10`)
     }
 
     scrolledToBottom = () => {
-        console.log('bottom')
+        console.log('here')
+        if(!this.props.last) {
+            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&page=${this.props.page + 1}&size=10`)
+            this.props.updateStudentsPage()
+        }
     }
 
     changeFilter = (key, value) => {
@@ -127,7 +131,9 @@ const mapStateToProps = (state) => {
     return {
 	    projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
 	    currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
-	    currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        page: state.course && state.course.studentsPage ? state.course.studentsPage : 1,
+        last: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.last : true,
     }
 }
 
@@ -138,7 +144,8 @@ const mapDispatchToProps = (dispatch) => {
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
         setModalState: (id) => dispatch(setModalState(id)),
         runTests: (url, headers, body) => dispatch(runTests(url, headers, body)),
-        syncRepositories: (url, headers, body) => dispatch(syncRepositories(url, headers, body))
+        syncRepositories: (url, headers, body) => dispatch(syncRepositories(url, headers, body)),
+        updateStudentsPage: () => dispatch(updateStudentsPage()),
     }
 }
 
