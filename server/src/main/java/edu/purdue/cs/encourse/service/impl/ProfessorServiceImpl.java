@@ -481,7 +481,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         String hiddenTestFile;
         String dailyCountsFile;
         if (DEBUG) {
-            visibleTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
+            visibleTestFile = "src/main//python/test_datasets/sampleTestsDay.txt";
             hiddenTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
             dailyCountsFile = "src/main/python/test_datasets/sampleCountsDay.txt";
         } else {
@@ -653,7 +653,52 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public JSONReturnable getClassSimilar(@NonNull String projectID) {
-        return null;
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return new JSONReturnable(-1, null);
+        }
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
+            return new JSONReturnable(-2, null);
+        }
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+
+        String diffsFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_codeDiffs.txt";
+        List<StudentProject> temp = new ArrayList<StudentProject>(projects);
+        // TODO: Bash scripts
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(diffsFile));
+            for (StudentProject projectOne : projects) {
+                temp.remove(projectOne);
+                Student studentOne = studentRepository.findByUserID(projectOne.getStudentID());
+                String studentOnePath = (sections.get(0).getCourseHub() + "/" + studentOne.getUserName() + "/" + project.getRepoName());
+                Process process = Runtime.getRuntime().exec("./src/main/bash/listCommitHistoryByAuthor.sh " + studentOnePath + " CS252");
+                BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String hash = stdInput.readLine().split(" ")[1];
+                process.destroy();
+                StringBuilder builder = new StringBuilder();
+                builder.append(studentOne.getUserName()).append(":");
+                for (StudentProject projectTwo : temp) {
+                    Student studentTwo = studentRepository.findByUserID(projectTwo.getStudentID());
+                    builder.append(studentTwo.getUserName()).append(";");
+                    String studentTwoPath = (sections.get(0).getCourseHub() + "/" + studentTwo.getUserName() + "/" + project.getRepoName());
+                    process = Runtime.getRuntime().exec("./src/main/bash/calculateDiffScore.sh " + studentOnePath + " " + studentTwoPath + " " + hash);
+                    stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    String result = stdInput.readLine();
+                    process.destroy();
+                    builder.append(result).append("_");
+                }
+                writer.write(builder.toString() + "\n");
+            }
+        } catch (Exception e) {
+            return new JSONReturnable(-4, null);
+        }
+
+        String pyPath = pythonPath + "get_similarity.py";
+        String command = pythonCommand + " " + pyPath + " " + diffsFile;
+        JSONReturnable json = runPython(command);
+        //executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
     }
 
     // NOTE: Not debugged
@@ -675,7 +720,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-3, null);
         }
         String pyPath = pythonPath + "get_class_statistics.py";
-        String command = pythonCommand + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
+        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
@@ -841,6 +886,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         String pyPath = pythonPath + "get_class_cheating.py";
+        //TODO: JARETT
+        //String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + diffsFile + " -l 1000";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -l 1000";
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
