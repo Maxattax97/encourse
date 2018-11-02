@@ -6,8 +6,8 @@ import ClassTestCasePercentDone from './chart/CourseTestCaseProgress'
 class CourseCharts extends Component {
 	render() {
 		const chartList = [
-			<ClassProgressHistogram key={1}/>,
-			<ClassTestCasePercentDone key={2}/>
+			<ClassProgressHistogram anon={true} key={1}/>,
+			<ClassTestCasePercentDone anon={true} key={2}/>
 		]
 
 		return (
