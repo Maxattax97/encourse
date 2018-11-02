@@ -627,7 +627,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         return json;
     }
 
-    // TODO: JARETT DO PYTHON
+    // NOTE: Not debugged
     public JSONReturnable getClassStatistics(@NonNull String projectID) {
         String dailyCountsFile = countAllCommitsByDay(projectID);
         String commitLogFile = listAllCommitsByTime(projectID);
