@@ -68,6 +68,16 @@ def setup_student_progress(parser):
     parser.set_defaults(func=API.student_progress.jsonprint)
 
 
+def setup_class_progress(parser):
+    parser.add_argument(
+        "visible", type=argparse.FileType("r"), help="path to visible test score file"
+    )
+    parser.add_argument(
+        "hidden", type=argparse.FileType("r"), help="path to hidden test score file"
+    )
+    parser.set_defaults(func=API.class_progress.jsonprint)
+
+
 if __name__ == "__main__":
     # Create the top-level parser
     parser = argparse.ArgumentParser(prog="encourse")
@@ -85,8 +95,11 @@ if __name__ == "__main__":
     gitlist_parser = subparsers.add_parser("gitlist")
     setup_gitlist(gitlist_parser)
 
-    student_progress_parser = subparsers.add_parser("student_progress")
+    student_progress_parser = subparsers.add_parser("student-progress")
     setup_student_progress(student_progress_parser)
+
+    class_progress_parser = subparsers.add_parser("class-progress")
+    setup_class_progress(class_progress_parser)
 
     ################# Tests ##################
     print("stats")
@@ -127,14 +140,25 @@ if __name__ == "__main__":
     parsed_args.func(parsed_args)
     print("\n")
 
-    print("student_progress")
+    print("student-progress")
     parsed_args = parser.parse_args(
         [
-            "student_progress",
+            "student-progress",
             "data/sampleTestsDay.txt",
             "data/sampleTestsDay.txt",
             "data/sampleCountsDay.txt",
             "cutz",
+        ]
+    )
+    parsed_args.func(parsed_args)
+    print("\n")
+
+    print("class-progress")
+    parsed_args = parser.parse_args(
+        [
+            "class-progress",
+            "data/sampleVisibleTestCases.txt",
+            "data/sampleHiddenTestCases.txt",
         ]
     )
     parsed_args.func(parsed_args)

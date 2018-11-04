@@ -12,6 +12,7 @@ from API import commitcount
 from API import changes
 from API import gitlist
 from API import student_progress
+from API import class_progress
 
 __all__ = [
     "sys",
@@ -28,4 +29,5 @@ __all__ = [
     "changes",
     "gitlist",
     "student_progress",
+    "class_progress",
 ]
