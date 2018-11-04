@@ -37,7 +37,6 @@ def setup_changes(parser):
     )
     parser.add_argument("name", help="user name")
     parser.add_argument("-l", "--limit", help="ignore file changes above limit")
-    parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
     parser.set_defaults(func=API.changes.jsonprint)
 
 
@@ -50,16 +49,33 @@ def setup_gitlist(parser):
     parser.set_defaults(func=API.gitlist.jsonprint)
 
 
+def setup_student_progress(parser):
+    """Configure student progress parser"""
+    parser.add_argument(
+        "visiblefile",
+        type=argparse.FileType("r"),
+        help="path to historic progress file for visible test cases",
+    )
+    parser.add_argument(
+        "hiddenfile",
+        type=argparse.FileType("r"),
+        help="path to historic progress file for hidden test cases",
+    )
+    parser.add_argument(
+        "timefile", type=argparse.FileType("r"), help="path to time file"
+    )
+    parser.add_argument("name", help="user name")
+    parser.set_defaults(func=API.student_progress.jsonprint)
+
+
 if __name__ == "__main__":
     # Create the top-level parser
     parser = argparse.ArgumentParser(prog="encourse")
     subparsers = parser.add_subparsers(dest="command")
 
-    # Create the parser for the "statistics" command
     stats_parser = subparsers.add_parser("stats")
     setup_stats(stats_parser)
 
-    # Create the parser for the "commitcount" command
     commitcount_parser = subparsers.add_parser("commitcount")
     setup_commitcount(commitcount_parser)
 
@@ -69,7 +85,10 @@ if __name__ == "__main__":
     gitlist_parser = subparsers.add_parser("gitlist")
     setup_gitlist(gitlist_parser)
 
-    # Tests
+    student_progress_parser = subparsers.add_parser("student_progress")
+    setup_student_progress(student_progress_parser)
+
+    ################# Tests ##################
     print("stats")
     parsed_args = parser.parse_args(
         [
@@ -104,8 +123,19 @@ if __name__ == "__main__":
     print("\n")
 
     print("gitlist")
+    parsed_args = parser.parse_args(["gitlist", "data/sampleCommitList.txt", "cutz"])
+    parsed_args.func(parsed_args)
+    print("\n")
+
+    print("student_progress")
     parsed_args = parser.parse_args(
-        ["gitlist", "data/sampleCommitList.txt", "cutz"]
+        [
+            "student_progress",
+            "data/sampleTestsDay.txt",
+            "data/sampleTestsDay.txt",
+            "data/sampleCountsDay.txt",
+            "cutz",
+        ]
     )
     parsed_args.func(parsed_args)
     print("\n")
