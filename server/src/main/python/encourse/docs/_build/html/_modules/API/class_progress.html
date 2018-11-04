@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API.class_progress &mdash; Encourse  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Encourse
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Encourse</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>API.class_progress</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for API.class_progress</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">API</span> <span class="k">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="jsonify"><a class="viewcode-back" href="../../API.html#API.class_progress.jsonify">[docs]</a><span class="k">def</span> <span class="nf">jsonify</span><span class="p">(</span><span class="n">visible_data</span><span class="p">,</span> <span class="n">hidden_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Formats data for /classProgress endpoint</span>
+
+<span class="sd">    Converts information in **data** into an appropriately formatted json </span>
+<span class="sd">    for the /classProgress endpoint     </span>
+
+<span class="sd">    **Args**:</span>
+<span class="sd">        **data** (dict): A dictionary of the following format: ::</span>
+
+<span class="sd">            {</span>
+<span class="sd">               &quot;name1&quot;: {</span>
+<span class="sd">                    &quot;Test1&quot;: (bool, float),</span>
+<span class="sd">                    ...</span>
+<span class="sd">               },</span>
+<span class="sd">               ...</span>
+<span class="sd">            }</span>
+
+<span class="sd">    **Return**:</span>
+<span class="sd">        dict: A dictionary of histogram data split into 20% bins: ::</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;0-20%&quot;: int,</span>
+<span class="sd">                &quot;20-40%&quot;: int,</span>
+<span class="sd">                &quot;40-60%&quot;: int,</span>
+<span class="sd">                &quot;60-80%&quot;: int,</span>
+<span class="sd">                &quot;80-100%&quot;: int</span>
+<span class="sd">            }</span>
+
+<span class="sd">        where each percentage bin contains a value 0 &lt;= int &lt;= 100</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">test_data</span> <span class="o">=</span> <span class="n">merge_inputs</span><span class="p">(</span><span class="n">visible_data</span><span class="p">,</span> <span class="n">hidden_data</span><span class="p">)</span>
+    <span class="n">histogram_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;0-20%&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;20-40%&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;40-60%&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;60-80%&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;80-100%&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">student</span> <span class="ow">in</span> <span class="n">test_data</span><span class="p">:</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="n">student</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">20</span><span class="p">:</span>
+            <span class="n">histogram_data</span><span class="p">[</span><span class="s2">&quot;0-20%&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">40</span><span class="p">:</span>
+            <span class="n">histogram_data</span><span class="p">[</span><span class="s2">&quot;20-40%&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">60</span><span class="p">:</span>
+            <span class="n">histogram_data</span><span class="p">[</span><span class="s2">&quot;40-60%&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">80</span><span class="p">:</span>
+            <span class="n">histogram_data</span><span class="p">[</span><span class="s2">&quot;60-80%&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="n">histogram_data</span><span class="p">[</span><span class="s2">&quot;80-100%&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">histogram_data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="merge_inputs"><a class="viewcode-back" href="../../API.html#API.class_progress.merge_inputs">[docs]</a><span class="k">def</span> <span class="nf">merge_inputs</span><span class="p">(</span><span class="n">visible</span><span class="p">,</span> <span class="n">hidden</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Merge test results per student from two input sources&quot;&quot;&quot;</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="n">visible</span>
+    <span class="c1"># Add hidden values to merged</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">hidden</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">merged</span><span class="p">:</span>
+            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;tests&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hidden</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;tests&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;tests&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hidden</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;tests&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">merged</span></div>
+
+
+<div class="viewcode-block" id="merge_data"><a class="viewcode-back" href="../../API.html#API.class_progress.merge_data">[docs]</a><span class="k">def</span> <span class="nf">merge_data</span><span class="p">(</span><span class="n">visible</span><span class="p">,</span> <span class="n">hidden</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sums the values in **visible** and **hidden** for each bin&quot;&quot;&quot;</span>
+    <span class="n">visible</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+    <span class="n">hidden</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">hidden</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">visible</span><span class="p">:</span>
+        <span class="n">visible</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+=</span> <span class="n">hidden</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="jsonprint"><a class="viewcode-back" href="../../API.html#API.class_progress.jsonprint">[docs]</a><span class="k">def</span> <span class="nf">jsonprint</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">visible_test_score_file</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">visible</span>
+    <span class="n">hidden_test_score_file</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">hidden</span>
+
+    <span class="n">visible_data</span> <span class="o">=</span> <span class="n">Progress</span><span class="o">.</span><span class="n">currentprogress</span><span class="o">.</span><span class="n">progress_from_file</span><span class="p">(</span><span class="n">visible_test_score_file</span><span class="p">)</span>
+    <span class="n">hidden_data</span> <span class="o">=</span> <span class="n">Progress</span><span class="o">.</span><span class="n">currentprogress</span><span class="o">.</span><span class="n">progress_from_file</span><span class="p">(</span><span class="n">hidden_test_score_file</span><span class="p">)</span>
+
+    <span class="n">formatted_data</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">visible_data</span><span class="p">,</span> <span class="n">hidden_data</span><span class="p">)</span>
+    <span class="n">api_json</span> <span class="o">=</span> <span class="n">formatted_data</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">api_json</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Ryan Sullivan
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,986 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API package &mdash; Encourse  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Encourse
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">API package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-API.changes">API.changes module</a></li>
+<li><a class="reference internal" href="#module-API.cheating">API.cheating module</a></li>
+<li><a class="reference internal" href="#module-API.class_progress">API.class_progress module</a></li>
+<li><a class="reference internal" href="#module-API.commitcount">API.commitcount module</a></li>
+<li><a class="reference internal" href="#module-API.gitlist">API.gitlist module</a></li>
+<li><a class="reference internal" href="#module-API.helper">API.helper module</a></li>
+<li><a class="reference internal" href="#module-API.stats">API.stats module</a></li>
+<li><a class="reference internal" href="#module-API.student_progress">API.student_progress module</a></li>
+<li><a class="reference internal" href="#module-API.test_summary">API.test_summary module</a></li>
+<li><a class="reference internal" href="#module-API.velocity">API.velocity module</a></li>
+<li><a class="reference internal" href="#module-API">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Encourse</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>API package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/API.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-package">
+<h1>API package<a class="headerlink" href="#api-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="API.GitLog.html">API.GitLog package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="API.GitLog.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.GitLog.html#module-API.GitLog.count">API.GitLog.count module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.GitLog.html#module-API.GitLog.daily">API.GitLog.daily module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.GitLog.html#module-API.GitLog.helper">API.GitLog.helper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.GitLog.html#module-API.GitLog.startend">API.GitLog.startend module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.GitLog.html#module-API.GitLog">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="API.Progress.html">API.Progress package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="API.Progress.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.Progress.html#module-API.Progress.currentprogress">API.Progress.currentprogress module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.Progress.html#module-API.Progress.helper">API.Progress.helper module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.Progress.html#module-API.Progress.pastprogress">API.Progress.pastprogress module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.Progress.html#module-API.Progress">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-API.changes">
+<span id="api-changes-module"></span><h2>API.changes module<a class="headerlink" href="#module-API.changes" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="API.changes.jsonify_data">
+<code class="descclassname">API.changes.</code><code class="descname">jsonify_data</code><span class="sig-paren">(</span><em>commit_data</em>, <em>times</em><span class="sig-paren">)</span> &#x2192; &lt;module 'json' from '/anaconda3/lib/python3.6/json/__init__.py'&gt;<a class="reference internal" href="_modules/API/changes.html#jsonify_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.changes.jsonify_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert data to json for api</p>
+<p>Converts the data to a list of dictionaries. One dictionary is
+created per day. A dictionary is also created for each day in between
+the first and last date, even if there is no data for that date. In that case,
+additions and deletions for that day are set to 0.</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>commit_data</strong> (dict): A dictionary containing the git commit list:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+            <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">seconds</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="o">...</span>
+    <span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">json: A json list of entries, one per day, of the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+      <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;mm-dd-yyyy&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+      <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.changes.jsonprint">
+<code class="descclassname">API.changes.</code><code class="descname">jsonprint</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/changes.html#jsonprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.changes.jsonprint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="API.changes.reformat">
+<code class="descclassname">API.changes.</code><code class="descname">reformat</code><span class="sig-paren">(</span><em>commit_list</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/API/changes.html#reformat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.changes.reformat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reformats a list of dates into a dictionary</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>commit_list</strong>: A list of dictionaries of the form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;additions&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="s1">&#39;deletions&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="n">datetime</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">dict: a single dictionary of the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;mm-dd-yyyy&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-API.cheating">
+<span id="api-cheating-module"></span><h2>API.cheating module<a class="headerlink" href="#module-API.cheating" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="API.cheating.is_suspicious">
+<code class="descclassname">API.cheating.</code><code class="descname">is_suspicious</code><span class="sig-paren">(</span><em>student_stats</em>, <em>class_stats</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/cheating.html#is_suspicious"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.cheating.is_suspicious" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each statistic in <strong>class_stats</strong> determine whether the student is within one
+standard deviation above the mean. If the student is outside of the standard 
+deviation for every statistic, flag them as suspicious.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.cheating.jsonify">
+<code class="descclassname">API.cheating.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>git_data</em>, <em>test_progress</em>, <em>hidden_progress=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/cheating.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.cheating.jsonify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="API.cheating.jsonprint">
+<code class="descclassname">API.cheating.</code><code class="descname">jsonprint</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/cheating.html#jsonprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.cheating.jsonprint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-API.class_progress">
+<span id="api-class-progress-module"></span><h2>API.class_progress module<a class="headerlink" href="#module-API.class_progress" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="API.class_progress.jsonify">
+<code class="descclassname">API.class_progress.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>visible_data</em>, <em>hidden_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/class_progress.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.class_progress.jsonify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats data for /classProgress endpoint</p>
+<p>Converts information in <strong>data</strong> into an appropriately formatted json 
+for the /classProgress endpoint</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>data</strong> (dict): A dictionary of the following format:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+   <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;Test1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+        <span class="o">...</span>
+   <span class="p">},</span>
+   <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Return</strong>:</dt>
+<dd><p class="first">dict: A dictionary of histogram data split into 20% bins:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;0-20%&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="s2">&quot;20-40%&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="s2">&quot;40-60%&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="s2">&quot;60-80%&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="s2">&quot;80-100%&quot;</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p class="last">where each percentage bin contains a value 0 &lt;= int &lt;= 100</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.class_progress.jsonprint">
+<code class="descclassname">API.class_progress.</code><code class="descname">jsonprint</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/class_progress.html#jsonprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.class_progress.jsonprint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="API.class_progress.merge_data">
+<code class="descclassname">API.class_progress.</code><code class="descname">merge_data</code><span class="sig-paren">(</span><em>visible</em>, <em>hidden</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/class_progress.html#merge_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.class_progress.merge_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sums the values in <strong>visible</strong> and <strong>hidden</strong> for each bin</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.class_progress.merge_inputs">
+<code class="descclassname">API.class_progress.</code><code class="descname">merge_inputs</code><span class="sig-paren">(</span><em>visible</em>, <em>hidden</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/class_progress.html#merge_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.class_progress.merge_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge test results per student from two input sources</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-API.commitcount">
+<span id="api-commitcount-module"></span><h2>API.commitcount module<a class="headerlink" href="#module-API.commitcount" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="API.commitcount.jsonify">
+<code class="descclassname">API.commitcount.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>commit_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/commitcount.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.commitcount.jsonify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts git log data json formatted for the /commitList endpoint</p>
+<p>Uses git log information to create a list of entries containing the date
+and commit count. Note that this function uses the data of a single student.</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>git_data</strong> (dict): A dictionary containing the git commit list:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+            <span class="s2">&quot;commit_count&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="o">...</span>
+    <span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">json: A json list with entries of the following format:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;mm-dd-yyyy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.commitcount.jsonprint">
+<code class="descclassname">API.commitcount.</code><code class="descname">jsonprint</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/commitcount.html#jsonprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.commitcount.jsonprint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-API.gitlist">
+<span id="api-gitlist-module"></span><h2>API.gitlist module<a class="headerlink" href="#module-API.gitlist" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="API.gitlist.jsonify">
+<code class="descclassname">API.gitlist.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>git_data</em>, <em>student_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/gitlist.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.gitlist.jsonify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts git log data json formatted for the /commitList endpoint</p>
+<p>Description</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>git_data</strong> (dict): A dictionary containing the git commit list:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+            <span class="s2">&quot;time_spent&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">seconds</span><span class="p">),</span>
+            <span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;file1&quot;</span><span class="p">,</span><span class="o">...</span><span class="p">],</span>
+        <span class="p">},</span>
+        <span class="o">...</span>
+    <span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd>dict: A dictionary identical to <strong>git_data</strong>, except all “date” and “time_spent”
+properties are converted to human readable strings</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.gitlist.jsonprint">
+<code class="descclassname">API.gitlist.</code><code class="descname">jsonprint</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/gitlist.html#jsonprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.gitlist.jsonprint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-API.helper">
+<span id="api-helper-module"></span><h2>API.helper module<a class="headerlink" href="#module-API.helper" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="API.helper.date_string">
+<code class="descclassname">API.helper.</code><code class="descname">date_string</code><span class="sig-paren">(</span><em>date</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/helper.html#date_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.helper.date_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a datetime object into the api’s standard date format</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.helper.daterange">
+<code class="descclassname">API.helper.</code><code class="descname">daterange</code><span class="sig-paren">(</span><em>start</em>, <em>end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/helper.html#daterange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.helper.daterange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of every date between <strong>start</strong> and <strong>end</strong></p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><div class="first last line-block">
+<div class="line"><strong>start</strong> (date): A datetime date object, representing the start of the range</div>
+<div class="line">of dates to be returned        </div>
+<div class="line"><strong>end</strong> (date): A datetime date object, representing the end of the range</div>
+<div class="line">of dates to be returned</div>
+</div>
+</dd>
+<dt><strong>Returns</strong></dt>
+<dd>list: A list of datetime date objects representing every date between start
+and end (inclusive)</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.helper.eprint">
+<code class="descclassname">API.helper.</code><code class="descname">eprint</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/helper.html#eprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.helper.eprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>A duplicate of the python print method that instead prints to standard error</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.helper.is_number">
+<code class="descclassname">API.helper.</code><code class="descname">is_number</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/helper.html#is_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.helper.is_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if a string can be converted to an int, false otherwise</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.helper.time_string">
+<code class="descclassname">API.helper.</code><code class="descname">time_string</code><span class="sig-paren">(</span><em>seconds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/helper.html#time_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.helper.time_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a datetime object to a concise string</p>
+<dl class="docutils">
+<dt><strong>Args</strong></dt>
+<dd><strong>seconds</strong> (int): The number of seconds that a student has worked on a project</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">str: Returns a string representing a (rounded) time, using the following rules:</p>
+<div class="last line-block">
+<div class="line">- “None” if the number of seconds &lt; 60</div>
+<div class="line">- “X minutes” if the number of minutes if greater than 1</div>
+<div class="line">- “X hours” if the number of hours is greater than 0</div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.helper.times_from_dailydata">
+<code class="descclassname">API.helper.</code><code class="descname">times_from_dailydata</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/helper.html#times_from_dailydata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.helper.times_from_dailydata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a start and end time from commit daily commit log data</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-API.stats">
+<span id="api-stats-module"></span><h2>API.stats module<a class="headerlink" href="#module-API.stats" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="API.stats.combine_statistics">
+<code class="descclassname">API.stats.</code><code class="descname">combine_statistics</code><span class="sig-paren">(</span><em>dates</em>, <em>stats</em>, <em>tests</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/stats.html#combine_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.stats.combine_statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a list of statistics for each user</p>
+<p>Combines the data from multiple sources into a set of statistics per student</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>dates</strong> (dict): A dict mapping students to a tuple of start and end dates:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;mm-dd-yyyy&quot;</span><span class="p">,</span>  <span class="s2">&quot;mm-dd-yyyy&quot;</span><span class="p">),</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>stats</strong> (dict): A dictionary of git log data per user. 
+The dictionary is of the following form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;commit_counts&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;time_spent&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">seconds</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>tests</strong> (dict): A dictionary of each user’s score for each test case.
+The dictionary is of the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;tests&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;Test1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;P&quot;</span> <span class="ow">or</span> <span class="s2">&quot;F&quot;</span><span class="p">),</span>
+        <span class="o">...</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">percentage</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Returns</strong></dt>
+<dd><p class="first">json: A json dictionary mapping users to a list of statistics. 
+Each statistic is of the form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;stat_name&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="s2">&quot;stat_value&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.stats.format_date">
+<code class="descclassname">API.stats.</code><code class="descname">format_date</code><span class="sig-paren">(</span><em>date</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/stats.html#format_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.stats.format_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a git date string to the iso format date string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.stats.jsonprint">
+<code class="descclassname">API.stats.</code><code class="descname">jsonprint</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/stats.html#jsonprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.stats.jsonprint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="API.stats.sum_statistics">
+<code class="descclassname">API.stats.</code><code class="descname">sum_statistics</code><span class="sig-paren">(</span><em>commit_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/stats.html#sum_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.stats.sum_statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts data per student per commit into cumulative statistics per student</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>commit_data</strong> (dict): A dictionary of students mapped to lists of commit data
+The dict has the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="s2">&quot;commit_count&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="s2">&quot;time_spent&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">seconds</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="o">...</span>
+    <span class="p">]</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">dict: A dictionary mapping students to cumulative statistics,
+The dictionary has the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;additions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;deletions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;commit_count&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;time_spent&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">seconds</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.stats.testcli">
+<code class="descclassname">API.stats.</code><code class="descname">testcli</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/stats.html#testcli"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.stats.testcli" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-API.student_progress">
+<span id="api-student-progress-module"></span><h2>API.student_progress module<a class="headerlink" href="#module-API.student_progress" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="API.student_progress.extract_progress">
+<code class="descclassname">API.student_progress.</code><code class="descname">extract_progress</code><span class="sig-paren">(</span><em>progress_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/student_progress.html#extract_progress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.student_progress.extract_progress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts additions and deletions from commit data</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>commit_data</strong> (dict): A list of dictionaries containing historical progress,
+each with the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+    <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">dict: A dictionary that maps dates to additions and deletions
+with the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;date1&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.student_progress.jsonify">
+<code class="descclassname">API.student_progress.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>visible_data</em>, <em>hidden_data</em>, <em>times</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/student_progress.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.student_progress.jsonify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert data to json for /progress endpoint</p>
+<p>Converts the data to a list of dictionaries. One dictionary is
+created per day. A dictionary is also created for each day in between
+the first and last date, even if there is no data for that date. In that case,
+progress for that day are set to the same value as the previous day.</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>commit_data</strong> (dict): A dictionary containing the git commit list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;date1&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p class="last"><strong>times</strong> (str, str): A tuple of start and end dates of the form “mm-dd-yyyy”</p>
+</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">json: A json list of entries, one per day, of the following form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;mm-dd-yyyy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.student_progress.jsonprint">
+<code class="descclassname">API.student_progress.</code><code class="descname">jsonprint</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/student_progress.html#jsonprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.student_progress.jsonprint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-API.test_summary">
+<span id="api-test-summary-module"></span><h2>API.test_summary module<a class="headerlink" href="#module-API.test_summary" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="API.test_summary.jsonify">
+<code class="descclassname">API.test_summary.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>test_data</em>, <em>hidden</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/test_summary.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.test_summary.jsonify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the number of students who have passed each test case</p>
+<p>Sums up the total number of students who have passed each particular test case, and
+stores that information with the test case name. If the test case is hidden, “H” is
+appended to the end of the test case name</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><p class="first"><strong>data</strong> (dict): A dictionary of users mapped to their respective test scores
+The dictionary has the following format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name1&quot;</span><span class="p">:</span> <span class="p">{</span>
+       <span class="s2">&quot;tests&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;Test1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+            <span class="o">...</span>
+       <span class="p">},</span>
+       <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">percentage</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p class="last"><strong>hidden</strong> (bool): A boolean that is true if the test cases are hidden</p>
+</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd><p class="first">json: A json array containing the percentage of students who passed each test.
+The json has the form:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;testName&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;hidden&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="n">percentage</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.test_summary.jsonprint">
+<code class="descclassname">API.test_summary.</code><code class="descname">jsonprint</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/test_summary.html#jsonprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.test_summary.jsonprint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="API.test_summary.merge_data">
+<code class="descclassname">API.test_summary.</code><code class="descname">merge_data</code><span class="sig-paren">(</span><em>visible</em>, <em>hidden</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/test_summary.html#merge_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.test_summary.merge_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines the visible and hidden test cases into a single json</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-API.velocity">
+<span id="api-velocity-module"></span><h2>API.velocity module<a class="headerlink" href="#module-API.velocity" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="API.velocity.jsonify">
+<code class="descclassname">API.velocity.</code><code class="descname">jsonify</code><span class="sig-paren">(</span><em>scores</em>, <em>daily_data</em>, <em>times</em>, <em>hidden_scores=None</em>, <em>max_velocity=None</em>, <em>max_rate=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/velocity.html#jsonify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.velocity.jsonify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert data to json for /velocity endpoint</p>
+<p>Converts the data to a mapping of students to their respective daily velocities. 
+Each student is flagged as suspicious if their progress per hour exceeds 
+<strong>max_velocity</strong>, or if their progress per commit exceeds <strong>max_rate</strong>
+A dictionary is also created for each day in between the first and last date, 
+even if there is no data for that date. In that case, both velocity and rate 
+for that day are set zero.</p>
+<dl class="docutils">
+<dt><strong>Args</strong>:</dt>
+<dd><strong>daily_data</strong> (dict): A dictionary containing the git commit list:
+<strong>times</strong> (str, str): A tuple of start and end dates of the form “mm-dd-yyyy”</dd>
+<dt><strong>Returns</strong>:</dt>
+<dd>json: A json dictionary</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="API.velocity.jsonprint">
+<code class="descclassname">API.velocity.</code><code class="descname">jsonprint</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/API/velocity.html#jsonprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.velocity.jsonprint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-API">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-API" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="API.datetime">
+<em class="property">class </em><code class="descclassname">API.</code><code class="descname">datetime</code><span class="sig-paren">(</span><em>year</em>, <em>month</em>, <em>day</em><span class="optional">[</span>, <em>hour</em><span class="optional">[</span>, <em>minute</em><span class="optional">[</span>, <em>second</em><span class="optional">[</span>, <em>microsecond</em><span class="optional">[</span>, <em>tzinfo</em><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/datetime.html#datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#API.datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#API.datetime.date" title="API.datetime.date"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.date</span></code></a></p>
+<p>The year, month and day arguments are required. tzinfo may be None, or an
+instance of a tzinfo subclass. The remaining arguments may be ints.</p>
+<dl class="method">
+<dt id="API.datetime.astimezone">
+<code class="descname">astimezone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.astimezone" title="Permalink to this definition">¶</a></dt>
+<dd><p>tz -&gt; convert to local time in new timezone tz</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.combine">
+<code class="descname">combine</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.combine" title="Permalink to this definition">¶</a></dt>
+<dd><p>date, time -&gt; datetime with same date and time fields</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.ctime">
+<code class="descname">ctime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.ctime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return ctime() style string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.date">
+<code class="descname">date</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return date object with same year, month and day.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.dst">
+<code class="descname">dst</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.dst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self.tzinfo.dst(self).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="API.datetime.fold">
+<code class="descname">fold</code><a class="headerlink" href="#API.datetime.fold" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.fromtimestamp">
+<code class="descname">fromtimestamp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.fromtimestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>timestamp[, tz] -&gt; tz’s local time from POSIX timestamp.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="API.datetime.hour">
+<code class="descname">hour</code><a class="headerlink" href="#API.datetime.hour" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.isoformat">
+<code class="descname">isoformat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.isoformat" title="Permalink to this definition">¶</a></dt>
+<dd><p>[sep] -&gt; string in ISO 8601 format, YYYY-MM-DDT[HH[:MM[:SS[.mmm[uuu]]]]][+HH:MM].
+sep is used to separate the year from the time, and defaults to ‘T’.
+timespec specifies what components of the time to include (allowed values are ‘auto’, ‘hours’, ‘minutes’, ‘seconds’, ‘milliseconds’, and ‘microseconds’).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="API.datetime.max">
+<code class="descname">max</code><em class="property"> = datetime.datetime(9999, 12, 31, 23, 59, 59, 999999)</em><a class="headerlink" href="#API.datetime.max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="API.datetime.microsecond">
+<code class="descname">microsecond</code><a class="headerlink" href="#API.datetime.microsecond" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="API.datetime.min">
+<code class="descname">min</code><em class="property"> = datetime.datetime(1, 1, 1, 0, 0)</em><a class="headerlink" href="#API.datetime.min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="API.datetime.minute">
+<code class="descname">minute</code><a class="headerlink" href="#API.datetime.minute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.now">
+<code class="descname">now</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.now" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns new datetime object representing current time local to tz.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>tz</dt>
+<dd>Timezone object.</dd>
+</dl>
+</div></blockquote>
+<p>If no tz is specified, uses local timezone.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.replace">
+<code class="descname">replace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return datetime with new specified fields.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="API.datetime.resolution">
+<code class="descname">resolution</code><em class="property"> = datetime.timedelta(0, 0, 1)</em><a class="headerlink" href="#API.datetime.resolution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="API.datetime.second">
+<code class="descname">second</code><a class="headerlink" href="#API.datetime.second" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.strptime">
+<code class="descname">strptime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.strptime" title="Permalink to this definition">¶</a></dt>
+<dd><p>string, format -&gt; new datetime parsed from a string (like time.strptime()).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.time">
+<code class="descname">time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return time object with same time but with tzinfo=None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.timestamp">
+<code class="descname">timestamp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return POSIX timestamp as float.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.timetuple">
+<code class="descname">timetuple</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.timetuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return time tuple, compatible with time.localtime().</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.timetz">
+<code class="descname">timetz</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.timetz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return time object with same time and tzinfo.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="API.datetime.tzinfo">
+<code class="descname">tzinfo</code><a class="headerlink" href="#API.datetime.tzinfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.tzname">
+<code class="descname">tzname</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.tzname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self.tzinfo.tzname(self).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.utcfromtimestamp">
+<code class="descname">utcfromtimestamp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.utcfromtimestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a naive UTC datetime from a POSIX timestamp.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.utcnow">
+<code class="descname">utcnow</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.utcnow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new datetime representing UTC day and time.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.utcoffset">
+<code class="descname">utcoffset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.utcoffset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self.tzinfo.utcoffset(self).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="API.datetime.utctimetuple">
+<code class="descname">utctimetuple</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#API.datetime.utctimetuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return UTC time tuple, compatible with time.localtime().</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Ryan Sullivan
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
