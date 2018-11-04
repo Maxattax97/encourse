@@ -1,4 +1,3 @@
-
 def past_progress(time_file):
     """Generates historic progrss data for all users
 

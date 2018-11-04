@@ -1,5 +1,6 @@
 from API.GitLog import *
 
+
 def create_day_dict(date, files, time_spent, additions, deletions, commit_count):
     """Creates a dictionary from inputs"""
     daily_data = {}
@@ -51,7 +52,7 @@ def remove_shared_commits(students, count=None):
     
     """
     # Compare among the first 3 students
-    if count: 
+    if count:
         for name in students:
             for i in range(min(count, len(students[name]))):
                 data = students[name].pop(0)

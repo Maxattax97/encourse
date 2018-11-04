@@ -1,5 +1,3 @@
-
-
 def progress_from_file(test_file):
     """Generates test score dictionary for each student
     

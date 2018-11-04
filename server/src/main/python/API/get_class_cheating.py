@@ -38,7 +38,11 @@ def jsonify(git_data, test_progress, hidden_progress=None):
         student_hidden = hidden_progress[student]
         startend = times(student_data)
 
-        velocity_data = json.loads(get_velocity(student_progress, student_data, startend, hidden_scores=student_hidden))
+        velocity_data = json.loads(
+            get_velocity(
+                student_progress, student_data, startend, hidden_scores=student_hidden
+            )
+        )
 
         progress = 0.0
         time_spent = 0.0
@@ -48,14 +52,14 @@ def jsonify(git_data, test_progress, hidden_progress=None):
             time_spent += day["time_spent"]
             commit_count += day["commit_count"]
 
-        # Convert time_spent from seconds to hours 
+        # Convert time_spent from seconds to hours
         time_spent /= 3600
-        velocity_averages.append(progress/time_spent)
-        rate_averages.append(progress/commit_count)
+        velocity_averages.append(progress / time_spent)
+        rate_averages.append(progress / commit_count)
 
         student_stats[student] = {
-            "rate": progress/commit_count,
-            "velocity": progress/time_spent
+            "rate": progress / commit_count,
+            "velocity": progress / time_spent,
         }
 
     # Find the mean and population standard deviation of velocity measures
@@ -71,17 +75,13 @@ def jsonify(git_data, test_progress, hidden_progress=None):
     eprint("Rate Standard Deviation: {}".format(rate_stdev))
 
     class_stats = {
-        "rate": {
-            "mean": rate_mean,
-            "stdev": rate_stdev
-        },
-        "velocity": {
-            "mean": velocity_mean,
-            "stdev": velocity_stdev
-        }
+        "rate": {"mean": rate_mean, "stdev": rate_stdev},
+        "velocity": {"mean": velocity_mean, "stdev": velocity_stdev},
     }
 
-    suspicious_students = [s for s in student_stats if is_suspicious(student_stats[s], class_stats) ]
+    suspicious_students = [
+        s for s in student_stats if is_suspicious(student_stats[s], class_stats)
+    ]
     suspicious_students = student_stats
 
     # Convert statistics into a single suspciousness score
@@ -94,17 +94,15 @@ def jsonify(git_data, test_progress, hidden_progress=None):
         # Convert rate to standard normal
         std_rate = (rate - rate_mean) / rate_stdev
         std_velocity = (velocity - velocity_mean) / velocity_stdev
-        
-        #Standardize combined metric (mean = 0, stdev = 2)
+
+        # Standardize combined metric (mean = 0, stdev = 2)
         score = (std_rate + std_velocity) / 2
 
         # Add student to the list
-        student_list.append({
-            "id": student,
-            "score": score
-        })
-        
+        student_list.append({"id": student, "score": score})
+
     return json.dumps(student_list)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -138,9 +136,7 @@ if __name__ == "__main__":
     visible_progress = past_progress(visible_file)
     hidden_progress = past_progress(hidden_file)
 
-    git_data = daily_data(
-        commit_log_file, max_change=args.limit, timeout=args.timeout
-    )
+    git_data = daily_data(commit_log_file, max_change=args.limit, timeout=args.timeout)
 
     api_json = jsonify(git_data, visible_progress, hidden_progress=hidden_progress)
 

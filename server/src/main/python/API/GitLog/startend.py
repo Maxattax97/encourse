@@ -1,5 +1,6 @@
 from API.GitLog import *
 
+
 def startend(time_file):
     """Generates commit time data for all users
 

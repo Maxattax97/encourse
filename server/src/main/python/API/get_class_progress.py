@@ -58,6 +58,7 @@ def jsonify(visible_data, hidden_data):
             histogram_data["80-100%"] += 1
     return json.dumps(histogram_data)
 
+
 def merge_inputs(visible, hidden):
     """Merge test results per student from two input sources"""
     merged = visible
@@ -71,7 +72,8 @@ def merge_inputs(visible, hidden):
             merged[key]["tests"] = hidden[key]["tests"]
     eprint(merged)
     return merged
-        
+
+
 def merge_data(visible, hidden):
     """Sums the values in **visible** and **hidden** for each bin"""
     visible = json.loads(visible)
@@ -79,6 +81,7 @@ def merge_data(visible, hidden):
     for key in visible:
         visible[key] += hidden[key]
     return json.dumps(visible)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
