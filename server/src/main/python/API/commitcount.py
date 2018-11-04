@@ -1,5 +1,6 @@
 from API import *
 
+
 def jsonify(commit_data):
     """ Converts git log data json formatted for the /commitList endpoint
 
