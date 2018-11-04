@@ -9,6 +9,7 @@ from API import CheatDetection
 from API import helper
 from API import stats
 from API import commitcount
+from API import changes
 
 __all__ = [
     "sys",
@@ -22,4 +23,5 @@ __all__ = [
     "helper",
     "stats",
     "commitcounts",
+    "changes",
 ]
