@@ -14,6 +14,7 @@ from API import gitlist
 from API import student_progress
 from API import class_progress
 from API import test_summary
+from API import velocity
 
 __all__ = [
     "sys",
@@ -32,4 +33,5 @@ __all__ = [
     "student_progress",
     "class_progress",
     "test_summary",
+    "velocity",
 ]
