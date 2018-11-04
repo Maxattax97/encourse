@@ -27,14 +27,11 @@ if __name__ == "__main__":
         "logfile", type=argparse.FileType("r"), help="path to commit log file"
     )
     commitcount_parser.add_argument("name", help="user name")
-    commitcount_parser.add_argument(
-        "-O", "--obfuscate", action="store_true", help="obfuscate flag"
-    )
     commitcount_parser.set_defaults(func=API.commitcount.jsonprint)
 
     changes_parser = subparsers.add_parser("changes")
-    changes_parser.add_argument("logfile", help="path to commit log file")
-    changes_parser.add_argument("timefile", help="path to commit time file")
+    changes_parser.add_argument("logfile", type=argparse.FileType("r"), help="path to commit log file")
+    changes_parser.add_argument("timefile", type=argparse.FileType("r"), help="path to commit time file")
     changes_parser.add_argument("name", help="user name")
     changes_parser.add_argument("-l", "--limit", help="ignore file changes above limit")
     changes_parser.add_argument(
@@ -42,7 +39,14 @@ if __name__ == "__main__":
     )
     changes_parser.set_defaults(func=API.changes.jsonprint)
 
+    gitlist_parser = subparsers.add_parser("gitlist")
+    gitlist_parser.add_argument("logfile", type=argparse.FileType("r"), help="path to commit log file")
+    gitlist_parser.add_argument("name", help="user name")
+    gitlist_parser.set_defaults(func=API.gitlist.jsonprint)
+
+
     # Tests
+    print("stats")
     parsed_args = parser.parse_args(
         [
             "stats",
@@ -53,11 +57,16 @@ if __name__ == "__main__":
         ]
     )
     parsed_args.func(parsed_args)
+    print("\n")
+
+    print("commitcount")
     parsed_args = parser.parse_args(
         ["commitcount", "test_datasets/sampleCommitList.txt", "cutz"]
     )
     parsed_args.func(parsed_args)
+    print("\n")
 
+    print("changes")
     parsed_args = parser.parse_args(
         [
             "changes",
@@ -68,6 +77,15 @@ if __name__ == "__main__":
         ]
     )
     parsed_args.func(parsed_args)
+    print("\n")
+
+    print("gitlist")
+    parsed_args = parser.parse_args(
+        ["gitlist", "test_datasets/sampleCommitList.txt", "cutz"]
+    )
+    parsed_args.func(parsed_args)
+    print("\n")
+    
 
     # Actual CLI code
     parsed_args = parser.parse_args()

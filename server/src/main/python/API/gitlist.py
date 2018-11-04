@@ -1,17 +1,5 @@
-import sys
-import json
+from API import *
 import copy
-import argparse
-from datetime import datetime
-from helper import time_string
-from helper import eprint
-from daily_git_data import get_daily_commit_data as get_progress
-
-
-def date_string(date):
-    """Converts datetime date object into the api's string format"""
-    return date.isoformat()
-
 
 def jsonify(git_data, student=None):
     """ Converts git log data json formatted for the /commitList endpoint
@@ -43,23 +31,17 @@ def jsonify(git_data, student=None):
     for student in data:
         student_data = data[student]
         for day in student_data:
-            day["date"] = date_string(day["date"])
-            day["time_spent"] = time_string(day["time_spent"])
+            day["date"] = helper.date_string(day["date"])
+            day["time_spent"] = helper.time_string(day["time_spent"])
     if student:
         return json.dumps(data[student])
     return json.dumps(data)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("logfile", help="path to commit log file")
-    parser.add_argument("name", help="user name")
-
-    args = parser.parse_args()
-
+def jsonprint(args):
     student_id = args.name
-    commit_data_file = open(args.logfile, "r")
-    data = get_progress(commit_data_file)
+    commit_data_file = args.logfile
+    data = GitLog.daily.daily(commit_data_file)
 
     api_json = jsonify(data, student_id)
     print(api_json)

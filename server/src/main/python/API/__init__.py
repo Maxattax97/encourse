@@ -10,6 +10,7 @@ from API import helper
 from API import stats
 from API import commitcount
 from API import changes
+from API import gitlist
 
 __all__ = [
     "sys",
@@ -24,4 +25,5 @@ __all__ = [
     "stats",
     "commitcounts",
     "changes",
+    "gitlist",
 ]

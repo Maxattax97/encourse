@@ -89,8 +89,8 @@ def jsonify_data(commit_data, times) -> json:
 
 
 def jsonprint(args):
-    commit_data_file = open(args.logfile, "r")
-    commit_times_file = open(args.timefile, "r")
+    commit_data_file = args.logfile
+    commit_times_file = args.timefile
     student_id = args.name
 
     data = (
