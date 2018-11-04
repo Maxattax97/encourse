@@ -7,7 +7,8 @@ from API import GitLog
 from API import Progress
 from API import CheatDetection
 from API import helper
-from API import get_statistics
+from API import stats
+from API import commitcount
 
 __all__ = [
     "sys",
@@ -19,5 +20,6 @@ __all__ = [
     "Progress",
     "CheatDetection",
     "helper",
-    "get_statistics",
+    "stats",
+    "commitcounts",
 ]

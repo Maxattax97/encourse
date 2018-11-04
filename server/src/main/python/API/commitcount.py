@@ -1,13 +1,4 @@
-import sys
-import json
-import copy
-import argparse
-from datetime import datetime
-from helper import date_string
-from helper import daterange
-from helper import eprint
-from daily_git_data import get_daily_commit_data as commit_list
-
+from API import *
 
 def jsonify(commit_data):
     """ Converts git log data json formatted for the /commitList endpoint
@@ -41,16 +32,16 @@ def jsonify(commit_data):
     new_data = []
     date1 = commit_data[0]["date"]
     date2 = commit_data[len(commit_data) - 1]["date"]
-    dates = daterange(date1, date2)
+    dates = helper.daterange(date1, date2)
 
     # Create a list of dictionaries for each date between the first and last
     for date in dates:
-        new_bar = {"date": date_string(date), "count": 0}
+        new_bar = {"date": helper.date_string(date), "count": 0}
         new_data.append(new_bar)
 
     # Replace the counts for each date with actual data
     for entry in commit_data:
-        date = date_string(entry["date"])
+        date = helper.date_string(entry["date"])
         count = entry["commit_count"]
         for e in new_data:
             if e["date"] == date:
@@ -59,18 +50,12 @@ def jsonify(commit_data):
     return json.dumps(new_data)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("logfile", help="path to commit log file")
-    parser.add_argument("name", help="user name")
-    parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
+def jsonprint(args):
 
-    args = parser.parse_args()
-
-    commit_data_file = open(args.logfile, "r")
+    commit_data_file = args.logfile
     student_id = args.name
 
-    commit_data = commit_list(commit_data_file)
+    commit_data = GitLog.daily.daily(commit_data_file)
     data = commit_data[student_id]
 
     formatted_data = jsonify(data)
