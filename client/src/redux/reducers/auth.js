@@ -46,6 +46,24 @@ function auth(state = {}, action) {
             changePasswordData: action.data,
             changePasswordIsLoading: false,
         })
+    case 'GET_ACCOUNT':
+        return Object.assign({}, state, {
+            getAccountIsLoading: true,
+        })
+    case 'GET_ACCOUNT_HAS_ERROR':
+        return Object.assign({}, state, {
+            getAccountHasError: action.hasError,
+            getAccountIsLoading: false,
+        })
+    case 'GET_ACCOUNT_DATA_SUCCESS':
+        return Object.assign({}, state, {
+            getAccountData: action.data,
+            getAccountIsLoading: false,
+        })
+    case 'SET_LOCATION':
+        return Object.assign({}, state, {
+            prevLocation: action.location,
+        })
     default:
         return state
     }

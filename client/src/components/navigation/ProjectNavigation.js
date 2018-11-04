@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { getClassProjects, setCurrentProject } from '../../redux/actions'
-import { Title, Card, BackIcon, SettingsIcon, PlusIcon } from '../Helpers'
+import {Title, Card, BackIcon, SettingsIcon, PlusIcon, LoadingIcon} from '../Helpers'
 import { history } from '../../redux/store'
 import url from '../../server'
 
@@ -37,16 +37,17 @@ class ProjectNavigation extends Component {
         return (
             <div className="list-nav side-nav-left">
                 <Card>
-                    { !this.props.isLoading
-                        ? <div className="list-container">
-                            <Title onClick={ this.openProjectOptions }>
-                                <h3 className='header'>Projects</h3>
-                                <SettingsIcon/>
-                            </Title>
-                            <div className="h3 break-line header"/>
-                            <div className='text-list'>
-                                {
-                                    this.props.projects &&
+                    <div className="list-container">
+                        <Title onClick={ this.openProjectOptions }>
+                            <h3 className='header'>Projects</h3>
+                            <SettingsIcon/>
+                        </Title>
+                        <div className="h3 break-line header"/>
+                        {
+                            !this.props.isLoading ?
+                                <div className='text-list'>
+                                    {
+                                        this.props.projects &&
                                         this.props.projects.map((project, index) =>
                                             <div key={ project.id }
                                                 onClick={ () => this.changeProject(project.id, index) }
@@ -55,10 +56,14 @@ class ProjectNavigation extends Component {
                                                     { project.project_name }
                                                 </h4>
                                             </div>)
-                                }
-                            </div>
-                        </div>
-                        : <div>Loading</div>}
+                                    }
+                                </div>
+                                :
+                                <div className='loading'>
+                                    <LoadingIcon/>
+                                </div>
+                        }
+                    </div>
                 </Card>
             </div>
         )

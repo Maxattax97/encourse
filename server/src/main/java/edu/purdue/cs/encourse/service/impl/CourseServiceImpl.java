@@ -58,6 +58,8 @@ public class CourseServiceImpl implements CourseService {
             Process process = Runtime.getRuntime().exec("./src/main/bash/" + command);
             StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
             Executors.newSingleThreadExecutor().submit(streamGobbler);
+            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), System.out::println);
+            Executors.newSingleThreadExecutor().submit(errorGobbler);
             process.waitFor();
         }
         catch(Exception e) {
@@ -372,6 +374,8 @@ public class CourseServiceImpl implements CourseService {
             projectJSON.put("test_script", visibleTestScripts);
             projectJSON.put("hidden_test_script", hiddenTestScripts);
             projectJSON.put("id", p.getProjectIdentifier());
+            projectJSON.put("last_sync", p.getSyncDate());
+            projectJSON.put("last_test", p.getTestDate());
             projectsJSON.add(projectJSON);
         }
         return projectsJSON;

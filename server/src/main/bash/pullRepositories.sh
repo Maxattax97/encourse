@@ -5,5 +5,5 @@
 DIRECTORY="$(pwd)"
 cd "$1"
 git reset --hard origin/master
-git pull
+git pull origin master
 cd "${DIRECTORY}"

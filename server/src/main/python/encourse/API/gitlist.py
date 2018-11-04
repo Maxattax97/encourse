@@ -2,7 +2,7 @@ from API import *
 import copy
 
 
-def jsonify(git_data, student=None):
+def jsonify(git_data, student_id=None):
     """ Converts git log data json formatted for the /commitList endpoint
 
     Description
@@ -34,7 +34,9 @@ def jsonify(git_data, student=None):
         for day in student_data:
             day["date"] = helper.date_string(day["date"])
             day["time_spent"] = helper.time_string(day["time_spent"])
-    if student:
+        data[student] = student_data
+    # TODO: Short circuit if student is defined and his or her data is parsed
+    if student_id:
         return json.dumps(data[student])
     return json.dumps(data)
 

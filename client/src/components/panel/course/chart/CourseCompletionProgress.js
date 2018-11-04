@@ -2,9 +2,10 @@ import React, { Component } from 'react'
 import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import { connect } from 'react-redux'
 
-import { getClassProgress } from '../../../../redux/actions/index'
+import { getClassProgress, getClassProgressAnon } from '../../../../redux/actions/index'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
+import CustomTooltipContent from './CustomTooltipContent';
 
 const toPercent = (decimal, fixed = 2) => {
     return `${(decimal).toFixed(fixed)}`
@@ -14,36 +15,36 @@ const defaultData = [
     {
         'progressBin': '0-20%',
         'order': 0,
-        'count': 10,
+        'count': 4,
         'percent': 0.625
     },
     {
         'progressBin': '20-40%',
         'order': 20,
-        'count': 3,
+        'count': 0,
         'percent': 0.1875
     },
     {
         'progressBin': '40-60%',
         'order': 40,
-        'count': 2,
+        'count': 4,
         'percent': 0.125
     },
     {
         'progressBin': '60-80%',
         'order': 60,
-        'count': 0,
+        'count': 7,
         'percent': 0
     },
     {
         'progressBin': '80-100%',
         'order': 80,
-        'count': 1,
+        'count': 5,
         'percent': 0.0625
     }
 ]
 
-class CourseCompletionProgress extends Component {
+class StudentsCompletionProgress extends Component {
     constructor(props) {
         super(props)
 
@@ -57,9 +58,15 @@ class CourseCompletionProgress extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if(this.props.isLoading && !nextProps.isLoading) {
-            this.setState({ formattedData: this.formatApiData(nextProps.data) })
-        }
+        if(!this.props.anon) {
+            if(this.props.isLoading && !nextProps.isLoading) {
+                this.setState({ formattedData: this.formatApiData(nextProps.data) })
+            }
+        } else {
+            if(this.props.isLoadingAnon && !nextProps.isLoadingAnon) {
+                this.setState({ formattedData: this.formatApiData(nextProps.data) })
+            }
+        }   
         if (nextProps.currentProjectId !== this.props.currentProjectId) {
             this.fetch(nextProps)
         }
@@ -67,7 +74,12 @@ class CourseCompletionProgress extends Component {
 
     fetch = (props) => {
         if(props.currentProjectId) {
-            props.getData(`${url}/api/classProgress?projectID=${props.currentProjectId}`)
+            if(props.anon) {
+                props.getAnonData(`${url}/api/progress?projectID=${props.currentProjectId}&anonymous=true`)
+            } else {
+                props.getData(`${url}/api/progress?projectID=${props.currentProjectId}`)
+            }
+            
         }    
     }
 
@@ -110,16 +122,16 @@ class CourseCompletionProgress extends Component {
                             <CartesianGrid/>
                             <XAxis dataKey="progressBin" type="category">
                                 <Label offset={-10} position="insideBottom">
-                                    Total
+                                    Progress
                                 </Label>
                             </XAxis>
-                            <YAxis tickFormatter={toPercent} domain={[0, 1]}>
+                            <YAxis>
                                 <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
                                     Students
                                 </Label>
                             </YAxis>
-                            <Tooltip/>
-                            <Bar dataKey="percent" fill="#8884d8"/>
+                            <Tooltip content={<CustomTooltipContent />} />
+                            <Bar dataKey="count" fill="#8884d8"/>
                         </ComposedChart>
                     </ResponsiveContainer>
                 </div>
@@ -135,15 +147,17 @@ const mapStateToProps = (state) => {
     return {
         data: state.course && state.course.getClassProgressData ? state.course.getClassProgressData : null,
         isLoading: state.course ? state.course.getClassProgressIsLoading : false,
+        isLoadingAnon: state.course ? state.course.getClassProgressIsLoadingAnon : false,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getData: (url, headers, body) => dispatch(getClassProgress(url, headers, body))
+        getData: (url, headers, body) => dispatch(getClassProgress(url, headers, body)),
+        getAnonData: (url, headers, body) => dispatch(getClassProgressAnon(url, headers, body))
     }
 }
 
-export { CourseCompletionProgress }
-export default connect(mapStateToProps, mapDispatchToProps)(CourseCompletionProgress)
+export { StudentsCompletionProgress }
+export default connect(mapStateToProps, mapDispatchToProps)(StudentsCompletionProgress)

@@ -30,11 +30,20 @@ public class TestExecuter implements Runnable {
             String command = "/home/" + courseAccount + "/testall.sh " + testingDirectory + " " + testCaseDirectory;
             Process process = Runtime.getRuntime().exec("./src/main/bash/runTestallAsCourseAccount.sh " + courseAccount + " " + command  + " 2> /dev/null");
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String error = null;
+            while ((error = stdError.readLine()) != null) {
+                System.out.println("Error: " + error);
+            }
             visibleResult = stdInput.readLine();
             command = "/home/" + courseAccount + "/testall.sh " + testingDirectory + " " + hiddenTestCaseDirectory;
             process = Runtime.getRuntime().exec("./src/main/bash/runTestallAsCourseAccount.sh " + courseAccount + " " + command  + " 2> /dev/null");
             stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             hiddenResult = stdInput.readLine();
+            while ((error = stdError.readLine()) != null) {
+                System.out.println("Error: " + error);
+            }
         }
         catch(IOException e) {
             e.printStackTrace();

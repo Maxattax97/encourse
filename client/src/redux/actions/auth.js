@@ -51,5 +51,30 @@ export function changePasswordDataSuccess(data) {
 }
 
 export const changePassword = genericDispatch(
-    'CHANGE_PASSWORD', changePasswordHasError, changePasswordDataSuccess, 'GET'
+    'CHANGE_PASSWORD', changePasswordHasError, changePasswordDataSuccess, 'POST'
 )
+
+export function getAccountHasError(hasError) {
+    return {
+        type: 'GET_ACCOUNT_HAS_ERROR',
+        hasError
+    }
+}
+
+export function getAccountDataSuccess(data) {
+    return {
+        type: 'GET_ACCOUNT_DATA_SUCCESS',
+        data
+    }
+}
+
+export const getAccount = genericDispatch(
+    'GET_ACCOUNT', getAccountHasError, getAccountDataSuccess, 'GET'
+)
+
+export function setLocation(location) {
+    return {
+        type: 'SET_LOCATION',
+        location
+    }
+}

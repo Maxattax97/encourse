@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { ComposedChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
+import { ComposedChart, Bar, Brush, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import { connect } from 'react-redux'
-import { getTestBarGraph } from '../../../../redux/actions/index'
+import { getTestBarGraph, getTestBarGraphAnon } from '../../../../redux/actions/index'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
 
@@ -64,7 +64,7 @@ const defaultData2 = [
     },
 ]
 
-class CourseTestCaseProgress extends Component {
+class StudentsTestCaseProgress extends Component {
     constructor(props) {
         super(props)
 
@@ -78,9 +78,15 @@ class CourseTestCaseProgress extends Component {
     }
 
     componentWillReceiveProps = (nextProps) => {
-        if (nextProps.data === null) {
-            this.setState({ formattedData: this.getDefaultData(nextProps) })
-        }
+        if(!this.props.anon) {
+            if(this.props.isLoading && !nextProps.isLoading) {
+                this.setState({ formattedData: this.formatApiData(nextProps.data) })
+            }
+        } else {
+            if(this.props.isLoadingAnon && !nextProps.isLoadingAnon) {
+                this.setState({ formattedData: this.formatApiData(nextProps.data) })
+            }
+        }   
         if (this.props.isLoading && !nextProps.isLoading) {
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
@@ -95,7 +101,11 @@ class CourseTestCaseProgress extends Component {
 
     fetch = (props) => {
         if(props.currentProjectId) {
-            props.getData(`${url}/api/testSummary?projectID=${props.currentProjectId}`)
+            if(props.anon) {
+                props.getAnonData(`${url}/api/testSummary?projectID=${props.currentProjectId}&anonymous=true`)
+            } else {
+                props.getData(`${url}/api/testSummary?projectID=${props.currentProjectId}`)
+            }     
         }   
     }
 
@@ -133,7 +143,7 @@ class CourseTestCaseProgress extends Component {
                             <CartesianGrid/>
                             <XAxis dataKey="testName" type="category">
                                 <Label offset={-10} position="insideBottom">
-                                Test Case
+                                {/*Test Case*/}
                                 </Label>
                             </XAxis>
                             <YAxis tickFormatter={toPercent} domain={[0, 1]}>
@@ -147,6 +157,7 @@ class CourseTestCaseProgress extends Component {
                                     <Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#8884d8' }/>
                                 ))}
                             </Bar>
+                            <Brush dataKey="testName" height={40} stroke="#8884d8"/>
                         </ComposedChart>
                     </ResponsiveContainer>
                 </div>
@@ -162,14 +173,16 @@ const mapStateToProps = (state) => {
     return {
         data: state.course && state.course.getTestBarGraphData ? state.course.getTestBarGraphData : null,
         isLoading: state.course ? state.course.getTestBarGraphIsLoading : false,
+        issLoadingAnon: state.course ? state.course.getTestBarGraphIsLoadingAnon : false,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getData: (url, headers, body) => dispatch(getTestBarGraph(url, headers, body))
+        getData: (url, headers, body) => dispatch(getTestBarGraph(url, headers, body)),
+        getAnonData: (url, headers, body) => dispatch(getTestBarGraphAnon(url, headers, body)),
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CourseTestCaseProgress)
+export default connect(mapStateToProps, mapDispatchToProps)(StudentsTestCaseProgress)

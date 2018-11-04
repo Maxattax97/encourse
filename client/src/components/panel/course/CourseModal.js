@@ -11,16 +11,8 @@ class CourseModal extends Component {
         super(props)
 
         this.state = {
-            show: false,
             course_directory: '',
             interval: 24
-        }
-    }
-
-    static getDerivedStateFromProps(props, state) {
-        return {
-            show: props.show,
-            course_directory: state.course_directory
         }
     }
 

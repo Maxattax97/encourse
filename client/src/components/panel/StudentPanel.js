@@ -4,9 +4,12 @@ import { connect } from 'react-redux'
 import {BackNav, Card} from '../Helpers'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import { history } from '../../redux/store'
-import { getStudent, clearStudent } from '../../redux/actions/index'
+import { getStudent, clearStudent, runStudentTests, syncStudentRepository } from '../../redux/actions/index'
+import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {StudentFeedback, StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
+import SyncItem from './common/SyncItem'
+import { fuzzing } from '../../fuzz'
 
 
 class StudentPanel extends Component {
@@ -17,26 +20,37 @@ class StudentPanel extends Component {
 
     componentDidMount = () => {
         if(!this.props.currentStudent) {
-            this.props.getStudent(/*TODO: add individual student call for case that currentStudent isn't stored*/)
+            this.props.getStudent(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&userName=${this.props.match.params.id}`)
         }
     }
 
     back = () => {
-        history.push('/course')
-    };
+        history.goBack()
+    }
 
     render() {
 
         const action_names = [
-            'View Hidden Tests',
+            'Sync Repository',
             'Run Tests',
             'Academic Dishonesty Report'
         ]
 
+        let studentDishonestyRedirect = () => { history.push('/student-dishonesty/' + this.props.currentStudent.id) }
+        if (fuzzing) {
+            studentDishonestyRedirect = () => { history.push('/student-dishonesty/student') }
+        }
+
         const actions = [
-            () => {},
-            () => {},
-            () => { history.push('/student-dishonesty/' + this.props.currentStudent.id) }
+            () => { 
+                if(this.props.currentProjectId && this.props.currentStudent)
+                    this.props.syncStudentRepository(`${url}/api/pull/project?projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
+            },
+            () => {
+                if(this.props.currentProjectId && this.props.currentStudent)
+                    this.props.runStudentTests(`${url}/api/run/testall?projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
+            },
+            studentDishonestyRedirect
         ]
 
         return (
@@ -45,19 +59,12 @@ class StudentPanel extends Component {
                 <div className='panel-left-nav'>
                     <BackNav back="Course"
                         backClick={ this.back }/>
-                    <ActionNavigation actions={ actions } action_names={ action_names }/>
                     <ProjectNavigation/>
+                    <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
 
                 <div className="panel-right-nav">
-                    <div className='top-nav'>
-                        <div>
-                            <h4>Last Sync:</h4>
-                        </div>
-                        <div>
-                            <h4>Last Test Ran:</h4>
-                        </div>
-                    </div>
+                    <SyncItem />
                     <StudentCommitHistory />
                 </div>
 
@@ -65,7 +72,7 @@ class StudentPanel extends Component {
                     <div className='panel-student-content'>
                         <h1 className='header'>
                             {
-                                `CS252 - ${this.props.currentStudent ? `${this.props.currentStudent.first_name} ${this.props.currentStudent.last_name}` : ''}`
+                                `CS252 - ${/*this.props.currentStudent ? `${this.props.currentStudent.first_name} ${this.props.currentStudent.last_name}` :*/ ''}`
                             }
                         </h1>
                         <div className="h1 break-line header" />
@@ -91,15 +98,18 @@ class StudentPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined
+        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         getStudent: (url, headers, body) => dispatch(getStudent(url, headers, body)),
+        syncStudentRepository: (url, headers, body) => dispatch(syncStudentRepository(url, headers, body)),
+        runStudentTests: (url, headers, body) => dispatch(runStudentTests(url, headers, body)),
         clearStudent: () => dispatch(clearStudent),
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(StudentPanel)
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(StudentPanel)

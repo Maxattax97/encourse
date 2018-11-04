@@ -33,7 +33,8 @@ def jsonify(
 
     velocity_data = []
     cumulative_progress = 0
-    min_progress = 0
+
+    max_progress = 0
 
     for day in dates:
         day = helper.date_string(day)
@@ -41,14 +42,22 @@ def jsonify(
         new_entry["date"] = day
 
         # get cumulative progress
-        if day in scores:
+        if day in scores and day in hidden_scores:
+            cumulative_progress = (
+                scores[day]["progress"] + hidden_scores[day]["progress"]
+            ) / 2
+        elif day in scores:
             cumulative_progress = scores[day]["progress"]
-        if day in hidden_scores:
+        elif day in hidden_scores:
             cumulative_progress = hidden_scores[day]["progress"]
 
+        # TESTING: Skip hidden tests for now
+        if day in scores:
+            cumulative_progress = scores[day]["progress"]
+
         # calculate daily progress
-        new_entry["progress"] = cumulative_progress - min_progress
-        min_progress = max(min_progress, cumulative_progress)
+        new_entry["progress"] = max(0, cumulative_progress - max_progress)
+        max_progress = max(max_progress, cumulative_progress)
 
         # copy daily data
         new_entry["time_spent"] = 0

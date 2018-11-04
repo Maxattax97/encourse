@@ -4,7 +4,7 @@ import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label, Bru
 import moment from 'moment'
 import { connect } from 'react-redux'
 
-import { getProgressPerTime } from '../../../../redux/actions/index'
+import { getProgressPerCommit } from '../../../../redux/actions/index'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
 
@@ -23,13 +23,13 @@ const defaultData = [
     {date: moment('2018-09-27').valueOf(), progress: 10, timeSpent: 3, commitCount: 50},
 ]
 
-class StudentVelocityPerTime extends Component {
+class StudentVelocityPerCommit extends Component {
 
     constructor(props) {
         super(props)
 
         this.state = {
-            formattedData: defaultData,
+            formattedData: [],
         }
     }
 
@@ -39,21 +39,31 @@ class StudentVelocityPerTime extends Component {
 
     componentWillReceiveProps = (nextProps) => {
         if(this.props.isLoading && !nextProps.isLoading) {
-            this.setState({ formattedData: this.formatApiData(nextProps.data) })
+            const data = this.formatApiData(nextProps.data)
+
+            if(data)
+                this.setState({ formattedData: data })
         }
-        if (nextProps.currentProjectId !== this.props.currentProjectId) {
+
+        if (nextProps.currentProjectId !== this.props.currentProjectId)
             this.fetch(nextProps)
-        }
     }
 
     fetch = (props) => {
         if(props.currentProjectId) {
             props.getData(`${url}/api/velocity?projectID=${props.currentProjectId}&userName=${props.currentStudent.id}`)
-        }  
+        }   
     }
 
     dateFormatter = (date) => {
         return moment(date).format('M-D')
+    }
+    
+    customDateFormatter = (value, name, props) => {
+        if (name === 'date') {
+            return moment(value).format('M-D')
+        }
+        return value
     }
 
     formatApiData = (udata) => {
@@ -68,6 +78,9 @@ class StudentVelocityPerTime extends Component {
 
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf()
+            entry.commitCount = entry.commit_count
+            // progress per commit
+            entry.ppc = entry.commitCount > 0 ? entry.progress / entry.commitCount : 0
         }
 
         return data
@@ -79,19 +92,19 @@ class StudentVelocityPerTime extends Component {
                 ? <div className="chart-container">
                     <ResponsiveContainer width="100%" height="100%">
                         <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
-                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Time</text>
+                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Commit</text>
                             <CartesianGrid/>
-                            <XAxis dataKey="timeSpent" type="number">
+                            <XAxis dataKey="date" type="number" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
                                 <Label offset={-15} position="insideBottom">
-                                Estimated Time worked
+                                    Date
                                 </Label>
                             </XAxis>
-                            <YAxis dataKey="progress" type="number">
+                            <YAxis dataKey="ppc" type="number">
                                 <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
-                                Progress
+                                    Progress per Commit
                                 </Label>
                             </YAxis>
-                            <Tooltip labelFormatter={this.dateFormatter} animationDuration={500}/>
+                            <Tooltip labelFormatter={this.customDateFormatter}/>
                             <Scatter type="number" fill="#8884d8"/>
                         </ScatterChart>
                     </ResponsiveContainer>
@@ -108,15 +121,15 @@ const mapStateToProps = (state) => {
     return {
         currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
-        data: state.student && state.student.getProgressPerTimeData ? state.student.getProgressPerTimeData : null,
-        isLoading: state.student ? state.student.getProgressPerTimeIsLoading : false,
+        data: state.student && state.student.getProgressPerCommitData ? state.student.getProgressPerCommitData : null,
+        isLoading: state.student ? state.student.getProgressPerCommitIsLoading : false,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getData: (url, headers, body) => dispatch(getProgressPerTime(url, headers, body)),
+        getData: (url, headers, body) => dispatch(getProgressPerCommit(url, headers, body)),
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(StudentVelocityPerTime)
+export default connect(mapStateToProps, mapDispatchToProps)(StudentVelocityPerCommit)

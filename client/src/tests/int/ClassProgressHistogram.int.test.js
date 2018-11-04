@@ -2,13 +2,13 @@ import React from 'react'
 import Enzyme, { mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 import { Provider } from 'react-redux'
-import ClassProgressHistogram from '../../components/panel/course/chart/CourseCompletionProgress'
+import ClassProgressHistogram from '../../components/panel/course/chart/StudentsCompletionProgress'
 import myReducer from '../../redux/reducers'
 import { setupIntegrationTest } from '../util/reduxTestUtils'
 
 Enzyme.configure({ adapter: new Adapter() })
 
-describe('<CourseCompletionProgress />', () => {
+describe('<StudentsCompletionProgress />', () => {
     let store
     // let dispatchSpy
 

@@ -3,31 +3,83 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import url from '../../server'
-import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState} from '../../redux/actions/index'
+import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories, updateStudentsPage, resetStudentsPage} from '../../redux/actions'
 import ProjectNavigation from '../navigation/ProjectNavigation'
-import {CourseModal, CourseCharts, CourseStudentFilter} from './course'
+import {CourseModal, CourseAnonCharts, CourseCharts, CourseStatistics, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
+import SyncItem from './common/SyncItem'
 import {Title, SettingsIcon, BackNav} from '../Helpers'
+import CourseCommitHistory from './course/CourseCommitHistory'
 
 class CoursePanel extends Component {
 
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            filters: {
+                sort_by: 0,
+                order_by: 0,
+                commit_filter: 0,
+                hour_filter: 0,
+                progress_filter: 0
+            }
+        }
+    }
+
     componentDidMount = () => {
-        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018`)
+        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&projectID=${this.props.currentProjectId}`)
+    }
+
+    scrolledToBottom = () => {
+        if(!this.props.last) {
+            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=${this.props.page + 1}&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}`)
+            this.props.updateStudentsPage()
+        }
+    }
+
+    getSortBy = (value) => {
+        let id = value ? value : this.state.filters.sort_by
+        switch(id) {
+            case 0:
+                return 'id'
+            case 1:
+                return 'timeSpent'
+            case 2:
+                return 'commitCounts'
+            case 3:
+                return 'grades'
+            
+        }
+    }
+
+    changeFilter = (key, value) => {
+        this.state.filters[key] = value
+        this.setState({ filters: Object.assign({}, this.state.filters) }, () => {
+            this.props.resetStudentsPage()
+            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=1&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}&order=${this.state.filters.order_by}&commit=${this.state.filters.commit_filter}&progress=${this.state.filters.progress_filter}&hour=${this.state.filters.hour_filter}`)
+        })
     }
 
     render() {
 
         const action_names = [
             'Manage Teaching Assistants',
-            'Sync Repositories',
-            'Run Tests',
+            'Sync Project Repositories',
+            'Run Project Tests',
             'Academic Dishonesty Report'
         ]
 
         const actions = [
             () => { history.push('/manage-tas') },
-            () => {  },
-            () => {  },
+            () => {
+                if(this.props.currentProjectId)
+                    this.props.syncRepositories(`${url}/api/pull/project?projectID=${this.props.currentProjectId}`)
+            },
+            () => {
+                if(this.props.currentProjectId)
+                    this.props.runTests(`${url}/api/run/testall?projectID=${this.props.currentProjectId}`)
+            },
             () => { history.push('/course-dishonesty') }
         ]
 
@@ -36,19 +88,13 @@ class CoursePanel extends Component {
 
                 <div className='panel-left-nav'>
                     <BackNav/>
-                    <ActionNavigation actions={ actions } action_names={ action_names }/>
                     <ProjectNavigation/>
+                    <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
 
                 <div className='panel-right-nav'>
-                    <div className='top-nav'>
-                        <div>
-                            <h4>Last Sync:</h4>
-                        </div>
-                        <div>
-                            <h4>Last Test Ran:</h4>
-                        </div>
-                    </div>
+                    <SyncItem />
+                    <CourseCommitHistory/>
                 </div>
 
                 <CourseModal id={1}/>
@@ -63,17 +109,34 @@ class CoursePanel extends Component {
                         <div className='h1 break-line header' />
 
                         <h3 className='header'>Course Charts Summary</h3>
+                        <CourseAnonCharts />
 
+	                    <div className='h1 break-line header' />
+
+	                    <h3 className='header'>Students Charts Summary</h3>
                         <CourseCharts/>
+
+                        <div className='h1 break-line header' />
+                        <h3 className='header'>Course Statistics</h3>
+                        <CourseStatistics />
 
                         <div className='h1 break-line' />
 
-                        <h3 className='header'>Students Summary</h3>
-                        <CourseStudentFilter />
+                        <CourseStudentFilter onChange={ this.changeFilter } filters={ this.state.filters } />
                     </div>
                 </div>
             </div>
         )
+    }
+}
+
+const mapStateToProps = (state) => {
+    return {
+	    projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
+	    currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
+        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        page: state.course && state.course.studentsPage ? state.course.studentsPage : 1,
+        last: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.last : true,
     }
 }
 
@@ -83,7 +146,11 @@ const mapDispatchToProps = (dispatch) => {
         setCurrentProject: (id, index) => dispatch(setCurrentProject(id, index)),
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
         setModalState: (id) => dispatch(setModalState(id)),
+        runTests: (url, headers, body) => dispatch(runTests(url, headers, body)),
+        syncRepositories: (url, headers, body) => dispatch(syncRepositories(url, headers, body)),
+        updateStudentsPage: () => dispatch(updateStudentsPage()),
+        resetStudentsPage: () => dispatch(resetStudentsPage()),
     }
 }
 
-export default connect(null, mapDispatchToProps)(CoursePanel)
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(CoursePanel)

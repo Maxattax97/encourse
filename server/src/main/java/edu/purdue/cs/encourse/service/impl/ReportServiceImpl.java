@@ -1,7 +1,6 @@
 package edu.purdue.cs.encourse.service.impl;
 
 import edu.purdue.cs.encourse.database.ReportRepository;
-import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.Report;
 import edu.purdue.cs.encourse.service.ReportService;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -10,7 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
 
 @Service(value = ReportServiceImpl.NAME)
 public class ReportServiceImpl implements ReportService {

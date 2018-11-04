@@ -1,7 +1,7 @@
 export {
     default as CourseCompletionProgress
-} from './CourseCompletionProgress'
+} from './StudentsCompletionProgress'
 
 export {
     default as CourseTestCaseProgress
-} from './CourseTestCaseProgress'
+} from './StudentsTestCaseProgress'

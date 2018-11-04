@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface ProfessorService {
 
+    // TODO: @reed add security checks for professors
+
     int assignProject(@NonNull String projectID);
     int assignProjectToStudent(@NonNull String projectID, @NonNull String userName);
     int cloneProjects(@NonNull String projectID);
@@ -23,13 +25,17 @@ public interface ProfessorService {
 
     JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getClassProgress(@NonNull String projectID);
+    JSONReturnable getClassSimilar(@NonNull String projectID);
+    JSONReturnable getGroupProgress(@NonNull String projectID, List<String> userNames);
+    JSONReturnable getClassStatistics(@NonNull String projectID);
     JSONReturnable getCommitCounts(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getCommitVelocity(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getTestSummary(@NonNull String projectID);
-
+    JSONReturnable getGroupTestSummary(@NonNull String projectID, List<String> userNames);
+    JSONReturnable getClassCommitList(@NonNull String projectID);
     JSONReturnable getClassCheating(@NonNull String projectID);
 
     String countAllCommits(@NonNull String projectID);
@@ -45,6 +51,7 @@ public interface ProfessorService {
     void pullAndTestAllProjects();
     int runTestall(@NonNull String projectID);
     int runTestallForStudent(@NonNull String projectID, @NonNull String userName);
+    int runHistoricTestall(@NonNull String projectID);
     ProjectTestScript addTestScript(@NonNull String projectID, @NonNull String testName, boolean isHidden, double points);
     ProjectTestScript uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents, boolean isHidden, double points);
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import Enzyme, { mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
-import { CourseCompletionProgress } from './CourseCompletionProgress'
+import { StudentsCompletionProgress } from './StudentsCompletionProgress'
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -11,7 +11,7 @@ function setup() {
         token: null
     }
 
-    const wrapper = mount(<CourseCompletionProgress {...props} />)
+    const wrapper = mount(<StudentsCompletionProgress {...props} />)
 
     return {
         props,
@@ -19,7 +19,7 @@ function setup() {
     }
 }
 
-describe('<CourseCompletionProgress />', () => {
+describe('<StudentsCompletionProgress />', () => {
     it('render()', () => {
         setup()
     })

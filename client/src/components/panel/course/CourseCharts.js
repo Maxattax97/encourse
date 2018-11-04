@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {Card, Summary} from '../../Helpers'
-import ClassProgressHistogram from './chart/CourseCompletionProgress'
-import ClassTestCasePercentDone from './chart/CourseTestCaseProgress'
+import ClassProgressHistogram from './chart/StudentsCompletionProgress'
+import ClassTestCasePercentDone from './chart/StudentsTestCaseProgress'
 
 class CourseCharts extends Component {
     render() {
@@ -11,13 +11,14 @@ class CourseCharts extends Component {
         ]
 
         return (
-            <Summary
-                columns={ 2 }
-                data={ chartList }
-                className='charts'
-                iterator={ (chart) => <Card key={ chart.key }>
-                    { chart }
-                </Card> } >
+            <Summary columns={ 2 } className='charts'>
+                {
+                    chartList.map( (chart) =>
+	                    <Card key={ chart.key }>
+		                    { chart }
+	                    </Card>
+                    )
+                }
             </Summary>
         )
     }

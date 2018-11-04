@@ -156,3 +156,51 @@ export function getProgressPerCommitDataSuccess(data) {
 export const getProgressPerCommit = genericDispatch(
     'GET_PROGRESS_PER_COMMIT', getProgressPerCommitHasError, getProgressPerCommitDataSuccess, 'GET'
 )
+
+export function syncStudentRepositoryHasError(hasError) {
+    return {
+        type: 'SYNC_STUDENT_REPOSITORIES_HAS_ERROR',
+        hasError
+    }
+}
+
+export function syncStudentRepositorySuccess(data) {
+    return {
+        type: 'SYNC_STUDENT_REPOSITORIES_SUCCESS',
+        data
+    }
+}
+
+export const syncStudentRepository = genericDispatch(
+	'SYNC_STUDENT_REPOSITORIES', syncStudentRepositoryHasError, syncStudentRepositorySuccess, 'POST'
+)
+
+export function runStudentTestsHasError(hasError) {
+    return {
+        type: 'RUN_STUDENT_TESTS_HAS_ERROR',
+        hasError
+    }
+}
+
+export function runStudentTestsSuccess(data) {
+    return {
+        type: 'RUN_STUDENT_TESTS_SUCCESS',
+        data
+    }
+}
+
+export const runStudentTests = genericDispatch(
+    'RUN_STUDENT_TESTS', runStudentTestsHasError, runStudentTestsSuccess, 'POST'
+)
+
+export function updateCommitsPage() {
+    return {
+        type: 'UPDATE_COMMITS_PAGE'
+    }
+}
+
+export function resetCommitsPage() {
+    return {
+        type: 'RESET_COMMITS_PAGE'
+    }
+}

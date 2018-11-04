@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Dropdown, Filter} from '../../Helpers'
+import {Checkbox, Dropdown, Filter} from '../../Helpers'
 import connect from 'react-redux/es/connect/connect'
 import CourseStudentSummary from './CourseStudentSummary'
 
@@ -11,26 +11,15 @@ class CourseStudentFilter extends Component {
     time_ranges = ['Any', '1 - 5', '6 - 10', '11 - 25', '26+']
     progress_ranges = ['Any', '0 - 25%', '26 - 50%', '51 - 75%', '76 - 100%']
 
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            sort_by: 0,
-            order_by: 0,
-            commit_filter: 0,
-            hour_filter: 0,
-            progress_filter: 0
-        }
-    }
-
     render() {
         return (
             <div className='course-students'>
+                <h3 className='header'>Students Summary</h3>
                 {
-                    this.props.students && this.props.students.length > 0 ?
+                    this.props.students ?
                         <Filter>
-                            <Dropdown header={<h5>Sort by { this.sort_by_ranges[this.state.sort_by] }</h5>}
-                                onClick={ (index) => { this.setState({ sort_by: index }) }}
+                            <Dropdown header={<h5>Sort by { this.sort_by_ranges[this.props.filters.sort_by] }</h5>}
+                                onClick={ (index) => this.props.onChange('sort_by', index) }
                                 leftAnchor>
 
                                 {
@@ -41,8 +30,8 @@ class CourseStudentFilter extends Component {
                                     )
                                 }
                             </Dropdown>
-                            <Dropdown header={<h5>{ this.order_ranges[this.state.order_by] } Order</h5>}
-                                onClick={ (index) => { this.setState({ order_by: index }) }}
+                            <Dropdown header={<h5>{ this.order_ranges[this.props.filters.order_by] } Order</h5>}
+                                onClick={ (index) => this.props.onChange('order_by', index) }
                                 rightAnchor>
                                 {
                                     this.order_ranges.map(range =>
@@ -52,8 +41,8 @@ class CourseStudentFilter extends Component {
                                     )
                                 }
                             </Dropdown>
-                            <Dropdown header={<h5>{ this.commit_ranges[this.state.commit_filter] } Commits</h5>}
-                                onClick={ (index) => { this.setState({ commit_filter: index }) }}
+                            <Dropdown header={<h5>{ this.commit_ranges[this.props.filters.commit_filter] } Commits</h5>}
+                                onClick={ (index) => this.props.onChange('commit_filter', index) }
                                 rightAnchor>
                                 {
                                     this.commit_ranges.map(range =>
@@ -63,8 +52,8 @@ class CourseStudentFilter extends Component {
                                     )
                                 }
                             </Dropdown>
-                            <Dropdown header={<h5>{ this.time_ranges[this.state.hour_filter] } Hours</h5>}
-                                onClick={ (index) => { this.setState({ hour_filter: index }) }}
+                            <Dropdown header={<h5>{ this.time_ranges[this.props.filters.hour_filter] } Hours</h5>}
+                                onClick={ (index) => this.props.onChange('hour_filter', index) }
                                 rightAnchor>
                                 {
                                     this.time_ranges.map(range =>
@@ -74,8 +63,8 @@ class CourseStudentFilter extends Component {
                                     )
                                 }
                             </Dropdown>
-                            <Dropdown header={<h5>{ this.progress_ranges[this.state.progress_filter] } Progress</h5>}
-                                onClick={ (index) => { this.setState({ progress_filter: index }) }}
+                            <Dropdown header={<h5>{ this.progress_ranges[this.props.filters.progress_filter] } Progress</h5>}
+                                onClick={ (index) => this.props.onChange('progress_filter', index) }
                                 rightAnchor>
                                 {
                                     this.progress_ranges.map(range =>
@@ -97,7 +86,7 @@ class CourseStudentFilter extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData : []
+        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : []
     }
 }
 
