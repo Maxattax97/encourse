@@ -15,6 +15,7 @@ from API import student_progress
 from API import class_progress
 from API import test_summary
 from API import velocity
+from API import cheating
 
 __all__ = [
     "sys",
@@ -34,4 +35,5 @@ __all__ = [
     "class_progress",
     "test_summary",
     "velocity",
+    "cheating",
 ]

@@ -1,12 +1,8 @@
-from daily_git_data import get_daily_commit_data as daily_data
-from past_progress import past_progress
-from get_velocity import jsonify as get_velocity
-from helper import eprint
-from helper import times_from_dailydata as times
+from API import *
 
-import argparse
-import json
 import statistics
+
+# TODO: Refactor so that this api is not dependent on velocity
 
 
 def is_suspicious(student_stats, class_stats):
@@ -36,10 +32,10 @@ def jsonify(git_data, test_progress, hidden_progress=None):
         student_data = git_data[student]
         student_progress = test_progress[student]
         student_hidden = hidden_progress[student]
-        startend = times(student_data)
+        startend = helper.times_from_dailydata(student_data)
 
         velocity_data = json.loads(
-            get_velocity(
+            velocity.jsonify(
                 student_progress, student_data, startend, hidden_scores=student_hidden
             )
         )
@@ -65,14 +61,14 @@ def jsonify(git_data, test_progress, hidden_progress=None):
     # Find the mean and population standard deviation of velocity measures
     velocity_mean = statistics.mean(velocity_averages)
     velocity_stdev = statistics.pstdev(velocity_averages)
-    eprint("Velocity Average: {}".format(velocity_mean))
-    eprint("Velocity Standard Deviation: {}".format(velocity_stdev))
+    helper.eprint("Velocity Average: {}".format(velocity_mean))
+    helper.eprint("Velocity Standard Deviation: {}".format(velocity_stdev))
 
     # Find the mean and population standard deviation of rate measures
     rate_mean = statistics.mean(rate_averages)
     rate_stdev = statistics.pstdev(rate_averages)
-    eprint("Rate Average: {}".format(rate_mean))
-    eprint("Rate Standard Deviation: {}".format(rate_stdev))
+    helper.eprint("Rate Average: {}".format(rate_mean))
+    helper.eprint("Rate Standard Deviation: {}".format(rate_stdev))
 
     class_stats = {
         "rate": {"mean": rate_mean, "stdev": rate_stdev},
@@ -88,12 +84,12 @@ def jsonify(git_data, test_progress, hidden_progress=None):
     student_list = []
     for student in suspicious_students:
         student_stats = suspicious_students[student]
-        rate = student_stats["rate"]
-        velocity = student_stats["velocity"]
+        student_rate = student_stats["rate"]
+        student_velocity = student_stats["velocity"]
 
         # Convert rate to standard normal
-        std_rate = (rate - rate_mean) / rate_stdev
-        std_velocity = (velocity - velocity_mean) / velocity_stdev
+        std_rate = (student_rate - rate_mean) / rate_stdev
+        std_velocity = (student_velocity - velocity_mean) / velocity_stdev
 
         # Standardize combined metric (mean = 0, stdev = 2)
         score = (std_rate + std_velocity) / 2
@@ -104,39 +100,18 @@ def jsonify(git_data, test_progress, hidden_progress=None):
     return json.dumps(student_list)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "visiblefile", help="path to historic progress file for visible test cases"
-    )
-    parser.add_argument(
-        "hiddenfile", help="path to historic progress file for hidden test cases"
-    )
-    parser.add_argument("logfile", help="path to log file")
-    parser.add_argument("-t", "--timeout", help="time spent timeout")
-    parser.add_argument("-l", "--limit", help="ignore file changes above limit")
-    parser.add_argument(
-        "-v",
-        "--velocity",
-        help="the maximum daily progress per hour spent before a student is flagged as suspicious",
-    )
-    parser.add_argument(
-        "-r",
-        "--rate",
-        help="the maximum daily progress per commit before a student is flagged as suspicious",
-    )
-    parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
+def jsonprint(args):
 
-    args = parser.parse_args()
+    visible_file = args.visiblefile
+    hidden_file = args.hiddenfile
+    commit_log_file = args.logfile
 
-    visible_file = open(args.visiblefile, "r")
-    hidden_file = open(args.hiddenfile, "r")
-    commit_log_file = open(args.logfile, "r")
+    visible_progress = Progress.pastprogress.pastprogress(visible_file)
+    hidden_progress = Progress.pastprogress.pastprogress(hidden_file)
 
-    visible_progress = past_progress(visible_file)
-    hidden_progress = past_progress(hidden_file)
-
-    git_data = daily_data(commit_log_file, max_change=args.limit, timeout=args.timeout)
+    git_data = GitLog.daily.daily(
+        commit_log_file, max_change=args.limit, timeout=args.timeout
+    )
 
     api_json = jsonify(git_data, visible_progress, hidden_progress=hidden_progress)
 

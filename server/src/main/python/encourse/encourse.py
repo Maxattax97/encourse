@@ -116,6 +116,33 @@ def setup_velocity(parser):
     parser.set_defaults(func=API.velocity.jsonprint)
 
 
+def setup_cheating(parser):
+    parser.add_argument(
+        "visiblefile",
+        type=argparse.FileType("r"),
+        help="path to historic progress file for visible test cases",
+    )
+    parser.add_argument(
+        "hiddenfile",
+        type=argparse.FileType("r"),
+        help="path to historic progress file for hidden test cases",
+    )
+    parser.add_argument("logfile", type=argparse.FileType("r"), help="path to log file")
+    parser.add_argument("-t", "--timeout", help="time spent timeout")
+    parser.add_argument("-l", "--limit", help="ignore file changes above limit")
+    parser.add_argument(
+        "-v",
+        "--velocity",
+        help="the maximum daily progress per hour spent before a student is flagged as suspicious",
+    )
+    parser.add_argument(
+        "-r",
+        "--rate",
+        help="the maximum daily progress per commit before a student is flagged as suspicious",
+    )
+    parser.set_defaults(func=API.cheating.jsonprint)
+
+
 if __name__ == "__main__":
     # Create the top-level parser
     parser = argparse.ArgumentParser(prog="encourse")
@@ -144,6 +171,9 @@ if __name__ == "__main__":
 
     velocity_parser = subparsers.add_parser("velocity")
     setup_velocity(velocity_parser)
+
+    cheating_parser = subparsers.add_parser("cheating")
+    setup_cheating(cheating_parser)
 
     # Actual CLI code
     parsed_args = parser.parse_args()
@@ -232,6 +262,18 @@ if __name__ == "__main__":
             "data/sampleTestsDay.txt",
             "data/sampleCommitList.txt",
             "cutz",
+        ]
+    )
+    parsed_args.func(parsed_args)
+    print("\n")
+
+    print("cheating")
+    parsed_args = parser.parse_args(
+        [
+            "cheating",
+            "data/sampleTestsDay.txt",
+            "data/sampleTestsDay.txt",
+            "data/sampleCommitList.txt",
         ]
     )
     parsed_args.func(parsed_args)
