@@ -74,8 +74,8 @@ if __name__ == "__main__":
     parsed_args = parser.parse_args(
         [
             "stats",
-            "test_datasets/sampleCommitList.txt",
-            "test_datasets/sampleCountsDay.txt",
+            "data/sampleCommitList.txt",
+            "data/sampleCountsDay.txt",
             "cutz",
             "cutz;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0",
         ]
@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
     print("commitcount")
     parsed_args = parser.parse_args(
-        ["commitcount", "test_datasets/sampleCommitList.txt", "cutz"]
+        ["commitcount", "data/sampleCommitList.txt", "cutz"]
     )
     parsed_args.func(parsed_args)
     print("\n")
@@ -94,8 +94,8 @@ if __name__ == "__main__":
     parsed_args = parser.parse_args(
         [
             "changes",
-            "test_datasets/sampleCommitList.txt",
-            "test_datasets/sampleCountsDay.txt",
+            "data/sampleCommitList.txt",
+            "data/sampleCountsDay.txt",
             "cutz",
             "-l 100",
         ]
@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
     print("gitlist")
     parsed_args = parser.parse_args(
-        ["gitlist", "test_datasets/sampleCommitList.txt", "cutz"]
+        ["gitlist", "data/sampleCommitList.txt", "cutz"]
     )
     parsed_args.func(parsed_args)
     print("\n")
