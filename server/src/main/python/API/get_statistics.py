@@ -1,18 +1,11 @@
-import sys
-import json
-import argparse
-import random
-from datetime import datetime
-from .helper import time_string
-from .helper import eprint
-import GitLog
-from start_end import commit_data as commit_times
-from daily_git_data import get_daily_commit_data as commit_list
-from test_completion import get_test_completion as test_completion
-from test_completion import get_test_completion_string as test_completion_string
+from API import *
 
-def testcli():
-    print("Successfully called get statistics function")
+#from test_completion import get_test_completion as test_completion
+#from test_completion import get_test_completion_string as test_completion_string
+
+def testcli(args):
+    print("hi")
+    print("Successfully called get statistics function with args: {}".format(args))
 
 priorities = {
     "Start Date": 0,
@@ -100,7 +93,7 @@ def combine_statistics(dates, stats, tests):
         user_data["Additions"] = "{} lines".format(additions)
         user_data["Deletions"] = "{} lines".format(deletions)
         user_data["Commit Count"] = "{} commits".format(count)
-        user_data["Estimated Time Spent"] = time_string(time)
+        user_data["Estimated Time Spent"] = helper.time_string(time)
         user_data["Current Test Score"] = "{}%".format(int(test_score))
 
         array_data = []
@@ -176,39 +169,29 @@ def sum_statistics(commit_data):
 
 
 # Runs on file call
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("logfile", help="path to commit log file")
-    parser.add_argument("timefile", help="path to commit time file")
-    parser.add_argument("name", help="user name")
-    parser.add_argument("tests", help="test case string")
-    parser.add_argument("-t", "--timeout", help="time spent timeout")
-    parser.add_argument("-l", "--limit", help="ignore file changes above limit")
-
-    args = parser.parse_args()
-
+def jsonprint(args):
     student_id = args.name
-    commit_date_file = open(args.timefile, "r")
-    commit_data_file = open(args.logfile, "r")
+    commit_date_file = args.timefile
+    commit_data_file = args.logfile
     test_case_string = args.tests
 
-    dates_dict = GitLog.startend(commit_date_file)
+    dates_dict = GitLog.startend.startend(commit_date_file)
     # for user in dates_dict.keys():
     #    start_end = dates_dict[user]
     #    print("{} -> {}".format(user, start_end))
 
     # print(counts_dict)
 
-    student_data = commit_list(
+    student_data = GitLog.daily.daily(
         commit_data_file, max_change=args.limit, timeout=args.timeout
     )
     formatted_student_data = sum_statistics(student_data)
     # TODO: check for valid dicts
 
-    test_data = test_completion_string(test_case_string)
+    test_data = Progress.currentprogress.progress_from_string(test_case_string)
 
     data = combine_statistics(dates_dict, formatted_student_data, test_data)
     # print(data)
-    json = json.dumps(data[student_id])
+    api_json = json.dumps(data[student_id])
     # Outputs json to stdout
-    print(json)
+    print(api_json)

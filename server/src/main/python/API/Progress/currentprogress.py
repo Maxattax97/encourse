@@ -1,9 +1,6 @@
-import sys
-from helper import is_number as is_number
-from helper import eprint
 
 
-def get_test_completion(test_file):
+def progress_from_file(test_file):
     """Generates test score dictionary for each student
     
     **Args**:
@@ -61,7 +58,7 @@ def get_test_completion(test_file):
     return students
 
 
-def get_test_completion_string(test_string):
+def progress_from_string(test_string):
     """Generates test score dictionary for each student
     
     **Args**:

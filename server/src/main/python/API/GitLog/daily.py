@@ -1,9 +1,4 @@
-import sys
-from helper import is_number as is_number
-from helper import eprint
-from datetime import datetime
-from datetime import timedelta
-
+from API.GitLog import *
 
 def create_day_dict(date, files, time_spent, additions, deletions, commit_count):
     """Creates a dictionary from inputs"""
@@ -43,7 +38,7 @@ def select_best(all_files: list):
         *sorted(zip(file_list, file_changes), key=lambda k: k[1], reverse=True)
     )
 
-    # eprint("Selected top files: {}".format(top_files))
+    # helper.eprint("Selected top files: {}".format(top_files))
     return top_files[:3]
 
 
@@ -60,8 +55,6 @@ def remove_shared_commits(students, count=None):
         for name in students:
             for i in range(min(count, len(students[name]))):
                 data = students[name].pop(0)
-                eprint(name)
-                eprint(data)
         return students
 
     keys = list(students.keys())
@@ -76,34 +69,34 @@ def remove_shared_commits(students, count=None):
 
         # Series of checks for each value
         if day_0["date"] != day_1["date"] or day_1["date"] != day_2["date"]:
-            eprint("date mismatch")
+            helper.eprint("date mismatch")
             should_remove = False
         if day_0["files"] != day_1["files"] or day_1["files"] != day_2["files"]:
-            eprint("files mismatch")
+            helper.eprint("files mismatch")
             should_remove = False
         if (
             day_0["time_spent"] != day_1["time_spent"]
             or day_1["time_spent"] != day_2["time_spent"]
         ):
-            eprint("time_spent mismatch")
+            helper.eprint("time_spent mismatch")
             should_remove = False
         if (
             day_0["additions"] != day_1["additions"]
             or day_1["additions"] != day_2["additions"]
         ):
-            eprint("additions mismatch")
+            helper.eprint("additions mismatch")
             should_remove = False
         if (
             day_0["deletions"] != day_1["deletions"]
             or day_1["deletions"] != day_2["deletions"]
         ):
-            eprint("deletions mismatch")
+            helper.eprint("deletions mismatch")
             should_remove = False
         if (
             day_0["commit_count"] != day_1["commit_count"]
             or day_1["commit_count"] != day_2["commit_count"]
         ):
-            eprint("commit_count mismatch")
+            helper.eprint("commit_count mismatch")
             should_remove = False
 
         if should_remove:
@@ -118,7 +111,7 @@ def remove_shared_commits(students, count=None):
     return students
 
 
-def get_daily_commit_data(progress_file, max_change=None, timeout=None):
+def daily(progress_file, max_change=None, timeout=None):
     """ Generates git commit statistics by day
 
     Uses the data in **progress_file** to generate git statistics by day
@@ -191,7 +184,7 @@ def get_daily_commit_data(progress_file, max_change=None, timeout=None):
         elif expect_time == True:  # New Data/Time/Code tuple
             expect_time = False
             if len(words) != 3:
-                eprint("Expected date, time, and code. Found: {}".format(words))
+                helper.eprint("Expected date, time, and code. Found: {}".format(words))
                 continue
             date = words[0]
             time = words[1]  # Unused
@@ -237,11 +230,11 @@ def get_daily_commit_data(progress_file, max_change=None, timeout=None):
             daily_commit_count += 1
         else:  # New Addition/Deletion/File tuple
             if len(words) < 3:
-                eprint("Unknown line format with words {}".format(words))
+                helper.eprint("Unknown line format with words {}".format(words))
                 continue
             words = [words[0]] + [words[1]] + [" ".join(words[2:])]
-            additions = int(words[0]) if is_number(words[0]) else 0
-            deletions = int(words[1]) if is_number(words[1]) else 0
+            additions = int(words[0]) if helper.is_number(words[0]) else 0
+            deletions = int(words[1]) if helper.is_number(words[1]) else 0
 
             # Ignores files with more than max_changes lines changes
             if additions > max_change or deletions > max_change:
