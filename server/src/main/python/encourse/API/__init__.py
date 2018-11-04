@@ -13,6 +13,7 @@ from API import changes
 from API import gitlist
 from API import student_progress
 from API import class_progress
+from API import test_summary
 
 __all__ = [
     "sys",
@@ -30,4 +31,5 @@ __all__ = [
     "gitlist",
     "student_progress",
     "class_progress",
+    "test_summary",
 ]

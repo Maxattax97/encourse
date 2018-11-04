@@ -1,14 +1,4 @@
-import sys
-import json
-import copy
-import argparse
-from datetime import datetime
-from helper import time_string
-from helper import daterange
-from helper import date_string
-from helper import eprint
-from test_completion import get_test_completion as get_test_scores
-from start_end import commit_data
+from API import *
 
 
 def jsonify(test_data, hidden):
@@ -93,19 +83,12 @@ def merge_data(visible, hidden):
     return json.dumps(visible)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("visible", help="path to visible test score file")
-    parser.add_argument("hidden", help="path to hidden test score file")
-    parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
+def jsonprint(args):
+    visible_test_score_file = args.visible
+    hidden_test_score_file = args.hidden
 
-    args = parser.parse_args()
-
-    visible_test_score_file = open(args.visible, "r")
-    hidden_test_score_file = open(args.hidden, "r")
-
-    visible_data = get_test_scores(visible_test_score_file)
-    hidden_data = get_test_scores(hidden_test_score_file)
+    visible_data = Progress.currentprogress.progress_from_file(visible_test_score_file)
+    hidden_data = Progress.currentprogress.progress_from_file(hidden_test_score_file)
 
     formatted_visible = jsonify(visible_data, False)
     formatted_hidden = jsonify(hidden_data, True)

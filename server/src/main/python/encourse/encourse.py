@@ -78,6 +78,16 @@ def setup_class_progress(parser):
     parser.set_defaults(func=API.class_progress.jsonprint)
 
 
+def setup_test_summary(parser):
+    parser.add_argument(
+        "visible", type=argparse.FileType("r"), help="path to visible test score file"
+    )
+    parser.add_argument(
+        "hidden", type=argparse.FileType("r"), help="path to hidden test score file"
+    )
+    parser.set_defaults(func=API.test_summary.jsonprint)
+
+
 if __name__ == "__main__":
     # Create the top-level parser
     parser = argparse.ArgumentParser(prog="encourse")
@@ -100,6 +110,14 @@ if __name__ == "__main__":
 
     class_progress_parser = subparsers.add_parser("class-progress")
     setup_class_progress(class_progress_parser)
+
+    test_summary_parser = subparsers.add_parser("test-summary")
+    setup_test_summary(test_summary_parser)
+
+    # Actual CLI code
+    parsed_args = parser.parse_args()
+    if parsed_args.command:
+        parsed_args.func(parsed_args)
 
     ################# Tests ##################
     print("stats")
@@ -164,7 +182,13 @@ if __name__ == "__main__":
     parsed_args.func(parsed_args)
     print("\n")
 
-    # Actual CLI code
-    parsed_args = parser.parse_args()
-    if parsed_args.command:
-        parsed_args.func(parsed_args)
+    print("test-summary")
+    parsed_args = parser.parse_args(
+        [
+            "test-summary",
+            "data/sampleVisibleTestCases.txt",
+            "data/sampleHiddenTestCases.txt",
+        ]
+    )
+    parsed_args.func(parsed_args)
+    print("\n")
