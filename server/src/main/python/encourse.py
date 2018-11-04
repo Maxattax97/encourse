@@ -2,6 +2,54 @@
 import argparse
 import API
 
+
+def setup_stats(parser):
+    """Configure stats parser"""
+    parser.add_argument(
+        "logfile", type=argparse.FileType("r"), help="path to commit log file"
+    )
+    parser.add_argument(
+        "timefile", type=argparse.FileType("r"), help="path to commit time file"
+    )
+    parser.add_argument("name", help="user name")
+    parser.add_argument("tests", help="test case string")
+    parser.add_argument("-t", "--timeout", help="time spent timeout")
+    parser.add_argument("-l", "--limit", help="ignore file changes above limit")
+    parser.set_defaults(func=API.stats.jsonprint)
+
+
+def setup_commitcount(parser):
+    """Configure commitcount parser"""
+    parser.add_argument(
+        "logfile", type=argparse.FileType("r"), help="path to commit log file"
+    )
+    parser.add_argument("name", help="user name")
+    parser.set_defaults(func=API.commitcount.jsonprint)
+
+
+def setup_changes(parser):
+    """Configure changes parser"""
+    parser.add_argument(
+        "logfile", type=argparse.FileType("r"), help="path to commit log file"
+    )
+    parser.add_argument(
+        "timefile", type=argparse.FileType("r"), help="path to commit time file"
+    )
+    parser.add_argument("name", help="user name")
+    parser.add_argument("-l", "--limit", help="ignore file changes above limit")
+    parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
+    parser.set_defaults(func=API.changes.jsonprint)
+
+
+def setup_gitlist(parser):
+    """Configure gitlist parser"""
+    parser.add_argument(
+        "logfile", type=argparse.FileType("r"), help="path to commit log file"
+    )
+    parser.add_argument("name", help="user name")
+    parser.set_defaults(func=API.gitlist.jsonprint)
+
+
 if __name__ == "__main__":
     # Create the top-level parser
     parser = argparse.ArgumentParser(prog="encourse")
@@ -9,41 +57,17 @@ if __name__ == "__main__":
 
     # Create the parser for the "statistics" command
     stats_parser = subparsers.add_parser("stats")
-    stats_parser.add_argument(
-        "logfile", type=argparse.FileType("r"), help="path to commit log file"
-    )
-    stats_parser.add_argument(
-        "timefile", type=argparse.FileType("r"), help="path to commit time file"
-    )
-    stats_parser.add_argument("name", help="user name")
-    stats_parser.add_argument("tests", help="test case string")
-    stats_parser.add_argument("-t", "--timeout", help="time spent timeout")
-    stats_parser.add_argument("-l", "--limit", help="ignore file changes above limit")
-    stats_parser.set_defaults(func=API.stats.jsonprint)
+    setup_stats(stats_parser)
 
     # Create the parser for the "commitcount" command
     commitcount_parser = subparsers.add_parser("commitcount")
-    commitcount_parser.add_argument(
-        "logfile", type=argparse.FileType("r"), help="path to commit log file"
-    )
-    commitcount_parser.add_argument("name", help="user name")
-    commitcount_parser.set_defaults(func=API.commitcount.jsonprint)
+    setup_commitcount(commitcount_parser)
 
     changes_parser = subparsers.add_parser("changes")
-    changes_parser.add_argument("logfile", type=argparse.FileType("r"), help="path to commit log file")
-    changes_parser.add_argument("timefile", type=argparse.FileType("r"), help="path to commit time file")
-    changes_parser.add_argument("name", help="user name")
-    changes_parser.add_argument("-l", "--limit", help="ignore file changes above limit")
-    changes_parser.add_argument(
-        "-O", "--obfuscate", action="store_true", help="obfuscate flag"
-    )
-    changes_parser.set_defaults(func=API.changes.jsonprint)
+    setup_changes(changes_parser)
 
     gitlist_parser = subparsers.add_parser("gitlist")
-    gitlist_parser.add_argument("logfile", type=argparse.FileType("r"), help="path to commit log file")
-    gitlist_parser.add_argument("name", help="user name")
-    gitlist_parser.set_defaults(func=API.gitlist.jsonprint)
-
+    setup_gitlist(gitlist_parser)
 
     # Tests
     print("stats")
@@ -85,7 +109,6 @@ if __name__ == "__main__":
     )
     parsed_args.func(parsed_args)
     print("\n")
-    
 
     # Actual CLI code
     parsed_args = parser.parse_args()
