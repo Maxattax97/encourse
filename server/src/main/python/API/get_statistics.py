@@ -3,12 +3,16 @@ import json
 import argparse
 import random
 from datetime import datetime
-from helper import time_string
-from helper import eprint
+from .helper import time_string
+from .helper import eprint
+import GitLog
 from start_end import commit_data as commit_times
 from daily_git_data import get_daily_commit_data as commit_list
 from test_completion import get_test_completion as test_completion
 from test_completion import get_test_completion_string as test_completion_string
+
+def testcli():
+    print("Successfully called get statistics function")
 
 priorities = {
     "Start Date": 0,
@@ -180,50 +184,15 @@ if __name__ == "__main__":
     parser.add_argument("tests", help="test case string")
     parser.add_argument("-t", "--timeout", help="time spent timeout")
     parser.add_argument("-l", "--limit", help="ignore file changes above limit")
-    parser.add_argument("-O", "--obfuscate", action="store_true", help="obfuscate flag")
 
     args = parser.parse_args()
-
-    if args.obfuscate:
-        fake_data = [
-            {
-                "stat_name": "Start Date",
-                "stat_value": "2018-08-0{}".format(random.randint(1, 9)),
-            },
-            {
-                "stat_name": "End Date",
-                "stat_value": "2018-09-0{}".format(random.randint(1, 9)),
-            },
-            {
-                "stat_name": "Additions",
-                "stat_value": "{} lines".format(random.randint(2000, 5000)),
-            },
-            {
-                "stat_name": "Deletions",
-                "stat_value": "{} lines".format(random.randint(0, 2000)),
-            },
-            {
-                "stat_name": "Commit Count",
-                "stat_value": "{} commits".format(random.randint(0, 200)),
-            },
-            {
-                "stat_name": "Estimated Time Spent",
-                "stat_value": "{} hours".format(random.randint(0, 36)),
-            },
-            {
-                "stat_name": "Current Test Score",
-                "stat_value": "{}%".format(10 * random.randint(0, 10)),
-            },
-        ]
-        print(json.dumps(fake_data))
-        sys.exit()
 
     student_id = args.name
     commit_date_file = open(args.timefile, "r")
     commit_data_file = open(args.logfile, "r")
     test_case_string = args.tests
 
-    dates_dict = commit_times(commit_date_file)
+    dates_dict = GitLog.startend(commit_date_file)
     # for user in dates_dict.keys():
     #    start_end = dates_dict[user]
     #    print("{} -> {}".format(user, start_end))
