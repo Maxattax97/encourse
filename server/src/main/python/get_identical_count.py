@@ -1,5 +1,6 @@
 import sys
 import argparse
+import json
 from helper import eprint
 
 
@@ -16,7 +17,7 @@ def jsonify(data):
 
             item = {
                 "user1": username1,
-                "user2": username1,
+                "user2": username2,
                 "similarity": identical_count,
                 "similarity_bin": similarity_bin,
                 "height": bins[similarity_bin],
@@ -24,7 +25,7 @@ def jsonify(data):
 
             out.append(item)
 
-    return out
+    return json.dumps(out)
 
 
 def get_identical_count(time_file):
@@ -64,6 +65,9 @@ def get_identical_count(time_file):
         other_users = other_users.split("_")
 
         for other_user in other_users:
+            # Handle empty lines
+            if ";" not in other_user:
+                break
             other_username, identical_count = other_user.split(";")
             data[username][other_username] = int(identical_count)
 
