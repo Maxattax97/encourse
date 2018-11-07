@@ -670,6 +670,9 @@ public class ProfessorServiceImpl implements ProfessorService {
             BufferedWriter writer = new BufferedWriter(new FileWriter(diffsFile));
             for (StudentProject projectOne : projects) {
                 temp.remove(projectOne);
+                if(temp.isEmpty()) {
+                    break;
+                }
                 Student studentOne = studentRepository.findByUserID(projectOne.getStudentID());
                 String studentOnePath = (sections.get(0).getCourseHub() + "/" + studentOne.getUserName() + "/" + project.getRepoName());
                 Process process = Runtime.getRuntime().exec("./src/main/bash/listCommitHistoryByAuthor.sh " + studentOnePath + " CS252");
