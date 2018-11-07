@@ -123,7 +123,7 @@ class CourseIdenticalLinesChart extends Component {
                         >
                             <XAxis dataKey="similarity_bin" type="number">
                                 <Label offset={-10} position="insideBottom">
-                                    Shared lines of code
+                                    Identical lines of code
                                 </Label>
                             </XAxis>
                             <YAxis dataKey="height" type="number">
@@ -132,7 +132,6 @@ class CourseIdenticalLinesChart extends Component {
                                 </Label>
                             </YAxis>
                             <Tooltip content={<CustomTooltipContent />} />
-                            <Brush />
                             <Scatter dataKey="height" fill="#8884d8"/>
                         </ScatterChart>
                     </ResponsiveContainer>
