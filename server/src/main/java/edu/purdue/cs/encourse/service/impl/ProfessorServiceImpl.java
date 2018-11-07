@@ -664,7 +664,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
 
         String diffsFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_codeDiffs.txt";
-        List<StudentProject> temp = new ArrayList<StudentProject>(projects);
+        List<StudentProject> temp = new ArrayList<>(projects);
         // TODO: Bash scripts
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(diffsFile));
@@ -690,6 +690,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 }
                 writer.write(builder.toString() + "\n");
             }
+            writer.close();
         } catch (Exception e) {
             return new JSONReturnable(-4, null);
         }
