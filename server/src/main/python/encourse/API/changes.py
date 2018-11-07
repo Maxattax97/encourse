@@ -96,7 +96,7 @@ def jsonprint(args):
     data = (
         GitLog.daily.daily(commit_data_file, max_change=int(args.limit))
         if args.limit
-        else get_progress(commit_data_file)
+        else GitLog.daily.daily(commit_data_file)
     )
     individual_data = data[student_id]
 
