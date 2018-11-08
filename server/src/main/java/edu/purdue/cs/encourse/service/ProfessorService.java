@@ -23,26 +23,19 @@ public interface ProfessorService {
     int updateStudentInformation(@NonNull String projectID, @NonNull String userName);
     Project addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate);
 
-    JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getClassProgress(@NonNull String projectID);
     JSONReturnable getClassSimilar(@NonNull String projectID);
-    JSONReturnable getGroupProgress(@NonNull String projectID, List<String> userNames);
     JSONReturnable getClassStatistics(@NonNull String projectID);
-    JSONReturnable getCommitCounts(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getCommitVelocity(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getTestSummary(@NonNull String projectID);
-    JSONReturnable getGroupTestSummary(@NonNull String projectID, List<String> userNames);
+    JSONReturnable getClassTestSummary(@NonNull String projectID);
     JSONReturnable getClassCommitList(@NonNull String projectID);
     JSONReturnable getClassCheating(@NonNull String projectID);
 
-    String countAllCommits(@NonNull String projectID);
-    String countAllCommitsByDay(@NonNull String projectID);
-    String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName);
-    String listAllCommitsByTime(@NonNull String projectID);
-    String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStudentAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStudentCommitCounts(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStudentCommitList(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStudentCommitVelocity(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStudentStatistics(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName);
 
     int assignTeachingAssistantToAllStudentsInSection(@NonNull String teachAssistUserName, @NonNull String sectionID);
     int assignTeachingAssistantToSection(@NonNull String teachAssistUserName, @NonNull String sectionID);
