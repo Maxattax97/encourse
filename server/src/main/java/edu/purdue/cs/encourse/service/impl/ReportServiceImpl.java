@@ -9,8 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.util.Calendar;
-import java.util.Date;
 
 @Service(value = ReportServiceImpl.NAME)
 public class ReportServiceImpl implements ReportService {

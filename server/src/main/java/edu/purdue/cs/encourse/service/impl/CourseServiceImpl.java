@@ -4,8 +4,7 @@ import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.CourseService;
-import edu.purdue.cs.encourse.service.helper.ServiceHelper;
-import edu.purdue.cs.encourse.service.helper.StreamGobbler;
+import edu.purdue.cs.encourse.service.helper.*;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import lombok.NonNull;
 import org.json.simple.JSONArray;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.Executors;
 
 @Service(value = CourseServiceImpl.NAME)
 public class CourseServiceImpl implements CourseService {
@@ -62,24 +60,8 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private StudentProjectTestRepository studentProjectTestRepository;
 
-    private int executeBashScript(@NonNull String command) {
-        try {
-            Process process = Runtime.getRuntime().exec("./src/main/bash/" + command);
-            StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
-            Executors.newSingleThreadExecutor().submit(streamGobbler);
-            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), System.out::println);
-            Executors.newSingleThreadExecutor().submit(errorGobbler);
-            process.waitFor();
-        }
-        catch(Exception e) {
-            return -1;
-        }
-        return 0;
-    }
-
-    public List<Section> getSectionsBySemesterAndCourseID(@NonNull String semester, @NonNull String courseID) {
-        return sectionRepository.findBySemesterAndCourseID(semester, courseID);
-
+    public Project getProject(@NonNull String projectID) {
+        return projectRepository.findByProjectIdentifier(projectID);
     }
 
     /** Mainly needed to populate the database when course hub already exists **/
@@ -140,6 +122,51 @@ public class CourseServiceImpl implements CourseService {
         return code;
     }
 
+    /** Gets all courses that a teaching assistant works for **/
+    public JSONArray getCourseData(@NonNull String userName, List<String> courseIDs) {
+        JSONArray coursesJSON = new JSONArray();
+        for(String courseID : courseIDs) {
+            JSONObject courseJSON = new JSONObject();
+            List<Section> sections = sectionRepository.findByCourseID(courseID);
+            List<String> sectionIDs = new ArrayList<>();
+            for(Section s : sections) {
+                sectionIDs.add(s.getSectionIdentifier());
+            }
+            courseJSON.put("course_number", sections.get(0).getCourseID());
+            courseJSON.put("course_name", sections.get(0).getCourseTitle());
+            courseJSON.put("semester", sections.get(0).getSemester());
+            courseJSON.put("id", userName);
+            courseJSON.put("sections", sectionIDs);
+            coursesJSON.add(courseJSON);
+        }
+        return coursesJSON;
+    }
+
+    /** Retrieves basic data for all projects in the course **/
+    public JSONArray getProjectData(@NonNull String semester, @NonNull String courseID) {
+        List<Project> projects = projectRepository.findBySemesterAndCourseID(semester, courseID);
+        if(projects.isEmpty()) {
+            return null;
+        }
+        JSONArray projectsJSON = new JSONArray();
+        for(Project p : projects) {
+            JSONObject projectJSON = new JSONObject();
+            List<ProjectTestScript> visibleTestScripts = projectTestScriptRepository.findByIdProjectIdentifierAndIsHidden(p.getProjectIdentifier(), false);
+            List<ProjectTestScript> hiddenTestScripts = projectTestScriptRepository.findByIdProjectIdentifierAndIsHidden(p.getProjectIdentifier(), true);
+            projectJSON.put("project_name", p.getProjectName());
+            projectJSON.put("source_name", p.getRepoName());
+            projectJSON.put("start_date", p.getStartDate());
+            projectJSON.put("due_date", p.getDueDate());
+            projectJSON.put("test_script", visibleTestScripts);
+            projectJSON.put("hidden_test_script", hiddenTestScripts);
+            projectJSON.put("id", p.getProjectIdentifier());
+            projectJSON.put("last_sync", p.getSyncDate());
+            projectJSON.put("last_test", p.getTestDate());
+            projectsJSON.add(projectJSON);
+        }
+        return projectsJSON;
+    }
+
     /** Gets all sections for a particular course **/
     public JSONArray getSectionData(@NonNull String semester, @NonNull String courseID) {
         List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
@@ -168,6 +195,61 @@ public class CourseServiceImpl implements CourseService {
         return sectionsJSON;
     }
 
+    // TODO: @REED add a courseID and semester to parameters
+    public JSONArray getStudentData(@NonNull String semester, @NonNull String courseID, List<String> userNames) {
+        List<String> completedStudents = new ArrayList<>();
+        JSONArray studentsJSON = new JSONArray();
+        for(String userName : userNames) {
+            Student student = studentRepository.findByUserName(userName);
+            if(!(completedStudents.contains(student.getUserID()))) {
+                completedStudents.add(student.getUserID());
+                List<StudentProject> studentProjects = studentProjectRepository.findByIdStudentID(student.getUserID());
+                Map<String, Double> grades = new TreeMap<>();
+                Map<String, Double> hiddenGrades = new TreeMap<>();
+                Map<String, Integer> commitCounts = new TreeMap<>();
+                Map<String, Double> timeSpent = new TreeMap<>();
+                for (StudentProject p : studentProjects) {
+                    grades.put(p.getProjectIdentifier(), p.getBestVisibleGrade());
+                    hiddenGrades.put(p.getProjectIdentifier(), p.getBestHiddenGrade());
+                    commitCounts.put(p.getProjectIdentifier(), p.getCommitCount());
+                    timeSpent.put(p.getProjectIdentifier(), p.getTotalTimeSpent());
+                }
+                List<StudentSection> assignedSections = studentSectionRepository.findByIdStudentID(student.getUserID());
+                List<String> sectionStrings = new ArrayList<>();
+                for (StudentSection a : assignedSections) {
+                    sectionStrings.add(a.getSectionIdentifier());
+                }
+                List<TeachingAssistantStudent> assignedTeachingAssistants = teachingAssistantStudentRepository.findByIdStudentID(student.getUserID());
+                List<String> teachingAssistants = new ArrayList<>();
+                for (TeachingAssistantStudent a : assignedTeachingAssistants) {
+                    TeachingAssistant teachingAssistantAssigned = teachingAssistantRepository.findByUserID(a.getTeachingAssistantID());
+                    teachingAssistants.add(teachingAssistantAssigned.getUserName());
+                }
+                JSONObject studentJSON = new JSONObject();
+                studentJSON.put("first_name", student.getFirstName());
+                studentJSON.put("last_name", student.getLastName());
+                studentJSON.put("id", student.getUserName());
+                studentJSON.put("sections", sectionStrings);
+                studentJSON.put("teaching_assistants", teachingAssistants);
+                studentJSON.put("grades", grades);
+                studentJSON.put("hiddenGrades", grades);
+                studentJSON.put("commitCounts", commitCounts);
+                studentJSON.put("timeSpent", timeSpent);
+                if (helper.OBFUSCATE) {
+                    studentJSON.put("first_name", student.getFirstName());
+                    studentJSON.put("last_name", student.getLastName());
+                    studentJSON.put("id", student.getUserName());
+                    studentJSON.put("grades", grades);
+                    studentJSON.put("hiddenGrades", grades);
+                    studentJSON.put("commitCounts", commitCounts);
+                    studentJSON.put("timeSpent", timeSpent);
+                }
+                studentsJSON.add(studentJSON);
+            }
+        }
+        return studentsJSON;
+    }
+
     public JSONReturnable getProgress(@NonNull String projectID, List<String> userNames) {
         List<StudentProject> projects = helper.getStudentProjects(projectID, userNames);
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
@@ -188,35 +270,6 @@ public class CourseServiceImpl implements CourseService {
         String command = helper.pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
         JSONReturnable json = helper.runPython(command);
         return json;
-    }
-
-    /** Retrieves basic data for all projects in the course **/
-    public JSONArray getProjectData(@NonNull String semester, @NonNull String courseID) {
-        List<Project> projects = projectRepository.findBySemesterAndCourseID(semester, courseID);
-        if(projects.isEmpty()) {
-            return null;
-        }
-        JSONArray projectsJSON = new JSONArray();
-        for(Project p : projects) {
-            JSONObject projectJSON = new JSONObject();
-            List<ProjectTestScript> visibleTestScripts = projectTestScriptRepository.findByIdProjectIdentifierAndIsHidden(p.getProjectIdentifier(), false);
-            List<ProjectTestScript> hiddenTestScripts = projectTestScriptRepository.findByIdProjectIdentifierAndIsHidden(p.getProjectIdentifier(), true);
-            projectJSON.put("project_name", p.getProjectName());
-            projectJSON.put("source_name", p.getRepoName());
-            projectJSON.put("start_date", p.getStartDate());
-            projectJSON.put("due_date", p.getDueDate());
-            projectJSON.put("test_script", visibleTestScripts);
-            projectJSON.put("hidden_test_script", hiddenTestScripts);
-            projectJSON.put("id", p.getProjectIdentifier());
-            projectJSON.put("last_sync", p.getSyncDate());
-            projectJSON.put("last_test", p.getTestDate());
-            projectsJSON.add(projectJSON);
-        }
-        return projectsJSON;
-    }
-
-    public Project getProject(@NonNull String projectID) {
-        return projectRepository.findByProjectIdentifier(projectID);
     }
 
     public JSONReturnable getSimilar(@NonNull String projectID, List<String> userNames) {
@@ -540,4 +593,146 @@ public class CourseServiceImpl implements CourseService {
         String command = helper.pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
         return helper.runPython(command);
     }
+
+    /** Runs testall for a single student, which is quicker if the professor or TA wants to manually run testall for a student **/
+    public int runTestallForStudent(@NonNull String projectID, @NonNull String userName) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -1;
+        }
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
+            return -2;
+        }
+        Student student = studentRepository.findByUserName(userName);
+        if(student == null) {
+            return -3;
+        }
+        String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
+        String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
+        String makefilePath = sections.get(0).getCourseHub() + "/makefiles/" + project.getRepoName() + "/Makefile";
+        File directory = new File(testCaseDirectory);
+        if(!directory.isDirectory() || directory.listFiles().length == 0) {
+            return -4;
+        }
+        File file = new File(makefilePath);
+        if(!file.exists()) {
+            return -5;
+        }
+        StudentProject studentProject = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+        if(studentProject == null) {
+            return -6;
+        }
+        String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName();
+        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_gitHashes.txt";
+        helper.executeBashScript("listTestUpdateHistory.sh " + testingDirectory + " " + fileName);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            String line = reader.readLine();
+            helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
+            String[] commitInfo = line.split(" ");
+            String date = commitInfo[2];
+            helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
+            if(helper.executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
+                return -7;
+            }
+            TestExecuter tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + helper.testDir, testCaseDirectory, hiddenTestCaseDirectory);
+            Thread thread = new Thread(tester);
+            thread.start();
+            Thread.sleep(5000);
+            thread.interrupt();
+            helper.executeBashScript("killProcesses.sh " + project.getCourseID());
+            String visibleResult = tester.getVisibleResult();
+            String hiddenResult = tester.getHiddenResult();
+            if(visibleResult == null) {
+                visibleResult = "";
+            }
+            if(hiddenResult == null) {
+                hiddenResult = "";
+            }
+            double visibleGrade = helper.parseProgressForProject(projectID, visibleResult);
+            double hiddenGrade = helper.parseProgressForProject(projectID, hiddenResult);
+            StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
+            if(projectDate == null) {
+                StudentProjectDate d = new StudentProjectDate(studentProject.getStudentID(), studentProject.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
+                studentProjectDateRepository.save(d);
+            }
+            else {
+                if(visibleGrade > projectDate.getDateVisibleGrade()) {
+                    projectDate.setDateVisibleGrade(visibleGrade);
+                    studentProjectDateRepository.save(projectDate);
+                }
+                if(hiddenGrade > projectDate.getDateHiddenGrade()) {
+                    projectDate.setDateHiddenGrade(hiddenGrade);
+                    studentProjectDateRepository.save(projectDate);
+                }
+            }
+            if(visibleGrade > studentProject.getBestVisibleGrade()) {
+                studentProject.setBestVisibleGrade(visibleGrade);
+                studentProject = studentProjectRepository.save(studentProject);
+                helper.updateTestResults(visibleResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), false);
+            }
+            if(hiddenGrade > studentProject.getBestHiddenGrade()) {
+                studentProject.setBestHiddenGrade(hiddenGrade);
+                studentProject = studentProjectRepository.save(studentProject);
+                helper.updateTestResults(hiddenResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), true);
+            }
+            line = reader.readLine();
+            commitInfo = line.split(" ");
+            date = commitInfo[2];
+            helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
+            if(helper.executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
+                return -8;
+            }
+            tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + helper.testDir, testCaseDirectory, hiddenTestCaseDirectory);
+            thread = new Thread(tester);
+            thread.start();
+            Thread.sleep(5000);
+            thread.interrupt();
+            helper.executeBashScript("killProcesses.sh " + project.getCourseID());
+            visibleResult = tester.getVisibleResult();
+            hiddenResult = tester.getHiddenResult();
+            if(visibleResult == null) {
+                visibleResult = "";
+            }
+            if(hiddenResult == null) {
+                hiddenResult = "";
+            }
+            visibleGrade = helper.parseProgressForProject(projectID, visibleResult);
+            hiddenGrade = helper.parseProgressForProject(projectID, hiddenResult);
+            projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
+            if(projectDate == null) {
+                StudentProjectDate d = new StudentProjectDate(studentProject.getStudentID(), studentProject.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
+                studentProjectDateRepository.save(d);
+            }
+            else {
+                if(visibleGrade > projectDate.getDateVisibleGrade()) {
+                    projectDate.setDateVisibleGrade(visibleGrade);
+                    studentProjectDateRepository.save(projectDate);
+                }
+                if(hiddenGrade > projectDate.getDateHiddenGrade()) {
+                    projectDate.setDateHiddenGrade(hiddenGrade);
+                    studentProjectDateRepository.save(projectDate);
+                }
+            }
+            if(visibleGrade > studentProject.getBestVisibleGrade()) {
+                studentProject.setBestVisibleGrade(visibleGrade);
+                studentProject = studentProjectRepository.save(studentProject);
+                helper.updateTestResults(visibleResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), false);
+            }
+            if(hiddenGrade > studentProject.getBestHiddenGrade()) {
+                studentProject.setBestHiddenGrade(hiddenGrade);
+                studentProject = studentProjectRepository.save(studentProject);
+                helper.updateTestResults(hiddenResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), true);
+            }
+            helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
+            reader.close();
+        }
+        catch(Exception e) {
+            helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
+            return -9;
+        }
+        return 0;
+    }
+
 }

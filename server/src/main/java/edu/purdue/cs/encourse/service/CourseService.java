@@ -10,16 +10,17 @@ import org.json.simple.JSONObject;
 import java.util.List;
 
 public interface CourseService {
-    List<Section> getSectionsBySemesterAndCourseID(@NonNull String semester, @NonNull String courseID);
+    Project getProject(String projectID);
 
     int setDirectory(@NonNull String semester, @NonNull String courseID);
     int createDirectory(@NonNull String semester, @NonNull String courseID);
 
     int setSectionRemotePaths(@NonNull String semester, @NonNull String courseID, @NonNull String remotePath);
 
-    JSONArray getSectionData(@NonNull String semester, @NonNull String courseID);
+    JSONArray getCourseData(@NonNull String userName, List<String> courseIDs);
     JSONArray getProjectData(@NonNull String semester, @NonNull String courseID);
-    Project getProject(String projectID);
+    JSONArray getSectionData(@NonNull String semester, @NonNull String courseID);
+    JSONArray getStudentData(@NonNull String semester, @NonNull String courseID, List<String> userNameStudents);
 
     JSONReturnable getProgress(@NonNull String projectID, List<String> userNames);
     JSONReturnable getSimilar(@NonNull String projectID, List<String> userNames);
@@ -34,4 +35,6 @@ public interface CourseService {
     JSONReturnable getStudentCommitVelocity(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getStudentStatistics(@NonNull String projectID, @NonNull String userName);
+
+    int runTestallForStudent(@NonNull String projectID, @NonNull String userName);
 }

@@ -246,6 +246,15 @@ public class ServiceHelper {
         return userNames;
     }
 
+    public List<String> getStudentUserNamesForTA(List<TeachingAssistantStudent> assignments) {
+        List<String> userNames = new ArrayList<>();
+        for(TeachingAssistantStudent assignment : assignments) {
+            Student student = studentRepository.findByUserName(assignment.getStudentID());
+            userNames.add(student.getUserName());
+        }
+        return userNames;
+    }
+
     /** Counts the number of commits that every student in the class has made for a project **/
     public String countAllCommits(@NonNull String projectID, List<StudentProject> projects) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
