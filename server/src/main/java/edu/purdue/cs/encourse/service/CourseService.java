@@ -19,6 +19,7 @@ public interface CourseService {
 
     JSONArray getSectionData(@NonNull String semester, @NonNull String courseID);
     JSONArray getProjectData(@NonNull String semester, @NonNull String courseID);
+    Project getProject(String projectID);
 
     JSONReturnable getProgress(@NonNull String projectID, List<String> userNames);
     JSONReturnable getSimilar(@NonNull String projectID, List<String> userNames);
@@ -27,8 +28,10 @@ public interface CourseService {
     JSONReturnable getCommitList(@NonNull String projectID, List<String> userNames);
     JSONReturnable getCheating(@NonNull String projectID, List<String> userNames);
 
-    JSONArray sortStudentData(@NonNull JSONArray studentsJSON, @NonNull List<String> parameters, @NonNull List<Boolean> isAscending);
-    JSONArray filterStudentData(@NonNull JSONArray studentsJSON, @NonNull List<String> parameters, @NonNull List<List<String>> values);
-
-    Project getProject(String projectID);
+    JSONReturnable getStudentAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStudentCommitCounts(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStudentCommitList(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStudentCommitVelocity(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName);
+    JSONReturnable getStudentStatistics(@NonNull String projectID, @NonNull String userName);
 }

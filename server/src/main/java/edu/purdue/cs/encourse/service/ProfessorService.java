@@ -23,19 +23,12 @@ public interface ProfessorService {
     int updateStudentInformation(@NonNull String projectID, @NonNull String userName);
     Project addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate);
 
+    JSONReturnable getClassCheating(@NonNull String projectID);
+    JSONReturnable getClassCommitList(@NonNull String projectID);
     JSONReturnable getClassProgress(@NonNull String projectID);
     JSONReturnable getClassSimilar(@NonNull String projectID);
     JSONReturnable getClassStatistics(@NonNull String projectID);
     JSONReturnable getClassTestSummary(@NonNull String projectID);
-    JSONReturnable getClassCommitList(@NonNull String projectID);
-    JSONReturnable getClassCheating(@NonNull String projectID);
-
-    JSONReturnable getStudentAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getStudentCommitCounts(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getStudentCommitList(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getStudentCommitVelocity(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getStudentStatistics(@NonNull String projectID, @NonNull String userName);
-    JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName);
 
     int assignTeachingAssistantToAllStudentsInSection(@NonNull String teachAssistUserName, @NonNull String sectionID);
     int assignTeachingAssistantToSection(@NonNull String teachAssistUserName, @NonNull String sectionID);
@@ -45,10 +38,9 @@ public interface ProfessorService {
     int runTestall(@NonNull String projectID);
     int runTestallForStudent(@NonNull String projectID, @NonNull String userName);
     int runHistoricTestall(@NonNull String projectID);
+
     ProjectTestScript addTestScript(@NonNull String projectID, @NonNull String testName, boolean isHidden, double points);
     ProjectTestScript uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents, boolean isHidden, double points);
-
-    int testPythonDirectory();
 
     JSONArray getCourseData(@NonNull String userName);
     JSONArray getStudentData(@NonNull String semester, @NonNull String courseID);

@@ -59,6 +59,9 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private StudentProjectDateRepository studentProjectDateRepository;
 
+    @Autowired
+    private StudentProjectTestRepository studentProjectTestRepository;
+
     private int executeBashScript(@NonNull String command) {
         try {
             Process process = Runtime.getRuntime().exec("./src/main/bash/" + command);
@@ -185,6 +188,35 @@ public class CourseServiceImpl implements CourseService {
         String command = helper.pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
         JSONReturnable json = helper.runPython(command);
         return json;
+    }
+
+    /** Retrieves basic data for all projects in the course **/
+    public JSONArray getProjectData(@NonNull String semester, @NonNull String courseID) {
+        List<Project> projects = projectRepository.findBySemesterAndCourseID(semester, courseID);
+        if(projects.isEmpty()) {
+            return null;
+        }
+        JSONArray projectsJSON = new JSONArray();
+        for(Project p : projects) {
+            JSONObject projectJSON = new JSONObject();
+            List<ProjectTestScript> visibleTestScripts = projectTestScriptRepository.findByIdProjectIdentifierAndIsHidden(p.getProjectIdentifier(), false);
+            List<ProjectTestScript> hiddenTestScripts = projectTestScriptRepository.findByIdProjectIdentifierAndIsHidden(p.getProjectIdentifier(), true);
+            projectJSON.put("project_name", p.getProjectName());
+            projectJSON.put("source_name", p.getRepoName());
+            projectJSON.put("start_date", p.getStartDate());
+            projectJSON.put("due_date", p.getDueDate());
+            projectJSON.put("test_script", visibleTestScripts);
+            projectJSON.put("hidden_test_script", hiddenTestScripts);
+            projectJSON.put("id", p.getProjectIdentifier());
+            projectJSON.put("last_sync", p.getSyncDate());
+            projectJSON.put("last_test", p.getTestDate());
+            projectsJSON.add(projectJSON);
+        }
+        return projectsJSON;
+    }
+
+    public Project getProject(@NonNull String projectID) {
+        return projectRepository.findByProjectIdentifier(projectID);
     }
 
     public JSONReturnable getSimilar(@NonNull String projectID, List<String> userNames) {
@@ -353,229 +385,159 @@ public class CourseServiceImpl implements CourseService {
         return json;
     }
 
-    public JSONArray sortStudentData(@NonNull JSONArray studentsJSON, @NonNull List<String> parameters, @NonNull List<Boolean> isAscending) {
-        JSONArray sorted = new JSONArray();
-        List<JSONObject> jsonList = new ArrayList<>();
-        for(Object obj : studentsJSON) {
-            jsonList.add((JSONObject)obj);
+    public JSONReturnable getStudentAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName) {
+        String dailyCountsFile = helper.countStudentCommitsByDay(projectID, userName);
+        String commitLogFile = helper.listStudentCommitsByTime(projectID, userName);
+        if(dailyCountsFile == null) {
+            return new JSONReturnable(-1, null);
         }
-        for(int i = 0; i < parameters.size(); i++) {
-            switch(parameters.get(i)) {
-                case "first_name": {
-                    if(isAscending.get(i)) {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                String valA = ((String) a.get("first_name")).toLowerCase();
-                                String valB = ((String) b.get("first_name")).toLowerCase();
-                                return valA.compareTo(valB);
-                            }
-                        });
-                    }
-                    else {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                String valA = ((String) a.get("first_name")).toLowerCase();
-                                String valB = ((String) b.get("first_name")).toLowerCase();
-                                return valB.compareTo(valA);
-                            }
-                        });
-                    }
-                    break;
+        if(commitLogFile == null) {
+            return new JSONReturnable(-2, null);
+        }
+        String pyPath = helper.pythonPath + "get_add_del.py";
+        String command = helper.pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " -l 200";
+        return helper.runPython(command);
+    }
+
+    public JSONReturnable getStudentCommitCounts(@NonNull String projectID, @NonNull String userName) {
+        String commitLogFile = helper.listStudentCommitsByTime(projectID, userName);
+        if(commitLogFile == null) {
+            return new JSONReturnable(-2, null);
+        }
+        String pyPath = helper.pythonPath + "get_git_commits.py";
+        String command = helper.pythonCommand + " " + pyPath + " " + commitLogFile + " " + userName;
+        return helper.runPython(command);
+    }
+
+    public JSONReturnable getStudentCommitList(@NonNull String projectID, @NonNull String userName) {
+        String commitLogFile = helper.listStudentCommitsByTime(projectID, userName);
+        if(commitLogFile == null) {
+            return new JSONReturnable(-1, null);
+        }
+        String pyPath = helper.pythonPath + "get_git_commit_list.py";
+        String command = helper.pythonCommand + " " + pyPath + " " + commitLogFile + " " + userName;
+        return helper.runPython(command);
+    }
+
+    public JSONReturnable getStudentCommitVelocity(@NonNull String projectID, @NonNull String userName) {
+        String dailyCountsFile = helper.countStudentCommitsByDay(projectID, userName);
+        String commitLogFile = helper.listStudentCommitsByTime(projectID, userName);
+        if(dailyCountsFile == null) {
+            return new JSONReturnable(-1, null);
+        }
+        if(commitLogFile == null) {
+            return new JSONReturnable(-2, null);
+        }
+        if(!projectRepository.existsByProjectIdentifier(projectID)) {
+            return new JSONReturnable(-1, null);
+        }
+        Student student = studentRepository.findByUserName(userName);
+        if(student == null) {
+            return new JSONReturnable(-2, null);
+        }
+        List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestDates.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestDates.txt";
+        if (helper.DEBUG) {
+            visibleTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
+            hiddenTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
+        }
+        try {
+            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+            visibleWriter.write("Start " + userName + "\n");
+            hiddenWriter.write("Start " + userName + "\n");
+            for (StudentProjectDate d : projectDates) {
+                visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
+                hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
+            }
+            visibleWriter.write("End " + userName + "\n");
+            hiddenWriter.write("End " + userName + "\n");
+            visibleWriter.close();
+            hiddenWriter.close();
+        }
+        catch(IOException e) {
+            return new JSONReturnable(-3, null);
+        }
+
+        String pyPath = helper.pythonPath + "get_velocity.py";
+        String command = helper.pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + userName;
+        return helper.runPython(command);
+    }
+
+    public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName) {
+        String visibleTestFile;
+        String hiddenTestFile;
+        String dailyCountsFile;
+        if (helper.DEBUG) {
+            visibleTestFile = "src/main//python/test_datasets/sampleTestsDay.txt";
+            hiddenTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
+            dailyCountsFile = "src/main/python/test_datasets/sampleCountsDay.txt";
+        } else {
+            dailyCountsFile = helper.countStudentCommitsByDay(projectID, userName);
+            if (!projectRepository.existsByProjectIdentifier(projectID)) {
+                return new JSONReturnable(-1, null);
+            }
+            Student student = studentRepository.findByUserName(userName);
+            if (student == null) {
+                return new JSONReturnable(-2, null);
+            }
+            List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+            visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestDates.txt";
+            hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestDates.txt";
+            try {
+                BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+                BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+                visibleWriter.write("Start " + userName + "\n");
+                hiddenWriter.write("Start " + userName + "\n");
+                for (StudentProjectDate d : projectDates) {
+                    visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
+                    hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
                 }
-                case "last_name": {
-                    if(isAscending.get(i)) {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                String valA = ((String) a.get("last_name")).toLowerCase();
-                                String valB = ((String) b.get("last_name")).toLowerCase();
-                                return valA.compareTo(valB);
-                            }
-                        });
-                    }
-                    else {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                String valA = ((String) a.get("last_name")).toLowerCase();
-                                String valB = ((String) b.get("last_name")).toLowerCase();
-                                return valB.compareTo(valA);
-                            }
-                        });
-                    }
-                    break;
-                }
-                case "id": {
-                    if(isAscending.get(i)) {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                String valA = ((String) a.get("id")).toLowerCase();
-                                String valB = ((String) b.get("id")).toLowerCase();
-                                return valA.compareTo(valB);
-                            }
-                        });
-                    }
-                    else {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                String valA = ((String) a.get("id")).toLowerCase();
-                                String valB = ((String) b.get("id")).toLowerCase();
-                                return valB.compareTo(valA);
-                            }
-                        });
-                    }
-                    break;
-                }
-                case "grades": {
-                    if(isAscending.get(i)) {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                Double valA = (Double) a.get("grades");
-                                Double valB = (Double) b.get("grades");
-                                return valA.compareTo(valB);
-                            }
-                        });
-                    }
-                    else {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                Double valA = (Double) a.get("grades");
-                                Double valB = (Double) b.get("grades");
-                                return valB.compareTo(valA);
-                            }
-                        });
-                    }
-                    break;
-                }
-                case "hiddenGrades": {
-                    if(isAscending.get(i)) {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                Double valA = (Double) a.get("hiddenGrades");
-                                Double valB = (Double) b.get("hiddenGrades");
-                                return valA.compareTo(valB);
-                            }
-                        });
-                    }
-                    else {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                Double valA = (Double) a.get("hiddenGrades");
-                                Double valB = (Double) b.get("hiddenGrades");
-                                return valB.compareTo(valA);
-                            }
-                        });
-                    }
-                    break;
-                }
-                case "commitCounts": {
-                    if(isAscending.get(i)) {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                Integer valA = (Integer) a.get("commitCounts");
-                                Integer valB = (Integer) b.get("commitCounts");
-                                return valA.compareTo(valB);
-                            }
-                        });
-                    }
-                    else {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                Integer valA = (Integer) a.get("commitCounts");
-                                Integer valB = (Integer) b.get("commitCounts");
-                                return valB.compareTo(valA);
-                            }
-                        });
-                    }
-                    break;
-                }
-                case "timeSpent": {
-                    if(isAscending.get(i)) {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                Double valA = (Double) a.get("timeSpent");
-                                Double valB = (Double) b.get("timeSpent");
-                                return valA.compareTo(valB);
-                            }
-                        });
-                    }
-                    else {
-                        jsonList.sort(new Comparator<JSONObject>() {
-                            @Override
-                            public int compare(JSONObject a, JSONObject b) {
-                                Double valA = (Double) a.get("timeSpent");
-                                Double valB = (Double) b.get("timeSpent");
-                                return valB.compareTo(valA);
-                            }
-                        });
-                    }
-                    break;
-                }
-                default: break;
+                visibleWriter.write("End " + userName + "\n");
+                hiddenWriter.write("End " + userName + "\n");
+                visibleWriter.close();
+                hiddenWriter.close();
+            }
+            catch(IOException e) {
+                return new JSONReturnable(-3, null);
             }
         }
-        sorted.addAll(jsonList);
-        return sorted;
+
+        String pyPath = helper.pythonPath + "get_individual_progress.py";
+        String command = helper.pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + dailyCountsFile + " " + userName;
+        return helper.runPython(command);
     }
 
-    public JSONArray filterStudentData(@NonNull JSONArray studentsJSON, @NonNull List<String> parameters, @NonNull List<List<String>> values) {
-        JSONArray filtered = new JSONArray();
-        List<JSONObject> jsonList = new ArrayList<>();
-        for(Object obj : studentsJSON) {
-            jsonList.add((JSONObject)obj);
+    public JSONReturnable getStudentStatistics(@NonNull String projectID, @NonNull String userName) {
+        String dailyCountsFile = helper.countStudentCommitsByDay(projectID, userName);
+        String commitLogFile = helper.listStudentCommitsByTime(projectID, userName);
+        if(dailyCountsFile == null) {
+            return new JSONReturnable(-1, null);
         }
-        for(int i = 0; i < parameters.size(); i++) {
-            List<JSONObject> tempList = new ArrayList<>();
-            for(int j = 0; j < values.get(i).size(); j++) {
-                for(JSONObject obj : jsonList) {
-                    if(obj.get(parameters.get(i)).equals(values.get(i).get(j))) {
-                        tempList.add(obj);
-                    }
-                }
+        if(commitLogFile == null) {
+            return new JSONReturnable(-2, null);
+        }
+        String testResult;
+        if (helper.DEBUG) {
+            testResult = "cutz;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0";
+        } else {
+            Student student = studentRepository.findByUserName(userName);
+            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+            StringBuilder builder = new StringBuilder();
+            builder.append(student.getUserName());
+            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), false);
+            for(StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
             }
-            jsonList = tempList;
+            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), true);
+            for(StudentProjectTest t : testResults) {
+                builder.append(";").append(t.getTestResultString());
+            }
+            testResult = builder.toString();
         }
-        filtered.addAll(jsonList);
-        return filtered;
-    }
-
-    /** Retrieves basic data for all projects in the course **/
-    public JSONArray getProjectData(@NonNull String semester, @NonNull String courseID) {
-        List<Project> projects = projectRepository.findBySemesterAndCourseID(semester, courseID);
-        if(projects.isEmpty()) {
-            return null;
-        }
-        JSONArray projectsJSON = new JSONArray();
-        for(Project p : projects) {
-            JSONObject projectJSON = new JSONObject();
-            List<ProjectTestScript> visibleTestScripts = projectTestScriptRepository.findByIdProjectIdentifierAndIsHidden(p.getProjectIdentifier(), false);
-            List<ProjectTestScript> hiddenTestScripts = projectTestScriptRepository.findByIdProjectIdentifierAndIsHidden(p.getProjectIdentifier(), true);
-            projectJSON.put("project_name", p.getProjectName());
-            projectJSON.put("source_name", p.getRepoName());
-            projectJSON.put("start_date", p.getStartDate());
-            projectJSON.put("due_date", p.getDueDate());
-            projectJSON.put("test_script", visibleTestScripts);
-            projectJSON.put("hidden_test_script", hiddenTestScripts);
-            projectJSON.put("id", p.getProjectIdentifier());
-            projectJSON.put("last_sync", p.getSyncDate());
-            projectJSON.put("last_test", p.getTestDate());
-            projectsJSON.add(projectJSON);
-        }
-        return projectsJSON;
-    }
-
-    public Project getProject(@NonNull String projectID) {
-        return projectRepository.findByProjectIdentifier(projectID);
+        String pyPath = helper.pythonPath + "get_statistics.py";
+        String command = helper.pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
+        return helper.runPython(command);
     }
 }
