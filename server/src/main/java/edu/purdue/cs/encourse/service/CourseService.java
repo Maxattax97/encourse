@@ -20,7 +20,7 @@ public interface CourseService {
     JSONArray getCourseData(@NonNull String userName, List<String> courseIDs);
     JSONArray getProjectData(@NonNull String semester, @NonNull String courseID);
     JSONArray getSectionData(@NonNull String semester, @NonNull String courseID);
-    JSONArray getStudentData(@NonNull String semester, @NonNull String courseID, List<String> userNameStudents);
+    JSONArray getStudentData(List<String> userNameStudents);
 
     JSONReturnable getProgress(@NonNull String projectID, List<String> userNames);
     JSONReturnable getSimilar(@NonNull String projectID, List<String> userNames);

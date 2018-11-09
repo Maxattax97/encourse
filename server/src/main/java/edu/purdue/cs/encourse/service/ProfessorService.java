@@ -11,9 +11,6 @@ import java.io.File;
 import java.util.List;
 
 public interface ProfessorService {
-
-    // TODO: @reed add security checks for professors
-
     int assignProject(@NonNull String projectID);
     int assignProjectToStudent(@NonNull String projectID, @NonNull String userName);
     int cloneProjects(@NonNull String projectID);

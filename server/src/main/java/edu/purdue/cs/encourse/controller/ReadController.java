@@ -283,17 +283,17 @@ public class ReadController {
             String auth = ((Authority) iter.next()).getAuthority();
             if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                 if (userNames != null) {
-                    returnJson = professorService.getGroupTestSummary(projectID, userNames);
+                    returnJson = courseService.getTestSummary(projectID, userNames);
                 } else {
-                    returnJson = professorService.getTestSummary(projectID);
+                    returnJson = professorService.getClassTestSummary(projectID);
                 }
                 break;
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
                 if (anon) {
-                    returnJson = professorService.getTestSummary(projectID);
+                    returnJson = professorService.getClassTestSummary(projectID);
                 } else {
                     if (userNames != null) {
-                        returnJson = taService.getGroupTestSummary(projectID, userNames, getUserFromAuth().getUsername());
+                        returnJson = courseService.getTestSummary(projectID, userNames);
                     } else {
                         returnJson = taService.getAssignmentsTestSummary(projectID, getUserFromAuth().getUsername());
                     }
@@ -324,18 +324,7 @@ public class ReadController {
 
         if (userName != null) {
             if (hasPermissionOverAccount(userName)) {
-                Iterator iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        returnJson = professorService.getCommitList(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        returnJson = taService.getCommitList(projectID, userName, getUserFromAuth().getUsername());
-                        break;
-                    }
-                }
-
+                returnJson = courseService.getStudentCommitList(projectID, userName);
                 if (returnJson == null || returnJson.jsonObject == null) {
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
@@ -433,19 +422,7 @@ public class ReadController {
         List<String> correct = new ArrayList<>();
         for (String userName: userNames) {
             if (hasPermissionOverAccount(userName)) {
-                JSONReturnable returnJson = null;
-                Iterator iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        returnJson = professorService.getCommitCounts(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        returnJson = taService.getCommitCounts(projectID, userName, getUserFromAuth().getUsername());
-                        break;
-                    }
-                }
-
+                JSONReturnable returnJson = courseService.getStudentCommitCounts(projectID, userName);
                 if (returnJson == null || returnJson.jsonObject == null) {
                     errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
@@ -478,14 +455,14 @@ public class ReadController {
                     }
                 } else {
                     if (userNames.size() == 1) {
-                        JSONReturnable curr = professorService.getStatistics(projectID, userNames.get(0));
+                        JSONReturnable curr = courseService.getStudentStatistics(projectID, userNames.get(0));
                         if (curr != null && curr.getJsonObject() != null) {
                             returnJson.add(curr.getJsonObject());
                         }
                         break;
                     }
                     for (String userName: userNames) {
-                        JSONReturnable curr = professorService.getStatistics(projectID, userName);
+                        JSONReturnable curr = courseService.getStudentStatistics(projectID, userName);
                         if (curr != null && curr.getJsonObject() != null) {
                             JSONArray a = (JSONArray) curr.getJsonObject().get("data");
                             JSONObject obj = new JSONObject();
@@ -503,14 +480,14 @@ public class ReadController {
                     }
                 } else {
                     if (userNames.size() == 1) {
-                        JSONReturnable curr = professorService.getStatistics(projectID, userNames.get(0));
+                        JSONReturnable curr = courseService.getStudentStatistics(projectID, userNames.get(0));
                         if (curr != null && curr.getJsonObject() != null) {
                             returnJson.add(curr.getJsonObject());
                         }
                         break;
                     }
                     for (String userName: userNames) {
-                        JSONReturnable curr = taService.getStatistics(projectID, userName, getUserFromAuth().getUsername());
+                        JSONReturnable curr = courseService.getStudentStatistics(projectID, userName);
                         if (curr != null && curr.getJsonObject() != null) {
                             JSONArray a = (JSONArray) curr.getJsonObject().get("data");
                             JSONObject obj = new JSONObject();
@@ -583,19 +560,7 @@ public class ReadController {
         List<String> correct = new ArrayList<>();
         for (String userName: userNames) {
             if (hasPermissionOverAccount(userName)) {
-                JSONReturnable returnJson = null;
-                Iterator iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        returnJson = professorService.getAdditionsAndDeletions(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        returnJson = taService.getAdditionsAndDeletions(projectID, userName, getUserFromAuth().getUsername());
-                        break;
-                    }
-                }
-
+                JSONReturnable returnJson = courseService.getStudentAdditionsAndDeletions(projectID, userName);
                 if (returnJson == null || returnJson.jsonObject == null) {
                     errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
@@ -619,18 +584,7 @@ public class ReadController {
                                                        @RequestParam(name = "userName") String userName) {
         JSONReturnable returnJson = null;
         if (hasPermissionOverAccount(userName)) {
-            Iterator iter = getUserAuthorities().iterator();
-            while (iter.hasNext()) {
-                String auth = ((Authority) iter.next()).getAuthority();
-                if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                    returnJson = professorService.getCommitVelocity(projectID, userName);
-                    break;
-                } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                    returnJson = null;
-                    break;
-                }
-            }
-
+            returnJson = courseService.getStudentCommitVelocity(projectID, userName);
             if (returnJson == null || returnJson.jsonObject == null) {
                 return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
             }
@@ -651,18 +605,18 @@ public class ReadController {
             String auth = ((Authority) iter.next()).getAuthority();
             if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                 if (userNames != null && userNames.size() == 1) {
-                    returnJson = professorService.getStudentProgress(projectID, userNames.get(0));
+                    returnJson = courseService.getStudentProgress(projectID, userNames.get(0));
                 } else if (userNames != null) {
-                    returnJson = professorService.getGroupProgress(projectID, userNames);
+                    returnJson = courseService.getProgress(projectID, userNames);
                 } else {
                     returnJson = professorService.getClassProgress(projectID);
                 }
                 break;
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
                 if (userNames != null && userNames.size() == 1) {
-                    returnJson = taService.getStudentProgress(projectID, userNames.get(0), getUserFromAuth().getUsername());
+                    returnJson = courseService.getStudentProgress(projectID, userNames.get(0));
                 } else if (userNames != null) {
-                    returnJson = taService.getGroupProgress(projectID, userNames, getUserFromAuth().getUsername());
+                    returnJson = courseService.getProgress(projectID, userNames);
                 } else {
                     returnJson = taService.getAssignmentsProgress(projectID, getUserFromAuth().getUsername());
                 }

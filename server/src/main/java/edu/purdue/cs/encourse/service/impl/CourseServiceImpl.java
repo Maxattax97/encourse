@@ -195,8 +195,7 @@ public class CourseServiceImpl implements CourseService {
         return sectionsJSON;
     }
 
-    // TODO: @REED add a courseID and semester to parameters
-    public JSONArray getStudentData(@NonNull String semester, @NonNull String courseID, List<String> userNames) {
+    public JSONArray getStudentData(List<String> userNames) {
         List<String> completedStudents = new ArrayList<>();
         JSONArray studentsJSON = new JSONArray();
         for(String userName : userNames) {

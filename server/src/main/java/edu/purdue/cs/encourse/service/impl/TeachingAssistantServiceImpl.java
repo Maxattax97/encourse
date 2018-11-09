@@ -152,74 +152,9 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         return courseService.getTestSummary(projectID, userNames);
     }
 
-    public JSONArray getStudentData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA) {
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
-        if(sections.isEmpty()) {
-            return null;
-        }
-        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
-        if(teachingAssistant == null) {
-            return null;
-        }
-        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), courseID);
-        List<String> completedStudents = new ArrayList<>();
-        JSONArray studentsJSON = new JSONArray();
-        for(TeachingAssistantStudent assignment : assignments) {
-            Student student = studentRepository.findByUserID(assignment.getStudentID());
-            if(!(completedStudents.contains(student.getUserID()))) {
-                completedStudents.add(student.getUserID());
-                List<StudentProject> studentProjects = studentProjectRepository.findByIdStudentID(student.getUserID());
-                Map<String, Double> grades = new TreeMap<>();
-                Map<String, Double> hiddenGrades = new TreeMap<>();
-                Map<String, Integer> commitCounts = new TreeMap<>();
-                Map<String, Double> timeSpent = new TreeMap<>();
-                for (StudentProject p : studentProjects) {
-                    grades.put(p.getProjectIdentifier(), p.getBestVisibleGrade());
-                    hiddenGrades.put(p.getProjectIdentifier(), p.getBestHiddenGrade());
-                    commitCounts.put(p.getProjectIdentifier(), p.getCommitCount());
-                    timeSpent.put(p.getProjectIdentifier(), p.getTotalTimeSpent());
-                }
-                List<StudentSection> assignedSections = studentSectionRepository.findByIdStudentID(student.getUserID());
-                List<String> sectionStrings = new ArrayList<>();
-                for (StudentSection a : assignedSections) {
-                    sectionStrings.add(a.getSectionIdentifier());
-                }
-                List<TeachingAssistantStudent> assignedTeachingAssistants = teachingAssistantStudentRepository.findByIdStudentID(student.getUserID());
-                List<String> teachingAssistants = new ArrayList<>();
-                for (TeachingAssistantStudent a : assignedTeachingAssistants) {
-                    TeachingAssistant teachingAssistantAssigned = teachingAssistantRepository.findByUserID(a.getTeachingAssistantID());
-                    teachingAssistants.add(teachingAssistantAssigned.getUserName());
-                }
-                JSONObject studentJSON = new JSONObject();
-                studentJSON.put("first_name", student.getFirstName());
-                studentJSON.put("last_name", student.getLastName());
-                studentJSON.put("id", student.getUserName());
-                studentJSON.put("sections", sectionStrings);
-                studentJSON.put("teaching_assistants", teachingAssistants);
-                studentJSON.put("grades", grades);
-                studentJSON.put("hiddenGrades", grades);
-                studentJSON.put("commitCounts", commitCounts);
-                studentJSON.put("timeSpent", timeSpent);
-                if (helper.OBFUSCATE) {
-                    // RandomStringGenerator generator = new RandomStringGenerator.Builder()
-                    //        .withinRange('a', 'z').build();
-                    studentJSON.put("first_name", student.getFirstName());
-                    studentJSON.put("last_name", student.getLastName());
-                    studentJSON.put("id", student.getUserName());
-                    studentJSON.put("grades", grades);
-                    studentJSON.put("hiddenGrades", grades);
-                    studentJSON.put("commitCounts", commitCounts);
-                    studentJSON.put("timeSpent", timeSpent);
-                }
-                studentsJSON.add(studentJSON);
-            }
-        }
-        return studentsJSON;
-    }
-
     /** Gets all courses that a teaching assistant works for **/
-    public JSONArray getCourseData(@NonNull String userNameTA) {
-        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
+    public JSONArray getCourseData(@NonNull String userName) {
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userName);
         if(teachingAssistant == null) {
             return null;
         }
@@ -227,21 +162,31 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         if(courses.isEmpty()) {
             return null;
         }
-        JSONArray coursesJSON = new JSONArray();
-        for(TeachingAssistantCourse c : courses) {
-            JSONObject courseJSON = new JSONObject();
-            List<Section> sections = sectionRepository.findByCourseID(c.getCourseID());
-            List<String> sectionIDs = new ArrayList<>();
-            for(Section s : sections) {
-                sectionIDs.add(s.getSectionIdentifier());
-            }
-            courseJSON.put("course_number", c.getCourseID());
-            courseJSON.put("course_name", sections.get(0).getCourseID());
-            courseJSON.put("semester", c.getSemester());
-            courseJSON.put("id", teachingAssistant.getUserName());
-            courseJSON.put("sections", sectionIDs);
-            coursesJSON.add(courseJSON);
+        List<String> courseIDs = new ArrayList<>();
+        for(TeachingAssistantCourse course : courses) {
+            courseIDs.add(course.getCourseID());
         }
-        return coursesJSON;
+        return courseService.getCourseData(userName, courseIDs);
+    }
+
+    public JSONArray getStudentData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA) {
+        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
+        if(teachingAssistant == null) {
+            return null;
+        }
+        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), courseID);
+        List<String> userNames = new ArrayList<>();
+        for(TeachingAssistantStudent assignment : assignments) {
+            List<StudentSection> studentSections = studentSectionRepository.findByIdStudentID(assignment.getStudentID());
+            for(StudentSection studentSection : studentSections) {
+                Section section = sectionRepository.findBySectionIdentifier(studentSection.getSectionIdentifier());
+                if(section.getSemester().equals(semester)) {
+                    Student student = studentRepository.findByUserID(assignment.getStudentID());
+                    userNames.add(student.getUserName());
+                    break;
+                }
+            }
+        }
+        return courseService.getStudentData(userNames);
     }
 }

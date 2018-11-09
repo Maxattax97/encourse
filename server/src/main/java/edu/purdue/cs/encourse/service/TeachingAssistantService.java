@@ -19,5 +19,5 @@ public interface TeachingAssistantService {
     JSONReturnable getAssignmentsTestSummary(@NonNull String projectID, @NonNull String userNameTA);
 
     JSONArray getStudentData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA);
-    JSONArray getCourseData(@NonNull String userNameTA);
+    JSONArray getCourseData(@NonNull String userName);
 }

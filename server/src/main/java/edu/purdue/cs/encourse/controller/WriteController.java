@@ -415,17 +415,7 @@ public class WriteController {
             if (projectID != null && userName == null) {
                 result = professorService.runTestall(projectID);
             } else if (projectID != null) {
-                Iterator<Authority> iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = iter.next().getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        result = professorService.runTestallForStudent(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        result = taService.runTestallForStudent(projectID, userName, getUserFromAuth().getUsername());
-                        break;
-                    }
-                }
+                result = courseService.runTestallForStudent(projectID, userName);
             }
         }
         if (result == 0) {
