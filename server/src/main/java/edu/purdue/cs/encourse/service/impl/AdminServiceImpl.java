@@ -12,6 +12,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Contains implementations for all services pertaining to administrative operations
+ * Primarily used for the admin panel functionality
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 @Service(value = AdminServiceImpl.NAME)
 public class AdminServiceImpl implements AdminService {
 
@@ -62,14 +69,14 @@ public class AdminServiceImpl implements AdminService {
     /**
      * Adds user credentials and authorities for an account to the database
      *
-     * @param userName of the account being added
-     * @param password encrypted credentials for account
-     * @param authority permission level for the account
-     * @param acc_expired indicates if account is currently active
-     * @param locked indicates if account can no longer log in
-     * @param cred_expired indicates if account login token is still active
-     * @param enabled indicates if account can log in to application
-     * @return user credentials created for account
+     * @param userName      Front-end identifier for account being added
+     * @param password      Encrypted credentials for account
+     * @param authority     Permission level for the account
+     * @param acc_expired   Indicates if account is currently active
+     * @param locked        Indicates if account can no longer log in
+     * @param cred_expired  Indicates if account login token is still active
+     * @param enabled       Indicates if account can log in to application
+     * @return              User credentials created for account
      */
     public User addUser(@NonNull String userName, @NonNull String password, @NonNull String authority, boolean acc_expired, boolean locked, boolean cred_expired, boolean enabled) {
         Authority auth = authorityRepository.findDistinctByName(authority);
@@ -99,9 +106,9 @@ public class AdminServiceImpl implements AdminService {
      * Professors can view any student in courses that they are assigned to
      * Administrators can view any account
      *
-     * @param loggedIn credentials for user trying to view another account
-     * @param userName of the account being viewed
-     * @return true if user can view account, false otherwise
+     * @param loggedIn  Credentials for user trying to view another account
+     * @param userName  Front-end identifier for account being accessed
+     * @return          True if user can view account, false otherwise
      */
     public boolean hasPermissionOverAccount(User loggedIn, String userName) {
         Account account = accountRepository.findByUserName(userName);
@@ -162,9 +169,9 @@ public class AdminServiceImpl implements AdminService {
     /**
      * Replaces an account with a new account with different permissions
      *
-     * @param userName of the account being modified
-     * @param role permissions for the new account
-     * @return error code
+     * @param userName  Front-end identifier for account being modified
+     * @param role      Permissions for the new account
+     * @return          Error code
      */
     public int modifyAuthority(@NonNull String userName, String role) {
         Account a = accountRepository.findByUserName(userName);
@@ -192,14 +199,14 @@ public class AdminServiceImpl implements AdminService {
     /**
      * Adds an account to the database, calling several private methods based on account type
      *
-     * @param userID of account being added
-     * @param userName of account being added
-     * @param firstName of the user for the account
-     * @param lastName of the user for the account
-     * @param type subclass for the account
-     * @param middleInit of the user for the account, optional
-     * @param eduEmail assigned by the university, optional
-     * @return error code
+     * @param userID        Front-end identifier for account being added
+     * @param userName      Attribute for account being added
+     * @param firstName     Attribute for account being added
+     * @param lastName      Attribute for account being added
+     * @param type          Subclass and role of account being added
+     * @param middleInit    (Optional) Attribute for account being added
+     * @param eduEmail      (Optional) Email used for messaging the user
+     * @return              Error code
      */
     public int addAccount(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName,
                           @NonNull String type, String middleInit, String eduEmail) {
@@ -214,6 +221,18 @@ public class AdminServiceImpl implements AdminService {
         return result;
     }
 
+    /**
+     * Adds a student account to the database
+     * Not called directly by endpoints
+     *
+     * @param userID        Front-end identifier for account being added
+     * @param userName      Attribute for account being added
+     * @param firstName     Attribute for account being added
+     * @param lastName      Attribute for account being added
+     * @param middleInit    (Optional) Attribute for account being added
+     * @param eduEmail      (Optional) Email used for messaging the user
+     * @return              Error code
+     */
     private int addStudent(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
         Student student = new Student(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(student.getUserID())) {
@@ -228,6 +247,18 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Adds a teaching assistant account to the database
+     * Not called directly by endpoints
+     *
+     * @param userID        Front-end identifier for account being added
+     * @param userName      Attribute for account being added
+     * @param firstName     Attribute for account being added
+     * @param lastName      Attribute for account being added
+     * @param middleInit    (Optional) Attribute for account being added
+     * @param eduEmail      (Optional) Email used for messaging the user
+     * @return              Error code
+     */
     private int addTA(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
         TeachingAssistant teachingAssistant = new TeachingAssistant(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(teachingAssistant.getUserID())) {
@@ -242,6 +273,18 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Adds a professor account to the database
+     * Not called directly by endpoints
+     *
+     * @param userID        Front-end identifier for account being added
+     * @param userName      Attribute for account being added
+     * @param firstName     Attribute for account being added
+     * @param lastName      Attribute for account being added
+     * @param middleInit    (Optional) Attribute for account being added
+     * @param eduEmail      (Optional) Email used for messaging the user
+     * @return              Error code
+     */
     private int addProfessor(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
         Professor professor = new Professor(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(professor.getUserID())) {
@@ -256,6 +299,18 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Adds an administrator account to the database
+     * Not called directly by endpoints
+     *
+     * @param userID        Front-end identifier for account being added
+     * @param userName      Attribute for account being added
+     * @param firstName     Attribute for account being added
+     * @param lastName      Attribute for account being added
+     * @param middleInit    (Optional) Attribute for account being added
+     * @param eduEmail      (Optional) Email used for messaging the user
+     * @return              Error code
+     */
     private int addAdmin(@NonNull String userID, @NonNull String userName, @NonNull String firstName, @NonNull String lastName, String middleInit, String eduEmail) {
         CollegeAdmin admin = new CollegeAdmin(userID, userName, firstName, lastName, middleInit, eduEmail);
         if(accountRepository.existsByUserID(admin.getUserID())) {
@@ -271,10 +326,10 @@ public class AdminServiceImpl implements AdminService {
     }
 
     /**
-     * Removes the account from database and all relations associated with it
+     * Removes an account from database and all relations associated with it
      *
-     * @param userName of the account being deleted
-     * @return error code
+     * @param userName  Front-end identifier for account being deleted
+     * @return          Error code
      */
     public int deleteAccount(@NonNull String userName) {
         Account account = accountRepository.findByUserName(userName);
@@ -293,6 +348,13 @@ public class AdminServiceImpl implements AdminService {
         return result;
     }
 
+    /**
+     * Removes a student account from database and all relations associated with it
+     * Not called directly by endpoints
+     *
+     * @param account   Account to remove from the database
+     * @return          Error code
+     */
     private int deleteStudent(@NonNull Account account){
         Student student = studentRepository.findByUserID(account.getUserID());
         student.copyAccount(account);
@@ -316,6 +378,13 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Removes a teaching assistant account from database and all relations associated with it
+     * Not called directly by endpoints
+     *
+     * @param account   Account to remove from the database
+     * @return          Error code
+     */
     private int deleteTA(@NonNull Account account) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(account.getUserID());
         teachingAssistant.copyAccount(account);
@@ -327,6 +396,13 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Removes a professor account from database and all relations associated with it
+     * Not called directly by endpoints
+     *
+     * @param account   Account to remove from the database
+     * @return          Error code
+     */
     private int deleteProfessor(@NonNull Account account) {
         Professor professor = professorRepository.findByUserID(account.getUserID());
         professor.copyAccount(account);
@@ -338,6 +414,13 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Removes an administrator account from database and all relations associated with it
+     * Not called directly by endpoints
+     *
+     * @param account   Account to remove from the database
+     * @return          Error code
+     */
     private int deleteAdmin(@NonNull Account account) {
         CollegeAdmin admin = adminRepository.findByUserID(account.getUserID());
         admin.copyAccount(account);
@@ -349,10 +432,10 @@ public class AdminServiceImpl implements AdminService {
      * Changes valid fields for an account
      * Some fields, like userID, are not allowed to be changed
      *
-     * @param userName of the account being modified
-     * @param field that is being modified for account
-     * @param value will be given to the selected field
-     * @return error code
+     * @param userName  Front-end identifier for the account being modified
+     * @param field     Attribute to change for the account
+     * @param value     (Optional) New value to insert into field. Type parsed based on specified field
+     * @return          Error code
      */
     public int modifyAccount(@NonNull String userName, @NonNull String field, String value) {
         Account account = accountRepository.findByUserName(userName);
@@ -379,6 +462,16 @@ public class AdminServiceImpl implements AdminService {
         return result;
     }
 
+    /**
+     * Changes valid fields for a student account
+     * Some fields, like userID, are not allowed to be changed
+     * Not called directly by endpoints
+     *
+     * @param account   Account to modify
+     * @param field     Attribute to change for the account
+     * @param value     (Optional) New value to insert into field. Type parsed based on specified field
+     * @return          Error code
+     */
     private int modifyStudent(@NonNull Account account, @NonNull String field, String value){
         Student student = studentRepository.findByUserID(account.getUserID());
         student.copyAccount(account);
@@ -388,6 +481,16 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Changes valid fields for a teaching assistant account
+     * Some fields, like userID, are not allowed to be changed
+     * Not called directly by endpoints
+     *
+     * @param account   Account to modify
+     * @param field     Attribute to change for the account
+     * @param value     (Optional) New value to insert into field. Type parsed based on specified field
+     * @return          Error code
+     */
     private int modifyTA(@NonNull Account account, @NonNull String field, String value) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(account.getUserID());
         teachingAssistant.copyAccount(account);
@@ -397,6 +500,16 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Changes valid fields for a professor account
+     * Some fields, like userID, are not allowed to be changed
+     * Not called directly by endpoints
+     *
+     * @param account   Account to modify
+     * @param field     Attribute to change for the account
+     * @param value     (Optional) New value to insert into field. Type parsed based on specified field
+     * @return          Error code
+     */
     private int modifyProfessor(@NonNull Account account, @NonNull String field, String value) {
         Professor professor = professorRepository.findByUserID(account.getUserID());
         professor.copyAccount(account);
@@ -406,6 +519,16 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Changes valid fields for an administrator account
+     * Some fields, like userID, are not allowed to be changed
+     * Not called directly by endpoints
+     *
+     * @param account   Account to modify
+     * @param field     Attribute to change for the account
+     * @param value     (Optional) New value to insert into field. Type parsed based on specified field
+     * @return          Error code
+     */
     private int modifyAdmin(@NonNull Account account, @NonNull String field, String value) {
         CollegeAdmin admin = adminRepository.findByUserID(account.getUserID());
         admin.copyAccount(account);
@@ -415,6 +538,17 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Adds a new course section to the database
+     *
+     * @param CRN           Course Registration Number for section being added
+     * @param semester      Semester that course is offered
+     * @param courseID      Identifier used by the university for the course that section is for
+     * @param courseTitle   Name of the course that section is for
+     * @param sectionType   Type of section being added
+     * @param timeSlot      Time and days that course is offered
+     * @return              Section that was added to the database
+     */
     public Section addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType, @NonNull String timeSlot) {
         System.out.println("ADDING SECTION");
         Section section = new Section(CRN, semester, courseID, courseTitle, sectionType, timeSlot);
@@ -424,10 +558,22 @@ public class AdminServiceImpl implements AdminService {
         return sectionRepository.save(section);
     }
 
+    /**
+     * Obtains a course section from the database
+     *
+     * @param sectionID Identifier for a section
+     * @return          Section corresponding to identifier
+     */
     public Section retrieveSection(@NonNull String sectionID) {
         return sectionRepository.findBySectionIdentifier(sectionID);
     }
 
+    /**
+     * Removes a section from database and all relations associated with it
+     *
+     * @param sectionID Identifier for the section being removed
+     * @return          Error code
+     */
     public int deleteSection(@NonNull String sectionID) {
         System.out.println("ADDING SECTION");
         Section section = sectionRepository.findBySectionIdentifier(sectionID);
@@ -442,6 +588,15 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Adds a relation between a professor and a courseID with semester
+     * Professor can then access data for the specified course from the specified semester
+     *
+     * @param userName  Front-end identifier for professor being assigned
+     * @param courseID  Identifier used by the university for a course
+     * @param semester  Semester that assignment is effective during
+     * @return          Error code
+     */
     public int assignProfessorToCourse(@NonNull String userName, @NonNull String courseID, @NonNull String semester) {
         Professor professor = professorRepository.findByUserName(userName);
         if(professor == null) {
@@ -457,6 +612,14 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Adds a relation between a student and a section
+     * Student can then show up in the professor and TA panels for the course
+     *
+     * @param userName  Front-end identifier for the student being registered
+     * @param sectionID Identifier for the section
+     * @return          Error code
+     */
     public int registerStudentToSection(@NonNull String userName, @NonNull String sectionID) {
         Student student = studentRepository.findByUserName(userName);
         if(student == null) {
@@ -473,6 +636,13 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Changes a student account to a teaching assistant account
+     * Student still has same view for most courses, but sees a TA view for courses that they are assigned to TA
+     *
+     * @param userName  Front-end identifier for student being hired
+     * @return          Error code
+     */
     public int hireStudentAsTeachingAssistant(@NonNull String userName) {
         Account account = accountRepository.findByUserName(userName);
         if(account == null) {
@@ -496,6 +666,15 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * Adds a relation between a teaching assistant and a courseID with semester
+     * Teaching assistant will then show up in a list of TAs for the professor to further assign to sections
+     *
+     * @param userName  Front-end identifier for the teaching assistant being assigned
+     * @param courseID  Identifier used by the university for a course
+     * @param semester  Semester that assignment is effective during
+     * @return          Error code
+     */
     public int assignTeachingAssistantToCourse(@NonNull String userName, @NonNull String courseID, @NonNull String semester) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userName);
         if(teachingAssistant == null) {
@@ -509,10 +688,16 @@ public class AdminServiceImpl implements AdminService {
         return 0;
     }
 
+    /**
+     * @return  List of login information for all accounts in the database
+     */
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
 
+    /**
+     * @return  List of all sections in the database
+     */
     public List<Section> findAllSections() { return sectionRepository.findAll(); }
 
 }

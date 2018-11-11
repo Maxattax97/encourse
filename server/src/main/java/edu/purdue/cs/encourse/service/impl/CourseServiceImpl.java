@@ -15,6 +15,13 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Contains implementations for all services which may be used by course personnel (Professors and TAs)
+ * Primarily used internally from other services, however some services are called directly for certain functionality
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 @Service(value = CourseServiceImpl.NAME)
 public class CourseServiceImpl implements CourseService {
     public final static String NAME = "CourseService";
@@ -64,7 +71,13 @@ public class CourseServiceImpl implements CourseService {
         return projectRepository.findByProjectIdentifier(projectID);
     }
 
-    /** Mainly needed to populate the database when course hub already exists **/
+    /**
+     * Mainly used internally for courses which already have repositories cloned
+     *
+     * @param semester  Semester of course being modified
+     * @param courseID  Identifier for the course being modified
+     * @return          Error Code
+     */
     public int setDirectory(@NonNull String semester, @NonNull String courseID) {
         List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
         if(sections.isEmpty()) {
