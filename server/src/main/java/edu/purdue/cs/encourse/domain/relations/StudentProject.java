@@ -80,14 +80,6 @@ public class StudentProject {
     public String getProjectIdentifier() {
         return id.getProjectIdentifier();
     }
-
-    public void updateCommitInformation(int commitCount, int totalLinesAdded, int totalLinesRemoved, String mostRecentCommitDate, double totalTimeSpent) {
-        setCommitCount(commitCount);
-        setTotalLinesAdded(totalLinesAdded);
-        setTotalLinesRemoved(totalLinesRemoved);
-        setMostRecentCommitDate(mostRecentCommitDate);
-        setTotalTimeSpent(totalTimeSpent);
-    }
 }
 
 @Getter

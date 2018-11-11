@@ -60,6 +60,12 @@ public class StudentProjectTest {
         return id.getTestScriptName();
     }
 
+    /**
+     * Converts test result into a string to be parsed by a Python script.
+     * Primarily used to communicate test results from Java to Python.
+     *
+     * @return String with the format {NAME}:{P/F}:{POINT_VALUE}
+     */
     public String getTestResultString() {
         if(isPassing()) {
             return getTestScriptName() + ":P:" + pointsWorth;
