@@ -9,18 +9,26 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+/**
+ * Represents a relation between a project and the test scripts that it runs.
+ * Primarily used during testall to determine the grade that a student receives.
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 @Getter
 @Entity
 @Table(name = "PROJECT_TEST_SCRIPT")
 public class ProjectTestScript {
+    /** Primary key for relation in database. Never used directly */
     @EmbeddedId
     ProjectTestScriptID id;
 
-    /** Indicates if students are able to see the result of this test script **/
+    /** Indicates if students are able to see the result of this test script */
     @Setter
     boolean isHidden;
 
-    /** Number of points earned for passing the test script **/
+    /** Number of points earned for passing the test script */
     @Setter
     double pointsWorth;
 
@@ -46,10 +54,10 @@ public class ProjectTestScript {
 @Getter
 @Embeddable
 class ProjectTestScriptID implements Serializable {
-    /** Key used to identify the project test scripts are for **/
+    /** Key used to identify the project */
     private String projectIdentifier;
 
-    /** Key used to identify which test script this is **/
+    /** Key used to identify the test script */
     private String testScriptName;
 
     public ProjectTestScriptID(String projectIdentifier, String testScriptName) {

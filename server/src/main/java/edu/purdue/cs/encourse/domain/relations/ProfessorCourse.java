@@ -8,10 +8,18 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+/**
+ * Represents a relation between a particular professor and a course that they teach.
+ * Relation primarily used for retrieving a professor's courses when they log in.
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 @Getter
 @Entity
 @Table(name = "PROFESSOR_COURSE")
 public class ProfessorCourse {
+    /** Primary key for relation in database. Never used directly */
     @EmbeddedId
     ProfessorCourseID id;
 
@@ -37,16 +45,15 @@ public class ProfessorCourse {
 
     @Override
     public String toString() { return getProfessorID() + " | " + getSemester() + " | " + getCourseID(); }
-
 }
 
 @Getter
 @Embeddable
 class ProfessorCourseID implements Serializable {
-    /** Key for the professor's account **/
+    /** Key for the professor */
     private String professorID;
 
-    /** Name and semester of course being taught by professor **/
+    /** Keys used to identify the course and semester */
     private String courseID;
     private String semester;
 

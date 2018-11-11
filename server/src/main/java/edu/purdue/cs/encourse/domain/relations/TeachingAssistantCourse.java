@@ -8,10 +8,18 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+/**
+ * Represents a relation between a teaching assistant and a course that they work for.
+ * Primarily used for showing a professor all of the TAs that they can assign for a course.
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 @Getter
 @Entity
 @Table(name = "TEACHING_ASSISTANT_COURSE")
 public class TeachingAssistantCourse {
+    /** Primary key for relation in database. Never used directly */
     @EmbeddedId
     TeachingAssistantCourseID id;
 
@@ -39,10 +47,10 @@ public class TeachingAssistantCourse {
 @Getter
 @Embeddable
 class TeachingAssistantCourseID implements Serializable {
-    /** Key for the professor's account **/
+    /** Key used to identify the TA */
     private String teachingAssistantID;
 
-    /** Course and semester TA is assigned to **/
+    /** Keys used to identify the course and semester */
     private String courseID;
     private String semester;
 
