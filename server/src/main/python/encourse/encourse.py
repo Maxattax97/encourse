@@ -181,6 +181,7 @@ if __name__ == "__main__":
         parsed_args.func(parsed_args)
 
     ################# Tests ##################
+    """
     print("stats")
     parsed_args = parser.parse_args(
         [
@@ -278,3 +279,4 @@ if __name__ == "__main__":
     )
     parsed_args.func(parsed_args)
     print("\n")
+    """

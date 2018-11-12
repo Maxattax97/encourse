@@ -25,7 +25,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 public class ProfessorServiceImpl implements ProfessorService {
 
     public final static String NAME = "ProfessorService";
-    private final static String pythonPath = "src/main/python/";
+    private final static String pythonPath = "src/main/python/encourse/";
     private final static String tailFilePath = "src/main/temp/";
     private final static Boolean DEBUG = ConfigurationManager.getInstance().debug;
     private final static String pythonCommand = DEBUG ? "/anaconda3/bin/python" : "python3";
@@ -422,7 +422,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
             testResult = builder.toString();
         }
-        String pyPath = pythonPath + "get_statistics.py";
+        String pyPath = pythonPath + "encourse.py statistics";
         String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);
         if(json == null || json.getJsonObject() == null) {
@@ -481,9 +481,9 @@ public class ProfessorServiceImpl implements ProfessorService {
         String hiddenTestFile;
         String dailyCountsFile;
         if (DEBUG) {
-            visibleTestFile = "src/main//python/test_datasets/sampleTestsDay.txt";
-            hiddenTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
-            dailyCountsFile = "src/main/python/test_datasets/sampleCountsDay.txt";
+            visibleTestFile = "src/main/python/encourse/data/sampleTestsDay.txt";
+            hiddenTestFile = "src/main/python/encourse/data/sampleTestsDay.txt";
+            dailyCountsFile = "src/main/python/encourse/data/sampleCountsDay.txt";
         } else {
             dailyCountsFile = countStudentCommitsByDay(projectID, userName);
             if (!projectRepository.existsByProjectIdentifier(projectID)) {
@@ -515,7 +515,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
         }
 
-        String pyPath = pythonPath + "get_individual_progress.py";
+        String pyPath = pythonPath + "encourse.py student-progress";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + dailyCountsFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -542,8 +542,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestDates.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestDates.txt";
         if (DEBUG) {
-            visibleTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
-            hiddenTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
+            visibleTestFile = pythonPath + "data/sampleTestsDay.txt";
+            hiddenTestFile = pythonPath + "data/sampleTestsDay.txt";
         }
         try {
             BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
@@ -563,7 +563,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-3, null);
         }
 
-        String pyPath = pythonPath + "get_velocity.py";
+        String pyPath = pythonPath + "encourse.py velocity";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -584,12 +584,12 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         if (DEBUG) {
-            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
+            visibleTestFile = pythonPath + "data/sampleVisibleTestCases.txt";
+            hiddenTestFile = pythonPath + "data/sampleHiddenTestCases.txt";
         }
 
         // TODO: Check that test results work as expected
-        String pyPath = pythonPath + "get_class_progress.py";
+        String pyPath = pythonPath + "encourse.py class-progress";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
         json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -614,7 +614,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         // }
 
         // TODO: Check that test results work as expected
-        String pyPath = pythonPath + "get_identical_count.py";
+        String pyPath = pythonPath + "encourse.py diff";
         String command = pythonCommand + " " + pyPath + " " /* + File */;
         json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -640,12 +640,12 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         if (DEBUG) {
-            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
+            visibleTestFile = pythonPath + "data/sampleVisibleTestCases.txt";
+            hiddenTestFile = pythonPath + "data/sampleHiddenTestCases.txt";
         }
 
         // TODO: Check that test results work as expected
-        String pyPath = pythonPath + "get_class_progress.py";
+        String pyPath = pythonPath + "encourse.py class-progress";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
         json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -694,7 +694,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return new JSONReturnable(-4, null);
         }
 
-        String pyPath = pythonPath + "get_identical_count.py";
+        String pyPath = pythonPath + "encourse.py class-cheating";
         String command = pythonCommand + " " + pyPath + " " + diffsFile;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -734,7 +734,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         } catch (IOException e) {
             return new JSONReturnable(-3, null);
         }
-        String pyPath = pythonPath + "get_class_statistics.py";
+        String pyPath = pythonPath + "encourse.py statistics";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -753,10 +753,10 @@ public class ProfessorServiceImpl implements ProfessorService {
             json = new JSONReturnable(-1, null);
         }
         if (DEBUG) {
-            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
+            visibleTestFile = pythonPath + "data/sampleVisibleTestCases.txt";
+            hiddenTestFile = pythonPath + "data/sampleHiddenTestCases.txt";
         }
-        String pyPath = pythonPath + "get_test_summary.py";
+        String pyPath = pythonPath + "encourse.py test-summary";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
         json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -781,10 +781,10 @@ public class ProfessorServiceImpl implements ProfessorService {
             json = new JSONReturnable(-1, null);
         }
         if (DEBUG) {
-            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
+            visibleTestFile = pythonPath + "data/sampleVisibleTestCases.txt";
+            hiddenTestFile = pythonPath + "data/sampleHiddenTestCases.txt";
         }
-        String pyPath = pythonPath + "get_test_summary.py";
+        String pyPath = pythonPath + "encourse.py test-summary";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
         json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -800,7 +800,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
-        String pyPath = pythonPath + "get_add_del.py";
+        String pyPath = pythonPath + "encourse.py changes";
         String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " -l 200";
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -834,7 +834,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
             testResult = builder.toString();
         }
-        String pyPath = pythonPath + "get_statistics.py";
+        String pyPath = pythonPath + "encourse.py stats";
         String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -879,12 +879,12 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
 
         if (DEBUG){
-            commitLogFile = pythonPath + "/test_datasets/sampleCommitList.txt";
-            visibleTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
+            commitLogFile = pythonPath + "data/sampleCommitList.txt";
+            visibleTestFile = pythonPath + "data/sampleTestsDay.txt";
+            hiddenTestFile = pythonPath + "data/sampleTestsDay.txt";
         }
 
-        String pyPath = pythonPath + "get_class_cheating.py";
+        String pyPath = pythonPath + "encourse.py cheating";
         //TODO: JARETT
         //String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + diffsFile + " -l 1000";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -l 1000";
@@ -899,7 +899,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
-        String pyPath = pythonPath + "get_git_commits.py";
+        String pyPath = pythonPath + "encourse.py commitcount";
         String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
 
@@ -912,7 +912,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(commitLogFile == null) {
             return new JSONReturnable(-1, null);
         }
-        String pyPath = pythonPath + "get_git_commit_list.py";
+        String pyPath = pythonPath + "encourse.py gitlist";
         String command = pythonCommand + " " + pyPath + " " + commitLogFile;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -924,7 +924,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(commitLogFile == null) {
             return new JSONReturnable(-1, null);
         }
-        String pyPath = pythonPath + "get_git_commit_list.py";
+        String pyPath = pythonPath + "encourse.py gitlist";
         String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + userName;
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
@@ -974,7 +974,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     /** Counts the number of commits that a single student has made for each day that the project is active **/
     public String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName) {
         if (DEBUG) {
-            return pythonPath + "test_datasets/sampleCountsDay.txt";
+            return pythonPath + "data/sampleCountsDay.txt";
         }
 
         Project project = projectRepository.findByProjectIdentifier(projectID);
@@ -1003,7 +1003,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     /** Lists various information about git history, including commit time and dates, and files modified in each commit for all students **/
     public String listAllCommitsByTime(@NonNull String projectID) {
         if (DEBUG) {
-            return pythonPath + "test_datasets/sampleCommitList.txt";
+            return pythonPath + "data/sampleCommitList.txt";
         }
 
         Project project = projectRepository.findByProjectIdentifier(projectID);
@@ -1027,7 +1027,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     /** Lists various information about git history, including commit time and dates, and files modified in each commit for one student **/
     public String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName) {
         if (DEBUG) {
-            return pythonPath + "test_datasets/sampleCommitList.txt";
+            return pythonPath + "data/sampleCommitList.txt";
         }
 
         Project project = projectRepository.findByProjectIdentifier(projectID);
