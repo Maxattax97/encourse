@@ -100,8 +100,9 @@ public class ProfessorServiceImpl implements ProfessorService {
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String output = null;
             String error = null;
+            System.out.println("Error: ");
             while ((error = stdError.readLine()) != null) {
-                System.out.println("Error: " + error);
+                System.out.println("\t\t" + error);
             }
             while ((output = stdInput.readLine()) != null) {
                 System.out.println("Output: " + output);
@@ -738,7 +739,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         } catch (IOException e) {
             return new JSONReturnable(-3, null);
         }
-        String pyPath = pythonPath + "encourse.py statistics";
+        String pyPath = pythonPath + "encourse.py stats";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
