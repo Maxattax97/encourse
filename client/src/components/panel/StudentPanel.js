@@ -72,7 +72,7 @@ class StudentPanel extends Component {
                     <div className='panel-student-content'>
                         <h1 className='header'>
                             {
-                                `CS252 - ${/*this.props.currentStudent ? `${this.props.currentStudent.first_name} ${this.props.currentStudent.last_name}` :*/ ''}`
+                                `CS252 - ${this.props.currentStudent ? `${this.props.currentStudent.first_name} ${this.props.currentStudent.last_name}` : ''}`
                             }
                         </h1>
                         <div className="h1 break-line header" />

@@ -9,8 +9,8 @@ class StudentAssignPreview extends Component {
         return (
 	        <PreviewCard onClick={ this.props.onClick } isSelected={ this.props.isSelected }>
 		        <div className="title">
-			        <h4>{ /*this.props.student.first_name*/ }</h4>
-			        <h4>{ /*this.props.student.last_name*/ }</h4>
+			        <h4>{ this.props.student.first_name }</h4>
+			        <h4>{ this.props.student.last_name }</h4>
 		        </div>
 		        <div className="h4 break-line header" />
 		        <div className="preview-content">

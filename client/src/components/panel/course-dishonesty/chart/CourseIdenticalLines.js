@@ -1,11 +1,11 @@
 import React, { Component } from 'react' 
-import { ScatterChart, Scatter, Dot, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
+import { ScatterChart, Scatter, Dot, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer, Brush } from 'recharts'
 import { connect } from 'react-redux'
+import CustomTooltipContent from './CustomTooltipContent';
 
 import { getSimilarityPlot } from '../../../../redux/actions'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
-// import CustomTooltipContent from './CustomTooltipContent';
 
 const toPercent = (decimal, fixed = 2) => {
     return `${(decimal).toFixed(fixed)}`
@@ -17,8 +17,8 @@ const defaultData = [
         'user2': 'user2',
         'user1index': 1,
         'user2index': 2,
-        'simularity': 10,
-        'simularity-bin': 10,
+        'similarity': 10,
+        'similarity_bin': 10,
         'height': 2
     },
     {
@@ -26,8 +26,8 @@ const defaultData = [
         'user2': 'user3',
         'user1index': 1,
         'user2index': 3,
-        'simularity-bin': 10,
-        'simularity': 11,
+        'similarity_bin': 10,
+        'similarity': 11,
         'height': 3
     },
     {
@@ -35,8 +35,8 @@ const defaultData = [
         'user2': 'user4',
         'user1index': 1,
         'user2index': 4,
-        'simularity-bin': 10,
-        'simularity': 9,
+        'similarity_bin': 10,
+        'similarity': 9,
         'height': 1
     },
     {
@@ -44,8 +44,8 @@ const defaultData = [
         'user2': 'user3',
         'user1index': 2,
         'user2index': 3,
-        'simularity-bin': 30,
-        'simularity': 30,
+        'similarity_bin': 30,
+        'similarity': 30,
         'height': 1
     },
     {
@@ -53,8 +53,8 @@ const defaultData = [
         'user2': 'user4',
         'user1index': 2,
         'user2index': 4,
-        'simularity-bin': 10,
-        'simularity': 13,
+        'similarity_bin': 10,
+        'similarity': 13,
         'height': 5
     },
     {
@@ -62,8 +62,8 @@ const defaultData = [
         'user2': 'user4',
         'user1index': 3,
         'user2index': 4,
-        'simularity-bin': 10,
-        'simularity': 12,
+        'similarity_bin': 10,
+        'similarity': 12,
         'height': 4
     },
 ];
@@ -82,7 +82,7 @@ class CourseIdenticalLinesChart extends Component {
     }
     
     componentWillReceiveProps = (nextProps) => {
-        if(this.props.isLoading && !nextProps.isLoading) {
+        if(this.props.isLoading && !nextProps.isLoading) { 
             this.setState({ formattedData: this.formatApiData(nextProps.data) })
         }
         if (nextProps.currentProjectId !== this.props.currentProjectId) {
@@ -97,12 +97,21 @@ class CourseIdenticalLinesChart extends Component {
     }
 
     formatApiData = (udata) => {
-        // TODO fix
-        return defaultData
+        let data = udata.data
+        console.log(data[0]);
+        for (let item of data) {
+            item.similarity_bin *= 10
+        }
+        data.sort((a, b) => {
+            if (a.similarity_bin == b.similarity_bin) {
+                return a.height - b.height
+            }
+            return a.similarity_bin - b.similarity_bin
+        })
+        return data
     }
 
     render() {
-        console.log(this.state.formattedData);
         return (
             this.props.isLoading !== undefined && !this.props.isLoading
                 ? <div className="chart-container">
@@ -112,18 +121,18 @@ class CourseIdenticalLinesChart extends Component {
                             margin={{top: 5, right: 30, left: 30, bottom: 35}}
                             barCategoryGap={0}
                         >
-                            <XAxis dataKey="simularity-bin" type="number">
+                            <XAxis dataKey="similarity_bin" type="number">
                                 <Label offset={-10} position="insideBottom">
-                                    Student
+                                    Identical lines of code
                                 </Label>
                             </XAxis>
                             <YAxis dataKey="height" type="number">
                                 <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
-                                    Student
+                                    Count
                                 </Label>
                             </YAxis>
-                            <Tooltip/>
-                            <Scatter dataKey="count" fill="#8884d8"/>
+                            <Tooltip content={<CustomTooltipContent />} />
+                            <Scatter dataKey="height" fill="#8884d8"/>
                         </ScatterChart>
                     </ResponsiveContainer>
                 </div>
@@ -138,7 +147,7 @@ class CourseIdenticalLinesChart extends Component {
 const mapStateToProps = (state) => {
     return {
         data: state.course && state.course.getSimilarityPlotData ? state.course.getSimilarityPlotData : null,
-        isLoading: state.course ? state.course.getClassProgressIsLoading : false,
+        isLoading: state.course ? state.course.getSimilarityPlotIsLoading : false,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
     }
 }
