@@ -72,10 +72,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     /**
+     * Sets only the directory used for each section in the database, without creating it on the server
      * Mainly used internally for courses which already have repositories cloned
      *
-     * @param semester  Semester of course being modified
-     * @param courseID  Identifier for the course being modified
+     * @param semester  Semester of course having a directory set
+     * @param courseID  Identifier for the course being having a directory set
      * @return          Error Code
      */
     public int setDirectory(@NonNull String semester, @NonNull String courseID) {
@@ -93,8 +94,13 @@ public class CourseServiceImpl implements CourseService {
         return code;
     }
 
-    /** Creates a directory containing a directory for every student in the course. Each of those student directories
-     will contain all of the cloned repositories that is being used to track git information **/
+    /**
+     * Creates a directory for storing all student repositories, test cases, and Makefiles used by the course
+     *
+     * @param semester  Semester of course having a directory created
+     * @param courseID  Identifier for the course having a directory created
+     * @return          Error Code
+     */
     public int createDirectory(@NonNull String semester, @NonNull String courseID){
         List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
         if(sections.isEmpty()) {
@@ -119,7 +125,14 @@ public class CourseServiceImpl implements CourseService {
         return code;
     }
 
-    /** Sets the location of the git repositories for every section under a particular courseID **/
+    /**
+     * Stores the remote path to use for cloning student git repositories
+     *
+     * @param semester      Semester of course having a remote path set
+     * @param courseID      Identifier for the course having a remote path set
+     * @param remotePath    Path to the directory containing the subdirectories for each student on university server
+     * @return              Error code
+     */
     public int setSectionRemotePaths(@NonNull String semester, @NonNull String courseID, @NonNull String remotePath) {
         List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
         if(sections.isEmpty()) {
@@ -135,7 +148,14 @@ public class CourseServiceImpl implements CourseService {
         return code;
     }
 
-    /** Gets all courses that a teaching assistant works for **/
+    /**
+     * Obtains data for all courses that an account is associated with
+     * Primarily used internally to generate the JSON for front-end to parse
+     *
+     * @param userName  Front-end identifier for account data is needed for
+     * @param courseIDs List of identifiers for the courses that information needs to be retrieved for
+     * @return          JSON for front-end to parse
+     */
     public JSONArray getCourseData(@NonNull String userName, List<String> courseIDs) {
         JSONArray coursesJSON = new JSONArray();
         for(String courseID : courseIDs) {
@@ -155,7 +175,14 @@ public class CourseServiceImpl implements CourseService {
         return coursesJSON;
     }
 
-    /** Retrieves basic data for all projects in the course **/
+    /**
+     * Obtains data for all projects associated with a courseID and semester
+     * Primarily used to find projects for a course that a user selects
+     *
+     * @param semester  Semester of the course that project data is requested for
+     * @param courseID  Identifier for the course that project data is requested for
+     * @return          JSON for front-end to parse
+     */
     public JSONArray getProjectData(@NonNull String semester, @NonNull String courseID) {
         List<Project> projects = projectRepository.findBySemesterAndCourseID(semester, courseID);
         if(projects.isEmpty()) {
