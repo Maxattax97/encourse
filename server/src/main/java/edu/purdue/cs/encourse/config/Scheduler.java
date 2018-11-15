@@ -9,7 +9,7 @@ public class Scheduler {
     ProfessorService professorService;
 
     /** Pulls and tests all projects ready to be synchronized with 1 minute delays **/
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedDelay = 60000)
     public void pullAndTestAllProjects() {
         System.out.println("Scheduled Task Running");
         professorService.pullAndTestAllProjects();
