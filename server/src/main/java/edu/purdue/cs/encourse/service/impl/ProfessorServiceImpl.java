@@ -100,8 +100,12 @@ public class ProfessorServiceImpl implements ProfessorService {
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String output = null;
             String error = null;
-            System.out.println("Error: ");
+            Boolean isFirstError = true;
             while ((error = stdError.readLine()) != null) {
+                if (isFirstError) {
+                    System.out.println("Error: ");
+                    isFirstError = false;
+                }
                 System.out.println("\t\t" + error);
             }
             while ((output = stdInput.readLine()) != null) {

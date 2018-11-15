@@ -23,7 +23,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 public class TeachingAssistantServiceImpl implements TeachingAssistantService {
 
     public final static String NAME = "TeachingAssistantService";
-    private final static String pythonPath = "src/main/python/";
+    private final static String pythonPath = "src/main/python/encourse/";
     private final static String tailFilePath = "src/main/temp/";
     private final static int RATE = 3600000;
     private final static Boolean DEBUG = false;
