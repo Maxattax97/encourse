@@ -1,6 +1,9 @@
 from API import *
 
 
+# TODO: Reduce code length by generating dict keys from
+#       test totals (instead of using elif).
+# TODO: Then merge jsonify functions
 def jsonify(visible_data, hidden_data):
     """Formats data for /classProgress endpoint
 
@@ -74,6 +77,7 @@ def jsonify(visible_data, hidden_data):
             histogram_data["90-100%"] += 1
     return json.dumps(histogram_data)
 
+
 def jsonify_with_names(visible_data, hidden_data):
     """Formats data for /classProgress endpoint
 
@@ -123,6 +127,9 @@ def jsonify_with_names(visible_data, hidden_data):
         "80-90%": [],
         "90-100%": [],
     }
+
+    # Since we are iterating through keys of a dictionary,
+    # we do not need to worry about appending duplicates to the bins
     for student in test_data:
         info = test_data[student]
         if info["total"] <= 10:
@@ -147,6 +154,7 @@ def jsonify_with_names(visible_data, hidden_data):
             histogram_data["90-100%"].append(student)
     return json.dumps(histogram_data)
 
+
 def merge_inputs(visible, hidden):
     """Merge test results per student from two input sources"""
     merged = visible
@@ -156,7 +164,7 @@ def merge_inputs(visible, hidden):
             merged[key]["tests"].update(hidden[key]["tests"])
         else:
             merged[key]["tests"] = hidden[key]["tests"]
-    #TODO: Recalculate totals for each student
+    # TODO: Recalculate totals for each student
     return merged
 
 
