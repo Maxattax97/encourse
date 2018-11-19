@@ -2,12 +2,43 @@ from . import *
 import operator
 
 
-class GitLogger:
+class GitLog:
     def __init__(self, gitlog):
-        self.commits = parselog(gitlog)
+        if all(isinstance(element, GitCommit) for element in gitlog):
+            self.commits = gitlog
+        else:
+            self.commits = parselog(gitlog)
+        self.time_estimate = self._estimate_time()
+
+    commits = property(operator.attrgetter("_commits"))
+
+    @commits.setter
+    def commits(self, commits):
+        print("setter called: commits")
+        # Check if commits are the right format
+        if all(isinstance(element, GitCommit) for element in commits):
+            self._commits = commits
+
+    time_estimate = property(operator.attrgetter("_time_estimate"))
+
+    @time_estimate.setter
+    def time_estimate(self, time_estimate):
+        print("setter called: time_estimate")
+        self._time_estimate = time_estimate
 
     def parselog(self, gitlog):
         pass
+
+    # TODO: Move to GitLog, add time range input
+    def _estimate_time(self, timeout=None):
+        total_time = 0
+        for commit in self.commits:
+            if not timeout:
+                timeout = sys.maxsize
+            # TODO: Improve time estimate heuristic
+            hours = (commit.timedelta.seconds / 3600) 
+            if hours < timeout:
+                total_time += hours
 
 
 class GitCommit:
@@ -15,7 +46,6 @@ class GitCommit:
         self.files = files
         self.timestamp = timestamp
         self.timedelta = timedelta
-        # self.time_estimate = self._estimate_time()
 
     files = property(operator.attrgetter("_files"))
 
@@ -64,14 +94,6 @@ class GitCommit:
         for gitfile in self.files:
             self.additions += gitfile.additions
             self.deletions += gitfile.deletions
-
-    # TODO: Move to GitLog, add time range input
-    def _estimate_time(self, timeout=None):
-        if not timeout:
-            timeout = sys.maxsize
-        # TODO: Imporve time estimate heuristic
-        if (self.timedelta.seconds / 3600) < timeout:
-            return self.timedelta
 
 
 class GitFile:
