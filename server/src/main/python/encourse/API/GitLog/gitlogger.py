@@ -10,6 +10,18 @@ class GitLog:
             self.commits = parselog(gitlog)
         self.time_estimate = self._estimate_time()
 
+    def __repr__(self):
+        commits_repr  = []
+        for commit in self.commits:
+            commits_repr.append(repr(commit))
+        return repr(commits_repr)
+
+    def __str__(self):
+        output = "Git Log: \n"
+        for commit in self.commits:
+            output += "\t" + str(commit) + "\n"
+        return output
+
     commits = property(operator.attrgetter("_commits"))
 
     @commits.setter
@@ -36,16 +48,26 @@ class GitLog:
             if not timeout:
                 timeout = sys.maxsize
             # TODO: Improve time estimate heuristic
-            hours = (commit.timedelta.seconds / 3600) 
+            hours = (commit.time_delta.seconds / 3600) 
             if hours < timeout:
                 total_time += hours
 
 
 class GitCommit:
-    def __init__(self, files, timestamp, timedelta):
+    def __init__(self, files, timestamp, time_delta):
         self.files = files
         self.timestamp = timestamp
-        self.timedelta = timedelta
+        self.time_delta = time_delta
+
+    def __repr__(self):
+        return "GitCommit({}, {}, {})".format(repr(self.files), repr(self.timestamp), repr(self.time_delta)) 
+
+    def __str__(self):
+        file_list = "Commit: " + self.timestamp.isoformat() + "\n"
+        max_filename = max([len(f.name) for f in self.files])
+        for f in self.files:
+            file_list += "\t" + f.name + ":" + (" " * (max_filename - len(f.name))) + "\t" + "+{}\t-{}\n".format(f.additions, f.deletions)
+        return file_list
 
     files = property(operator.attrgetter("_files"))
 
@@ -60,16 +82,18 @@ class GitCommit:
     @timestamp.setter
     def timestamp(self, timestamp):
         print("setter called: timestamp")
-        if timestamp is date:
+        print(type(timestamp))
+        if isinstance(timestamp, date):
+            print("hi")
             self._timestamp = timestamp
 
-    timedelta = property(operator.attrgetter("_timedelta"))
+    time_delta = property(operator.attrgetter("_time_delta"))
 
-    @timedelta.setter
-    def timedelta(self, timedelta):
-        print("setter called: timedelta")
-        if timedelta is timedelta:
-            self._timedelta = timedelta
+    @time_delta.setter
+    def time_delta(self, time_delta):
+        print("setter called: time_delta")
+        if isinstance(time_delta, timedelta):
+            self._time_delta = time_delta
 
     additions = property(operator.attrgetter("_additions"))
 
@@ -101,3 +125,6 @@ class GitFile:
         self.name = name
         self.additions = additions
         self.deletions = deletions
+
+    def __repr__(self):
+        return "GitFile({}, {}, {})".format(repr(self.name), repr(self.additions), repr(self.deletions))
