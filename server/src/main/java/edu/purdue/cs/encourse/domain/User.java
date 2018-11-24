@@ -10,6 +10,13 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
 
+/**
+ * Represents an account's current state for the application.
+ * Primarily used for determining if an account is allowed to log in.
+ *
+ * @author Shawn Montgomery
+ * @author montgo38@purdue.edu
+ */
 @Entity
 @Table(name = "USER_", uniqueConstraints = { @UniqueConstraint(columnNames = { "USER_NAME" }) })
 @Getter

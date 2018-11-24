@@ -4,35 +4,27 @@ import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.ProfessorService;
-import edu.purdue.cs.encourse.util.ConfigurationManager;
+import edu.purdue.cs.encourse.service.helper.*;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.Executors;
+import java.time.LocalDate;
 import lombok.NonNull;
-
-import javax.persistence.criteria.CriteriaBuilder;
 
 @Service(value = ProfessorServiceImpl.NAME)
 public class ProfessorServiceImpl implements ProfessorService {
 
-    public final static String NAME = "ProfessorService";
-    private final static String pythonPath = "src/main/python/";
-    private final static String tailFilePath = "src/main/temp/";
-    private final static Boolean DEBUG = ConfigurationManager.getInstance().debug;
-    private final static String pythonCommand = DEBUG ? "/anaconda3/bin/python" : "python3";
-    private final static Boolean OBFUSCATE = false;
+    final static String NAME = "ProfessorService";
+    
+    private final static ServiceHelper helper = ServiceHelper.getInstance();
 
-    /** Hardcoded for shell project, since shell project test cases use relative paths instead of absolute **/
-    final static String testDir = "test-shell";
+    @Autowired
+    private CourseServiceImpl courseService;
 
     @Autowired
     private StudentRepository studentRepository;
@@ -75,144 +67,6 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Autowired
     private TeachingAssistantSectionRepository teachingAssistantSectionRepository;
-
-    private int executeBashScript(@NonNull String command) {
-        try {
-            Process process = Runtime.getRuntime().exec("./src/main/bash/" + command + " 2> /dev/null");
-            StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
-            Executors.newSingleThreadExecutor().submit(streamGobbler);
-            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), System.out::println);
-            Executors.newSingleThreadExecutor().submit(errorGobbler);
-            process.waitFor();
-        }
-        catch(Exception e) {
-            return -1;
-        }
-        return 0;
-    }
-
-    public JSONReturnable runPython(@NonNull String command) {
-        System.out.println(command);
-        JSONReturnable json = null;
-        try {
-            Process process = Runtime.getRuntime().exec(command);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String output = null;
-            String error = null;
-            while ((error = stdError.readLine()) != null) {
-                System.out.println("Error: " + error);
-            }
-            while ((output = stdInput.readLine()) != null) {
-                System.out.println("Output: " + output);
-                JSONParser jsonParser = new JSONParser();
-                Object obj = null;
-                try {
-                    obj = jsonParser.parse(output);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    json =  new JSONReturnable(-3, null);
-                }
-                if (obj != null) {
-                    JSONObject jsonObject = null;
-                    if (obj.getClass() == JSONObject.class) {
-                        jsonObject = (JSONObject)obj;
-                    } else if (obj.getClass() == JSONArray.class) {
-                        jsonObject = new JSONObject();
-                        JSONArray jsonArray = (JSONArray)obj;
-                        jsonObject.put("data", jsonArray);
-                    } else {
-                        json = new JSONReturnable(-4, null);
-                    }
-                    json = new JSONReturnable(1, jsonObject);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            json = new JSONReturnable(-2, null);
-        }
-        return json;
-    }
-
-    private boolean isTakingCourse(@NonNull Student student, @NonNull Project project) {
-        List<StudentSection> studentSections = studentSectionRepository.findByIdStudentID(student.getUserID());
-        boolean isTaking = false;
-        for(StudentSection s : studentSections) {
-            Section section = sectionRepository.findBySectionIdentifier(s.getSectionIdentifier());
-            if(section.getCourseID().equals(project.getCourseID()) && section.getSemester().equals(project.getSemester())) {
-                isTaking = true;
-                break;
-            }
-        }
-        return isTaking;
-    }
-
-    private double parseProgressForProject(@NonNull String projectID, @NonNull String testOutput) {
-        String[] testResults = testOutput.split(";");
-        double earnedPoints = 0.0;
-        double maxPoints = 0.0;
-        for(String r : testResults) {
-            String testName = r.split(":")[0];
-            ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
-            if(testScript == null) {
-                continue;
-            }
-            maxPoints += testScript.getPointsWorth();
-            if(r.endsWith("P")) {
-                earnedPoints += testScript.getPointsWorth();
-            }
-        }
-        if(maxPoints == 0.0) {
-            return 0.0;
-        }
-        return Math.round((earnedPoints / maxPoints) * 100);
-    }
-
-    private void updateTestResults(String result, String studentID, String projectID, boolean isHidden) {
-        String[] testResults = result.split(";");
-        for(String s : testResults) {
-            String testName = s.split(":")[0];
-            String testScore = s.split(":")[1];
-            boolean isPassing = testScore.equals("P");
-            StudentProjectTest studentProjectTest =
-                    studentProjectTestRepository.findByIdProjectIdentifierAndIdTestScriptNameAndIdStudentID(projectID, testName, studentID);
-            if(studentProjectTest == null) {
-                ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
-                studentProjectTest = new StudentProjectTest(studentID, projectID, testName, isPassing, isHidden, testScript.getPointsWorth());
-                studentProjectTestRepository.save(studentProjectTest);
-            }
-            else {
-                studentProjectTest.setPassing(isPassing);
-                studentProjectTestRepository.save(studentProjectTest);
-            }
-        }
-    }
-
-    private void createTestFiles(String visibleTestFile, String hiddenTestFile, List<StudentProject> projects) throws IOException {
-        BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-        BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-        for (StudentProject p : projects) {
-            Student student = studentRepository.findByUserID(p.getStudentID());
-            StringBuilder builder = new StringBuilder();
-            builder.append(student.getUserName());
-            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), false);
-            for (StudentProjectTest t : testResults) {
-                builder.append(";").append(t.getTestResultString());
-            }
-            String visibleTestResult = builder.toString();
-            builder = new StringBuilder();
-            builder.append(student.getUserName());
-            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), true);
-            for (StudentProjectTest t : testResults) {
-                builder.append(";").append(t.getTestResultString());
-            }
-            String hiddenTestResult = builder.toString();
-            visibleWriter.write(visibleTestResult + "\n");
-            hiddenWriter.write(hiddenTestResult + "\n");
-        }
-        visibleWriter.close();
-        hiddenWriter.close();
-    }
 
     /** Adds a new project to the database, which needs to be done before cloning the project in the course hub **/
     public Project addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate) {
@@ -259,7 +113,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 return -3;
             }
         }
-        if(!isTakingCourse(student, project)) {
+        if(!helper.isTakingCourse(student, project)) {
             return -4;
         }
         studentProjectRepository.save(new StudentProject(student.getUserID(), project.getProjectIdentifier()));
@@ -343,13 +197,13 @@ public class ProfessorServiceImpl implements ProfessorService {
                 if(!(new File(s.getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName()).exists())) {
                     String destPath = (s.getCourseHub() + "/" + student.getUserName());
                     String repoPath = (s.getRemotePath() + "/" + student.getUserName() + "/" + project.getRepoName() + ".git");
-                    if(executeBashScript("cloneRepositories.sh " + destPath + " " + repoPath) == -1) {
+                    if(helper.executeBashScript("cloneRepositories.sh " + destPath + " " + repoPath) == -1) {
                         code = -6;
                     }
                 }
             }
         }
-        if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
+        if(helper.executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
             return -7;
         }
         return code;
@@ -380,14 +234,14 @@ public class ProfessorServiceImpl implements ProfessorService {
                 Student student = studentRepository.findByUserID(a.getStudentID());
                 if(!(completedStudents.contains(student.getUserName()))) {
                     String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-                    if(executeBashScript("pullRepositories.sh " + destPath) == -1) {
+                    if(helper.executeBashScript("pullRepositories.sh " + destPath) == -1) {
                         code = -5;
                     }
                     completedStudents.add(student.getUserName());
                 }
             }
         }
-        if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
+        if(helper.executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
             return -6;
         }
         project.setSyncDate(LocalDate.now().toString());
@@ -396,44 +250,37 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public int updateStudentInformation(@NonNull String projectID, @NonNull String userName) {
-        String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
-        String commitLogFile = listStudentCommitsByTime(projectID, userName);
+        String dailyCountsFile = helper.countStudentCommitsByDay(projectID, userName);
+        String commitLogFile = helper.listStudentCommitsByTime(projectID, userName);
         if(dailyCountsFile == null) {
             return -1;
         }
         if(commitLogFile == null) {
             return -2;
         }
-        String testResult = null;
-        if (DEBUG) {
-            testResult = "cutz;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0";
-        } else {
-            Student student = studentRepository.findByUserName(userName);
-            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-            StringBuilder builder = new StringBuilder();
-            builder.append(student.getUserName());
-            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), false);
-            for(StudentProjectTest t : testResults) {
-                builder.append(";").append(t.getTestResultString());
-            }
-            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), true);
-            for(StudentProjectTest t : testResults) {
-                builder.append(";").append(t.getTestResultString());
-            }
-            testResult = builder.toString();
+        Student student = studentRepository.findByUserName(userName);
+        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+        StringBuilder builder = new StringBuilder();
+        builder.append(student.getUserName());
+        List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), false);
+        for(StudentProjectTest t : testResults) {
+            builder.append(";").append(t.getTestResultString());
         }
-        String pyPath = pythonPath + "get_statistics.py";
-        String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
-        JSONReturnable json = runPython(command);
+        testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), true);
+        for(StudentProjectTest t : testResults) {
+            builder.append(";").append(t.getTestResultString());
+        }
+        String testResult = builder.toString();
+        String pyPath = helper.pythonPath + "get_statistics.py";
+        String command = helper.pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
+        JSONReturnable json = helper.runPython(command);
         if(json == null || json.getJsonObject() == null) {
             return 0;
         }
-        if (DEBUG) {
-            executeBashScript("cleanDirectory.sh src/main/temp");
+        if (helper.DEBUG) {
+            helper.executeBashScript("cleanDirectory.sh src/main/temp");
             return 0;
         }
-        Student student = studentRepository.findByUserName(userName);
-        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
         JSONArray array = (JSONArray)json.getJsonObject().get("data");
         for(int i = 0; i < array.size(); i++) {
             JSONObject data = (JSONObject)array.get(i);
@@ -472,589 +319,44 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
         }
         studentProjectRepository.save(project);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
+        //helper.executeBashScript("cleanDirectory.sh src/main/temp");
         return 0;
     }
 
-    public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName) {
-        String visibleTestFile;
-        String hiddenTestFile;
-        String dailyCountsFile;
-        if (DEBUG) {
-            visibleTestFile = "src/main//python/test_datasets/sampleTestsDay.txt";
-            hiddenTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
-            dailyCountsFile = "src/main/python/test_datasets/sampleCountsDay.txt";
-        } else {
-            dailyCountsFile = countStudentCommitsByDay(projectID, userName);
-            if (!projectRepository.existsByProjectIdentifier(projectID)) {
-                return new JSONReturnable(-1, null);
-            }
-            Student student = studentRepository.findByUserName(userName);
-            if (student == null) {
-                return new JSONReturnable(-2, null);
-            }
-            List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-            visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestDates.txt";
-            hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestDates.txt";
-            try {
-                BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-                BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-                visibleWriter.write("Start " + userName + "\n");
-                hiddenWriter.write("Start " + userName + "\n");
-                for (StudentProjectDate d : projectDates) {
-                    visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
-                    hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
-                }
-                visibleWriter.write("End " + userName + "\n");
-                hiddenWriter.write("End " + userName + "\n");
-                visibleWriter.close();
-                hiddenWriter.close();
-            }
-            catch(IOException e) {
-                return new JSONReturnable(-3, null);
-            }
-        }
-
-        String pyPath = pythonPath + "get_individual_progress.py";
-        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + dailyCountsFile + " " + userName;
-        JSONReturnable json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-    }
-
-    public JSONReturnable getCommitVelocity(@NonNull String projectID, @NonNull String userName) {
-        String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
-        String commitLogFile = listStudentCommitsByTime(projectID, userName);
-        if(dailyCountsFile == null) {
-            return new JSONReturnable(-1, null);
-        }
-        if(commitLogFile == null) {
-            return new JSONReturnable(-2, null);
-        }
-        if(!projectRepository.existsByProjectIdentifier(projectID)) {
-            return new JSONReturnable(-1, null);
-        }
-        Student student = studentRepository.findByUserName(userName);
-        if(student == null) {
-            return new JSONReturnable(-2, null);
-        }
-        List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestDates.txt";
-        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestDates.txt";
-        if (DEBUG) {
-            visibleTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
-            hiddenTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
-        }
-        try {
-            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-            visibleWriter.write("Start " + userName + "\n");
-            hiddenWriter.write("Start " + userName + "\n");
-            for (StudentProjectDate d : projectDates) {
-                visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
-                hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
-            }
-            visibleWriter.write("End " + userName + "\n");
-            hiddenWriter.write("End " + userName + "\n");
-            visibleWriter.close();
-            hiddenWriter.close();
-        }
-        catch(IOException e) {
-            return new JSONReturnable(-3, null);
-        }
-
-        String pyPath = pythonPath + "get_velocity.py";
-        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + userName;
-        JSONReturnable json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-
-
-    }
-
-    public JSONReturnable getClassProgress(@NonNull String projectID) {
-        JSONReturnable json = null;
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
-        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
-        try {
-            createTestFiles(visibleTestFile, hiddenTestFile, projects);
-        } catch (IOException e) {
-            json = new JSONReturnable(-1, null);
-        }
-
-        if (DEBUG) {
-            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
-        }
-
-        // TODO: Check that test results work as expected
-        String pyPath = pythonPath + "get_class_progress.py";
-        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
-        json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-    }
-    
-    // TODO JARETT and REED connect new calculateDiffScore.sh
-    public JSONReturnable getDiffScore(@NonNull String projectID) {
-        JSONReturnable json = null;
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        // String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
-        // String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
-        // try {
-        //     createTestFiles(visibleTestFile, hiddenTestFile, projects);
-        // } catch (IOException e) {
-        //     json = new JSONReturnable(-1, null);
-        // }
-        // 
-        // if (DEBUG) {
-        //     visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
-        //     hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
-        // }
-
-        // TODO: Check that test results work as expected
-        String pyPath = pythonPath + "get_identical_count.py";
-        String command = pythonCommand + " " + pyPath + " " /* + File */;
-        json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-    }
-
-    public JSONReturnable getGroupProgress(@NonNull String projectID, @NonNull List<String> userNames) {
-        JSONReturnable json = null;
-        List<StudentProject> projects = new ArrayList<>();
-        for(String userName: userNames) {
-            Student student = studentRepository.findByUserName(userName);
-            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-            if(project != null) {
-                projects.add(project);
-            }
-        }
-        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
-        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
-        try {
-            createTestFiles(visibleTestFile, hiddenTestFile, projects);
-        } catch (IOException e) {
-            json = new JSONReturnable(-1, null);
-        }
-
-        if (DEBUG) {
-            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
-        }
-
-        // TODO: Check that test results work as expected
-        String pyPath = pythonPath + "get_class_progress.py";
-        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
-        json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-    }
-
-    public JSONReturnable getClassSimilar(@NonNull String projectID) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
-        if(project == null) {
-            return new JSONReturnable(-1, null);
-        }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
-        if(sections.isEmpty()) {
-            return new JSONReturnable(-2, null);
-        }
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-
-        String diffsFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_codeDiffs.txt";
-        List<StudentProject> temp = new ArrayList<>(projects);
-        // TODO: Bash scripts
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(diffsFile));
-            for (StudentProject projectOne : projects) {
-                temp.remove(projectOne);
-                if(temp.isEmpty()) {
-                    break;
-                }
-                Student studentOne = studentRepository.findByUserID(projectOne.getStudentID());
-                String studentOnePath = (sections.get(0).getCourseHub() + "/" + studentOne.getUserName() + "/" + project.getRepoName());
-                Process process = Runtime.getRuntime().exec("./src/main/bash/listCommitHistoryByAuthor.sh " + studentOnePath + " CS252");
-                BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String hash = stdInput.readLine().split(" ")[1];
-                process.destroy();
-                StringBuilder builder = new StringBuilder();
-                builder.append(studentOne.getUserName()).append(":");
-                for (StudentProject projectTwo : temp) {
-                    Student studentTwo = studentRepository.findByUserID(projectTwo.getStudentID());
-                    builder.append(studentTwo.getUserName()).append(";");
-                    String studentTwoPath = (sections.get(0).getCourseHub() + "/" + studentTwo.getUserName() + "/" + project.getRepoName());
-                    process = Runtime.getRuntime().exec("./src/main/bash/calculateDiffScore.sh " + studentOnePath + " " + studentTwoPath + " " + hash);
-                    stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    String result = stdInput.readLine();
-                    process.destroy();
-                    builder.append(result).append("_");
-                }
-                writer.write(builder.toString() + "\n");
-            }
-            writer.close();
-        } catch (Exception e) {
-            return new JSONReturnable(-4, null);
-        }
-
-        String pyPath = pythonPath + "get_identical_count.py";
-        String command = pythonCommand + " " + pyPath + " " + diffsFile;
-        JSONReturnable json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-    }
-
-    // NOTE: Not debugged
-    public JSONReturnable getClassStatistics(@NonNull String projectID) {
-        String dailyCountsFile = countAllCommitsByDay(projectID);
-        String commitLogFile = listAllCommitsByTime(projectID);
-        if(dailyCountsFile == null) {
-            return new JSONReturnable(-1, null);
-        }
-        if(commitLogFile == null) {
-            return new JSONReturnable(-2, null);
-        }
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestsDates.txt";
-        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestsDates.txt";
-        try {
-            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-            for(StudentProject project : projects) {
-                Student student = studentRepository.findByUserID(project.getStudentID());
-                List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-                visibleWriter.write("Start " + student.getUserName() + "\n");
-                hiddenWriter.write("Start " + student.getUserName() + "\n");
-                for (StudentProjectDate d : projectDates) {
-                    visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
-                    hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
-                }
-                visibleWriter.write("End " + student.getUserName() + "\n");
-                hiddenWriter.write("End " + student.getUserName() + "\n");
-            }
-            visibleWriter.close();
-            hiddenWriter.close();
-        } catch (IOException e) {
-            return new JSONReturnable(-3, null);
-        }
-        String pyPath = pythonPath + "get_class_statistics.py";
-        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -t 1.0 -l 200";
-        JSONReturnable json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-    }
-
-    public JSONReturnable getTestSummary(@NonNull String projectID) {
-        JSONReturnable json = null;
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
-        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
-        try {
-            createTestFiles(visibleTestFile, hiddenTestFile, projects);
-        }
-        catch(IOException e) {
-            json = new JSONReturnable(-1, null);
-        }
-        if (DEBUG) {
-            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
-        }
-        String pyPath = pythonPath + "get_test_summary.py";
-        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
-        json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-    }
-
-    public JSONReturnable getGroupTestSummary(@NonNull String projectID, @NonNull List<String> userNames) {
-        JSONReturnable json = null;
-        List<StudentProject> projects = new ArrayList<>();
-        for(String userName: userNames) {
-            Student student = studentRepository.findByUserName(userName);
-            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-            if(project != null) {
-                projects.add(project);
-            }
-        }
-        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
-        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
-        try {
-            createTestFiles(visibleTestFile, hiddenTestFile, projects);
-        } catch (IOException e) {
-            json = new JSONReturnable(-1, null);
-        }
-        if (DEBUG) {
-            visibleTestFile = pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
-        }
-        String pyPath = pythonPath + "get_test_summary.py";
-        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
-        json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-    }
-
-    public JSONReturnable getAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName) {
-        String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
-        String commitLogFile = listStudentCommitsByTime(projectID, userName);
-        if(dailyCountsFile == null) {
-            return new JSONReturnable(-1, null);
-        }
-        if(commitLogFile == null) {
-            return new JSONReturnable(-2, null);
-        }
-        String pyPath = pythonPath + "get_add_del.py";
-        String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " -l 200";
-        JSONReturnable json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-    }
-
-    public JSONReturnable getStatistics(@NonNull String projectID, @NonNull String userName) {
-        String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
-        String commitLogFile = listStudentCommitsByTime(projectID, userName);
-        if(dailyCountsFile == null) {
-            return new JSONReturnable(-1, null);
-        }
-        if(commitLogFile == null) {
-            return new JSONReturnable(-2, null);
-        }
-        String testResult = null;
-        if (DEBUG) {
-            testResult = "cutz;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0";
-        } else {
-            Student student = studentRepository.findByUserName(userName);
-            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-            StringBuilder builder = new StringBuilder();
-            builder.append(student.getUserName());
-            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), false);
-            for(StudentProjectTest t : testResults) {
-                builder.append(";").append(t.getTestResultString());
-            }
-            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), true);
-            for(StudentProjectTest t : testResults) {
-                builder.append(";").append(t.getTestResultString());
-            }
-            testResult = builder.toString();
-        }
-        String pyPath = pythonPath + "get_statistics.py";
-        String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
-        JSONReturnable json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-    }
-
     public JSONReturnable getClassCheating(@NonNull String projectID) {
-        Project p = projectRepository.findByProjectIdentifier(projectID);
-        if(p == null) {
-            return new JSONReturnable(-1, null);
-        }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(p.getSemester(), p.getCourseID());
-        if(sections.isEmpty()) {
-            return new JSONReturnable(-2, null);
-        }
-        String commitLogFile = listAllCommitsByTime(projectID);
-        if(commitLogFile == null) {
-            return new JSONReturnable(-3, null);
-        }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestsDates.txt";
-        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestsDates.txt";
-        try {
-            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-            for(StudentProject project : projects) {
-                Student student = studentRepository.findByUserID(project.getStudentID());
-                List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-                visibleWriter.write("Start " + student.getUserName() + "\n");
-                hiddenWriter.write("Start " + student.getUserName() + "\n");
-                for (StudentProjectDate d : projectDates) {
-                    visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
-                    hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
-                }
-                visibleWriter.write("End " + student.getUserName() + "\n");
-                hiddenWriter.write("End " + student.getUserName() + "\n");
-            }
-            visibleWriter.close();
-            hiddenWriter.close();
-        } catch (IOException e) {
-            return new JSONReturnable(-3, null);
-        }
-
-        if (DEBUG){
-            commitLogFile = pythonPath + "/test_datasets/sampleCommitList.txt";
-            visibleTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
-            hiddenTestFile = pythonPath + "/test_datasets/sampleTestsDay.txt";
-        }
-
-        String pyPath = pythonPath + "get_class_cheating.py";
-        //TODO: JARETT
-        //String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + diffsFile + " -l 1000";
-        String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -l 1000";
-        JSONReturnable json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-    }
-
-
-    public JSONReturnable getCommitCounts(@NonNull String projectID, @NonNull String userName) {
-        String commitLogFile = listStudentCommitsByTime(projectID, userName);
-        if(commitLogFile == null) {
-            return new JSONReturnable(-2, null);
-        }
-        String pyPath = pythonPath + "get_git_commits.py";
-        String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + userName;
-        JSONReturnable json = runPython(command);
-
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
+        List<String> userNames = helper.getStudentUserNames(projects);
+        return courseService.getCheating(projectID, userNames);
     }
 
     public JSONReturnable getClassCommitList(@NonNull String projectID) {
-        String commitLogFile = listAllCommitsByTime(projectID);
-        if(commitLogFile == null) {
-            return new JSONReturnable(-1, null);
-        }
-        String pyPath = pythonPath + "get_git_commit_list.py";
-        String command = pythonCommand + " " + pyPath + " " + commitLogFile;
-        JSONReturnable json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-    }
-
-    public JSONReturnable getCommitList(@NonNull String projectID, @NonNull String userName) {
-        String commitLogFile = listStudentCommitsByTime(projectID, userName);
-        if(commitLogFile == null) {
-            return new JSONReturnable(-1, null);
-        }
-        String pyPath = pythonPath + "get_git_commit_list.py";
-        String command = pythonCommand + " " + pyPath + " " + commitLogFile + " " + userName;
-        JSONReturnable json = runPython(command);
-        //executeBashScript("cleanDirectory.sh src/main/temp");
-        return json;
-    }
-
-    /** Counts the number of commits that every student in the class has made for a project **/
-    public String countAllCommits(@NonNull String projectID) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
-        if(project == null) {
-            return null;
-        }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
-        if(sections.isEmpty()) {
-            return null;
-        }
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_counts.txt";
-        for(StudentProject s : projects) {
-            Student student = studentRepository.findByUserID(s.getStudentID());
-            String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-            executeBashScript("countCommits.sh " + destPath + " " + fileName + " " + student.getUserName());
-        }
-        return fileName;
+        List<String> userNames = helper.getStudentUserNames(projects);
+        return courseService.getCommitList(projectID, userNames);
     }
 
-    /** Counts the total number of commits made each day that the project was active **/
-    public String countAllCommitsByDay(@NonNull String projectID) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
-        if(project == null) {
-            return null;
-        }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
-        if(sections.isEmpty()) {
-            return null;
-        }
+    public JSONReturnable getClassProgress(@NonNull String projectID) {
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_countsByDay.txt";
-        for(StudentProject s : projects) {
-            Student student = studentRepository.findByUserID(s.getStudentID());
-            String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-            executeBashScript("countCommitsByDay.sh " + destPath + " " + fileName + " " + student.getUserName());
-        }
-        return fileName;
+        List<String> userNames = helper.getStudentUserNames(projects);
+        return courseService.getProgress(projectID, userNames);
     }
 
-    /** Counts the number of commits that a single student has made for each day that the project is active **/
-    public String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName) {
-        if (DEBUG) {
-            return pythonPath + "test_datasets/sampleCountsDay.txt";
-        }
-
-        Project project = projectRepository.findByProjectIdentifier(projectID);
-        if(project == null) {
-            return null;
-        }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
-        if(sections.isEmpty()) {
-            return null;
-        }
-        Student student = studentRepository.findByUserName(userName);
-        if(student == null) {
-            return null;
-        }
-        if(!isTakingCourse(student, project)) {
-            return null;
-        }
-        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_studentCountsByDay.txt";
-        String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-        if(executeBashScript("countCommitsByDay.sh " + destPath + " " + fileName + " " + student.getUserName()) == -1) {
-            return null;
-        }
-        return fileName;
-    }
-
-    /** Lists various information about git history, including commit time and dates, and files modified in each commit for all students **/
-    public String listAllCommitsByTime(@NonNull String projectID) {
-        if (DEBUG) {
-            return pythonPath + "test_datasets/sampleCommitList.txt";
-        }
-
-        Project project = projectRepository.findByProjectIdentifier(projectID);
-        if(project == null) {
-            return null;
-        }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
-        if(sections.isEmpty()) {
-            return null;
-        }
+    public JSONReturnable getClassSimilar(@NonNull String projectID) {
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_commitInfo.txt";
-        for(StudentProject s : projects) {
-            Student student = studentRepository.findByUserID(s.getStudentID());
-            String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-            executeBashScript("listCommitsByTime.sh " + destPath + " " + fileName + " " + student.getUserName());
-        }
-        return fileName;
+        List<String> userNames = helper.getStudentUserNames(projects);
+        return courseService.getSimilar(projectID, userNames);
     }
 
-    /** Lists various information about git history, including commit time and dates, and files modified in each commit for one student **/
-    public String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName) {
-        if (DEBUG) {
-            return pythonPath + "test_datasets/sampleCommitList.txt";
-        }
+    public JSONReturnable getClassStatistics(@NonNull String projectID) {
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        List<String> userNames = helper.getStudentUserNames(projects);
+        return courseService.getStatistics(projectID, userNames);
+    }
 
-        Project project = projectRepository.findByProjectIdentifier(projectID);
-        if(project == null) {
-            return null;
-        }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
-        if(sections.isEmpty()) {
-            return null;
-        }
-        Student student = studentRepository.findByUserName(userName);
-        if(student == null) {
-            return null;
-        }
-        if(!isTakingCourse(student, project)) {
-            return null;
-        }
-        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_studentCommitInfo.txt";
-        String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-        if(executeBashScript("listCommitsByTime.sh " + destPath + " " + fileName + " " + student.getUserName()) == -1) {
-            return null;
-        }
-        return fileName;
+    public JSONReturnable getClassTestSummary(@NonNull String projectID) {
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        List<String> userNames = helper.getStudentUserNames(projects);
+        return courseService.getTestSummary(projectID, userNames);
     }
 
     /** Uploads a testing script to testcases directory in the course hub **/
@@ -1085,7 +387,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return null;
         }
         ProjectTestScript script = new ProjectTestScript(projectID, testName, isHidden, points);
-        executeBashScript("setPermissions.sh " + sections.get(0).getCourseID());
+        helper.executeBashScript("setPermissions.sh " + sections.get(0).getCourseID());
         return projectTestScriptRepository.save(script);
     }
 
@@ -1135,7 +437,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             catch(IOException e) {
                 return -4;
             }
-            if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
+            if(helper.executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
                 return -5;
             }
             return 0;
@@ -1177,7 +479,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             catch(IOException e) {
                 return -7;
             }
-            if(executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
+            if(helper.executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
                 return -8;
             }
         }
@@ -1224,23 +526,23 @@ public class ProfessorServiceImpl implements ProfessorService {
         for(StudentProject p : projects) {
             Student student = studentRepository.findByUserID(p.getStudentID());
             String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName();
-            executeBashScript("listTestUpdateHistory.sh " + testingDirectory + " " + fileName);
+            helper.executeBashScript("listTestUpdateHistory.sh " + testingDirectory + " " + fileName);
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(fileName));
                 String line = reader.readLine();
-                executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
+                helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
                 String[] commitInfo = line.split(" ");
                 String date = commitInfo[2];
-                executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
-                if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
+                helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
+                if(helper.executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
                     code = -5;
                 }
-                TestExecuter tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
+                TestExecuter tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + helper.testDir, testCaseDirectory, hiddenTestCaseDirectory);
                 Thread thread = new Thread(tester);
                 thread.start();
                 Thread.sleep(5000);
                 thread.interrupt();
-                executeBashScript("killProcesses.sh " + project.getCourseID());
+                helper.executeBashScript("killProcesses.sh " + project.getCourseID());
                 String visibleResult = tester.getVisibleResult();
                 String hiddenResult = tester.getHiddenResult();
                 if(visibleResult == null) {
@@ -1249,8 +551,8 @@ public class ProfessorServiceImpl implements ProfessorService {
                 if(hiddenResult == null) {
                     hiddenResult = "";
                 }
-                double visibleGrade = parseProgressForProject(projectID, visibleResult);
-                double hiddenGrade = parseProgressForProject(projectID, hiddenResult);
+                double visibleGrade = helper.parseProgressForProject(projectID, visibleResult);
+                double hiddenGrade = helper.parseProgressForProject(projectID, hiddenResult);
                 StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
                 if(projectDate == null) {
                     StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
@@ -1269,26 +571,26 @@ public class ProfessorServiceImpl implements ProfessorService {
                 if(visibleGrade > p.getBestVisibleGrade()) {
                     p.setBestVisibleGrade(visibleGrade);
                     p = studentProjectRepository.save(p);
-                    updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                    helper.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
                 }
                 if(hiddenGrade > p.getBestHiddenGrade()) {
                     p.setBestHiddenGrade(hiddenGrade);
                     p = studentProjectRepository.save(p);
-                    updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
+                    helper.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
                 }
                 line = reader.readLine();
                 commitInfo = line.split(" ");
                 date = commitInfo[2];
-                executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
-                if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
+                helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
+                if(helper.executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
                     code = -5;
                 }
-                tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
+                tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + helper.testDir, testCaseDirectory, hiddenTestCaseDirectory);
                 thread = new Thread(tester);
                 thread.start();
                 Thread.sleep(5000);
                 thread.interrupt();
-                executeBashScript("killProcesses.sh " + project.getCourseID());
+                helper.executeBashScript("killProcesses.sh " + project.getCourseID());
                 visibleResult = tester.getVisibleResult();
                 hiddenResult = tester.getHiddenResult();
                 if(visibleResult == null) {
@@ -1297,8 +599,8 @@ public class ProfessorServiceImpl implements ProfessorService {
                 if(hiddenResult == null) {
                     hiddenResult = "";
                 }
-                visibleGrade = parseProgressForProject(projectID, visibleResult);
-                hiddenGrade = parseProgressForProject(projectID, hiddenResult);
+                visibleGrade = helper.parseProgressForProject(projectID, visibleResult);
+                hiddenGrade = helper.parseProgressForProject(projectID, hiddenResult);
                 projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
                 if(projectDate == null) {
                     StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
@@ -1317,165 +619,24 @@ public class ProfessorServiceImpl implements ProfessorService {
                 if(visibleGrade > p.getBestVisibleGrade()) {
                     p.setBestVisibleGrade(visibleGrade);
                     p = studentProjectRepository.save(p);
-                    updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                    helper.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
                 }
                 if(hiddenGrade > p.getBestHiddenGrade()) {
                     p.setBestHiddenGrade(hiddenGrade);
                     p = studentProjectRepository.save(p);
-                    updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
+                    helper.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
                 }
-                executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
+                helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
                 reader.close();
             }
             catch(Exception e) {
                 code = -6;
-                executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
+                helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             }
         }
         project.setTestDate(LocalDate.now().toString());
         projectRepository.save(project);
         return code;
-    }
-
-    /** Runs testall for a single student, which is quicker if the professor or TA wants to manually run testall for a student **/
-    public int runTestallForStudent(@NonNull String projectID, @NonNull String userName) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
-        if(project == null) {
-            return -1;
-        }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
-        if(sections.isEmpty()) {
-            return -2;
-        }
-        Student student = studentRepository.findByUserName(userName);
-        if(student == null) {
-            return -3;
-        }
-        String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
-        String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
-        String makefilePath = sections.get(0).getCourseHub() + "/makefiles/" + project.getRepoName() + "/Makefile";
-        File directory = new File(testCaseDirectory);
-        if(!directory.isDirectory() || directory.listFiles().length == 0) {
-            return -4;
-        }
-        File file = new File(makefilePath);
-        if(!file.exists()) {
-            return -5;
-        }
-        StudentProject studentProject = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-        if(studentProject == null) {
-            return -6;
-        }
-        String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName();
-        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_gitHashes.txt";
-        executeBashScript("listTestUpdateHistory.sh " + testingDirectory + " " + fileName);
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            String line = reader.readLine();
-            executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
-            String[] commitInfo = line.split(" ");
-            String date = commitInfo[2];
-            executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
-            if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
-                return -7;
-            }
-            TestExecuter tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
-            Thread thread = new Thread(tester);
-            thread.start();
-            Thread.sleep(5000);
-            thread.interrupt();
-            executeBashScript("killProcesses.sh " + project.getCourseID());
-            String visibleResult = tester.getVisibleResult();
-            String hiddenResult = tester.getHiddenResult();
-            if(visibleResult == null) {
-                visibleResult = "";
-            }
-            if(hiddenResult == null) {
-                hiddenResult = "";
-            }
-            double visibleGrade = parseProgressForProject(projectID, visibleResult);
-            double hiddenGrade = parseProgressForProject(projectID, hiddenResult);
-            StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
-            if(projectDate == null) {
-                StudentProjectDate d = new StudentProjectDate(studentProject.getStudentID(), studentProject.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
-                studentProjectDateRepository.save(d);
-            }
-            else {
-                if(visibleGrade > projectDate.getDateVisibleGrade()) {
-                    projectDate.setDateVisibleGrade(visibleGrade);
-                    studentProjectDateRepository.save(projectDate);
-                }
-                if(hiddenGrade > projectDate.getDateHiddenGrade()) {
-                    projectDate.setDateHiddenGrade(hiddenGrade);
-                    studentProjectDateRepository.save(projectDate);
-                }
-            }
-            if(visibleGrade > studentProject.getBestVisibleGrade()) {
-                studentProject.setBestVisibleGrade(visibleGrade);
-                studentProject = studentProjectRepository.save(studentProject);
-                updateTestResults(visibleResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), false);
-            }
-            if(hiddenGrade > studentProject.getBestHiddenGrade()) {
-                studentProject.setBestHiddenGrade(hiddenGrade);
-                studentProject = studentProjectRepository.save(studentProject);
-                updateTestResults(hiddenResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), true);
-            }
-            line = reader.readLine();
-            commitInfo = line.split(" ");
-            date = commitInfo[2];
-            executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
-            if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
-                return -8;
-            }
-            tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
-            thread = new Thread(tester);
-            thread.start();
-            Thread.sleep(5000);
-            thread.interrupt();
-            executeBashScript("killProcesses.sh " + project.getCourseID());
-            visibleResult = tester.getVisibleResult();
-            hiddenResult = tester.getHiddenResult();
-            if(visibleResult == null) {
-                visibleResult = "";
-            }
-            if(hiddenResult == null) {
-                hiddenResult = "";
-            }
-            visibleGrade = parseProgressForProject(projectID, visibleResult);
-            hiddenGrade = parseProgressForProject(projectID, hiddenResult);
-            projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
-            if(projectDate == null) {
-                StudentProjectDate d = new StudentProjectDate(studentProject.getStudentID(), studentProject.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
-                studentProjectDateRepository.save(d);
-            }
-            else {
-                if(visibleGrade > projectDate.getDateVisibleGrade()) {
-                    projectDate.setDateVisibleGrade(visibleGrade);
-                    studentProjectDateRepository.save(projectDate);
-                }
-                if(hiddenGrade > projectDate.getDateHiddenGrade()) {
-                    projectDate.setDateHiddenGrade(hiddenGrade);
-                    studentProjectDateRepository.save(projectDate);
-                }
-            }
-            if(visibleGrade > studentProject.getBestVisibleGrade()) {
-                studentProject.setBestVisibleGrade(visibleGrade);
-                studentProject = studentProjectRepository.save(studentProject);
-                updateTestResults(visibleResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), false);
-            }
-            if(hiddenGrade > studentProject.getBestHiddenGrade()) {
-                studentProject.setBestHiddenGrade(hiddenGrade);
-                studentProject = studentProjectRepository.save(studentProject);
-                updateTestResults(hiddenResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), true);
-            }
-            executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
-            reader.close();
-        }
-        catch(Exception e) {
-            executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
-            return -9;
-        }
-        return 0;
     }
 
     /** Runs a testall script using two commits out of every day that a student has worked **/
@@ -1505,8 +666,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         for(StudentProject p : projects) {
             Student student = studentRepository.findByUserID(p.getStudentID());
             String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName();
-            executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
-            executeBashScript("listTestUpdateHistory.sh " + testingDirectory + " " + fileName);
+            helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
+            helper.executeBashScript("listTestUpdateHistory.sh " + testingDirectory + " " + fileName);
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(fileName));
                 String line;
@@ -1519,16 +680,16 @@ public class ProfessorServiceImpl implements ProfessorService {
                     }
                     commitDate = commitInfo[2];
                     String date = commitInfo[2];
-                    executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
-                    if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
+                    helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
+                    if(helper.executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
                         code = -5;
                     }
-                    TestExecuter tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
+                    TestExecuter tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + helper.testDir, testCaseDirectory, hiddenTestCaseDirectory);
                     Thread thread = new Thread(tester);
                     thread.start();
                     Thread.sleep(5000);
                     thread.interrupt();
-                    executeBashScript("killProcesses.sh " + project.getCourseID());
+                    helper.executeBashScript("killProcesses.sh " + project.getCourseID());
                     String visibleResult = tester.getVisibleResult();
                     String hiddenResult = tester.getHiddenResult();
                     if(visibleResult == null) {
@@ -1537,8 +698,8 @@ public class ProfessorServiceImpl implements ProfessorService {
                     if(hiddenResult == null) {
                         hiddenResult = "";
                     }
-                    double visibleGrade = parseProgressForProject(projectID, visibleResult);
-                    double hiddenGrade = parseProgressForProject(projectID, hiddenResult);
+                    double visibleGrade = helper.parseProgressForProject(projectID, visibleResult);
+                    double hiddenGrade = helper.parseProgressForProject(projectID, hiddenResult);
                     StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
                     if(projectDate == null) {
                         StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
@@ -1557,26 +718,26 @@ public class ProfessorServiceImpl implements ProfessorService {
                     if(visibleGrade > p.getBestVisibleGrade()) {
                         p.setBestVisibleGrade(visibleGrade);
                         p = studentProjectRepository.save(p);
-                        updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                        helper.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
                     }
                     if(hiddenGrade > p.getBestHiddenGrade()) {
                         p.setBestHiddenGrade(hiddenGrade);
                         p = studentProjectRepository.save(p);
-                        updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
+                        helper.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
                     }
                     line = reader.readLine();
                     commitInfo = line.split(" ");
                     date = commitInfo[2];
-                    executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
-                    if(executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
+                    helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
+                    if(helper.executeBashScript("runMakefile.sh " + testingDirectory + " " + makefilePath) == -1) {
                         code = -5;
                     }
-                    tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + testDir, testCaseDirectory, hiddenTestCaseDirectory);
+                    tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + helper.testDir, testCaseDirectory, hiddenTestCaseDirectory);
                     thread = new Thread(tester);
                     thread.start();
                     Thread.sleep(5000);
                     thread.interrupt();
-                    executeBashScript("killProcesses.sh " + project.getCourseID());
+                    helper.executeBashScript("killProcesses.sh " + project.getCourseID());
                     visibleResult = tester.getVisibleResult();
                     hiddenResult = tester.getHiddenResult();
                     if(visibleResult == null) {
@@ -1585,8 +746,8 @@ public class ProfessorServiceImpl implements ProfessorService {
                     if(hiddenResult == null) {
                         hiddenResult = "";
                     }
-                    visibleGrade = parseProgressForProject(projectID, visibleResult);
-                    hiddenGrade = parseProgressForProject(projectID, hiddenResult);
+                    visibleGrade = helper.parseProgressForProject(projectID, visibleResult);
+                    hiddenGrade = helper.parseProgressForProject(projectID, hiddenResult);
                     projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
                     if(projectDate == null) {
                         StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
@@ -1605,20 +766,20 @@ public class ProfessorServiceImpl implements ProfessorService {
                     if(visibleGrade > p.getBestVisibleGrade()) {
                         p.setBestVisibleGrade(visibleGrade);
                         p = studentProjectRepository.save(p);
-                        updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                        helper.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
                     }
                     if(hiddenGrade > p.getBestHiddenGrade()) {
                         p.setBestHiddenGrade(hiddenGrade);
                         p = studentProjectRepository.save(p);
-                        updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
+                        helper.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
                     }
                 }
-                executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
+                helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
                 reader.close();
             }
             catch(Exception e) {
                 code = -6;
-                executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
+                helper.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             }
         }
         project.setTestDate(LocalDate.now().toString());
@@ -1645,37 +806,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 project.setTestCount(project.getTestCount() - 1);
             }
         }
-        executeBashScript("cleanDirectory.sh src/main/temp");
-    }
-
-    public int testPythonDirectory() {
-
-        // This hardcoded path will undoubtedly cause us difficulty in the future.
-        String filePath = pythonPath + "hello.py";
-        String dataFilePath = pythonPath + "testData.txt";
-        //BufferedWriter stdOutput = new BufferedWriter(new OutputStreamWriter());
-
-        try {
-            // Run `python hello.py testData.txt` at correct directory
-            Process process = Runtime.getRuntime().exec(pythonCommand + " " + filePath + " " + dataFilePath);
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String input = null;
-            String error = null;
-            while ((error = stdError.readLine()) != null) {
-                System.out.println(error);
-            }
-            while ((input = stdInput.readLine()) != null) {
-                //System.out.println(input);
-                if (input.equals("Hello World")) {
-                    return 1;
-                }
-            }
-            return -1;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return -2;
-        }
+        helper.executeBashScript("cleanDirectory.sh src/main/temp");
     }
 
     /** Assigns a TA to a section in the course. Does not include assignments to students within section **/
@@ -1763,86 +894,30 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(courses.isEmpty()) {
             return null;
         }
-        JSONArray coursesJSON = new JSONArray();
-        for(ProfessorCourse c : courses) {
-            JSONObject courseJSON = new JSONObject();
-            List<Section> sections = sectionRepository.findByCourseID(c.getCourseID());
-            List<String> sectionIDs = new ArrayList<>();
-            for(Section s : sections) {
-                sectionIDs.add(s.getSectionIdentifier());
-            }
-            courseJSON.put("course_number", c.getCourseID());
-            courseJSON.put("course_name", sections.get(0).getCourseID());
-            courseJSON.put("semester", c.getSemester());
-            courseJSON.put("id", professor.getUserName());
-            courseJSON.put("sections", sectionIDs);
-            coursesJSON.add(courseJSON);
+        List<String> courseIDs = new ArrayList<>();
+        for(ProfessorCourse course : courses) {
+            courseIDs.add(course.getCourseID());
         }
-        return coursesJSON;
+        return courseService.getCourseData(userName, courseIDs);
     }
 
     /** Retrieves basic data for all students in course, including name, userName, and simple project info **/
     public JSONArray getStudentData(@NonNull String semester, @NonNull String courseID) {
         List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
-        if(sections.isEmpty()) {
-            return null;
-        }
-        List<String> completedStudents = new ArrayList<>();
-        JSONArray studentsJSON = new JSONArray();
+        List<String> userNames = new ArrayList<>();
         for(Section section : sections) {
             List<StudentSection> studentSections = studentSectionRepository.findByIdSectionIdentifier(section.getSectionIdentifier());
             for(StudentSection studentSection : studentSections) {
                 Student student = studentRepository.findByUserID(studentSection.getStudentID());
-                if(!(completedStudents.contains(student.getUserID()))) {
-                    completedStudents.add(student.getUserID());
-                    List<StudentProject> studentProjects = studentProjectRepository.findByIdStudentID(student.getUserID());
-                    Map<String, Double> grades = new TreeMap<>();
-                    Map<String, Double> hiddenGrades = new TreeMap<>();
-                    Map<String, Integer> commitCounts = new TreeMap<>();
-                    Map<String, Double> timeSpent = new TreeMap<>();
-                    for(StudentProject p : studentProjects) {
-                        grades.put(p.getProjectIdentifier(), p.getBestVisibleGrade());
-                        hiddenGrades.put(p.getProjectIdentifier(), p.getBestHiddenGrade());
-                        commitCounts.put(p.getProjectIdentifier(), p.getCommitCount());
-                        timeSpent.put(p.getProjectIdentifier(), p.getTotalTimeSpent());
-                    }
-                    List<StudentSection> assignedSections = studentSectionRepository.findByIdStudentID(student.getUserID());
-                    List<String> sectionStrings = new ArrayList<>();
-                    for(StudentSection a : assignedSections) {
-                        sectionStrings.add(a.getSectionIdentifier());
-                    }
-                    List<TeachingAssistantStudent> assignedTeachingAssistants = teachingAssistantStudentRepository.findByIdStudentID(student.getUserID());
-                    List<String> teachingAssistants = new ArrayList<>();
-                    for(TeachingAssistantStudent a : assignedTeachingAssistants) {
-                        TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(a.getTeachingAssistantID());
-                        teachingAssistants.add(teachingAssistant.getUserName());
-                    }
-                    JSONObject studentJSON = new JSONObject();
-                    studentJSON.put("first_name", student.getFirstName());
-                    studentJSON.put("last_name", student.getLastName());
-                    studentJSON.put("id", student.getUserName());
-                    studentJSON.put("sections", sectionStrings);
-                    studentJSON.put("teaching_assistants", teachingAssistants);
-                    studentJSON.put("grades", grades);
-                    studentJSON.put("hiddenGrades", grades);
-                    studentJSON.put("commitCounts", commitCounts);
-                    studentJSON.put("timeSpent", timeSpent);
-                    if (OBFUSCATE) {
-                        // RandomStringGenerator generator = new RandomStringGenerator.Builder()
-                        //        .withinRange('a', 'z').build();
-                        studentJSON.put("first_name", student.getFirstName());
-                        studentJSON.put("last_name", student.getLastName());
-                        studentJSON.put("id", student.getUserName());
-                        studentJSON.put("grades", grades);
-                        studentJSON.put("hiddenGrades", grades);
-                        studentJSON.put("commitCounts", commitCounts);
-                        studentJSON.put("timeSpent", timeSpent);
-                    }
-                    studentsJSON.add(studentJSON);
+                if(!userNames.contains(student.getUserName())) {
+                    userNames.add(student.getUserName());
                 }
             }
         }
-        return studentsJSON;
+        if(userNames.isEmpty()) {
+            return null;
+        }
+        return courseService.getStudentData(userNames);
     }
 
     public JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID) {
@@ -1874,5 +949,30 @@ public class ProfessorServiceImpl implements ProfessorService {
             teachingAssistantsJSON.add(teachingAssistantJSON);
         }
         return teachingAssistantsJSON;
+    }
+
+    // TODO JARETT and REED connect new calculateDiffScore.sh
+    public JSONReturnable getDiffScore(@NonNull String projectID) {
+        JSONReturnable json = null;
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        // String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        // String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        // try {
+        //     helper.createTestFiles(visibleTestFile, hiddenTestFile, projects);
+        // } catch (IOException e) {
+        //     json = new JSONReturnable(-1, null);
+        // }
+        //
+        // if (helper.DEBUG) {
+        //     visibleTestFile = helper.pythonPath + "/test_datasets/sampleVisibleTestCases.txt";
+        //     hiddenTestFile = helper.pythonPath + "/test_datasets/sampleHiddenTestCases.txt";
+        // }
+
+        // TODO: Check that test results work as expected
+        String pyPath = helper.pythonPath + "get_identical_count.py";
+        String command = helper.pythonCommand + " " + pyPath + " " /* + File */;
+        json = helper.runPython(command);
+        //helper.executeBashScript("cleanDirectory.sh src/main/temp");
+        return json;
     }
 }
