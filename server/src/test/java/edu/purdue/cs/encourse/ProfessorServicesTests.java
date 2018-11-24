@@ -6,7 +6,6 @@ import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.TeachingAssistantStudent;
 import edu.purdue.cs.encourse.service.*;
-import edu.purdue.cs.encourse.service.helper.ServiceHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

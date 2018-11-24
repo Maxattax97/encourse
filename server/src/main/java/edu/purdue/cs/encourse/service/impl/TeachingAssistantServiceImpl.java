@@ -4,10 +4,8 @@ import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.*;
-import edu.purdue.cs.encourse.service.helper.*;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +17,8 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
 
     public final static String NAME = "TeachingAssistantService";
     
-    private final static ServiceHelper helper = ServiceHelper.getInstance();
-
-    /**
-     * Hardcoded for shell project, since shell project test cases use relative paths instead of absolute
-     **/
-    final static String testDir = "test-shell";
+    @Autowired
+    private HelperService helperService;
 
     @Autowired
     private StudentRepository studentRepository;
@@ -78,7 +72,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             return new JSONReturnable(-2, null);
         }
         List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
-        List<String> userNames = helper.getStudentUserNamesForTA(assignments);
+        List<String> userNames = helperService.getStudentUserNamesForTA(assignments);
         return courseService.getCheating(projectID, userNames);
     }
 
@@ -92,7 +86,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             return new JSONReturnable(-2, null);
         }
         List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
-        List<String> userNames = helper.getStudentUserNamesForTA(assignments);
+        List<String> userNames = helperService.getStudentUserNamesForTA(assignments);
         return courseService.getCommitList(projectID, userNames);
     }
 
@@ -106,7 +100,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             return new JSONReturnable(-2, null);
         }
         List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
-        List<String> userNames = helper.getStudentUserNamesForTA(assignments);
+        List<String> userNames = helperService.getStudentUserNamesForTA(assignments);
         return courseService.getProgress(projectID, userNames);
     }
 
@@ -120,7 +114,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             return new JSONReturnable(-2, null);
         }
         List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
-        List<String> userNames = helper.getStudentUserNamesForTA(assignments);
+        List<String> userNames = helperService.getStudentUserNamesForTA(assignments);
         return courseService.getSimilar(projectID, userNames);
     }
 
@@ -134,7 +128,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             return new JSONReturnable(-2, null);
         }
         List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
-        List<String> userNames = helper.getStudentUserNamesForTA(assignments);
+        List<String> userNames = helperService.getStudentUserNamesForTA(assignments);
         return courseService.getStatistics(projectID, userNames);
     }
 
@@ -148,7 +142,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
             return new JSONReturnable(-2, null);
         }
         List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdCourseID(teachingAssistant.getUserID(), project.getCourseID());
-        List<String> userNames = helper.getStudentUserNamesForTA(assignments);
+        List<String> userNames = helperService.getStudentUserNamesForTA(assignments);
         return courseService.getTestSummary(projectID, userNames);
     }
 

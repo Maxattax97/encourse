@@ -1,8 +1,9 @@
-package edu.purdue.cs.encourse.service.helper;
+package edu.purdue.cs.encourse.service.impl;
 
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.*;
+import edu.purdue.cs.encourse.service.helper.StreamGobbler;
 import edu.purdue.cs.encourse.util.ConfigurationManager;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import lombok.NonNull;
@@ -11,14 +12,18 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-public class ServiceHelper {
-    private static ServiceHelper instance;
+@Service(value = HelperServiceImpl.NAME)
+public class HelperServiceImpl {
+
+    public final static String NAME = "TeachingAssistantService";
+
     public final Boolean DEBUG = ConfigurationManager.getInstance().debug;
     public final Boolean OBFUSCATE = false;
     public final String pythonCommand = DEBUG ? "/anaconda3/bin/python" : "python3";
@@ -47,15 +52,28 @@ public class ServiceHelper {
     @Autowired
     private ProjectRepository projectRepository;
 
-    private ServiceHelper() {
-
+    public boolean getDebug() {
+        return DEBUG;
     }
 
-    public static ServiceHelper getInstance() {
-        if(instance == null) {
-            instance = new ServiceHelper();
-        }
-        return instance;
+    public boolean getObfuscate() {
+        return OBFUSCATE;
+    }
+
+    public String getPythonCommand() {
+        return pythonCommand;
+    }
+
+    public String getPythonPath() {
+        return pythonPath;
+    }
+
+    public String getTailFilePath() {
+        return tailFilePath;
+    }
+
+    public String getTestDir() {
+        return testDir;
     }
 
     public int executeBashScript(@NonNull String command) {
@@ -240,7 +258,7 @@ public class ServiceHelper {
     public List<String> getStudentUserNames(List<StudentProject> studentProjects) {
         List<String> userNames = new ArrayList<>();
         for(StudentProject project : studentProjects) {
-            Student student = studentRepository.findByUserName(project.getStudentID());
+            Student student = studentRepository.findByUserID(project.getStudentID());
             userNames.add(student.getUserName());
         }
         return userNames;
@@ -249,7 +267,7 @@ public class ServiceHelper {
     public List<String> getStudentUserNamesForTA(List<TeachingAssistantStudent> assignments) {
         List<String> userNames = new ArrayList<>();
         for(TeachingAssistantStudent assignment : assignments) {
-            Student student = studentRepository.findByUserName(assignment.getStudentID());
+            Student student = studentRepository.findByUserID(assignment.getStudentID());
             userNames.add(student.getUserName());
         }
         return userNames;
