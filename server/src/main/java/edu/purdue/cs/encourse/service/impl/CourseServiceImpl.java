@@ -635,6 +635,27 @@ public class CourseServiceImpl implements CourseService {
         return helperService.runPython(command);
     }
 
+    public String getSourceWithChanges(@NonNull String projectID, @NonNull String userName, @NonNull String commitHash, @NonNull String sourceName) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return null;
+        }
+        Student student = studentRepository.findByUserName(userName);
+        if(student == null) {
+            return null;
+        }
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
+            return null;
+        }
+        String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
+        String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_sourceChanges.txt";
+        if(helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + commitHash + " " + sourceName) < 0) {
+            return null;
+        }
+        return fileName;
+    }
+
     /** Runs testall for a single student, which is quicker if the professor or TA wants to manually run testall for a student **/
     public int runTestallForStudent(@NonNull String projectID, @NonNull String userName) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
