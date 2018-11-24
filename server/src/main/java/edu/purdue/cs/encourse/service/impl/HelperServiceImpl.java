@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 @Service(value = HelperServiceImpl.NAME)
 public class HelperServiceImpl {
 
-    public final static String NAME = "TeachingAssistantService";
+    public final static String NAME = "HelperService";
 
     public final Boolean DEBUG = ConfigurationManager.getInstance().debug;
     public final Boolean OBFUSCATE = false;

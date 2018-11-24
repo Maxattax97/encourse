@@ -2,15 +2,11 @@ package edu.purdue.cs.encourse.service;
 
 import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.Student;
-import edu.purdue.cs.encourse.domain.User;
-import edu.purdue.cs.encourse.domain.relations.ProjectTestScript;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.TeachingAssistantStudent;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import lombok.NonNull;
-import org.json.simple.JSONArray;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
