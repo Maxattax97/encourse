@@ -3,6 +3,7 @@ package edu.purdue.cs.encourse.service.impl;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.*;
+import edu.purdue.cs.encourse.service.HelperService;
 import edu.purdue.cs.encourse.service.helper.StreamGobbler;
 import edu.purdue.cs.encourse.util.ConfigurationManager;
 import edu.purdue.cs.encourse.util.JSONReturnable;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 @Service(value = HelperServiceImpl.NAME)
-public class HelperServiceImpl {
+public class HelperServiceImpl implements HelperService {
 
     public final static String NAME = "HelperService";
 
