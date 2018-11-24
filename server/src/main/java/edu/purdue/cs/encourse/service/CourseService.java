@@ -36,7 +36,7 @@ public interface CourseService {
     JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName);
     JSONReturnable getStudentStatistics(@NonNull String projectID, @NonNull String userName);
 
-    String getSourceWithChanges(@NonNull String projectID, @NonNull String userName, @NonNull String commitHash, @NonNull String sourceName);
+    String getSourceWithChanges(@NonNull String projectID, @NonNull String userName, @NonNull String startCommitHash, @NonNull String endCommitHash, @NonNull String sourceName);
 
     int runTestallForStudent(@NonNull String projectID, @NonNull String userName);
 }

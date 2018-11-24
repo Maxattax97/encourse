@@ -635,7 +635,7 @@ public class CourseServiceImpl implements CourseService {
         return helperService.runPython(command);
     }
 
-    public String getSourceWithChanges(@NonNull String projectID, @NonNull String userName, @NonNull String commitHash, @NonNull String sourceName) {
+    public String getSourceWithChanges(@NonNull String projectID, @NonNull String userName, @NonNull String startCommitHash, @NonNull String endCommitHash, @NonNull String sourceName) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
             return null;
@@ -650,7 +650,7 @@ public class CourseServiceImpl implements CourseService {
         }
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
         String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_sourceChanges.txt";
-        if(helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + commitHash + " " + sourceName) < 0) {
+        if(helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + startCommitHash + " " + endCommitHash + " " + sourceName) < 0) {
             return null;
         }
         return fileName;
