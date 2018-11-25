@@ -8,7 +8,7 @@ import { getStudent, clearStudent, runStudentTests, syncStudentRepository } from
 import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {StudentFeedback, StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
-import SyncItem from './common/SyncItem'
+import SyncItem from './common/HistoryText'
 import { fuzzing } from '../../fuzz'
 
 

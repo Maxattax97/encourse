@@ -14,33 +14,24 @@ class StudentReportFilter extends Component {
 	            {
 	                this.props.report && this.props.report.length > 0 ?
 	                    <Filter>
-	                        <Dropdown header={<h5>Sort by { this.sort_by_ranges[this.props.filters.sort_by] }</h5>}
+	                        <Dropdown header='h5'
+	                                  text='Sort by'
+	                                  values={ this.sort_by_ranges }
+	                                  current_index={this.props.filters.sort_by}
 							          onClick={ (index) => this.props.onChange('sort_by', index) }
-							          leftAnchor>
+							          left />
 
-	                            {
-	                                this.sort_by_ranges.map(range =>
-	                                    <h5 key={range}>
-											Sort by {range}
-	                                    </h5>
-	                                )
-	                            }
-	                        </Dropdown>
-	                        <Dropdown header={<h5>{ this.order_ranges[this.props.filters.order_by] } Order</h5>}
+	                        <Dropdown header='h5'
+	                                  text='Order'
+	                                  values={ this.order_ranges }
+	                                  current_index={ this.props.filters.order_by }
 							          onClick={ (index) => this.props.onChange('order_by', index) }
-							          rightAnchor>
-	                            {
-	                                this.order_ranges.map(range =>
-	                                    <h5 key={range}>
-	                                        {range} Order
-	                                    </h5>
-	                                )
-	                            }
-	                        </Dropdown>
+							          right />
 	                    </Filter>
 	                    :
 	                    null
 	            }
+
 	            <StudentReportSummary/>
 	        </div>
 	    )

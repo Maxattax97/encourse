@@ -49,8 +49,6 @@ class StudentStatistics extends Component {
     }
 
     render() {
-        console.log(this.state.formattedData)
-
         return (
             <div className='summary'>
                 <div className='summary-container'>

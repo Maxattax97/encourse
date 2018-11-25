@@ -33,5 +33,5 @@ export {
 } from './teaching_assistant'
 
 export {
-    setModalState
-} from './modal'
+    setModalState, toggleSelectAllCards, toggleSelectCard, resetAllCards
+} from './control'

@@ -2,6 +2,15 @@ import React, { Component } from 'react'
 import {setModalState} from '../redux/actions'
 import connect from 'react-redux/es/connect/connect'
 
+export function elementFromProps(props, content) {
+	return (
+		props.h1 ? <h1>{content}</h1> : props.h2 ? <h2>{content}</h2> :
+			props.h3 ? <h3>{content}</h3> : props.h4 ? <h4>{content}</h4> :
+				props.h5 ? <h5>{content}</h5> : props.h6 ? <h6>{content}</h6> :
+					<p>{content}</p>
+    )
+}
+
 export class Title extends Component {
     render() {
         return (
@@ -26,15 +35,29 @@ export class Card extends Component {
 
 class ModalClass extends Component {
 
+    previousModal = 0
+
+    close = () => {
+        if(!this.props.onClose || this.props.onClose())
+            this.props.closeModal()
+    }
+
     render() {
+        const show = this.props.currentModal === this.props.id
+        const openedModal = this.previousModal !== this.props.currentModal
+	    this.previousModal = this.props.currentModal
+
+        if(show && openedModal && this.props.onOpen)
+            this.props.onOpen()
+
         return (
-            <div className='modal' style={this.props.currentModal === this.props.id ? {} : {display: 'none'}} onClick={ this.props.closeModal }>
+            <div className='modal' style={show ? {} : {display: 'none'}} onClick={ this.props.closeModal }>
                 <div className={this.props.left ? 'modal-left' : this.props.right ? 'modal-right' : 'modal-center'} onClick={(e) => e.stopPropagation()}>
                     <Card>
                         <div className={'modal-container'}>
                             {this.props.children}
                         </div>
-                        <div className="action svg-icon exit-nav" onClick={ this.props.closeModal }>
+                        <div className="action svg-icon exit-nav" onClick={ this.close }>
                             <XIcon/>
                         </div>
                     </Card>
@@ -45,7 +68,7 @@ class ModalClass extends Component {
 
     static mapStateToProps = (state) => {
         return {
-            currentModal: state.modal && state.modal.getCurrentModal ? state.modal.getCurrentModal : 0,
+            currentModal: state.control && state.control.getCurrentModal ? state.control.getCurrentModal : 0,
         }
     }
 
@@ -114,11 +137,11 @@ export class Checkbox extends Component {
     render() {
         return (
             <div className={ this.props.className ? 'checkbox ' + this.props.className : 'checkbox' } onClick={ this.props.onClick }>
-                <div className='checkbox-value'>
-                    {
-                        this.props.children
-                    }
-                </div>
+	            <div className='checkbox-value'>
+		            {
+			            this.props.children
+		            }
+	            </div>
             </div>
         )
     }
@@ -153,16 +176,32 @@ export class Dropdown extends Component {
     }
 
     render() {
+	    const DropdownHeader = React.createElement(this.props.header,
+		    {},
+		    this.props.left ?
+			    this.props.text + ' ' + this.props.values[this.props.current_index] :
+			    this.props.values[this.props.current_index] + ' ' + this.props.text
+	    )
+
+	    const options = this.props.values.map((item) =>
+		    React.createElement(this.props.header,
+			    {},
+			    this.props.left ?
+				    this.props.text + ' ' + item :
+				    item + ' ' + this.props.text
+		    )
+	    )
+
         return (
             <div ref={ this.setDropdownRef } className='dropdown'>
                 <div className='dropdown-toggle' onClick={ () => this.setState({ show: !this.state.show }) }>
-                    { this.props.header }
+                    {DropdownHeader}
                     <DropdownIcon/>
                 </div>
-                <ul className={ 'dropdown-menu ' + ( this.props.rightAnchor ? 'dropdown-menu-right' : 'dropdown-menu-left' ) }
+                <ul className={ 'dropdown-menu ' + ( this.props.right ? 'dropdown-menu-right' : 'dropdown-menu-left' ) }
                     style={ this.state.show ? null : { display: 'none' } }>
                     {
-                        React.Children.map(this.props.children, (child, index) =>
+                        React.Children.map(options, (child, index) =>
                             <li className='action' onClick={ () => {
                                 this.props.onClick(index)
                                 this.setState({ show: false })

@@ -5,7 +5,7 @@ import {BackNav} from '../Helpers'
 import {history} from '../../redux/store'
 import {clearStudent, getStudent, syncStudentRepository, runStudentTests, setModalState} from '../../redux/actions'
 import url from '../../server'
-import SyncItem from './common/SyncItem'
+import SyncItem from './common/HistoryText'
 import StudentDishonestyCharts from "./student-dishonesty/StudentDishonestyCharts"
 import ShareReportModal from "./common/ShareReportModal"
 

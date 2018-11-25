@@ -5,11 +5,11 @@ import { history } from '../../redux/store'
 import url from '../../server'
 import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories, updateStudentsPage, resetStudentsPage} from '../../redux/actions'
 import ProjectNavigation from '../navigation/ProjectNavigation'
-import {CourseModal, CourseAnonCharts, CourseCharts, CourseStatistics, CourseStudentFilter} from './course'
+import {CourseModal, AnonymousCharts, Charts, CourseStatistics, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
-import SyncItem from './common/SyncItem'
+import HistoryText from './common/HistoryText'
 import {Title, SettingsIcon, BackNav} from '../Helpers'
-import CourseCommitHistory from './course/CourseCommitHistory'
+import ProgressModal from "./common/ProgressModal"
 
 class CoursePanel extends Component {
 
@@ -73,6 +73,9 @@ class CoursePanel extends Component {
         const actions = [
             () => { history.push('/manage-tas') },
             () => {
+        	    this.props.setModalState(2)
+	            this.setState({ get_progress: 'sync' })
+
                 if(this.props.currentProjectId)
                     this.props.syncRepositories(`${url}/api/pull/project?projectID=${this.props.currentProjectId}`)
             },
@@ -93,11 +96,12 @@ class CoursePanel extends Component {
                 </div>
 
                 <div className='panel-right-nav'>
-                    <SyncItem />
-                    <CourseCommitHistory/>
+                    <HistoryText />
                 </div>
 
                 <CourseModal id={1}/>
+				<ProgressModal id={2} header={'Sync Progress'} progress={5} />
+	            <ProgressModal id={3} header={'Run Tests Progress'} progress={5} />
 
                 <div className='panel-center-content'>
 
@@ -109,12 +113,12 @@ class CoursePanel extends Component {
                         <div className='h1 break-line header' />
 
                         <h3 className='header'>Course Charts Summary</h3>
-                        <CourseAnonCharts />
+                        <AnonymousCharts />
 
 	                    <div className='h1 break-line header' />
 
 	                    <h3 className='header'>Students Charts Summary</h3>
-                        <CourseCharts/>
+                        <Charts/>
 
                         <div className='h1 break-line header' />
                         <h3 className='header'>Course Statistics</h3>

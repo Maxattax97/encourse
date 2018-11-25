@@ -24,11 +24,7 @@
 }
 
 .card:hover .card-select, .card .card-select.selectable {
-  display: block;
-}
-
-.card .card-select:hover > div {
-  border: 1px $input-border-color-hover solid;
+  display: inline-block;
 }
 
 .overflow {

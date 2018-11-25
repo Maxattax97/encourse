@@ -6,7 +6,7 @@ import {Title, Card, BackIcon, SettingsIcon, PlusIcon, LoadingIcon} from '../../
 import { history } from '../../../redux/store'
 import url from '../../../server'
 
-class SyncItem extends Component {
+class HistoryText extends Component {
     componentDidMount = () => {
         if(this.props.projects.length === 0) {
             //TODO: remove classid and semester hardcoding
@@ -51,4 +51,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SyncItem)
+export default connect(mapStateToProps, mapDispatchToProps)(HistoryText)

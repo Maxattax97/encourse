@@ -8,7 +8,7 @@ import url from '../../server'
 import connect from 'react-redux/es/connect/connect'
 import StudentReportFilter from './course-dishonesty/StudentReportFilter'
 import CourseDishonestyCharts from './course-dishonesty/CourseDishonestyCharts'
-import SyncItem from './common/SyncItem'
+import SyncItem from './common/HistoryText'
 import ShareReportModal from './common/ShareReportModal'
 
 class CourseDishonestyPanel extends Component {
