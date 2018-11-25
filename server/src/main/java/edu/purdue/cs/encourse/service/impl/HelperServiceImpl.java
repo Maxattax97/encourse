@@ -187,6 +187,33 @@ public class HelperServiceImpl implements HelperService {
                 studentProjectTestRepository.save(studentProjectTest);
             }
         }
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        String[] suites = project.getSuites().split(",");
+        for(String s : suites) {
+            StudentProject suiteProject = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(projectID, studentID, s);
+            List<StudentProjectTest> testScores = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(projectID, studentID, isHidden);
+            double earnedPoints = 0.0;
+            double maxPoints = 0.0;
+            for(StudentProjectTest t : testScores) {
+                if(t.isPassing()) {
+                    earnedPoints += t.getPointsWorth();
+                }
+                maxPoints += t.getPointsWorth();
+            }
+            int grade = (int)Math.round((earnedPoints / maxPoints) * 100);
+            if(isHidden) {
+                if(grade > suiteProject.getBestHiddenGrade()) {
+                    suiteProject.setBestHiddenGrade(Math.round((earnedPoints / maxPoints) * 100));
+                    studentProjectRepository.save(suiteProject);
+                }
+            }
+            else {
+                if(grade > suiteProject.getBestVisibleGrade()) {
+                    suiteProject.setBestVisibleGrade(Math.round((earnedPoints / maxPoints) * 100));
+                    studentProjectRepository.save(suiteProject);
+                }
+            }
+        }
     }
 
     public void createTestFiles(String visibleTestFile, String hiddenTestFile, List<StudentProject> projects) throws IOException {

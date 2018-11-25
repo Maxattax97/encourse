@@ -37,6 +37,7 @@ public interface ProfessorService {
 
     ProjectTestScript addTestScript(@NonNull String projectID, @NonNull String testName, boolean isHidden, double points);
     ProjectTestScript uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents, boolean isHidden, double points);
+    int addTestScriptToSuite(@NonNull String projectID, @NonNull String testName, @NonNull String suite);
 
     JSONArray getCourseData(@NonNull String userName);
     JSONArray getStudentData(@NonNull String semester, @NonNull String courseID);

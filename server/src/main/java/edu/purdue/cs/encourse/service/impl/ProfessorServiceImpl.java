@@ -500,6 +500,31 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
+    public int addTestScriptToSuite(@NonNull String projectID, @NonNull String testName, @NonNull String suite) {
+        ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
+        if(testScript == null) {
+            return -1;
+        }
+        if(!testScript.hasSuite(suite)) {
+            testScript.addSuite(suite);
+        }
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return -2;
+        }
+        if(!project.hasSuite(suite)) {
+            project.addSuite(suite);
+            List<StudentProject> studentProjects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
+            for(StudentProject p : studentProjects) {
+                StudentProject studentProject = new StudentProject(p.getStudentID(), p.getProjectIdentifier(), suite);
+                studentProjectRepository.save(studentProject);
+            }
+        }
+        projectTestScriptRepository.save(testScript);
+        projectRepository.save(project);
+        return 0;
+    }
+
     /** Runs a generic testall script, which simply checks if nothing is output, which usually means test was passed,
         and assigns a pass or fail to each test case based on if there was no output from test script **/
     public int runTestall(@NonNull String projectID) {
@@ -511,7 +536,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(sections.isEmpty()) {
             return -2;
         }
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
         String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
         String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
         String makefilePath = sections.get(0).getCourseHub() + "/makefiles/" + project.getRepoName() + "/Makefile";
@@ -553,8 +578,10 @@ public class ProfessorServiceImpl implements ProfessorService {
                 if(hiddenResult == null) {
                     hiddenResult = "";
                 }
-                double visibleGrade = helperService.parseProgressForProject(projectID, visibleResult);
-                double hiddenGrade = helperService.parseProgressForProject(projectID, hiddenResult);
+                double visibleGrade = helperService.parseProgressForProject(p.getProjectIdentifier(), visibleResult);
+                double hiddenGrade = helperService.parseProgressForProject(p.getProjectIdentifier(), hiddenResult);
+                helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
                 StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
                 if(projectDate == null) {
                     StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
@@ -570,16 +597,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                         studentProjectDateRepository.save(projectDate);
                     }
                 }
-                if(visibleGrade > p.getBestVisibleGrade()) {
-                    p.setBestVisibleGrade(visibleGrade);
-                    p = studentProjectRepository.save(p);
-                    helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
-                }
-                if(hiddenGrade > p.getBestHiddenGrade()) {
-                    p.setBestHiddenGrade(hiddenGrade);
-                    p = studentProjectRepository.save(p);
-                    helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
-                }
+                p = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(p.getProjectIdentifier(), p.getStudentID(), "testall");
                 line = reader.readLine();
                 commitInfo = line.split(" ");
                 date = commitInfo[2];
@@ -603,6 +621,8 @@ public class ProfessorServiceImpl implements ProfessorService {
                 }
                 visibleGrade = helperService.parseProgressForProject(projectID, visibleResult);
                 hiddenGrade = helperService.parseProgressForProject(projectID, hiddenResult);
+                helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
                 projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
                 if(projectDate == null) {
                     StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
@@ -617,16 +637,6 @@ public class ProfessorServiceImpl implements ProfessorService {
                         projectDate.setDateHiddenGrade(hiddenGrade);
                         studentProjectDateRepository.save(projectDate);
                     }
-                }
-                if(visibleGrade > p.getBestVisibleGrade()) {
-                    p.setBestVisibleGrade(visibleGrade);
-                    p = studentProjectRepository.save(p);
-                    helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
-                }
-                if(hiddenGrade > p.getBestHiddenGrade()) {
-                    p.setBestHiddenGrade(hiddenGrade);
-                    p = studentProjectRepository.save(p);
-                    helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
                 }
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
                 reader.close();
@@ -651,7 +661,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(sections.isEmpty()) {
             return -2;
         }
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
         String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
         String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
         String makefilePath = sections.get(0).getCourseHub() + "/makefiles/" + project.getRepoName() + "/Makefile";
@@ -700,6 +710,8 @@ public class ProfessorServiceImpl implements ProfessorService {
                     if(hiddenResult == null) {
                         hiddenResult = "";
                     }
+                    helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                    helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
                     double visibleGrade = helperService.parseProgressForProject(projectID, visibleResult);
                     double hiddenGrade = helperService.parseProgressForProject(projectID, hiddenResult);
                     StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
@@ -717,16 +729,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                             studentProjectDateRepository.save(projectDate);
                         }
                     }
-                    if(visibleGrade > p.getBestVisibleGrade()) {
-                        p.setBestVisibleGrade(visibleGrade);
-                        p = studentProjectRepository.save(p);
-                        helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
-                    }
-                    if(hiddenGrade > p.getBestHiddenGrade()) {
-                        p.setBestHiddenGrade(hiddenGrade);
-                        p = studentProjectRepository.save(p);
-                        helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
-                    }
+                    p = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(p.getProjectIdentifier(), p.getStudentID(), "testall");
                     line = reader.readLine();
                     commitInfo = line.split(" ");
                     date = commitInfo[2];
@@ -748,6 +751,8 @@ public class ProfessorServiceImpl implements ProfessorService {
                     if(hiddenResult == null) {
                         hiddenResult = "";
                     }
+                    helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                    helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
                     visibleGrade = helperService.parseProgressForProject(projectID, visibleResult);
                     hiddenGrade = helperService.parseProgressForProject(projectID, hiddenResult);
                     projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
@@ -764,16 +769,6 @@ public class ProfessorServiceImpl implements ProfessorService {
                             projectDate.setDateHiddenGrade(hiddenGrade);
                             studentProjectDateRepository.save(projectDate);
                         }
-                    }
-                    if(visibleGrade > p.getBestVisibleGrade()) {
-                        p.setBestVisibleGrade(visibleGrade);
-                        p = studentProjectRepository.save(p);
-                        helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
-                    }
-                    if(hiddenGrade > p.getBestHiddenGrade()) {
-                        p.setBestHiddenGrade(hiddenGrade);
-                        p = studentProjectRepository.save(p);
-                        helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
                     }
                 }
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
