@@ -9,5 +9,8 @@ import java.util.List;
 public interface StudentProjectRepository extends CrudRepository<StudentProject, String> {
     List<StudentProject> findByIdStudentID(@NonNull String studentID);
     List<StudentProject> findByIdProjectIdentifier(@NonNull String projectID);
-    StudentProject findByIdProjectIdentifierAndIdStudentID(@NonNull String projectID, @NonNull String studentID);
+    List<StudentProject> findByIdProjectIdentifierAndIdStudentID(@NonNull String projectID, @NonNull String studentID);
+    List<StudentProject> findByIdProjectIdentifierAndIdSuite(@NonNull String projectID, @NonNull String suite);
+    List<StudentProject> findByIdStudentIDAndIdSuite(@NonNull String studentID, @NonNull String suite);
+    StudentProject findByIdProjectIdentifierAndIdStudentIDAndIdSuite(@NonNull String projectID, @NonNull String studentID, @NonNull String suite);
 }

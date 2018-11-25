@@ -123,10 +123,6 @@ public class ProfessorServicesTests {
         assertEquals(0, courseService.createDirectory("Fall2018", "cs250"));
         assertEquals(0, professorService.cloneProjects(proj1.getProjectIdentifier()));
         assertEquals(0, professorService.pullProjects(proj1.getProjectIdentifier()));
-        assertNotNull(professorService.countAllCommits(proj1.getProjectIdentifier()));
-        assertNotNull(professorService.countAllCommitsByDay(proj1.getProjectIdentifier()));
-        assertNotNull(professorService.countStudentCommitsByDay(proj1.getProjectIdentifier(), "dwyork"));
-        assertNotNull(professorService.listStudentCommitsByTime(proj1.getProjectIdentifier(), "rravind"));
         assertEquals(0, professorService.uploadTestScript(proj1.getProjectIdentifier(), "ls_test.sh", "ls ..", false, 5));
         assertEquals(0, professorService.uploadTestScript(proj1.getProjectIdentifier(), "echo_test.sh", "echo \"\"", false, 10));
         assertEquals(0, professorService.runTestall(proj1.getProjectIdentifier()));

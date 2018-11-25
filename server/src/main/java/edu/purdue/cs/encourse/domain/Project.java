@@ -8,45 +8,56 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
 
+/**
+ * Represents a project that has been created by a professor.
+ * Primarily used for identifying relations involving a project, and storing general information about project.
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 @Getter
 @Entity
 @Table(name = "PROJECT")
 public class Project {
-    /** courseID + semester + projectName, forms the primary key **/
+    /** courseID + semester + projectName, forms the primary key */
     @Id
     private String projectIdentifier;
 
-    /** Each piece of the project identifier **/
+    /** Each piece of the project identifier */
     private String courseID;
     private String semester;
     private String projectName;
 
-    /** Date that project is opened to students **/
+    /** Date that project is opened to students */
     @Setter
     private String startDate;
 
-    /** Deadline mainly stored for display purposes, hence it is two Strings and not a LocalDateTime **/
+    /** Deadline mainly stored for display purposes, hence it is two Strings and not a LocalDateTime */
     @Setter
     private String dueDate;
 
-    /** The name of the directory that will store the project. Remove .git if this is included **/
+    /** The name of the directory that will store the project. Remove .git if this is included */
     private String repoName;
 
-    /** Rate in which projects will be pulled and tested, in hourse **/
+    /** Rate in which projects will be pulled and tested, in hourse */
     @Setter
     private int testRate;
 
-    /** Current count towards pulling and testing **/
+    /** Current count towards pulling and testing */
     @Setter
     private int testCount;
 
-    /** Date project was last synced **/
+    /** Date project was last synced */
     @Setter
     private String syncDate;
 
-    /** Date project was last tested **/
+    /** Date project was last tested */
     @Setter
     private String testDate;
+
+    /** Listing of suites for the project, separated by commas */
+    @Setter
+    private String suites;
 
     public Project(String courseID, String semester, String projectName,
                    String repoName, String startDate, String dueDate, int testRate) {
@@ -65,12 +76,18 @@ public class Project {
             this.testRate = 0;
             this.testCount = 0;
         }
+        this.suites = "testall";
     }
 
     public Project() {
 
     }
 
+    /**
+     * Used to set the name of the .git file to clone for every student.
+     *
+     * @param repoName Name of the .git file on remote repository
+     */
     public void setRepoName(String repoName) {
         if(repoName.indexOf('.') >= 0) {
             this.repoName = repoName.substring(0, repoName.indexOf('.'));
@@ -78,6 +95,20 @@ public class Project {
         else {
             this.repoName = repoName;
         }
+    }
+
+    public void addSuite(String suiteName) {
+        suites += "," + suiteName;
+    }
+
+    public boolean hasSuite(String suiteName) {
+        String[] suiteArray = suites.split(",");
+        for(String s : suiteArray) {
+            if(s.equals(suiteName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

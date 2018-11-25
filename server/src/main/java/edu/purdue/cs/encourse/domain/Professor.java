@@ -5,6 +5,13 @@ import lombok.Getter;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/**
+ * Represents a professor's account for the application.
+ * Primarily used for performing services that can only be done by professors.
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 @Getter
 @Entity
 @Table(name = "PROFESSOR")

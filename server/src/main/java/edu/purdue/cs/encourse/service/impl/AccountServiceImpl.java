@@ -9,6 +9,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Contains implementations for all services pertaining to account operations.
+ * Primarily used for logging in with an account.
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 @Service(value = AccountServiceImpl.NAME)
 public class AccountServiceImpl implements AccountService {
 
@@ -32,8 +39,8 @@ public class AccountServiceImpl implements AccountService {
     /**
      * The primary method for retrieving an account from database
      *
-     * @param userName of account being retrieved
-     * @return account associated with userName
+     * @param userName Front-end identifier used for the account
+     * @return Account matching the specified userName
      */
     public Account retrieveAccount(@NonNull String userName) {
         return accountRepository.findByUserName(userName);
@@ -43,8 +50,8 @@ public class AccountServiceImpl implements AccountService {
      * A secondary method for retrieving an account
      * Only useful for backend code, frontend does not have access to userIDs
      *
-     * @param userID of account being retrieved
-     * @return account associated with userID
+     * @param userID Back-end identifier used for the account
+     * @return Account matching the specified userID
      */
     public Account retrieveAccountByID(@NonNull String userID) {
         return accountRepository.findByUserID(userID);
@@ -53,38 +60,38 @@ public class AccountServiceImpl implements AccountService {
     /**
      * Retrieves an account as a student
      *
-     * @param userName of account being retrieved
-     * @return student account associated with userName
+     * @param userName Front-end identifier used for the account
+     * @return Student account matching the specified userName
      */
     public Student retrieveStudent(@NonNull String userName) {
         return studentRepository.findByUserName(userName);
     }
 
     /**
-     * Retrieves an account as a student
+     * Retrieves an account as a teaching assistant
      *
-     * @param userName of account being retrieved
-     * @return teaching assistant account associated with userName
+     * @param userName Front-end identifier used for the account
+     * @return Teaching assistant account matching the specified userName
      */
     public TeachingAssistant retrieveTA(@NonNull String userName) {
         return teachingAssistantRepository.findByUserName(userName);
     }
 
     /**
-     * Retrieves an account as a student
+     * Retrieves an account as a professor
      *
-     * @param userName of account being retrieved
-     * @return professor account associated with userName
+     * @param userName Front-end identifier used for the account
+     * @return Professor account matching the specified userName
      */
     public Professor retrieveProfessor(@NonNull String userName) {
         return professorRepository.findByUserName(userName);
     }
 
     /**
-     * Retrieves an account as a student
+     * Retrieves an account as an administrator
      *
-     * @param userName of account being retrieved
-     * @return administrator account associated with userName
+     * @param userName Front-end identifier used for the account
+     * @return Administrator account matching the specified userName
      */
     public CollegeAdmin retrieveAdmin(@NonNull String userName) {
         return adminRepository.findByUserName(userName);
@@ -94,7 +101,7 @@ public class AccountServiceImpl implements AccountService {
      * Retrieves all accounts currently in the database
      * Used by administrators to see and manage accounts
      *
-     * @return all accounts in the database
+     * @return All accounts in the database
      */
     public List<Account> retrieveAllAccounts() {
         List<Account> accounts = accountRepository.findAll();

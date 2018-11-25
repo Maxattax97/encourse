@@ -1,4 +1,4 @@
-package edu.purdue.cs.encourse.service.impl;
+package edu.purdue.cs.encourse.service.helper;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
