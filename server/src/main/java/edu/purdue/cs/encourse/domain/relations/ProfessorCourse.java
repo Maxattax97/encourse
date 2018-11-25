@@ -21,7 +21,7 @@ import java.io.Serializable;
 public class ProfessorCourse {
     /** Primary key for relation in database. Never used directly */
     @EmbeddedId
-    ProfessorCourseID id;
+    private ProfessorCourseID id;
 
     public ProfessorCourse(String professorID, String courseID, String semester) {
         this.id = new ProfessorCourseID(professorID, courseID, semester);

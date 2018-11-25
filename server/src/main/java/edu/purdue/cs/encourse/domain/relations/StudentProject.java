@@ -22,7 +22,7 @@ import java.io.Serializable;
 public class StudentProject {
     /** Primary key for relation in database. Never used directly */
     @EmbeddedId
-    StudentProjectID id;
+    private StudentProjectID id;
 
     /** Best visible grade output by testall for the project */
     @Setter
@@ -56,8 +56,8 @@ public class StudentProject {
     @Setter
     private double totalTimeSpent;
 
-    public StudentProject(String userID, String projectIdentifier) {
-        this.id = new StudentProjectID(userID, projectIdentifier);
+    public StudentProject(String userID, String projectIdentifier, String suite) {
+        this.id = new StudentProjectID(userID, projectIdentifier, suite);
         this.bestVisibleGrade = 0.0;
         this.bestHiddenGrade = 0.0;
         this.commitCount = 0;
@@ -91,9 +91,13 @@ class StudentProjectID implements Serializable {
     /** Key used to identify the project */
     private String projectIdentifier;
 
-    public StudentProjectID(String userID, String projectIdentifier) {
+    /** Key used to identify the suite grade is for */
+    private String suite;
+
+    public StudentProjectID(String userID, String projectIdentifier, String suite) {
         this.studentID = userID;
         this.projectIdentifier = projectIdentifier;
+        this.suite = suite;
     }
 
     public StudentProjectID() {

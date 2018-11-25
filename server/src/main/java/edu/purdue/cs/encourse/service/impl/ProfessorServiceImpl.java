@@ -91,7 +91,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             List<StudentSection> assignments = studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
             for(StudentSection a : assignments) {
                 if(!(completedStudents.contains(a.getStudentID()))) {
-                    studentProjectRepository.save(new StudentProject(a.getStudentID(), project.getProjectIdentifier()));
+                    studentProjectRepository.save(new StudentProject(a.getStudentID(), project.getProjectIdentifier(), "testall"));
                     completedStudents.add(a.getStudentID());
                 }
             }
@@ -118,7 +118,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(!helperService.isTakingCourse(student, project)) {
             return -4;
         }
-        studentProjectRepository.save(new StudentProject(student.getUserID(), project.getProjectIdentifier()));
+        studentProjectRepository.save(new StudentProject(student.getUserID(), project.getProjectIdentifier(), "testall"));
         return 0;
     }
 
@@ -261,7 +261,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             return -2;
         }
         Student student = studentRepository.findByUserName(userName);
-        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
         StringBuilder builder = new StringBuilder();
         builder.append(student.getUserName());
         List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), false);
@@ -326,37 +326,37 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public JSONReturnable getClassCheating(@NonNull String projectID) {
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
         List<String> userNames = helperService.getStudentUserNames(projects);
         return courseService.getCheating(projectID, userNames);
     }
 
     public JSONReturnable getClassCommitList(@NonNull String projectID) {
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
         List<String> userNames = helperService.getStudentUserNames(projects);
         return courseService.getCommitList(projectID, userNames);
     }
 
     public JSONReturnable getClassProgress(@NonNull String projectID) {
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
         List<String> userNames = helperService.getStudentUserNames(projects);
         return courseService.getProgress(projectID, userNames);
     }
 
     public JSONReturnable getClassSimilar(@NonNull String projectID) {
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
         List<String> userNames = helperService.getStudentUserNames(projects);
         return courseService.getSimilar(projectID, userNames);
     }
 
     public JSONReturnable getClassStatistics(@NonNull String projectID) {
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
         List<String> userNames = helperService.getStudentUserNames(projects);
         return courseService.getStatistics(projectID, userNames);
     }
 
     public JSONReturnable getClassTestSummary(@NonNull String projectID) {
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
         List<String> userNames = helperService.getStudentUserNames(projects);
         return courseService.getTestSummary(projectID, userNames);
     }
@@ -797,7 +797,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 pullProjects(project.getProjectIdentifier());
                 System.out.println("Testing project " + project.getProjectName());
                 runTestall(project.getProjectIdentifier());
-                List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(project.getProjectIdentifier());
+                List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(project.getProjectIdentifier(), "testall");
                 for(StudentProject p : projects) {
                     Student student = studentRepository.findByUserID(p.getStudentID());
                     updateStudentInformation(p.getProjectIdentifier(), student.getUserName());
@@ -956,7 +956,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     // TODO JARETT and REED connect new calculateDiffScore.sh
     public JSONReturnable getDiffScore(@NonNull String projectID) {
         JSONReturnable json = null;
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
         // String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
         // String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
         // try {

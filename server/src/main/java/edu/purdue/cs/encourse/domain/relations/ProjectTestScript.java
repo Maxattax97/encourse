@@ -26,16 +26,20 @@ public class ProjectTestScript {
 
     /** Indicates if students are able to see the result of this test script */
     @Setter
-    boolean isHidden;
+    private boolean isHidden;
 
     /** Number of points earned for passing the test script */
     @Setter
-    double pointsWorth;
+    private double pointsWorth;
+
+    /** Listing of suites involving the test case, separated by commas */
+    private String suites;
 
     public ProjectTestScript(String projectIdentifier, String testScriptName, boolean isHidden, double pointsWorth) {
         this.id = new ProjectTestScriptID(projectIdentifier, testScriptName);
         this.isHidden = isHidden;
         this.pointsWorth = pointsWorth;
+        this.suites = "testall";
     }
 
     public ProjectTestScript() {
@@ -48,6 +52,20 @@ public class ProjectTestScript {
 
     public String getTestScriptName() {
         return id.getTestScriptName();
+    }
+
+    public void addSuite(String suiteName) {
+        suites += "," + suiteName;
+    }
+
+    public boolean hasSuite(String suiteName) {
+        String[] suiteArray = suites.split(",");
+        for(String s : suiteArray) {
+            if(s.equals(suiteName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

@@ -193,14 +193,16 @@ public class CourseServiceImpl implements CourseService {
         JSONArray projectsJSON = new JSONArray();
         for(Project p : projects) {
             JSONObject projectJSON = new JSONObject();
-            List<ProjectTestScript> visibleTestScripts = projectTestScriptRepository.findByIdProjectIdentifierAndIsHidden(p.getProjectIdentifier(), false);
-            List<ProjectTestScript> hiddenTestScripts = projectTestScriptRepository.findByIdProjectIdentifierAndIsHidden(p.getProjectIdentifier(), true);
+            List<ProjectTestScript> testScripts = projectTestScriptRepository.findByIdProjectIdentifier(p.getProjectIdentifier());
+            List<String> testNames = new ArrayList<>();
+            for(ProjectTestScript t : testScripts) {
+                testNames.add(t.getTestScriptName());
+            }
             projectJSON.put("project_name", p.getProjectName());
             projectJSON.put("source_name", p.getRepoName());
             projectJSON.put("start_date", p.getStartDate());
             projectJSON.put("due_date", p.getDueDate());
-            projectJSON.put("test_script", visibleTestScripts);
-            projectJSON.put("hidden_test_script", hiddenTestScripts);
+            projectJSON.put("test_scripts", testNames);
             projectJSON.put("id", p.getProjectIdentifier());
             projectJSON.put("last_sync", p.getSyncDate());
             projectJSON.put("last_test", p.getTestDate());
@@ -244,7 +246,8 @@ public class CourseServiceImpl implements CourseService {
             Student student = studentRepository.findByUserName(userName);
             if(!(completedStudents.contains(student.getUserID()))) {
                 completedStudents.add(student.getUserID());
-                List<StudentProject> studentProjects = studentProjectRepository.findByIdStudentID(student.getUserID());
+                // TODO: Security issue in multiple course system. Must make sure professor teaches the course each project belongs to
+                List<StudentProject> studentProjects = studentProjectRepository.findByIdStudentIDAndIdSuite(student.getUserID(), "testall");
                 Map<String, Double> grades = new TreeMap<>();
                 Map<String, Double> hiddenGrades = new TreeMap<>();
                 Map<String, Integer> commitCounts = new TreeMap<>();
@@ -289,6 +292,24 @@ public class CourseServiceImpl implements CourseService {
             }
         }
         return studentsJSON;
+    }
+
+    public JSONArray getTestScriptData(@NonNull String projectID) {
+        List<ProjectTestScript> testScripts = projectTestScriptRepository.findByIdProjectIdentifier(projectID);
+        if(testScripts.isEmpty()) {
+            return null;
+        }
+        JSONArray testsJSON = new JSONArray();
+        for(ProjectTestScript t : testScripts) {
+            JSONObject testJSON = new JSONObject();
+            testJSON.put("id", t.getTestScriptName());
+            testJSON.put("hidden", t.isHidden());
+            testJSON.put("points", t.getPointsWorth());
+            testJSON.put("suites", t.getSuites().split(","));
+            testsJSON.add(testJSON);
+        }
+        return testsJSON;
+
     }
 
     public JSONReturnable getProgress(@NonNull String projectID, List<String> userNames) {
@@ -617,7 +638,7 @@ public class CourseServiceImpl implements CourseService {
             testResult = "cutz;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0";
         } else {
             Student student = studentRepository.findByUserName(userName);
-            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
             StringBuilder builder = new StringBuilder();
             builder.append(student.getUserName());
             List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), false);
@@ -681,7 +702,7 @@ public class CourseServiceImpl implements CourseService {
         if(!file.exists()) {
             return -5;
         }
-        StudentProject studentProject = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+        StudentProject studentProject = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
         if(studentProject == null) {
             return -6;
         }

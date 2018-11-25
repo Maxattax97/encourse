@@ -248,7 +248,7 @@ public class HelperServiceImpl implements HelperService {
         List<StudentProject> projects = new ArrayList<>();
         for(String userName: userNames) {
             Student student = studentRepository.findByUserName(userName);
-            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
             if(project != null) {
                 projects.add(project);
             }

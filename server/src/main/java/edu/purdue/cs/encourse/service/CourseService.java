@@ -21,6 +21,7 @@ public interface CourseService {
     JSONArray getProjectData(@NonNull String semester, @NonNull String courseID);
     JSONArray getSectionData(@NonNull String semester, @NonNull String courseID);
     JSONArray getStudentData(List<String> userNameStudents);
+    JSONArray getTestScriptData(@NonNull String projectID);
 
     JSONReturnable getProgress(@NonNull String projectID, List<String> userNames);
     JSONReturnable getSimilar(@NonNull String projectID, List<String> userNames);

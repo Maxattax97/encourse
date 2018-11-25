@@ -21,7 +21,7 @@ import java.io.Serializable;
 public class StudentSection {
     /** Primary key for relation in database. Never used directly */
     @EmbeddedId
-    StudentSectionID id;
+    private StudentSectionID id;
 
     public StudentSection(String studentID, String sectionIdentifier) {
         this.id = new StudentSectionID(studentID, sectionIdentifier);

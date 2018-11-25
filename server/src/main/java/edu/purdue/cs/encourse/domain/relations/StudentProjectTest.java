@@ -22,19 +22,19 @@ import java.io.Serializable;
 public class StudentProjectTest {
     /** Primary key for relation in database. Never used directly */
     @EmbeddedId
-    StudentProjectTestID id;
+    private StudentProjectTestID id;
 
     /** Indicates if students are able to see the result of this test script */
     @Setter
-    boolean isPassing;
+    private boolean isPassing;
 
     /** Indicates if students are able to see the result of this test script */
     @Setter
-    boolean isHidden;
+    private boolean isHidden;
 
     /** Number of points earned for passing the test script */
     @Setter
-    double pointsWorth;
+    private double pointsWorth;
 
     public StudentProjectTest(String studentID, String projectIdentifier, String testScriptName, boolean isPassing, boolean isHidden, double pointsWorth) {
         this.id = new StudentProjectTestID(studentID, projectIdentifier, testScriptName);

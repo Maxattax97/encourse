@@ -55,6 +55,10 @@ public class Project {
     @Setter
     private String testDate;
 
+    /** Listing of suites for the project, separated by commas */
+    @Setter
+    private String suites;
+
     public Project(String courseID, String semester, String projectName,
                    String repoName, String startDate, String dueDate, int testRate) {
         this.courseID = courseID;
@@ -72,6 +76,7 @@ public class Project {
             this.testRate = 0;
             this.testCount = 0;
         }
+        this.suites = "testall";
     }
 
     public Project() {
@@ -90,6 +95,20 @@ public class Project {
         else {
             this.repoName = repoName;
         }
+    }
+
+    public void addSuite(String suiteName) {
+        suites += "," + suiteName;
+    }
+
+    public boolean hasSuite(String suiteName) {
+        String[] suiteArray = suites.split(",");
+        for(String s : suiteArray) {
+            if(s.equals(suiteName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

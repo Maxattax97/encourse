@@ -22,7 +22,7 @@ import java.io.Serializable;
 public class StudentProjectDate {
     /** Primary key for relation in database. Never used directly */
     @EmbeddedId
-    StudentProjectDateID id;
+    private StudentProjectDateID id;
 
     /** Best visible grade output by testall on the given date */
     @Setter
