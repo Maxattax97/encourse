@@ -1,3 +1,5 @@
+@import "../helpers";
+
 div.break-line {
   width: 100%;
   height: 1px;
@@ -5,23 +7,28 @@ div.break-line {
 }
 
 div.h1 {
-  margin: 30px 0;
+  @include set-rem-safe(margin-top, 2rem);
+  @include set-rem-safe(margin-bottom, 2rem);
 }
 
 div.h2 {
-  margin: 25px 0;
+  @include set-rem-safe(margin-top, 1.625rem);
+  @include set-rem-safe(margin-bottom, 1.625rem);
 }
 
 div.h3 {
-  margin: 20px 0;
+  @include set-rem-safe(margin-top, 1.25rem);
+  @include set-rem-safe(margin-bottom, 1.25rem);
 }
 
 div.h4 {
-  margin: 15px 0;
+  @include set-rem-safe(margin-top, .875rem);
+  @include set-rem-safe(margin-bottom, .875rem);
 }
 
 div.h5 {
-  margin: 10px 0;
+  @include set-rem-safe(margin-top, .5rem);
+  @include set-rem-safe(margin-bottom, .5rem);
 }
 
 div.break-line.header {

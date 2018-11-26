@@ -1,206 +1,88 @@
-import genericDispatch from './fetch'
+import {genericDispatch} from "./index"
+
+const type = 'STUDENT'
 
 export function setCurrentStudent(student) {
     return {
-        type: 'SET_CURRENT_STUDENT',
+        type,
+        class: 'SET_CURRENT_STUDENT',
         student
     }
 }
 
 export function clearStudent() {
     return {
-        type: 'CLEAR_STUDENT'
+	    type,
+	    class: 'CLEAR_STUDENT'
     }
 }
 
 export function getStudentHasError(hasError) {
     return {
-        type: 'GET_STUDENT_HAS_ERROR',
+	    type,
+	    class: 'GET_STUDENT_HAS_ERROR',
         hasError
     }
 }
 
 export function getStudentDataSuccess(data) {
     return {
-        type: 'GET_STUDENT_DATA_SUCCESS',
+	    type,
+	    class: 'GET_STUDENT_DATA_SUCCESS',
         data
     }
 }
 
 export const getStudent = genericDispatch(
-    'GET_STUDENT', getStudentHasError, getStudentDataSuccess, 'GET'
+    type, 'GET_STUDENT', 'GET'
 )
-
-export function getProgressLineHasError(hasError) {
-    return {
-        type: 'GET_PROGRESS_LINE_HAS_ERROR',
-        hasError
-    }
-}
-
-export function getProgressLineDataSuccess(data) {
-    return {
-        type: 'GET_PROGRESS_LINE_DATA_SUCCESS',
-        data
-    }
-}
 
 export const getProgressLine = genericDispatch(
-    'GET_PROGRESS_LINE', getProgressLineHasError, getProgressLineDataSuccess, 'GET'
+    type, 'GET_PROGRESS_LINE', 'GET'
 )
-
-export function getCodeFrequencyHasError(hasError) {
-    return {
-        type: 'GET_CODE_FREQUENCY_HAS_ERROR',
-        hasError
-    }
-}
-
-export function getCodeFrequencyDataSuccess(data) {
-    return {
-        type: 'GET_CODE_FREQUENCY_DATA_SUCCESS',
-        data
-    }
-}
 
 export const getCodeFrequency = genericDispatch(
-    'GET_CODE_FREQUENCY', getCodeFrequencyHasError, getCodeFrequencyDataSuccess, 'GET'
+    type, 'GET_CODE_FREQUENCY',  'GET'
 )
-
-export function getCommitFrequencyHasError(hasError) {
-    return {
-        type: 'GET_COMMIT_FREQUENCY_HAS_ERROR',
-        hasError
-    }
-}
-
-export function getCommitFrequencyDataSuccess(data) {
-    return {
-        type: 'GET_COMMIT_FREQUENCY_DATA_SUCCESS',
-        data
-    }
-}
 
 export const getCommitFrequency = genericDispatch(
-    'GET_COMMIT_FREQUENCY', getCommitFrequencyHasError, getCommitFrequencyDataSuccess, 'GET'
+    type, 'GET_COMMIT_FREQUENCY', 'GET'
 )
-
-export function getStatisticsHasError(hasError) {
-    return {
-        type: 'GET_STATISTICS_HAS_ERROR',
-        hasError
-    }
-}
-
-export function getStatisticsDataSuccess(data) {
-    return {
-        type: 'GET_STATISTICS_DATA_SUCCESS',
-        data
-    }
-}
 
 export const getStatistics = genericDispatch(
-    'GET_STATISTICS', getStatisticsHasError, getStatisticsDataSuccess, 'GET'
+    type, 'GET_STATISTICS', 'GET'
 )
-
-export function getCommitHistoryHasError(hasError) {
-    return {
-        type: 'GET_COMMIT_HISTORY_HAS_ERROR',
-        hasError
-    }
-}
-
-export function getCommitHistoryDataSuccess(data) {
-    return {
-        type: 'GET_COMMIT_HISTORY_DATA_SUCCESS',
-        data
-    }
-}
 
 export const getCommitHistory = genericDispatch(
-    'GET_COMMIT_HISTORY', getCommitHistoryHasError, getCommitHistoryDataSuccess, 'GET'
+    type, 'GET_COMMIT_HISTORY', 'GET'
 )
-
-export function getProgressPerTimeHasError(hasError) {
-    return {
-        type: 'GET_PROGRESS_PER_TIME_HAS_ERROR',
-        hasError
-    }
-}
-
-export function getProgressPerTimeDataSuccess(data) {
-    return {
-        type: 'GET_PROGRESS_PER_TIME_DATA_SUCCESS',
-        data
-    }
-}
 
 export const getProgressPerTime = genericDispatch(
-    'GET_PROGRESS_PER_TIME', getProgressPerTimeHasError, getProgressPerTimeDataSuccess, 'GET'
+    type, 'GET_PROGRESS_PER_TIME', 'GET'
 )
-
-export function getProgressPerCommitHasError(hasError) {
-    return {
-        type: 'GET_PROGRESS_PER_COMMIT_HAS_ERROR',
-        hasError
-    }
-}
-
-export function getProgressPerCommitDataSuccess(data) {
-    return {
-        type: 'GET_PROGRESS_PER_COMMIT_DATA_SUCCESS',
-        data
-    }
-}
 
 export const getProgressPerCommit = genericDispatch(
-    'GET_PROGRESS_PER_COMMIT', getProgressPerCommitHasError, getProgressPerCommitDataSuccess, 'GET'
+    type, 'GET_PROGRESS_PER_COMMIT', 'GET'
 )
-
-export function syncStudentRepositoryHasError(hasError) {
-    return {
-        type: 'SYNC_STUDENT_REPOSITORIES_HAS_ERROR',
-        hasError
-    }
-}
-
-export function syncStudentRepositorySuccess(data) {
-    return {
-        type: 'SYNC_STUDENT_REPOSITORIES_SUCCESS',
-        data
-    }
-}
 
 export const syncStudentRepository = genericDispatch(
-	'SYNC_STUDENT_REPOSITORIES', syncStudentRepositoryHasError, syncStudentRepositorySuccess, 'POST'
+	type, 'SYNC_STUDENT_REPOSITORIES', 'POST'
 )
 
-export function runStudentTestsHasError(hasError) {
-    return {
-        type: 'RUN_STUDENT_TESTS_HAS_ERROR',
-        hasError
-    }
-}
-
-export function runStudentTestsSuccess(data) {
-    return {
-        type: 'RUN_STUDENT_TESTS_SUCCESS',
-        data
-    }
-}
-
 export const runStudentTests = genericDispatch(
-    'RUN_STUDENT_TESTS', runStudentTestsHasError, runStudentTestsSuccess, 'POST'
+    type, 'RUN_STUDENT_TESTS', 'POST'
 )
 
 export function updateCommitsPage() {
     return {
-        type: 'UPDATE_COMMITS_PAGE'
+	    type,
+	    class: 'UPDATE_COMMITS_PAGE'
     }
 }
 
 export function resetCommitsPage() {
     return {
-        type: 'RESET_COMMITS_PAGE'
+	    type,
+	    class: 'RESET_COMMITS_PAGE'
     }
 }

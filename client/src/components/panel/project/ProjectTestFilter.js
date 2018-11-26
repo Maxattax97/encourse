@@ -21,28 +21,28 @@ class ProjectTestFilter extends Component {
 					<Dropdown header='h5'
 					          text='Sort by'
 					          values={this.sort_by_values}
-					          current_index={this.props.filters.sort_by}
+					          currentIndex={this.props.filters.sort_by}
 					          onClick={ (index) => this.props.onChange('sort_by', index) }
 					          left/>
 
 					<Dropdown header='h5'
 					          text='Bundle by'
 					          values={this.bundle_by_values}
-					          current_index={this.props.filters.bundle_by}
+					          currentIndex={this.props.filters.bundle_by}
 					          onClick={ (index) => this.props.onChange('bundle_by', index) }
 					          left/>
 
 					<Dropdown header='h5'
 					          text='Order'
 					          values={this.order_values}
-					          current_index={this.props.filters.order_by}
+					          currentIndex={this.props.filters.order_by}
 					          onClick={ (index) => this.props.onChange('order_by', index) }
 					          right />
 
 					<Dropdown header='h5'
 					          text='View'
 					          values={this.view_values}
-					          current_index={this.props.filters.view_filter}
+					          currentIndex={this.props.filters.view_filter}
 					          onClick={ (index) => this.props.onChange('view_filter', index) }
 					          left/>
 				</Filter>

@@ -8,8 +8,13 @@ import {
 	setCurrentStudent
 } from '../../../redux/actions'
 import SelectableCardSummary from "../common/SelectableCardSummary"
+import {getAllStudentsInfo} from "../../../redux/dispatchs/course"
 
 class StudentSummary extends Component {
+
+	componentWillMount() {
+		getAllStudentsInfo()
+	}
 
 	clickStudentCard = (student) => {
 
@@ -47,11 +52,10 @@ class StudentSummary extends Component {
 
 	render() {
 		return (
-			<SelectableCardSummary
-				type='students'
-				values={this.props.students}
-				render={this.renderPreview}
-				onClick={this.clickStudentCard} />
+			<SelectableCardSummary type='students'
+			                       values={this.props.students}
+			                       render={this.renderPreview}
+			                       onClick={this.clickStudentCard} />
 		)
 	}
 }

@@ -1,8 +1,11 @@
-import genericDispatch from './fetch'
+import {genericDispatch} from "./index"
+
+const type = 'PROJECT'
 
 export function setCurrentProject(id, index) {
     return {
-        type: 'SET_CURRENT_PROJECT',
+        type,
+        class: 'SET_CURRENT_PROJECT',
         id,
         index,
     }
@@ -10,96 +13,43 @@ export function setCurrentProject(id, index) {
 
 export function toggleHidden() {
     return {
-        type: 'TOGGLE_HIDDEN',
+	    type,
+	    class: 'TOGGLE_HIDDEN',
     }
 }
 
 export function getClassProjectsHasError(hasError) {
     return {
-        type: 'GET_CLASS_PROJECTS_HAS_ERROR',
+	    type,
+	    class: 'GET_CLASS_PROJECTS_HAS_ERROR',
         hasError
     }
 }
 
 export function getClassProjectsDataSuccess(data) {
     return {
-        type: 'GET_CLASS_PROJECTS_DATA_SUCCESS',
+	    type,
+	    class: 'GET_CLASS_PROJECTS_DATA_SUCCESS',
         data
     }
 }
 
 export const getClassProjects = genericDispatch(
-    'GET_CLASS_PROJECTS', getClassProjectsHasError, getClassProjectsDataSuccess, 'GET'
+    type, 'GET_CLASS_PROJECTS', 'GET'
 )
-
-export function addProjectHasError(hasError) {
-    return {
-        type: 'ADD_PROJECT_HAS_ERROR',
-        hasError
-    }
-}
-
-export function addProjectDataSuccess(data) {
-    return {
-        type: 'ADD_PROJECT_DATA_SUCCESS',
-        data
-    }
-}
 
 export const addProject = genericDispatch(
-    'ADD_PROJECT', addProjectHasError, addProjectDataSuccess, 'POST'
+    type, 'ADD_PROJECT', 'POST'
 )
-
-export function deleteProjectHasError(hasError) {
-    return {
-        type: 'DELETE_PROJECT_HAS_ERROR',
-        hasError
-    }
-}
-
-export function deleteProjectDataSuccess(data) {
-    return {
-        type: 'DELETE_PROJECT_DATA_SUCCESS',
-        data
-    }
-}
 
 export const deleteProject = genericDispatch(
-    'DELETE_PROJECT', deleteProjectHasError, deleteProjectDataSuccess, 'DELETE'
+    type, 'DELETE_PROJECT', 'DELETE'
 )
-
-export function modifyProjectHasError(hasError) {
-    return {
-        type: 'MODIFY_PROJECT_HAS_ERROR',
-        hasError
-    }
-}
-
-export function modifyProjectDataSuccess(data) {
-    return {
-        type: 'MODIFY_PROJECT_DATA_SUCCESS',
-        data
-    }
-}
 
 export const modifyProject = genericDispatch(
-    'MODIFY_PROJECT', modifyProjectHasError, modifyProjectDataSuccess, 'POST'
+    type, 'MODIFY_PROJECT', 'POST'
 )
 
-export function addTestHasError(hasError) {
-    return {
-        type: 'ADD_TEST_HAS_ERROR',
-        hasError
-    }
-}
-
-export function addTestDataSuccess(data) {
-    return {
-        type: 'ADD_TEST_DATA_SUCCESS',
-        data
-    }
-}
-
 export const addTest = genericDispatch(
-    'ADD_TEST', addTestHasError, addTestDataSuccess, 'POST'
+    type, 'ADD_TEST', 'POST'
 )

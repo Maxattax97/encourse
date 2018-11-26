@@ -4,7 +4,7 @@
   .float-height {
     > div {
       float:left;
-      padding: 12px;
+      @include set-rem-safe(padding, .75rem);
     }
   }
 

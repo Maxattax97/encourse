@@ -10,25 +10,13 @@ import ActionNavigation from '../navigation/ActionNavigation'
 import HistoryText from './common/HistoryText'
 import {Title, SettingsIcon, BackNav} from '../Helpers'
 import ProgressModal from "./common/ProgressModal"
+import {getAllStudentsInfo} from "../../redux/dispatchs/course"
 
 class CoursePanel extends Component {
 
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            filters: {
-                sort_by: 0,
-                order_by: 0,
-                commit_filter: 0,
-                hour_filter: 0,
-                progress_filter: 0
-            }
-        }
-    }
-
     componentDidMount = () => {
-        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&projectID=${this.props.currentProjectId}`)
+        //this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&projectID=${this.props.currentProjectId}`)
+        getAllStudentsInfo()
     }
 
     scrolledToBottom = () => {
@@ -74,12 +62,13 @@ class CoursePanel extends Component {
             () => { history.push('/manage-tas') },
             () => {
         	    this.props.setModalState(2)
-	            this.setState({ get_progress: 'sync' })
 
                 if(this.props.currentProjectId)
                     this.props.syncRepositories(`${url}/api/pull/project?projectID=${this.props.currentProjectId}`)
             },
             () => {
+                this.props.setModalState(3)
+
                 if(this.props.currentProjectId)
                     this.props.runTests(`${url}/api/run/testall?projectID=${this.props.currentProjectId}`)
             },
@@ -100,8 +89,8 @@ class CoursePanel extends Component {
                 </div>
 
                 <CourseModal id={1}/>
-				<ProgressModal id={2} header={'Sync Progress'} progress={5} />
-	            <ProgressModal id={3} header={'Run Tests Progress'} progress={5} />
+				<ProgressModal id={2} header={'Syncing'} progress={5} />
+	            <ProgressModal id={3} header={'Running Tests'} progress={5} />
 
                 <div className='panel-center-content'>
 
@@ -115,18 +104,18 @@ class CoursePanel extends Component {
                         <h3 className='header'>Course Charts Summary</h3>
                         <AnonymousCharts />
 
-	                    <div className='h1 break-line header' />
+	                    <div className='h1 break-line' />
 
 	                    <h3 className='header'>Students Charts Summary</h3>
                         <Charts/>
 
-                        <div className='h1 break-line header' />
+                        <div className='h1 break-line' />
                         <h3 className='header'>Course Statistics</h3>
                         <CourseStatistics />
 
                         <div className='h1 break-line' />
 
-                        <CourseStudentFilter onChange={ this.changeFilter } filters={ this.state.filters } />
+                        <CourseStudentFilter />
                     </div>
                 </div>
             </div>

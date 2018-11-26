@@ -7,7 +7,7 @@ import { history } from '../../redux/store'
 import { getStudent, clearStudent, runStudentTests, syncStudentRepository } from '../../redux/actions/index'
 import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {StudentFeedback, StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
+import {StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
 import SyncItem from './common/HistoryText'
 import { fuzzing } from '../../fuzz'
 
@@ -81,14 +81,8 @@ class StudentPanel extends Component {
                         <StudentCharts />
 
                         <div className="h1 break-line" />
-                        <div className="student-stats-comments float-height">
-                            <Card>
-                                <StudentStatistics/>
-                            </Card>
-                            <Card>
-                                <StudentFeedback/>
-                            </Card>
-                        </div>
+                        <h3 className='header'>Student Statistics</h3>
+	                    <StudentStatistics/>
                     </div>
                 </div>
             </div>

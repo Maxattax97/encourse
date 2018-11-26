@@ -10,6 +10,7 @@ import url from "../../server"
 import ProjectModal from "./project/ProjectModal"
 import ProjectTestModal from "./project/ProjectTestModal"
 import HistoryText from "./common/HistoryText"
+import ProjectInfo from "./project/ProjectInfo"
 
 class ProjectPanel extends Component {
 
@@ -37,8 +38,6 @@ class ProjectPanel extends Component {
 	changeFilter = (key, value) => {
 		this.state.filters[key] = value
 		this.setState({ filters: Object.assign({}, this.state.filters) }, () => {
-			this.props.resetStudentsPage()
-			this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=1&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}&order=${this.state.filters.order_by}&commit=${this.state.filters.commit_filter}&progress=${this.state.filters.progress_filter}&hour=${this.state.filters.hour_filter}`)
 		})
 	}
 
@@ -84,8 +83,14 @@ class ProjectPanel extends Component {
 		                <h1 className='header'>CS252 - Projects - { /*this.props.projects[this.props.current_project_index].project_name*/ }</h1>
 		                <SettingsIcon/>
 	                </Title>
-                    <div className='h6 break-line header' />
+                    <div className='h1 break-line header' />
 
+	                <h3 className='header'>Project Information</h3>
+	                <ProjectInfo />
+
+	                <div className='h1 break-line' />
+
+	                <h3 className='header'>Test Scripts</h3>
                     <ProjectTestFilter onChange={ this.changeFilter } filters={ this.state.filters }/>
                 </div>
             </div>

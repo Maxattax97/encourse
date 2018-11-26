@@ -57,9 +57,13 @@ class ModalClass extends Component {
                         <div className={'modal-container'}>
                             {this.props.children}
                         </div>
-                        <div className="action svg-icon exit-nav" onClick={ this.close }>
-                            <XIcon/>
-                        </div>
+                        {
+                            !this.props.noExit ?
+	                            <div className="action svg-icon exit-nav" onClick={ this.close }>
+		                            <XIcon/>
+	                            </div>
+                                : null
+                        }
                     </Card>
                 </div>
             </div>
@@ -170,17 +174,18 @@ export class Dropdown extends Component {
     }
 
     clickEvent = (event) => {
-        if(this.dropdown && this.state.show && !this.dropdown.contains(event.target)) {
+        if(this.dropdown && this.state.show && !this.dropdown.contains(event.target))
             this.setState({ show: false })
-        }
     }
 
     render() {
+        const index = this.props.currentIndex || 0
+
 	    const DropdownHeader = React.createElement(this.props.header,
 		    {},
 		    this.props.left ?
-			    this.props.text + ' ' + this.props.values[this.props.current_index] :
-			    this.props.values[this.props.current_index] + ' ' + this.props.text
+			    this.props.text + ' ' + this.props.values[index] :
+			    this.props.values[index] + ' ' + this.props.text
 	    )
 
 	    const options = this.props.values.map((item) =>
