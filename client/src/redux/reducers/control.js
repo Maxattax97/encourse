@@ -1,64 +1,79 @@
 function setModalState(state, action) {
-	return Object.assign({}, state, {
+	return {
+		...state,
 		modalState: action.id || 0
-	})
+	}
 }
 
 function toggleSelectAllCards(state, action) {
-	const name = action.id.charAt(0).toUpperCase() + action.id.slice(1)
-
-	return Object.assign({}, state, {
-		['selectedAll' + name]: state['selectedAll' + name] === 2 ? 0 : 2,
-		['selected' + name]: {}
-	})
+	return {
+		...state,
+		[action.id]: {
+			selectedAll: state[action.id] && state[action.id].selectedAll === 2 ? 0 : 2,
+			selected: {}
+		}
+	}
 }
 
 function toggleSelectCard(state, action) {
-	const name = action.id.charAt(0).toUpperCase() + action.id.slice(1)
+	if(!state[action.id])
+		return {
+			...state,
+			[action.id]: {
+				selectedAll: 0,
+				selected: {[action.index]: true}
+			}
+		}
 
-	if(!state['selected' + name])
-		return Object.assign({}, state, {
-			['selected' + name]: {[action.index]: true},
-			['selectedAll' + name]: state['selectedAll' + name] === 2 ? 1 : 0
-		})
-
-	if(state['selected' + name][action.index]) {
-		const newSelected = Object.assign({}, state['selected' + name])
+	if(state[action.id].selected[action.index]) {
+		const newSelected = {
+			...state[action.id].selected
+		}
 		delete newSelected[action.index]
 
-		return Object.assign({}, state, {
-			['selected' + name]: newSelected,
-			['selectedAll' + name]: state['selectedAll' + name] === 0 ? 0 : Object.keys(newSelected).length === 0 ? 2 : 1
-		})
+		return {
+			...state,
+			[action.id]: {
+				selectedAll: !state[action.id].selectedAll ? 0 : !Object.keys(newSelected).length ? 2 : 1,
+				selected: newSelected
+			}
+		}
 	}
 
-	return Object.assign({}, state, {
-		['selected' + name]: Object.assign({[action.index]: true}, state['selected' + name]),
-		['selectedAll' + name]: state['selectedAll' + name] === 0 ? 0 : 1
-	})
+	return {
+		...state,
+		[action.id]: {
+			selectedAll: !state[action.id].selectedAll ? 0 : 1,
+			selected: {
+				...state[action.id].selected,
+				[action.index]: true
+			}
+		}
+	}
 }
 
 function resetAllCards(state, action) {
-	const name = action.id.charAt(0).toUpperCase() + action.id.slice(1)
-
-	return Object.assign({}, state, {
-		['selectedAll' + name]: 0,
-		['selected' + name]: {}
-	})
+	return {
+		...state,
+		[action.id]: null
+	}
 }
 
 function setFilterState(state, action) {
-	return Object.assign({}, state, {
-		filters: Object.assign({}, state.filters, {
+	return {
+		...state,
+		filters: {
+			...state.filters,
 			[action.id]: action.value
-		})
-	})
+		}
+	}
 }
 
 function resetFilterState(state, action) {
-	return Object.assign({}, state, {
+	return {
+		...state,
 		filters: {}
-	})
+	}
 }
 
 export default function control(state = {}, action) {
@@ -70,17 +85,18 @@ export default function control(state = {}, action) {
 			return setModalState(state, action)
 		case 'TOGGLE_SELECT_ALL_CARDS_OF_TYPE':
 			return toggleSelectAllCards(state, action)
-        case 'TOGGLE_SELECT_CARD_OF_TYPE':
-	        return toggleSelectCard(state, action)
-        case 'RESET_ALL_CARDS_OF_TYPE':
+		case 'TOGGLE_SELECT_CARD_OF_TYPE':
+			return toggleSelectCard(state, action)
+		case 'RESET_ALL_CARDS_OF_TYPE':
 			return resetAllCards(state, action)
 		case 'SET_FILTER_STATE':
 			return setFilterState(state, action)
 		case 'RESET_FILTER_STATE':
 			return resetFilterState(state, action)
 		default:
-			return Object.assign({}, state, {
+			return {
+				...state,
 				reduxError: action
-			})
+			}
 	}
 }

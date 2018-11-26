@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import {setDirectory, modifyProject} from '../../../redux/actions/index'
-import url from '../../../server'
-import {CheckmarkIcon, Modal} from '../../Helpers'
+import {Modal} from '../../Helpers'
 
 class CourseModal extends Component {
 

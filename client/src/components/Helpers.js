@@ -2,15 +2,6 @@ import React, { Component } from 'react'
 import {setModalState} from '../redux/actions'
 import connect from 'react-redux/es/connect/connect'
 
-export function elementFromProps(props, content) {
-	return (
-		props.h1 ? <h1>{content}</h1> : props.h2 ? <h2>{content}</h2> :
-			props.h3 ? <h3>{content}</h3> : props.h4 ? <h4>{content}</h4> :
-				props.h5 ? <h5>{content}</h5> : props.h6 ? <h6>{content}</h6> :
-					<p>{content}</p>
-    )
-}
-
 export class Title extends Component {
     render() {
         return (
@@ -219,6 +210,44 @@ export class Dropdown extends Component {
             </div>
         )
     }
+}
+
+export class Chart extends Component {
+    render() {
+	    if(this.props.chart.loading)
+		    return (
+			    <div className='chart-container loading'>
+				    <LoadingIcon/>
+			    </div>
+		    )
+
+        return (
+	        <div className="chart-container">
+                {
+                    this.props.children
+                }
+            </div>
+        )
+    }
+}
+
+export class ChartList extends Component {
+
+	render() {
+		return (
+			<Summary columns={ 2 } className='charts'>
+				{
+					React.Children.map(this.props.children, (child, index) =>
+						<Card key={ index }>
+							{
+								child
+							}
+						</Card>
+					)
+				}
+			</Summary>
+		)
+	}
 }
 
 export class SVG extends Component {

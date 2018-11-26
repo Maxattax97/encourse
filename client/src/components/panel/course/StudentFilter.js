@@ -3,6 +3,8 @@ import {Checkbox, CheckmarkIcon, Dropdown, Filter} from '../../Helpers'
 import connect from 'react-redux/es/connect/connect'
 import CourseStudentSummary from './StudentSummary'
 import {toggleSelectAllCards, resetFilterState, setFilterState} from "../../../redux/actions"
+import {getAllSelected, getFilters} from "../../../redux/state-peekers/control"
+import {getStudents} from "../../../redux/state-peekers/course"
 
 class StudentFilter extends Component {
 
@@ -11,6 +13,7 @@ class StudentFilter extends Component {
     commit_values = ['Any', '1 - 10', '11 - 25', '26 - 100', '101 - 500', '500+']
     time_values = ['Any', '1 - 5', '6 - 10', '11 - 25', '26+']
     progress_values = ['Any', '0 - 25%', '26 - 50%', '51 - 75%', '76 - 100%']
+	view_values = ['All Tests', 'Visible Tests', 'Hidden Tests']
 
     componentWillUnmount() {
         this.props.resetFilterState()
@@ -21,11 +24,11 @@ class StudentFilter extends Component {
             <div className='course-students'>
                 <h3 className='header'>Students Summary</h3>
                 {
-                    this.props.students ?
+                    this.props.students.length ?
                         <Filter>
 	                        <Checkbox onClick={() => this.props.toggleSelectAllCards()}>
                                 {
-                                    this.props.selectedAllStudents === 2 ?
+                                    this.props.selectedAllStudents ?
                                         <CheckmarkIcon/>
                                         : null
                                 }
@@ -65,6 +68,13 @@ class StudentFilter extends Component {
                                       currentIndex={this.props.filters.progress_filter}
                                       onClick={ (index) => this.props.setFilterState('progress_filter', index) }
                                       right />
+
+	                        <Dropdown header='h5'
+	                                  text='View'
+	                                  values={this.view_values}
+	                                  currentIndex={this.props.filters.view_filter}
+	                                  onClick={ (index) => this.props.setFilterState('view_filter', index) }
+	                                  left/>
                         </Filter>
                         :
                         null
@@ -77,9 +87,9 @@ class StudentFilter extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : [],
-        selectedAllStudents: state.control && state.control.selectedAllStudents ? state.control.selectedAllStudents : 0,
-        filters: state.control && state.control.filters ? state.control.filters : {}
+        students: getStudents(state),
+        selectedAllStudents: getAllSelected(state, 'students'),
+        filters: getFilters(state)
     }
 }
 

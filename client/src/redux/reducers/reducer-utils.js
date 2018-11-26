@@ -13,3 +13,16 @@ export function getData(state, action, name) {
 		[name + 'IsLoading']: true,
 	})
 }
+
+export function forwardData(state, action, name, dataFunction) {
+	return {
+		...state,
+		...{
+			[name]: {
+				error: action.hasError,
+				loading: !(action.hasError) && !(action.data),
+				data: action.data ? dataFunction ? dataFunction(action.data) : action.data : state[name] ? state[name].data : []
+			}
+		}
+	}
+}

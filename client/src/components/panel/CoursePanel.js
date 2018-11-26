@@ -10,13 +10,12 @@ import ActionNavigation from '../navigation/ActionNavigation'
 import HistoryText from './common/HistoryText'
 import {Title, SettingsIcon, BackNav} from '../Helpers'
 import ProgressModal from "./common/ProgressModal"
-import {getAllStudentsInfo} from "../../redux/dispatchs/course"
 
 class CoursePanel extends Component {
 
     componentDidMount = () => {
         //this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&projectID=${this.props.currentProjectId}`)
-        getAllStudentsInfo()
+        //retrieveAllStudents()
     }
 
     scrolledToBottom = () => {

@@ -1,15 +1,17 @@
-import React from 'react'
-import ClassProgressHistogram from './chart/CourseCompletionProgress'
-import ClassTestCasePercentDone from './chart/CourseTestCaseProgress'
-import ChartList from "../common/ChartList"
+import React, {Component} from 'react'
+import CompletionProgress from './chart/CompletionProgress'
+import TestCaseProgress from './chart/TestCaseProgress'
+import {ChartList} from "../../Helpers"
 
-class CourseCharts extends ChartList {
+class CourseCharts extends Component {
 
-	constructor(props) {
-		super(props, [
-			ClassProgressHistogram,
-			ClassTestCasePercentDone
-		])
+	render() {
+		return (
+			<ChartList>
+				<CompletionProgress anon/>
+				<TestCaseProgress anon/>
+			</ChartList>
+		)
 	}
 }
 

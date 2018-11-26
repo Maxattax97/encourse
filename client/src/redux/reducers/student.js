@@ -1,4 +1,4 @@
-import {getData} from "./reducer-utils"
+import {forwardData, getData} from "./reducer-utils"
 
 function setCurrentStudent(state, action) {
 	return Object.assign({}, state, {
@@ -32,6 +32,17 @@ function getStudent(state, action) {
 	return Object.assign({}, state, {
 		getStudentIsLoading: true,
 	})
+}
+
+function sortStatistics(udata) {
+	if (!udata || !udata.data)
+		return null
+
+	const data = udata.data
+
+	data.sort((d1, d2) => d1.index - d2.index)
+
+	return data
 }
 
 function getCommitHistory(state, action) {
@@ -93,7 +104,7 @@ export default function student(state = {}, action) {
     case 'GET_CODE_FREQUENCY':
         return getData(state, action, 'getCodeFrequency')
     case 'GET_STATISTICS':
-        return getData(state, action, 'getStatistics')
+        return forwardData(state, action, 'stats', sortStatistics)
     case 'GET_COMMIT_HISTORY':
         return getCommitHistory(state, action)
     case 'GET_PROGRESS_PER_TIME':

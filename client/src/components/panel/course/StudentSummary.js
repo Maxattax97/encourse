@@ -1,29 +1,25 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {Title} from '../../Helpers'
-import {fuzzing} from '../../../fuzz'
 import {history} from '../../../redux/store'
 import {
-	getStudentPreviews,
 	setCurrentStudent
 } from '../../../redux/actions'
 import SelectableCardSummary from "../common/SelectableCardSummary"
-import {getAllStudentsInfo} from "../../../redux/dispatchs/course"
+import {retrieveAllStudents} from "../../../redux/retrievals/course"
+import {getCurrentProject} from "../../../redux/state-peekers/project"
+import {getStudents} from "../../../redux/state-peekers/course"
 
 class StudentSummary extends Component {
 
-	componentWillMount() {
-		getAllStudentsInfo()
+	componentWillReceiveProps(nextProps) {
+		if(nextProps.project && (!(this.props.project) || this.props.project.index !== nextProps.project.index))
+			retrieveAllStudents(nextProps.project)
 	}
 
 	clickStudentCard = (student) => {
-
 		this.props.setCurrentStudent(student)
-		if (fuzzing) {
-			history.push('/student/student')
-		} else {
-			history.push(`/student/${student.id}`)
-		}
+		history.push(`/student/${student.id}`)
 	};
 
 	renderPreview = (student) => {
@@ -35,15 +31,15 @@ class StudentSummary extends Component {
 				</Title>
 				<div className="h4 break-line header" />
 				<div className="preview-content">
-					<h5>Time: { student.timeSpent[this.props.currentProjectId] } hours</h5>
-					<h5>Commits: { student.commitCounts[this.props.currentProjectId] }</h5>
+					<h5>Time: { student.timeSpent[this.props.project.id] } hours</h5>
+					<h5>Commits: { student.commitCounts[this.props.project.id] }</h5>
 				</div>
 				<div className="student-preview-progress">
 					<div className="progress-bar">
-						<div style={{width: (this.props.isHidden ? student.hiddenGrades[this.props.currentProjectId] : student.grades[this.props.currentProjectId]) + '%'}} />
+						<div style={{width: (student.grades[this.props.project.id]) + '%'}} />
 					</div>
 					<h6 className="progress-text">
-						{parseInt(this.props.isHidden ? student.hiddenGrades[this.props.currentProjectId] : student.grades[this.props.currentProjectId])}%
+						{parseInt(student.grades[this.props.project.id])}%
 					</h6>
 				</div>
 			</div>
@@ -51,6 +47,9 @@ class StudentSummary extends Component {
 	}
 
 	render() {
+		if(!this.props.project)
+			return null
+
 		return (
 			<SelectableCardSummary type='students'
 			                       values={this.props.students}
@@ -62,15 +61,13 @@ class StudentSummary extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		isHidden: state.projects ? state.projects.isHidden : false,
-		students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : [],
-		currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null
+		students: getStudents(state),
+		project: getCurrentProject(state)
 	}
 }
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
 		setCurrentStudent: (student) => dispatch(setCurrentStudent(student))
 	}
 }

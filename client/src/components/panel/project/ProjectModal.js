@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import Calendar from 'rc-calendar';
 import 'rc-calendar/assets/index.css';
 
-import url from '../../../server'
 import {CheckmarkIcon, Modal} from '../../Helpers'
 import moment from "moment"
 

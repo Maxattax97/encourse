@@ -11,33 +11,17 @@ import {
 	toggleSelectCard
 } from '../../../redux/actions'
 import PreviewCard from "../common/PreviewCard"
-
-function formatName(name) {
-	console.log(name)
-	return name.charAt(0).toUpperCase() + name.splice(1)
-}
+import {getAllSelected, getSelected, isAnySelected} from "../../../redux/state-peekers/control"
 
 class SelectableCardSummary extends Component {
 
-	constructor(props) {
-		super(props)
-
-		this.selectedAll = 'selectedAll' + this.props.type.charAt(0).toUpperCase() + this.props.type.substring(1)
-		this.selected = 'selected' + this.props.type.charAt(0).toUpperCase() + this.props.type.substring(1)
-	}
-
-	isAnySelected = () => {
-		return !this.props.control.invalid && this.props.control[this.selectedAll] > 0 || (this.props.control[this.selected] && Object.keys(this.props.control[this.selected]).length > 0)
-	}
-
 	isSelected = (value) => {
-		return !this.props.control.invalid && (this.props.control[this.selectedAll] === 2 ||
-			((this.props.control[this.selectedAll] === 0) === (this.props.control[this.selected] && this.props.control[this.selected][value.id] === true)))
+		return this.props.selectedAll || (this.props.selected(value.id))
 	}
 
 	clickCard = (value) => {
 		if(this.isAnySelected())
-			return this.props.resetAllCards()
+			return this.props.resetAllCards(this.props.type)
 
 		this.props.onClick(value)
 	};
@@ -55,7 +39,7 @@ class SelectableCardSummary extends Component {
 					this.props.values.map( (value) =>
 						<PreviewCard onClick={ () => this.clickCard(value) } isSelected={ this.isSelected(value) } key={ value.id }>
 							{ this.props.render(value) }
-							<Checkbox className={ this.isAnySelected() ? 'card-select selectable' : 'card-select' } onClick={ (e) => this.clickSelect(e, value) }>
+							<Checkbox className={ this.props.isAnySelected ? 'card-select selectable' : 'card-select' } onClick={ (e) => this.clickSelect(e, value) }>
 								{
 									this.isSelected(value) ?
 										<CheckmarkIcon/>
@@ -70,9 +54,11 @@ class SelectableCardSummary extends Component {
 	}
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
 	return {
-		control: state.control ? state.control : {invalid: true},
+		selectedAll: getAllSelected(state, props.type),
+		selected: getSelected(state, props.type),
+		isAnySelected: isAnySelected(state, props.type)
 	}
 }
 

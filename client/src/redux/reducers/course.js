@@ -1,4 +1,4 @@
-import {getData} from "./reducer-utils"
+import {forwardData, getData} from "./reducer-utils"
 
 function getStudentPreviews(state, action) {
     if(action.hasError)
@@ -102,6 +102,17 @@ function resetStudentsPage(state, action) {
 	})
 }
 
+function sortStatistics(udata) {
+	if (!udata || !udata.data)
+		return null
+
+	const data = udata.data
+
+	data.sort((d1, d2) => d1.index - d2.index)
+
+	return data
+}
+
 function submitStudents(state, action) {
     if(action.hasError)
 	    return Object.assign({}, state, {
@@ -161,6 +172,52 @@ function getClassCommitHistory(state, action) {
 	})
 }
 
+function formatProgress(udata) {
+	if (!udata)
+		return []
+
+	const data = udata
+	const formattedData = []
+	const data2 = Object.entries(data)
+	const total = data2.reduce((sum, p) => sum + p[1], 0)
+
+	for (let apiEntry of data2) {
+		const entry = {
+			progressBin: apiEntry[0],
+			order: parseInt(apiEntry[0]),
+			count: apiEntry[1],
+			percent: apiEntry[1] / total,
+		}
+
+		formattedData.push(entry)
+	}
+
+	formattedData.sort((a, b) => a.order - b.order)
+
+	return formattedData
+}
+
+function formatTestProgress(udata) {
+	if(!udata || !udata.data || udata.data.length === 0)
+		return []
+
+	const data = udata.data
+	const formattedData = []
+
+	for (let apiEntry of data) {
+		const entry = {
+			testName: apiEntry.testName,
+			hidden: apiEntry.hidden,
+			percent: apiEntry.score / 100,
+			score: apiEntry.score,
+		}
+
+		formattedData.push(entry)
+	}
+
+	return formattedData
+}
+
 export default function course(state = {}, action) {
     if(action.type !== 'COURSE')
         return state
@@ -171,9 +228,9 @@ export default function course(state = {}, action) {
     case 'GET_SECTIONS':
         return getData(state, action, 'getSectionsData')
     case 'GET_PROGRESS':
-        return getData(state, action, 'getClassProgress')
+	    return forwardData(state, action, 'studentsProgress', formatProgress)
     case 'GET_TEST_BAR_GRAPH':
-        return getData(state, action, 'getTestBarGraph')
+    	return forwardData(state, action, 'studentsTestProgress', formatTestProgress)
     case 'SET_DIRECTORY':
         return getData(state, action, 'setDirectory')
 	case 'SYNC':
@@ -193,15 +250,15 @@ export default function course(state = {}, action) {
     case 'GET_SIMILARITY_PLOT':
         return getData(state, action, 'getSimilarityPlot')
     case 'GET_STATISTICS':
-        return getData(state, action, 'getClassStatistics')
+        return forwardData(state, action, 'stats', sortStatistics)
     case 'SUBMIT_STUDENTS':
         return submitStudents(state, action)
     case 'GET_COMMIT_HISTORY':
         return getClassCommitHistory(state, action)
     case 'GET_PROGRESS_ANON':
-        return getData(state, action, 'getClassProgressAnon')
+        return forwardData(state, action, 'courseProgress', formatProgress)
     case 'GET_TEST_BAR_GRAPH_ANON':
-        return getData(state, action, 'getTestBarGraphAnon')
+	    return forwardData(state, action, 'courseTestProgress', formatTestProgress)
     default:
 	    return Object.assign({}, state, {
 		    reduxError: action

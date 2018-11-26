@@ -3,71 +3,33 @@ import { connect } from 'react-redux'
 
 import { getStatistics } from '../../../redux/actions/index'
 import url from '../../../server'
-import {LoadingIcon} from "../../Helpers"
 import Statistics from "../common/Statistics"
+import {getCurrentStudent, getStudentStatistics} from "../../../redux/state-peekers/student"
+import {getCurrentProject} from "../../../redux/state-peekers/project"
 
 class StudentStatistics extends Component {
 
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            formattedData: [],
-        }
-    }
-
-    componentDidMount = () => {
-        this.fetch(this.props)
-    }
-
     componentWillReceiveProps(nextProps) {
-        if(this.props.isLoading && !nextProps.isLoading) {
-            const data = this.formatApiData(nextProps.stats)
-            if(data)
-                this.setState({ formattedData: data })
-        }
-        if (nextProps.currentProjectId !== this.props.currentProjectId) {
-            this.fetch(nextProps)
-        }
+	    if(nextProps.project && (!(this.props.project) || this.props.project.index !== nextProps.project.index))
+	        this.fetch(nextProps)
     }
 
     fetch = (props) => {
-        if(props.currentProjectId) {
-            props.getStatistics(`${url}/api/statistics?projectID=${props.currentProjectId}&userName=${props.currentStudent.id}`)
-        }
-    }
-
-    formatApiData = (udata) => {
-        if (!udata) {
-            return null
-        }
-        udata = udata[0]
-        if (!udata || !udata.data) {
-            return null
-        }
-        const data = udata.data
-        if (!data) {
-            return null
-        }
-
-        data.sort((d1, d2) => d1.index - d2.index)
-
-        return data.slice()
+            props.getStatistics(`${url}/api/statistics?projectID=${props.project.id}&userName=${props.student.id}`)
     }
 
     render() {
         return (
-            <Statistics isLoading={this.props.isLoading} values={this.state.formattedData} />
+            <Statistics isLoading={this.props.stats.loading} values={this.props.stats.data} />
         )
     }
 }
 
 const mapStateToProps = (state) => {
     return {
-        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
-        stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : [],
-        isLoading: state.student ? state.student.getStatisticsIsLoading : false,
+        student: getCurrentStudent(state),
+        project: getCurrentProject(state),
+        stats: getStudentStatistics(state)
     }
 }
 
