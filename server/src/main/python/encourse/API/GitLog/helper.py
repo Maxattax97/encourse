@@ -43,22 +43,6 @@ def time_string(seconds):
     return "{} hours".format(int(hours))
 
 
-def daterange(start, end):
-    """Returns a list of every date between **start** and **end**
-        
-    **Args**:
-        |  **start** (date): A datetime date object, representing the start of the range
-        |  of dates to be returned        
-        |  **end** (date): A datetime date object, representing the end of the range
-        |  of dates to be returned
-
-    **Returns**
-        list: A list of datetime date objects representing every date between start
-        and end (inclusive)
-
-    """
-    for n in range(int((end - start).days) + 1):
-        yield start + timedelta(n)
 
 
 def times_from_dailydata(data, include_today=None):

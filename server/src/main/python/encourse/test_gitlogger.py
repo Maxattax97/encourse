@@ -19,3 +19,7 @@ gitlog = GitLog([commit, commit2])
 
 print(repr(gitlog))
 print(gitlog)
+print(gitlog.date_range())
+
+gitparser = GitParser(open("data/sampleCommitList.txt", "r"))
+print(gitparser)
