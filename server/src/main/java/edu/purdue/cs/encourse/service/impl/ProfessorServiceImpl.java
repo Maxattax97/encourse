@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.time.LocalTime;
 import java.util.*;
 import java.time.LocalDate;
 import lombok.NonNull;
@@ -217,36 +218,46 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(project == null) {
             return -1;
         }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
-        if(sections.isEmpty()) {
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
+        if(projects.isEmpty()) {
             return -2;
         }
-        if(sections.get(0).getCourseHub() == null) {
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
             return -3;
         }
-        if(project.getRepoName() == null) {
+        if(sections.get(0).getCourseHub() == null) {
             return -4;
         }
+        if(project.getRepoName() == null) {
+            return -5;
+        }
         int code = 0;
-        List<String> completedStudents = new ArrayList<>();
-        for(Section s : sections){
-            List<StudentSection> assignments =
-                    studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
-            for(StudentSection a : assignments) {
-                Student student = studentRepository.findByUserID(a.getStudentID());
-                if(!(completedStudents.contains(student.getUserName()))) {
-                    String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
-                    if(helperService.executeBashScript("pullRepositories.sh " + destPath) == -1) {
-                        code = -5;
-                    }
-                    completedStudents.add(student.getUserName());
-                }
+        int count = 0;
+        long start = System.currentTimeMillis();
+        project.setSyncing(true);
+        project = projectRepository.save(project);
+        for(StudentProject p : projects){
+            count++;
+            Student student = studentRepository.findByUserID(p.getStudentID());
+            String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
+            if(helperService.executeBashScript("pullRepositories.sh " + destPath) == -1) {
+                code = -6;
+            }
+            if(count % 10 == 0) {
+                project.setOperationProgress(1.0 * count / projects.size());
+                project.setOperationTime((System.currentTimeMillis() - start) / 1000);
+                project = projectRepository.save(project);
             }
         }
         if(helperService.executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
-            return -6;
+            return -7;
         }
+        project.setSyncing(false);
         project.setSyncDate(LocalDate.now().toString());
+        project.setSyncTime(LocalTime.now().toString());
+        project.setOperationProgress(1.0 * count / projects.size());
+        project.setOperationTime((System.currentTimeMillis() - start) / 1000);
         projectRepository.save(project);
         return code;
     }
@@ -549,8 +560,13 @@ public class ProfessorServiceImpl implements ProfessorService {
             return -4;
         }
         int code = 0;
+        int count = 0;
+        long start = System.currentTimeMillis();
+        project.setTesting(true);
+        project = projectRepository.save(project);
         String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_gitHashes.txt";
         for(StudentProject p : projects) {
+            count++;
             Student student = studentRepository.findByUserID(p.getStudentID());
             String testingDirectory = sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName();
             helperService.executeBashScript("listTestUpdateHistory.sh " + testingDirectory + " " + fileName);
@@ -640,13 +656,20 @@ public class ProfessorServiceImpl implements ProfessorService {
                 }
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
                 reader.close();
+                project.setOperationProgress(1.0 * count / projects.size());
+                project.setOperationTime((System.currentTimeMillis() - start) / 1000);
+                project = projectRepository.save(project);
             }
             catch(Exception e) {
                 code = -6;
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             }
         }
+        project.setTesting(false);
         project.setTestDate(LocalDate.now().toString());
+        project.setTestTime(LocalTime.now().toString());
+        project.setOperationProgress(1.0 * count / projects.size());
+        project.setOperationTime((System.currentTimeMillis() - start) / 1000);
         projectRepository.save(project);
         return code;
     }

@@ -23,6 +23,8 @@ public interface CourseService {
     JSONArray getStudentData(List<String> userNameStudents);
     JSONArray getTestScriptData(@NonNull String projectID);
 
+    JSONObject getOperationData(@NonNull String projectID);
+
     JSONReturnable getProgress(@NonNull String projectID, List<String> userNames);
     JSONReturnable getSimilar(@NonNull String projectID, List<String> userNames);
     JSONReturnable getStatistics(@NonNull String projectID, List<String> userNames);

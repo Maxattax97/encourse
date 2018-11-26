@@ -47,6 +47,22 @@ public class Project {
     @Setter
     private int testCount;
 
+    /** Listing of suites for the project, separated by commas */
+    @Setter
+    private String suites;
+
+    /** True if a pull is currently happening for the project, false otherwise */
+    @Setter
+    private boolean syncing;
+
+    /** True if tests are currently being run for the project, false otherwise */
+    @Setter
+    private boolean testing;
+
+    /** True if academic dishonesty analysis if currently running for the project, false otherwise */
+    @Setter
+    private boolean analyzing;
+
     /** Date project was last synced */
     @Setter
     private String syncDate;
@@ -55,9 +71,29 @@ public class Project {
     @Setter
     private String testDate;
 
-    /** Listing of suites for the project, separated by commas */
+    /** Date project last had academic dishonesty analysis ran */
     @Setter
-    private String suites;
+    private String analyzeDate;
+
+    /** Time project was last synced */
+    @Setter
+    private String syncTime;
+
+    /** Time project was last tested */
+    @Setter
+    private String testTime;
+
+    /** Time project last had academic dishonesty analysis ran */
+    @Setter
+    private String analyzeTime;
+
+    /** Current progress for the active operation (sync, test, or analysis) */
+    @Setter
+    private double operationProgress;
+
+    /** Estimated run time for the active operation (sync, test, or analysis) */
+    @Setter
+    private long operationTime;
 
     public Project(String courseID, String semester, String projectName,
                    String repoName, String startDate, String dueDate, int testRate) {
@@ -77,6 +113,11 @@ public class Project {
             this.testCount = 0;
         }
         this.suites = "testall";
+        this.syncing = false;
+        this.testing = false;
+        this.analyzing = false;
+        this.operationProgress = 0.0;
+        this.operationTime = 0;
     }
 
     public Project() {
@@ -111,4 +152,10 @@ public class Project {
         return false;
     }
 
+    public long getEstimatedTimeRemaining() {
+        if(operationProgress == 0.0) {
+            return 0;
+        }
+        return Math.round((operationTime / operationProgress) * (1.0 - operationProgress));
+    }
 }

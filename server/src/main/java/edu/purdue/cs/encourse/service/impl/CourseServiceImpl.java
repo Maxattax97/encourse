@@ -211,7 +211,14 @@ public class CourseServiceImpl implements CourseService {
         return projectsJSON;
     }
 
-    /** Gets all sections for a particular course **/
+    /**
+     * Obtains data for all sections associated with a semester and courseID
+     * Primarily used to display the sections for a professor's course
+     *
+     * @param semester  Semester of the course that project data is requested for
+     * @param courseID  Identifier for the course that project data is requested for
+     * @return          JSON for front-end to parse
+     */
     public JSONArray getSectionData(@NonNull String semester, @NonNull String courseID) {
         List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
         JSONArray sectionsJSON = new JSONArray();
@@ -239,6 +246,13 @@ public class CourseServiceImpl implements CourseService {
         return sectionsJSON;
     }
 
+    /**
+     * Obtains data for all of the students with the specified usernames
+     * Primarily used as a generalized way to obtain student data for professors or TAs
+     *
+     * @param userNames Front-end identifiers for all students data should pertain to
+     * @return          JSON for front-end to parse
+     */
     public JSONArray getStudentData(List<String> userNames) {
         List<String> completedStudents = new ArrayList<>();
         JSONArray studentsJSON = new JSONArray();
@@ -294,6 +308,13 @@ public class CourseServiceImpl implements CourseService {
         return studentsJSON;
     }
 
+    /**
+     * Obtains data for all test scripts associated with a project
+     * Primarily used to show existing test scripts that a project has
+     *
+     * @param projectID Identifier for project to obtain test scripts for
+     * @return          JSON for front-end to parse
+     */
     public JSONArray getTestScriptData(@NonNull String projectID) {
         List<ProjectTestScript> testScripts = projectTestScriptRepository.findByIdProjectIdentifier(projectID);
         if(testScripts.isEmpty()) {
@@ -312,6 +333,48 @@ public class CourseServiceImpl implements CourseService {
 
     }
 
+    /**
+     * Obtains information on any operation currently being done for a project
+     * Primarily used to keep the user updated on progress for a time consuming operation
+     *
+     * @param projectID Identifier for project operation information is obtained for
+     * @return          JSON for front-end to parse
+     */
+    public JSONObject getOperationData(@NonNull String projectID) {
+        Project project = projectRepository.findByProjectIdentifier(projectID);
+        if(project == null) {
+            return null;
+        }
+        JSONObject operationJSON = new JSONObject();
+        operationJSON.put("progress", project.getOperationProgress());
+        operationJSON.put("time_elapsed", project.getOperationTime());
+        operationJSON.put("estimated_time_remaining", project.getEstimatedTimeRemaining());
+        if(project.isSyncing()) {
+            operationJSON.put("operation", "Syncing");
+        }
+        else if(project.isTesting()) {
+            operationJSON.put("operation", "Testing");
+        }
+        else if(project.isAnalyzing()) {
+            operationJSON.put("operation", "Analyzing");
+        }
+        else {
+            operationJSON.put("operation", "None");
+            operationJSON.put("progress", 0);
+            operationJSON.put("time_elapsed", 0);
+            operationJSON.put("estimated_time_remaining", 0);
+        }
+        return operationJSON;
+    }
+
+    /**
+     * Obtains information on amount of progress each student specified has made on a project
+     * Primarily used for graphs which show project over time on front-end
+     *
+     * @param projectID Identifier for project that progress is being obtained from
+     * @param userNames Front-end identifier for each student to include in progress analysis
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getProgress(@NonNull String projectID, List<String> userNames) {
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
@@ -334,6 +397,14 @@ public class CourseServiceImpl implements CourseService {
         return json;
     }
 
+    /**
+     * Obtains information on similarities between students' projects
+     * Primarily used for showing signs of academic dishonesty on front-end
+     *
+     * @param projectID Identifier for project that similarities are being analyzed from
+     * @param userNames Front-end identifier for each student involved in the analysis
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getSimilar(@NonNull String projectID, List<String> userNames) {
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
         Project project = projectRepository.findByProjectIdentifier(projectID);
@@ -383,6 +454,14 @@ public class CourseServiceImpl implements CourseService {
         return json;
     }
 
+    /**
+     * Obtains various statistics for a group of students for a project
+     * Primarily used for showing class and group statistics summaries
+     *
+     * @param projectID Identifier for project that statistics are obtained from
+     * @param userNames Front-end identifier for each student that statistics include
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getStatistics(@NonNull String projectID, List<String> userNames) {
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
         String dailyCountsFile = helperService.countAllCommitsByDay(projectID, projects);
@@ -421,6 +500,14 @@ public class CourseServiceImpl implements CourseService {
         return json;
     }
 
+    /**
+     * Obtains information on current test results for several students
+     * Primarily used for showing which test cases are being passed on front-end
+     *
+     * @param projectID Identifier for project that test results are obtained from
+     * @param userNames Front-end identifier for each student that test results include
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getTestSummary(@NonNull String projectID, List<String> userNames) {
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
@@ -440,6 +527,14 @@ public class CourseServiceImpl implements CourseService {
         return json;
     }
 
+    /**
+     * Obtains information on commit history for several students
+     * Primarily used for showing the list of most recent commits in a group of students
+     *
+     * @param projectID Identifier for project that commit history is obtained from
+     * @param userNames Front-end identifier for each student included in the history
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getCommitList(@NonNull String projectID, List<String> userNames) {
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
         String commitLogFile = helperService.listAllCommitsByTime(projectID, projects);
@@ -452,6 +547,14 @@ public class CourseServiceImpl implements CourseService {
         return json;
     }
 
+    /**
+     * Obtains analysis for which students are likely cheating on a project
+     * Primarily used for showing signs of academic dishonesty
+     *
+     * @param projectID Identifier for project that cheating analysis is performed from
+     * @param userNames Front-end identifier for each student included in the analysis
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getCheating(@NonNull String projectID, List<String> userNames) {
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
         Project project = projectRepository.findByProjectIdentifier(projectID);
@@ -500,6 +603,14 @@ public class CourseServiceImpl implements CourseService {
         return json;
     }
 
+    /**
+     * Obtains information on additions and deletions that a student has made for a project
+     * Primarily used for displaying the information in an additions and deletions graph
+     *
+     * @param projectID Identifier for project additions and deletions are obtained from
+     * @param userName  Front-end identifier for student whose project is being analyzed
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getStudentAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = helperService.countStudentCommitsByDay(projectID, userName);
         String commitLogFile = helperService.listStudentCommitsByTime(projectID, userName);
@@ -514,6 +625,14 @@ public class CourseServiceImpl implements CourseService {
         return helperService.runPython(command);
     }
 
+    /**
+     * Obtains each day's commit count for a student's project
+     * Primarily used for displaying the information in a commits over time graph
+     *
+     * @param projectID Identifier for project daily commit counts are obtained from
+     * @param userName  Front-end identifier for student whose project is being analyzed
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getStudentCommitCounts(@NonNull String projectID, @NonNull String userName) {
         String commitLogFile = helperService.listStudentCommitsByTime(projectID, userName);
         if(commitLogFile == null) {
