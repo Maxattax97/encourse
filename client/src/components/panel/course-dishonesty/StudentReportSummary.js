@@ -1,41 +1,49 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {Card, Summary, Title} from '../../Helpers'
-import {fuzzing} from '../../../fuzz'
+import {Title} from '../../Helpers'
 import {history} from '../../../redux/store'
 import {getStudentPreviews, setCurrentStudent, clearStudent} from '../../../redux/actions'
+import {getCurrentProject} from "../../../redux/state-peekers/project"
+import SelectableCardSummary from "../common/SelectableCardSummary"
+import {retrieveAllStudents} from "../../../redux/retrievals/course"
 
 class StudentReportSummary extends Component {
 
+	componentWillMount() {
+		if(this.props.project)
+			retrieveAllStudents(this.props.project)
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if(nextProps.project && (!(this.props.project) || this.props.project.index !== nextProps.project.index))
+			retrieveAllStudents(nextProps.project)
+	}
+
     clickStudentCard = (student) => {
-        this.props.clearStudent()
-        if (fuzzing) {
-            history.push('/student-dishonesty/student')
-        } else {
-            history.push(`/student-dishonesty/${student.id}`)
-        }
+	    this.props.clearStudent()
+        history.push(`/student-dishonesty/${student.id}`)
     }
+
+	renderPreview = (student) => {
+		return (
+			<div>
+				<Title>
+					<h4>{ student.id }</h4>
+				</Title>
+				<div className="h4 break-line header" />
+				<div className="preview-content">
+					<h5>Score: { student.score }</h5>
+				</div>
+			</div>
+		)
+	}
 
     render() {
         return (
-            <Summary columns={ 5 }>
-                {
-                    this.props.report && 
-                    this.props.report.map( (student) =>
-	                    <Card className='action' onClick={ () => this.clickStudentCard(student) } key={student.id}>
-		                    <div className="summary-preview">
-			                    <Title>
-				                    <h4>{ student.id }</h4>
-			                    </Title>
-			                    <div className="h4 break-line header" />
-			                    <div className="preview-content">
-				                    <h5>Score: { student.score }</h5>
-			                    </div>
-		                    </div>
-	                    </Card>
-                    )
-                }
-            </Summary>
+	        <SelectableCardSummary type='students'
+	                               values={this.props.report}
+	                               render={this.renderPreview}
+	                               onClick={this.clickStudentCard} />
         )
     }
 }
@@ -43,9 +51,7 @@ class StudentReportSummary extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        isHidden: state.projects ? state.projects.isHidden : false,
-        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : [],
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        project: getCurrentProject(state),
         report: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.content : [],
 
     }
@@ -54,7 +60,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
-        setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
         clearStudent: () => dispatch(clearStudent),
     }
 }

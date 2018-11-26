@@ -10,6 +10,16 @@ import {Chart} from "../../../Helpers"
 
 class CompletionProgress extends Component {
 
+	componentWillMount() {
+		if (this.props.project)
+		{
+			if (this.props.anon)
+				retrieveCourseProgress(this.props.project)
+			else
+				retrieveStudentsProgress(this.props.project)
+		}
+	}
+
 	componentWillReceiveProps = (nextProps) => {
 		if(nextProps.project && (!(this.props.project) || this.props.project.index !== nextProps.project.index)) {
 			if(this.props.anon)

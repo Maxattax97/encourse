@@ -9,14 +9,16 @@ import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
 import SyncItem from './common/HistoryText'
-import { fuzzing } from '../../fuzz'
+import {retrieveStudent} from "../../redux/retrievals/student"
+import {getCurrentStudent} from "../../redux/state-peekers/student"
+import {getCurrentProject} from "../../redux/state-peekers/project"
 
 
 class StudentPanel extends Component {
 
     componentDidMount = () => {
         if(!this.props.currentStudent) {
-            this.props.getStudent(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&userName=${this.props.match.params.id}`)
+            retrieveStudent({id: this.props.match.params.id})
         }
     }
 
@@ -36,10 +38,7 @@ class StudentPanel extends Component {
             'Academic Dishonesty Report'
         ]
 
-        let studentDishonestyRedirect = () => { history.push('/student-dishonesty/' + this.props.currentStudent.id) }
-        if (fuzzing) {
-            studentDishonestyRedirect = () => { history.push('/student-dishonesty/student') }
-        }
+        let studentDishonestyRedirect = () => { history.push('/student-dishonesty/' + this.props.student.id) }
 
         const actions = [
             () => { 
@@ -72,7 +71,7 @@ class StudentPanel extends Component {
                     <div className='panel-student-content'>
                         <h1 className='header'>
                             {
-                                `CS252 - ${this.props.currentStudent ? `${this.props.currentStudent.first_name} ${this.props.currentStudent.last_name}` : ''}`
+                                `CS252 - ${this.props.student ? `${this.props.student.first_name} ${this.props.student.last_name}` : ''}`
                             }
                         </h1>
                         <div className="h1 break-line header" />
@@ -93,8 +92,8 @@ class StudentPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        student: getCurrentStudent(state),
+        project: getCurrentProject(state)
     }
 }
 

@@ -1,5 +1,5 @@
 import store from "../store"
-import url from '../../server'
+
 import {
 	getClassProgress,
 	getClassProgressAnon,
@@ -7,27 +7,28 @@ import {
 	getStudentPreviews, getTestBarGraph,
 	getTestBarGraphAnon
 } from "../actions"
+import {api_v1, projectID_v1} from "./retrieval-utils"
 
 export function retrieveAllStudents(project) {
-	store.dispatch(getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=215&projectID=${project.id}`))
+	store.dispatch(getStudentPreviews(`${api_v1}studentsData?courseID=cs252&semester=Fall2018&size=215&${projectID_v1(project)}`))
 }
 
-export function retrieveStats(project) {
-	store.dispatch(getClassStatistics(`${url}/api/classStatistics?projectID=${project.id}`))
+export function retrieveCourseStats(project) {
+	store.dispatch(getClassStatistics(`${api_v1}classStatistics?${projectID_v1(project)}`))
 }
 
 export function retrieveCourseProgress(project) {
-	store.dispatch(getClassProgressAnon(`${url}/api/progress?projectID=${project.id}&anonymous=true`))
+	store.dispatch(getClassProgressAnon(`${api_v1}progress?${projectID_v1(project)}&anonymous=true`))
 }
 
 export function retrieveCourseTestProgress(project) {
-	store.dispatch(getTestBarGraphAnon(`${url}/api/testSummary?projectID=${project.id}`))
+	store.dispatch(getTestBarGraphAnon(`${api_v1}testSummary?${projectID_v1(project)}`))
 }
 
 export function retrieveStudentsProgress(project) {
-	store.dispatch(getClassProgress(`${url}/api/progress?projectID=${project.id}`))
+	store.dispatch(getClassProgress(`${api_v1}progress?${projectID_v1(project)}`))
 }
 
 export function retrieveStudentsTestProgress(project) {
-	store.dispatch(getTestBarGraph(`${url}/api/testSummary?projectID=${project.id}`))
+	store.dispatch(getTestBarGraph(`${api_v1}testSummary?${projectID_v1(project)}`))
 }

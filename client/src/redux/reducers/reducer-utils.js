@@ -21,7 +21,7 @@ export function forwardData(state, action, name, dataFunction) {
 			[name]: {
 				error: action.hasError,
 				loading: !(action.hasError) && !(action.data),
-				data: action.data ? dataFunction ? dataFunction(action.data) : action.data : state[name] ? state[name].data : []
+				data: action.data ? dataFunction ? dataFunction(action.data, action.extra, state) : action.data : state[name] ? state[name].data : []
 			}
 		}
 	}

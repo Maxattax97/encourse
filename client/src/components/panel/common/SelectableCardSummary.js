@@ -20,7 +20,7 @@ class SelectableCardSummary extends Component {
 	}
 
 	clickCard = (value) => {
-		if(this.isAnySelected())
+		if(this.props.isAnySelected)
 			return this.props.resetAllCards(this.props.type)
 
 		this.props.onClick(value)

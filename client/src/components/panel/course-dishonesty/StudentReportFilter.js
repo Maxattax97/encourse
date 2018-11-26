@@ -1,31 +1,46 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {Dropdown, Filter} from '../../Helpers'
+import {Checkbox, CheckmarkIcon, Dropdown, Filter} from '../../Helpers'
 import StudentReportSummary from './StudentReportSummary'
+import {getStudents} from "../../../redux/state-peekers/course"
+import {getAllSelected, getFilters} from "../../../redux/state-peekers/control"
+import {resetFilterState, setFilterState, toggleSelectAllCards} from "../../../redux/actions"
 
 class StudentReportFilter extends Component {
 
 	sort_by_ranges = ['Name', 'Score']
 	order_ranges = ['Ascending', 'Descending']
 
+	componentWillUnmount() {
+		this.props.resetFilterState()
+	}
+
 	render() {
 	    return (
 	        <div className='course-students-report'>
 	            {
-	                this.props.report && this.props.report.length > 0 ?
+	                this.props.report.length ?
 	                    <Filter>
+		                    <Checkbox onClick={() => this.props.toggleSelectAllCards()}>
+			                    {
+				                    this.props.selectedAllStudents ?
+					                    <CheckmarkIcon/>
+					                    : null
+			                    }
+		                    </Checkbox>
+
 	                        <Dropdown header='h5'
 	                                  text='Sort by'
 	                                  values={ this.sort_by_ranges }
-	                                  current_index={this.props.filters.sort_by}
-							          onClick={ (index) => this.props.onChange('sort_by', index) }
+	                                  currentIndex={this.props.filters.sort_by}
+							          onClick={ (index) => this.props.setFilterState('sort_by', index) }
 							          left />
 
 	                        <Dropdown header='h5'
 	                                  text='Order'
 	                                  values={ this.order_ranges }
-	                                  current_index={ this.props.filters.order_by }
-							          onClick={ (index) => this.props.onChange('order_by', index) }
+	                                  currentIndex={ this.props.filters.order_by }
+							          onClick={ (index) => this.props.setFilterState('order_by', index) }
 							          right />
 	                    </Filter>
 	                    :
@@ -38,12 +53,20 @@ class StudentReportFilter extends Component {
 	}
 }
 
-
 const mapStateToProps = (state) => {
-    return {
-        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : []
-    }
+	return {
+		students: getStudents(state),
+		selectedAllStudents: getAllSelected(state, 'students'),
+		filters: getFilters(state)
+	}
 }
 
+const mapDispatchToProps = (dispatch) => {
+	return {
+		toggleSelectAllCards: () => dispatch(toggleSelectAllCards('students')),
+		setFilterState: (id, value) => dispatch(setFilterState(id, value)),
+		resetFilterState: () => dispatch(resetFilterState())
+	}
+}
 
-export default connect(mapStateToProps, null)(StudentReportFilter)
+export default connect(mapStateToProps, mapDispatchToProps)(StudentReportFilter)

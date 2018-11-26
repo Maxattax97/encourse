@@ -18,13 +18,6 @@ class CoursePanel extends Component {
         //retrieveAllStudents()
     }
 
-    scrolledToBottom = () => {
-        if(!this.props.last) {
-            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=${this.props.page + 1}&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}`)
-            this.props.updateStudentsPage()
-        }
-    }
-
     getSortBy = (value) => {
         let id = value ? value : this.state.filters.sort_by
         switch(id) {

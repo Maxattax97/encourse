@@ -12,6 +12,11 @@ import {getStudents} from "../../../redux/state-peekers/course"
 
 class StudentSummary extends Component {
 
+	componentWillMount() {
+		if(this.props.project)
+			retrieveAllStudents(this.props.project)
+	}
+
 	componentWillReceiveProps(nextProps) {
 		if(nextProps.project && (!(this.props.project) || this.props.project.index !== nextProps.project.index))
 			retrieveAllStudents(nextProps.project)

@@ -108,7 +108,7 @@ class CourseDishonestyPanel extends Component {
                         <div className='h1 break-line' />
 
                         <h3 className='header'>Students Summary</h3>
-                        <StudentReportFilter onChange={ this.changeFilter } filters={ this.state.filters } report={this.props.report}/>
+                        <StudentReportFilter report={this.props.report}/>
                     </div>
                 </div>
             </div>

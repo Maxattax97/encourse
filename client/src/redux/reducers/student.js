@@ -1,4 +1,5 @@
 import {forwardData, getData} from "./reducer-utils"
+import moment from "moment"
 
 function setCurrentStudent(state, action) {
 	return Object.assign({}, state, {
@@ -25,8 +26,8 @@ function getStudent(state, action) {
 	    })
     if(action.data)
 	    return Object.assign({}, state, {
-		    getStudentData: action.data,
-		    currentStudent: action.data,
+		    getStudentData: action.data[0],
+		    currentStudent: action.data[0],
 		    getStudentIsLoading: false,
 	    })
 	return Object.assign({}, state, {
@@ -34,9 +35,105 @@ function getStudent(state, action) {
 	})
 }
 
+function formatCommitFrequency(udata) {
+	if (!udata) {
+		return []
+	}
+	let data = udata.data
+
+	if (!data || data.length === 0) {
+		return []
+	}
+
+	for (let entry of data) {
+		entry.date = moment(entry.date).valueOf()
+	}
+
+	return data
+}
+
+function formatCodeChanges(udata) {
+	if (!udata || !udata.data) {
+		return []
+	}
+	const data = udata.data
+
+	for (let entry of data) {
+		entry.date = moment(entry.date).valueOf()
+		entry.deletions = -entry.deletions
+	}
+
+	if (!data || data.length === 0) {
+		return []
+	}
+
+	const minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date)
+	const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date)
+
+	const formattedData = []
+
+	let inputIndex = 0
+	for (let m = moment(minDate); m.diff(moment(maxDate), 'days') <= 0; m.add(1, 'days')) {
+		const inputEntry = data[inputIndex]
+		const inputDate = inputEntry.date
+
+		if (m.isSame(inputDate, 'day')) {
+			formattedData.push(inputEntry)
+			inputIndex++
+		}
+		else {
+			formattedData.push({
+				date: m.valueOf(),
+				additions: data[inputIndex - 1] || 0,
+				deletions: data[inputIndex - 1] || 0,
+			})
+		}
+	}
+
+	return formattedData
+}
+
+function formatStudentProgress(udata) {
+	if (!udata || !udata.data) {
+		return []
+	}
+	const data = udata.data
+	for (let entry of data) {
+		entry.date = moment(entry.date).valueOf()
+	}
+
+	if (!data || data.length === 0) {
+		return []
+	}
+
+	const minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date)
+	const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date)
+
+	const formattedData = []
+
+	let inputIndex = 0
+	for (let m = moment(minDate); m.diff(moment(maxDate), 'days') <= 0; m.add(1, 'days')) {
+		const inputEntry = data[inputIndex]
+		const inputDate = inputEntry.date
+
+		if (m.isSame(inputDate, 'day')) {
+			formattedData.push(inputEntry)
+			inputIndex++
+		}
+		else {
+			formattedData.push({
+				date: m.valueOf(),
+				progress: inputEntry.progress,
+			})
+		}
+	}
+
+	return formattedData
+}
+
 function sortStatistics(udata) {
 	if (!udata || !udata.data)
-		return null
+		return []
 
 	const data = udata.data
 
@@ -45,33 +142,32 @@ function sortStatistics(udata) {
 	return data
 }
 
-function getCommitHistory(state, action) {
-    if(action.hasError)
-	    return Object.assign({}, state, {
-		    getCommitHistoryHasError: action.hasError,
-		    getCommitHistoryIsLoading: false,
-	    })
-    if(action.data) {
-	    let content = state.getCommitHistoryData ? [...state.getCommitHistoryData.content] : []
-	    let contains = false
-	    for(let value of content) {
-		    if(value.date === action.data.content[0].date) {
-			    contains = true
-			    break
-		    }
-	    }
-	    if(!contains) {
-		    content = content.concat(action.data.content)
-	    }
-	    action.data.content = content;
-	    return Object.assign({}, state, {
-		    getCommitHistoryData: action.data,
-		    getCommitHistoryIsLoading: false,
-	    })
-    }
-	return Object.assign({}, state, {
-		getCommitHistoryIsLoading: true,
-	})
+function formatCommitHistory(udata, extra, state) {
+	if(!udata)
+		return {}
+
+	if(!udata.content)
+		return {
+			...udata,
+			content: {}
+		}
+
+	let content = state.commitHistory && state.commitHistory.data.content ? [...state.commitHistory.data.content] : []
+
+	let contains = false
+	for(let value of content) {
+		if(value.date === udata.content[0].date) {
+			contains = true
+			break
+		}
+	}
+	if(!contains)
+		content = content.concat(udata.content)
+
+	return {
+		...udata,
+		content: content
+	}
 }
 
 function updateCommitsPage(state, action) {
@@ -98,15 +194,15 @@ export default function student(state = {}, action) {
     case 'GET':
         return getStudent(state, action)
     case 'GET_PROGRESS_LINE':
-        return getData(state, action, 'getProgressLine')
+        return forwardData(state, action, 'studentProgress', formatStudentProgress)
     case 'GET_COMMIT_FREQUENCY':
-        return getData(state, action, 'getCommitFrequency')
+        return forwardData(state, action, 'commitFrequency', formatCommitFrequency)
     case 'GET_CODE_FREQUENCY':
-        return getData(state, action, 'getCodeFrequency')
+        return forwardData(state, action, 'codeChanges', formatCodeChanges)
     case 'GET_STATISTICS':
         return forwardData(state, action, 'stats', sortStatistics)
     case 'GET_COMMIT_HISTORY':
-        return getCommitHistory(state, action)
+        return forwardData(state, action, 'commitHistory', formatCommitHistory)
     case 'GET_PROGRESS_PER_TIME':
         return getData(state, action, 'getProgressPerTime')
     case 'GET_PROGRESS_PER_COMMIT':
