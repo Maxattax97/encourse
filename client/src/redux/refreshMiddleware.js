@@ -42,7 +42,10 @@ export default function refreshMiddleware() {
                 return response.json()
             })
             .then((data) => {
-                dispatch({ type: 'SET_TOKENS', data })
+                dispatch({
+                    type: 'AUTH',
+                    class: 'SET_TOKENS',
+                    data })
                 refreshing = false
                 for(let queuedRequest of requests) {
                     queuedRequest(data.access_token, dispatch, false)

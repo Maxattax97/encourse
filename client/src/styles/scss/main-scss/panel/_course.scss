@@ -2,6 +2,13 @@
   .modal-container {
     width: 250px;
   }
+
+  .rc-calendar-body {
+    height: 189px;
+    table thead {
+      display: none;
+    }
+  }
 }
 
 @import "util/student-preview";

@@ -1,4 +1,48 @@
-export { 
+export function genericDispatch(type, actionClass, method) {
+	return (url, headers = {}, body, extra) => {
+		return {
+			type,
+            class: actionClass,
+			request: (accessToken, dispatch, auth) => {
+				if(typeof dispatch !== 'function') return
+				dispatch({
+                    type,
+                    class: actionClass
+				})
+				const authorization = auth ? `Basic ${btoa('encourse-client:encourse-password')}` : `Bearer ${accessToken}`
+				fetch(url, { headers:
+						{ 'Authorization': authorization, ...headers }, method, body, mode: 'cors'})
+					.then((response) => {
+						if (!response.ok || response.status === 204)
+							throw Error(response.status + ' ' + response.statusText + ' ')
+						return response
+					})
+					.then((response) => {
+						if(response.type !== 'basic') return response.json()
+					})
+					.then((data) => {
+						dispatch({
+                            type,
+                            class: actionClass,
+                            data,
+                            extra
+                        })
+					})
+					.catch((error) => {
+						console.log(url, '\n', error)
+						dispatch({
+                            type,
+                            class: actionClass,
+                            hasError: error,
+                            extra
+                        })
+					})
+			}
+		}
+	}
+}
+
+export {
     getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, 
     getSectionsData, syncRepositories, runTests, getDishonestyReport,
     updateCourseDishonestyPage, resetCourseDishonestyPage, updateStudentsPage,
@@ -33,5 +77,6 @@ export {
 } from './teaching_assistant'
 
 export {
-    setModalState
-} from './modal'
+    setModalState, toggleSelectAllCards, toggleSelectCard, resetAllCards,
+	setFilterState, resetFilterState
+} from './control'

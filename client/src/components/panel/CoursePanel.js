@@ -5,30 +5,18 @@ import { history } from '../../redux/store'
 import url from '../../server'
 import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories, updateStudentsPage, resetStudentsPage} from '../../redux/actions'
 import ProjectNavigation from '../navigation/ProjectNavigation'
-import {CourseModal, CourseAnonCharts, CourseCharts, CourseStatistics, CourseStudentFilter} from './course'
+import {CourseModal, AnonymousCharts, Charts, CourseStatistics, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
-import SyncItem from './common/SyncItem'
+import HistoryText from './common/HistoryText'
 import {Title, SettingsIcon, BackNav} from '../Helpers'
-import CourseCommitHistory from './course/CourseCommitHistory'
+import ProgressModal from "./common/ProgressModal"
+import {getAllStudentsInfo} from "../../redux/dispatchs/course"
 
 class CoursePanel extends Component {
 
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            filters: {
-                sort_by: 0,
-                order_by: 0,
-                commit_filter: 0,
-                hour_filter: 0,
-                progress_filter: 0
-            }
-        }
-    }
-
     componentDidMount = () => {
-        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&projectID=${this.props.currentProjectId}`)
+        //this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&projectID=${this.props.currentProjectId}`)
+        getAllStudentsInfo()
     }
 
     scrolledToBottom = () => {
@@ -73,10 +61,14 @@ class CoursePanel extends Component {
         const actions = [
             () => { history.push('/manage-tas') },
             () => {
+        	    this.props.setModalState(2)
+
                 if(this.props.currentProjectId)
                     this.props.syncRepositories(`${url}/api/pull/project?projectID=${this.props.currentProjectId}`)
             },
             () => {
+                this.props.setModalState(3)
+
                 if(this.props.currentProjectId)
                     this.props.runTests(`${url}/api/run/testall?projectID=${this.props.currentProjectId}`)
             },
@@ -93,11 +85,12 @@ class CoursePanel extends Component {
                 </div>
 
                 <div className='panel-right-nav'>
-                    <SyncItem />
-                    <CourseCommitHistory/>
+                    <HistoryText />
                 </div>
 
                 <CourseModal id={1}/>
+				<ProgressModal id={2} header={'Syncing'} progress={5} />
+	            <ProgressModal id={3} header={'Running Tests'} progress={5} />
 
                 <div className='panel-center-content'>
 
@@ -109,20 +102,20 @@ class CoursePanel extends Component {
                         <div className='h1 break-line header' />
 
                         <h3 className='header'>Course Charts Summary</h3>
-                        <CourseAnonCharts />
+                        <AnonymousCharts />
 
-	                    <div className='h1 break-line header' />
+	                    <div className='h1 break-line' />
 
 	                    <h3 className='header'>Students Charts Summary</h3>
-                        <CourseCharts/>
+                        <Charts/>
 
-                        <div className='h1 break-line header' />
+                        <div className='h1 break-line' />
                         <h3 className='header'>Course Statistics</h3>
                         <CourseStatistics />
 
                         <div className='h1 break-line' />
 
-                        <CourseStudentFilter onChange={ this.changeFilter } filters={ this.state.filters } />
+                        <CourseStudentFilter />
                     </div>
                 </div>
             </div>

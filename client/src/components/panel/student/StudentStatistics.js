@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { getStatistics } from '../../../redux/actions/index'
 import url from '../../../server'
 import {LoadingIcon} from "../../Helpers"
+import Statistics from "../common/Statistics"
 
 class StudentStatistics extends Component {
 
@@ -56,23 +57,7 @@ class StudentStatistics extends Component {
 
     render() {
         return (
-            <div className="student-stats-container">
-                <h3 className='header'>Statistics</h3>
-                <div className="h3 break-line header" />
-                {
-                    !this.props.isLoading && this.state.formattedData && this.state.formattedData.map ?
-                        this.state.formattedData.map((stat)  =>
-                            <div key={stat.stat_name} className="stat float-height">
-                                <h5>{stat.stat_name}</h5>
-                                <h5>{stat.stat_value}</h5>
-                            </div>
-                        )
-                        :
-	                    <div className='loading'>
-		                    <LoadingIcon/>
-	                    </div>
-                }
-            </div>
+            <Statistics isLoading={this.props.isLoading} values={this.state.formattedData} />
         )
     }
 }

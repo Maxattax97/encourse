@@ -1,20 +1,7 @@
-import genericDispatch from './fetch'
+import {genericDispatch} from "./index"
 
-export function getTeachingAssistantsHasError(hasError) {
-    return {
-        type: 'GET_TEACHING_ASSISTANTS_HAS_ERROR',
-        hasError
-    }
-}
-
-export function getTeachingAssistantsSuccess(data) {
-
-    return {
-        type: 'GET_TEACHING_ASSISTANTS_SUCCESS',
-        data
-    }
-}
+const type = 'TEACHING_ASSISTANT'
 
 export const getTeachingAssistants = genericDispatch(
-    'GET_TEACHING_ASSISTANTS', getTeachingAssistantsHasError, getTeachingAssistantsSuccess, 'GET'
+    type, 'GET_TEACHING_ASSISTANTS', 'GET'
 )

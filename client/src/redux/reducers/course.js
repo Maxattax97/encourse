@@ -1,273 +1,210 @@
-function course(state = {}, action) {
-    let content;
-    let contains;
-    switch(action.type) {
-    case 'GET_STUDENT_PREVIEWS':
-        return Object.assign({}, state, {
-            getStudentPreviewsIsLoading: true,
-        })
-    case 'GET_STUDENT_PREVIEWS_HAS_ERROR':
-        return Object.assign({}, state, {
-            getStudentPreviewsHasError: action.hasError,
-            getStudentPreviewsIsLoading: false,
-        })
-    case 'GET_STUDENT_PREVIEWS_DATA_SUCCESS':
-        content = state.getStudentPreviewsData ? [...state.getStudentPreviewsData.content] : []
-        contains = false
-        for(let value of content) {
-            if(value.id === action.data.content[0].id) {
-                contains = true
-                break
-            }
-        }
-        if(!contains) {
-            content = content.concat(action.data.content)
-        } 
-        action.data.content = content;
-        return Object.assign({}, state, {
-            getStudentPreviewsData: action.data,
-            getStudentPreviewsIsLoading: false,
-        })
-    case 'GET_SECTIONS_DATA':
-        return Object.assign({}, state, {
-            getSectionsDataIsLoading: true
-        })
-    case 'GET_SECTIONS_DATA_HAS_ERROR':
-        return Object.assign({}, state, {
-            getSectionsDataHasError: action.hasError,
-            getSectionsDataIsLoading: false
-        })
-    case 'GET_SECTIONS_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getSectionsData: action.data,
-            getSectionsDataIsLoading: false
-        })
-    case 'GET_CLASS_PROGRESS':
-        return Object.assign({}, state, {
-            getClassProgressIsLoading: true,
-        })
-    case 'GET_CLASS_PROGRESS_HAS_ERROR':
-        return Object.assign({}, state, {
-            getClassProgressHasError: action.hasError,
-            getClassProgressIsLoading: false,
-        })
-    case 'GET_CLASS_PROGRESS_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getClassProgressData: action.data,
-            getClassProgressIsLoading: false
-        })
-    case 'GET_TEST_BAR_GRAPH':
-        return Object.assign({}, state, {
-            getTestBarGraphIsLoading: true,
-        })
-    case 'GET_TEST_BAR_GRAPH_HAS_ERROR':
-        return Object.assign({}, state, {
-            getTestBarGraphHasError: action.hasError,
-            getTestBarGraphIsLoading: false,
-        })
-    case 'GET_TEST_BAR_GRAPH_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getTestBarGraphData: action.data,
-            getTestBarGraphIsLoading: false,
-        })
-    case 'SET_DIRECTORY':
-        return Object.assign({}, state, {
-            setDirectoryIsLoading: true,
-        })
-    case 'SET_DIRECTORY_HAS_ERROR':
-        return Object.assign({}, state, {
-            setDirectoryHasError: action.hasError,
-            setDirectoryIsLoading: false,
-        })
-    case 'SET_DIRECTORY_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            setDirectoryData: action.data,
-            setDirectoryIsLoading: false,
-        })
-	case 'SYNC_REPOSITORIES':
-		return Object.assign({}, state, {
-			syncRepositoriesIsLoading: true
-		})
-    case 'SYNC_REPOSITORIES_HAS_ERROR':
-        return Object.assign({}, state, {
-            syncRepositoriesIsLoading: false,
-            syncRepositoriesHasError: action.hasError
-        })
-    case 'SYNC_REPOSITORIES_SUCCESS':
-        return Object.assign({}, state, {
-            syncRepositoriesData: action.data,
-            syncRepositoriesIsLoading: false
-        })
-    case 'RUN_TESTS':
-        return Object.assign({}, state, {
-            runTestsIsLoading: true
-        })
-    case 'RUN_TESTS_HAS_ERROR':
-        return Object.assign({}, state, {
-            runTestsIsLoading: false,
-            runTestsHasError: action.hasError
-        })
-    case 'RUN_TESTS_SUCCESS':
-        return Object.assign({}, state, {
-            runTestsData: action.data,
-            runTestsIsLoading: false
-        })
-    case 'GET_DISHONESTY_REPORT':
-        return Object.assign({}, state, {
-            getDishonestyReportIsLoading: true,
-        })
-    case 'GET_DISHONESTY_REPORT_HAS_ERROR':
-        return Object.assign({}, state, {
-            getDishonestyReportHasError: action.hasError,
-            getDishonestyReportIsLoading: false,
-        })
-    case 'GET_DISHONESTY_REPORT_DATA_SUCCESS':
-        content = state.getDishonestyReportData ? [...state.getDishonestyReportData.content] : []
-        contains = false
-        for(let value of content) {
-            if(value.id === action.data.content[0].id) {
-                contains = true
-                break
-            }
-        }
-        if(!contains) {
-            content = content.concat(action.data.content)
-        } 
-        action.data.content = content;
-        return Object.assign({}, state, {
-            getDishonestyReportData: action.data,
-            getDishonestyReportIsLoading: false,
-        })
-    case 'UPDATE_COURSE_DISHONESTY_PAGE':
-        return Object.assign({}, state, {
-            dishonestyPage: state.dishonestyPage ? state.dishonestyPage + 1 : 2,
-        })
-    case 'RESET_COURSE_DISHONESTY_PAGE':
-        return Object.assign({}, state, {
-            getDishonestyReportData: null,
-            dishonestyPage: 1,
-        })
-    case 'UPDATE_STUDENTS_PAGE':
-        return Object.assign({}, state, {
-            studentsPage: state.studentsPage ? state.studentsPage + 1 : 2,
-        })
-    case 'RESET_STUDENTS_PAGE':
-        return Object.assign({}, state, {
-            getStudentPreviewsData: null,
-            studentsPage: 1,
-        })
-    case 'GET_SIMILARITY_PLOT':
-        return Object.assign({}, state, {
-            getSimilarityPlotIsLoading: true,
-        })
-    case 'GET_SIMILARITY_PLOT_HAS_ERROR':
-        return Object.assign({}, state, {
-            getSimilarityPlotHasError: action.hasError,
-            getSimilarityPlotIsLoading: false,
-        })
-    case 'GET_SIMILARITY_PLOT_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getSimilarityPlotData: action.data,
-            getSimilarityPlotIsLoading: false,
-        })
-    case 'GET_CLASS_STATISTICS':
-        return Object.assign({}, state, {
-            getClassStatisticsIsLoading: true,
-        })
-    case 'GET_CLASS_STATISTICS_HAS_ERROR':
-        return Object.assign({}, state, {
-            getClassStatisticsHasError: action.hasError,
-            getClassStatisticsIsLoading: false,
-        })
-    case 'GET_CLASS_STATISTICS_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getClassStatisticsData: action.data,
-            getClassStatisticsIsLoading: false,
-        })
-    case 'SUBMIT_STUDENTS':
-        return Object.assign({}, state, {
-            submitStudentsIsLoading: true,
-        })
-    case 'SUBMIT_STUDENTS_HAS_ERROR':
-        return Object.assign({}, state, {
-            submitStudentsHasError: action.hasError,
-            submitStudentsIsLoading: false,
-        })
-    case 'SUBMIT_STUDENTS_SUCCESS':
-        let ta = action.updates.ta
-        let updatedStudents = action.updates.students
-        let students = {...state.getStudentPreviewsData}
-        for(let student of updatedStudents) {
-            for(let student2 of students.content) {
-                if(student === student2.id) {
-                    if(!student2.teaching_assistants.includes(ta)) {
-                        student2.teaching_assistants.push(ta)
-                    }
-                }
-            }
-        }
-        return Object.assign({}, state, {
-            submitStudentsData: action.data,
-            submitStudentsIsLoading: false,
-            getStudentPreviewsData: students,
-        })
-    case 'GET_CLASS_COMMIT_HISTORY':
-        return Object.assign({}, state, {
-            getClassCommitHistoryIsLoading: true,
-        })
-    case 'GET_CLASS_COMMIT_HISTORY_HAS_ERROR':
-        return Object.assign({}, state, {
-            getClassCommitHistoryHasError: action.hasError,
-            getClassCommitHistoryIsLoading: false,
-        })
-    case 'GET_CLASS_COMMIT_HISTORY_DATA_SUCCESS':
-        content = state.getClassCommitHistoryData ? [...state.getClassCommitHistoryData.content] : []
-        contains = false
-        for(let value of content) {
-            if(value.date === action.data.content[0].date) {
-                contains = true
-                break
-            }
-        }
-        if(!contains) {
-            content = content.concat(action.data.content)
-        } 
-        action.data.content = content;
-        return Object.assign({}, state, {
-            getClassCommitHistoryData: action.data,
-            getClassCommitHistoryIsLoading: false,
-        })
-    case 'GET_CLASS_PROGRESS_ANON':
-        return Object.assign({}, state, {
-            getClassProgressIsLoading: true,
-        })
-    case 'GET_CLASS_PROGRESS_ANON_HAS_ERROR':
-        return Object.assign({}, state, {
-            getClassProgressHasError: action.hasError,
-            getClassProgressIsLoading: false,
-        })
-    case 'GET_CLASS_PROGRESS_ANON_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getClassProgressData: action.data,
-            getClassProgressIsLoading: false
-        })
-    case 'GET_TEST_BAR_GRAPH_ANON':
-        return Object.assign({}, state, {
-            getTestBarGraphAnonIsLoading: true,
-        })
-    case 'GET_TEST_BAR_GRAPH_ANON_HAS_ERROR':
-        return Object.assign({}, state, {
-            getTestBarGraphAnonHasError: action.hasError,
-            getTestBarGraphAnonIsLoading: false,
-        })
-    case 'GET_TEST_BAR_GRAPH_ANON_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getTestBarGraphAnonData: action.data,
-            getTestBarGraphAnonIsLoading: false,
-        })
-    default:
-        return state
+import {getData} from "./reducer-utils"
+
+function getStudentPreviews(state, action) {
+    if(action.hasError)
+	    return Object.assign({}, state, {
+		    getStudentPreviewsHasError: action.hasError,
+		    getStudentPreviewsIsLoading: false,
+	    })
+    if(action.data) {
+        /*
+         * TODO Jordan Buckmaster: this should replace and resort. To be precise, replacing is such that any time a value
+         * is already present inside inside the getStudentPreviewsData variable, we replace with the newer copy.
+         * This shouldn't be a hard coded (first element of the new data check) approach because it could be such that
+         * the result is larger the getStudentPreviewsData contains. Resort is the idea that we aren't ensuring what we've
+         * retrieved is sorted. So, we should rerun the operation on the front-end as well to double check that things go
+         * as expected. I've already noticed problems on the front-end because of this (this is a two-fold problem with the
+         * back-end involved as well).
+        */
+	    let content = state.getStudentPreviewsData ? [...state.getStudentPreviewsData.content] : []
+	    let contains = false
+	    for(let value of content) {
+		    if(value.id === action.data.content[0].id) {
+			    contains = true
+			    break
+		    }
+	    }
+	    if(!contains) {
+		    content = content.concat(action.data.content)
+	    }
+	    action.data.content = content
+	    return Object.assign({}, state, {
+		    getStudentPreviewsData: action.data,
+		    getStudentPreviewsIsLoading: false,
+	    })
     }
+	return Object.assign({}, state, {
+		getStudentPreviewsIsLoading: true,
+	})
 }
 
-export default course
+function getDishonestyReport(state, action) {
+    if(action.hasError)
+	    return Object.assign({}, state, {
+		    getDishonestyReportHasError: action.hasError,
+		    getDishonestyReportIsLoading: false,
+	    })
+    if(action.data) {
+	    /*
+ * TODO Jordan Buckmaster: this should replace and resort. To be precise, replacing is such that any time a value
+ * is already present inside inside the getStudentPreviewsData variable, we replace with the newer copy.
+ * This shouldn't be a hard coded (first element of the new data check) approach because it could be such that
+ * the result is larger the getStudentPreviewsData contains. Resort is the idea that we aren't ensuring what we've
+ * retrieved is sorted. So, we should rerun the operation on the front-end as well to double check that things go
+ * as expected. I've already noticed problems on the front-end because of this (this is a two-fold problem with the
+ * back-end involved as well).
+*/
+	    let content = state.getDishonestyReportData ? [...state.getDishonestyReportData.content] : []
+	    let contains = false
+	    for(let value of content) {
+		    if(value.id === action.data.content[0].id) {
+			    contains = true
+			    break
+		    }
+	    }
+	    if(!contains) {
+		    content = content.concat(action.data.content)
+	    }
+	    action.data.content = content;
+	    return Object.assign({}, state, {
+		    getDishonestyReportData: action.data,
+		    getDishonestyReportIsLoading: false,
+	    })
+    }
+	return Object.assign({}, state, {
+		getDishonestyReportIsLoading: true,
+	})
+}
+
+function updateCourseDishonestyPage(state, action) {
+	return Object.assign({}, state, {
+		dishonestyPage: state.dishonestyPage ? state.dishonestyPage + 1 : 2,
+	})
+}
+
+function resetCourseDishonestyPage(state, action) {
+	return Object.assign({}, state, {
+		getDishonestyReportData: null,
+		dishonestyPage: 1,
+	})
+}
+
+function updateStudentsPage(state, action) {
+	return Object.assign({}, state, {
+		studentsPage: state.studentsPage ? state.studentsPage + 1 : 2,
+	})
+}
+
+function resetStudentsPage(state, action) {
+	return Object.assign({}, state, {
+		getStudentPreviewsData: null,
+		studentsPage: 1,
+	})
+}
+
+function submitStudents(state, action) {
+    if(action.hasError)
+	    return Object.assign({}, state, {
+		    submitStudentsHasError: action.hasError,
+		    submitStudentsIsLoading: false,
+	    })
+    if(action.data) {
+	    let ta = action.extra.ta
+	    let updatedStudents = action.extra.students
+	    let students = {...state.getStudentPreviewsData}
+	    for(let student of updatedStudents) {
+		    for(let student2 of students.content) {
+			    if(student === student2.id) {
+				    if(!student2.teaching_assistants.includes(ta)) {
+					    student2.teaching_assistants.push(ta)
+				    }
+			    }
+		    }
+	    }
+	    return Object.assign({}, state, {
+		    submitStudentsData: action.data,
+		    submitStudentsIsLoading: false,
+		    getStudentPreviewsData: students,
+	    })
+    }
+	return Object.assign({}, state, {
+		submitStudentsIsLoading: true,
+	})
+}
+
+function getClassCommitHistory(state, action) {
+    if(action.hasError)
+	    return Object.assign({}, state, {
+		    getClassCommitHistoryHasError: action.hasError,
+		    getClassCommitHistoryIsLoading: false,
+	    })
+    if(action.data) {
+	    let content = state.getClassCommitHistoryData ? [...state.getClassCommitHistoryData.content] : []
+	    let contains = false
+	    for(let value of content) {
+		    if(value.date === action.data.content[0].date) {
+			    contains = true
+			    break
+		    }
+	    }
+	    if(!contains) {
+		    content = content.concat(action.data.content)
+	    }
+	    action.data.content = content;
+	    return Object.assign({}, state, {
+		    getClassCommitHistoryData: action.data,
+		    getClassCommitHistoryIsLoading: false,
+	    })
+    }
+	return Object.assign({}, state, {
+		getClassCommitHistoryIsLoading: true,
+	})
+}
+
+export default function course(state = {}, action) {
+    if(action.type !== 'COURSE')
+        return state
+
+    switch(action.class) {
+    case 'GET_STUDENT_PREVIEWS':
+        return getStudentPreviews(state, action)
+    case 'GET_SECTIONS_DATA':
+        return getData(state, action, 'getSectionsData')
+    case 'GET_CLASS_PROGRESS':
+        return getData(state, action, 'getClassProgress')
+    case 'GET_TEST_BAR_GRAPH':
+        return getData(state, action, 'getTestBarGraph')
+    case 'SET_DIRECTORY':
+        return getData(state, action, 'setDirectory')
+	case 'SYNC_REPOSITORIES':
+	    return getData(state, action, 'syncRepositories')
+    case 'RUN_TESTS':
+        return getData(state, action, 'runTests')
+    case 'GET_DISHONESTY_REPORT':
+        return getDishonestyReport(state, action)
+    case 'UPDATE_COURSE_DISHONESTY_PAGE':
+        return updateCourseDishonestyPage(state, action)
+    case 'RESET_COURSE_DISHONESTY_PAGE':
+        return resetCourseDishonestyPage(state, action)
+    case 'UPDATE_STUDENTS_PAGE':
+        return updateStudentsPage(state, action)
+    case 'RESET_STUDENTS_PAGE':
+        return resetStudentsPage(state, action)
+    case 'GET_SIMILARITY_PLOT':
+        return getData(state, action, 'getSimilarityPlot')
+    case 'GET_CLASS_STATISTICS':
+        return getData(state, action, 'getClassStatistics')
+    case 'SUBMIT_STUDENTS':
+        return submitStudents(state, action)
+    case 'GET_CLASS_COMMIT_HISTORY':
+        return getClassCommitHistory(state, action)
+    case 'GET_CLASS_PROGRESS_ANON':
+        return getData(state, action, 'getClassProgressAnon')
+    case 'GET_TEST_BAR_GRAPH_ANON':
+        return getData(state, action, 'getTestBarGraphAnon')
+    default:
+	    return Object.assign({}, state, {
+		    reduxError: action
+	    })
+    }
+}

@@ -104,7 +104,7 @@ class Main extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        isModalFocused: state.modal && state.modal.isModalFocused ? state.modal.isModalFocused : false,
+        isModalFocused: state.control && state.control.isModalFocused ? state.control.isModalFocused : false,
         account: state.auth && state.auth.getAccountData ? state.auth.getAccountData : null,
     }
 }

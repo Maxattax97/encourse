@@ -4,6 +4,8 @@
 .checkbox {
   @include set-size-rem-safe(1.5rem, 1.5rem);
   @include set-rem-safe(padding, .25rem);
+  display: inline-block;
+  cursor: pointer;
 }
 
 .checkbox-value {

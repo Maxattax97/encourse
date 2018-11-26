@@ -5,7 +5,7 @@ import {BackNav} from '../Helpers'
 import {history} from '../../redux/store'
 import {clearStudent, getStudent, syncStudentRepository, runStudentTests, setModalState} from '../../redux/actions'
 import url from '../../server'
-import SyncItem from './common/SyncItem'
+import HistoryText from './common/HistoryText'
 import StudentDishonestyCharts from "./student-dishonesty/StudentDishonestyCharts"
 import ShareReportModal from "./common/ShareReportModal"
 
@@ -53,7 +53,7 @@ class StudentDishonestyPanel extends Component {
                 </div>
 
                 <div className='panel-right-nav'>
-                    <SyncItem />
+                    <HistoryText />
                 </div>
 
                 <ShareReportModal id={1} link={null}/>

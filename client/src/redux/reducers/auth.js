@@ -1,72 +1,75 @@
-function auth(state = {}, action) {
-    switch(action.type) {
-    case 'LOG_IN':
-        return Object.assign({}, state, {
-            logInIsLoading: true,
-        })    
-    case 'LOG_IN_HAS_ERROR':
-        return Object.assign({}, state, {
-            logInHasError: action.hasError,
-            logInIsLoading: false,
-        })
-    case 'SET_TOKENS':
-    case 'LOG_IN_DATA_SUCCESS':
-        const expires_in = action.data.expires_in
-        const expires_at = Date.now() + expires_in*1000
-        return Object.assign({}, state, {
-            logInData: {...action.data, expires_at},
-            logInIsLoading: false,
-        })
-    case 'LOG_OUT':
-        return Object.assign({}, state, {
-            logInData: null,
-            logOutIsLoading: true,
-        })   
-    case 'LOG_OUT_HAS_ERROR':
-        return Object.assign({}, state, {
-            logOutHasError: action.hasError,
-            logOutIsLoading: false,
-        })
-    case 'LOG_OUT_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            logInData: null,
-            logOutIsLoading: false,
-        })
-    case 'CHANGE_PASSWORD':
-        return Object.assign({}, state, {
-            changePasswordIsLoading: true,
-        })
-    case 'CHANGE_PASSWORD_HAS_ERROR':
-        return Object.assign({}, state, {
-            changePasswordHasError: action.hasError,
-            changePasswordIsLoading: false,
-        })
-    case 'CHANGE_PASSWORD_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            changePasswordData: action.data,
-            changePasswordIsLoading: false,
-        })
-    case 'GET_ACCOUNT':
-        return Object.assign({}, state, {
-            getAccountIsLoading: true,
-        })
-    case 'GET_ACCOUNT_HAS_ERROR':
-        return Object.assign({}, state, {
-            getAccountHasError: action.hasError,
-            getAccountIsLoading: false,
-        })
-    case 'GET_ACCOUNT_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getAccountData: action.data,
-            getAccountIsLoading: false,
-        })
-    case 'SET_LOCATION':
-        return Object.assign({}, state, {
-            prevLocation: action.location,
-        })
-    default:
-        return state
-    }
+import {getData} from "./reducer-utils"
+
+function setTokens(state, action) {
+	const expires_at = Date.now() + (action.data.expires_in) * 1000
+	return Object.assign({}, state, {
+		logInData: {...action.data, expires_at},
+		logInIsLoading: false,
+	})
 }
 
-export default auth
+//if(action.hasError) -> this is the if statement to determine if error has occurred
+//if(action.data) -> this is the if statement to determine if success has occurred
+//else (implicit) -> this is the return statement on the start of the fetch request
+
+function logIn(state, action) {
+	if(action.hasError)
+		return Object.assign({}, state, {
+			logInHasError: action.hasError,
+			logInIsLoading: false,
+		})
+	if(action.data)
+	    return setTokens(state, action)
+
+	return Object.assign({}, state, {
+		logInIsLoading: true,
+	})
+}
+
+function logOut(state, action) {
+    if(action.hasError)
+	    return Object.assign({}, state, {
+		    logOutHasError: action.hasError,
+		    logOutIsLoading: false,
+	    })
+    if(action.data)
+	    return Object.assign({}, state, {
+		    logInData: null,
+		    logOutIsLoading: false,
+	    })
+    //TODO Jordan Buckmaster: logInData -> null for both the error case and non-error case (success state), are we ok with that?
+	return Object.assign({}, state, {
+		logInData: null,
+		logOutIsLoading: true,
+	})
+}
+
+function setLocation(state, action) {
+	return Object.assign({}, state, {
+		prevLocation: action.location,
+	})
+}
+
+export default function auth(state = {}, action) {
+	if(action.type !== 'AUTH')
+		return state
+
+	switch(action.class) {
+		case 'LOG_IN':
+			return logIn(state, action)
+		case 'SET_TOKENS':
+		    return setTokens(state, action)
+		case 'LOG_OUT':
+		    return logOut(state, action)
+		case 'CHANGE_PASSWORD':
+		    return getData(state, action, 'changePassword')
+		case 'GET_ACCOUNT':
+		    return getData(state, action, 'getAccount')
+		case 'SET_LOCATION':
+		    return setLocation(state, action)
+		default:
+			return Object.assign({}, state, {
+				reduxError: action
+			})
+	}
+}

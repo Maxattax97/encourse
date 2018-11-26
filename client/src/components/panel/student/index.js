@@ -7,9 +7,5 @@ export {
 } from './StudentCommitHistory'
 
 export {
-    default as StudentFeedback
-} from './StudentFeedback'
-
-export {
     default as StudentStatistics
 } from './StudentStatistics'

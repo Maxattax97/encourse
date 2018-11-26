@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { getClassStatistics } from '../../../redux/actions/index'
 import url from '../../../server'
-import {LoadingIcon, Card} from '../../Helpers'
+import Statistics from "../common/Statistics"
 
 class StudentStatistics extends Component {
 
@@ -49,30 +49,8 @@ class StudentStatistics extends Component {
     }
 
     render() {
-        console.log(this.state.formattedData)
-
         return (
-            <div className='summary'>
-                <div className='summary-container'>
-                    <div className='float-height cols-2'>
-                        <Card>
-                            {
-                                !this.props.isLoading && this.state.formattedData && this.state.formattedData.map ?
-                                    this.state.formattedData.map((stat)  =>
-                                        <div key={stat.stat_name} className="stat float-height">
-                                            <h5>{stat.stat_name}</h5>
-                                            <h5>{stat.stat_value}</h5>
-                                        </div>
-                                    )
-                                    :
-                                    <div className='loading'>
-                                        <LoadingIcon/>
-                                    </div>
-                            }
-                        </Card>
-                    </div>
-                </div>
-            </div>
+            <Statistics isLoading={this.props.isLoading} values={this.state.formattedData} />
         )
     }
 }

@@ -3,6 +3,16 @@
 
 .filter-container {
 
+  position: relative;
   display: inline-block;
+
+  > div {
+    vertical-align: top;
+  }
+
+  .checkbox {
+    margin-top: 5px;
+    margin-top: calc(3px + .125rem);
+  }
 
 }
