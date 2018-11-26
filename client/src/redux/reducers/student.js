@@ -80,11 +80,11 @@ export default function student(state = {}, action) {
         return state
 
     switch(action.class) {
-    case 'SET_CURRENT_STUDENT':
+    case 'SET_CURRENT':
         return setCurrentStudent(state, action)
-    case 'CLEAR_STUDENT':
+    case 'CLEAR':
         return clearStudent(state, action)
-    case 'GET_STUDENT':
+    case 'GET':
         return getStudent(state, action)
     case 'GET_PROGRESS_LINE':
         return getData(state, action, 'getProgressLine')
@@ -104,9 +104,9 @@ export default function student(state = {}, action) {
         return updateCommitsPage(state, action)
     case 'RESET_COMMITS_PAGE':
         return resetCommitsPage(state, action)
-    case 'SYNC_STUDENT_REPOSITORY':
+    case 'SYNC':
         return getData(state, action, 'syncStudentRepository')
-    case 'RUN_STUDENT_TESTS':
+    case 'RUN_TESTS':
         return getData(state, action, 'runStudentTests')
     default:
 	    return Object.assign({}, state, {

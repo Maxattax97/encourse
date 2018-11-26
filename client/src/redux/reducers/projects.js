@@ -120,17 +120,17 @@ export default function projects(state = {}, action) {
         return state
 
     switch(action.class) {
-    case 'SET_CURRENT_PROJECT':
+    case 'SET_CURRENT':
         return setCurrentProject(state, action)
     case 'TOGGLE_HIDDEN':
         return toggleHidden(state, action)
-    case 'GET_CLASS_PROJECTS':
+    case 'GET_ALL':
         return getClassProjects(state, action)
-    case 'MODIFY_PROJECT':
+    case 'MODIFY':
         return modifyProject(state, action)
-    case 'ADD_PROJECT':
+    case 'ADD':
         return addProject(state, action)
-    case 'DELETE_PROJECT':
+    case 'DELETE':
         return deleteProject(state, action)
     case 'ADD_TEST':
         return getData(state, action, 'addTest')

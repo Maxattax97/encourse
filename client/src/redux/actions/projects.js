@@ -5,7 +5,7 @@ const type = 'PROJECT'
 export function setCurrentProject(id, index) {
     return {
         type,
-        class: 'SET_CURRENT_PROJECT',
+        class: 'SET_CURRENT',
         id,
         index,
     }
@@ -18,36 +18,20 @@ export function toggleHidden() {
     }
 }
 
-export function getClassProjectsHasError(hasError) {
-    return {
-	    type,
-	    class: 'GET_CLASS_PROJECTS_HAS_ERROR',
-        hasError
-    }
-}
-
-export function getClassProjectsDataSuccess(data) {
-    return {
-	    type,
-	    class: 'GET_CLASS_PROJECTS_DATA_SUCCESS',
-        data
-    }
-}
-
 export const getClassProjects = genericDispatch(
-    type, 'GET_CLASS_PROJECTS', 'GET'
+    type, 'GET_ALL', 'GET'
 )
 
 export const addProject = genericDispatch(
-    type, 'ADD_PROJECT', 'POST'
+    type, 'ADD', 'POST'
 )
 
 export const deleteProject = genericDispatch(
-    type, 'DELETE_PROJECT', 'DELETE'
+    type, 'DELETE', 'DELETE'
 )
 
 export const modifyProject = genericDispatch(
-    type, 'MODIFY_PROJECT', 'POST'
+    type, 'MODIFY', 'POST'
 )
 
 export const addTest = genericDispatch(

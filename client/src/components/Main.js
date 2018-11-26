@@ -9,14 +9,7 @@ import url from '../server'
 import '../styles/css/base.css'
 import '../styles/css/main.css'
 import Navbar from './navigation/TopNavigation'
-import CoursePanel from './panel/CoursePanel'
-import StudentPanel from './panel/StudentPanel'
-import AdminPanel from './panel/AdminPanel'
-import PreferencePanel from './panel/PreferencePanel'
-import ProjectPanel from './panel/ProjectPanel'
-import ManageTAPanel from './panel/ManageTAPanel'
-import CourseDishonestyPanel from './panel/CourseDishonestyPanel'
-import StudentDishonestyPanel from './panel/StudentDishonestyPanel'
+import {AdminPanel, CoursePanel, CourseDishonestyPanel, ManageTAPanel, PreferencePanel, ProjectPanel, StudentDishonestyPanel, StudentPanel} from "./panel"
 
 class Main extends Component {
 
@@ -53,7 +46,6 @@ class Main extends Component {
     }
 
     render() {
-
         return (
             <div className="main">
                 <Navbar />
@@ -104,7 +96,7 @@ class Main extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        isModalFocused: state.control && state.control.isModalFocused ? state.control.isModalFocused : false,
+        isModalFocused: !!(state.control && state.control.modalState),
         account: state.auth && state.auth.getAccountData ? state.auth.getAccountData : null,
     }
 }

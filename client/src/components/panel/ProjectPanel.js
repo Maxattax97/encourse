@@ -5,12 +5,8 @@ import {BackNav, SettingsIcon, Title} from '../Helpers'
 import {history} from '../../redux/store'
 import {getClassProjects, setCurrentProject, setModalState} from '../../redux/actions'
 import connect from 'react-redux/es/connect/connect'
-import ProjectTestFilter from "./project/ProjectTestFilter"
-import url from "../../server"
-import ProjectModal from "./project/ProjectModal"
-import ProjectTestModal from "./project/ProjectTestModal"
+import {ProjectInfo, ProjectModal, ProjectTestFilter, ProjectTestModal} from './project'
 import HistoryText from "./common/HistoryText"
-import ProjectInfo from "./project/ProjectInfo"
 
 class ProjectPanel extends Component {
 
@@ -18,10 +14,6 @@ class ProjectPanel extends Component {
         super(props)
 
         this.state = {
-            name: '',
-            source_name: '',
-            created_date: '',
-            due_date: '',
             filters: {
 	            sort_by: 0,
 	            bundle_by: 0,

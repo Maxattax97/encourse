@@ -5,7 +5,7 @@ function teachingAssistant(state = {}, action) {
         return state
 
     switch(action.class) {
-    case 'GET_TEACHING_ASSISTANTS':
+    case 'GET_ALL':
         return getData(state, action, 'getTeachingAssistants')
     default:
 	    return Object.assign({}, state, {

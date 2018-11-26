@@ -43,9 +43,9 @@ class ModalClass extends Component {
     }
 
     render() {
-        const show = this.props.currentModal === this.props.id
-        const openedModal = this.previousModal !== this.props.currentModal
-	    this.previousModal = this.props.currentModal
+        const show = this.props.modalState === this.props.id
+        const openedModal = this.previousModal !== this.props.modalState
+	    this.previousModal = this.props.modalState
 
         if(show && openedModal && this.props.onOpen)
             this.props.onOpen()
@@ -72,7 +72,7 @@ class ModalClass extends Component {
 
     static mapStateToProps = (state) => {
         return {
-            currentModal: state.control && state.control.getCurrentModal ? state.control.getCurrentModal : 0,
+            modalState: state.control && state.control.modalState ? state.control.modalState : 0,
         }
     }
 

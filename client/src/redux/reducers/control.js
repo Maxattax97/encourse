@@ -1,7 +1,6 @@
 function setModalState(state, action) {
 	return Object.assign({}, state, {
-		isModalFocused: false,
-		getCurrentModal: action.id || 0
+		modalState: action.id || 0
 	})
 }
 

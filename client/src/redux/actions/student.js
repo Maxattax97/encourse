@@ -2,10 +2,24 @@ import {genericDispatch} from "./index"
 
 const type = 'STUDENT'
 
+export function updateCommitsPage() {
+	return {
+		type,
+		class: 'UPDATE_COMMITS_PAGE'
+	}
+}
+
+export function resetCommitsPage() {
+	return {
+		type,
+		class: 'RESET_COMMITS_PAGE'
+	}
+}
+
 export function setCurrentStudent(student) {
     return {
         type,
-        class: 'SET_CURRENT_STUDENT',
+        class: 'SET_CURRENT',
         student
     }
 }
@@ -13,28 +27,12 @@ export function setCurrentStudent(student) {
 export function clearStudent() {
     return {
 	    type,
-	    class: 'CLEAR_STUDENT'
-    }
-}
-
-export function getStudentHasError(hasError) {
-    return {
-	    type,
-	    class: 'GET_STUDENT_HAS_ERROR',
-        hasError
-    }
-}
-
-export function getStudentDataSuccess(data) {
-    return {
-	    type,
-	    class: 'GET_STUDENT_DATA_SUCCESS',
-        data
+	    class: 'CLEAR'
     }
 }
 
 export const getStudent = genericDispatch(
-    type, 'GET_STUDENT', 'GET'
+    type, 'GET', 'GET'
 )
 
 export const getProgressLine = genericDispatch(
@@ -66,23 +64,9 @@ export const getProgressPerCommit = genericDispatch(
 )
 
 export const syncStudentRepository = genericDispatch(
-	type, 'SYNC_STUDENT_REPOSITORIES', 'POST'
+	type, 'SYNC', 'POST'
 )
 
 export const runStudentTests = genericDispatch(
-    type, 'RUN_STUDENT_TESTS', 'POST'
+    type, 'RUN_TESTS', 'POST'
 )
-
-export function updateCommitsPage() {
-    return {
-	    type,
-	    class: 'UPDATE_COMMITS_PAGE'
-    }
-}
-
-export function resetCommitsPage() {
-    return {
-	    type,
-	    class: 'RESET_COMMITS_PAGE'
-    }
-}

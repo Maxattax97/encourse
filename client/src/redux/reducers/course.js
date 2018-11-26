@@ -166,17 +166,17 @@ export default function course(state = {}, action) {
         return state
 
     switch(action.class) {
-    case 'GET_STUDENT_PREVIEWS':
+    case 'GET_STUDENTS':
         return getStudentPreviews(state, action)
-    case 'GET_SECTIONS_DATA':
+    case 'GET_SECTIONS':
         return getData(state, action, 'getSectionsData')
-    case 'GET_CLASS_PROGRESS':
+    case 'GET_PROGRESS':
         return getData(state, action, 'getClassProgress')
     case 'GET_TEST_BAR_GRAPH':
         return getData(state, action, 'getTestBarGraph')
     case 'SET_DIRECTORY':
         return getData(state, action, 'setDirectory')
-	case 'SYNC_REPOSITORIES':
+	case 'SYNC':
 	    return getData(state, action, 'syncRepositories')
     case 'RUN_TESTS':
         return getData(state, action, 'runTests')
@@ -192,13 +192,13 @@ export default function course(state = {}, action) {
         return resetStudentsPage(state, action)
     case 'GET_SIMILARITY_PLOT':
         return getData(state, action, 'getSimilarityPlot')
-    case 'GET_CLASS_STATISTICS':
+    case 'GET_STATISTICS':
         return getData(state, action, 'getClassStatistics')
     case 'SUBMIT_STUDENTS':
         return submitStudents(state, action)
-    case 'GET_CLASS_COMMIT_HISTORY':
+    case 'GET_COMMIT_HISTORY':
         return getClassCommitHistory(state, action)
-    case 'GET_CLASS_PROGRESS_ANON':
+    case 'GET_PROGRESS_ANON':
         return getData(state, action, 'getClassProgressAnon')
     case 'GET_TEST_BAR_GRAPH_ANON':
         return getData(state, action, 'getTestBarGraphAnon')

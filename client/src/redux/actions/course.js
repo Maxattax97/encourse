@@ -30,6 +30,62 @@ export function resetStudentsPage() {
     }
 }
 
+export const getStudentPreviews = genericDispatch(
+    type, 'GET_STUDENTS', 'GET'
+)
+
+export const getSectionsData = genericDispatch(
+    type, 'GET_SECTIONS', 'GET'
+)
+
+export const getClassProgress = genericDispatch(
+    type, 'GET_PROGRESS', 'GET'
+)
+
+export const getTestBarGraph = genericDispatch(
+    type, 'GET_TEST_BAR_GRAPH', 'GET',
+)
+
+export const setDirectory = genericDispatch(
+    type, 'SET_DIRECTORY', 'POST'
+)
+
+export const syncRepositories = genericDispatch(
+	type, 'SYNC', 'POST'
+)
+
+export const runTests = genericDispatch(
+    type, 'RUN_TESTS', 'POST'
+)
+
+export const getDishonestyReport = genericDispatch(
+    type, 'GET_DISHONESTY_REPORT', 'GET'
+)
+
+export const getSimilarityPlot = genericDispatch(
+    type, 'GET_SIMILARITY_PLOT', 'GET'
+)
+
+export const getClassStatistics = genericDispatch(
+    type, 'GET_STATISTICS', 'GET'
+)
+
+export const submitStudents = genericDispatch(
+    type, 'SUBMIT_STUDENTS', 'POST'
+)
+
+export const getClassCommitHistory = genericDispatch(
+    type, 'GET_COMMIT_HISTORY', 'GET'
+)
+
+export const getClassProgressAnon = genericDispatch(
+    type, 'GET_PROGRESS_ANON', 'GET'
+)
+
+export const getTestBarGraphAnon = genericDispatch(
+    type, 'GET_TEST_BAR_GRAPH_ANON', 'GET',
+)
+
 /*export function getStudentPreviewsDataSuccess(data) {
     if (fuzzing) {
         for (let e of data.content) {
@@ -58,10 +114,6 @@ export function resetStudentsPage() {
     }
 }*/
 
-export const getStudentPreviews = genericDispatch(
-    type, 'GET_STUDENT_PREVIEWS', 'GET'
-)
-
 /*export function getSectionsDataSuccess(data) {
     if (fuzzing) {
         for (let e of data) {
@@ -89,55 +141,3 @@ export const getStudentPreviews = genericDispatch(
         data
     }
 }*/
-
-export const getSectionsData = genericDispatch(
-    type, 'GET_SECTIONS_DATA', 'GET'
-)
-
-export const getClassProgress = genericDispatch(
-    type, 'GET_CLASS_PROGRESS', 'GET'
-)
-
-export const getTestBarGraph = genericDispatch(
-    type, 'GET_TEST_BAR_GRAPH', 'GET',
-)
-
-export const setDirectory = genericDispatch(
-    type, 'SET_DIRECTORY', 'POST'
-)
-
-export const syncRepositories = genericDispatch(
-	type, 'SYNC_REPOSITORIES', 'POST'
-)
-
-export const runTests = genericDispatch(
-    type, 'RUN_TESTS', 'POST'
-)
-
-export const getDishonestyReport = genericDispatch(
-    type, 'GET_DISHONESTY_REPORT', 'GET'
-)
-
-export const getSimilarityPlot = genericDispatch(
-    type, 'GET_SIMILARITY_PLOT', 'GET'
-)
-
-export const getClassStatistics = genericDispatch(
-    type, 'GET_CLASS_STATISTICS', 'GET'
-)
-
-export const submitStudents = genericDispatch(
-    type, 'SUBMIT_STUDENTS', 'POST'
-)
-
-export const getClassCommitHistory = genericDispatch(
-    type, 'GET_CLASS_COMMIT_HISTORY', 'GET'
-)
-
-export const getClassProgressAnon = genericDispatch(
-    type, 'GET_CLASS_PROGRESS_ANON', 'GET'
-)
-
-export const getTestBarGraphAnon = genericDispatch(
-    type, 'GET_TEST_BAR_GRAPH_ANON', 'GET',
-)

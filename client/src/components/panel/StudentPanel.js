@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import {BackNav, Card} from '../Helpers'
+import {BackNav} from '../Helpers'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import { history } from '../../redux/store'
 import { getStudent, clearStudent, runStudentTests, syncStudentRepository } from '../../redux/actions/index'
@@ -14,17 +14,17 @@ import { fuzzing } from '../../fuzz'
 
 class StudentPanel extends Component {
 
-    componentWillMount = () => this.clear()
-    componentWillUnmount = () => this.clear()
-    clear = () => this.props.clearStudent()
-
     componentDidMount = () => {
         if(!this.props.currentStudent) {
             this.props.getStudent(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&userName=${this.props.match.params.id}`)
         }
     }
 
-    back = () => {
+	componentWillUnmount() {
+		this.props.clearStudent()
+	}
+
+	back = () => {
         history.goBack()
     }
 
@@ -81,6 +81,7 @@ class StudentPanel extends Component {
                         <StudentCharts />
 
                         <div className="h1 break-line" />
+
                         <h3 className='header'>Student Statistics</h3>
 	                    <StudentStatistics/>
                     </div>
