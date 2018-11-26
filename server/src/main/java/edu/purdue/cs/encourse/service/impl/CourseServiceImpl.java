@@ -369,10 +369,10 @@ public class CourseServiceImpl implements CourseService {
 
     /**
      * Obtains information on amount of progress each student specified has made on a project
-     * Primarily used for graphs which show project over time on front-end
+     * Primarily used for graphs which show progress over time on front-end
      *
      * @param projectID Identifier for project that progress is being obtained from
-     * @param userNames Front-end identifier for each student to include in progress analysis
+     * @param userNames Front-end identifier for each student to include in the analysis
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getProgress(@NonNull String projectID, List<String> userNames) {
@@ -402,7 +402,7 @@ public class CourseServiceImpl implements CourseService {
      * Primarily used for showing signs of academic dishonesty on front-end
      *
      * @param projectID Identifier for project that similarities are being analyzed from
-     * @param userNames Front-end identifier for each student involved in the analysis
+     * @param userNames Front-end identifier for each student to include in the analysis
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getSimilar(@NonNull String projectID, List<String> userNames) {
@@ -459,7 +459,7 @@ public class CourseServiceImpl implements CourseService {
      * Primarily used for showing class and group statistics summaries
      *
      * @param projectID Identifier for project that statistics are obtained from
-     * @param userNames Front-end identifier for each student that statistics include
+     * @param userNames Front-end identifier for each student to include in the analysis
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getStatistics(@NonNull String projectID, List<String> userNames) {
@@ -505,7 +505,7 @@ public class CourseServiceImpl implements CourseService {
      * Primarily used for showing which test cases are being passed on front-end
      *
      * @param projectID Identifier for project that test results are obtained from
-     * @param userNames Front-end identifier for each student that test results include
+     * @param userNames Front-end identifier for each student to include in the analysis
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getTestSummary(@NonNull String projectID, List<String> userNames) {
@@ -528,11 +528,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     /**
-     * Obtains information on commit history for several students
+     * Obtains information on commit history by day for several students
      * Primarily used for showing the list of most recent commits in a group of students
      *
      * @param projectID Identifier for project that commit history is obtained from
-     * @param userNames Front-end identifier for each student included in the history
+     * @param userNames Front-end identifier for each student to include in the analysis
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getCommitList(@NonNull String projectID, List<String> userNames) {
@@ -552,7 +552,7 @@ public class CourseServiceImpl implements CourseService {
      * Primarily used for showing signs of academic dishonesty
      *
      * @param projectID Identifier for project that cheating analysis is performed from
-     * @param userNames Front-end identifier for each student included in the analysis
+     * @param userNames Front-end identifier for each student to include in the analysis
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getCheating(@NonNull String projectID, List<String> userNames) {
@@ -643,6 +643,14 @@ public class CourseServiceImpl implements CourseService {
         return helperService.runPython(command);
     }
 
+    /**
+     * Obtains files modified and major files changed for each day that student has worked on project
+     * Primarily used for showing a brief commit history on the student page
+     *
+     * @param projectID Identifier for project that commit history is obtained from
+     * @param userName  Front-end identifier for student whose project is being analyzed
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getStudentCommitList(@NonNull String projectID, @NonNull String userName) {
         String commitLogFile = helperService.listStudentCommitsByTime(projectID, userName);
         if(commitLogFile == null) {
@@ -653,6 +661,14 @@ public class CourseServiceImpl implements CourseService {
         return helperService.runPython(command);
     }
 
+    /**
+     * Obtains analysis on progress per commit for a student
+     * Primarily used for showing signs of academic dishonesty
+     *
+     * @param projectID Identifier for project that progress per commit is obtained from
+     * @param userName  Front-end identifier for student whose project is being analyzed
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getStudentCommitVelocity(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = helperService.countStudentCommitsByDay(projectID, userName);
         String commitLogFile = helperService.listStudentCommitsByTime(projectID, userName);
@@ -699,6 +715,14 @@ public class CourseServiceImpl implements CourseService {
         return helperService.runPython(command);
     }
 
+    /**
+     * Obtains information on amount of progress that a student has made on a project
+     * Primarily used for graphs which show progress over time on front-end
+     *
+     * @param projectID Identifier for project that progress is being obtained from
+     * @param userName  Front-end identifier for student whose project is being analyzed
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName) {
         String visibleTestFile;
         String hiddenTestFile;
@@ -743,6 +767,14 @@ public class CourseServiceImpl implements CourseService {
         return helperService.runPython(command);
     }
 
+    /**
+     * Obtains various statistics for a student's work on a project
+     * Primarily used for showing student statistics summaries
+     *
+     * @param projectID Identifier for project that statistics are being obtained from
+     * @param userName  Front-end identifier for student whose project is being analyzed
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getStudentStatistics(@NonNull String projectID, @NonNull String userName) {
         String dailyCountsFile = helperService.countStudentCommitsByDay(projectID, userName);
         String commitLogFile = helperService.listStudentCommitsByTime(projectID, userName);
@@ -775,6 +807,18 @@ public class CourseServiceImpl implements CourseService {
         return helperService.runPython(command);
     }
 
+    /**
+     * Obtains a specified source file with changes between specified commit hashes
+     * Hashes will typically be the last commit on the previous day for start and last commit on the current dsy for end
+     * Primerily used to show a file with all changes between the hashes
+     *
+     * @param projectID         Identifier for project that source is being taken from
+     * @param userName          Front-end identifier for student whose source is being shown
+     * @param startCommitHash   Hash corresponding to the commit with the initial state of the file
+     * @param endCommitHash     Hash corresponding to the commit with the final state of the file
+     * @param sourceName        Name of the source file being analyzed
+     * @return                  Path to a new file with the entire source file and additions and deletion shown inline
+     */
     public String getSourceWithChanges(@NonNull String projectID, @NonNull String userName, @NonNull String startCommitHash, @NonNull String endCommitHash, @NonNull String sourceName) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
@@ -796,7 +840,14 @@ public class CourseServiceImpl implements CourseService {
         return fileName;
     }
 
-    /** Runs testall for a single student, which is quicker if the professor or TA wants to manually run testall for a student **/
+    /**
+     * Runs a testall immediately for a particular student
+     * Primarily used for quickly running a testall on a particular student without having to test the entire class
+     *
+     * @param projectID Identifier for the project being tested
+     * @param userName  Front-end identifier for the student being tested
+     * @return          Error code
+     */
     public int runTestallForStudent(@NonNull String projectID, @NonNull String userName) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
