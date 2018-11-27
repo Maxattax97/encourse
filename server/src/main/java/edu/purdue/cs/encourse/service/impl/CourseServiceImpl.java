@@ -903,8 +903,6 @@ public class CourseServiceImpl implements CourseService {
             if(hiddenResult == null) {
                 hiddenResult = "";
             }
-            helperService.updateTestResults(visibleResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), false);
-            helperService.updateTestResults(hiddenResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), true);
             double visibleGrade = helperService.parseProgressForProject(projectID, visibleResult);
             double hiddenGrade = helperService.parseProgressForProject(projectID, hiddenResult);
             StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
@@ -921,6 +919,12 @@ public class CourseServiceImpl implements CourseService {
                     projectDate.setDateHiddenGrade(hiddenGrade);
                     studentProjectDateRepository.save(projectDate);
                 }
+            }
+            if(visibleGrade > studentProject.getBestVisibleGrade()) {
+                helperService.updateTestResults(visibleResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), false);
+            }
+            if(hiddenGrade > studentProject.getBestHiddenGrade()) {
+                helperService.updateTestResults(hiddenResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), true);
             }
             studentProject = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(studentProject.getProjectIdentifier(), studentProject.getStudentID(), "testall");
             line = reader.readLine();
@@ -944,8 +948,6 @@ public class CourseServiceImpl implements CourseService {
             if(hiddenResult == null) {
                 hiddenResult = "";
             }
-            helperService.updateTestResults(visibleResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), false);
-            helperService.updateTestResults(hiddenResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), true);
             visibleGrade = helperService.parseProgressForProject(projectID, visibleResult);
             hiddenGrade = helperService.parseProgressForProject(projectID, hiddenResult);
             projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
@@ -962,6 +964,12 @@ public class CourseServiceImpl implements CourseService {
                     projectDate.setDateHiddenGrade(hiddenGrade);
                     studentProjectDateRepository.save(projectDate);
                 }
+            }
+            if(visibleGrade > studentProject.getBestVisibleGrade()) {
+                helperService.updateTestResults(visibleResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), false);
+            }
+            if(hiddenGrade > studentProject.getBestHiddenGrade()) {
+                helperService.updateTestResults(hiddenResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), true);
             }
             helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             reader.close();
