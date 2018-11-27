@@ -15,6 +15,17 @@ Test cases by pass
 Most passed test cases
 Least passed test cases
 
+Stats
+------
+Average Additions
+    Average number of lines of code added so far per student
+Average Deletions
+    Average number of lines of code deleted so far per student
+Average Commit Count
+    Average number of commits so far per student
+Average Estimated Time Spent
+    Average number of time spent so far per student. Estimated by (recording an hour of work if there is a commit between two hours | recording time if there is a commit within an hour of another commit)
+
 
 Student page
 ======
@@ -24,3 +35,6 @@ Graphs
 Percentage of test cases passed by day. This graph is strictly increasing since it ignores changes that break the code.
 Number of commits by day
 Cumulative number of lines added or deleted by day
+
+Stats
+------
