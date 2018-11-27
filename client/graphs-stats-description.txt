@@ -1,6 +1,12 @@
 Should each graph have a completely description? This might involve passing a description as a property or something
 
 
+Other
+=====
+Last Sync - The last time that the server moved the git project files from data.cs.purdue.edu to vm2
+Last Test Ran - The last time the server ran the testall scripts on each project
+
+
 Project page
 =====
 
@@ -38,3 +44,4 @@ Cumulative number of lines added or deleted by day
 
 Stats
 ------
+# TODO
