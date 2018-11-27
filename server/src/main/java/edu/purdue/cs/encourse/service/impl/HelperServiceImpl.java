@@ -20,6 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+/**
+ * Contains implementations for all services which are used internally as helper functions for other services
+ * Primarily used internally by other services
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 @Service(value = HelperServiceImpl.NAME)
 public class HelperServiceImpl implements HelperService {
 
@@ -77,6 +84,13 @@ public class HelperServiceImpl implements HelperService {
         return testDir;
     }
 
+    /**
+     * Executes a bash script using the project's directory for bash scripts
+     * Primarily used for connecting Java to bash scripts
+     *
+     * @param command   Script and arguments to execute, format is "{ScriptName} {Argument1} {Argument2} ..."
+     * @return          Error code
+     */
     public int executeBashScript(@NonNull String command) {
         try {
             Process process = Runtime.getRuntime().exec("./src/main/bash/" + command + " 2> /dev/null");
@@ -92,6 +106,13 @@ public class HelperServiceImpl implements HelperService {
         return 0;
     }
 
+    /**
+     * Executes a python script and gives the return value of the script
+     * Primarily used for connecting Java to Python scripts
+     *
+     * @param command   Script and arguments to execute, format is "{PythonDir}/{ScriptName} {Argument1} {Argument2} ..."
+     * @return          Return value of the script
+     */
     public JSONReturnable runPython(@NonNull String command) {
         System.out.println(command);
         JSONReturnable json = null;
@@ -99,8 +120,8 @@ public class HelperServiceImpl implements HelperService {
             Process process = Runtime.getRuntime().exec(command);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String output = null;
-            String error = null;
+            String output;
+            String error;
             while ((error = stdError.readLine()) != null) {
                 System.out.println("Error: " + error);
             }
@@ -135,6 +156,13 @@ public class HelperServiceImpl implements HelperService {
         return json;
     }
 
+    /**
+     * Checks if a student is taking a course that a project is assigned for
+     *
+     * @param student   Object representing the student being checked
+     * @param project   Object representing a project for a course
+     * @return          True if the student is in the course, false otherwise
+     */
     public boolean isTakingCourse(@NonNull Student student, @NonNull Project project) {
         List<StudentSection> studentSections = studentSectionRepository.findByIdStudentID(student.getUserID());
         boolean isTaking = false;
@@ -148,6 +176,14 @@ public class HelperServiceImpl implements HelperService {
         return isTaking;
     }
 
+    /**
+     * Takes a string representing the test results for a project and converts it to a grade
+     * Primarily used for setting the best grade earned for a project on a particular date
+     *
+     * @param projectID     Identifier for project that was tested
+     * @param testOutput    Output of the testall for the project
+     * @return              Grade on a scale from 0 to 100, rounded to nearest integer
+     */
     public double parseProgressForProject(@NonNull String projectID, @NonNull String testOutput) {
         String[] testResults = testOutput.split(";");
         double earnedPoints = 0.0;
@@ -169,6 +205,16 @@ public class HelperServiceImpl implements HelperService {
         return Math.round((earnedPoints / maxPoints) * 100);
     }
 
+    /**
+     * Updates each individual test script to indicate if it passed or failed in the test result
+     * Also updates the grade for every suite based on the scores for each test script within the suite
+     * Primarily used to record the best grade from the testall
+     *
+     * @param result    Output of the testall for the project
+     * @param studentID Back-end identifier for the student tested
+     * @param projectID Identifier for the project that was tested
+     * @param isHidden  Indicated if results should be hidden from students
+     */
     public void updateTestResults(String result, String studentID, String projectID, boolean isHidden) {
         String[] testResults = result.split(";");
         for(String s : testResults) {
@@ -200,22 +246,27 @@ public class HelperServiceImpl implements HelperService {
                 }
                 maxPoints += t.getPointsWorth();
             }
-            int grade = (int)Math.round((earnedPoints / maxPoints) * 100);
+            double grade = Math.round((earnedPoints / maxPoints) * 100);
             if(isHidden) {
-                if(grade > suiteProject.getBestHiddenGrade()) {
-                    suiteProject.setBestHiddenGrade(Math.round((earnedPoints / maxPoints) * 100));
-                    studentProjectRepository.save(suiteProject);
-                }
+                suiteProject.setBestHiddenGrade(grade);
+                studentProjectRepository.save(suiteProject);
             }
             else {
-                if(grade > suiteProject.getBestVisibleGrade()) {
-                    suiteProject.setBestVisibleGrade(Math.round((earnedPoints / maxPoints) * 100));
-                    studentProjectRepository.save(suiteProject);
-                }
+                suiteProject.setBestVisibleGrade(grade);
+                studentProjectRepository.save(suiteProject);
             }
         }
     }
 
+    /**
+     * Creates temporary files containing visible and hidden test results for Python scripts to parse
+     * Primarily used for services which analyze test scores for a project
+     *
+     * @param visibleTestFile   Name of the file to contain visible test results
+     * @param hiddenTestFile    Name of the file to contain hidden test results
+     * @param projects          All of the students and associated projects to write test results for
+     * @throws IOException      Opens, closes, and writes to files
+     */
     public void createTestFiles(String visibleTestFile, String hiddenTestFile, List<StudentProject> projects) throws IOException {
         BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
         BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
@@ -242,6 +293,16 @@ public class HelperServiceImpl implements HelperService {
         hiddenWriter.close();
     }
 
+    /**
+     * Creates temporary files containing visible and hidden test results for assigned students for Python scripts to parse
+     * Primarily used for services which analyze test scores for a project for a TA
+     *
+     * @param visibleTestFile   Name of the file to contain visible test results
+     * @param hiddenTestFile    Name of the file to contain hidden test results
+     * @param assignments       All of the assigned students to write test results for
+     * @param projectID         Identifier for the project that test results pertain to
+     * @throws IOException      Opens, closes, and writes to files
+     */
     public void createTestFilesTA(String visibleTestFile, String hiddenTestFile, List<TeachingAssistantStudent> assignments, String projectID) throws IOException {
         BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
         BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
@@ -271,6 +332,13 @@ public class HelperServiceImpl implements HelperService {
         hiddenWriter.close();
     }
 
+    /**
+     * Obtains all project for a list of students
+     *
+     * @param projectID Identifier for the project
+     * @param userNames Front-end identifiers for all students that projects are retrieved for
+     * @return          Projects associated with each username
+     */
     public List<StudentProject> getStudentProjects(String projectID, List<String> userNames) {
         List<StudentProject> projects = new ArrayList<>();
         for(String userName: userNames) {
@@ -283,6 +351,12 @@ public class HelperServiceImpl implements HelperService {
         return projects;
     }
 
+    /**
+     * Obtains front-end identifiers for students that work on the specified projects
+     *
+     * @param studentProjects   Projects that identifiers are being obtained for
+     * @return                  Usernames associated with each project
+     */
     public List<String> getStudentUserNames(List<StudentProject> studentProjects) {
         List<String> userNames = new ArrayList<>();
         for(StudentProject project : studentProjects) {
@@ -292,6 +366,12 @@ public class HelperServiceImpl implements HelperService {
         return userNames;
     }
 
+    /**
+     * Obtains front-end identifiers for students that are assigned to a TA
+     *
+     * @param assignments   Assignments that identifiers are being obtained for
+     * @return              Student usernames associated with each TA assignment
+     */
     public List<String> getStudentUserNamesForTA(List<TeachingAssistantStudent> assignments) {
         List<String> userNames = new ArrayList<>();
         for(TeachingAssistantStudent assignment : assignments) {
@@ -301,7 +381,14 @@ public class HelperServiceImpl implements HelperService {
         return userNames;
     }
 
-    /** Counts the number of commits that every student in the class has made for a project **/
+    /**
+     * Counts the commits for each specified student's project, and stores result in a temporary file
+     * Primarily used to relay information to Python via temporary file
+     *
+     * @param projectID Identifier for project that git information is obtained from
+     * @param projects  List of student projects to count commits for
+     * @return          Filename for the temporary file created to store commit counts
+     */
     public String countAllCommits(@NonNull String projectID, List<StudentProject> projects) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
@@ -320,7 +407,14 @@ public class HelperServiceImpl implements HelperService {
         return fileName;
     }
 
-    /** Counts the total number of commits made each day that the project was active **/
+    /**
+     * Counts the commits for each day for each specified student's project, and stores result in a temporary file
+     * Primarily used to relay information to Python via temporary file
+     *
+     * @param projectID Identifier for project that git information is obtained from
+     * @param projects  List of student projects to count commits for by day
+     * @return          Filename for the temporary file created to store daily commit counts
+     */
     public String countAllCommitsByDay(@NonNull String projectID, List<StudentProject> projects) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
@@ -339,7 +433,14 @@ public class HelperServiceImpl implements HelperService {
         return fileName;
     }
 
-    /** Counts the number of commits that a single student has made for each day that the project is active **/
+    /**
+     * Counts the commits for each day for a student's project, and stores result in a temporary file
+     * Primarily used to relay information to Python via temporary file
+     *
+     * @param projectID Identifier for project that git information is obtained from
+     * @param userName  Front-end identifier for student whose project is being analyzed
+     * @return          Filename for the temporary file created to store daily commit count
+     */
     public String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName) {
         if (DEBUG) {
             return pythonPath + "test_datasets/sampleCountsDay.txt";
@@ -368,7 +469,15 @@ public class HelperServiceImpl implements HelperService {
         return fileName;
     }
 
-    /** Lists various information about git history, including commit time and dates, and files modified in each commit for all students **/
+    /**
+     * Lists various git information, like additions and deletions, for each commit made
+     * for each specified student's project, and stores result in a temporary file
+     * Primarily used to relay information to Python via temporary file
+     *
+     * @param projectID Identifier for project that git information is obtained from
+     * @param projects  List of student projects to list commit information for
+     * @return          Filename for the temporary file created to store commit information
+     */
     public String listAllCommitsByTime(@NonNull String projectID, List<StudentProject> projects) {
         if (DEBUG) {
             return pythonPath + "test_datasets/sampleCommitList.txt";
@@ -391,7 +500,15 @@ public class HelperServiceImpl implements HelperService {
         return fileName;
     }
 
-    /** Lists various information about git history, including commit time and dates, and files modified in each commit for one student **/
+    /**
+     * Lists various git information, like additions and deletions,
+     * for each commit in a student's project, and stores result in a temporary file
+     * Primarily used to relay information to Python via temporary file
+     *
+     * @param projectID Identifier for project that git information is obtained from
+     * @param userName  Front-end identifier for student whose project is being analyzed
+     * @return          Filename for the temporary file created to store commit information
+     */
     public String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName) {
         if (DEBUG) {
             return pythonPath + "test_datasets/sampleCommitList.txt";
