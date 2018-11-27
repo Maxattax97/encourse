@@ -1,0 +1,26 @@
+Should each graph have a completely description? This might involve passing a description as a property or something
+
+
+Project page
+=====
+
+Graphs
+-----
+Histogram of all students in the course grouped by the percentage of tests they are passing (progress).
+Histogram of selected students grouped by the percentage of tests they are passing (progress).
+
+Histogram of students grouped by the percentage of tests they are passing (progress).
+
+Test cases by pass
+Most passed test cases
+Least passed test cases
+
+
+Student page
+======
+
+Graphs
+-----
+Percentage of test cases passed by day. This graph is strictly increasing since it ignores changes that break the code.
+Number of commits by day
+Cumulative number of lines added or deleted by day
