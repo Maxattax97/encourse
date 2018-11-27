@@ -24,9 +24,9 @@ Least passed test cases
 Stats
 ------
 Average Additions
-    Average number of lines of code added so far per student
+    Average number of added lines of code so far per student
 Average Deletions
-    Average number of lines of code deleted so far per student
+    Average number of deleted lines of code so far per student
 Average Commit Count
     Average number of commits so far per student
 Average Estimated Time Spent
@@ -44,4 +44,10 @@ Cumulative number of lines added or deleted by day
 
 Stats
 ------
-# TODO
+Start Date - The date of the student's first commit
+End Date - The date of the student's last commit
+Estimated Time Spent - Estimated time spent on the project. Estimated by (recording an hour of work if there is a commit between two hours | recording time if there is a commit within an hour of another commit)
+Current Test Score - (Percentage of passing test cases | Score calculated by summing the points given for each passing test case)
+Commit Count - Number of commits made the by student so far
+Deletions - Number of deleted lines of code made the by student so far
+Additions - Number of added lines of code made the by student so far
