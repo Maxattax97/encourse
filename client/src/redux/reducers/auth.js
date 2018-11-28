@@ -51,10 +51,10 @@ function setLocation(state, action) {
 }
 
 export default function auth(state = {}, action) {
-	if(action.type !== 'AUTH')
+	if(action.class !== 'AUTH')
 		return state
 
-	switch(action.class) {
+	switch(action.type) {
 		case 'LOG_IN':
 			return logIn(state, action)
 		case 'SET_TOKENS':

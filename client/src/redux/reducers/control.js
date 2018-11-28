@@ -77,10 +77,10 @@ function resetFilterState(state, action) {
 }
 
 export default function control(state = {}, action) {
-	if(action.type !== 'CONTROL')
+	if(action.class !== 'CONTROL')
 		return state
 
-	switch(action.class) {
+	switch(action.type) {
 		case 'SET_MODAL_STATE':
 			return setModalState(state, action)
 		case 'TOGGLE_SELECT_ALL_CARDS_OF_TYPE':

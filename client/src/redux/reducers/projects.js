@@ -116,10 +116,10 @@ function deleteProject(state, action) {
 }
 
 export default function projects(state = {}, action) {
-    if(action.type !== 'PROJECT')
+    if(action.class !== 'PROJECT')
         return state
 
-    switch(action.class) {
+    switch(action.type) {
     case 'SET_CURRENT':
         return setCurrentProject(state, action)
     case 'TOGGLE_HIDDEN':

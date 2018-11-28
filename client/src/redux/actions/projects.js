@@ -1,11 +1,11 @@
 import {genericDispatch} from "./fetch"
 
-const type = 'PROJECT'
+const class_type = 'PROJECT'
 
 export function setCurrentProject(id, index) {
     return {
-        type,
-        class: 'SET_CURRENT',
+        class: class_type,
+        type: 'SET_CURRENT',
         id,
         index,
     }
@@ -13,27 +13,27 @@ export function setCurrentProject(id, index) {
 
 export function toggleHidden() {
     return {
-	    type,
-	    class: 'TOGGLE_HIDDEN',
+	    class: class_type,
+        type: 'TOGGLE_HIDDEN',
     }
 }
 
 export const getClassProjects = genericDispatch(
-    type, 'GET_ALL', 'GET'
+    class_type, 'GET_ALL', 'GET'
 )
 
 export const addProject = genericDispatch(
-    type, 'ADD', 'POST'
+    class_type, 'ADD', 'POST'
 )
 
 export const deleteProject = genericDispatch(
-    type, 'DELETE', 'DELETE'
+    class_type, 'DELETE', 'DELETE'
 )
 
 export const modifyProject = genericDispatch(
-    type, 'MODIFY', 'POST'
+    class_type, 'MODIFY', 'POST'
 )
 
 export const addTest = genericDispatch(
-    type, 'ADD_TEST', 'POST'
+    class_type, 'ADD_TEST', 'POST'
 )

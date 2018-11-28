@@ -1,25 +1,26 @@
 import {genericDispatch} from "./fetch"
 
-const type = 'AUTH'
+const class_type = 'AUTH'
 
 export const logIn = genericDispatch(
-    type, 'LOG_IN', 'POST'
+    class_type, 'LOG_IN', 'POST'
 )
 
 export const logOut = genericDispatch(
-    type, 'LOG_OUT', 'GET'
+    class_type, 'LOG_OUT', 'GET'
 )
 
 export const changePassword = genericDispatch(
-    type, 'CHANGE_PASSWORD', 'POST'
+    class_type, 'CHANGE_PASSWORD', 'POST'
 )
 
 export const getAccount = genericDispatch(
-    type, 'GET_ACCOUNT', 'GET'
+    class_type, 'GET_ACCOUNT', 'GET'
 )
 
 export function setLocation(location) {
     return {
+        class: class_type,
         type: 'SET_LOCATION',
         location
     }

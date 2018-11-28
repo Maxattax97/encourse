@@ -1,35 +1,35 @@
 import { genericDispatch } from "./fetch"
 
-const type = 'ADMIN'
+const class_type = 'ADMIN'
 
 export const getCourses = genericDispatch(
-    type, 'GET_COURSES', 'GET'
+    class_type, 'GET_COURSES', 'GET'
 )
 
 export const addCourse = genericDispatch(
-   type, 'ADD_COURSE', 'POST'
+   class_type, 'ADD_COURSE', 'POST'
 )
 
 export const modifyCourse = genericDispatch(
-    type, 'MODIFY_COURSE', 'POST'
+    class_type, 'MODIFY_COURSE', 'POST'
 )
 
 export const removeCourse = genericDispatch(
-    type, 'REMOVE_COURSE', 'DELETE'
+    class_type, 'REMOVE_COURSE', 'DELETE'
 )
 
 export const getAccounts = genericDispatch(
-    type, 'GET_ACCOUNTS', 'GET'
+    class_type, 'GET_ACCOUNTS', 'GET'
 )
 
 export const addAccount = genericDispatch(
-    type, 'ADD_ACCOUNT', 'POST'
+    class_type, 'ADD_ACCOUNT', 'POST'
 )
 
 export const modifyAccount = genericDispatch(
-    type, 'MODIFY_ACCOUNT', 'POST'
+    class_type, 'MODIFY_ACCOUNT', 'POST'
 )
 
 export const removeAccount = genericDispatch(
-    type, 'REMOVE_ACCOUNT', 'DELETE'
+    class_type, 'REMOVE_ACCOUNT', 'DELETE'
 )

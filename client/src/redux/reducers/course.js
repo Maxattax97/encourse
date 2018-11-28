@@ -244,10 +244,10 @@ function formatTestProgress(udata) {
 }
 
 export default function course(state = {}, action) {
-    if(action.type !== 'COURSE')
+    if(action.class !== 'COURSE')
         return state
 
-    switch(action.class) {
+    switch(action.type) {
 	case 'SET_CURRENT_COURSE':
 		return setCurrentCourse(state, action)
 	case 'SET_CURRENT_SEMESTER':
