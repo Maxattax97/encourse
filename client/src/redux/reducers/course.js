@@ -114,13 +114,26 @@ function resetStudentsPage(state, action) {
 	})
 }
 
-function sortStatistics(udata) {
+const statDict = {
+	"Average Additions": "Average number of line of code added over the entire project",
+	"Average Deletions": "Average number of line of code deleted over the entire project",
+	"Average Commit Count": "Average number of commits",
+	"Average Estimated Time Spent": "Average estimated time spent. Estimated by recording the time between commits that appear less than an hour appart",
+}
+
+function formatStatistics(udata) {
 	if (!udata || !udata.data)
 		return null
 
 	const data = udata.data
 
 	data.sort((d1, d2) => d1.index - d2.index)
+
+	for (let item of data) {
+		if (statDict[item.stat_name]) {
+			item.stat_desc = statDict[item.stat_name]
+		}
+	}
 
 	return data
 }
@@ -236,7 +249,7 @@ export default function course(state = {}, action) {
 
     switch(action.class) {
 	case 'SET_CURRENT_COURSE':
-		return setCurrentCourse(state, action) 
+		return setCurrentCourse(state, action)
 	case 'SET_CURRENT_SEMESTER':
 		return setCurrentSemester(state, action)
     case 'GET_STUDENTS':
@@ -266,7 +279,7 @@ export default function course(state = {}, action) {
     case 'GET_SIMILARITY_PLOT':
         return getData(state, action, 'getSimilarityPlot')
     case 'GET_STATISTICS':
-        return forwardData(state, action, 'stats', sortStatistics)
+        return forwardData(state, action, 'stats', formatStatistics)
     case 'SUBMIT_STUDENTS':
         return submitStudents(state, action)
     case 'GET_COMMIT_HISTORY':
