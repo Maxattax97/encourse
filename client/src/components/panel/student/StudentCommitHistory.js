@@ -13,7 +13,7 @@ import {getCurrentProject} from "../../../redux/state-peekers/project"
 
 class StudentCommitHistory extends Component {
 
-    componentWillMount() {
+    componentDidMount() {
         if(this.props.student && this.props.project) {
 	        this.props.resetCommitsPage()
 	        retrieveStudentCommitHistory(this.props.student, this.props.project, 1, 5)

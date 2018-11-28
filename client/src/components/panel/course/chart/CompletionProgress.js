@@ -10,7 +10,7 @@ import {Chart} from "../../../Helpers"
 
 class CompletionProgress extends Component {
 
-	componentWillMount() {
+	componentDidMount() {
 		if (this.props.project) {
 			if (this.props.anon)
 				retrieveCourseProgress(this.props.project)

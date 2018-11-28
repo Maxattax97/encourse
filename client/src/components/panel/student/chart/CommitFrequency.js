@@ -11,7 +11,7 @@ import {getCurrentProject} from "../../../../redux/state-peekers/project"
 
 class CommitHistoryHistogram extends Component {
 
-	componentWillMount() {
+	componentDidMount() {
 		if(this.props.student && this.props.project)
 			retrieveStudentCommitFrequency(this.props.student, this.props.project)
 	}

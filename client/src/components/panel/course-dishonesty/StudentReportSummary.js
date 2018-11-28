@@ -9,7 +9,7 @@ import {retrieveAllStudents} from "../../../redux/retrievals/course"
 
 class StudentReportSummary extends Component {
 
-	componentWillMount() {
+	componentDidMount() {
 		if(this.props.project)
 			retrieveAllStudents(this.props.project)
 	}

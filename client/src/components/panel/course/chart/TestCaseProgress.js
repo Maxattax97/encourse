@@ -18,7 +18,7 @@ const toPercent = (decimal, fixed = 0) => {
 
 class StudentsTestCaseProgress extends Component {
 
-	componentWillMount() {
+	componentDidMount() {
 		if(this.props.project){
 			if(this.props.anon)
 				retrieveCourseTestProgress(this.props.project)

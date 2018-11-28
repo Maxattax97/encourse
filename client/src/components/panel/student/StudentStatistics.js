@@ -8,7 +8,7 @@ import {retrieveStudentStats} from "../../../redux/retrievals/student"
 
 class StudentStatistics extends Component {
 
-	componentWillMount() {
+	componentDidMount() {
 		if(this.props.student && this.props.project)
 			retrieveStudentStats(this.props.student, this.props.project)
 	}

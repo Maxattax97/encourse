@@ -13,7 +13,7 @@ import {getCurrentProject} from "../../../../redux/state-peekers/project"
 
 class CodeChanges extends Component {
 
-	componentWillMount() {
+	componentDidMount() {
 		if(this.props.student && this.props.project)
 			retrieveStudentCodeChanges(this.props.student, this.props.project)
 	}
