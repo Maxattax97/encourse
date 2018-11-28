@@ -1,0 +1,10 @@
+edu.purdue.cs.encourse
+edu.purdue.cs.encourse.config
+edu.purdue.cs.encourse.controller
+edu.purdue.cs.encourse.database
+edu.purdue.cs.encourse.domain
+edu.purdue.cs.encourse.domain.relations
+edu.purdue.cs.encourse.service
+edu.purdue.cs.encourse.service.helper
+edu.purdue.cs.encourse.service.impl
+edu.purdue.cs.encourse.util
