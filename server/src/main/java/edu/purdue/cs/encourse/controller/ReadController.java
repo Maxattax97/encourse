@@ -553,6 +553,25 @@ public class ReadController {
     }
 
     @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/source", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getSource(@RequestParam(name = "projectID") String projectID,
+                                                     @RequestParam(name = "userName") String userName,
+                                                     @RequestParam(name = "startHash") String startHash,
+                                                     @RequestParam(name = "endHash") String endHash,
+                                                     @RequestParam(name = "file") String file) {
+        String source;
+        if (hasPermissionOverAccount(userName)) {
+            source = courseService.getSourceWithChanges(projectID, userName, startHash, endHash, file);
+            if (source == null) {
+                return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(source, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/diffs", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getDiffs(@RequestParam(name = "projectID") String projectID,
                                                     @RequestParam(name = "userName") List<String> userNames) {
