@@ -1,10 +1,10 @@
 import {getData} from "./reducer-utils"
 
 function teachingAssistant(state = {}, action) {
-    if(action.type !== 'TEACHING_ASSISTANT')
+    if(action.class !== 'TEACHING_ASSISTANT')
         return state
 
-    switch(action.class) {
+    switch(action.type) {
     case 'GET_ALL':
         return getData(state, action, 'getTeachingAssistants')
     default:

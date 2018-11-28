@@ -101,10 +101,10 @@ function removeAccount(state, action) {
 }
 
 export default function admin(state = {}, action) {
-	if(action.type !== 'ADMIN')
+	if(action.class !== 'ADMIN')
 		return state;
 
-	switch(action.class) {
+	switch(action.type) {
         case 'GET_COURSES':
             return getData(state, action, 'getCourses')
         case 'ADD_COURSE':

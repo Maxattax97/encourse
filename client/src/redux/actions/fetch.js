@@ -1,7 +1,7 @@
-export function genericDispatch(type, actionClass, method) {
+export function genericDispatch(actionClass, type, method) {
 	return (url, headers = {}, body, extra) => {
 		return {
-			type,
+            type,
             class: actionClass,
 			request: (accessToken, dispatch, auth) => {
 				if(typeof dispatch !== 'function') return

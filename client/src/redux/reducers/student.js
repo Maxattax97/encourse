@@ -132,10 +132,10 @@ function formatStudentProgress(udata) {
 }
 
 function sortStatistics(udata) {
-	if (!udata || !udata.data)
+	if (!udata)
 		return []
 
-	const data = udata.data
+	const data = udata[0].data
 
 	data.sort((d1, d2) => d1.index - d2.index)
 
@@ -183,10 +183,10 @@ function resetCommitsPage(state, action) {
 }
 
 export default function student(state = {}, action) {
-    if(action.type !== 'STUDENT')
+    if(action.class !== 'STUDENT')
         return state
 
-    switch(action.class) {
+    switch(action.type) {
     case 'SET_CURRENT':
         return setCurrentStudent(state, action)
     case 'CLEAR':
@@ -215,9 +215,10 @@ export default function student(state = {}, action) {
         return getData(state, action, 'syncStudentRepository')
     case 'RUN_TESTS':
         return getData(state, action, 'runStudentTests')
-    default:
-	    return Object.assign({}, state, {
-		    reduxError: action
-	    })
+        default:
+	    return {
+            ...state,
+            reduxError: action
+        }
     }
 }

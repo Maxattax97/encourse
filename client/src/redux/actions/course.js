@@ -1,104 +1,104 @@
 import {genericDispatch} from "./fetch"
 
-const type = 'COURSE'
+const class_type = 'COURSE'
 export function setCurrentCourse(id) {
     return {
-        type,
-        class: 'SET_CURRENT_COURSE',
+        class: class_type,
+        type: 'SET_CURRENT_COURSE',
         id
     }
 }
 
 export function setCurrentSemester(id) {
     return {
-        type,
-        class: 'SET_CURRENT_COURSE',
+        class: class_type,
+        type: 'SET_CURRENT_COURSE',
         id
     }
 }
 
 export function updateCourseDishonestyPage() {
     return {
-        type,
-        class: 'UPDATE_COURSE_DISHONESTY_PAGE'
+        class: class_type,
+        type: 'UPDATE_COURSE_DISHONESTY_PAGE'
     }
 }
 
 export function resetCourseDishonestyPage() {
     return {
-	    type,
-	    class: 'RESET_COURSE_DISHONESTY_PAGE'
+	    class: class_type,
+	    type: 'RESET_COURSE_DISHONESTY_PAGE'
     }
 }
 
 export function updateStudentsPage() {
     return {
-	    type,
-	    class: 'UPDATE_STUDENTS_PAGE'
+	    class: class_type,
+	    type: 'UPDATE_STUDENTS_PAGE'
     }
 }
 
 export function resetStudentsPage() {
     return {
-	    type,
-	    class: 'RESET_STUDENTS_PAGE'
+	    class: class_type,
+	    type: 'RESET_STUDENTS_PAGE'
     }
 }
 
 export const getStudentPreviews = genericDispatch(
-    type, 'GET_STUDENTS', 'GET'
+    class_type, 'GET_STUDENTS', 'GET'
 )
 
 export const getSectionsData = genericDispatch(
-    type, 'GET_SECTIONS', 'GET'
+    class_type, 'GET_SECTIONS', 'GET'
 )
 
 export const getClassProgress = genericDispatch(
-    type, 'GET_PROGRESS', 'GET'
+    class_type, 'GET_PROGRESS', 'GET'
 )
 
 export const getTestBarGraph = genericDispatch(
-    type, 'GET_TEST_BAR_GRAPH', 'GET',
+    class_type, 'GET_TEST_BAR_GRAPH', 'GET',
 )
 
 export const setDirectory = genericDispatch(
-    type, 'SET_DIRECTORY', 'POST'
+    class_type, 'SET_DIRECTORY', 'POST'
 )
 
 export const syncRepositories = genericDispatch(
-	type, 'SYNC', 'POST'
+	class_type, 'SYNC', 'POST'
 )
 
 export const runTests = genericDispatch(
-    type, 'RUN_TESTS', 'POST'
+    class_type, 'RUN_TESTS', 'POST'
 )
 
 export const getDishonestyReport = genericDispatch(
-    type, 'GET_DISHONESTY_REPORT', 'GET'
+    class_type, 'GET_DISHONESTY_REPORT', 'GET'
 )
 
 export const getSimilarityPlot = genericDispatch(
-    type, 'GET_SIMILARITY_PLOT', 'GET'
+    class_type, 'GET_SIMILARITY_PLOT', 'GET'
 )
 
 export const getClassStatistics = genericDispatch(
-    type, 'GET_STATISTICS', 'GET'
+    class_type, 'GET_STATISTICS', 'GET'
 )
 
 export const submitStudents = genericDispatch(
-    type, 'SUBMIT_STUDENTS', 'POST'
+    class_type, 'SUBMIT_STUDENTS', 'POST'
 )
 
 export const getClassCommitHistory = genericDispatch(
-    type, 'GET_COMMIT_HISTORY', 'GET'
+    class_type, 'GET_COMMIT_HISTORY', 'GET'
 )
 
 export const getClassProgressAnon = genericDispatch(
-    type, 'GET_PROGRESS_ANON', 'GET'
+    class_type, 'GET_PROGRESS_ANON', 'GET'
 )
 
 export const getTestBarGraphAnon = genericDispatch(
-    type, 'GET_TEST_BAR_GRAPH_ANON', 'GET',
+    class_type, 'GET_TEST_BAR_GRAPH_ANON', 'GET',
 )
 
 /*export function getStudentPreviewsDataSuccess(data) {
