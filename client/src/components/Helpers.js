@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {setModalState} from '../redux/actions'
 import connect from 'react-redux/es/connect/connect'
+import PreviewCard from './panel/common/PreviewCard'
 
 export class Title extends Component {
     render() {
@@ -206,13 +207,13 @@ export class Chart extends Component {
     render() {
 	    if(this.props.chart.loading)
 		    return (
-			    <div className='chart-container loading'>
+			    <div className='chart-container loading' title={ this.props.title ? this.props.title : null}>
 				    <LoadingIcon/>
 			    </div>
 		    )
 
         return (
-	        <div className="chart-container">
+	        <div className="chart-container" title={ this.props.title ? this.props.title : null}>
                 {
                     this.props.children
                 }
@@ -223,15 +224,35 @@ export class Chart extends Component {
 
 export class ChartList extends Component {
 
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            resize: {
+
+            }
+        }
+    }
+
 	render() {
 		return (
 			<Summary columns={ 2 } className='charts'>
 				{
 					React.Children.map(this.props.children, (child, index) =>
-						<Card key={ index }>
-							{
-								child
-							}
+						<Card key={ index } className={ this.state.resize[index] ? 'big-graph' : ''}>
+                            {
+                                child
+                            }
+                            <Checkbox
+                                className='card-select'
+                                onClick={ () => { this.setState({ resize: { ...this.state.resize, [index]: !this.state.resize[index]} })} }
+                            >
+                                {
+                                    this.state.resize[index] ?
+                                        <PlusIcon />
+                                        : null
+                                }
+                            </Checkbox>
 						</Card>
 					)
 				}

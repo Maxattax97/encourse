@@ -17,8 +17,8 @@ class CommitHistoryHistogram extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
-			retrieveStudentCommitFrequency(this.props.project)
+		if(this.props.student && this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
+			retrieveStudentCommitFrequency(this.props.student, this.props.project)
 	}
 
     dateFormatter = (date) => {

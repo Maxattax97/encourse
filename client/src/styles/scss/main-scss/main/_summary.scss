@@ -21,6 +21,10 @@
     }
   }
 
+  .cols-2 .big-graph {
+    width: 100%;
+  }
+
   .summary-preview {
       position: relative;
       @include set-rem-safe(height, 7.5rem);

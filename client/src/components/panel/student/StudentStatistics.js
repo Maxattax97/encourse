@@ -14,8 +14,8 @@ class StudentStatistics extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
-			retrieveStudentStats(this.props.project)
+		if(this.props.student && this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
+			retrieveStudentStats(this.props.student, this.props.project)
 	}
 
     render() {

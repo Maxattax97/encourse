@@ -30,8 +30,14 @@ class CompletionProgress extends Component {
 
 	render() {
 		return (
-			<Chart chart={this.props.chart}>
-				<ResponsiveContainer width="100%" height="100%">
+			<Chart
+                chart={this.props.chart}
+                title='Histogram of all students in the course grouped by the percentage of tests they are passing (progress).'
+            >
+				<ResponsiveContainer
+                    width="100%"
+                    height="100%"
+                >
 					<ComposedChart
 						data={this.props.chart.data}
 						margin={{top: 5, right: 30, left: 30, bottom: 35}}

@@ -93,6 +93,8 @@ class CourseIdenticalLinesChart extends Component {
     }
 
     formatApiData = (udata) => {
+        if(!udata || udata.data)
+            return []
         let data = udata.data
         console.log(data[0]);
         for (let item of data) {

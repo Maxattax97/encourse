@@ -19,8 +19,8 @@ class CodeChanges extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
-			retrieveStudentCodeChanges(this.props.project)
+		if(this.props.student && this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
+			retrieveStudentCodeChanges(this.props.student, this.props.project)
 	}
 
     dateFormatter = (date) => {
