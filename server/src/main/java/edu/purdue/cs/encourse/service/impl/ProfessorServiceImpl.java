@@ -18,6 +18,13 @@ import java.util.*;
 import java.time.LocalDate;
 import lombok.NonNull;
 
+/**
+ * Contains implementations for all services which are used by professors for managing a class
+ * Primarily used by endpoints called for professors
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 @Service(value = ProfessorServiceImpl.NAME)
 public class ProfessorServiceImpl implements ProfessorService {
 
