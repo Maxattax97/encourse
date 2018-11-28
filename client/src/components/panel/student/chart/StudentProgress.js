@@ -16,8 +16,9 @@ class StudentProgress extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
-			retrieveStudentProgress(this.props.project)
+		if(this.props.project && this.props.student && (!(prevProps.project) || prevProps.project.index !== this.props.project.index)) {
+            retrieveStudentProgress(this.props.student, this.props.project)
+        }
 	}
 
 	dateFormatter = (dateUnix) => {
