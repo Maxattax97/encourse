@@ -116,12 +116,12 @@ public class ReadController {
             };
             jsonValues.sort(order == 0 ? compare : compare.reversed());
 
-            int median = ((Number) ((TreeMap)jsonValues.get(jsonValues.size() / 2).get(sortName)).get(projectID)).intValue();
-            int q1 =  ((Number) ((TreeMap)jsonValues.get(jsonValues.size() / 4).get(sortName)).get(projectID)).intValue();
+            int median = (int) ((Number) ((TreeMap)jsonValues.get(jsonValues.size() / 2).get(sortName)).get(projectID)).doubleValue();
+            int q1 =  (int) ((Number) ((TreeMap)jsonValues.get(jsonValues.size() / 4).get(sortName)).get(projectID)).doubleValue();
             filters.get(sortName).add(q1);
             filters.get(sortName).add(median);
-            int q3 =  ((Number) ((TreeMap)jsonValues.get(jsonValues.size() * 3 / 4).get(sortName)).get(projectID)).intValue();
-            int max = ((Number) ((TreeMap)jsonValues.get(jsonValues.size() - 1).get(sortName)).get(projectID)).intValue();
+            int q3 =  (int) ((Number) ((TreeMap)jsonValues.get(jsonValues.size() * 3 / 4).get(sortName)).get(projectID)).doubleValue();
+            int max = (int) ((Number) ((TreeMap)jsonValues.get(jsonValues.size() - 1).get(sortName)).get(projectID)).doubleValue();
             filters.get(sortName).add(q3);
             filters.get(sortName).add(max);
 
