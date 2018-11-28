@@ -7,18 +7,19 @@ export default function refreshMiddleware() {
     return ({ dispatch, getState }) => next => (action) => {
         
         const { request, type } = action
+        console.log(action)
         if (!request) {
             return next(action)
         }
 
         const tokens = getState().auth.logInData
-
-        if(request && type === 'LOG_OUT') {
-            dispatch({ type })
+        if(request && type === 'AUTH' && action.class === 'LOG_OUT' ) {
+            console.log('here')
+            dispatch({ type, class: 'LOG_OUT' })
         }
         // 5 minutes from now
         const refreshThreshold = Date.now() + 300000
-
+        console.log(tokens)
         if(!tokens || !tokens.refresh_token) {
             return request(null, dispatch, true);
         }
