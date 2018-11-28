@@ -25,6 +25,7 @@ public interface HelperService {
     boolean isTakingCourse(@NonNull Student student, @NonNull Project project);
 
     double parseProgressForProject(@NonNull String projectID, @NonNull String testOutput);
+    int updateStudentInformation(@NonNull String projectID, @NonNull String userName);
     void updateTestResults(String result, String studentID, String projectID, boolean isHidden);
     void createTestFiles(String visibleTestFile, String hiddenTestFile, List<StudentProject> projects) throws IOException;
     void createTestFilesTA(String visibleTestFile, String hiddenTestFile, List<TeachingAssistantStudent> assignments, String projectID) throws IOException;

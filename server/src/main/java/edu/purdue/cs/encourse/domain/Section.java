@@ -22,7 +22,7 @@ import java.util.UUID;
 public class Section {
     /** Randomly generated String */
     @Id
-    private String sectionIdentifier;
+    private String sectionID;
 
     /** Each piece of the section identifier */
     private String courseID;
@@ -54,7 +54,7 @@ public class Section {
     private String remotePath;
 
     public Section(String CRN, String semester, String courseID, String courseTitle, String sectionType, String timeSlot) {
-        this.sectionIdentifier = UUID.randomUUID().toString();
+        this.sectionID = UUID.randomUUID().toString();
         this.CRN = CRN;
         this.semester = semester;
         this.courseID = courseID;

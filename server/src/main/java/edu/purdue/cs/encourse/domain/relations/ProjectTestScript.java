@@ -35,8 +35,8 @@ public class ProjectTestScript {
     /** Listing of suites involving the test case, separated by commas */
     private String suites;
 
-    public ProjectTestScript(String projectIdentifier, String testScriptName, boolean isHidden, double pointsWorth) {
-        this.id = new ProjectTestScriptID(projectIdentifier, testScriptName);
+    public ProjectTestScript(String projectID, String testScriptName, boolean isHidden, double pointsWorth) {
+        this.id = new ProjectTestScriptID(projectID, testScriptName);
         this.isHidden = isHidden;
         this.pointsWorth = pointsWorth;
         this.suites = "testall";
@@ -46,8 +46,8 @@ public class ProjectTestScript {
 
     }
 
-    public String getProjectIdentifier() {
-        return id.getProjectIdentifier();
+    public String getProjectID() {
+        return id.getProjectID();
     }
 
     public String getTestScriptName() {
@@ -73,13 +73,13 @@ public class ProjectTestScript {
 @Embeddable
 class ProjectTestScriptID implements Serializable {
     /** Key used to identify the project */
-    private String projectIdentifier;
+    private String projectID;
 
     /** Key used to identify the test script */
     private String testScriptName;
 
-    public ProjectTestScriptID(String projectIdentifier, String testScriptName) {
-        this.projectIdentifier = projectIdentifier;
+    public ProjectTestScriptID(String projectID, String testScriptName) {
+        this.projectID = projectID;
         this.testScriptName = testScriptName;
     }
 

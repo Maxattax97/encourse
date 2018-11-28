@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface StudentProjectDateRepository extends CrudRepository<StudentProjectDate, String> {
     List<StudentProjectDate> findByIdStudentID(@NonNull String studentID);
-    List<StudentProjectDate> findByIdProjectIdentifier(@NonNull String projectID);
+    List<StudentProjectDate> findByIdProjectID(@NonNull String projectID);
     List<StudentProjectDate> findByIdDate(@NonNull String date);
     List<StudentProjectDate> findByIdDateAndIdStudentID(@NonNull String date, @NonNull String studentID);
-    List<StudentProjectDate> findByIdProjectIdentifierAndIdStudentID(@NonNull String projectID, @NonNull String studentID);
-    List<StudentProjectDate> findByIdDateAndIdProjectIdentifier(@NonNull String date, @NonNull String projectID);
-    StudentProjectDate findByIdDateAndIdProjectIdentifierAndIdStudentID(@NonNull String date, @NonNull String projectID, @NonNull String studentID);
+    List<StudentProjectDate> findByIdProjectIDAndIdStudentID(@NonNull String projectID, @NonNull String studentID);
+    List<StudentProjectDate> findByIdDateAndIdProjectID(@NonNull String date, @NonNull String projectID);
+    StudentProjectDate findByIdDateAndIdProjectIDAndIdStudentID(@NonNull String date, @NonNull String projectID, @NonNull String studentID);
 }

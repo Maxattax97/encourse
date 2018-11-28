@@ -36,8 +36,8 @@ public class StudentProjectTest {
     @Setter
     private double pointsWorth;
 
-    public StudentProjectTest(String studentID, String projectIdentifier, String testScriptName, boolean isPassing, boolean isHidden, double pointsWorth) {
-        this.id = new StudentProjectTestID(studentID, projectIdentifier, testScriptName);
+    public StudentProjectTest(String studentID, String projectID, String testScriptName, boolean isPassing, boolean isHidden, double pointsWorth) {
+        this.id = new StudentProjectTestID(studentID, projectID, testScriptName);
         this.isPassing = isPassing;
         this.isHidden = isHidden;
         this.pointsWorth = pointsWorth;
@@ -52,8 +52,8 @@ public class StudentProjectTest {
     }
 
 
-    public String getProjectIdentifier() {
-        return id.getProjectIdentifier();
+    public String getProjectID() {
+        return id.getProjectID();
     }
 
     public String getTestScriptName() {
@@ -83,14 +83,14 @@ class StudentProjectTestID implements Serializable {
     private String studentID;
 
     /** Key used to identify the project */
-    private String projectIdentifier;
+    private String projectID;
 
     /** Key used to identify the test script */
     private String testScriptName;
 
-    public StudentProjectTestID(String studentID, String projectIdentifier, String testScriptName) {
+    public StudentProjectTestID(String studentID, String projectID, String testScriptName) {
         this.studentID = studentID;
-        this.projectIdentifier = projectIdentifier;
+        this.projectID = projectID;
         this.testScriptName = testScriptName;
     }
 

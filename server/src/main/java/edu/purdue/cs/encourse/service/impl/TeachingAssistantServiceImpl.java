@@ -63,7 +63,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
     private CourseService courseService;
 
     public JSONReturnable getAssignmentsCheating(@NonNull String projectID, @NonNull String userNameTA) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -77,7 +77,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
     }
 
     public JSONReturnable getAssignmentsCommitList(@NonNull String projectID, @NonNull String userNameTA) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -91,7 +91,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
     }
 
     public JSONReturnable getAssignmentsProgress(@NonNull String projectID, @NonNull String userNameTA) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -105,7 +105,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
     }
 
     public JSONReturnable getAssignmentsSimilar(@NonNull String projectID, @NonNull String userNameTA) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -119,7 +119,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
     }
 
     public JSONReturnable getAssignmentsStatistics(@NonNull String projectID, @NonNull String userNameTA) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -133,7 +133,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
     }
 
     public JSONReturnable getAssignmentsTestSummary(@NonNull String projectID, @NonNull String userNameTA) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -173,7 +173,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         for(TeachingAssistantStudent assignment : assignments) {
             List<StudentSection> studentSections = studentSectionRepository.findByIdStudentID(assignment.getStudentID());
             for(StudentSection studentSection : studentSections) {
-                Section section = sectionRepository.findBySectionIdentifier(studentSection.getSectionIdentifier());
+                Section section = sectionRepository.findBySectionID(studentSection.getSectionID());
                 if(section.getSemester().equals(semester)) {
                     Student student = studentRepository.findByUserID(assignment.getStudentID());
                     userNames.add(student.getUserName());

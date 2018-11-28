@@ -138,10 +138,10 @@ public class AdminServicesTests {
 
     @Test
     public void testAssignments() {
-        assertEquals(0, adminService.registerStudentToSection("kleclain", sect1.getSectionIdentifier()));
-        assertEquals(0, adminService.registerStudentToSection("buckmast", sect2.getSectionIdentifier()));
+        assertEquals(0, adminService.registerStudentToSection("kleclain", sect1.getSectionID()));
+        assertEquals(0, adminService.registerStudentToSection("buckmast", sect2.getSectionID()));
         assertEquals(-2, adminService.registerStudentToSection("buckmast", "InvalidSection"));
-        assertEquals(-1, adminService.registerStudentToSection("grr", sect1.getSectionIdentifier()));
+        assertEquals(-1, adminService.registerStudentToSection("grr", sect1.getSectionID()));
         assertEquals(2, studentSectionRepository.count());
         assertEquals(0, adminService.assignProfessorToCourse("grr", "cs250", "Fall2018"));
         assertEquals(-2, adminService.assignProfessorToCourse("grr", "cs251", "Fall2018"));

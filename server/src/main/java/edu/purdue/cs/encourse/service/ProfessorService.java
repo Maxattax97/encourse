@@ -17,7 +17,6 @@ public interface ProfessorService {
     int deleteProject(@NonNull String projectID);
     int modifyProject(@NonNull String projectID, @NonNull String field, String value);
     int pullProjects(@NonNull String projectID);
-    int updateStudentInformation(@NonNull String projectID, @NonNull String userName);
     Project addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate);
 
     JSONReturnable getClassCheating(@NonNull String projectID);

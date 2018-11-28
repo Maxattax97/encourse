@@ -84,7 +84,7 @@ public class PythonScriptTests {
 
         @Test
         public void testIndividualProgressData() {
-            String projectID = DEBUG ? "cs252" : proj1.getProjectIdentifier();
+            String projectID = DEBUG ? "cs252" : proj1.getProjectID();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================   Individual Progress Test    ============================\n");
@@ -94,7 +94,7 @@ public class PythonScriptTests {
 
         @Test
         public void testClassProgressData() {
-            String projectID = DEBUG ? "cs252" : proj1.getProjectIdentifier();
+            String projectID = DEBUG ? "cs252" : proj1.getProjectID();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Class Progress Test    ============================\n");
@@ -104,7 +104,7 @@ public class PythonScriptTests {
 
         @Test
         public void testTestSummaryData() {
-            String projectID = DEBUG ? "cs252" : proj1.getProjectIdentifier();
+            String projectID = DEBUG ? "cs252" : proj1.getProjectID();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Test Summary Test    ============================\n");
@@ -114,7 +114,7 @@ public class PythonScriptTests {
 
         @Test
         public void testStatisticsData() {
-            String projectID = DEBUG ? "cs252" : proj1.getProjectIdentifier();
+            String projectID = DEBUG ? "cs252" : proj1.getProjectID();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Statistics Test    ============================\n");
@@ -124,7 +124,7 @@ public class PythonScriptTests {
 
         @Test
         public void testAdditionDeletionData() {
-            String projectID = DEBUG ? "cs252" : proj1.getProjectIdentifier();
+            String projectID = DEBUG ? "cs252" : proj1.getProjectID();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================   Addition Deletion Test    ============================\n");
@@ -134,7 +134,7 @@ public class PythonScriptTests {
 
         @Test
         public void testCommitListData() {
-            String projectID = DEBUG ? "cs252" : proj1.getProjectIdentifier();
+            String projectID = DEBUG ? "cs252" : proj1.getProjectID();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Git Commit List Test    ============================\n");
@@ -145,7 +145,7 @@ public class PythonScriptTests {
 
         @Test
         public void testCommitCountData() {
-            String projectID = DEBUG ? "cs252" : proj1.getProjectIdentifier();
+            String projectID = DEBUG ? "cs252" : proj1.getProjectID();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Git Commit Count Test    ============================\n");
@@ -155,7 +155,7 @@ public class PythonScriptTests {
 
         @Test
         public void testCommitVelocity() {
-            String projectID = DEBUG ? "cs252" : proj1.getProjectIdentifier();
+            String projectID = DEBUG ? "cs252" : proj1.getProjectID();
             String studentID = "cutz";
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Commit Velocity Test    ============================\n");
@@ -165,7 +165,7 @@ public class PythonScriptTests {
 
         @Test
         public void testClassCheating() {
-            String projectID = DEBUG ? "cs252" : proj1.getProjectIdentifier();
+            String projectID = DEBUG ? "cs252" : proj1.getProjectID();
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Class Cheating Test    ============================\n");
             jsonReturn = professorService.getClassCheating(projectID);

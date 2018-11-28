@@ -32,8 +32,8 @@ public class StudentProjectDate {
     @Setter
     private double dateHiddenGrade;
 
-    public StudentProjectDate(String userID, String projectIdentifier, String date, double dateVisibleGrade, double dateHiddenGrade) {
-        this.id = new StudentProjectDateID(userID, projectIdentifier, date);
+    public StudentProjectDate(String userID, String projectID, String date, double dateVisibleGrade, double dateHiddenGrade) {
+        this.id = new StudentProjectDateID(userID, projectID, date);
         this.dateVisibleGrade = dateVisibleGrade;
         this.dateHiddenGrade = dateHiddenGrade;
     }
@@ -46,8 +46,8 @@ public class StudentProjectDate {
         return id.getStudentID();
     }
 
-    public String getProjectIdentifier() {
-        return id.getProjectIdentifier();
+    public String getProjectID() {
+        return id.getProjectID();
     }
 
     public String getDate() {
@@ -62,14 +62,14 @@ class StudentProjectDateID implements Serializable {
     private String studentID;
 
     /** Key used to identify the project */
-    private String projectIdentifier;
+    private String projectID;
 
     /** Key used to identify the date */
     private String date;
 
-    public StudentProjectDateID(String userID, String projectIdentifier, String date) {
+    public StudentProjectDateID(String userID, String projectID, String date) {
         this.studentID = userID;
-        this.projectIdentifier = projectIdentifier;
+        this.projectID = projectID;
         this.date = date;
     }
 

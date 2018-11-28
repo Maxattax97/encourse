@@ -72,8 +72,8 @@ public class StudentProject {
     @Setter
     private double totalTimeSpent;
 
-    public StudentProject(String userID, String projectIdentifier, String suite) {
-        this.id = new StudentProjectID(userID, projectIdentifier, suite);
+    public StudentProject(String userID, String projectID, String suite) {
+        this.id = new StudentProjectID(userID, projectID, suite);
         this.bestVisibleGrade = 0.0;
         this.bestHiddenGrade = 0.0;
         this.bestVisiblePoints = 0.0;
@@ -97,8 +97,8 @@ public class StudentProject {
         return id.getStudentID();
     }
 
-    public String getProjectIdentifier() {
-        return id.getProjectIdentifier();
+    public String getProjectID() {
+        return id.getProjectID();
     }
 }
 
@@ -109,14 +109,14 @@ class StudentProjectID implements Serializable {
     private String studentID;
 
     /** Key used to identify the project */
-    private String projectIdentifier;
+    private String projectID;
 
     /** Key used to identify the suite grade is for */
     private String suite;
 
-    public StudentProjectID(String userID, String projectIdentifier, String suite) {
+    public StudentProjectID(String userID, String projectID, String suite) {
         this.studentID = userID;
-        this.projectIdentifier = projectIdentifier;
+        this.projectID = projectID;
         this.suite = suite;
     }
 

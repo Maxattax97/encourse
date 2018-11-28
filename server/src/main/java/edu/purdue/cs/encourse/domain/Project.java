@@ -21,7 +21,7 @@ import java.util.UUID;
 public class Project {
     /** courseID + semester + projectName, forms the primary key */
     @Id
-    private String projectIdentifier;
+    private String projectID;
 
     /** Each piece of the project identifier */
     private String courseID;
@@ -101,7 +101,7 @@ public class Project {
         this.semester = semester;
         this.projectName = projectName;
         this.setRepoName(repoName);
-        this.projectIdentifier = UUID.randomUUID().toString();
+        this.projectID = UUID.randomUUID().toString();
         this.startDate = startDate;
         this.dueDate = dueDate;
         if(testRate > 0) {
