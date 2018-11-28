@@ -1,15 +1,11 @@
 import React, { Component } from 'react' 
-import { ScatterChart, Scatter, Dot, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer, Brush } from 'recharts'
+import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import { connect } from 'react-redux'
 import CustomTooltipContent from './CustomTooltipContent';
 
 import { getSimilarityPlot } from '../../../../redux/actions'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
-
-const toPercent = (decimal, fixed = 2) => {
-    return `${(decimal).toFixed(fixed)}`
-}
 
 const defaultData = [
     {
@@ -103,7 +99,7 @@ class CourseIdenticalLinesChart extends Component {
             item.similarity_bin *= 10
         }
         data.sort((a, b) => {
-            if (a.similarity_bin == b.similarity_bin) {
+            if (a.similarity_bin === b.similarity_bin) {
                 return a.height - b.height
             }
             return a.similarity_bin - b.similarity_bin

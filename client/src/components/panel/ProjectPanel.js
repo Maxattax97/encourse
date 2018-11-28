@@ -28,8 +28,9 @@ class ProjectPanel extends Component {
     };
 
 	changeFilter = (key, value) => {
-		this.state.filters[key] = value
-		this.setState({ filters: Object.assign({}, this.state.filters) }, () => {
+        let filters = [...this.state.filters]
+        filters[key] = value
+		this.setState({ filters }, () => {
 		})
 	}
 

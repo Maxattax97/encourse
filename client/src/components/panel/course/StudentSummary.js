@@ -44,7 +44,7 @@ class StudentSummary extends Component {
 						<div style={{width: (student.grades[this.props.project.id]) + '%'}} />
 					</div>
 					<h6 className="progress-text">
-						{parseInt(student.grades[this.props.project.id])}%
+						{parseInt(student.grades[this.props.project.id], 10)}%
 					</h6>
 				</div>
 			</div>

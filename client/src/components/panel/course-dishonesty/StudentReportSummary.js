@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {Title} from '../../Helpers'
 import {history} from '../../../redux/store'
-import {getStudentPreviews, setCurrentStudent, clearStudent} from '../../../redux/actions'
+import {getStudentPreviews, clearStudent} from '../../../redux/actions'
 import {getCurrentProject} from "../../../redux/state-peekers/project"
 import SelectableCardSummary from "../common/SelectableCardSummary"
 import {retrieveAllStudents} from "../../../redux/retrievals/course"

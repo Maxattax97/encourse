@@ -15,7 +15,7 @@ class CourseModal extends Component {
 							<div style={{width: (this.props.progress + '%')}} />
 						</div>
 						<h6 className="progress-text">
-							{ parseInt(this.props.progress) }%
+							{ parseInt(this.props.progress, 10) }%
 						</h6>
 					</div>
 				</Modal>

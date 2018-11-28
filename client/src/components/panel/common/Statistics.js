@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 
-import { getClassStatistics } from '../../../redux/actions/index'
-import url from '../../../server'
 import {LoadingIcon, Card} from '../../Helpers'
 
 class Statistics extends Component {

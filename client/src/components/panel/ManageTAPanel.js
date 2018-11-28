@@ -63,12 +63,12 @@ class ManageTAPanel extends Component {
 
     changeTA = (index) => {
         //this.state.students = [].concat(this.props.teaching_assistants[index].students)
-        this.state.sections = [].concat(this.props.teaching_assistants[index].sections)
+        const sections = [].concat(this.props.teaching_assistants[index].sections)
 
         this.setState({
             assignment_type: this.props.teaching_assistants[index].assignment_type,
             students: this.state.students,
-            sections: this.state.sections,
+            sections,
             current_ta: index
         })
     }
@@ -108,13 +108,13 @@ class ManageTAPanel extends Component {
     }
 
     discard = () => {
-        this.state.students = [].concat(this.props.teaching_assistants[this.state.current_ta].students)
-        this.state.sections = [].concat(this.props.teaching_assistants[this.state.current_ta].sections)
+        const students = [].concat(this.props.teaching_assistants[this.state.current_ta].students)
+        const sections = [].concat(this.props.teaching_assistants[this.state.current_ta].sections)
 
         this.setState({
             assignment_type: this.props.teaching_assistants[this.state.current_ta].assignment_type,
-            students: this.state.students,
-            sections: this.state.sections
+            students,
+            sections
         })
     }
 

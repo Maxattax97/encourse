@@ -29,13 +29,15 @@ class CoursePanel extends Component {
                 return 'commitCounts'
             case 3:
                 return 'grades'
-            
+            default:
+                return 'id'
         }
     }
 
     changeFilter = (key, value) => {
-        this.state.filters[key] = value
-        this.setState({ filters: Object.assign({}, this.state.filters) }, () => {
+        let filters = [...this.state.filters]
+        filters[key] = value
+        this.setState({ filters }, () => {
             this.props.resetStudentsPage()
             this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=1&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}&order=${this.state.filters.order_by}&commit=${this.state.filters.commit_filter}&progress=${this.state.filters.progress_filter}&hour=${this.state.filters.hour_filter}`)
         })

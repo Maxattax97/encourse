@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react'
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label, Brush, ResponsiveContainer } from 'recharts'
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import moment from 'moment'
 import { connect } from 'react-redux'
 
@@ -75,7 +75,7 @@ class StudentVelocityPerTime extends Component {
 
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf()
-            entry.timeSpent = parseInt(entry.time_spent / 1000)
+            entry.timeSpent = parseInt(entry.time_spent / 1000, 10)
             // progress per time spent
             entry.ppts = entry.timeSpent > 0 ? entry.progress / entry.timeSpent : 0
         }

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { getClassProjects, setCurrentProject } from '../../redux/actions'
-import {Title, Card, BackIcon, SettingsIcon, PlusIcon, LoadingIcon} from '../Helpers'
+import {Title, Card, SettingsIcon, LoadingIcon} from '../Helpers'
 import { history } from '../../redux/store'
 import url from '../../server'
 

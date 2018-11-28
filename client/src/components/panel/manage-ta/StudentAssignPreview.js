@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { Card } from '../../Helpers'
 import connect from 'react-redux/es/connect/connect'
 import PreviewCard from "../common/PreviewCard"
 

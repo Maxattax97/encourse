@@ -184,7 +184,7 @@ function formatProgress(udata) {
 	for (let apiEntry of data2) {
 		const entry = {
 			progressBin: apiEntry[0],
-			order: parseInt(apiEntry[0]),
+			order: parseInt(apiEntry[0], 10),
 			count: apiEntry[1],
 			percent: apiEntry[1] / total,
 		}

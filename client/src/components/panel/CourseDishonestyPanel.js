@@ -46,18 +46,21 @@ class CourseDishonestyPanel extends Component {
                 return 'id'
             case 1:
                 return 'score' 
+            default:
+                return 'id'
         }
     }
 
     changeFilter = (key, value) => {
-        this.state.filters[key] = value
+        const filters = [...this.state.filters]
+        filters[key] = value
 
         if(key === 'sort_by') {
             this.props.resetCourseDishonestyPage()
             this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy(value)}&page=1`)
         }
 
-        this.setState({ filters: Object.assign({}, this.state.filters) })
+        this.setState({ filters })
     }
 
     share = () => {
