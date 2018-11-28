@@ -12,13 +12,14 @@ import SyncItem from './common/HistoryText'
 import {retrieveStudent} from "../../redux/retrievals/student"
 import {getCurrentStudent} from "../../redux/state-peekers/student"
 import {getCurrentProject} from "../../redux/state-peekers/project"
+import {getCurrentCourseId, getCurrentSemesterId} from "../../redux/state-peekers/course"
 
 
 class StudentPanel extends Component {
 
     componentDidMount = () => {
         if(!this.props.currentStudent) {
-            retrieveStudent({id: this.props.match.params.id})
+            retrieveStudent({id: this.props.match.params.id}, this.props.currentCourseId, this.props.currentSemesterId)
         }
     }
 
@@ -71,7 +72,7 @@ class StudentPanel extends Component {
                     <div className='panel-student-content'>
                         <h1 className='header'>
                             {
-                                `CS252 - ${this.props.student ? `${this.props.student.first_name} ${this.props.student.last_name}` : ''}`
+                                `${this.props.currentCourseId.toUpperCase()} - ${this.props.student ? `${this.props.student.first_name} ${this.props.student.last_name}` : ''}`
                             }
                         </h1>
                         <div className="h1 break-line header" />
@@ -93,7 +94,9 @@ class StudentPanel extends Component {
 const mapStateToProps = (state) => {
     return {
         student: getCurrentStudent(state),
-        project: getCurrentProject(state)
+        project: getCurrentProject(state),
+        currentCourseId: getCurrentCourseId(state),
+        currentSemesterId: getCurrentSemesterId(state),
     }
 }
 

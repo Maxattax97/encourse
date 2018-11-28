@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { getClassProjects, setCurrentProject } from '../../redux/actions'
+import { getCurrentCourseId, getCurrentSemesterId } from "../../redux/state-peekers/course"
 import {Title, Card, SettingsIcon, LoadingIcon} from '../Helpers'
 import { history } from '../../redux/store'
 import url from '../../server'
@@ -20,7 +21,7 @@ class ProjectNavigation extends Component {
     componentDidMount = () => {
         if(this.props.projects.length === 0) {
             //TODO: remove classid and semester hardcoding
-            this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`)
+            this.props.getClassProjects(`${url}/api/projectsData?courseID=${this.props.currentCourseId}&semester=${this.props.currentSemesterId}`)
         }
     }
 
@@ -73,6 +74,8 @@ class ProjectNavigation extends Component {
 const mapStateToProps = (state) => {
     return {
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
+        currentCourseId: getCurrentCourseId(state),
+        currentSemesterId: getCurrentSemesterId(state),
         currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
         isLoading: state.projects ? state.projects.getClassProjectsIsLoading : false,
     }

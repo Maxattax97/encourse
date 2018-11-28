@@ -4,6 +4,7 @@ import {Title} from '../../Helpers'
 import {history} from '../../../redux/store'
 import {getStudentPreviews, clearStudent} from '../../../redux/actions'
 import {getCurrentProject} from "../../../redux/state-peekers/project"
+import {getCurrentCourseId, getCurrentSemesterId} from "../../../redux/state-peekers/course"
 import SelectableCardSummary from "../common/SelectableCardSummary"
 import {retrieveAllStudents} from "../../../redux/retrievals/course"
 
@@ -11,12 +12,12 @@ class StudentReportSummary extends Component {
 
 	componentDidMount() {
 		if(this.props.project)
-			retrieveAllStudents(this.props.project)
+			retrieveAllStudents(this.props.project, this.props.course, this.props.semester)
 	}
 
 	componentDidUpdate(prevProps) {
 		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
-			retrieveAllStudents(this.props.project)
+			retrieveAllStudents(this.props.project, this.props.course, this.props.semester)
 	}
 
     clickStudentCard = (student) => {
@@ -53,7 +54,8 @@ const mapStateToProps = (state) => {
     return {
         project: getCurrentProject(state),
         report: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.content : [],
-
+		course: getCurrentCourseId(state),
+		semester: getCurrentSemesterId(state),
     }
 }
 

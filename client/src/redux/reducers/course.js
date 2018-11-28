@@ -1,5 +1,17 @@
 import {forwardData, getData} from "./reducer-utils"
 
+function setCurrentCourse(state, action) {
+	return Object.assign({}, state, {
+		currentCourseId: action.id,
+	})
+}
+
+function setCurrentSemester(state, action) {
+	return Object.assign({}, state, {
+		currentSemesterId: action.id,
+	})
+}
+
 function getStudentPreviews(state, action) {
     if(action.hasError)
 	    return Object.assign({}, state, {
@@ -223,6 +235,10 @@ export default function course(state = {}, action) {
         return state
 
     switch(action.class) {
+	case 'SET_CURRENT_COURSE':
+		return setCurrentCourse(state, action) 
+	case 'SET_CURRENT_SEMESTER':
+		return setCurrentSemester(state, action)
     case 'GET_STUDENTS':
         return getStudentPreviews(state, action)
     case 'GET_SECTIONS':

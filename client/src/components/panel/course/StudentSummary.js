@@ -8,18 +8,18 @@ import {
 import SelectableCardSummary from "../common/SelectableCardSummary"
 import {retrieveAllStudents} from "../../../redux/retrievals/course"
 import {getCurrentProject} from "../../../redux/state-peekers/project"
-import {getStudents} from "../../../redux/state-peekers/course"
+import {getStudents, getCurrentCourseId, getCurrentSemesterId} from "../../../redux/state-peekers/course"
 
 class StudentSummary extends Component {
 
 	componentDidMount() {
 		if(this.props.project)
-			retrieveAllStudents(this.props.project)
+			retrieveAllStudents(this.props.project, this.props.course, this.props.semester)
 	}
 
 	componentDidUpdate(prevProps) {
 		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
-			retrieveAllStudents(this.props.project)
+			retrieveAllStudents(this.props.project, this.props.course, this.props.semester)
 	}
 
 	clickStudentCard = (student) => {
@@ -67,7 +67,9 @@ class StudentSummary extends Component {
 const mapStateToProps = (state) => {
 	return {
 		students: getStudents(state),
-		project: getCurrentProject(state)
+		project: getCurrentProject(state),
+		course: getCurrentCourseId(state),
+		semester: getCurrentSemesterId(state),
 	}
 }
 

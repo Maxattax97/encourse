@@ -11,7 +11,8 @@ class Statistics extends Component {
 					<div className='float-height cols-2'>
 						<Card>
 							{
-								!this.props.stats.loading ?
+
+								this.props.stats && !this.props.stats.loading ?
 									this.props.stats.data.map((value)  =>
 										<div key={value.stat_name} className={'stat float-height' + (value.break ? ' break' : '')} title={ value.stat_desc ? value.stat_desc : null }>
 											<h5>{value.stat_name}</h5>

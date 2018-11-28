@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { history } from '../../redux/store'
 import { logOut } from '../../redux/actions/index'
 import url from '../../server'
+import { defaultCourse } from '../../defaults'
 import {LogoutIcon, SettingsIcon} from '../Helpers'
 
 class TopNavigation extends Component {
@@ -17,7 +18,7 @@ class TopNavigation extends Component {
             <div className="nav">
                 <div className="nav-options">
                     <div className="action" onClick={() => {
-                        if(this.props.path === '/settings') history.push('/course')
+                        if(this.props.path === '/settings') history.push(`/course/${defaultCourse}`)
                         else history.push('/settings')
                     }}>
                         <SettingsIcon/>
@@ -26,7 +27,7 @@ class TopNavigation extends Component {
                         <LogoutIcon/>
                     </div>
                 </div>
-                <div className="nav-title" onClick={ () => history.push('/course')}>
+                <div className="nav-title" onClick={ () => history.push(`/course/${defaultCourse}`)}>
                     <span className="nav-en">En</span>
                     <span className="nav-course">Course</span>
                 </div>

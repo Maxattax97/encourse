@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 
 import {setDirectory, modifyProject} from '../../../redux/actions/index'
 import url from '../../../server'
+import { defaultCourse } from '../../../defaults'
 import {CheckmarkIcon, Modal} from '../../Helpers'
 
 class CourseModal extends Component {
@@ -21,7 +22,7 @@ class CourseModal extends Component {
     };
 
     saveSettings = () => {
-        if(this.state.name === 'cs252') {
+        if(this.state.name === defaultCourse) {
             this.props.setDirectory(`${url}`)
         }
         for(let project of this.props.projects) {

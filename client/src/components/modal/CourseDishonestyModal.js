@@ -1,5 +1,6 @@
 import {Component} from 'react'
 import url from '../../server'
+import { defaultCourse } from '../../defaults'
 import Modal from './Modal'
 import {CheckmarkIcon} from '../Helpers'
 import React from 'react'
@@ -28,7 +29,7 @@ class CourseDishonestyModal extends Component {
     };
 
     saveSettings = () => {
-        if(this.state.name === 'cs252') {
+        if(this.state.name === defaultCourse) {
             this.props.setDirectory(`${url}`)
         }
         for(let project of this.props.projects) {

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Route, Redirect, Switch } from 'react-router'
 import { connect } from 'react-redux'
 import { history } from '../redux/store'
+import { defaultCourse } from '../defaults'
 
 import '../styles/css/login.css'
 import Login from './Login'
@@ -22,7 +23,6 @@ class App extends Component {
     }
 
     updateState = () => {
-        console.log('here')
         return this.setState({ prevRoute: history.location.pathname})
     }
 
@@ -34,7 +34,7 @@ class App extends Component {
                         console.log(this.props.prevRoute)
                         return !this.loggedIn()
                             ? <Login {...navProps} />
-                            : <Redirect to="/course"/>
+                            : <Redirect to={`/course/${defaultCourse}`}/>
                     }
 
                     }/>

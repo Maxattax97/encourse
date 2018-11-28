@@ -25,7 +25,11 @@ const store = createStore(connectRouter(history)(rootReducer),
         },
         student: {
             ...getLocalStorageState('currentStudent'),
-        },    
+        },  
+        course: {
+            ...getLocalStorageState('currentCourseId'),
+            ...getLocalStorageState('currentSemesterId'),
+        }  
     }, 
     enhancers)
 
@@ -53,6 +57,8 @@ store.subscribe(() => {
     setLocalStorageState(state, 'currentProjectId', JSON.stringify((state.projects || {}).currentProjectId))
     setLocalStorageState(state, 'currentProjectIndex', JSON.stringify((state.projects || {}).currentProjectIndex))
     setLocalStorageState(state, 'currentStudent', JSON.stringify((state.student || {}).currentStudent))
+    setLocalStorageState(state, 'currentCourseId', JSON.stringify((state.course || {}).currentCourseId))
+    setLocalStorageState(state, 'currentSemesterId', JSON.stringify((state.course || {}).currentSemesterId))
 })
 
 if(module.hot) {

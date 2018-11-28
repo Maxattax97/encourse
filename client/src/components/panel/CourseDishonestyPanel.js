@@ -4,8 +4,9 @@ import {history} from '../../redux/store'
 import {BackNav, SettingsIcon, Title} from '../Helpers'
 import CourseDishonestyModal from '../modal/CourseDishonestyModal'
 import {getStudentPreviews, setCurrentStudent, setModalState, getDishonestyReport, updateCourseDishonestyPage, resetCourseDishonestyPage} from '../../redux/actions'
+import {getCurrentCourseId} from '../../redux/state-peekers/course'
 import url from '../../server'
-import connect from 'react-redux/es/connect/connect'
+import { connect } from 'react-redux'
 import StudentReportFilter from './course-dishonesty/StudentReportFilter'
 import CourseDishonestyCharts from './course-dishonesty/CourseDishonestyCharts'
 import HistoryText from './common/HistoryText'
@@ -100,7 +101,7 @@ class CourseDishonestyPanel extends Component {
 
                     <div className='panel-course-report'>
                         <Title onClick={ () => this.props.setModalState(1) }>
-                            <h1 className='header'>CS252 - Academic Dishonesty Report</h1>
+                            <h1 className='header'>{this.props.currentCourseId.toUpperCase()} - Academic Dishonesty Report</h1>
                             <SettingsIcon/>
                         </Title>
                         <div className='h1 break-line header' />
@@ -122,6 +123,7 @@ class CourseDishonestyPanel extends Component {
 const mapStateToProps = (state) => {
     return {
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : [],
+        currentCourseId: getCurrentCourseId(state),
         report: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.content : [],
         currentProjectId: state.projects ? state.projects.currentProjectId : null,
         page: state.course && state.course.dishonestyPage ? state.course.dishonestyPage : 1,

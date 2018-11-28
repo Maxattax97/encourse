@@ -1,6 +1,21 @@
-import {genericDispatch} from "./index"
+import {genericDispatch} from "./fetch"
 
 const type = 'COURSE'
+export function setCurrentCourse(id) {
+    return {
+        type,
+        class: 'SET_CURRENT_COURSE',
+        id
+    }
+}
+
+export function setCurrentSemester(id) {
+    return {
+        type,
+        class: 'SET_CURRENT_COURSE',
+        id
+    }
+}
 
 export function updateCourseDishonestyPage() {
     return {
