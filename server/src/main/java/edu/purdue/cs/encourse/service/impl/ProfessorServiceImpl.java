@@ -71,7 +71,19 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Autowired
     private TeachingAssistantSectionRepository teachingAssistantSectionRepository;
 
-    /** Adds a new project to the database, which needs to be done before cloning the project in the course hub **/
+    /**
+     * Adds a new project to the database
+     *
+     * @param courseID      Identifier for course that is associated with the project
+     * @param semester      Semester that the project is assigned
+     * @param projectName   Name of the project for display purposes
+     * @param repoName      Name of the remote repository to clone
+     * @param startDate     Date that project will start for students
+     * @param dueDate       Date that project will be due for students
+     * @param testRate      Rate at which project will be pulled, tested, and analyzed automatically
+     *                      testRate is currently not used since automatic loop is run as often as possible
+     * @return              The object representing the created project
+     */
     public Project addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate) {
         Project project = new Project(courseID, semester, projectName, repoName, startDate, dueDate, testRate);
         if(projectRepository.existsByProjectIdentifier(project.getProjectIdentifier())) {
@@ -80,7 +92,13 @@ public class ProfessorServiceImpl implements ProfessorService {
         return projectRepository.save(project);
     }
 
-    /** Assigns a project to all students in the course so that the project starts being tracked **/
+    /**
+     * Assigns a project so that students can now see and be graded for the project
+     * Primarily used for a professor that wishes to add projects in advance but not assign them until later
+     *
+     * @param projectID Identifier for the project being assigned
+     * @return          Error code
+     */
     public int assignProject(@NonNull String projectID) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
@@ -100,7 +118,14 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    /** Assigns a project to a single student, to account for students being added to course after a project was assigned **/
+    /**
+     * Assigns a project to a particular student so that they can now see and be graded for the project
+     * Primarily used to assign a project to a student who joined the course after the project was already assigned
+     *
+     * @param projectID Identifier for the project being assigned
+     * @param userName  Front-end identifier for student being assigned a project
+     * @return          Error code
+     */
     public int assignProjectToStudent(@NonNull String projectID, @NonNull String userName) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
@@ -123,7 +148,12 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    /** Deletes project and all relations referring to project **/
+    /**
+     * Deletes a project and all relations involving it
+     *
+     * @param projectID Identifier for project being deleted
+     * @return          Error code
+     */
     public int deleteProject(@NonNull String projectID) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {
@@ -145,8 +175,14 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    /** Modifies project information like start and end dates **/
-    // TODO: RACE CONDITION FOR MULTIPLE CALLS SIMULTANEOUSLY
+    /**
+     * Modifies certain project information
+     *
+     * @param projectID Identifier for project being modified
+     * @param field     Field to modify. Can be startDate, dueDate, repoName, or testRate
+     * @param value     New value to update the project with. Must fit format of field
+     * @return          Error code
+     */
     public int modifyProject(@NonNull String projectID, @NonNull String field, String value) {
         Project project = projectRepository.findByProjectIdentifier(projectID);
         if(project == null) {

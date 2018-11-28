@@ -241,18 +241,25 @@ public class HelperServiceImpl implements HelperService {
             double earnedPoints = 0.0;
             double maxPoints = 0.0;
             for(StudentProjectTest t : testScores) {
-                if(t.isPassing()) {
-                    earnedPoints += t.getPointsWorth();
+                ProjectTestScript test = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(t.getProjectIdentifier(), t.getTestScriptName());
+                if(test.hasSuite(s)) {
+                    if (t.isPassing()) {
+                        earnedPoints += t.getPointsWorth();
+                    }
+                    maxPoints += t.getPointsWorth();
                 }
-                maxPoints += t.getPointsWorth();
             }
             double grade = Math.round((earnedPoints / maxPoints) * 100);
             if(isHidden) {
                 suiteProject.setBestHiddenGrade(grade);
+                suiteProject.setBestHiddenPoints(earnedPoints);
+                suiteProject.setHiddenPointTotal(maxPoints);
                 studentProjectRepository.save(suiteProject);
             }
             else {
                 suiteProject.setBestVisibleGrade(grade);
+                suiteProject.setBestVisiblePoints(earnedPoints);
+                suiteProject.setVisiblePointTotal(maxPoints);
                 studentProjectRepository.save(suiteProject);
             }
         }

@@ -263,12 +263,20 @@ public class CourseServiceImpl implements CourseService {
                 // TODO: Security issue in multiple course system. Must make sure professor teaches the course each project belongs to
                 List<StudentProject> studentProjects = studentProjectRepository.findByIdStudentIDAndIdSuite(student.getUserID(), "testall");
                 Map<String, Double> grades = new TreeMap<>();
+                Map<String, Double> points = new TreeMap<>();
+                Map<String, Double> totals = new TreeMap<>();
                 Map<String, Double> hiddenGrades = new TreeMap<>();
+                Map<String, Double> hiddenPoints = new TreeMap<>();
+                Map<String, Double> hiddenTotals = new TreeMap<>();
                 Map<String, Integer> commitCounts = new TreeMap<>();
                 Map<String, Double> timeSpent = new TreeMap<>();
                 for (StudentProject p : studentProjects) {
                     grades.put(p.getProjectIdentifier(), p.getBestVisibleGrade());
+                    points.put(p.getProjectIdentifier(), p.getBestVisiblePoints());
+                    totals.put(p.getProjectIdentifier(), p.getVisiblePointTotal());
                     hiddenGrades.put(p.getProjectIdentifier(), p.getBestHiddenGrade());
+                    hiddenPoints.put(p.getProjectIdentifier(), p.getBestHiddenPoints());
+                    hiddenTotals.put(p.getProjectIdentifier(), p.getHiddenPointTotal());
                     commitCounts.put(p.getProjectIdentifier(), p.getCommitCount());
                     timeSpent.put(p.getProjectIdentifier(), p.getTotalTimeSpent());
                 }
@@ -290,18 +298,13 @@ public class CourseServiceImpl implements CourseService {
                 studentJSON.put("sections", sectionStrings);
                 studentJSON.put("teaching_assistants", teachingAssistants);
                 studentJSON.put("grades", grades);
-                studentJSON.put("hiddenGrades", grades);
+                studentJSON.put("points", points);
+                studentJSON.put("totals", totals);
+                studentJSON.put("hiddenGrades", hiddenGrades);
+                studentJSON.put("hiddenPoints", hiddenPoints);
+                studentJSON.put("hiddenTotals", hiddenTotals);
                 studentJSON.put("commitCounts", commitCounts);
                 studentJSON.put("timeSpent", timeSpent);
-                if (helperService.getObfuscate()) {
-                    studentJSON.put("first_name", student.getFirstName());
-                    studentJSON.put("last_name", student.getLastName());
-                    studentJSON.put("id", student.getUserName());
-                    studentJSON.put("grades", grades);
-                    studentJSON.put("hiddenGrades", grades);
-                    studentJSON.put("commitCounts", commitCounts);
-                    studentJSON.put("timeSpent", timeSpent);
-                }
                 studentsJSON.add(studentJSON);
             }
         }

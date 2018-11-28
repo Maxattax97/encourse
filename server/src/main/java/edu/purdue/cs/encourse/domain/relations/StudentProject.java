@@ -32,6 +32,22 @@ public class StudentProject {
     @Setter
     private double bestHiddenGrade;
 
+    /** Best visible point score for the project */
+    @Setter
+    private double bestVisiblePoints;
+
+    /** Best hidden point score for the project */
+    @Setter
+    private double bestHiddenPoints;
+
+    /** Maximum points possible for visible grade */
+    @Setter
+    private double visiblePointTotal;
+
+    /** Maximum points possible for hidden grade*/
+    @Setter
+    private double hiddenPointTotal;
+
     /** Git commit count for the project */
     @Setter
     private int commitCount;
@@ -60,6 +76,10 @@ public class StudentProject {
         this.id = new StudentProjectID(userID, projectIdentifier, suite);
         this.bestVisibleGrade = 0.0;
         this.bestHiddenGrade = 0.0;
+        this.bestVisiblePoints = 0.0;
+        this.bestHiddenPoints = 0.0;
+        this.visiblePointTotal = 0.0;
+        this.hiddenPointTotal = 0.0;
         this.commitCount = 0;
         this.totalLinesAdded = 0;
         this.totalLinesRemoved = 0;
