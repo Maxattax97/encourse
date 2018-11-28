@@ -6,6 +6,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Helper object for a test script on a separate thread
+ * Primarily used to be able to run tests with the ability to kill them if they take too much time
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 public class TestExecuter implements Runnable {
     @Getter
     private volatile String visibleResult;
