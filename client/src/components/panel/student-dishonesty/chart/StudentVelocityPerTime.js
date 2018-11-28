@@ -37,12 +37,12 @@ class StudentVelocityPerTime extends Component {
         this.fetch(this.props)
     }
 
-    componentWillReceiveProps = (nextProps) => {
-        if(this.props.isLoading && !nextProps.isLoading) {
-            this.setState({ formattedData: this.formatApiData(nextProps.data) })
+    componentDidUpdate = (prevProps) => {
+        if(prevProps.isLoading && !this.props.isLoading) {
+            this.setState({ formattedData: this.formatApiData(this.props.data) })
         }
-        if (nextProps.currentProjectId !== this.props.currentProjectId) {
-            this.fetch(nextProps)
+        if (this.props.currentProjectId !== prevProps.currentProjectId) {
+            this.fetch(this.props)
         }
     }
 

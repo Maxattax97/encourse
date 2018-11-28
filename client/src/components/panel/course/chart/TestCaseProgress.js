@@ -27,12 +27,12 @@ class StudentsTestCaseProgress extends Component {
 		}
 	}
 
-	componentWillReceiveProps = (nextProps) => {
-		if(nextProps.project && (!(this.props.project) || this.props.project.index !== nextProps.project.index)) {
-			if(this.props.anon)
-				retrieveCourseTestProgress(nextProps.project)
+	componentDidUpdate = (prevProps) => {
+		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index)) {
+			if(prevProps.anon)
+				retrieveCourseTestProgress(this.props.project)
 			else
-				retrieveStudentsTestProgress(nextProps.project)
+				retrieveStudentsTestProgress(this.props.project)
 		}
 	}
 

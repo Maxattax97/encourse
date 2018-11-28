@@ -81,12 +81,12 @@ class CourseIdenticalLinesChart extends Component {
         this.fetch(this.props)
     }
     
-    componentWillReceiveProps = (nextProps) => {
-        if(this.props.isLoading && !nextProps.isLoading) { 
-            this.setState({ formattedData: this.formatApiData(nextProps.data) })
+    componentDidUpdate = (prevProps) => {
+        if(prevProps.isLoading && !this.props.isLoading) { 
+            this.setState({ formattedData: this.formatApiData(this.props.data) })
         }
-        if (nextProps.currentProjectId !== this.props.currentProjectId) {
-            this.fetch(nextProps)
+        if (prevProps.currentProjectId !== this.props.currentProjectId) {
+            this.fetch(this.props)
         }
     }
     

@@ -20,10 +20,10 @@ class StudentCommitHistory extends Component {
         }
     }
 
-	componentWillReceiveProps(nextProps) {
-		if(nextProps.student && nextProps.project && (!(this.props.project) || !(this.props.student) || this.props.project.index !== nextProps.project.index)) {
+	componentDidUpdate(prevProps) {
+		if(this.props.student && this.props.project && (!(prevProps.project) || !(prevProps.student) || prevProps.project.index !== this.props.project.index)) {
             this.props.resetCommitsPage()
-			retrieveStudentCommitHistory(nextProps.student, nextProps.project, 1, 5)
+			retrieveStudentCommitHistory(this.props.student, this.props.project, 1, 5)
         }
 	}
 
