@@ -54,6 +54,7 @@ public class ReadController {
                                                           @RequestParam(name = "size", defaultValue = "100", required = false) int size,
                                                           @RequestParam(name = "sortBy", defaultValue = "id", required = false) String sortBy,
                                                           @RequestParam(name = "projectID", required = false) String projectID,
+                                                          @RequestParam(name = "selectAll", defaultValue = "true", required = false) boolean selectAll,
                                                           @RequestParam(name = "userName", required = false) List<String> userNames,
                                                           @RequestParam(name = "order", defaultValue = "0", required = false) int order,
                                                           @RequestParam(name = "commit", defaultValue = "0", required = false) int commit,
@@ -75,54 +76,96 @@ public class ReadController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
+        // Select specified students
         List<JSONObject> jsonValues = new ArrayList<>();
-        List<JSONObject> specifiedStudents = new ArrayList<>();
-        boolean specificStudent = false;
         for (int i = 0; i < returnJson.size(); i++) {
             JSONObject json = (JSONObject)returnJson.get(i);
-            if (userNames != null) {
-                if (userNames.contains(json.get("id"))) {
-                    specifiedStudents.add(json);
-                    specificStudent = true;
-                    continue;
+            if (selectAll) {
+                if (userNames != null) {
+                    if (userNames.contains(json.get("id"))) {
+                        continue;
+                    }
+                }
+                jsonValues.add(json);
+            } else {
+                if (userNames != null) {
+                    if (userNames.contains(json.get("id"))) {
+                        jsonValues.add(json);
+                    }
                 }
             }
-            jsonValues.add(json);
         }
-        if (specificStudent) {
-            return new ResponseEntity<>(specifiedStudents, HttpStatus.OK);
-        }
+
         // Filtering
-        int[] commits = {0, 10, 25, 100, 500};
-        int[] hours = {0, 5, 10, 25};
-        int[] progresses = {0, 25, 50, 75};
+        Map<String, List<Integer>> filters = new HashMap<>();
+        filters.put("commitCounts", new ArrayList<>());
+        filters.get("commitCounts").add(commit);
+        filters.put("timeSpent", new ArrayList<>());
+        filters.get("timeSpent").add(hour);
+        filters.put("grades", new ArrayList<>());
+        filters.get("grades").add(progress);
 
-        if (commit != 0) {
-            if (commit >= commits.length) {
-                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commits.length - 1] );
-            } else {
-                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() > commits[commit] ||
-                                          ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commit - 1]);
+        for (String sortName: filters.keySet()) {
+            Comparator<JSONObject> compare = (a, b) -> {
+                TreeMap jsonA = (TreeMap) a.get(sortName);
+                TreeMap jsonB = (TreeMap) b.get(sortName);
+
+                double valA = ((Number)jsonA.get(projectID)).doubleValue();
+                double valB = ((Number)jsonB.get(projectID)).doubleValue();
+                return Double.compare(valA, valB);
+            };
+            jsonValues.sort(order == 0 ? compare : compare.reversed());
+
+            int median = (int) ((Number) ((TreeMap)jsonValues.get(jsonValues.size() / 2).get(sortName)).get(projectID)).doubleValue();
+            int q1 =  (int) ((Number) ((TreeMap)jsonValues.get(jsonValues.size() / 4).get(sortName)).get(projectID)).doubleValue();
+            filters.get(sortName).add(q1);
+            filters.get(sortName).add(median);
+            int q3 =  (int) ((Number) ((TreeMap)jsonValues.get(jsonValues.size() * 3 / 4).get(sortName)).get(projectID)).doubleValue();
+            int max = (int) ((Number) ((TreeMap)jsonValues.get(jsonValues.size() - 1).get(sortName)).get(projectID)).doubleValue();
+            filters.get(sortName).add(q3);
+            filters.get(sortName).add(max);
+
+            if (filters.get(sortName).get(0) != 0) {
+                if (filters.get(sortName).get(0) >= 4) {
+                    jsonValues.removeIf( i -> ((Number)((TreeMap)i.get(sortName)).get(projectID)).doubleValue() < filters.get(sortName).get(3) );
+                } else {
+                    jsonValues.removeIf( i -> ((Number)((TreeMap)i.get(sortName)).get(projectID)).doubleValue() > filters.get(sortName).get(filters.get(sortName).get(0)) ||
+                                              ((Number)((TreeMap)i.get(sortName)).get(projectID)).doubleValue() < filters.get(sortName).get(filters.get(sortName).get(0) - 1));
+                }
+                filters.get(sortName).set(0, 0);
             }
         }
 
-        if (hour != 0) {
-            if (hour >= hours.length) {
-                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hours.length - 1] );
-            } else {
-                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() > hours[hour] ||
-                                          ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hour - 1]);
-            }
-        }
-
-        if (progress != 0) {
-            if (progress >= progresses.length) {
-                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progresses.length - 1] );
-            } else {
-                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() > progresses[progress] ||
-                                          ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progress - 1]);
-            }
-        }
+//        int[] commits = {0, 10, 25, 100, 500};
+//        int[] hours = {0, 5, 10, 25};
+//        int[] progresses = {0, 25, 50, 75};
+//
+//        if (commit != 0) {
+//            if (commit >= commits.length) {
+//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commits.length - 1] );
+//            } else {
+//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() > commits[commit] ||
+//                                          ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commit - 1]);
+//            }
+//        }
+//
+//        if (hour != 0) {
+//            if (hour >= hours.length) {
+//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hours.length - 1] );
+//            } else {
+//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() > hours[hour] ||
+//                                          ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hour - 1]);
+//            }
+//        }
+//
+//        if (progress != 0) {
+//            if (progress >= progresses.length) {
+//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progresses.length - 1] );
+//            } else {
+//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() > progresses[progress] ||
+//                                          ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progress - 1]);
+//            }
+//        }
 
         // Sorting
         Comparator<JSONObject> compare;
@@ -172,6 +215,7 @@ public class ReadController {
         response.put("sortedBy", sortBy);
         response.put("last", (page >= jsonValues.size() / size));
         response.put("first", (page == 1));
+        response.put("filters", filters);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -504,38 +548,6 @@ public class ReadController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(returnJson, HttpStatus.OK);
-
-//        List<String> errors = new ArrayList<>();
-//        List<String> correct = new ArrayList<>();
-//        for (String userName: userNames) {
-//            if (hasPermissionOverAccount(userName)) {
-//                JSONReturnable returnJson = null;
-//                Iterator iter = getUserAuthorities().iterator();
-//                while (iter.hasNext()) {
-//                    String auth = ((Authority) iter.next()).getAuthority();
-//                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-//                        returnJson = professorService.getStatistics(projectID, userName);
-//                        break;
-//                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-//                        returnJson = taService.getStatistics(projectID, userName, getUserFromAuth().getUsername());
-//                        break;
-//                    }
-//                }
-//
-//                if (returnJson == null || returnJson.jsonObject == null) {
-//                    errors.add("\"" + userName + " does not have content" + "\"");
-//                    continue;
-//                }
-//                String json = returnJson.jsonObject.toJSONString();
-//                correct.add(json);
-//            } else {
-//                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
-//            }
-//        }
-//        if (errors.isEmpty()) {
-//            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
-//        }
-//        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
@@ -550,6 +562,25 @@ public class ReadController {
         }
         String json = returnJson.jsonObject.toJSONString();
         return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/source", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getSource(@RequestParam(name = "projectID") String projectID,
+                                                     @RequestParam(name = "userName") String userName,
+                                                     @RequestParam(name = "startHash") String startHash,
+                                                     @RequestParam(name = "endHash") String endHash,
+                                                     @RequestParam(name = "file") String file) {
+        String source;
+        if (hasPermissionOverAccount(userName)) {
+            source = courseService.getSourceWithChanges(projectID, userName, startHash, endHash, file);
+            if (source == null) {
+                return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(source, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")

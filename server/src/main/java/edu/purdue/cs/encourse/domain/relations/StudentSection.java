@@ -23,8 +23,8 @@ public class StudentSection {
     @EmbeddedId
     private StudentSectionID id;
 
-    public StudentSection(String studentID, String sectionIdentifier) {
-        this.id = new StudentSectionID(studentID, sectionIdentifier);
+    public StudentSection(String studentID, String sectionID) {
+        this.id = new StudentSectionID(studentID, sectionID);
     }
 
     public StudentSection() {
@@ -35,12 +35,12 @@ public class StudentSection {
         return id.getStudentID();
     }
 
-    public String getSectionIdentifier() {
-        return id.getSectionIdentifier();
+    public String getSectionID() {
+        return id.getSectionID();
     }
 
     @Override
-    public String toString() { return getStudentID() + " | " + getSectionIdentifier(); }
+    public String toString() { return getStudentID() + " | " + getSectionID(); }
 }
 
 @Getter
@@ -50,11 +50,11 @@ class StudentSectionID implements Serializable {
     private String studentID;
 
     /** Key used to identify the section */
-    private String sectionIdentifier;
+    private String sectionID;
 
-    public StudentSectionID(String studentID, String sectionIdentifier) {
+    public StudentSectionID(String studentID, String sectionID) {
         this.studentID = studentID;
-        this.sectionIdentifier = sectionIdentifier;
+        this.sectionID = sectionID;
     }
 
     public StudentSectionID() {

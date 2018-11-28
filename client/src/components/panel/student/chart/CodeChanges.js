@@ -13,14 +13,14 @@ import {getCurrentProject} from "../../../../redux/state-peekers/project"
 
 class CodeChanges extends Component {
 
-	componentWillMount() {
+	componentDidMount() {
 		if(this.props.student && this.props.project)
 			retrieveStudentCodeChanges(this.props.student, this.props.project)
 	}
 
-	componentWillReceiveProps(nextProps) {
-		if(nextProps.student && nextProps.project && (!(this.props.project) || !(this.props.student) || this.props.project.index !== nextProps.project.index))
-			retrieveStudentCodeChanges(nextProps.student, nextProps.project)
+	componentDidUpdate(prevProps) {
+		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
+			retrieveStudentCodeChanges(this.props.project)
 	}
 
     dateFormatter = (date) => {

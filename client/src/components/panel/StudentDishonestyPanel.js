@@ -4,6 +4,7 @@ import ActionNavigation from '../navigation/ActionNavigation'
 import {BackNav} from '../Helpers'
 import {history} from '../../redux/store'
 import {clearStudent, getStudent, syncStudentRepository, runStudentTests, setModalState} from '../../redux/actions'
+import {getCurrentCourseId, getCurrentSemesterId} from '../../redux/state-peekers/course'
 import url from '../../server'
 import HistoryText from './common/HistoryText'
 import StudentDishonestyCharts from "./student-dishonesty/StudentDishonestyCharts"
@@ -13,7 +14,7 @@ class StudentDishonestyPanel extends Component {
 
     componentDidMount = () => {
         if(!this.props.currentStudent) {
-            this.props.getStudent(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&userName=${this.props.match.params.id}`)
+            this.props.getStudent(`${url}/api/studentsData?courseID=${this.props.currentCourseId}&semester=${this.props.currentSemesterId}&userName=${this.props.match.params.id}`)
         }
     }
 
@@ -61,7 +62,7 @@ class StudentDishonestyPanel extends Component {
                 <div className='panel-center-content'>
 
                     <div className='panel-student-report'>
-                        <h1 className='header'>CS252 - { this.props.currentStudent ? this.props.currentStudent.first_name : '' } { this.props.currentStudent ? this.props.currentStudent.last_name : '' } - Academic Dishonesty Report</h1>
+                        <h1 className='header'>{this.props.currentCourseId.toUpperCase()} - { this.props.currentStudent ? this.props.currentStudent.first_name : '' } { this.props.currentStudent ? this.props.currentStudent.last_name : '' } - Academic Dishonesty Report</h1>
                         <div className='h1 break-line header' />
 
                         <h3 className='header'>Student Charts Summary</h3>
@@ -77,6 +78,8 @@ const mapStateToProps = (state) => {
     return {
         currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        currentCourseId: getCurrentCourseId(state),
+        currentSemesterId: getCurrentSemesterId(state),
     }
 }
 

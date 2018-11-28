@@ -10,14 +10,14 @@ import {Chart} from "../../../Helpers"
 
 class StudentProgress extends Component {
 
-	componentWillMount() {
+	componentDidMount() {
 		if(this.props.student && this.props.project)
 			retrieveStudentProgress(this.props.student, this.props.project)
 	}
 
-	componentWillReceiveProps(nextProps) {
-		if(nextProps.student && nextProps.project && (!(this.props.project) || !(this.props.student) || this.props.project.index !== nextProps.project.index))
-			retrieveStudentProgress(nextProps.student, nextProps.project)
+	componentDidUpdate(prevProps) {
+		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
+			retrieveStudentProgress(this.props.project)
 	}
 
 	dateFormatter = (dateUnix) => {

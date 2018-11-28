@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {Checkbox, CheckmarkIcon, Dropdown, Filter} from '../../Helpers'
-import connect from 'react-redux/es/connect/connect'
+import { connect } from 'react-redux'
+
 import ProjectTestSummary from "./ProjectTestSummary"
 import {getAllSelected, getFilters} from "../../../redux/state-peekers/control"
 import {resetFilterState, setFilterState, toggleSelectAllCards} from "../../../redux/actions"

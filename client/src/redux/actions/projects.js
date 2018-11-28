@@ -1,4 +1,4 @@
-import {genericDispatch} from "./index"
+import {genericDispatch} from "./fetch"
 
 const type = 'PROJECT'
 

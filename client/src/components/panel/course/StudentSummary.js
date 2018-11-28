@@ -8,18 +8,18 @@ import {
 import SelectableCardSummary from "../common/SelectableCardSummary"
 import {retrieveAllStudents} from "../../../redux/retrievals/course"
 import {getCurrentProject} from "../../../redux/state-peekers/project"
-import {getStudents} from "../../../redux/state-peekers/course"
+import {getStudents, getCurrentCourseId, getCurrentSemesterId} from "../../../redux/state-peekers/course"
 
 class StudentSummary extends Component {
 
-	componentWillMount() {
+	componentDidMount() {
 		if(this.props.project)
-			retrieveAllStudents(this.props.project)
+			retrieveAllStudents(this.props.project, this.props.course, this.props.semester)
 	}
 
-	componentWillReceiveProps(nextProps) {
-		if(nextProps.project && (!(this.props.project) || this.props.project.index !== nextProps.project.index))
-			retrieveAllStudents(nextProps.project)
+	componentDidUpdate(prevProps) {
+		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
+			retrieveAllStudents(this.props.project, this.props.course, this.props.semester)
 	}
 
 	clickStudentCard = (student) => {
@@ -44,7 +44,7 @@ class StudentSummary extends Component {
 						<div style={{width: (student.grades[this.props.project.id]) + '%'}} />
 					</div>
 					<h6 className="progress-text">
-						{parseInt(student.grades[this.props.project.id])}%
+						{parseInt(student.grades[this.props.project.id], 10)}%
 					</h6>
 				</div>
 			</div>
@@ -67,7 +67,9 @@ class StudentSummary extends Component {
 const mapStateToProps = (state) => {
 	return {
 		students: getStudents(state),
-		project: getCurrentProject(state)
+		project: getCurrentProject(state),
+		course: getCurrentCourseId(state),
+		semester: getCurrentSemesterId(state),
 	}
 }
 

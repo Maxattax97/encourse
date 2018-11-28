@@ -10,9 +10,8 @@ import {Chart} from "../../../Helpers"
 
 class CompletionProgress extends Component {
 
-	componentWillMount() {
-		if (this.props.project)
-		{
+	componentDidMount() {
+		if (this.props.project) {
 			if (this.props.anon)
 				retrieveCourseProgress(this.props.project)
 			else
@@ -20,12 +19,12 @@ class CompletionProgress extends Component {
 		}
 	}
 
-	componentWillReceiveProps = (nextProps) => {
-		if(nextProps.project && (!(this.props.project) || this.props.project.index !== nextProps.project.index)) {
-			if(this.props.anon)
-				retrieveCourseProgress(nextProps.project)
+	componentDidUpdate = (prevProps) => {
+		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index)) {
+			if(prevProps.anon)
+				retrieveCourseProgress(this.props.project)
 			else
-				retrieveStudentsProgress(nextProps.project)
+				retrieveStudentsProgress(this.props.project)
 		}
 	}
 

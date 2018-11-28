@@ -8,15 +8,15 @@ import {retrieveStudentStats} from "../../../redux/retrievals/student"
 
 class StudentStatistics extends Component {
 
-	componentWillMount() {
+	componentDidMount() {
 		if(this.props.student && this.props.project)
 			retrieveStudentStats(this.props.student, this.props.project)
 	}
 
-    componentWillReceiveProps(nextProps) {
-	    if(nextProps.student && nextProps.project && (!(this.props.project) || !(this.props.student) || this.props.project.index !== nextProps.project.index))
-	        retrieveStudentStats(nextProps.student, nextProps.project)
-    }
+	componentDidUpdate(prevProps) {
+		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
+			retrieveStudentStats(this.props.project)
+	}
 
     render() {
         return (

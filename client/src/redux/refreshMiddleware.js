@@ -12,13 +12,11 @@ export default function refreshMiddleware() {
         }
 
         const tokens = getState().auth.logInData
-
-        if(request && type === 'LOG_OUT') {
-            dispatch({ type })
+        if(request && type === 'AUTH' && action.class === 'LOG_OUT' ) {
+            dispatch({ type, class: 'LOG_OUT' })
         }
         // 5 minutes from now
         const refreshThreshold = Date.now() + 300000
-
         if(!tokens || !tokens.refresh_token) {
             return request(null, dispatch, true);
         }
@@ -56,7 +54,7 @@ export default function refreshMiddleware() {
                 console.log('refresh token error', error)
                 refreshing = false
                 requests = []
-                //TODO: add error action for refresh
+                dispatch({ type, class: 'LOG_OUT' })
             })
         } else if (refreshing) {
             requests.push(request)

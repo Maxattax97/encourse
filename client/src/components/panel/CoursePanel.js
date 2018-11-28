@@ -3,7 +3,11 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import url from '../../server'
-import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories, updateStudentsPage, resetStudentsPage} from '../../redux/actions'
+import { defaultCourse, defaultSemester } from '../../defaults'
+import { getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, 
+        runTests, syncRepositories, updateStudentsPage, resetStudentsPage,
+        setCurrentCourse, setCurrentSemester } from '../../redux/actions'
+import { getCurrentCourseId, getCurrentSemesterId } from '../../redux/state-peekers/course'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import {CourseModal, AnonymousCharts, Charts, CourseStatistics, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
@@ -16,6 +20,20 @@ class CoursePanel extends Component {
     componentDidMount = () => {
         //this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&projectID=${this.props.currentProjectId}`)
         //retrieveAllStudents()
+        const course = this.props.match.params.courseID
+        const semester = this.props.match.params.semesterID
+        if(/^((Fall)|(Spring)|(Summer))2[0-9][0-9][0-9]$/.test(semester)) {
+            setCurrentSemester(semester)
+        } else {
+            history.push(`/course/${course}/${defaultSemester}`)
+        }
+
+        if(/^[a-z]+[0-9]{3,}$/.test(course)) {
+            setCurrentCourse(course)
+        } else {
+            history.push(`/course/${defaultCourse}/${semester}`)
+        }
+
     }
 
     getSortBy = (value) => {
@@ -29,15 +47,17 @@ class CoursePanel extends Component {
                 return 'commitCounts'
             case 3:
                 return 'grades'
-            
+            default:
+                return 'id'
         }
     }
 
     changeFilter = (key, value) => {
-        this.state.filters[key] = value
-        this.setState({ filters: Object.assign({}, this.state.filters) }, () => {
+        let filters = [...this.state.filters]
+        filters[key] = value
+        this.setState({ filters }, () => {
             this.props.resetStudentsPage()
-            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=1&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}&order=${this.state.filters.order_by}&commit=${this.state.filters.commit_filter}&progress=${this.state.filters.progress_filter}&hour=${this.state.filters.hour_filter}`)
+            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=${this.props.currentCourseId}&semester=${this.props.currentSemesterId}&size=10&page=1&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}&order=${this.state.filters.order_by}&commit=${this.state.filters.commit_filter}&progress=${this.state.filters.progress_filter}&hour=${this.state.filters.hour_filter}`)
         })
     }
 
@@ -88,7 +108,7 @@ class CoursePanel extends Component {
 
                     <div className='panel-course-content'>
                         <Title onClick={ () => this.props.setModalState(1) }>
-                            <h1 className='header'>CS252</h1>
+                            <h1 className='header'>{this.props.currentCourseId.toUpperCase()}</h1>
                             <SettingsIcon/>
                         </Title>
                         <div className='h1 break-line header' />
@@ -118,8 +138,10 @@ class CoursePanel extends Component {
 const mapStateToProps = (state) => {
     return {
 	    projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
-	    currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
+        currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
         currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        currentCourseId: getCurrentCourseId(state),
+        currentSemesterId: getCurrentSemesterId(state),
         page: state.course && state.course.studentsPage ? state.course.studentsPage : 1,
         last: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.last : true,
     }
@@ -130,6 +152,8 @@ const mapDispatchToProps = (dispatch) => {
         getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
         setCurrentProject: (id, index) => dispatch(setCurrentProject(id, index)),
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
+        setCurrentCourse: (id) => dispatch(setCurrentCourse(id)),
+        setCurrentSemester: (id) => dispatch(setCurrentSemester(id)),
         setModalState: (id) => dispatch(setModalState(id)),
         runTests: (url, headers, body) => dispatch(runTests(url, headers, body)),
         syncRepositories: (url, headers, body) => dispatch(syncRepositories(url, headers, body)),

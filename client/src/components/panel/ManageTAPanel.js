@@ -9,6 +9,7 @@ import StudentAssignPreview from './manage-ta/StudentAssignPreview'
 import SectionPreview from './manage-ta/SectionPreview'
 import url from '../../server'
 import {getSectionsData, getStudentPreviews, getTeachingAssistants, submitStudents, updateStudentsPage, resetStudentsPage } from '../../redux/actions'
+import { getCurrentCourseId, getCurrentSemesterId } from '../../redux/state-peekers/course'
 
 class ManageTAPanel extends Component {
 
@@ -44,9 +45,9 @@ class ManageTAPanel extends Component {
     componentDidMount = () => {
         //TODO: clear class projects/student previews to account for multiple classes
         //TODO: Add course ID functionality for multiple classes
-        this.props.getSectionsData(`${url}/api/sectionsData?courseID=cs252&semester=Fall2018`)
-        this.props.getTeachingAssistants(`${url}/api/teachingAssistantsData?courseID=cs252&semester=Fall2018`)
-        this.props.getStudentPreviews(`${url}/api/studentsData?size=10&page=1&courseID=cs252&semester=Fall2018`)
+        this.props.getSectionsData(`${url}/api/sectionsData?courseID=${this.props.currentCourseId}&semester=${this.props.currentSemesterId}`)
+        this.props.getTeachingAssistants(`${url}/api/teachingAssistantsData?courseID=${this.props.currentCourseId}&semester=${this.props.currentSemesterId}`)
+        this.props.getStudentPreviews(`${url}/api/studentsData?size=10&page=1&courseID=${this.props.currentCourseId}&semester=${this.props.currentSemesterId}`)
     }
 
     onChange = (event) => {
@@ -63,12 +64,12 @@ class ManageTAPanel extends Component {
 
     changeTA = (index) => {
         //this.state.students = [].concat(this.props.teaching_assistants[index].students)
-        this.state.sections = [].concat(this.props.teaching_assistants[index].sections)
+        const sections = [].concat(this.props.teaching_assistants[index].sections)
 
         this.setState({
             assignment_type: this.props.teaching_assistants[index].assignment_type,
             students: this.state.students,
-            sections: this.state.sections,
+            sections,
             current_ta: index
         })
     }
@@ -108,13 +109,13 @@ class ManageTAPanel extends Component {
     }
 
     discard = () => {
-        this.state.students = [].concat(this.props.teaching_assistants[this.state.current_ta].students)
-        this.state.sections = [].concat(this.props.teaching_assistants[this.state.current_ta].sections)
+        const students = [].concat(this.props.teaching_assistants[this.state.current_ta].students)
+        const sections = [].concat(this.props.teaching_assistants[this.state.current_ta].sections)
 
         this.setState({
             assignment_type: this.props.teaching_assistants[this.state.current_ta].assignment_type,
-            students: this.state.students,
-            sections: this.state.sections
+            students,
+            sections
         })
     }
 
@@ -131,7 +132,7 @@ class ManageTAPanel extends Component {
 
     scrolledToBottom = () => {
         if(!this.props.last) {
-            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=${this.props.page + 1}&projectID=${this.props.currentProjectId}`)
+            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=${this.props.currentCourseId}&semester=${this.props.currentSemesterId}&size=10&page=${this.props.page + 1}&projectID=${this.props.currentProjectId}`)
             this.props.updateStudentsPage()
         }
     }
@@ -173,7 +174,7 @@ class ManageTAPanel extends Component {
 
                     <div className="panel-center-content">
                         <Title>
-                            <h1 className='header'>CS252 - Teaching Assistants</h1>
+                            <h1 className='header'>{this.props.currentCourseId.toUpperCase()} - Teaching Assistants</h1>
                         </Title>
                         <div className='h1 break-line header' />
 
@@ -202,7 +203,7 @@ class ManageTAPanel extends Component {
                 </div>
 
                 <div className="panel-center-content">
-                    <h1 className='header'>CS252 - Teaching Assistants - { `${current_ta.first_name} ${current_ta.last_name}` }</h1>
+                    <h1 className='header'>{this.props.currentCourseId.toUpperCase()} - Teaching Assistants - { `${current_ta.first_name} ${current_ta.last_name}` }</h1>
                     <div className='h1 break-line header' />
 
                     <h3 className='header'>Assigning Sections to {current_ta.first_name} {current_ta.last_name}</h3>
@@ -313,6 +314,8 @@ const mapStateToProps = (state) => {
         sections: state.course && state.course.getSectionsData ? state.course.getSectionsData : [],
         teaching_assistants: state.teachingAssistant && state.teachingAssistant.getTeachingAssistantsData ? state.teachingAssistant.getTeachingAssistantsData : [],
         sectionsIsLoading: state.course ? state.course.getSectionsIsLoading : false,
+        currentCourseId: getCurrentCourseId(state),
+        currentSemesterId: getCurrentSemesterId(state),
         taIsLoading: state.teachingAssistant ? state.teachingAssistant.getTeachingAssistantsIsLoading : false,
         studentsIsLoading: state.course ? state.course.getStudentPreviewsIsLoading : false,
         page: state.course && state.course.studentsPage ? state.course.studentsPage : 1,

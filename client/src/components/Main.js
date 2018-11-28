@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Route, Redirect, Switch } from 'react-router'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
+import { defaultCourse, defaultSemester } from '../defaults'
 
 import { setModalState, getAccount } from '../redux/actions'
 import url from '../server'
@@ -58,10 +59,14 @@ class Main extends Component {
                         <Switch>
                             <Route path="/panel" render={(/* navProps */) => {
                                 //determine logic for course panel, student panel, or admin panel. For now, use course panel
-                                return <Redirect to="/course"/>
+                                return <Redirect to={`/course/${defaultCourse}`} />
                             }}/>
-                            <Route path="/course" render={(navProps) =>
+                            <Route path="/course/:courseID/:semesterID" render={(navProps) =>
                                 <CoursePanel ref={ this.setChild } {...navProps} />
+                            }/>
+                            <Route path="/course/:courseID" render={() => 
+                                //TODO: get current semester from API
+                                <Redirect to={`/course/${defaultCourse}/${defaultSemester}`} />
                             }/>
                             <Route path="/student/:id" render={(navProps) =>
                                 <StudentPanel ref={ this.setChild } {...navProps} />

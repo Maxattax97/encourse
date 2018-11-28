@@ -77,11 +77,6 @@ class ModalClass extends Component {
 export const Modal = connect(ModalClass.mapStateToProps, ModalClass.mapDispatchToProps)(ModalClass)
 
 export class Summary extends Component {
-
-    constructor(props) {
-        super(props)
-    }
-
     render() {
         return (
             <div className={ `summary ${this.props.className ? this.props.className : ''}` }>
@@ -96,11 +91,6 @@ export class Summary extends Component {
 }
 
 export class Filter extends Component {
-
-    constructor(props) {
-        super(props)
-    }
-
     render() {
         return (
             <div className='filter'>

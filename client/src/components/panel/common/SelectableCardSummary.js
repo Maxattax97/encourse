@@ -1,17 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {Card, Checkbox, CheckmarkIcon, Summary, Title} from '../../Helpers'
-import {fuzzing} from '../../../fuzz'
-import {history} from '../../../redux/store'
+import { Checkbox, CheckmarkIcon, Summary } from '../../Helpers'
 import {
-	getStudentPreviews,
 	resetAllCards,
-	setCurrentStudent,
-	toggleSelectAllCards,
 	toggleSelectCard
 } from '../../../redux/actions'
 import PreviewCard from "../common/PreviewCard"
-import {getAllSelected, getSelected, isAnySelected} from "../../../redux/state-peekers/control"
+import { getAllSelected, getSelected, isAnySelected } from "../../../redux/state-peekers/control"
 
 class SelectableCardSummary extends Component {
 

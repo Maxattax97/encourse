@@ -8,14 +8,14 @@ import {getCurrentProject} from "../../../redux/state-peekers/project"
 
 class StudentStatistics extends Component {
 
-	componentWillMount() {
+	componentDidMount() {
 		if(this.props.project)
 			retrieveCourseStats(this.props.project)
 	}
 
-	componentWillReceiveProps(nextProps) {
-		if(nextProps.project && (!(this.props.project) || this.props.project.index !== nextProps.project.index))
-			retrieveCourseStats(nextProps.project)
+	componentDidUpdate(prevProps) {
+		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
+			retrieveCourseStats(this.props.project)
 	}
 
 	render() {

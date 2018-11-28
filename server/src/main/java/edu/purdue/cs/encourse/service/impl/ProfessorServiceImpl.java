@@ -18,6 +18,13 @@ import java.util.*;
 import java.time.LocalDate;
 import lombok.NonNull;
 
+/**
+ * Contains implementations for all services which are used by professors for managing a class
+ * Primarily used by endpoints called for professors
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 @Service(value = ProfessorServiceImpl.NAME)
 public class ProfessorServiceImpl implements ProfessorService {
 
@@ -71,28 +78,46 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Autowired
     private TeachingAssistantSectionRepository teachingAssistantSectionRepository;
 
-    /** Adds a new project to the database, which needs to be done before cloning the project in the course hub **/
+    /**
+     * Adds a new project to the database
+     *
+     * @param courseID      Identifier for course that is associated with the project
+     * @param semester      Semester that the project is assigned
+     * @param projectName   Name of the project for display purposes
+     * @param repoName      Name of the remote repository to clone
+     * @param startDate     Date that project will start for students
+     * @param dueDate       Date that project will be due for students
+     * @param testRate      Rate at which project will be pulled, tested, and analyzed automatically
+     *                      testRate is currently not used since automatic loop is run as often as possible
+     * @return              The object representing the created project
+     */
     public Project addProject(@NonNull String courseID, @NonNull String semester, @NonNull String projectName, String repoName, String startDate, String dueDate, int testRate) {
         Project project = new Project(courseID, semester, projectName, repoName, startDate, dueDate, testRate);
-        if(projectRepository.existsByProjectIdentifier(project.getProjectIdentifier())) {
+        if(projectRepository.existsByProjectID(project.getProjectID())) {
             return null;
         }
         return projectRepository.save(project);
     }
 
-    /** Assigns a project to all students in the course so that the project starts being tracked **/
+    /**
+     * Assigns a project so that students can now see and be graded for the project
+     * Primarily used for a professor that wishes to add projects in advance but not assign them until later
+     *
+     * @param projectID Identifier for the project being assigned
+     * @return          Error code
+     */
     public int assignProject(@NonNull String projectID) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return -1;
         }
         List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         List<String> completedStudents = new ArrayList<>();
         for(Section s : sections) {
-            List<StudentSection> assignments = studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            List<StudentSection> assignments = studentSectionRepository.findByIdSectionID(s.getSectionID());
             for(StudentSection a : assignments) {
                 if(!(completedStudents.contains(a.getStudentID()))) {
-                    studentProjectRepository.save(new StudentProject(a.getStudentID(), project.getProjectIdentifier(), "testall"));
+                    studentProjectRepository.save(new StudentProject(a.getStudentID(), project.getProjectID(), "testall"));
                     completedStudents.add(a.getStudentID());
                 }
             }
@@ -100,9 +125,16 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    /** Assigns a project to a single student, to account for students being added to course after a project was assigned **/
+    /**
+     * Assigns a project to a particular student so that they can now see and be graded for the project
+     * Primarily used to assign a project to a student who joined the course after the project was already assigned
+     *
+     * @param projectID Identifier for the project being assigned
+     * @param userName  Front-end identifier for student being assigned a project
+     * @return          Error code
+     */
     public int assignProjectToStudent(@NonNull String projectID, @NonNull String userName) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return -1;
         }
@@ -112,32 +144,37 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
         List<StudentProject> projects = studentProjectRepository.findByIdStudentID(student.getUserID());
         for(StudentProject p : projects) {
-            if(p.getProjectIdentifier().equals(projectID)) {
+            if(p.getProjectID().equals(projectID)) {
                 return -3;
             }
         }
         if(!helperService.isTakingCourse(student, project)) {
             return -4;
         }
-        studentProjectRepository.save(new StudentProject(student.getUserID(), project.getProjectIdentifier(), "testall"));
+        studentProjectRepository.save(new StudentProject(student.getUserID(), project.getProjectID(), "testall"));
         return 0;
     }
 
-    /** Deletes project and all relations referring to project **/
+    /**
+     * Deletes a project and all relations involving it
+     *
+     * @param projectID Identifier for project being deleted
+     * @return          Error code
+     */
     public int deleteProject(@NonNull String projectID) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return -1;
         }
-        List<ProjectTestScript> testScripts = projectTestScriptRepository.findByIdProjectIdentifier(projectID);
+        List<ProjectTestScript> testScripts = projectTestScriptRepository.findByIdProjectID(projectID);
         for(ProjectTestScript t : testScripts) {
             projectTestScriptRepository.delete(t);
         }
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectID(projectID);
         for(StudentProject p : projects) {
             studentProjectRepository.delete(p);
         }
-        List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifier(projectID);
+        List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectID(projectID);
         for(StudentProjectDate p : projectDates) {
             studentProjectDateRepository.delete(p);
         }
@@ -145,10 +182,16 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    /** Modifies project information like start and end dates **/
-    // TODO: RACE CONDITION FOR MULTIPLE CALLS SIMULTANEOUSLY
+    /**
+     * Modifies certain project information
+     *
+     * @param projectID Identifier for project being modified
+     * @param field     Field to modify. Can be startDate, dueDate, repoName, or testRate
+     * @param value     New value to update the project with. Must fit format of field
+     * @return          Error code
+     */
     public int modifyProject(@NonNull String projectID, @NonNull String field, String value) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return -1;
         }
@@ -171,54 +214,63 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    /** Runs a bash script to initially clone every student's git repository. Each university should supply its own
-     bash script, since repo locations will vary **/
+    /**
+     * Runs a bash script to clone projects for each student from a remote repository
+     *
+     * @param projectID Identifier for the project being cloned
+     * @return          Error code
+     */
     public int cloneProjects(@NonNull String projectID){
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return -1;
         }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
-        if(sections.isEmpty()) {
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(projectID, "testall");
+        if(projects.isEmpty()) {
             return -2;
         }
-        if(sections.get(0).getCourseHub() == null) {
+        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+        if(sections.isEmpty()) {
             return -3;
         }
-        if(project.getRepoName() == null) {
+        if(sections.get(0).getCourseHub() == null) {
             return -4;
         }
-        if(sections.get(0).getRemotePath() == null) {
+        if(project.getRepoName() == null) {
             return -5;
         }
+        if(sections.get(0).getRemotePath() == null) {
+            return -6;
+        }
         int code = 0;
-        for(Section s : sections){
-            List<StudentSection> assignments =
-                    studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
-            for(StudentSection a : assignments){
-                Student student = studentRepository.findByUserID(a.getStudentID());
-                if(!(new File(s.getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName()).exists())) {
-                    String destPath = (s.getCourseHub() + "/" + student.getUserName());
-                    String repoPath = (s.getRemotePath() + "/" + student.getUserName() + "/" + project.getRepoName() + ".git");
-                    if(helperService.executeBashScript("cloneRepositories.sh " + destPath + " " + repoPath) == -1) {
-                        code = -6;
-                    }
+        for(StudentProject p : projects) {
+            Student student = studentRepository.findByUserID(p.getStudentID());
+            if(!(new File(sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName()).exists())) {
+                String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName());
+                String repoPath = (sections.get(0).getRemotePath() + "/" + student.getUserName() + "/" + project.getRepoName() + ".git");
+                if (helperService.executeBashScript("cloneRepositories.sh " + destPath + " " + repoPath) == -1) {
+                    code = -7;
                 }
             }
         }
         if(helperService.executeBashScript("setPermissions.sh " + sections.get(0).getCourseID()) == -1) {
-            return -7;
+            return -8;
         }
         return code;
     }
 
-    /** Pulls the designated project within every students directory under the course hub **/
+    /**
+     * Runs a bash script to pull projects for each student from a remote repository
+     *
+     * @param projectID Identifier for the project being pulled
+     * @return          Error code
+     */
     public int pullProjects(@NonNull String projectID){
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return -1;
         }
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(projectID, "testall");
         if(projects.isEmpty()) {
             return -2;
         }
@@ -244,6 +296,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             if(helperService.executeBashScript("pullRepositories.sh " + destPath) == -1) {
                 code = -6;
             }
+            helperService.updateStudentInformation(p.getProjectID(), student.getUserName());
             if(count % 10 == 0) {
                 project.setOperationProgress(1.0 * count / projects.size());
                 project.setOperationTime((System.currentTimeMillis() - start) / 1000);
@@ -262,119 +315,96 @@ public class ProfessorServiceImpl implements ProfessorService {
         return code;
     }
 
-    public int updateStudentInformation(@NonNull String projectID, @NonNull String userName) {
-        String dailyCountsFile = helperService.countStudentCommitsByDay(projectID, userName);
-        String commitLogFile = helperService.listStudentCommitsByTime(projectID, userName);
-        if(dailyCountsFile == null) {
-            return -1;
-        }
-        if(commitLogFile == null) {
-            return -2;
-        }
-        Student student = studentRepository.findByUserName(userName);
-        StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
-        StringBuilder builder = new StringBuilder();
-        builder.append(student.getUserName());
-        List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), false);
-        for(StudentProjectTest t : testResults) {
-            builder.append(";").append(t.getTestResultString());
-        }
-        testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), true);
-        for(StudentProjectTest t : testResults) {
-            builder.append(";").append(t.getTestResultString());
-        }
-        String testResult = builder.toString();
-        String pyPath = helperService.getPythonPath() + "get_statistics.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
-        JSONReturnable json = helperService.runPython(command);
-        if(json == null || json.getJsonObject() == null) {
-            return 0;
-        }
-        if (helperService.getDebug()) {
-            helperService.executeBashScript("cleanDirectory.sh src/main/temp");
-            return 0;
-        }
-        JSONArray array = (JSONArray)json.getJsonObject().get("data");
-        for(int i = 0; i < array.size(); i++) {
-            JSONObject data = (JSONObject)array.get(i);
-            if (data.get("stat_name").equals("End Date")) {
-                project.setMostRecentCommitDate(data.get("stat_value").toString());
-            }
-            else if (data.get("stat_name").equals("Additions")) {
-                try {
-                    project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setTotalLinesAdded(0);
-                }
-            }
-            else if (data.get("stat_name").equals("Deletions")) {
-                try {
-                    project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setTotalLinesRemoved(0);
-                }
-            } else if (data.get("stat_name").equals("Commit Count")) {
-                try {
-                    project.setCommitCount(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
-                }
-                catch(NumberFormatException e) {
-                    project.setCommitCount(0);
-                }
-            }
-            else if (data.get("stat_name").equals("Estimated Time Spent")) {
-                try {
-                    project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
-                } catch (NumberFormatException e) {
-                    project.setTotalTimeSpent(0.0);
-                }
-            }
-        }
-        studentProjectRepository.save(project);
-        //helperService.executeBashScript("cleanDirectory.sh src/main/temp");
-        return 0;
-    }
-
+    /**
+     * Obtains analysis on an entire class for potential cheating on a project
+     * Primarily used in the professor's summary for academic dishonesty
+     *
+     * @param projectID Identifier for the project being analyzed
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getClassCheating(@NonNull String projectID) {
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(projectID, "testall");
         List<String> userNames = helperService.getStudentUserNames(projects);
         return courseService.getCheating(projectID, userNames);
     }
 
+    /**
+     * Obtains commit history for an entire class for a project
+     * Primarily used in the professor's summary for a project
+     *
+     * @param projectID Identifier for the project being analyzed
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getClassCommitList(@NonNull String projectID) {
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(projectID, "testall");
         List<String> userNames = helperService.getStudentUserNames(projects);
         return courseService.getCommitList(projectID, userNames);
     }
 
+    /**
+     * Obtains progress history for an entire class for a project
+     * Primarily used in the professor's summary for a project
+     *
+     * @param projectID Identifier for the project being analyzed
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getClassProgress(@NonNull String projectID) {
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(projectID, "testall");
         List<String> userNames = helperService.getStudentUserNames(projects);
         return courseService.getProgress(projectID, userNames);
     }
 
+    /**
+     * Obtains analysis on similarities between each student's project in an entire class
+     * Primarily used in the professor's summary for academic dishonesty
+     *
+     * @param projectID Identifier for the project being analyzed
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getClassSimilar(@NonNull String projectID) {
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(projectID, "testall");
         List<String> userNames = helperService.getStudentUserNames(projects);
         return courseService.getSimilar(projectID, userNames);
     }
 
+    /**
+     * Obtains statistics, such as additions and deletions, for an entire class for a project
+     * Primarily used in the professor's summary for a project
+     *
+     * @param projectID Identifier for the project being analyzed
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getClassStatistics(@NonNull String projectID) {
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(projectID, "testall");
         List<String> userNames = helperService.getStudentUserNames(projects);
         return courseService.getStatistics(projectID, userNames);
     }
 
+    /**
+     * Obtains a summary of passed test cases for an entire class for a project
+     * Primarily used in the professor's summary for a project
+     *
+     * @param projectID Identifier for the project being analyzed
+     * @return          JSON for front-end to parse
+     */
     public JSONReturnable getClassTestSummary(@NonNull String projectID) {
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(projectID, "testall");
         List<String> userNames = helperService.getStudentUserNames(projects);
         return courseService.getTestSummary(projectID, userNames);
     }
 
-    /** Uploads a testing script to testcases directory in the course hub **/
+    /**
+     * Adds a test script to the database and project repository so that it can be ran on projects
+     *
+     * @param projectID     Identifier for project that test script is made for
+     * @param testName      Filename for the test script
+     * @param testContents  The entire content of the test script file
+     * @param isHidden      True if test script is part of a student's hidden grade, false otherwise
+     * @param points        Points given to a student for passing the script
+     * @return              Object representing the new test script
+     */
     public ProjectTestScript uploadTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String testContents, boolean isHidden, double points) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return null;
         }
@@ -404,9 +434,18 @@ public class ProfessorServiceImpl implements ProfessorService {
         return projectTestScriptRepository.save(script);
     }
 
-    /** Adds a testing script to the database. Mainly for testing purposes **/
+    /**
+     * Adds a test script to the database without adding it to the repository
+     * Primarily used for registering a test case that is already on the server for a project
+     *
+     * @param projectID Identifier for project that test script is made for
+     * @param testName  Filename for the test script
+     * @param isHidden  True if test script is part of a student's hidden grade, false otherwise
+     * @param points    Points given to a student for passing the script
+     * @return          Object representing the new test script
+     */
     public ProjectTestScript addTestScript(@NonNull String projectID, @NonNull String testName, boolean isHidden, double points) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return null;
         }
@@ -418,13 +457,21 @@ public class ProfessorServiceImpl implements ProfessorService {
         return projectTestScriptRepository.save(script);
     }
 
-    /** Modify an uploaded testing script to either change its contents, point value, or if it is hidden **/
+    /**
+     * Modify an existing test script in the database
+     *
+     * @param projectID Identifier for the project having a test script modified
+     * @param testName  Filename of the test script
+     * @param field     Field being modified in the test script. Can be "content", "points", or "value"
+     * @param value     Value that is used to update the test script
+     * @return          Error code
+     */
     public int modifyTestScript(@NonNull String projectID, @NonNull String testName, @NonNull String field, @NonNull String value) {
-        ProjectTestScript script = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
+        ProjectTestScript script = projectTestScriptRepository.findByIdProjectIDAndIdTestScriptName(projectID, testName);
         if(script == null) {
             return -1;
         }
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return -2;
         }
@@ -511,23 +558,31 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
+    /**
+     * Adds a test script to a testing suite
+     *
+     * @param projectID Identifier for project that test script is made for
+     * @param testName  Filename of the test script being added to a suite
+     * @param suite     Name of the suite. Can be a new or existing suite
+     * @return          Error code
+     */
     public int addTestScriptToSuite(@NonNull String projectID, @NonNull String testName, @NonNull String suite) {
-        ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
+        ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIDAndIdTestScriptName(projectID, testName);
         if(testScript == null) {
             return -1;
         }
         if(!testScript.hasSuite(suite)) {
             testScript.addSuite(suite);
         }
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return -2;
         }
         if(!project.hasSuite(suite)) {
             project.addSuite(suite);
-            List<StudentProject> studentProjects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
+            List<StudentProject> studentProjects = studentProjectRepository.findByIdProjectIDAndIdSuite(projectID, "testall");
             for(StudentProject p : studentProjects) {
-                StudentProject studentProject = new StudentProject(p.getStudentID(), p.getProjectIdentifier(), suite);
+                StudentProject studentProject = new StudentProject(p.getStudentID(), p.getProjectID(), suite);
                 studentProjectRepository.save(studentProject);
             }
         }
@@ -536,10 +591,15 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    /** Runs a generic testall script, which simply checks if nothing is output, which usually means test was passed,
-        and assigns a pass or fail to each test case based on if there was no output from test script **/
+    /**
+     * Runs a generic testall on every student's work for a project so far
+     * Primarily used in the automatic pull and test interval but can also be initiated manually
+     *
+     * @param projectID Identifier for the project being tested
+     * @return          Error code
+     */
     public int runTestall(@NonNull String projectID) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return -1;
         }
@@ -547,7 +607,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(sections.isEmpty()) {
             return -2;
         }
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(projectID, "testall");
         String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
         String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
         String makefilePath = sections.get(0).getCourseHub() + "/makefiles/" + project.getRepoName() + "/Makefile";
@@ -594,12 +654,12 @@ public class ProfessorServiceImpl implements ProfessorService {
                 if(hiddenResult == null) {
                     hiddenResult = "";
                 }
-                double visibleGrade = helperService.parseProgressForProject(p.getProjectIdentifier(), visibleResult);
-                double hiddenGrade = helperService.parseProgressForProject(p.getProjectIdentifier(), hiddenResult);
-                helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
-                StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
+                double visibleGrade = helperService.parseProgressForProject(p.getProjectID(), visibleResult);
+                double hiddenGrade = helperService.parseProgressForProject(p.getProjectID(), hiddenResult);
+                helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectID(), true);
+                StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIDAndIdStudentID(date, projectID, student.getUserID());
                 if(projectDate == null) {
-                    StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
+                    StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectID(), date, visibleGrade, hiddenGrade);
                     studentProjectDateRepository.save(d);
                 }
                 else {
@@ -613,12 +673,12 @@ public class ProfessorServiceImpl implements ProfessorService {
                     }
                 }
                 if(visibleGrade > p.getBestVisibleGrade()) {
-                    helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                    helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectID(), false);
                 }
                 if(hiddenGrade > p.getBestHiddenGrade()) {
-                    helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
+                    helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectID(), true);
                 }
-                p = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(p.getProjectIdentifier(), p.getStudentID(), "testall");
+                p = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(p.getProjectID(), p.getStudentID(), "testall");
                 line = reader.readLine();
                 commitInfo = line.split(" ");
                 date = commitInfo[2];
@@ -642,9 +702,9 @@ public class ProfessorServiceImpl implements ProfessorService {
                 }
                 visibleGrade = helperService.parseProgressForProject(projectID, visibleResult);
                 hiddenGrade = helperService.parseProgressForProject(projectID, hiddenResult);
-                projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
+                projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIDAndIdStudentID(date, projectID, student.getUserID());
                 if(projectDate == null) {
-                    StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
+                    StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectID(), date, visibleGrade, hiddenGrade);
                     studentProjectDateRepository.save(d);
                 }
                 else {
@@ -658,10 +718,10 @@ public class ProfessorServiceImpl implements ProfessorService {
                     }
                 }
                 if(visibleGrade > p.getBestVisibleGrade()) {
-                    helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                    helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectID(), false);
                 }
                 if(hiddenGrade > p.getBestHiddenGrade()) {
-                    helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
+                    helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectID(), true);
                 }
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
                 reader.close();
@@ -683,9 +743,15 @@ public class ProfessorServiceImpl implements ProfessorService {
         return code;
     }
 
-    /** Runs a testall script using two commits out of every day that a student has worked **/
+    /**
+     * Runs a generic testall on every student's work for a project using two commits from each day that they worked
+     * Primarily used for populating the database with progress for a project that already finished
+     *
+     * @param projectID Identifier for the project being tested
+     * @return          Error code
+     */
     public int runHistoricTestall(@NonNull String projectID) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return -1;
         }
@@ -693,7 +759,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(sections.isEmpty()) {
             return -2;
         }
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(projectID, "testall");
         String testCaseDirectory = sections.get(0).getCourseHub() + "/testcases/" + project.getRepoName();
         String hiddenTestCaseDirectory = sections.get(0).getCourseHub() + "/hidden_testcases/" + project.getRepoName();
         String makefilePath = sections.get(0).getCourseHub() + "/makefiles/" + project.getRepoName() + "/Makefile";
@@ -744,9 +810,9 @@ public class ProfessorServiceImpl implements ProfessorService {
                     }
                     double visibleGrade = helperService.parseProgressForProject(projectID, visibleResult);
                     double hiddenGrade = helperService.parseProgressForProject(projectID, hiddenResult);
-                    StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
+                    StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIDAndIdStudentID(date, projectID, student.getUserID());
                     if(projectDate == null) {
-                        StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
+                        StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectID(), date, visibleGrade, hiddenGrade);
                         studentProjectDateRepository.save(d);
                     }
                     else {
@@ -760,12 +826,12 @@ public class ProfessorServiceImpl implements ProfessorService {
                         }
                     }
                     if(visibleGrade > p.getBestVisibleGrade()) {
-                        helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                        helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectID(), false);
                     }
                     if(hiddenGrade > p.getBestHiddenGrade()) {
-                        helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
+                        helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectID(), true);
                     }
-                    p = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(p.getProjectIdentifier(), p.getStudentID(), "testall");
+                    p = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(p.getProjectID(), p.getStudentID(), "testall");
                     line = reader.readLine();
                     commitInfo = line.split(" ");
                     date = commitInfo[2];
@@ -789,9 +855,9 @@ public class ProfessorServiceImpl implements ProfessorService {
                     }
                     visibleGrade = helperService.parseProgressForProject(projectID, visibleResult);
                     hiddenGrade = helperService.parseProgressForProject(projectID, hiddenResult);
-                    projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
+                    projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIDAndIdStudentID(date, projectID, student.getUserID());
                     if(projectDate == null) {
-                        StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
+                        StudentProjectDate d = new StudentProjectDate(p.getStudentID(), p.getProjectID(), date, visibleGrade, hiddenGrade);
                         studentProjectDateRepository.save(d);
                     }
                     else {
@@ -805,10 +871,10 @@ public class ProfessorServiceImpl implements ProfessorService {
                         }
                     }
                     if(visibleGrade > p.getBestVisibleGrade()) {
-                        helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectIdentifier(), false);
+                        helperService.updateTestResults(visibleResult, p.getStudentID(), p.getProjectID(), false);
                     }
                     if(hiddenGrade > p.getBestHiddenGrade()) {
-                        helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectIdentifier(), true);
+                        helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectID(), true);
                     }
                 }
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
@@ -824,19 +890,18 @@ public class ProfessorServiceImpl implements ProfessorService {
         return code;
     }
 
-    /** Pulls and tests every project in the database on one hour intervals **/
+    /**
+     * Runs time consuming operations on an automatic interval
+     * Primarily used in a scheduled task that runs with a fixed delay between start and finish
+     */
     public void pullAndTestAllProjects() {
         for(Project project : projectRepository.findAll()) {
             if(project.getTestRate() > 0 && project.getTestCount() <= 0) {
                 System.out.println("Pulling project " + project.getProjectName());
-                pullProjects(project.getProjectIdentifier());
+                pullProjects(project.getProjectID());
                 System.out.println("Testing project " + project.getProjectName());
-                runTestall(project.getProjectIdentifier());
-                List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(project.getProjectIdentifier(), "testall");
-                for(StudentProject p : projects) {
-                    Student student = studentRepository.findByUserID(p.getStudentID());
-                    updateStudentInformation(p.getProjectIdentifier(), student.getUserName());
-                }
+                runTestall(project.getProjectID());
+                List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(project.getProjectID(), "testall");
                 project.setTestCount(project.getTestRate() - 1);
             }
             else {
@@ -846,13 +911,20 @@ public class ProfessorServiceImpl implements ProfessorService {
         helperService.executeBashScript("cleanDirectory.sh src/main/temp");
     }
 
-    /** Assigns a TA to a section in the course. Does not include assignments to students within section **/
+    /**
+     * Assigns a teaching assistant to a section without yet assigning students to the TA
+     * Primarily used to initially organize TAs into sections
+     *
+     * @param teachAssistUserName   Front-end identifier for the teaching assistant
+     * @param sectionID             Identifier for the section that they are assigned to
+     * @return                      Error code
+     */
     public int assignTeachingAssistantToSection(@NonNull String teachAssistUserName, @NonNull String sectionID) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
         if(teachingAssistant == null) {
             return -1;
         }
-        Section section = sectionRepository.findBySectionIdentifier(sectionID);
+        Section section = sectionRepository.findBySectionID(sectionID);
         if(section == null) {
             return -2;
         }
@@ -869,7 +941,15 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    /** Assigns a TA to a student in a section that they TA for **/
+    /**
+     * Assigns a teaching assistant to a student in a section that they oversee
+     * Primarily used in the professor's panel for assigning TAs to students
+     *
+     * @param teachAssistUserName   Front-end identifier for TA being assigned
+     * @param studentUserName       Front-end identifier for student that TA is assigned to
+     * @param sectionID             Identifier for the section that assignment is effective for
+     * @return                      Error code
+     */
     public int assignTeachingAssistantToStudentInSection(@NonNull String teachAssistUserName, @NonNull String studentUserName, @NonNull String sectionID) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
         if(teachingAssistant == null) {
@@ -879,24 +959,35 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(student == null) {
             return -2;
         }
-        TeachingAssistantSection check = teachingAssistantSectionRepository.findByIdTeachingAssistantIDAndIdSectionID(teachingAssistant.getUserID(), sectionID);
-        if(check == null) {
+        Section section = sectionRepository.findBySectionID(sectionID);
+        if(section == null) {
             return -3;
         }
-        Section section = sectionRepository.findBySectionIdentifier(sectionID);
-        if(section == null) {
+        TeachingAssistantSection check = teachingAssistantSectionRepository.findByIdTeachingAssistantIDAndIdSectionID(teachingAssistant.getUserID(), sectionID);
+        if(check == null) {
             return -4;
+        }
+        StudentSection checkStudent = studentSectionRepository.findByIdStudentIDAndIdSectionID(student.getUserID(), sectionID);
+        if(checkStudent == null) {
+            return -5;
         }
         TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(teachingAssistant.getUserID(), student.getUserID(), section.getCourseID());
         if(assignment != null) {
-            return -5;
+            return -6;
         }
         assignment = new TeachingAssistantStudent(teachingAssistant.getUserID(), student.getUserID(), section.getCourseID());
         teachingAssistantStudentRepository.save(assignment);
         return 0;
     }
 
-    /** Assigns a TA to all students in a course with one command. **/
+    /**
+     * Assigns a teaching assistant to all students in a section that they oversee
+     * Primarily used in the professor's panel for quickly assigning a TA to many students
+     *
+     * @param teachAssistUserName   Front-end identifier for TA being assigned
+     * @param sectionID             Identifier for the section that assignments are effective for
+     * @return                      Error code
+     */
     public int assignTeachingAssistantToAllStudentsInSection(@NonNull String teachAssistUserName, @NonNull String sectionID) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(teachAssistUserName);
         if(teachingAssistant == null) {
@@ -906,11 +997,11 @@ public class ProfessorServiceImpl implements ProfessorService {
         if(check == null) {
             return -2;
         }
-        Section section = sectionRepository.findBySectionIdentifier(sectionID);
+        Section section = sectionRepository.findBySectionID(sectionID);
         if(section == null) {
             return -3;
         }
-        List<StudentSection> studentSections = studentSectionRepository.findByIdSectionIdentifier(sectionID);
+        List<StudentSection> studentSections = studentSectionRepository.findByIdSectionID(sectionID);
         for(StudentSection s : studentSections) {
             TeachingAssistantStudent assignment = teachingAssistantStudentRepository.findByIdTeachingAssistantIDAndIdStudentIDAndIdCourseID(teachingAssistant.getUserID(), s.getStudentID(), section.getCourseID());
             if (assignment == null) {
@@ -921,7 +1012,12 @@ public class ProfessorServiceImpl implements ProfessorService {
         return 0;
     }
 
-    /** Gets all courses that a professor supervises **/
+    /**
+     * Obtains data needed for displaying a professor's courses when they log in
+     *
+     * @param userName  Front-end identifier for the professor
+     * @return          JSON for front-end to parse
+     */
     public JSONArray getCourseData(@NonNull String userName) {
         Professor professor = professorRepository.findByUserName(userName);
         if(professor == null) {
@@ -938,12 +1034,18 @@ public class ProfessorServiceImpl implements ProfessorService {
         return courseService.getCourseData(userName, courseIDs);
     }
 
-    /** Retrieves basic data for all students in course, including name, userName, and simple project info **/
+    /**
+     * Obtains data for displaying every student in a professor's course
+     *
+     * @param semester  Semester that course is being taught
+     * @param courseID  Identifier for the course
+     * @return          JSON for front-end to parse
+     */
     public JSONArray getStudentData(@NonNull String semester, @NonNull String courseID) {
         List<Section> sections = sectionRepository.findBySemesterAndCourseID(semester, courseID);
         List<String> userNames = new ArrayList<>();
         for(Section section : sections) {
-            List<StudentSection> studentSections = studentSectionRepository.findByIdSectionIdentifier(section.getSectionIdentifier());
+            List<StudentSection> studentSections = studentSectionRepository.findByIdSectionID(section.getSectionID());
             for(StudentSection studentSection : studentSections) {
                 Student student = studentRepository.findByUserID(studentSection.getStudentID());
                 if(!userNames.contains(student.getUserName())) {
@@ -957,6 +1059,13 @@ public class ProfessorServiceImpl implements ProfessorService {
         return courseService.getStudentData(userNames);
     }
 
+    /**
+     * Obtains data for displaying every teaching assistant and their assignments
+     *
+     * @param semester  Semester that course is being taught
+     * @param courseID  Identifier for the course
+     * @return          JSON for front-end to parse
+     */
     public JSONArray getTeachingAssistantData(@NonNull String semester, @NonNull String courseID) {
         List<TeachingAssistantCourse> teachingAssistants = teachingAssistantCourseRepository.findByIdSemesterAndIdCourseID(semester, courseID);
         if(teachingAssistants.isEmpty()) {
@@ -991,7 +1100,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     // TODO JARETT and REED connect new calculateDiffScore.sh
     public JSONReturnable getDiffScore(@NonNull String projectID) {
         JSONReturnable json = null;
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifierAndIdSuite(projectID, "testall");
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(projectID, "testall");
         // String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
         // String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
         // try {

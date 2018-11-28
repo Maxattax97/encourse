@@ -4,6 +4,7 @@ import ActionNavigation from '../navigation/ActionNavigation'
 import {BackNav, SettingsIcon, Title} from '../Helpers'
 import {history} from '../../redux/store'
 import {getClassProjects, setCurrentProject, setModalState} from '../../redux/actions'
+import {getCurrentCourseId} from '../../redux/state-peekers/course'
 import connect from 'react-redux/es/connect/connect'
 import {ProjectInfo, ProjectModal, ProjectTestFilter, ProjectTestModal} from './project'
 import HistoryText from "./common/HistoryText"
@@ -28,8 +29,9 @@ class ProjectPanel extends Component {
     };
 
 	changeFilter = (key, value) => {
-		this.state.filters[key] = value
-		this.setState({ filters: Object.assign({}, this.state.filters) }, () => {
+        let filters = [...this.state.filters]
+        filters[key] = value
+		this.setState({ filters }, () => {
 		})
 	}
 
@@ -72,7 +74,7 @@ class ProjectPanel extends Component {
 
                 <div className='panel-center-content'>
 	                <Title onClick={ () => this.props.setModalState(2) }>
-		                <h1 className='header'>CS252 - Projects - { /*this.props.projects[this.props.current_project_index].project_name*/ }</h1>
+		                <h1 className='header'>{this.props.currentCourseId.toUpperCase()} - Projects - { /*this.props.projects[this.props.current_project_index].project_name*/ }</h1>
 		                <SettingsIcon/>
 	                </Title>
                     <div className='h1 break-line header' />
@@ -94,6 +96,7 @@ class ProjectPanel extends Component {
 const mapStateToProps = (state) => {
     return {
         projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
+        currentCourseId: getCurrentCourseId(state),
         current_project_index: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0
     }
 }

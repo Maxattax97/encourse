@@ -12,6 +12,13 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import lombok.NonNull;
 
+/**
+ * Contains implementations for all services which are used by teaching assistants for managing their assigned students
+ * Primarily used by endpoints called for teaching assistants
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 @Service(value = TeachingAssistantServiceImpl.NAME)
 public class TeachingAssistantServiceImpl implements TeachingAssistantService {
 
@@ -62,8 +69,16 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
     @Autowired
     private CourseService courseService;
 
+    /**
+     * Obtains analysis on all assigned students for a TA for potential cheating on a project
+     * Primarily used in a teaching assistant's summary for academic dishonesty
+     *
+     * @param projectID     Identifier for the project being analyzed
+     * @param userNameTA    Front-end identifier for teaching assistant retrieving the data
+     * @return              JSON for front-end to parse
+     */
     public JSONReturnable getAssignmentsCheating(@NonNull String projectID, @NonNull String userNameTA) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -76,8 +91,16 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         return courseService.getCheating(projectID, userNames);
     }
 
+    /**
+     * Obtains commit information for all assigned students for a TA
+     * Primarily used in a teaching assistant's summary for a project
+     *
+     * @param projectID     Identifier for the project being analyzed
+     * @param userNameTA    Front-end identifier for teaching assistant retrieving the data
+     * @return              JSON for front-end to parse
+     */
     public JSONReturnable getAssignmentsCommitList(@NonNull String projectID, @NonNull String userNameTA) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -90,8 +113,16 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         return courseService.getCommitList(projectID, userNames);
     }
 
+    /**
+     * Obtains progress over time for all assigned students for a TA
+     * Primarily used in a teaching assistant's summary for a project
+     *
+     * @param projectID     Identifier for the project being analyzed
+     * @param userNameTA    Front-end identifier for teaching assistant retrieving the data
+     * @return              JSON for front-end to parse
+     */
     public JSONReturnable getAssignmentsProgress(@NonNull String projectID, @NonNull String userNameTA) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -104,8 +135,16 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         return courseService.getProgress(projectID, userNames);
     }
 
+    /**
+     * Obtains analysis on all assigned students for a TA for similarities between projects
+     * Primarily used in a teaching assistant's summary for academic dishonesty
+     *
+     * @param projectID     Identifier for the project being analyzed
+     * @param userNameTA    Front-end identifier for teaching assistant retrieving the data
+     * @return              JSON for front-end to parse
+     */
     public JSONReturnable getAssignmentsSimilar(@NonNull String projectID, @NonNull String userNameTA) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -118,8 +157,16 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         return courseService.getSimilar(projectID, userNames);
     }
 
+    /**
+     * Obtains statistics, such as additions and deletions, for all assigned students for a TA
+     * Primarily used in a teaching assistant's summary for a project
+     *
+     * @param projectID     Identifier for the project being analyzed
+     * @param userNameTA    Front-end identifier for teaching assistant retrieving the data
+     * @return              JSON for front-end to parse
+     */
     public JSONReturnable getAssignmentsStatistics(@NonNull String projectID, @NonNull String userNameTA) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -132,8 +179,16 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         return courseService.getStatistics(projectID, userNames);
     }
 
+    /**
+     * Obtains information on which test cases were passed for all assigned students for a TA
+     * Primarily used in a teaching assistant's summary for a project
+     *
+     * @param projectID     Identifier for the project being analyzed
+     * @param userNameTA    Front-end identifier for teaching assistant retrieving the data
+     * @return              JSON for front-end to parse
+     */
     public JSONReturnable getAssignmentsTestSummary(@NonNull String projectID, @NonNull String userNameTA) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -146,7 +201,12 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         return courseService.getTestSummary(projectID, userNames);
     }
 
-    /** Gets all courses that a teaching assistant works for **/
+    /**
+     * Obtains data needed for displaying a teaching assistant's courses when they log in
+     *
+     * @param userName  Front-end identifier for the teaching assistant
+     * @return          JSON for front-end to parse
+     */
     public JSONArray getCourseData(@NonNull String userName) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userName);
         if(teachingAssistant == null) {
@@ -163,6 +223,14 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         return courseService.getCourseData(userName, courseIDs);
     }
 
+    /**
+     * Obtains data for displaying every student that is assigned to a TA for a course
+     *
+     * @param semester      Semester that course is being taught
+     * @param courseID      Identifier for the course
+     * @param userNameTA    Front-end identifier for the teaching assistant
+     * @return              JSON for front-end to parse
+     */
     public JSONArray getStudentData(@NonNull String semester, @NonNull String courseID, @NonNull String userNameTA) {
         TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserName(userNameTA);
         if(teachingAssistant == null) {
@@ -173,7 +241,7 @@ public class TeachingAssistantServiceImpl implements TeachingAssistantService {
         for(TeachingAssistantStudent assignment : assignments) {
             List<StudentSection> studentSections = studentSectionRepository.findByIdStudentID(assignment.getStudentID());
             for(StudentSection studentSection : studentSections) {
-                Section section = sectionRepository.findBySectionIdentifier(studentSection.getSectionIdentifier());
+                Section section = sectionRepository.findBySectionID(studentSection.getSectionID());
                 if(section.getSemester().equals(semester)) {
                     Student student = studentRepository.findByUserID(assignment.getStudentID());
                     userNames.add(student.getUserName());

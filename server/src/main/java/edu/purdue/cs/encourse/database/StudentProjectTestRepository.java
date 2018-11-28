@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface StudentProjectTestRepository extends CrudRepository<StudentProjectTest, String> {
-    List<StudentProjectTest> findByIdProjectIdentifier(@NonNull String projectID);
-    List<StudentProjectTest> findByIdProjectIdentifierAndIdStudentIDAndIsHidden(@NonNull String projectID, @NonNull String studentID, boolean isHidden);
-    StudentProjectTest findByIdProjectIdentifierAndIdTestScriptNameAndIdStudentID(@NonNull String projectID, @NonNull String testScriptName, @NonNull String studentID);
+    List<StudentProjectTest> findByIdProjectID(@NonNull String projectID);
+    List<StudentProjectTest> findByIdProjectIDAndIdStudentIDAndIsHidden(@NonNull String projectID, @NonNull String studentID, boolean isHidden);
+    StudentProjectTest findByIdProjectIDAndIdTestScriptNameAndIdStudentID(@NonNull String projectID, @NonNull String testScriptName, @NonNull String studentID);
 }

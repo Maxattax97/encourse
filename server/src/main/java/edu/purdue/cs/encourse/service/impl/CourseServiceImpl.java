@@ -70,7 +70,7 @@ public class CourseServiceImpl implements CourseService {
     private StudentProjectTestRepository studentProjectTestRepository;
 
     public Project getProject(@NonNull String projectID) {
-        return projectRepository.findByProjectIdentifier(projectID);
+        return projectRepository.findByProjectID(projectID);
     }
 
     /**
@@ -118,7 +118,7 @@ public class CourseServiceImpl implements CourseService {
                 code = -3;
             }
             List<StudentSection> assignments =
-                    studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+                    studentSectionRepository.findByIdSectionID(s.getSectionID());
             for(StudentSection a : assignments){
                 Student student = studentRepository.findByUserID(a.getStudentID());
                 new File(sections.get(0).getCourseHub() + "/" + student.getUserName()).mkdir();
@@ -165,7 +165,7 @@ public class CourseServiceImpl implements CourseService {
             List<Section> sections = sectionRepository.findByCourseID(courseID);
             List<String> sectionIDs = new ArrayList<>();
             for(Section s : sections) {
-                sectionIDs.add(s.getSectionIdentifier());
+                sectionIDs.add(s.getSectionID());
             }
             courseJSON.put("course_number", sections.get(0).getCourseID());
             courseJSON.put("course_name", sections.get(0).getCourseTitle());
@@ -193,7 +193,7 @@ public class CourseServiceImpl implements CourseService {
         JSONArray projectsJSON = new JSONArray();
         for(Project p : projects) {
             JSONObject projectJSON = new JSONObject();
-            List<ProjectTestScript> testScripts = projectTestScriptRepository.findByIdProjectIdentifier(p.getProjectIdentifier());
+            List<ProjectTestScript> testScripts = projectTestScriptRepository.findByIdProjectID(p.getProjectID());
             List<String> testNames = new ArrayList<>();
             for(ProjectTestScript t : testScripts) {
                 testNames.add(t.getTestScriptName());
@@ -203,7 +203,7 @@ public class CourseServiceImpl implements CourseService {
             projectJSON.put("start_date", p.getStartDate());
             projectJSON.put("due_date", p.getDueDate());
             projectJSON.put("test_scripts", testNames);
-            projectJSON.put("id", p.getProjectIdentifier());
+            projectJSON.put("id", p.getProjectID());
             projectJSON.put("last_sync", p.getSyncDate());
             projectJSON.put("last_test", p.getTestDate());
             projectsJSON.add(projectJSON);
@@ -224,20 +224,20 @@ public class CourseServiceImpl implements CourseService {
         JSONArray sectionsJSON = new JSONArray();
         for(Section s : sections) {
             JSONObject sectionJSON = new JSONObject();
-            List<StudentSection> assignedStudents = studentSectionRepository.findByIdSectionIdentifier(s.getSectionIdentifier());
+            List<StudentSection> assignedStudents = studentSectionRepository.findByIdSectionID(s.getSectionID());
             List<String> students = new ArrayList<>();
             for(StudentSection a : assignedStudents) {
                 Student student = studentRepository.findByUserID(a.getStudentID());
                 students.add(student.getUserName());
             }
-            List<TeachingAssistantSection> assignedTeachingAssistants = teachingAssistantSectionRepository.findByIdSectionID(s.getSectionIdentifier());
+            List<TeachingAssistantSection> assignedTeachingAssistants = teachingAssistantSectionRepository.findByIdSectionID(s.getSectionID());
             List<String> teachingAssistants = new ArrayList<>();
             for(TeachingAssistantSection a : assignedTeachingAssistants) {
                 TeachingAssistant teachingAssistant = teachingAssistantRepository.findByUserID(a.getTeachingAssistantID());
                 teachingAssistants.add(teachingAssistant.getUserName());
             }
             sectionJSON.put("name", s.getSectionType());
-            sectionJSON.put("id", s.getSectionIdentifier());
+            sectionJSON.put("id", s.getSectionID());
             sectionJSON.put("time", s.getTimeSlot());
             sectionJSON.put("students", students);
             sectionJSON.put("teaching_assistants", teachingAssistants);
@@ -263,19 +263,27 @@ public class CourseServiceImpl implements CourseService {
                 // TODO: Security issue in multiple course system. Must make sure professor teaches the course each project belongs to
                 List<StudentProject> studentProjects = studentProjectRepository.findByIdStudentIDAndIdSuite(student.getUserID(), "testall");
                 Map<String, Double> grades = new TreeMap<>();
+                Map<String, Double> points = new TreeMap<>();
+                Map<String, Double> totals = new TreeMap<>();
                 Map<String, Double> hiddenGrades = new TreeMap<>();
+                Map<String, Double> hiddenPoints = new TreeMap<>();
+                Map<String, Double> hiddenTotals = new TreeMap<>();
                 Map<String, Integer> commitCounts = new TreeMap<>();
                 Map<String, Double> timeSpent = new TreeMap<>();
                 for (StudentProject p : studentProjects) {
-                    grades.put(p.getProjectIdentifier(), p.getBestVisibleGrade());
-                    hiddenGrades.put(p.getProjectIdentifier(), p.getBestHiddenGrade());
-                    commitCounts.put(p.getProjectIdentifier(), p.getCommitCount());
-                    timeSpent.put(p.getProjectIdentifier(), p.getTotalTimeSpent());
+                    grades.put(p.getProjectID(), p.getBestVisibleGrade());
+                    points.put(p.getProjectID(), p.getBestVisiblePoints());
+                    totals.put(p.getProjectID(), p.getVisiblePointTotal());
+                    hiddenGrades.put(p.getProjectID(), p.getBestHiddenGrade());
+                    hiddenPoints.put(p.getProjectID(), p.getBestHiddenPoints());
+                    hiddenTotals.put(p.getProjectID(), p.getHiddenPointTotal());
+                    commitCounts.put(p.getProjectID(), p.getCommitCount());
+                    timeSpent.put(p.getProjectID(), p.getTotalTimeSpent());
                 }
                 List<StudentSection> assignedSections = studentSectionRepository.findByIdStudentID(student.getUserID());
                 List<String> sectionStrings = new ArrayList<>();
                 for (StudentSection a : assignedSections) {
-                    sectionStrings.add(a.getSectionIdentifier());
+                    sectionStrings.add(a.getSectionID());
                 }
                 List<TeachingAssistantStudent> assignedTeachingAssistants = teachingAssistantStudentRepository.findByIdStudentID(student.getUserID());
                 List<String> teachingAssistants = new ArrayList<>();
@@ -290,18 +298,13 @@ public class CourseServiceImpl implements CourseService {
                 studentJSON.put("sections", sectionStrings);
                 studentJSON.put("teaching_assistants", teachingAssistants);
                 studentJSON.put("grades", grades);
-                studentJSON.put("hiddenGrades", grades);
+                studentJSON.put("points", points);
+                studentJSON.put("totals", totals);
+                studentJSON.put("hiddenGrades", hiddenGrades);
+                studentJSON.put("hiddenPoints", hiddenPoints);
+                studentJSON.put("hiddenTotals", hiddenTotals);
                 studentJSON.put("commitCounts", commitCounts);
                 studentJSON.put("timeSpent", timeSpent);
-                if (helperService.getObfuscate()) {
-                    studentJSON.put("first_name", student.getFirstName());
-                    studentJSON.put("last_name", student.getLastName());
-                    studentJSON.put("id", student.getUserName());
-                    studentJSON.put("grades", grades);
-                    studentJSON.put("hiddenGrades", grades);
-                    studentJSON.put("commitCounts", commitCounts);
-                    studentJSON.put("timeSpent", timeSpent);
-                }
                 studentsJSON.add(studentJSON);
             }
         }
@@ -316,7 +319,7 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONArray getTestScriptData(@NonNull String projectID) {
-        List<ProjectTestScript> testScripts = projectTestScriptRepository.findByIdProjectIdentifier(projectID);
+        List<ProjectTestScript> testScripts = projectTestScriptRepository.findByIdProjectID(projectID);
         if(testScripts.isEmpty()) {
             return null;
         }
@@ -341,7 +344,7 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONObject getOperationData(@NonNull String projectID) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return null;
         }
@@ -407,7 +410,7 @@ public class CourseServiceImpl implements CourseService {
      */
     public JSONReturnable getSimilar(@NonNull String projectID, List<String> userNames) {
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -479,7 +482,7 @@ public class CourseServiceImpl implements CourseService {
             BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
             for(StudentProject project : projects) {
                 Student student = studentRepository.findByUserID(project.getStudentID());
-                List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+                List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID());
                 visibleWriter.write("Start " + student.getUserName() + "\n");
                 hiddenWriter.write("Start " + student.getUserName() + "\n");
                 for (StudentProjectDate d : projectDates) {
@@ -557,7 +560,7 @@ public class CourseServiceImpl implements CourseService {
      */
     public JSONReturnable getCheating(@NonNull String projectID, List<String> userNames) {
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return new JSONReturnable(-1, null);
         }
@@ -576,7 +579,7 @@ public class CourseServiceImpl implements CourseService {
             BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
             for(StudentProject p : projects) {
                 Student student = studentRepository.findByUserID(p.getStudentID());
-                List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+                List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID());
                 visibleWriter.write("Start " + student.getUserName() + "\n");
                 hiddenWriter.write("Start " + student.getUserName() + "\n");
                 for (StudentProjectDate d : projectDates) {
@@ -678,14 +681,14 @@ public class CourseServiceImpl implements CourseService {
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
-        if(!projectRepository.existsByProjectIdentifier(projectID)) {
+        if(!projectRepository.existsByProjectID(projectID)) {
             return new JSONReturnable(-1, null);
         }
         Student student = studentRepository.findByUserName(userName);
         if(student == null) {
             return new JSONReturnable(-2, null);
         }
-        List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+        List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID());
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestDates.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestDates.txt";
         if (helperService.getDebug()) {
@@ -733,14 +736,14 @@ public class CourseServiceImpl implements CourseService {
             dailyCountsFile = "src/main/python/test_datasets/sampleCountsDay.txt";
         } else {
             dailyCountsFile = helperService.countStudentCommitsByDay(projectID, userName);
-            if (!projectRepository.existsByProjectIdentifier(projectID)) {
+            if (!projectRepository.existsByProjectID(projectID)) {
                 return new JSONReturnable(-1, null);
             }
             Student student = studentRepository.findByUserName(userName);
             if (student == null) {
                 return new JSONReturnable(-2, null);
             }
-            List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+            List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID());
             visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestDates.txt";
             hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestDates.txt";
             try {
@@ -789,14 +792,14 @@ public class CourseServiceImpl implements CourseService {
             testResult = "cutz;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0";
         } else {
             Student student = studentRepository.findByUserName(userName);
-            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
+            StudentProject project = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
             StringBuilder builder = new StringBuilder();
             builder.append(student.getUserName());
-            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), false);
+            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), false);
             for(StudentProjectTest t : testResults) {
                 builder.append(";").append(t.getTestResultString());
             }
-            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(project.getProjectIdentifier(), project.getStudentID(), true);
+            testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), true);
             for(StudentProjectTest t : testResults) {
                 builder.append(";").append(t.getTestResultString());
             }
@@ -820,7 +823,7 @@ public class CourseServiceImpl implements CourseService {
      * @return                  Path to a new file with the entire source file and additions and deletion shown inline
      */
     public String getSourceWithChanges(@NonNull String projectID, @NonNull String userName, @NonNull String startCommitHash, @NonNull String endCommitHash, @NonNull String sourceName) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return null;
         }
@@ -849,7 +852,7 @@ public class CourseServiceImpl implements CourseService {
      * @return          Error code
      */
     public int runTestallForStudent(@NonNull String projectID, @NonNull String userName) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return -1;
         }
@@ -872,7 +875,7 @@ public class CourseServiceImpl implements CourseService {
         if(!file.exists()) {
             return -5;
         }
-        StudentProject studentProject = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
+        StudentProject studentProject = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
         if(studentProject == null) {
             return -6;
         }
@@ -905,9 +908,9 @@ public class CourseServiceImpl implements CourseService {
             }
             double visibleGrade = helperService.parseProgressForProject(projectID, visibleResult);
             double hiddenGrade = helperService.parseProgressForProject(projectID, hiddenResult);
-            StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
+            StudentProjectDate projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIDAndIdStudentID(date, projectID, student.getUserID());
             if(projectDate == null) {
-                StudentProjectDate d = new StudentProjectDate(studentProject.getStudentID(), studentProject.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
+                StudentProjectDate d = new StudentProjectDate(studentProject.getStudentID(), studentProject.getProjectID(), date, visibleGrade, hiddenGrade);
                 studentProjectDateRepository.save(d);
             }
             else {
@@ -921,12 +924,12 @@ public class CourseServiceImpl implements CourseService {
                 }
             }
             if(visibleGrade > studentProject.getBestVisibleGrade()) {
-                helperService.updateTestResults(visibleResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), false);
+                helperService.updateTestResults(visibleResult, studentProject.getStudentID(), studentProject.getProjectID(), false);
             }
             if(hiddenGrade > studentProject.getBestHiddenGrade()) {
-                helperService.updateTestResults(hiddenResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), true);
+                helperService.updateTestResults(hiddenResult, studentProject.getStudentID(), studentProject.getProjectID(), true);
             }
-            studentProject = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(studentProject.getProjectIdentifier(), studentProject.getStudentID(), "testall");
+            studentProject = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(studentProject.getProjectID(), studentProject.getStudentID(), "testall");
             line = reader.readLine();
             commitInfo = line.split(" ");
             date = commitInfo[2];
@@ -950,9 +953,9 @@ public class CourseServiceImpl implements CourseService {
             }
             visibleGrade = helperService.parseProgressForProject(projectID, visibleResult);
             hiddenGrade = helperService.parseProgressForProject(projectID, hiddenResult);
-            projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIdentifierAndIdStudentID(date, projectID, student.getUserID());
+            projectDate = studentProjectDateRepository.findByIdDateAndIdProjectIDAndIdStudentID(date, projectID, student.getUserID());
             if(projectDate == null) {
-                StudentProjectDate d = new StudentProjectDate(studentProject.getStudentID(), studentProject.getProjectIdentifier(), date, visibleGrade, hiddenGrade);
+                StudentProjectDate d = new StudentProjectDate(studentProject.getStudentID(), studentProject.getProjectID(), date, visibleGrade, hiddenGrade);
                 studentProjectDateRepository.save(d);
             }
             else {
@@ -966,10 +969,10 @@ public class CourseServiceImpl implements CourseService {
                 }
             }
             if(visibleGrade > studentProject.getBestVisibleGrade()) {
-                helperService.updateTestResults(visibleResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), false);
+                helperService.updateTestResults(visibleResult, studentProject.getStudentID(), studentProject.getProjectID(), false);
             }
             if(hiddenGrade > studentProject.getBestHiddenGrade()) {
-                helperService.updateTestResults(hiddenResult, studentProject.getStudentID(), studentProject.getProjectIdentifier(), true);
+                helperService.updateTestResults(hiddenResult, studentProject.getStudentID(), studentProject.getProjectID(), true);
             }
             helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             reader.close();

@@ -41,7 +41,6 @@ class Login extends Component {
                         <input type="text" name="username" />
                         <h3>Password</h3>
                         <input type="password" name="password" />
-                        <h3></h3>
                         <input type="submit" value="Enter Credentials" />
                     </form>
                 </div>
