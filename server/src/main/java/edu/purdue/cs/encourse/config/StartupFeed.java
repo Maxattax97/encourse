@@ -47,6 +47,9 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private HelperService helperService;
     
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
@@ -75,7 +78,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             Section section = adminService.addSection("1001", "Fall2018", "cs252", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
             adminService.assignProfessorToCourse("grr", "cs252", "Fall2018");
             adminService.assignTeachingAssistantToCourse("reed226", "cs252", "Fall2018");
-            professorService.assignTeachingAssistantToSection("reed226", section.getSectionIdentifier());
+            professorService.assignTeachingAssistantToSection("reed226", section.getSectionID());
 
             try {
                 BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/students.txt"));
@@ -88,9 +91,9 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                     //adminService.addAccount(Integer.toString(100 + count), student, "Student", Integer.toString(count),
                     adminService.addAccount(Integer.toString(100 + count), student, "Student", student,
                             Account.Role_Names.STUDENT, null, student + "@purdue.edu");
-                    adminService.registerStudentToSection(student, section.getSectionIdentifier());
+                    adminService.registerStudentToSection(student, section.getSectionID());
                     if(count == 5) {
-                        professorService.assignTeachingAssistantToAllStudentsInSection("reed226", section.getSectionIdentifier());
+                        professorService.assignTeachingAssistantToAllStudentsInSection("reed226", section.getSectionID());
                     }
                     count++;
                 }
@@ -103,84 +106,84 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             courseService.setDirectory("Fall2018", "cs252");
             //Project malloc = professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/27/2018", "9/10/2018", 0);
             Project shell = professorService.addProject("cs252", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
-            //professorService.assignProject(malloc.getProjectIdentifier());
-            professorService.assignProject(shell.getProjectIdentifier());
-            /*professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test1.sh",
+            //professorService.assignProject(malloc.getProjectID());
+            professorService.assignProject(shell.getProjectID());
+            /*professorService.uploadTestScript(malloc.getProjectID(), "Test1.sh",
                     "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 5);
-            professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test2.sh",
+            professorService.uploadTestScript(malloc.getProjectID(), "Test2.sh",
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
-            professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test3.sh",
+            professorService.uploadTestScript(malloc.getProjectID(), "Test3.sh",
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
-            professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test4.sh",
+            professorService.uploadTestScript(malloc.getProjectID(), "Test4.sh",
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
-            professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test5.sh",
+            professorService.uploadTestScript(malloc.getProjectID(), "Test5.sh",
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 20);
-            professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test6.sh",
+            professorService.uploadTestScript(malloc.getProjectID(), "Test6.sh",
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 10);
-            professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test7.sh",
+            professorService.uploadTestScript(malloc.getProjectID(), "Test7.sh",
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 20);
-            professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test8.sh",
+            professorService.uploadTestScript(malloc.getProjectID(), "Test8.sh",
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 20);
-            professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test9.sh",
+            professorService.uploadTestScript(malloc.getProjectID(), "Test9.sh",
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 25);
-            professorService.uploadTestScript(malloc.getProjectIdentifier(), "Test10.sh",
+            professorService.uploadTestScript(malloc.getProjectID(), "Test10.sh",
                     "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 30);
-            professorService.runTestall(malloc.getProjectIdentifier());*/
+            professorService.runTestall(malloc.getProjectID());*/
 
-            //professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_input", false, 2);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_output", false, 2);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_error", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_error2", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_out_err", false, 2);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_redirect_multiple", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_append_output", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_pipes1", false, 2);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_pipes2", false, 2);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_pipes_redirect_out", false, 2);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_pipes_redirect_err", false, 2);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_background", false, 2);
-            //professorService.addTestScript(shell.getProjectIdentifier(), "test_zombie", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_printenv", false, 1);
-            //professorService.addTestScript(shell.getProjectIdentifier(), "test_setenv", false, 0.5);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_unsetenv", false, 0.5);
-            //professorService.addTestScript(shell.getProjectIdentifier(), "test_source", false, 2);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_cd1", false, 0.5);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_cd2", false, 0.5);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_cd3", false, 0.5);
-            //professorService.addTestScript(shell.getProjectIdentifier(), "test_cd4", false, 0.5);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_parsing1", false, 0.5);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_parsing2", false, 0.5);
-            //professorService.addTestScript(shell.getProjectIdentifier(), "test_quotes1", false, 1);
-            //professorService.addTestScript(shell.getProjectIdentifier(), "test_quotes2", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_escape", false, 2);
-            //professorService.addTestScript(shell.getProjectIdentifier(), "test_subshell", false, 10);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_env_expand1", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_env_expand2", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_env_var_shell", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_env_var_dollar", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_env_var_question", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_env_var_bang", false, 1);
-            //professorService.addTestScript(shell.getProjectIdentifier(), "test_env_var_uscore", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_wildcards1", false, 3);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_wildcards2", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_wildcards3", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_wildcards4", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_wildcards5", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_wildcards6", false, 1);
-            professorService.addTestScript(shell.getProjectIdentifier(), "test_wildcards7", false, 1);
-            //professorService.addTestScript(shell.getProjectIdentifier(), "test_tilde", false, 2);
-            //professorService.addTestScript(shell.getProjectIdentifier(), "test_robustness", false, 10);
-            professorService.runHistoricTestall(shell.getProjectIdentifier());
+            //professorService.addTestScript(shell.getProjectID(), "test_redirect_input", false, 2);
+            professorService.addTestScript(shell.getProjectID(), "test_redirect_output", false, 2);
+            professorService.addTestScript(shell.getProjectID(), "test_redirect_error", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_redirect_error2", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_redirect_out_err", false, 2);
+            professorService.addTestScript(shell.getProjectID(), "test_redirect_multiple", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_append_output", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_pipes1", false, 2);
+            professorService.addTestScript(shell.getProjectID(), "test_pipes2", false, 2);
+            professorService.addTestScript(shell.getProjectID(), "test_pipes_redirect_out", false, 2);
+            professorService.addTestScript(shell.getProjectID(), "test_pipes_redirect_err", false, 2);
+            professorService.addTestScript(shell.getProjectID(), "test_background", false, 2);
+            //professorService.addTestScript(shell.getProjectID(), "test_zombie", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_printenv", false, 1);
+            //professorService.addTestScript(shell.getProjectID(), "test_setenv", false, 0.5);
+            professorService.addTestScript(shell.getProjectID(), "test_unsetenv", false, 0.5);
+            //professorService.addTestScript(shell.getProjectID(), "test_source", false, 2);
+            professorService.addTestScript(shell.getProjectID(), "test_cd1", false, 0.5);
+            professorService.addTestScript(shell.getProjectID(), "test_cd2", false, 0.5);
+            professorService.addTestScript(shell.getProjectID(), "test_cd3", false, 0.5);
+            //professorService.addTestScript(shell.getProjectID(), "test_cd4", false, 0.5);
+            professorService.addTestScript(shell.getProjectID(), "test_parsing1", false, 0.5);
+            professorService.addTestScript(shell.getProjectID(), "test_parsing2", false, 0.5);
+            //professorService.addTestScript(shell.getProjectID(), "test_quotes1", false, 1);
+            //professorService.addTestScript(shell.getProjectID(), "test_quotes2", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_escape", false, 2);
+            //professorService.addTestScript(shell.getProjectID(), "test_subshell", false, 10);
+            professorService.addTestScript(shell.getProjectID(), "test_env_expand1", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_env_expand2", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_env_var_shell", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_env_var_dollar", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_env_var_question", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_env_var_bang", false, 1);
+            //professorService.addTestScript(shell.getProjectID(), "test_env_var_uscore", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_wildcards1", false, 3);
+            professorService.addTestScript(shell.getProjectID(), "test_wildcards2", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_wildcards3", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_wildcards4", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_wildcards5", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_wildcards6", false, 1);
+            professorService.addTestScript(shell.getProjectID(), "test_wildcards7", false, 1);
+            //professorService.addTestScript(shell.getProjectID(), "test_tilde", false, 2);
+            //professorService.addTestScript(shell.getProjectID(), "test_robustness", false, 10);
+            professorService.runHistoricTestall(shell.getProjectID());
 
-            /*List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(malloc.getProjectIdentifier());
+            /*List<StudentProject> projects = studentProjectRepository.findByIdProjectID(malloc.getProjectID());
             for(StudentProject p : projects) {
                 Student student = studentRepository.findByUserID(p.getStudentID());
-                professorService.updateStudentInformation(p.getProjectIdentifier(), student.getUserName());
+                professorService.updateStudentInformation(p.getProjectID(), student.getUserName());
             }*/
-            List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(shell.getProjectIdentifier());
+            List<StudentProject> projects = studentProjectRepository.findByIdProjectID(shell.getProjectID());
             for(StudentProject p : projects) {
                 Student student = studentRepository.findByUserID(p.getStudentID());
-                professorService.updateStudentInformation(p.getProjectIdentifier(), student.getUserName());
+                helperService.updateStudentInformation(p.getProjectID(), student.getUserName());
             }
         }
         else {

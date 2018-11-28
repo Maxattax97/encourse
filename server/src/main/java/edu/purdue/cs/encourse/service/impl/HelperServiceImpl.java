@@ -167,7 +167,7 @@ public class HelperServiceImpl implements HelperService {
         List<StudentSection> studentSections = studentSectionRepository.findByIdStudentID(student.getUserID());
         boolean isTaking = false;
         for(StudentSection s : studentSections) {
-            Section section = sectionRepository.findBySectionIdentifier(s.getSectionIdentifier());
+            Section section = sectionRepository.findBySectionID(s.getSectionID());
             if(section.getCourseID().equals(project.getCourseID()) && section.getSemester().equals(project.getSemester())) {
                 isTaking = true;
                 break;
@@ -190,7 +190,7 @@ public class HelperServiceImpl implements HelperService {
         double maxPoints = 0.0;
         for(String r : testResults) {
             String testName = r.split(":")[0];
-            ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
+            ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIDAndIdTestScriptName(projectID, testName);
             if(testScript == null) {
                 continue;
             }
@@ -203,6 +203,88 @@ public class HelperServiceImpl implements HelperService {
             return 0.0;
         }
         return Math.round((earnedPoints / maxPoints) * 100);
+    }
+
+    /**
+     * Updates git information for each student's project
+     * Primarily used after pulling a student's project to refresh information in database
+     *
+     * @param projectID Identifier for project that is having git information stored
+     * @param userName  Front-end identifier for student who worked on project
+     * @return          Error Code
+     */
+    public int updateStudentInformation(@NonNull String projectID, @NonNull String userName) {
+        String dailyCountsFile = countStudentCommitsByDay(projectID, userName);
+        String commitLogFile = listStudentCommitsByTime(projectID, userName);
+        if(dailyCountsFile == null) {
+            return -1;
+        }
+        if(commitLogFile == null) {
+            return -2;
+        }
+        Student student = studentRepository.findByUserName(userName);
+        StudentProject project = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
+        StringBuilder builder = new StringBuilder();
+        builder.append(student.getUserName());
+        List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), false);
+        for(StudentProjectTest t : testResults) {
+            builder.append(";").append(t.getTestResultString());
+        }
+        testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), true);
+        for(StudentProjectTest t : testResults) {
+            builder.append(";").append(t.getTestResultString());
+        }
+        String testResult = builder.toString();
+        String pyPath = getPythonPath() + "get_statistics.py";
+        String command = getPythonCommand() + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
+        JSONReturnable json = runPython(command);
+        if(json == null || json.getJsonObject() == null) {
+            return 0;
+        }
+        if (getDebug()) {
+            executeBashScript("cleanDirectory.sh src/main/temp");
+            return 0;
+        }
+        JSONArray array = (JSONArray)json.getJsonObject().get("data");
+        for(int i = 0; i < array.size(); i++) {
+            JSONObject data = (JSONObject)array.get(i);
+            if (data.get("stat_name").equals("End Date")) {
+                project.setMostRecentCommitDate(data.get("stat_value").toString());
+            }
+            else if (data.get("stat_name").equals("Additions")) {
+                try {
+                    project.setTotalLinesAdded(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setTotalLinesAdded(0);
+                }
+            }
+            else if (data.get("stat_name").equals("Deletions")) {
+                try {
+                    project.setTotalLinesRemoved(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setTotalLinesRemoved(0);
+                }
+            } else if (data.get("stat_name").equals("Commit Count")) {
+                try {
+                    project.setCommitCount(Integer.parseInt(data.get("stat_value").toString().split(" ")[0]));
+                }
+                catch(NumberFormatException e) {
+                    project.setCommitCount(0);
+                }
+            }
+            else if (data.get("stat_name").equals("Estimated Time Spent")) {
+                try {
+                    project.setTotalTimeSpent(Double.parseDouble(data.get("stat_value").toString().split(" ")[0]));
+                } catch (NumberFormatException e) {
+                    project.setTotalTimeSpent(0.0);
+                }
+            }
+        }
+        studentProjectRepository.save(project);
+        //helperService.executeBashScript("cleanDirectory.sh src/main/temp");
+        return 0;
     }
 
     /**
@@ -222,9 +304,9 @@ public class HelperServiceImpl implements HelperService {
             String testScore = s.split(":")[1];
             boolean isPassing = testScore.equals("P");
             StudentProjectTest studentProjectTest =
-                    studentProjectTestRepository.findByIdProjectIdentifierAndIdTestScriptNameAndIdStudentID(projectID, testName, studentID);
+                    studentProjectTestRepository.findByIdProjectIDAndIdTestScriptNameAndIdStudentID(projectID, testName, studentID);
             if(studentProjectTest == null) {
-                ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(projectID, testName);
+                ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIDAndIdTestScriptName(projectID, testName);
                 studentProjectTest = new StudentProjectTest(studentID, projectID, testName, isPassing, isHidden, testScript.getPointsWorth());
                 studentProjectTestRepository.save(studentProjectTest);
             }
@@ -233,15 +315,15 @@ public class HelperServiceImpl implements HelperService {
                 studentProjectTestRepository.save(studentProjectTest);
             }
         }
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         String[] suites = project.getSuites().split(",");
         for(String s : suites) {
-            StudentProject suiteProject = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(projectID, studentID, s);
-            List<StudentProjectTest> testScores = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(projectID, studentID, isHidden);
+            StudentProject suiteProject = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(projectID, studentID, s);
+            List<StudentProjectTest> testScores = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(projectID, studentID, isHidden);
             double earnedPoints = 0.0;
             double maxPoints = 0.0;
             for(StudentProjectTest t : testScores) {
-                ProjectTestScript test = projectTestScriptRepository.findByIdProjectIdentifierAndIdTestScriptName(t.getProjectIdentifier(), t.getTestScriptName());
+                ProjectTestScript test = projectTestScriptRepository.findByIdProjectIDAndIdTestScriptName(t.getProjectID(), t.getTestScriptName());
                 if(test.hasSuite(s)) {
                     if (t.isPassing()) {
                         earnedPoints += t.getPointsWorth();
@@ -281,14 +363,14 @@ public class HelperServiceImpl implements HelperService {
             Student student = studentRepository.findByUserID(p.getStudentID());
             StringBuilder builder = new StringBuilder();
             builder.append(student.getUserName());
-            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), false);
+            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(p.getProjectID(), p.getStudentID(), false);
             for (StudentProjectTest t : testResults) {
                 builder.append(";").append(t.getTestResultString());
             }
             String visibleTestResult = builder.toString();
             builder = new StringBuilder();
             builder.append(student.getUserName());
-            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(p.getProjectIdentifier(), p.getStudentID(), true);
+            testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(p.getProjectID(), p.getStudentID(), true);
             for (StudentProjectTest t : testResults) {
                 builder.append(";").append(t.getTestResultString());
             }
@@ -315,19 +397,19 @@ public class HelperServiceImpl implements HelperService {
         BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
         for (TeachingAssistantStudent s : assignments) {
             Student student = studentRepository.findByUserID(s.getStudentID());
-            if(studentProjectRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID()) == null) {
+            if(studentProjectRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID()) == null) {
                 continue;
             }
             StringBuilder builder = new StringBuilder();
             builder.append(student.getUserName());
-            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(projectID, student.getUserID(), false);
+            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(projectID, student.getUserID(), false);
             for (StudentProjectTest t : testResults) {
                 builder.append(";").append(t.getTestResultString());
             }
             String visibleTestResult = builder.toString();
             builder = new StringBuilder();
             builder.append(student.getUserName());
-            testResults = studentProjectTestRepository.findByIdProjectIdentifierAndIdStudentIDAndIsHidden(projectID, student.getUserID(), true);
+            testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(projectID, student.getUserID(), true);
             for (StudentProjectTest t : testResults) {
                 builder.append(";").append(t.getTestResultString());
             }
@@ -350,7 +432,7 @@ public class HelperServiceImpl implements HelperService {
         List<StudentProject> projects = new ArrayList<>();
         for(String userName: userNames) {
             Student student = studentRepository.findByUserName(userName);
-            StudentProject project = studentProjectRepository.findByIdProjectIdentifierAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
+            StudentProject project = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
             if(project != null) {
                 projects.add(project);
             }
@@ -397,7 +479,7 @@ public class HelperServiceImpl implements HelperService {
      * @return          Filename for the temporary file created to store commit counts
      */
     public String countAllCommits(@NonNull String projectID, List<StudentProject> projects) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return null;
         }
@@ -423,7 +505,7 @@ public class HelperServiceImpl implements HelperService {
      * @return          Filename for the temporary file created to store daily commit counts
      */
     public String countAllCommitsByDay(@NonNull String projectID, List<StudentProject> projects) {
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return null;
         }
@@ -453,7 +535,7 @@ public class HelperServiceImpl implements HelperService {
             return pythonPath + "test_datasets/sampleCountsDay.txt";
         }
 
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return null;
         }
@@ -490,7 +572,7 @@ public class HelperServiceImpl implements HelperService {
             return pythonPath + "test_datasets/sampleCommitList.txt";
         }
 
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return null;
         }
@@ -521,7 +603,7 @@ public class HelperServiceImpl implements HelperService {
             return pythonPath + "test_datasets/sampleCommitList.txt";
         }
 
-        Project project = projectRepository.findByProjectIdentifier(projectID);
+        Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return null;
         }

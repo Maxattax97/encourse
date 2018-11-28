@@ -17,7 +17,6 @@ export default function refreshMiddleware() {
         }
         // 5 minutes from now
         const refreshThreshold = Date.now() + 300000
-        console.log(tokens)
         if(!tokens || !tokens.refresh_token) {
             return request(null, dispatch, true);
         }

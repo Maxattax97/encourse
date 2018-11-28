@@ -48,6 +48,9 @@ public class WriteController {
     @Autowired
     private TeachingAssistantService taService;
 
+    @Autowired
+    private HelperService helperService;
+
     /**
      * Create a new Section
      *
@@ -308,7 +311,7 @@ public class WriteController {
             p = new ObjectMapper().readValue(json, Project.class);
             result = professorService.addProject(p.getCourseID(), p.getSemester(), p.getProjectName(), p.getRepoName(), p.getStartDate(), p.getDueDate(), p.getTestRate());
             if (result != null) {
-                professorService.assignProject(p.getProjectIdentifier());
+                professorService.assignProject(p.getProjectID());
             }
         } catch (IOException e) {
             System.out.println(e);
@@ -381,7 +384,7 @@ public class WriteController {
             result = professorService.pullProjects(projectID);
         } else {
             for (String userName: userNames) {
-                result = professorService.updateStudentInformation(projectID, userName);
+                result = helperService.updateStudentInformation(projectID, userName);
             }
         }
         if (result == 0) {

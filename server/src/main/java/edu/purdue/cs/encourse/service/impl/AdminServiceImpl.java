@@ -146,7 +146,7 @@ public class AdminServiceImpl implements AdminService {
                     List<ProfessorCourse> professorCourses = professorCourseRepository.findByIdProfessorID(sentRequest.getUserID());
 
                     for (StudentSection ss: studentSections) {
-                        Section section = sectionRepository.findBySectionIdentifier(ss.getSectionIdentifier());
+                        Section section = sectionRepository.findBySectionID(ss.getSectionID());
                         for (ProfessorCourse pc: professorCourses) {
                             if (pc.getCourseID().contentEquals(section.getCourseID()) && pc.getSemester().contentEquals(section.getSemester())) {
                                 hasAuth = true;
@@ -552,7 +552,7 @@ public class AdminServiceImpl implements AdminService {
     public Section addSection(@NonNull String CRN, @NonNull String semester, @NonNull String courseID, @NonNull String courseTitle, @NonNull String sectionType, @NonNull String timeSlot) {
         System.out.println("ADDING SECTION");
         Section section = new Section(CRN, semester, courseID, courseTitle, sectionType, timeSlot);
-        if(sectionRepository.existsBySectionIdentifier(section.getSectionIdentifier())) {
+        if(sectionRepository.existsBySectionID(section.getSectionID())) {
             return null;
         }
         return sectionRepository.save(section);
@@ -565,7 +565,7 @@ public class AdminServiceImpl implements AdminService {
      * @return          Section corresponding to identifier
      */
     public Section retrieveSection(@NonNull String sectionID) {
-        return sectionRepository.findBySectionIdentifier(sectionID);
+        return sectionRepository.findBySectionID(sectionID);
     }
 
     /**
@@ -576,11 +576,11 @@ public class AdminServiceImpl implements AdminService {
      */
     public int deleteSection(@NonNull String sectionID) {
         System.out.println("ADDING SECTION");
-        Section section = sectionRepository.findBySectionIdentifier(sectionID);
+        Section section = sectionRepository.findBySectionID(sectionID);
         if(section == null) {
             return -1;
         }
-        List<StudentSection> sections = studentSectionRepository.findByIdSectionIdentifier(sectionID);
+        List<StudentSection> sections = studentSectionRepository.findByIdSectionID(sectionID);
         for(StudentSection s : sections) {
             studentSectionRepository.delete(s);
         }
@@ -625,11 +625,11 @@ public class AdminServiceImpl implements AdminService {
         if(student == null) {
             return -1;
         }
-        Section section = sectionRepository.findBySectionIdentifier(sectionID);
+        Section section = sectionRepository.findBySectionID(sectionID);
         if(section == null) {
             return -2;
         }
-        StudentSection assignment = new StudentSection(student.getUserID(), section.getSectionIdentifier());
+        StudentSection assignment = new StudentSection(student.getUserID(), section.getSectionID());
         if(studentSectionRepository.save(assignment) == null) {
             return -3;
         }
