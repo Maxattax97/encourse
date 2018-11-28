@@ -98,13 +98,12 @@ public class ReadController {
 
         // Filtering
         Map<String, List<Integer>> filters = new HashMap<>();
-        List<Integer> temp = new ArrayList<>();
-        temp.add(commit);
-        filters.put("commitCounts", temp);
-        temp.set(0, hour);
-        filters.put("timeSpent", temp);
-        temp.set(0, progress);
-        filters.put("grades", temp);
+        filters.put("commitCounts", new ArrayList<>());
+        filters.get("commitCounts").add(commit);
+        filters.put("timeSpent", new ArrayList<>());
+        filters.get("timeSpent").add(hour);
+        filters.put("grades", new ArrayList<>());
+        filters.get("grades").add(progress);
 
         for (String sortName: filters.keySet()) {
             Comparator<JSONObject> compare = (a, b) -> {
