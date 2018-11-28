@@ -207,13 +207,13 @@ export class Chart extends Component {
     render() {
 	    if(this.props.chart.loading)
 		    return (
-			    <div className='chart-container loading'>
+			    <div className='chart-container loading' title={ this.props.title ? this.props.title : null}>
 				    <LoadingIcon/>
 			    </div>
 		    )
 
         return (
-	        <div className="chart-container">
+	        <div className="chart-container" title={ this.props.title ? this.props.title : null}>
                 {
                     this.props.children
                 }
@@ -243,7 +243,10 @@ export class ChartList extends Component {
                             {
                                 child
                             }
-                            <Checkbox className='card-select' onClick={ () => { this.setState({ resize: { ...this.state.resize, [index]: !this.state.resize[index]} })} }>
+                            <Checkbox
+                                className='card-select'
+                                onClick={ () => { this.setState({ resize: { ...this.state.resize, [index]: !this.state.resize[index]} })} }
+                            >
                                 {
                                     this.state.resize[index] ?
                                         <PlusIcon />

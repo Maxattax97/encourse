@@ -38,7 +38,10 @@ class StudentsTestCaseProgress extends Component {
 
 	render() {
 		return (
-			<Chart chart={this.props.chart}>
+			<Chart
+                chart={this.props.chart}
+                title='Histogram of students grouped by the percentage of tests they are passing (progress).'
+            >
 				<ResponsiveContainer width="100%" height="100%">
 					<ComposedChart
 						data={this.props.chart.data}
