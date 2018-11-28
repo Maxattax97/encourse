@@ -11,7 +11,9 @@ class ProjectInfo extends Component {
 		if(!this.props.project)
 			return []
 
-		return [
+		console.log('here')
+		return {
+			data: [	
 			{
 				stat_name: 'Project Name',
 				stat_value: this.props.project.project_name
@@ -34,12 +36,12 @@ class ProjectInfo extends Component {
 				stat_name: 'Last Ran Testall',
 				stat_value: this.props.project.last_test
 			}
-		]
+		] }
 	}
 
 	render() {
 		return (
-			<Statistics values={ this.getProjectInfo() }/>
+			<Statistics stats={ this.getProjectInfo() }/>
 		)
 	}
 }
