@@ -14,14 +14,23 @@ export function getData(state, action, name) {
 	})
 }
 
+export function unknownAction(state, action) {
+    return {
+        ...state,
+        reduxError: action
+    }
+}
+
 export function forwardData(state, action, name, dataFunction) {
+    const data = (action.data ? dataFunction ? dataFunction(action.data, action.extra, state) : action.data : state[name] ? state[name].data : [])
+
 	return {
 		...state,
 		...{
 			[name]: {
 				error: action.hasError,
 				loading: !(action.hasError) && !(action.data),
-				data: action.data ? dataFunction ? dataFunction(action.data, action.extra, state) : action.data : state[name] ? state[name].data : []
+				data: data
 			}
 		}
 	}
