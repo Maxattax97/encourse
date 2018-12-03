@@ -5,7 +5,7 @@ from datetime import datetime
 from datetime import timedelta
 
 
-def create_day_dict(date, files, time_spent, additions, deletions, commit_count):
+def create_day_dict(date, files, time_spent, additions, deletions, commit_count, commit_hash):
     """Creates a dictionary from inputs"""
     daily_data = {}
     daily_data["date"] = date
@@ -14,6 +14,7 @@ def create_day_dict(date, files, time_spent, additions, deletions, commit_count)
     daily_data["additions"] = additions
     daily_data["deletions"] = deletions
     daily_data["commit_count"] = commit_count
+    daily_data["commit_hash"] = commit_hash
     return daily_data
 
 
@@ -172,6 +173,7 @@ def get_daily_commit_data(progress_file, max_change=None, timeout=None):
             daily_additions = 0
             daily_deletions = 0
             daily_commit_count = 0
+            commit_hash = ""
             name = words[1]
         elif words[0] == "End":  # End of user
             # Add the last day to student's data
@@ -183,6 +185,7 @@ def get_daily_commit_data(progress_file, max_change=None, timeout=None):
                     daily_additions,
                     daily_deletions,
                     daily_commit_count,
+                    commit_hash
                 )
             )
 
@@ -190,12 +193,15 @@ def get_daily_commit_data(progress_file, max_change=None, timeout=None):
             students[name] = student_data
         elif expect_time == True:  # New Data/Time/Code tuple
             expect_time = False
-            if len(words) != 3:
-                eprint("Expected date, time, and code. Found: {}".format(words))
+            if len(words) != 4:
+                eprint("Expected date, time, code, and hash. Found: {}".format(words))
                 continue
+
             date = words[0]
-            time = words[1]  # Unused
+            time = words[1]
             code = words[2]  # Unused
+            commit_hash = words[3]
+
             date = datetime.strptime(date, "%Y-%m-%d").date()
             time = datetime.strptime(time, "%H:%M:%S").time()
             if current_date == datetime(1, 1, 1).date():
@@ -219,6 +225,7 @@ def get_daily_commit_data(progress_file, max_change=None, timeout=None):
                         daily_additions,
                         daily_deletions,
                         daily_commit_count,
+                        commit_hash
                     )
                 )
                 current_date = date
