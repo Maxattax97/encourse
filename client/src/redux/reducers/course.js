@@ -1,4 +1,4 @@
-import {forwardData, getData} from "./reducer-utils"
+import {forwardData, getData, unknownAction} from './reducer-utils'
 
 function setCurrentCourse(state, action) {
 	return Object.assign({}, state, {
@@ -289,8 +289,6 @@ export default function course(state = {}, action) {
     case 'GET_TEST_BAR_GRAPH_ANON':
 	    return forwardData(state, action, 'courseTestProgress', formatTestProgress)
     default:
-	    return Object.assign({}, state, {
-		    reduxError: action
-	    })
+	    return unknownAction(state, action)
     }
 }

@@ -1,103 +1,40 @@
-import {getData} from "./reducer-utils"
+import {forwardData, unknownAction} from './reducer-utils'
 
-function addCourse(state, action) {
-	if(action.error)
-		return Object.assign({}, state, {
-			addCourseHasError: action.error,
-			addCourseIsLoading: false,
-		})
-	if(action.data)
-		return Object.assign({}, state, {
-			addCourseData: action.data,
-			getCoursesData: [...state.getCoursesData, action.data],
-			addCourseIsLoading: false,
-		})
-	return Object.assign({}, state, {
-		addCourseIsLoading: true,
-	})
+function addCourse(data, extra, state) {
+    state.courses.data = [...state.courses.data, data]
+
+    return data
 }
 
-function modifyCourse(state, action) {
-	if(action.error)
-		return Object.assign({}, state, {
-			modifyCourseHasError: action.error,
-			modifyCourseIsLoading: false,
-		})
-	if(action.data)
-		return Object.assign({}, state, {
-			modifyCourseData: action.data,
-			modifyCourseIsLoading: false,
-		})
-	return Object.assign({}, state, {
-		modifyCourseIsLoading: true,
-	})
+//TODO Bucky, change course.userID to a unique identiifer
+function modifyCourse(data, extra, state) {
+    state.courses.data = [...state.courses.data.filter(course => course.userID !== data.userID), data]
+
+    return data
 }
 
-function removeCourse(state, action) {
-	if(action.error)
-		return Object.assign({}, state, {
-			removeCourseHasError: action.error,
-			removeCourseIsLoading: false,
-		})
-	if(action.data)
-		return Object.assign({}, state, {
-			removeCourseData: action.data,
-			removeCourseIsLoading: false,
-		})
-	return Object.assign({}, state, {
-		removeCourseIsLoading: true,
-	})
+function removeCourse(data, extra, state) {
+    state.courses.data = [...state.courses.data.filter(course => course.userID !== data.userID)]
+
+    return data
 }
 
-function addAccount(state, action) {
-	if(action.error)
-		return Object.assign({}, state, {
-			addAccountHasError: action.error,
-			addAccountIsLoading: false,
-		})
-	if(action.data)
-		return Object.assign({}, state, {
-			addAccountData: action.data,
-			getAccountsData: [...state.getAccountsData, action.data],
-			addAccountIsLoading: false,
-		})
-	return Object.assign({}, state, {
-		addAccountIsLoading: true,
-	})
+function addAccount(data, extra, state) {
+    state.accounts.data = [...state.accounts.data, data]
+
+    return data
 }
 
-function modifyAccount(state, action) {
-	if(action.error)
-		return Object.assign({}, state, {
-			modifyAccountHasError: action.error,
-			modifyAccountIsLoading: false,
-		})
-	if(action.data)
-		return Object.assign({}, state, {
-			modifyAccountData: action.data,
-			getAccountsData: [...state.getAccountsData.filter(account => account.userID !== action.data.userID), action.data],
-			modifyAccountIsLoading: false,
-		})
-	return Object.assign({}, state, {
-		modifyAccountIsLoading: true,
-	})
+function modifyAccount(data, extra, state) {
+    state.accounts.data = [...state.accounts.data.filter(account => account.userID !== data.userID), data]
+
+    return data
 }
 
-function removeAccount(state, action) {
-	if(action.error)
-		return Object.assign({}, state, {
-			removeAccountHasError: action.error,
-			removeAccountIsLoading: false,
-		})
-	if(action.data)
-		return Object.assign({}, state, {
-			removeAccountData: action.data,
-			getAccountsData: [...state.getAccountsData.filter(account => account.userID !== action.data.userID)],
-			removeAccountIsLoading: false,
-		})
-	return Object.assign({}, state, {
-		removeAccountIsLoading: true,
-	})
+function removeAccount(data, extra, state) {
+    state.accounts.data = [...state.accounts.data.filter(account => account.userID !== data.userID)]
+
+    return data
 }
 
 export default function admin(state = {}, action) {
@@ -106,24 +43,22 @@ export default function admin(state = {}, action) {
 
 	switch(action.type) {
         case 'GET_COURSES':
-            return getData(state, action, 'getCourses')
+            return forwardData(state, action, 'courses')
         case 'ADD_COURSE':
-            return addCourse(state, action)
+            return forwardData(state, action, 'addCourse', addCourse)
         case 'MODIFY_COURSE':
-            return modifyCourse(state, action)
+            return forwardData(state, action, 'modifyCourse', modifyCourse)
         case 'REMOVE_COURSE':
-            return removeCourse(state, action)
+            return forwardData(state, action, 'removeCourse', removeCourse)
         case 'GET_ACCOUNTS':
-            return getData(state, action, 'getAccounts')
+            return forwardData(state, action, 'accounts')
         case 'ADD_ACCOUNT':
-            return addAccount(state, action)
+            return forwardData(state, action, 'addAccount', addAccount)
         case 'MODIFY_ACCOUNT':
-            return modifyAccount(state, action)
+            return forwardData(state, action, 'modifyAccount', modifyAccount)
         case 'REMOVE_ACCOUNT':
-            return removeAccount(state, action)
-		default:
-			return Object.assign({}, state, {
-			    reduxError: action
-            })
+            return forwardData(state, action, 'removeAccount', removeAccount)
+        default:
+			return unknownAction(state, action)
 	}
 }
