@@ -3,7 +3,9 @@ import { defaultCourse, defaultSemester } from '../../defaults'
 
 const createPeeker = (name) => (state) => state.course && state.course[name] ? state.course[name] : { loading: true, data: [] }
 
-export const getStats = createPeeker('stats')
+export const getCourseStats = createPeeker('stats')
+
+export const getStudentsStats = createPeeker('studentsStats')
 
 export function getStudents(state) {
 	return state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : []

@@ -215,8 +215,8 @@ export default function student(state = {}, action) {
         return getData(state, action, 'syncStudentRepository')
     case 'RUN_TESTS':
         return getData(state, action, 'runStudentTests')
-        default:
-	    return {
+    default:
+        return {
             ...state,
             reduxError: action
         }

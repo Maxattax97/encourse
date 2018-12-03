@@ -8,6 +8,7 @@ import {getCurrentCourseId} from '../../redux/state-peekers/course'
 import connect from 'react-redux/es/connect/connect'
 import {ProjectInfo, ProjectModal, ProjectTestFilter, ProjectTestModal} from './project'
 import HistoryText from "./common/HistoryText"
+import {getCurrentProject} from '../../redux/state-peekers/project'
 
 class ProjectPanel extends Component {
 
@@ -74,7 +75,7 @@ class ProjectPanel extends Component {
 
                 <div className='panel-center-content'>
 	                <Title onClick={ () => this.props.setModalState(2) }>
-		                <h1 className='header'>{this.props.currentCourseId.toUpperCase()} - Projects - { /*this.props.projects[this.props.current_project_index].project_name*/ }</h1>
+		                <h1 className='header'>{ this.props.project ? this.props.project.project_name : '' }</h1>
 		                <SettingsIcon/>
 	                </Title>
                     <div className='h1 break-line header' />
@@ -95,9 +96,8 @@ class ProjectPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
         currentCourseId: getCurrentCourseId(state),
-        current_project_index: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0
+        project: getCurrentProject(state),
     }
 }
 
