@@ -307,6 +307,9 @@ public class HelperServiceImpl implements HelperService {
                     studentProjectTestRepository.findByIdProjectIDAndIdTestScriptNameAndIdStudentID(projectID, testName, studentID);
             if(studentProjectTest == null) {
                 ProjectTestScript testScript = projectTestScriptRepository.findByIdProjectIDAndIdTestScriptName(projectID, testName);
+                if(testScript == null) {
+                    continue;
+                }
                 studentProjectTest = new StudentProjectTest(studentID, projectID, testName, isPassing, isHidden, testScript.getPointsWorth());
                 studentProjectTestRepository.save(studentProjectTest);
             }
@@ -344,6 +347,21 @@ public class HelperServiceImpl implements HelperService {
                 suiteProject.setVisiblePointTotal(maxPoints);
                 studentProjectRepository.save(suiteProject);
             }
+        }
+    }
+
+    /**
+     * Initializes each student's test score to be failing to account for projects that crash before a score is recorded
+     * Primarily used upon assigning the project to avoid issues with students having 0 points possible
+     *
+     * @param studentID Back-end identifier for the student being assigned the project
+     * @param projectID Identifier for the project test scripts are taken from
+     */
+    public void initTestResults(String studentID, String projectID) {
+        List<ProjectTestScript> testScripts = projectTestScriptRepository.findByIdProjectID(projectID);
+        for(ProjectTestScript t : testScripts) {
+            StudentProjectTest studentProjectTest = new StudentProjectTest(studentID, projectID, t.getTestScriptName(), false, t.isHidden(), t.getPointsWorth());
+            studentProjectTestRepository.save(studentProjectTest);
         }
     }
 

@@ -118,6 +118,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             for(StudentSection a : assignments) {
                 if(!(completedStudents.contains(a.getStudentID()))) {
                     studentProjectRepository.save(new StudentProject(a.getStudentID(), project.getProjectID(), "testall"));
+                    helperService.initTestResults(a.getStudentID(), project.getProjectID());
                     completedStudents.add(a.getStudentID());
                 }
             }
