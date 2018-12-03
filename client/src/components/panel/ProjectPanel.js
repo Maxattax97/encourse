@@ -12,47 +12,22 @@ import {getCurrentProject} from '../../redux/state-peekers/project'
 
 class ProjectPanel extends Component {
 
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            filters: {
-	            sort_by: 0,
-	            bundle_by: 0,
-	            order_by: 0,
-                view_filter: 0
-            }
-        }
-    }
-
     back = () => {
         history.goBack()
     };
-
-	changeFilter = (key, value) => {
-        let filters = [...this.state.filters]
-        filters[key] = value
-		this.setState({ filters }, () => {
-		})
-	}
 
     render() {
 
         const action_names = [
             'Add New Project',
 	        'Add New Test Script',
-            'Upload Test Zip',
-            //'Save Changes',
-            //'Revert Changes',
-            //'Remove Project'
+            'Upload Test Zip'
         ]
 
         const actions = [
 	        () => this.props.setModalState(1),
 	        () => this.props.setModalState(3),
             {},
-            {},
-            {}
         ]
 
         return (
@@ -86,7 +61,7 @@ class ProjectPanel extends Component {
 	                <div className='h1 break-line' />
 
 	                <h3 className='header'>Test Scripts</h3>
-                    <ProjectTestFilter onChange={ this.changeFilter } filters={ this.state.filters }/>
+                    <ProjectTestFilter />
                 </div>
             </div>
         )
