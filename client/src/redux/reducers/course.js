@@ -243,6 +243,22 @@ function formatTestProgress(udata) {
 	return formattedData
 }
 
+function formatStudentsSimilarity(udata) {
+	if(!udata || udata.data)
+		return []
+	let data = udata.data
+	for (let item of data) {
+		item.similarity_bin *= 10
+	}
+	data.sort((a, b) => {
+		if (a.similarity_bin === b.similarity_bin) {
+			return a.height - b.height
+		}
+		return a.similarity_bin - b.similarity_bin
+	})
+	return data
+}
+
 export default function course(state = {}, action) {
     if(action.class !== 'COURSE')
         return state
@@ -277,7 +293,7 @@ export default function course(state = {}, action) {
     case 'RESET_STUDENTS_PAGE':
         return resetStudentsPage(state, action)
     case 'GET_SIMILARITY_PLOT':
-        return getData(state, action, 'getSimilarityPlot')
+        return forwardData(state, action, 'studentsSimilarity', formatStudentsSimilarity)
     case 'GET_STATISTICS':
         return forwardData(state, action, 'stats', formatStatistics)
     case 'SUBMIT_STUDENTS':

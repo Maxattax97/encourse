@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import {AnonymousCharts, Charts, CourseStatistics, CourseStudentFilter} from './course'
-import {Title, SettingsIcon} from '../Helpers'
+import CoursesSummary from "./course-selection/CoursesSummary"
 
 class CourseSelectionPanel extends Component {
 
@@ -16,6 +15,7 @@ class CourseSelectionPanel extends Component {
 					<div className='panel-course-content'>
 
 						<h3 className='header'>Course Selection</h3>
+						<CoursesSummary/>
 					</div>
 				</div>
 			</div>
