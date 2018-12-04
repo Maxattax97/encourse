@@ -3,7 +3,7 @@ import store from "../store"
 import {
 	getClassProgress,
 	getClassProgressAnon,
-	getClassStatistics,
+	getClassStatistics, getSimilarityPlot,
 	getStudentPreviews, getTestBarGraph,
 	getTestBarGraphAnon
 } from "../actions"
@@ -31,4 +31,8 @@ export function retrieveStudentsProgress(project) {
 
 export function retrieveStudentsTestProgress(project) {
 	store.dispatch(getTestBarGraph(`${api_v1}testSummary?${projectID_v1(project)}`))
+}
+
+export function retrieveStudentsSimilarity(project) {
+	store.dispatch(getSimilarityPlot(`${api_v1}classSimilar?${projectID_v1(project)}`))
 }

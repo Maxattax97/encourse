@@ -11,6 +11,7 @@ import StudentReportFilter from './course-dishonesty/StudentReportFilter'
 import CourseDishonestyCharts from './course-dishonesty/CourseDishonestyCharts'
 import HistoryText from './common/HistoryText'
 import ShareReportModal from './common/ShareReportModal'
+import TaskModal from './common/TaskModal'
 
 class CourseDishonestyPanel extends Component {
 
@@ -71,14 +72,12 @@ class CourseDishonestyPanel extends Component {
     render() {
 
         const action_names = [
-            'Sync Repositories',
-            'Run Tests',
+            'Current Task',
             'Share Results'
         ]
 
         const actions = [
-            () => {  },
-            () => {  },
+            () => { this.props.setModalState(1) },
             this.share
         ]
 
@@ -94,14 +93,14 @@ class CourseDishonestyPanel extends Component {
                     <HistoryText />
                 </div>
 
-                <CourseDishonestyModal id={1}/>
+                <TaskModal id={1} />
                 <ShareReportModal id={2} link={window.location}/>
 
                 <div className='panel-center-content'>
 
                     <div className='panel-course-report'>
-                        <Title onClick={ () => this.props.setModalState(1) }>
-                            <h1 className='header'>{this.props.currentCourseId.toUpperCase()} - Academic Dishonesty Report</h1>
+                        <Title>
+                            <h1 className='header'>Academic Dishonesty Report</h1>
                             <SettingsIcon/>
                         </Title>
                         <div className='h1 break-line header' />

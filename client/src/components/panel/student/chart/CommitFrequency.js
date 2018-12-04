@@ -44,7 +44,7 @@ class CommitHistoryHistogram extends Component {
 			            </YAxis>
 			            <Tooltip labelFormatter={this.dateFormatter} animationDuration={500}/>
 			            <Bar dataKey="count" fill="#8884d8"/>
-			            <Brush dataKey="date" height={20} stroke="#8884d8" tickFormatter={this.dateFormatter} onChange={this.props.setBrush}/>
+			            <Brush dataKey="date" height={20} stroke="#8884d8" tickFormatter={this.dateFormatter}/>
 		            </BarChart>
 	            </ResponsiveContainer>
             </Chart>

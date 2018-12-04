@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import Statistics from "../common/Statistics"
 import {retrieveCourseStats} from "../../../redux/retrievals/course"
-import {getStats} from "../../../redux/state-peekers/course"
+import {getCourseStats, getStudentsStats} from '../../../redux/state-peekers/course'
 import {getCurrentProject} from "../../../redux/state-peekers/project"
 
 class StudentStatistics extends Component {
@@ -25,10 +25,10 @@ class StudentStatistics extends Component {
 	}
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
 	return {
 		project: getCurrentProject(state),
-		stats: getStats(state)
+		stats: props.anon ? getCourseStats(state) : getStudentsStats(state)
 	}
 }
 

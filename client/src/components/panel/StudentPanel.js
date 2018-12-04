@@ -4,7 +4,13 @@ import { connect } from 'react-redux'
 import {BackNav} from '../Helpers'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import { history } from '../../redux/store'
-import { getStudent, clearStudent, runStudentTests, syncStudentRepository } from '../../redux/actions/index'
+import {
+    getStudent,
+    clearStudent,
+    runStudentTests,
+    syncStudentRepository,
+    setModalState
+} from '../../redux/actions/index'
 import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
@@ -13,6 +19,8 @@ import {retrieveStudent} from "../../redux/retrievals/student"
 import {getCurrentStudent} from "../../redux/state-peekers/student"
 import {getCurrentProject} from "../../redux/state-peekers/project"
 import {getCurrentCourseId, getCurrentSemesterId} from "../../redux/state-peekers/course"
+import {CourseModal} from './course'
+import ProgressModal from './common/TaskModal'
 
 
 class StudentPanel extends Component {
@@ -34,21 +42,15 @@ class StudentPanel extends Component {
     render() {
 
         const action_names = [
-            'Sync Repository',
-            'Run Tests',
+            'View Current Task',
             'Academic Dishonesty Report'
         ]
 
         let studentDishonestyRedirect = () => { history.push('/student-dishonesty/' + this.props.student.id) }
 
         const actions = [
-            () => { 
-                if(this.props.currentProjectId && this.props.currentStudent)
-                    this.props.syncStudentRepository(`${url}/api/pull/project?projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
-            },
             () => {
-                if(this.props.currentProjectId && this.props.currentStudent)
-                    this.props.runStudentTests(`${url}/api/run/testall?projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
+                this.props.setModalState(2)
             },
             studentDishonestyRedirect
         ]
@@ -68,11 +70,13 @@ class StudentPanel extends Component {
                     <StudentCommitHistory />
                 </div>
 
+                <ProgressModal id={2} />
+
                 <div className="panel-center-content">
                     <div className='panel-student-content'>
                         <h1 className='header'>
                             {
-                                `${this.props.currentCourseId.toUpperCase()} - ${this.props.student ? `${this.props.student.first_name} ${this.props.student.last_name}` : ''}`
+                                 this.props.student ? `${this.props.student.first_name} ${this.props.student.last_name}` : ''
                             }
                         </h1>
                         <div className="h1 break-line header" />
@@ -81,9 +85,11 @@ class StudentPanel extends Component {
                         <StudentCharts />
 
                         <div className="h1 break-line" />
-
                         <h3 className='header'>Student Statistics</h3>
-	                    <StudentStatistics/>
+	                    <StudentStatistics />
+
+                        <div className='h1 break-line' />
+                        <h3 className='header'>Test Suite Results</h3>
                     </div>
                 </div>
             </div>
@@ -102,6 +108,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        setModalState: (id) => dispatch(setModalState(id)),
         getStudent: (url, headers, body) => dispatch(getStudent(url, headers, body)),
         syncStudentRepository: (url, headers, body) => dispatch(syncStudentRepository(url, headers, body)),
         runStudentTests: (url, headers, body) => dispatch(runStudentTests(url, headers, body)),

@@ -9,11 +9,14 @@ import url from '../../server'
 import HistoryText from './common/HistoryText'
 import StudentDishonestyCharts from "./student-dishonesty/StudentDishonestyCharts"
 import ShareReportModal from "./common/ShareReportModal"
+import {getCurrentStudent} from '../../redux/state-peekers/student'
+import TaskModal from './common/TaskModal'
+import {getCurrentProject} from '../../redux/state-peekers/project'
 
 class StudentDishonestyPanel extends Component {
 
     componentDidMount = () => {
-        if(!this.props.currentStudent) {
+        if(!this.props.student) {
             this.props.getStudent(`${url}/api/studentsData?courseID=${this.props.currentCourseId}&semester=${this.props.currentSemesterId}&userName=${this.props.match.params.id}`)
         }
     }
@@ -29,20 +32,12 @@ class StudentDishonestyPanel extends Component {
     render() {
 
         const action_names = [
-            'Sync Repository',
-            'Run Tests',
+            'Current Task',
             'Share Results'
         ]
 
         const actions = [
-            () => { 
-                if(this.props.currentProjectId && this.props.currentStudent)
-                    this.props.syncStudentRepository(`${url}/api/pull/project?projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
-            },
-            () => {
-                if(this.props.currentProjectId && this.props.currentStudent)
-                    this.props.runStudentTests(`${url}/api/run/testall?projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
-            },
+            () => { this.props.setModalState(2) },
             this.share
         ]
         //TODO: update currentStudent correctly
@@ -58,11 +53,12 @@ class StudentDishonestyPanel extends Component {
                 </div>
 
                 <ShareReportModal id={1} link={null}/>
+                <TaskModal id={2} />
 
                 <div className='panel-center-content'>
 
                     <div className='panel-student-report'>
-                        <h1 className='header'>{this.props.currentCourseId.toUpperCase()} - { this.props.currentStudent ? this.props.currentStudent.first_name : '' } { this.props.currentStudent ? this.props.currentStudent.last_name : '' } - Academic Dishonesty Report</h1>
+                        <h1 className='header'>'{ this.props.student ? this.props.student.last_name : 'Student' }' Dishonesty Report</h1>
                         <div className='h1 break-line header' />
 
                         <h3 className='header'>Student Charts Summary</h3>
@@ -76,8 +72,8 @@ class StudentDishonestyPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        student: getCurrentStudent(state),
+        project: getCurrentProject(state),
         currentCourseId: getCurrentCourseId(state),
         currentSemesterId: getCurrentSemesterId(state),
     }

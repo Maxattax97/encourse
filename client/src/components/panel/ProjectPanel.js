@@ -8,50 +8,26 @@ import {getCurrentCourseId} from '../../redux/state-peekers/course'
 import connect from 'react-redux/es/connect/connect'
 import {ProjectInfo, ProjectModal, ProjectTestFilter, ProjectTestModal} from './project'
 import HistoryText from "./common/HistoryText"
+import {getCurrentProject} from '../../redux/state-peekers/project'
 
 class ProjectPanel extends Component {
-
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            filters: {
-	            sort_by: 0,
-	            bundle_by: 0,
-	            order_by: 0,
-                view_filter: 0
-            }
-        }
-    }
 
     back = () => {
         history.goBack()
     };
-
-	changeFilter = (key, value) => {
-        let filters = [...this.state.filters]
-        filters[key] = value
-		this.setState({ filters }, () => {
-		})
-	}
 
     render() {
 
         const action_names = [
             'Add New Project',
 	        'Add New Test Script',
-            'Upload Test Zip',
-            //'Save Changes',
-            //'Revert Changes',
-            //'Remove Project'
+            'Upload Test Zip'
         ]
 
         const actions = [
 	        () => this.props.setModalState(1),
 	        () => this.props.setModalState(3),
             {},
-            {},
-            {}
         ]
 
         return (
@@ -74,7 +50,7 @@ class ProjectPanel extends Component {
 
                 <div className='panel-center-content'>
 	                <Title onClick={ () => this.props.setModalState(2) }>
-		                <h1 className='header'>{this.props.currentCourseId.toUpperCase()} - Projects - { /*this.props.projects[this.props.current_project_index].project_name*/ }</h1>
+		                <h1 className='header'>{ this.props.project ? this.props.project.project_name : '' }</h1>
 		                <SettingsIcon/>
 	                </Title>
                     <div className='h1 break-line header' />
@@ -85,7 +61,7 @@ class ProjectPanel extends Component {
 	                <div className='h1 break-line' />
 
 	                <h3 className='header'>Test Scripts</h3>
-                    <ProjectTestFilter onChange={ this.changeFilter } filters={ this.state.filters }/>
+                    <ProjectTestFilter />
                 </div>
             </div>
         )
@@ -95,9 +71,8 @@ class ProjectPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
         currentCourseId: getCurrentCourseId(state),
-        current_project_index: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0
+        project: getCurrentProject(state),
     }
 }
 
