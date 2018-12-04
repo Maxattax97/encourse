@@ -851,53 +851,61 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     public JSONReturnable getClassCheating(@NonNull String projectID) {
-        Project p = projectRepository.findByProjectIdentifier(projectID);
-        if(p == null) {
-            return new JSONReturnable(-1, null);
-        }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(p.getSemester(), p.getCourseID());
-        if(sections.isEmpty()) {
-            return new JSONReturnable(-2, null);
-        }
-        String commitLogFile = listAllCommitsByTime(projectID);
-        if(commitLogFile == null) {
-            return new JSONReturnable(-3, null);
-        }
-        List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
-        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestsDates.txt";
-        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestsDates.txt";
-        try {
-            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-            for(StudentProject project : projects) {
-                Student student = studentRepository.findByUserID(project.getStudentID());
-                List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
-                visibleWriter.write("Start " + student.getUserName() + "\n");
-                hiddenWriter.write("Start " + student.getUserName() + "\n");
-                for (StudentProjectDate d : projectDates) {
-                    visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
-                    hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
-                }
-                visibleWriter.write("End " + student.getUserName() + "\n");
-                hiddenWriter.write("End " + student.getUserName() + "\n");
-            }
-            visibleWriter.close();
-            hiddenWriter.close();
-        } catch (IOException e) {
-            return new JSONReturnable(-3, null);
-        }
+        JSONReturnable json = null;
+        String commitLogFile;
+        String visibleTestFile;
+        String hiddenTestFile;
 
         if (DEBUG){
             commitLogFile = pythonPath + "data/sampleCommitList.txt";
             visibleTestFile = pythonPath + "data/sampleTestsDay.txt";
             hiddenTestFile = pythonPath + "data/sampleTestsDay.txt";
         }
+        else {
+            Project p = projectRepository.findByProjectIdentifier(projectID);
+            if(p == null) {
+                json = new JSONReturnable(-1, null);
+            }
+            List<Section> sections = sectionRepository.findBySemesterAndCourseID(p.getSemester(), p.getCourseID());
+            if(sections.isEmpty()) {
+                json = new JSONReturnable(-2, null);
+            }
+            commitLogFile = listAllCommitsByTime(projectID);
+            if(commitLogFile == null) {
+                json = new JSONReturnable(-3, null);
+            }
+            List<StudentProject> projects = studentProjectRepository.findByIdProjectIdentifier(projectID);
+            visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestsDates.txt";
+            hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestsDates.txt";
+            try {
+                BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+                BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+                for(StudentProject project : projects) {
+                    Student student = studentRepository.findByUserID(project.getStudentID());
+                    List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIdentifierAndIdStudentID(projectID, student.getUserID());
+                    visibleWriter.write("Start " + student.getUserName() + "\n");
+                    hiddenWriter.write("Start " + student.getUserName() + "\n");
+                    for (StudentProjectDate d : projectDates) {
+                        visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
+                        hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
+                    }
+                    visibleWriter.write("End " + student.getUserName() + "\n");
+                    hiddenWriter.write("End " + student.getUserName() + "\n");
+                }
+                visibleWriter.close();
+                hiddenWriter.close();
+            } catch (IOException e) {
+                json =  new JSONReturnable(-3, null);
+            }
+            System.out.println("Hi");
+            return json;
+        }
 
         String pyPath = pythonPath + "encourse.py cheating";
         //TODO: JARETT
         //String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + diffsFile + " -l 1000";
         String command = pythonCommand + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -l 1000";
-        JSONReturnable json = runPython(command);
+        json = runPython(command);
         //executeBashScript("cleanDirectory.sh src/main/temp");
         return json;
     }

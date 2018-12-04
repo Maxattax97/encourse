@@ -154,7 +154,7 @@ class GitLog:
                     "deletions": 0,
                     "files": [],
                     "time_spent": 0.0,
-                    "commit_count": 0
+                    "commit_count": 1
                 }
                 current_commits = [commit]
             else:

@@ -29,7 +29,7 @@ def jsonify(
 
     scores = {helper.date_string(x["date"]): x for x in scores}
     hidden_scores = {helper.date_string(x["date"]): x for x in hidden_scores}
-    daily_data = {helper.date_string(x["date"]): x for x in daily_data}
+    daily_data = {helper.date_string(day["timestamp"]): day for day in daily_data.commitsByDay()}
 
     velocity_data = []
     cumulative_progress = 0
@@ -83,10 +83,8 @@ def jsonprint(args):
     hidden_data = Progress.pastprogress.pastprogress(hidden_file)
     individual_hidden_data = hidden_data[student_id]
 
-    daily_data = GitLog.daily.daily(
-        commit_log_file, max_change=args.limit, timeout=args.timeout
-    )
-    individual_daily_data = daily_data[student_id]
+    daily_data = GitLog.GitParser(commit_log_file)
+    individual_daily_data = daily_data.student_log[student_id]
 
     startend = helper.times_from_dailydata(individual_daily_data)
 
