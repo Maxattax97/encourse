@@ -43,8 +43,6 @@ def time_string(seconds):
     return "{} hours".format(int(hours))
 
 
-
-
 def times_from_dailydata(data, include_today=None):
     """Generate a start and end time from commit daily commit log data"""
     dates = []

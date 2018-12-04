@@ -17,6 +17,7 @@ from API import test_summary
 from API import velocity
 from API import cheating
 
+
 __all__ = [
     "sys",
     "json",
@@ -37,3 +38,5 @@ __all__ = [
     "velocity",
     "cheating",
 ]
+
+print(dir(GitLog))

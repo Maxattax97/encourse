@@ -1,7 +1,7 @@
 from API import *
 
 
-def reformat(commit_list) -> dict:
+def reformat(gitlog) -> dict:
     """Reformats a list of dates into a dictionary
     
     **Args**:
@@ -23,11 +23,11 @@ def reformat(commit_list) -> dict:
 
     """
     commit_dict = {}
-    for info in commit_list:
+    for commit in gitlog.commits:
         new_entry = {}
-        new_entry["additions"] = info["additions"]
-        new_entry["deletions"] = info["deletions"]
-        date = helper.date_string(info["date"])
+        new_entry["additions"] = commit.additions
+        new_entry["deletions"] = commit.deletions
+        date = helper.date_string(commit.timestamp.date())
         commit_dict[date] = new_entry
     return commit_dict
 
