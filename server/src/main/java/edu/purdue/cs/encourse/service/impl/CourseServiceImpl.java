@@ -311,6 +311,27 @@ public class CourseServiceImpl implements CourseService {
         return studentsJSON;
     }
 
+    public JSONArray getSuitesData(String userName, String projectID) {
+        Student student = studentRepository.findByUserName(userName);
+        if(student == null) {
+            return null;
+        }
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID());
+        JSONArray suitesJSON = new JSONArray();
+        for(StudentProject p : projects) {
+            JSONObject suiteJSON = new JSONObject();
+            suiteJSON.put("suite_name", p.getSuite().toUpperCase());
+            suiteJSON.put("grade", p.getBestVisibleGrade());
+            suiteJSON.put("points", p.getBestVisiblePoints());
+            suiteJSON.put("total", p.getVisiblePointTotal());
+            suiteJSON.put("hiddenGrade", p.getBestHiddenGrade());
+            suiteJSON.put("hiddenPoints", p.getBestHiddenPoints());
+            suiteJSON.put("hiddenTotal", p.getHiddenPointTotal());
+            suitesJSON.add(suiteJSON);
+        }
+        return suitesJSON;
+    }
+
     /**
      * Obtains data for all test scripts associated with a project
      * Primarily used to show existing test scripts that a project has
