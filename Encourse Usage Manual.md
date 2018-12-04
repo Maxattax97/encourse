@@ -56,6 +56,8 @@ Table of Contents
       * [Administrator Course Management Page](#administrator-course-management-page)
    * [Understanding the Code](#understanding-the-code)
       * [Introduction](#introduction-1)
+      * [Frontend Organization](#frontend-organization)
+         * [Frontend File Tree](#frontend-file-tree)
       * [Backend Organization](#backend-organization)
          * [Java Overview](#java-overview)
             * [Java File Tree](#java-file-tree)
