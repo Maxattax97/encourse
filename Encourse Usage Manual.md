@@ -56,6 +56,8 @@ Table of Contents
       * [Administrator Course Management Page](#administrator-course-management-page)
    * [Understanding the Code](#understanding-the-code)
       * [Introduction](#introduction-1)
+      * [Frontend Organization](#frontend-organization)
+         * [Frontend File Tree](#frontend-file-tree)
       * [Backend Organization](#backend-organization)
          * [Java Overview](#java-overview)
             * [Java File Tree](#java-file-tree)
@@ -406,15 +408,257 @@ To maintain the backend server code, a developer should have a solid understandi
 
 **For the remainder of this documentation**:
 
+* **Frontend code** refers to code beneath the directory `encourse/client/`
+
 * **Backend code** refers to code beneath the directory `encourse/server/`
 
-* **Frontend code** refers to code beneath the directory `encourse/client/`
+## Frontend Organization
+
+### Frontend File Tree
+
+Frontend Directory Tree:
+
+```
+client/src
+├── components
+│   ├── chart
+│   ├── modal
+│   │   └── util
+│   ├── navigation
+│   └── panel
+│       ├── admin
+│       ├── common
+│       ├── course
+│       │   └── chart
+│       ├── course-dishonesty
+│       │   └── chart
+│       ├── manage-ta
+│       ├── preference
+│       ├── project
+│       ├── student
+│       │   └── chart
+│       └── student-dishonesty
+│           └── chart
+├── redux
+│   ├── actions
+│   ├── reducers
+│   ├── retrievals
+│   └── state-peekers
+├── resources
+├── styles
+│   ├── css
+│   └── scss
+│       ├── base-scss
+│       ├── login-scss
+│       └── main-scss
+│           ├── main
+│           ├── navigation
+│           └── panel
+│               └── util
+└── tests
+    ├── int
+    └── util
+```
+
+Expanded File Tree:
+
+```
+client/src
+├── components
+│   ├── App.js
+│   ├── ChangePassword.js
+│   ├── chart
+│   │   └── chartUtils.js
+│   ├── Helpers.js
+│   ├── Login.js
+│   ├── Main.js
+│   ├── modal
+│   │   ├── CourseDishonestyModal.js
+│   │   ├── Modal.js
+│   │   └── util
+│   │       └── TestScriptList.js
+│   ├── navigation
+│   │   ├── ActionNavigation.js
+│   │   ├── ProjectNavigation.js
+│   │   ├── TANavigation.js
+│   │   └── TopNavigation.js
+│   └── panel
+│       ├── admin
+│       │   ├── AccountPreview.js
+│       │   └── CoursePreview.js
+│       ├── AdminPanel.js
+│       ├── common
+│       │   ├── CommitHistory.js
+│       │   ├── HistoryText.js
+│       │   ├── PreviewCard.js
+│       │   ├── SelectableCardSummary.js
+│       │   ├── ShareReportModal.js
+│       │   ├── Statistics.js
+│       │   └── TaskModal.js
+│       ├── course
+│       │   ├── chart
+│       │   │   ├── CompletionProgress.js
+│       │   │   ├── CustomTooltipContent.js
+│       │   │   ├── index.js
+│       │   │   └── TestCaseProgress.js
+│       │   ├── CourseAnonCharts.js
+│       │   ├── CourseCharts.js
+│       │   ├── CourseModal.js
+│       │   ├── CourseStatistics.js
+│       │   ├── index.js
+│       │   ├── StudentFilter.js
+│       │   └── StudentSummary.js
+│       ├── course-dishonesty
+│       │   ├── chart
+│       │   │   ├── CourseIdenticalLines.js
+│       │   │   └── CustomTooltipContent.js
+│       │   ├── CourseDishonestyCharts.js
+│       │   ├── StudentReportFilter.js
+│       │   └── StudentReportSummary.js
+│       ├── CourseDishonestyPanel.js
+│       ├── CoursePanel.js
+│       ├── course-selection
+│       │   ├── CoursesFilter.js
+│       │   └── CoursesSummary.js
+│       ├── CourseSelectionPanel.js
+│       ├── index.js
+│       ├── manage-ta
+│       │   ├── SectionPreview.js
+│       │   └── StudentAssignPreview.js
+│       ├── ManageTAPanel.js
+│       ├── preference
+│       │   └── ChangePasswordModal.js
+│       ├── PreferencePanel.js
+│       ├── project
+│       │   ├── index.js
+│       │   ├── ProjectInfo.js
+│       │   ├── ProjectModal.js
+│       │   ├── ProjectTestFilter.js
+│       │   ├── ProjectTestModal.js
+│       │   └── ProjectTestSummary.js
+│       ├── ProjectPanel.js
+│       ├── student
+│       │   ├── chart
+│       │   │   ├── CodeChanges.js
+│       │   │   ├── CommitFrequency.js
+│       │   │   └── StudentProgress.js
+│       │   ├── index.js
+│       │   ├── StudentCharts.js
+│       │   ├── StudentCommitHistory.js
+│       │   └── StudentStatistics.js
+│       ├── student-dishonesty
+│       │   ├── chart
+│       │   │   ├── StudentVelocityPerCommit.js
+│       │   │   └── StudentVelocityPerTime.js
+│       │   └── StudentDishonestyCharts.js
+│       ├── StudentDishonestyPanel.js
+│       └── StudentPanel.js
+├── defaults.js
+├── fuzz.js
+├── index.js
+├── redux
+│   ├── actions
+│   │   ├── admin.js
+│   │   ├── auth.js
+│   │   ├── control.js
+│   │   ├── course.js
+│   │   ├── fetch.js
+│   │   ├── index.js
+│   │   ├── projects.js
+│   │   ├── student.js
+│   │   └── teaching_assistant.js
+│   ├── reducers
+│   │   ├── admin.js
+│   │   ├── auth.js
+│   │   ├── control.js
+│   │   ├── course.js
+│   │   ├── index.js
+│   │   ├── projects.js
+│   │   ├── reducer-utils.js
+│   │   ├── student.js
+│   │   └── teaching_assistant.js
+│   ├── refreshMiddleware.js
+│   ├── retrievals
+│   │   ├── course.js
+│   │   ├── retrieval-utils.js
+│   │   └── student.js
+│   ├── state-peekers
+│   │   ├── admin.js
+│   │   ├── control.js
+│   │   ├── course.js
+│   │   ├── project.js
+│   │   └── student.js
+│   └── store.js
+├── registerServiceWorker.js
+├── resources
+│   ├── back.svg
+│   ├── checkmark.svg
+│   ├── encourse-logo-large.png
+│   ├── loading.svg
+│   ├── logout.svg
+│   ├── plus.svg
+│   ├── search.svg
+│   ├── settings.svg
+│   ├── sync.svg
+│   ├── trash.svg
+│   └── x.svg
+├── server.example.js
+├── server.js
+├── styles
+│   ├── css
+│   │   ├── base.css
+│   │   ├── login.css
+│   │   └── main.css
+│   └── scss
+│       ├── base-scss
+│       │   └── base.scss
+│       ├── login-scss
+│       │   └── login.scss
+│       └── main-scss
+│           ├── _definitions.scss
+│           ├── _helpers.scss
+│           ├── main
+│           │   ├── _action.scss
+│           │   ├── _breakline.scss
+│           │   ├── _card.scss
+│           │   ├── _chart.scss
+│           │   ├── _checkbox.scss
+│           │   ├── _dropdown.scss
+│           │   ├── _exit.scss
+│           │   ├── _filter.scss
+│           │   ├── _image.scss
+│           │   ├── _list.scss
+│           │   ├── _modal.scss
+│           │   ├── _panel.scss
+│           │   ├── _progress-bar.scss
+│           │   ├── _summary.scss
+│           │   └── _title.scss
+│           ├── main.scss
+│           ├── navigation
+│           │   ├── _actions-nav.scss
+│           │   ├── _list-nav.scss
+│           │   └── _nav.scss
+│           └── panel
+│               ├── _course.scss
+│               ├── _preferences.scss
+│               ├── _project.scss
+│               ├── _student.scss
+│               └── util
+│                   ├── _commit-history.scss
+│                   ├── _student-preview.scss
+│                   └── _test-scripts.scss
+└── tests
+    ├── int
+    │   └── ClassProgressHistogram.int.test.js
+    └── util
+        └── reduxTestUtils.js
+```
 
 ## Backend Organization
 
 ### Java Overview
 
-Since the backend server is built using Spring, which is a Java framework, most of the Java code is based heavily around Spring conventions. Most of the conventions used in this application are those seen in typical Spring applications, so for a more in depth guide about developing for a Spring project, see the [Spring documentation](https://spring.io/docs). For this manual, the focus will be on quick guidelines to continue development for the Java code, and will be split into explanations for each subcomponent in the Java code. The file tree for “encourse/server/src/main/java/edu/purdue/cs/encourse” is shown starting on the next page. Each component subdirectory will then be explained in detail.
+Since the backend server is built using Spring, which is a Java framework, most of the Java code is based heavily around Spring conventions. Most of the conventions used in this application are those seen in typical Spring applications, so for a more in depth guide about developing for a Spring project, see the [Spring documentation](https://spring.io/docs). For this manual, the focus will be on quick guidelines to continue development for the Java code, and will be split into explanations for each subcomponent in the Java code. The file tree for the Java components is shown starting on the next page. Each component subdirectory will then be explained in detail.
 
 
 
@@ -423,7 +667,7 @@ Since the backend server is built using Spring, which is a Java framework, most 
 Java Directory Tree:
 
 ```
-encourse
+server/src/main/java/edu/purdue/cs/encourse
 ├── config
 ├── controller
 ├── database
@@ -438,7 +682,7 @@ encourse
 Expanded File Tree:
 
 ```
-encourse
+server/src/main/java/edu/purdue/cs/encourse
 ├── EncourseApplication.java
 ├── config
 │   ├── AuthServerOAuth2Config.java

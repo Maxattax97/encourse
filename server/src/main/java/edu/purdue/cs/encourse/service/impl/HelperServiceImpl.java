@@ -123,7 +123,7 @@ public class HelperServiceImpl implements HelperService {
             String output;
             String error;
             while ((error = stdError.readLine()) != null) {
-                System.out.println("Error: " + error);
+                //System.out.println("Error: " + error);
             }
             while ((output = stdInput.readLine()) != null) {
                 System.out.println("Output: " + output);
