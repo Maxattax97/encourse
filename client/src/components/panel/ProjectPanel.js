@@ -8,7 +8,7 @@ import {getCurrentCourseId} from '../../redux/state-peekers/course'
 import connect from 'react-redux/es/connect/connect'
 import {ProjectInfo, ProjectModal, ProjectTestFilter, ProjectTestModal} from './project'
 import HistoryText from "./common/HistoryText"
-import {getCurrentProject} from '../../redux/state-peekers/project'
+import {getCurrentProject} from '../../redux/state-peekers/projects'
 
 class ProjectPanel extends Component {
 

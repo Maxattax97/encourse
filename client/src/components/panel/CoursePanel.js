@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { history } from '../../redux/store'
 import { defaultCourse, defaultSemester } from '../../defaults'
 import { getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, 
-        runTests, syncRepositories, updateStudentsPage, resetStudentsPage,
+        runTests, syncRepositories,
         setCurrentCourse, setCurrentSemester } from '../../redux/actions'
 import { getCurrentCourseId, getCurrentSemesterId } from '../../redux/state-peekers/course'
 import ProjectNavigation from '../navigation/ProjectNavigation'
@@ -13,6 +13,7 @@ import ActionNavigation from '../navigation/ActionNavigation'
 import HistoryText from './common/HistoryText'
 import {Title, SettingsIcon, BackNav} from '../Helpers'
 import ProgressModal from "./common/TaskModal"
+import {isAnySelected} from '../../redux/state-peekers/control'
 
 class CoursePanel extends Component {
 
@@ -75,17 +76,30 @@ class CoursePanel extends Component {
                         <h3 className='header'>Course Charts Summary</h3>
                         <AnonymousCharts />
 
-	                    <div className='h1 break-line' />
-	                    <h3 className='header'>Students Charts Summary</h3>
-                        <Charts/>
+                        {
+                            this.props.isAnySelected ?
+                                <div>
+                                    <div className='h1 break-line' />
+                                    <h3 className='header'>Students Charts Summary</h3>
+                                    <Charts/>
+                                </div>
+                                : null
+                        }
 
                         <div className='h1 break-line' />
                         <h3 className='header'>Course Statistics</h3>
                         <CourseStatistics anon />
 
-                        <div className='h1 break-line' />
-                        <h3 className='header'>Students Statistics</h3>
-                        <CourseStatistics />
+                        {
+                            this.props.isAnySelected ?
+                                <div>
+                                    <div className='h1 break-line' />
+                                    <h3 className='header'>Students Statistics</h3>
+                                    <CourseStatistics />
+                                </div>
+                                : null
+                        }
+
 
                         <div className='h1 break-line' />
 
@@ -101,6 +115,7 @@ const mapStateToProps = (state) => {
     return {
         currentCourseId: getCurrentCourseId(state),
         currentSemesterId: getCurrentSemesterId(state),
+        isAnySelected: isAnySelected(state, 'students')
     }
 }
 
@@ -114,8 +129,6 @@ const mapDispatchToProps = (dispatch) => {
         setModalState: (id) => dispatch(setModalState(id)),
         runTests: (url, headers, body) => dispatch(runTests(url, headers, body)),
         syncRepositories: (url, headers, body) => dispatch(syncRepositories(url, headers, body)),
-        updateStudentsPage: () => dispatch(updateStudentsPage()),
-        resetStudentsPage: () => dispatch(resetStudentsPage()),
     }
 }
 

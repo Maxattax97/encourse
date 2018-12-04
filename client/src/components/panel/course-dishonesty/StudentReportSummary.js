@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import {Title} from '../../Helpers'
 import {history} from '../../../redux/store'
 import {getStudentPreviews, clearStudent} from '../../../redux/actions'
-import {getCurrentProject} from "../../../redux/state-peekers/project"
+import {getCurrentProject} from "../../../redux/state-peekers/projects"
 import {getCurrentCourseId, getCurrentSemesterId} from "../../../redux/state-peekers/course"
 import SelectableCardSummary from "../common/SelectableCardSummary"
 import {retrieveAllStudents} from "../../../redux/retrievals/course"

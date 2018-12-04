@@ -45,6 +45,15 @@ export function resetStudentsPage() {
     }
 }
 
+export function setCurrentTA(ta, index) {
+    return {
+        class: class_type,
+        type: 'SET_CURRENT_TA',
+        ta,
+        index
+    }
+}
+
 export const getStudentPreviews = genericDispatch(
     class_type, 'GET_STUDENTS', 'GET'
 )
@@ -99,6 +108,10 @@ export const getClassProgressAnon = genericDispatch(
 
 export const getTestBarGraphAnon = genericDispatch(
     class_type, 'GET_TEST_BAR_GRAPH_ANON', 'GET',
+)
+
+export const getTeachingAssistants = genericDispatch(
+    class_type, 'GET_TEACHING_ASSISTANTS', 'GET'
 )
 
 /*export function getStudentPreviewsDataSuccess(data) {

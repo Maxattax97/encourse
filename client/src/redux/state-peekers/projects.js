@@ -3,7 +3,7 @@ export function getProjects(state) {
 }
 
 export function getCurrentProjectIndex(state) {
-	return state.projects && state.currentProjectIndex ? state.projects.currentProjectIndex : 0
+	return state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0
 }
 
 export function getCurrentProject(state) {

@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import {Chart} from '../../../Helpers'
 import {retrieveStudentCommitFrequency} from "../../../../redux/retrievals/student"
 import {getCurrentStudent, getStudentCommitFrequency} from "../../../../redux/state-peekers/student"
-import {getCurrentProject} from "../../../../redux/state-peekers/project"
+import {getCurrentProject} from "../../../../redux/state-peekers/projects"
 
 class CommitHistoryHistogram extends Component {
 

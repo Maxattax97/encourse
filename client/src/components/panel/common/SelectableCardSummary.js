@@ -10,12 +10,16 @@ import { getAllSelected, getSelected, isAnySelected } from "../../../redux/state
 
 class SelectableCardSummary extends Component {
 
+    componentWillUnmount() {
+        this.props.resetAllCards(this.props.type)
+    }
+
 	isSelected = (value) => {
 		return this.props.selectedAll || (this.props.selected(value.id))
 	}
 
 	clickCard = (value) => {
-		if(this.props.isAnySelected)
+		if(this.props.isAnySelected && !this.props.noReset)
 			return this.props.resetAllCards(this.props.type)
 
 		this.props.onClick(value)

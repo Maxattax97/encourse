@@ -17,7 +17,7 @@ import {StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
 import SyncItem from './common/HistoryText'
 import {retrieveStudent} from "../../redux/retrievals/student"
 import {getCurrentStudent} from "../../redux/state-peekers/student"
-import {getCurrentProject} from "../../redux/state-peekers/project"
+import {getCurrentProject} from "../../redux/state-peekers/projects"
 import {getCurrentCourseId, getCurrentSemesterId} from "../../redux/state-peekers/course"
 import {CourseModal} from './course'
 import ProgressModal from './common/TaskModal'

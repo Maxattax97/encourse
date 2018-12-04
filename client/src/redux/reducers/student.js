@@ -4,7 +4,11 @@ import moment from "moment"
 function setCurrentStudent(state, action) {
 	return {
 		...state,
-		...resetData('student')
+		student: {
+		    loading: false,
+            data: action.student,
+            error: null
+        }
 	}
 }
 

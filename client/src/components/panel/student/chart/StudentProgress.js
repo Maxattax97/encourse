@@ -5,7 +5,7 @@ import moment from 'moment'
 import { connect } from 'react-redux'
 import {retrieveStudentProgress} from "../../../../redux/retrievals/student"
 import {getCurrentStudent, getStudentProgress} from "../../../../redux/state-peekers/student"
-import {getCurrentProject} from "../../../../redux/state-peekers/project"
+import {getCurrentProject} from "../../../../redux/state-peekers/projects"
 import {Chart} from "../../../Helpers"
 
 class StudentProgress extends Component {

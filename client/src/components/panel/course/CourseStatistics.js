@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import Statistics from "../common/Statistics"
 import {retrieveCourseStats} from "../../../redux/retrievals/course"
 import {getCourseStats, getStudentsStats} from '../../../redux/state-peekers/course'
-import {getCurrentProject} from "../../../redux/state-peekers/project"
+import {getCurrentProject} from "../../../redux/state-peekers/projects"
 
 class StudentStatistics extends Component {
 

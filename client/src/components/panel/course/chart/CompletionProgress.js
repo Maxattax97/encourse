@@ -3,7 +3,7 @@ import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Label, Respon
 import { connect } from 'react-redux'
 
 import CustomTooltipContent from './CustomTooltipContent';
-import {getCurrentProject} from "../../../../redux/state-peekers/project"
+import {getCurrentProject} from "../../../../redux/state-peekers/projects"
 import {getCourseProgress, getStudentsProgress} from "../../../../redux/state-peekers/course"
 import {retrieveCourseProgress, retrieveStudentsProgress} from "../../../../redux/retrievals/course"
 import {Chart} from "../../../Helpers"

@@ -4,7 +4,7 @@ export {
     getSectionsData, syncRepositories, runTests, getDishonestyReport,
     updateCourseDishonestyPage, resetCourseDishonestyPage, updateStudentsPage,
     resetStudentsPage, getSimilarityPlot, getClassStatistics, submitStudents,
-    getClassCommitHistory, getClassProgressAnon, getTestBarGraphAnon,
+    getClassCommitHistory, getClassProgressAnon, getTestBarGraphAnon, getTeachingAssistants
 } from './course' 
 
 export {
@@ -28,10 +28,6 @@ export {
     getCourses, addCourse, modifyCourse, removeCourse, 
     getAccounts, addAccount, modifyAccount, removeAccount,
 } from './admin'
-
-export {
-    getTeachingAssistants,
-} from './teaching_assistant'
 
 export {
     setModalState, toggleSelectAllCards, toggleSelectCard, resetAllCards,

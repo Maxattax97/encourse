@@ -5,8 +5,6 @@ import {LoadingIcon, Card} from '../../Helpers'
 class Statistics extends Component {
 
 	render() {
-	    console.log(this.props.stats)
-
 		return (
 			<div className='summary'>
 				<div className='summary-container'>
@@ -14,7 +12,7 @@ class Statistics extends Component {
 						<Card>
 							{
 
-								this.props.stats && !this.props.stats.loading ?
+								this.props.stats && (!this.props.stats.loading || this.props.stats.data.length) ?
 									this.props.stats.data.map((value)  =>
 										<div key={value.stat_name} className={'stat float-height' + (value.break ? ' break' : '')} title={ value.stat_desc ? value.stat_desc : null }>
 											<h5>{value.stat_name}</h5>

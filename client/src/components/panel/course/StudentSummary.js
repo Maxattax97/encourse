@@ -7,7 +7,7 @@ import {
 } from '../../../redux/actions'
 import SelectableCardSummary from '../common/SelectableCardSummary'
 import {retrieveAllStudents} from '../../../redux/retrievals/course'
-import {getCurrentProject} from '../../../redux/state-peekers/project'
+import {getCurrentProject} from '../../../redux/state-peekers/projects'
 import {getStudents, getCurrentCourseId, getCurrentSemesterId} from '../../../redux/state-peekers/course'
 import {getFilters} from '../../../redux/state-peekers/control'
 
@@ -58,12 +58,12 @@ class StudentSummary extends Component {
 	}
 
 	render() {
-	    if(!this.props.project)
+	    if(!this.props.project || !this.props.students.data)
 	        return null
 
 	    return (
 	        <SelectableCardSummary type='students'
-			                       values={this.props.students}
+			                       values={this.props.students.data}
 			                       render={this.renderPreview}
 			                       onClick={this.clickStudentCard} />
 	    )
