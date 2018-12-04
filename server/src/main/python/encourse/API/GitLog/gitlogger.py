@@ -87,7 +87,7 @@ class GitLog:
             self.commits = gitlog
         else:
             self.commits = parselog(gitlog)
-        self.time_estimate = self._estimate_time()
+        self.time_estimate = self._estimate_time(self.commits)
 
     def __repr__(self):
         commits_repr = []
@@ -140,9 +140,11 @@ class GitLog:
         days = []
         current_date = 0
         current_day = {}
+        current_commits = []
         for commit in self.commits:
             if commit.timestamp.date() != current_date:
                 if current_date != 0:
+                    current_day["time_spent"] = self._estimate_time(current_commits)
                     days.append(current_day)
                 current_date = commit.timestamp.date()
                 current_day = {
@@ -150,8 +152,11 @@ class GitLog:
                     "additions": 0,
                     "deletions": 0,
                     "files": [],
+                    "time_spent": 0.0
                 }
+                current_commits = [commit]
             else:
+                current_commits.append(commit)
                 current_day["additions"] += commit.additions
                 current_day["deletions"] += commit.deletions
                 for f in commit.files:
@@ -163,20 +168,21 @@ class GitLog:
                                 match.additions += f.additions
                                 match.deletions += f.deletions
                                 break
+        current_day["time_spent"] = self._estimate_time(current_commits)
         days.append(current_day)
-        print(days)
         return days
 
     # TODO: Move to GitLog, add time range input
-    def _estimate_time(self, timeout=None):
+    def _estimate_time(self, commits, timeout=None):
         total_time = 0
-        for commit in self.commits:
-            if not timeout:
-                timeout = sys.maxsize
+        if not timeout:
+            timeout = sys.maxsize
+        for commit in commits:
             # TODO: Improve time estimate heuristic
             hours = commit.time_delta.seconds / 3600
             if hours < timeout:
                 total_time += hours
+        return total_time
 
     def date_range(self):
         """Returns a list of every date with a commit

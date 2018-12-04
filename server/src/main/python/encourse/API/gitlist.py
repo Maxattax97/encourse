@@ -39,9 +39,7 @@ def jsonify(gitlogs, student_id=None):
             day["files"] = []
             for f in files:
                 day["files"].append(f.name)
-            day["time_spent"] = (
-                helper.time_string(day["time_spent"]) if "time_spent" in day else "X"
-            )
+            day["time_spent"] = day["time_spent"]
         git_dict[student] = daily_commits
     # TODO: Short circuit if student is defined and his or her data is parsed
     if student_id:
