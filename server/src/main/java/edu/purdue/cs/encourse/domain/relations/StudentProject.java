@@ -100,6 +100,10 @@ public class StudentProject {
     public String getProjectID() {
         return id.getProjectID();
     }
+
+    public String getSuite() {
+        return id.getSuite();
+    }
 }
 
 @Getter
