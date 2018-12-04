@@ -353,16 +353,16 @@ public class CourseServiceImpl implements CourseService {
         operationJSON.put("time_elapsed", project.getOperationTime());
         operationJSON.put("estimated_time_remaining", project.getEstimatedTimeRemaining());
         if(project.isSyncing()) {
-            operationJSON.put("operation", "Syncing");
+            operationJSON.put("operation", "sync");
         }
         else if(project.isTesting()) {
-            operationJSON.put("operation", "Testing");
+            operationJSON.put("operation", "test");
         }
         else if(project.isAnalyzing()) {
-            operationJSON.put("operation", "Analyzing");
+            operationJSON.put("operation", "analyze");
         }
         else {
-            operationJSON.put("operation", "None");
+            operationJSON.put("operation", "none");
             operationJSON.put("progress", 0);
             operationJSON.put("time_elapsed", 0);
             operationJSON.put("estimated_time_remaining", 0);

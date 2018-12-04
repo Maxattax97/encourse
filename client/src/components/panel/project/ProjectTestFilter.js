@@ -13,6 +13,10 @@ class ProjectTestFilter extends Component {
 	order_values = ['Ascending', 'Descending']
 	view_values = ['All Tests', 'Visible Tests', 'Hidden Tests']
 
+    componentWillUnmount() {
+        this.props.resetFilterState()
+    }
+
 	render() {
 		return (
 			<div className='project-tests'>

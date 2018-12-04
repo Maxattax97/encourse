@@ -9,9 +9,8 @@ class ProjectInfo extends Component {
 
 	getProjectInfo = () => {
 		if(!this.props.project)
-			return []
+			return { loading: true, data: [] }
 
-		console.log('here')
 		return {
 			data: [	
 			{

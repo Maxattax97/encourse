@@ -1,7 +1,7 @@
 const createPeeker = (name) => (state) => state.student && state.student[name] ? state.student[name] : { loading: true, data: [] }
 
 export function getCurrentStudent(state) {
-	return state.student && state.student.currentStudent ? state.student.currentStudent : null
+	return state.student && state.student.student ? state.student.student.data : null
 }
 
 export const getStudentStatistics = createPeeker('stats')

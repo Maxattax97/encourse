@@ -16,14 +16,14 @@ class StudentCommitHistory extends Component {
     componentDidMount() {
         if(this.props.student && this.props.project) {
 	        this.props.resetCommitsPage()
-	        retrieveStudentCommitHistory(this.props.student, this.props.project, 1, 5)
+	        retrieveStudentCommitHistory(this.props.student, this.props.project, 1, 215)
         }
     }
 
 	componentDidUpdate(prevProps) {
 		if(this.props.student && this.props.project && (!(prevProps.project) || !(prevProps.student) || prevProps.project.index !== this.props.project.index)) {
             this.props.resetCommitsPage()
-			retrieveStudentCommitHistory(this.props.student, this.props.project, 1, 5)
+			retrieveStudentCommitHistory(this.props.student, this.props.project, 1, 215)
         }
 	}
 
@@ -33,7 +33,7 @@ class StudentCommitHistory extends Component {
 
     scrolledToBottom = () => {
         if(!this.props.last && this.props.student && this.props.project) {
-            retrieveStudentCommitHistory(this.props.student, this.props.project, this.props.page + 1, 5)
+            retrieveStudentCommitHistory(this.props.student, this.props.project, this.props.page + 1, 215)
             this.props.updateCommitsPage()
         }
     }
@@ -50,7 +50,6 @@ const mapStateToProps = (state) => {
 	    student: getCurrentStudent(state),
 	    project: getCurrentProject(state),
 	    history: getStudentCommitHistory(state),
-        page: state.student && state.student.commitsPage ? state.student.commitsPage : 1,
         last: isLastCommitsPage(state)
     }
 }

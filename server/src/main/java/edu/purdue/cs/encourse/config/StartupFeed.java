@@ -192,6 +192,11 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 p.setTestRate(4);
                 p.setTestCount(0);
                 projectRepository.save(p);
+                List<StudentProject> studentProjects = studentProjectRepository.findByIdProjectID(p.getProjectID());
+                for(StudentProject s : studentProjects) {
+                    Student student = studentRepository.findByUserID(s.getStudentID());
+                    helperService.updateStudentInformation(s.getProjectID(), student.getUserName());
+                }
             }
         }
     }

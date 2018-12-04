@@ -5,6 +5,8 @@ import {LoadingIcon, Card} from '../../Helpers'
 class Statistics extends Component {
 
 	render() {
+	    console.log(this.props.stats)
+
 		return (
 			<div className='summary'>
 				<div className='summary-container'>

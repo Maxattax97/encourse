@@ -1,3 +1,5 @@
+import {unknownAction} from './reducer-utils'
+
 function setModalState(state, action) {
 	return {
 		...state,
@@ -94,9 +96,6 @@ export default function control(state = {}, action) {
 		case 'RESET_FILTER_STATE':
 			return resetFilterState(state, action)
 		default:
-			return {
-				...state,
-				reduxError: action
-			}
+			return unknownAction(state, action)
 	}
 }

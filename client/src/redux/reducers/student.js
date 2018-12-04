@@ -1,38 +1,25 @@
-import {forwardData, getData} from "./reducer-utils"
+import {forwardData, getData, resetData, unknownAction} from "./reducer-utils"
 import moment from "moment"
 
 function setCurrentStudent(state, action) {
-	return Object.assign({}, state, {
-		currentStudent: action.student,
-	})
+	return {
+		...state,
+		...resetData('student')
+	}
 }
 
 function clearStudent(state, action) {
-	return Object.assign({}, state, {
-		currentStudent: null,
-		getProgressLineData: null,
-		getCommitFrequencyData: null,
-		getCodeFrequencyData: null,
-		getStatisticsData: null,
-		getCommitHistoryData: null,
-	})
-}
-
-function getStudent(state, action) {
-    if(action.hasError)
-	    return Object.assign({}, state, {
-		    getStudentHasError: action.hasError,
-		    getStudentIsLoading: false,
-	    })
-    if(action.data)
-	    return Object.assign({}, state, {
-		    getStudentData: action.data[0],
-		    currentStudent: action.data[0],
-		    getStudentIsLoading: false,
-	    })
-	return Object.assign({}, state, {
-		getStudentIsLoading: true,
-	})
+	return {
+		...state,
+		...resetData('student'),
+		...resetData('studentProgress'),
+		...resetData('commitFrequency'),
+		...resetData('codeChanges'),
+		...resetData('commitHistory'),
+		...resetData('getProgressPerTime'),
+		...resetData('stats'),
+		...resetData('getProgressPerCommit'),
+	}
 }
 
 function formatCommitFrequency(udata) {
@@ -192,7 +179,7 @@ export default function student(state = {}, action) {
     case 'CLEAR':
         return clearStudent(state, action)
     case 'GET':
-        return getStudent(state, action)
+        return forwardData(state, action, 'student')
     case 'GET_PROGRESS_LINE':
         return forwardData(state, action, 'studentProgress', formatStudentProgress)
     case 'GET_COMMIT_FREQUENCY':
@@ -215,10 +202,7 @@ export default function student(state = {}, action) {
         return getData(state, action, 'syncStudentRepository')
     case 'RUN_TESTS':
         return getData(state, action, 'runStudentTests')
-        default:
-	    return {
-            ...state,
-            reduxError: action
-        }
+    default:
+        return unknownAction(state, action)
     }
 }
