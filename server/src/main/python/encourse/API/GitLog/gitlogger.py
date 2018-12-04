@@ -144,7 +144,8 @@ class GitLog:
         for commit in self.commits:
             if commit.timestamp.date() != current_date:
                 if current_date != 0:
-                    current_day["time_spent"] = self._estimate_time(current_commits)
+                    current_day["time_spent"] = self._estimate_time(current_commits, timeout=1)
+                    current_day["commit_count"] = len(current_commits)
                     days.append(current_day)
                 current_date = commit.timestamp.date()
                 current_day = {
@@ -152,7 +153,8 @@ class GitLog:
                     "additions": 0,
                     "deletions": 0,
                     "files": [],
-                    "time_spent": 0.0
+                    "time_spent": 0.0,
+                    "commit_count": 0
                 }
                 current_commits = [commit]
             else:
@@ -168,7 +170,8 @@ class GitLog:
                                 match.additions += f.additions
                                 match.deletions += f.deletions
                                 break
-        current_day["time_spent"] = self._estimate_time(current_commits)
+        current_day["time_spent"] = self._estimate_time(current_commits, timeout=1)
+        current_day["commit_count"] = len(current_commits)
         days.append(current_day)
         return days
 

@@ -120,7 +120,7 @@ def format_date(date):
     return date_data.date().isoformat()
 
 
-def sum_statistics(commit_data):
+def sum_statistics(parser):
     """Converts data per student per commit into cumulative statistics per student
 
     **Args**:
@@ -156,22 +156,22 @@ def sum_statistics(commit_data):
         
     """
     new_data = {}
-    for student in commit_data:
-        commits = commit_data[student]
+    for student in parser.student_log:
+        log = parser.student_log[student]
         total_add = 0
         total_del = 0
         total_count = 0
         total_time = 0
-        for commit in commits:
-            total_add += commit["additions"]
-            total_del += commit["deletions"]
-            total_time += commit["time_spent"]
-            total_count += commit["commit_count"]
+        for day in log.commitsByDay():
+            total_add += day["additions"]
+            total_del += day["deletions"]
+            total_time += day["time_spent"]
+            total_count += day["commit_count"]
         student_data = {}
         student_data["additions"] = total_add
         student_data["deletions"] = total_del
         student_data["commit_count"] = total_count
-        student_data["time_spent"] = total_time
+        student_data["time_spent"] = total_time * 3600.0
         new_data[student] = student_data
     return new_data
 
@@ -190,9 +190,7 @@ def jsonprint(args):
 
     # print(counts_dict)
 
-    student_data = GitLog.daily.daily(
-        commit_data_file, max_change=args.limit, timeout=args.timeout
-    )
+    student_data = GitLog.GitParser(commit_data_file)
     formatted_student_data = sum_statistics(student_data)
     # TODO: check for valid dicts
 
