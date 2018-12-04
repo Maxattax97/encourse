@@ -50,16 +50,63 @@ public class ReadController {
     @RequestMapping(value = "/studentsData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentData(@RequestParam(name = "courseID") String courseID,
                                                           @RequestParam(name = "semester") String semester,
-                                                          @RequestParam(name = "page", defaultValue = "1", required = false) int page,
-                                                          @RequestParam(name = "size", defaultValue = "100", required = false) int size,
-                                                          @RequestParam(name = "sortBy", defaultValue = "id", required = false) String sortBy,
                                                           @RequestParam(name = "projectID", required = false) String projectID,
-                                                          @RequestParam(name = "selectAll", defaultValue = "true", required = false) boolean selectAll,
-                                                          @RequestParam(name = "userName", required = false) List<String> userNames,
-                                                          @RequestParam(name = "order", defaultValue = "0", required = false) int order,
-                                                          @RequestParam(name = "commit", defaultValue = "0", required = false) int commit,
-                                                          @RequestParam(name = "hours", defaultValue = "0", required = false) int hour,
-                                                          @RequestParam(name = "progress", defaultValue = "0", required = false) int progress) {
+                                                          @RequestBody String body) {
+        List<String> userNames = new ArrayList<>();
+        Map<String, int[]> options = new HashMap<>(); // option: [min, max]
+        int page = 1;
+        int size = 100;
+        String sortBy;
+        boolean selectAll = true;
+        int order = 0;
+
+        // Parse request body for parameters
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject json = (JSONObject) parser.parse(body);
+            if (json.keySet().contains("userNames")) {
+                String[] names = (String[]) json.get("userNames");
+                for(String name: names) userNames.add(name);
+            }
+            if (json.keySet().contains("page")) {
+                page = (Integer) json.get("page");
+            }
+            if (json.keySet().contains("size")) {
+                size = (Integer) json.get("size");
+            }
+            if (json.keySet().contains("order")) {
+                order = (Integer) json.get("order");
+            }
+            if (json.keySet().contains("sortBy")) {
+                sortBy = (String) json.get("sortBy");
+            } else {
+                sortBy = "id";
+            }
+            if (json.keySet().contains("selectAll")) {
+                selectAll = (Boolean) json.get("selectAll");
+            }
+
+            if (json.keySet().contains("commit")) {
+                Map<String, Integer> values = (TreeMap) json.get("commit");
+                int[] arr = {values.get("min"), values.get("max")};
+                options.put("commit", arr);
+            }
+            if (json.keySet().contains("hours")) {
+                Map<String, Integer> values = (TreeMap) json.get("hours");
+                int[] arr = {values.get("min"), values.get("max")};
+                options.put("hours", arr);
+            }
+            if (json.keySet().contains("progress")) {
+                Map<String, Integer> values = (TreeMap) json.get("progress");
+                int[] arr = {values.get("min"), values.get("max")};
+                options.put("progress", arr);
+            }
+
+        } catch (org.json.simple.parser.ParseException e) {
+            return new ResponseEntity<>("{\"errors\": \"Could not parse body\"}", HttpStatus.BAD_REQUEST);
+        }
+
+        // Get the appropriate data based on account type
         JSONArray returnJson = null;
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
@@ -98,41 +145,44 @@ public class ReadController {
 
         // Filtering
         Map<String, List<Integer>> filters = new HashMap<>();
-        filters.put("commitCounts", new ArrayList<>());
-        filters.get("commitCounts").add(commit);
-        filters.put("timeSpent", new ArrayList<>());
-        filters.get("timeSpent").add(hour);
-        filters.put("grades", new ArrayList<>());
-        filters.get("grades").add(progress);
+        if (projectID != null) {
+            filters.put("commitCounts", new ArrayList<>());
+            filters.put("timeSpent", new ArrayList<>());
+            filters.put("grades", new ArrayList<>());
 
-        for (String sortName: filters.keySet()) {
-            Comparator<JSONObject> compare = (a, b) -> {
-                TreeMap jsonA = (TreeMap) a.get(sortName);
-                TreeMap jsonB = (TreeMap) b.get(sortName);
+            for (String sortName : filters.keySet()) {
+                Comparator<JSONObject> compare = (a, b) -> {
+                    TreeMap jsonA = (TreeMap) a.get(sortName);
+                    TreeMap jsonB = (TreeMap) b.get(sortName);
 
-                double valA = ((Number)jsonA.get(projectID)).doubleValue();
-                double valB = ((Number)jsonB.get(projectID)).doubleValue();
-                return Double.compare(valA, valB);
-            };
-            jsonValues.sort(order == 0 ? compare : compare.reversed());
+                    double valA = ((Number) jsonA.get(projectID)).doubleValue();
+                    double valB = ((Number) jsonB.get(projectID)).doubleValue();
+                    return Double.compare(valA, valB);
+                };
+                jsonValues.sort(order == 0 ? compare : compare.reversed());
 
-            int median = (int) ((Number) ((TreeMap)jsonValues.get(jsonValues.size() / 2).get(sortName)).get(projectID)).doubleValue();
-            int q1 =  (int) ((Number) ((TreeMap)jsonValues.get(jsonValues.size() / 4).get(sortName)).get(projectID)).doubleValue();
-            filters.get(sortName).add(q1);
-            filters.get(sortName).add(median);
-            int q3 =  (int) ((Number) ((TreeMap)jsonValues.get(jsonValues.size() * 3 / 4).get(sortName)).get(projectID)).doubleValue();
-            int max = (int) ((Number) ((TreeMap)jsonValues.get(jsonValues.size() - 1).get(sortName)).get(projectID)).doubleValue();
-            filters.get(sortName).add(q3);
-            filters.get(sortName).add(max);
+                int min = (int) ((Number) ((TreeMap) jsonValues.get(0).get(sortName)).get(projectID)).doubleValue();
+                int median = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() / 2).get(sortName)).get(projectID)).doubleValue();
+                int q1 = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() / 4).get(sortName)).get(projectID)).doubleValue();
+                int q3 = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() * 3 / 4).get(sortName)).get(projectID)).doubleValue();
+                int max = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() - 1).get(sortName)).get(projectID)).doubleValue();
+                filters.get(sortName).add(min);
+                filters.get(sortName).add(q1);
+                filters.get(sortName).add(median);
+                filters.get(sortName).add(q3);
+                filters.get(sortName).add(max);
 
-            if (filters.get(sortName).get(0) != 0) {
-                if (filters.get(sortName).get(0) >= 4) {
-                    jsonValues.removeIf( i -> ((Number)((TreeMap)i.get(sortName)).get(projectID)).doubleValue() < filters.get(sortName).get(3) );
-                } else {
-                    jsonValues.removeIf( i -> ((Number)((TreeMap)i.get(sortName)).get(projectID)).doubleValue() > filters.get(sortName).get(filters.get(sortName).get(0)) ||
-                                              ((Number)((TreeMap)i.get(sortName)).get(projectID)).doubleValue() < filters.get(sortName).get(filters.get(sortName).get(0) - 1));
+                if (options.keySet().contains(sortName)) {
+                    if (options.get(sortName)[0] < 0) {
+                        options.get(sortName)[0] = 0;
+                    }
+                    if (options.get(sortName)[1] > max) {
+                        options.get(sortName)[1] = max;
+                    }
+                    jsonValues.removeIf(i -> ((Number) ((TreeMap) i.get(sortName)).get(projectID)).doubleValue() > options.get(sortName)[1] ||
+                                             ((Number) ((TreeMap) i.get(sortName)).get(projectID)).doubleValue() < options.get(sortName)[0]);
+                    filters.get(sortName).set(0, 0);
                 }
-                filters.get(sortName).set(0, 0);
             }
         }
 
@@ -168,33 +218,35 @@ public class ReadController {
 //        }
 
         // Sorting
-        Comparator<JSONObject> compare;
-        switch(sortBy) {
-            case "timeSpent":
-            case "grades":
-            case "commitCounts":
-                if (projectID == null) {
-                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                }
-                compare = (a, b) -> {
-                    TreeMap jsonA = (TreeMap) a.get(sortBy);
-                    TreeMap jsonB = (TreeMap) b.get(sortBy);
+        if (projectID != null) {
+            Comparator<JSONObject> compare;
+            switch (sortBy) {
+                case "timeSpent":
+                case "grades":
+                case "commitCounts":
+                    if (projectID == null) {
+                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                    }
+                    compare = (a, b) -> {
+                        TreeMap jsonA = (TreeMap) a.get(sortBy);
+                        TreeMap jsonB = (TreeMap) b.get(sortBy);
 
-                    double valA = ((Number)jsonA.get(projectID)).doubleValue();
-                    double valB = ((Number)jsonB.get(projectID)).doubleValue();
-                    return Double.compare(valA, valB);
-                };
-                break;
-            case "id":
-            default:
-                compare = (JSONObject a, JSONObject b) -> {
-                    String valA = (String) a.get(sortBy);
-                    String valB = (String) b.get(sortBy);
-                    return valA.compareTo(valB);
-                };
-                break;
+                        double valA = ((Number) jsonA.get(projectID)).doubleValue();
+                        double valB = ((Number) jsonB.get(projectID)).doubleValue();
+                        return Double.compare(valA, valB);
+                    };
+                    break;
+                case "id":
+                default:
+                    compare = (JSONObject a, JSONObject b) -> {
+                        String valA = (String) a.get(sortBy);
+                        String valB = (String) b.get(sortBy);
+                        return valA.compareTo(valB);
+                    };
+                    break;
+            }
+            jsonValues.sort(order == 0 ? compare : compare.reversed());
         }
-        jsonValues.sort(order == 0 ? compare : compare.reversed());
 
         JSONArray sortedAndPagedJsonArray = new JSONArray();
         page = (page > jsonValues.size() / size + 1) ? jsonValues.size() / size + 1 : page;
