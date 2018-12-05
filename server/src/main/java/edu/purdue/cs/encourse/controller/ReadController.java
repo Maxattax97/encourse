@@ -759,7 +759,14 @@ public class ReadController {
         if (returnJson == null || returnJson.getJsonObject() == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(returnJson.getJsonObject(), HttpStatus.OK);
+
+        JSONObject toReturn = new JSONObject();
+        for (Object key: returnJson.getJsonObject().keySet()) {
+            List<String> names = (List<String>) returnJson.getJsonObject().get(key);
+            toReturn.put(key, names.size());
+        }
+
+        return new ResponseEntity<>(toReturn, HttpStatus.OK);
     }
     
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
