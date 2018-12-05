@@ -193,37 +193,6 @@ public class ReadController {
             }
         }
 
-//        int[] commits = {0, 10, 25, 100, 500};
-//        int[] hours = {0, 5, 10, 25};
-//        int[] progresses = {0, 25, 50, 75};
-//
-//        if (commit != 0) {
-//            if (commit >= commits.length) {
-//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commits.length - 1] );
-//            } else {
-//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() > commits[commit] ||
-//                                          ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commit - 1]);
-//            }
-//        }
-//
-//        if (hour != 0) {
-//            if (hour >= hours.length) {
-//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hours.length - 1] );
-//            } else {
-//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() > hours[hour] ||
-//                                          ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hour - 1]);
-//            }
-//        }
-//
-//        if (progress != 0) {
-//            if (progress >= progresses.length) {
-//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progresses.length - 1] );
-//            } else {
-//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() > progresses[progress] ||
-//                                          ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progress - 1]);
-//            }
-//        }
-
         // Sorting
         if (projectID != null) {
             Comparator<JSONObject> compare;
@@ -707,12 +676,15 @@ public class ReadController {
         if (hasPermissionOverAccount(userName)) {
             returnJson = courseService.getStudentCommitVelocity(projectID, userName);
             if (returnJson == null) {
-                return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.NO_CONTENT);
             }
         } else {
             return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(returnJson.getJsonObject().toJSONString(), HttpStatus.OK);
+        if (returnJson == null || returnJson.getJsonArray() == null) {
+            return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
