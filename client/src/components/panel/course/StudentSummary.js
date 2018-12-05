@@ -24,7 +24,7 @@ class StudentSummary extends Component {
 			retrieveAllStudents(this.props.project, this.props.course, this.props.semester)
 		} else if(this.props.filtersHaveChanged) {
 			let body = {}
-			let dynamicFilters = this.props.students ? this.props.students.page.filters : {}
+			let dynamicFilters = this.props.students && this.props.students.page ? this.props.students.page.filters : {}
 			if(this.props.filters.order_by) {
 				body.order = this.props.filters.order_by
 			}
