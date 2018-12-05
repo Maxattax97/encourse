@@ -4,6 +4,7 @@ import argparse
 import random
 from datetime import datetime
 from datetime import date
+from datetime import timedelta
 from API import GitLog
 from API import Progress
 from API import CheatDetection
@@ -26,6 +27,7 @@ __all__ = [
     "argparse",
     "datetime",
     "date",
+    "timedelta",
     "random",
     "GitLog",
     "Progress",

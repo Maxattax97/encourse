@@ -31,19 +31,23 @@ class GitParser:
         commit_files = []
         commit_timestamp = None  # datetime.datetime
         commit_timedelta = None  # datetime.timedelta
+        commit_hash = ""
         for line in student_log:
             if line[:5] == "Start":
                 student_name = line[6:].strip()
                 commit_files = []
                 commit_timestamp = None  # datetime.datetime
                 commit_timedelta = None  # datetime.timedelta
+                commit_hash = ""
             elif line[:3] == "End":
                 student_commits.append(
-                    GitCommit(commit_files, commit_timestamp, commit_timedelta)
+                    GitCommit(commit_files, commit_timestamp, commit_timedelta, commit_hash)
                 )
+                print(student_name)
                 self.student_log[student_name] = GitLog(student_commits, student_name)
+                print(student_name)
                 student_commits = []
-            elif len(line.split(" ")) == 3:
+            elif len(line.split(" ")) == 4:
                 # This line is a commit time
                 words = line.strip().split(" ")
                 # Check type of line
@@ -53,16 +57,19 @@ class GitParser:
                     if commit_files:
                         # If a time is found, add the previously stored data as a commit
                         student_commits.append(
-                            GitCommit(commit_files, commit_timestamp, commit_timedelta)
+                            GitCommit(commit_files, commit_timestamp, commit_timedelta, commit_hash)
                         )
                     # Since a commit was just added, start tracking data for a new commit
                     commit_files = []
+                    commit_hash = ""
                     if commit_timestamp:
                         commit_timedelta = timestamp - commit_timestamp
                     else:
                         # No previous timestamp exists (eg. the first commit)
                         commit_timedelta = timedelta(minutes=0)
                     commit_timestamp = timestamp
+                    commit_hash = words[3].strip()
+                    
                     timestamp = None
             elif len(line.split("\t")) == 3:
                 # This line is a commit file
@@ -207,10 +214,13 @@ class GitLog:
 
 
 class GitCommit:
-    def __init__(self, files, timestamp, time_delta):
+    def __init__(self, files, timestamp, time_delta, commit_hash):
         self.files = files  # Recounts changes in setter
+        print("Timestamp ", timestamp)
         self.timestamp = timestamp
+        print("Timedelta ",time_delta)
         self.time_delta = time_delta
+        self.commit_hash = commit_hash
 
     def __repr__(self):
         return "GitCommit({}, {}, {})".format(
@@ -231,6 +241,9 @@ class GitCommit:
                     + "+{}\t-{}\n".format(f.additions, f.deletions)
                 )
         return file_list
+
+
+    timestamp = property(operator.attrgetter("_timestamp"))
 
     files = property(operator.attrgetter("_files"))
 
@@ -253,6 +266,8 @@ class GitCommit:
         # print("timedelta" + str(time_delta))
         if isinstance(time_delta, timedelta):
             self._time_delta = time_delta
+        else:
+            self._time_delta = timedelta(0)
 
     additions = property(operator.attrgetter("_additions"))
 
@@ -267,6 +282,12 @@ class GitCommit:
     def deletions(self, deletions):
         if deletions >= 0:
             self._deletions = deletions
+
+    commit_hash = property(operator.attrgetter("_commit_hash"))
+
+    @commit_hash.setter
+    def commit_hash(self, commit_hash):
+        self._commit_hash = commit_hash
 
     def count_changes(self, max_size=None):
         # sum up additions and deletionsfor each file
