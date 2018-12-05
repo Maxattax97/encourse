@@ -761,8 +761,7 @@ public class ReadController {
         }
         return new ResponseEntity<>(returnJson.getJsonObject(), HttpStatus.OK);
     }
-
-
+    
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/classProgress", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
