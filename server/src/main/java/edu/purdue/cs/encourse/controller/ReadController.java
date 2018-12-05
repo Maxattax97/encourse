@@ -248,6 +248,26 @@ public class ReadController {
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
+    @RequestMapping(value = "/testScriptData", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getTestScriptData(@RequestParam(name = "projectID") String projectID) {
+        JSONArray json = courseService.getTestScriptData(projectID);
+        if (json == null) {
+            return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
+    @RequestMapping(value = "/operationData", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getOperationData(@RequestParam(name = "projectID") String projectID) {
+        JSONObject json = courseService.getOperationData(projectID);
+        if (json == null) {
+            return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/sections", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getAllSections(@RequestParam(name = "page", defaultValue = "1", required = false) int page,
@@ -625,6 +645,16 @@ public class ReadController {
         return new ResponseEntity<>(returnJson.jsonObject.toJSONString(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
+    @RequestMapping(value = "/suites", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getSuiteData(@RequestParam(name = "projectID") String projectID,
+                                                        @RequestParam(name = "userName") String userName) {
+        JSONArray json = courseService.getSuitesData(userName, projectID);
+        if (json == null) {
+            return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/progress", method = RequestMethod.GET)
