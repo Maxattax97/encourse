@@ -83,8 +83,8 @@ def setup_stats(parser):
     parser.add_argument(
         "hiddenfile", type=argparse.FileType("r"), help="path to hidden test file"
     )
-    parser.add_argument("-t", "--timeout", help="time spent timeout")
-    parser.add_argument("-l", "--limit", help="ignore file changes above limit")
+    parser.add_argument("-t", "--timeout", type=float, help="time spent timeout")
+    parser.add_argument("-l", "--limit", type=int, help="ignore file changes above limit")
     parser.set_defaults(func=API.stats.jsonprint)
 
 

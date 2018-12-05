@@ -22,7 +22,7 @@ priorities = {
 }
 
 
-def average_statistics(parser, visible, hidden=None):
+def average_statistics(parser, visible, hidden=None, max_changes=None):
     """Creates a list of statistics for each user
 
     Combines the data from multiple sources into a set of statistics per student
@@ -69,8 +69,9 @@ def average_statistics(parser, visible, hidden=None):
             }
         
     """
+    if not max_changes:
+        max_changes = sys.maxsize
     users = len(parser.student_log.keys())
-    print(users)
     total_additions = 0
     total_deletions = 0
     start_date = date.today()
@@ -84,7 +85,7 @@ def average_statistics(parser, visible, hidden=None):
     for user in parser.student_log:
         log = parser.student_log[user]
 
-        additions, deletions = log.count_changes()
+        additions, deletions = log.count_changes(max_size=max_changes)
         total_additions += additions
         total_deletions += deletions
 
@@ -151,6 +152,7 @@ def jsonprint(args):
     commit_data_file = args.logfile
     visible_file = args.visiblefile
     hidden_file = args.hiddenfile
+    limit = args.limit
 
     parser = GitLog.GitParser(commit_data_file)
     # TODO: check for valid dicts
@@ -158,7 +160,7 @@ def jsonprint(args):
     visible_scores = Progress.currentprogress.progress_from_file(visible_file)
     hidden_scores = Progress.currentprogress.progress_from_file(hidden_file)
 
-    stats = average_statistics(parser, visible_scores, hidden=hidden_scores)
+    stats = average_statistics(parser, visible_scores, hidden=hidden_scores, max_changes=limit)
     # print(data)
     api_json = json.dumps(stats)
     # Outputs json to stdout

@@ -128,12 +128,15 @@ class GitLog:
     def time_estimate(self, time_estimate):
         self._time_estimate = time_estimate
 
-    def count_changes(self):
+    def count_changes(self, max_size=None):
+        if not max_size:
+            max_size = sys.maxsize
         additions = 0
         deletions = 0
         for commit in self.commits:
-            additions += commit.additions
-            deletions += commit.deletions
+                commit_additions, commit_deletions = commit.count_changes(max_size=max_size)
+                additions += commit_additions
+                deletions += commit_deletions
         return additions, deletions
 
     def commitsByDay(self):
@@ -205,10 +208,9 @@ class GitLog:
 
 class GitCommit:
     def __init__(self, files, timestamp, time_delta):
-        self.files = files
+        self.files = files  # Recounts changes in setter
         self.timestamp = timestamp
         self.time_delta = time_delta
-        self._count_changes()
 
     def __repr__(self):
         return "GitCommit({}, {}, {})".format(
@@ -235,7 +237,7 @@ class GitCommit:
     @files.setter
     def files(self, files):
         self._files = files
-        self._count_changes()
+        self.additions, self.deletions = self.count_changes()
 
     timestamp = property(operator.attrgetter("_timestamp"))
 
@@ -266,13 +268,19 @@ class GitCommit:
         if deletions >= 0:
             self._deletions = deletions
 
-    def _count_changes(self):
+    def count_changes(self, max_size=None):
         # sum up additions and deletionsfor each file
-        self.additions = 0
-        self.deletions = 0
+        if not max_size:
+            max_size = sys.maxsize
+
+        additions = 0
+        deletions = 0
         for gitfile in self.files:
-            self.additions += gitfile.additions
-            self.deletions += gitfile.deletions
+            if gitfile.additions < max_size:
+                additions += gitfile.additions
+            if gitfile.deletions < max_size:
+                deletions += gitfile.deletions
+        return additions, deletions
 
 
 class GitFile:
