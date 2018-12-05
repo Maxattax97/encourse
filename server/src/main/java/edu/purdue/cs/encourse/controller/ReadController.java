@@ -762,7 +762,7 @@ public class ReadController {
             if (returnJson == null || returnJson.getJsonArray() == null) {
                 return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
             }
-            return new ResponseEntity<>(returnJson.getJsonArray().get(0), HttpStatus.OK);
+            return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
         } else {
             if (returnJson == null || returnJson.getJsonObject() == null) {
                 return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
