@@ -612,7 +612,7 @@ public class ReadController {
                                                      @RequestParam(name = "userName") String userName,
                                                      @RequestParam(name = "startHash") String startHash,
                                                      @RequestParam(name = "endHash") String endHash,
-                                                     @RequestParam(name = "file") String file) {
+                                                     @RequestParam(name = "file", required = false) String file) {
         String sourceFile;
         if (hasPermissionOverAccount(userName)) {
             sourceFile = courseService.getSourceWithChanges(projectID, userName, startHash, endHash, file);
