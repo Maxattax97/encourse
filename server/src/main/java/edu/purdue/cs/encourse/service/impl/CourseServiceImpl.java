@@ -479,7 +479,7 @@ public class CourseServiceImpl implements CourseService {
         } catch (Exception e) {
             return new JSONReturnable(-3, (JSONObject) null);
         }
-        String command = helperService.getPythonCommand() + " diff " + helperService.getPythonPath() + diffsFile;
+        String command = helperService.getPythonCommand() + " cheating " + helperService.getPythonPath() + diffsFile;
         JSONReturnable json = helperService.runPython(command);
         return json;
     }
@@ -573,7 +573,7 @@ public class CourseServiceImpl implements CourseService {
         if(commitLogFile == null) {
             json = new JSONReturnable(-1, (JSONObject) null);
         }
-        if (!helperService.getDebug()) {
+        if (!helperService.getDebug() && json != null) {
             return json;
         }
         String command = helperService.getPythonCommand() + " gitlist " + commitLogFile;
@@ -662,7 +662,7 @@ public class CourseServiceImpl implements CourseService {
         if(commitLogFile == null) {
             json = new JSONReturnable(-2, (JSONObject) null);
         }
-        if (!helperService.getDebug()) {
+        if (!helperService.getDebug() && json != null) {
             return json;
         }
         String command = helperService.getPythonCommand() + " changes " + commitLogFile + " " + dailyCountsFile + " " + userName + " -l 200";
@@ -683,7 +683,7 @@ public class CourseServiceImpl implements CourseService {
         if(commitLogFile == null) {
             json = new JSONReturnable(-2, (JSONObject) null);
         }
-        if (!helperService.getDebug()) {
+        if (!helperService.getDebug() && json != null) {
             return json;
         }
         String command = helperService.getPythonCommand() + " commitcount " + commitLogFile + " " + userName;
@@ -704,7 +704,7 @@ public class CourseServiceImpl implements CourseService {
         if(commitLogFile == null) {
             json = new JSONReturnable(-1, (JSONObject) null);
         }
-        if (!helperService.getDebug()) {
+        if (!helperService.getDebug() && json != null) {
             return json;
         }
         String command = helperService.getPythonCommand() + " gitlist " + commitLogFile + " " + userName;
