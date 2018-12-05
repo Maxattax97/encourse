@@ -24,7 +24,7 @@ class App extends Component {
             const course = this.props.match.params.courseID ? this.props.match.params.courseID : defaultCourse
             const semester = this.props.match.params.semesterID ? this.props.match.params.semesterID : defaultSemester
             const page = this.props.path.substring(this.props.path.lastIndexOf('/') + 1)
-            console.log(page)
+            
             if(/^((Fall)|(Spring)|(Summer))2[0-9][0-9][0-9]$/.test(semester)) {
                 this.props.setCurrentSemester(semester)
             } 
