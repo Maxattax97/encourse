@@ -35,7 +35,7 @@ public class HelperServiceImpl implements HelperService {
     public final Boolean DEBUG = ConfigurationManager.getInstance().debug;
     public final Boolean OBFUSCATE = false;
     public final String pythonPath = "src/main/python/encourse/";
-    public final String pythonCommand = DEBUG ? "/anaconda3/bin/python " + pythonPath + "encourse.py": "python3" + pythonPath + "encourse.py";
+    public final String pythonCommand = DEBUG ? "/anaconda3/bin/python " + pythonPath + "encourse.py": "python3 " + pythonPath + "encourse.py";
     public final String tailFilePath = "src/main/temp/";
     public final String testDir = "test-shell";
 
