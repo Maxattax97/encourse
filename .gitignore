@@ -16,6 +16,7 @@ sampleCommitList.txt
 sampleCountsDay.txt
 sampleCounts.txt
 __pycache__
+data
 
 # User-specific stuff
 .idea/**/workspace.xml

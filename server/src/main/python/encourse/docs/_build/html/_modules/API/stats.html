@@ -1,0 +1,407 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API.stats &mdash; Encourse  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Encourse
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Encourse</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>API.stats</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for API.stats</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">API</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="c1"># from test_completion import get_test_completion as test_completion</span>
+<span class="c1"># from test_completion import get_test_completion_string as test_completion_string</span>
+
+
+<div class="viewcode-block" id="testcli"><a class="viewcode-back" href="../../API.html#API.stats.testcli">[docs]</a><span class="k">def</span> <span class="nf">testcli</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;hi&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Successfully called get statistics function with args: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="p">))</span></div>
+
+
+<span class="n">priorities</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Start Date&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;End Date&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Additions&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;Deletions&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;Commit Count&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s2">&quot;Estimated Time Spent&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;Current Test Score&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="combine_statistics"><a class="viewcode-back" href="../../API.html#API.stats.combine_statistics">[docs]</a><span class="k">def</span> <span class="nf">combine_statistics</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">tests</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a list of statistics for each user</span>
+
+<span class="sd">    Combines the data from multiple sources into a set of statistics per student</span>
+
+<span class="sd">    **Args**:</span>
+<span class="sd">        **dates** (dict): A dict mapping students to a tuple of start and end dates: ::</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;name1&quot;: (&quot;mm-dd-yyyy&quot;,  &quot;mm-dd-yyyy&quot;),</span>
+<span class="sd">                ...</span>
+<span class="sd">            }</span>
+
+<span class="sd">        **stats** (dict): A dictionary of git log data per user. </span>
+<span class="sd">        The dictionary is of the following form: ::</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;name1&quot;: {</span>
+<span class="sd">                    &quot;additions&quot;: int,</span>
+<span class="sd">                    &quot;deletions&quot;: int,</span>
+<span class="sd">                    &quot;commit_counts&quot;: int,</span>
+<span class="sd">                    &quot;time_spent&quot;: int (seconds),</span>
+<span class="sd">                }</span>
+<span class="sd">                ...</span>
+<span class="sd">            }</span>
+
+<span class="sd">        **tests** (dict): A dictionary of each user&#39;s score for each test case.</span>
+<span class="sd">        The dictionary is of the following form: ::</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;tests&quot;: {</span>
+<span class="sd">                    &quot;Test1&quot;: (&quot;P&quot; or &quot;F&quot;),</span>
+<span class="sd">                    ...</span>
+<span class="sd">                },</span>
+<span class="sd">                &quot;total&quot;: int (percentage)</span>
+<span class="sd">            }</span>
+<span class="sd">    </span>
+<span class="sd">    **Returns**</span>
+<span class="sd">        json: A json dictionary mapping users to a list of statistics. </span>
+<span class="sd">        Each statistic is of the form: ::</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;stat_name&quot;: int,</span>
+<span class="sd">                &quot;stat_value&quot;: int,</span>
+<span class="sd">            }</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">dates</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">user_dates</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[</span><span class="n">user</span><span class="p">]</span>
+        <span class="n">additions</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">deletions</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="n">user</span><span class="p">]</span>
+            <span class="n">additions</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span>
+            <span class="n">deletions</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;commit_count&quot;</span><span class="p">]</span>
+            <span class="n">time</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;time_spent&quot;</span><span class="p">]</span>
+        <span class="n">test_score</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># This if else is dumb, fix it. strings and files should both be handled gracefully</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">tests</span><span class="p">[</span><span class="n">user</span><span class="p">]</span>
+            <span class="n">test_score</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s2">&quot;total&quot;</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
+            <span class="n">test_score</span> <span class="o">=</span> <span class="n">tests</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_dates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;Start Date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">format_date</span><span class="p">(</span><span class="n">user_dates</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;End Date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">format_date</span><span class="p">(</span><span class="n">user_dates</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;Additions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> lines&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">additions</span><span class="p">)</span>
+        <span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;Deletions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> lines&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">deletions</span><span class="p">)</span>
+        <span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;Commit Count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> commits&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+        <span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;Estimated Time Spent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">time_string</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+        <span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;Current Test Score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">%&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">test_score</span><span class="p">))</span>
+
+        <span class="n">array_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">stat_name</span> <span class="ow">in</span> <span class="n">user_data</span><span class="p">:</span>
+            <span class="n">stat_value</span> <span class="o">=</span> <span class="n">user_data</span><span class="p">[</span><span class="n">stat_name</span><span class="p">]</span>
+            <span class="n">array_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;stat_name&quot;</span><span class="p">:</span> <span class="n">stat_name</span><span class="p">,</span>
+                    <span class="s2">&quot;stat_value&quot;</span><span class="p">:</span> <span class="n">stat_value</span><span class="p">,</span>
+                    <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="n">priorities</span><span class="p">[</span><span class="n">stat_name</span><span class="p">],</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="o">=</span> <span class="n">array_data</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="format_date"><a class="viewcode-back" href="../../API.html#API.stats.format_date">[docs]</a><span class="k">def</span> <span class="nf">format_date</span><span class="p">(</span><span class="n">date</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts a git date string to the iso format date string&quot;&quot;&quot;</span>
+
+    <span class="n">date_data</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">date_data</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="sum_statistics"><a class="viewcode-back" href="../../API.html#API.stats.sum_statistics">[docs]</a><span class="k">def</span> <span class="nf">sum_statistics</span><span class="p">(</span><span class="n">commit_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts data per student per commit into cumulative statistics per student</span>
+
+<span class="sd">    **Args**:</span>
+<span class="sd">        **commit_data** (dict): A dictionary of students mapped to lists of commit data</span>
+<span class="sd">        The dict has the following form: ::</span>
+<span class="sd">            </span>
+<span class="sd">            {</span>
+<span class="sd">                &quot;name1&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;additions&quot;: int,</span>
+<span class="sd">                        &quot;deletions&quot;: int,</span>
+<span class="sd">                        &quot;commit_count&quot;: int,</span>
+<span class="sd">                        &quot;time_spent&quot;: int (seconds)</span>
+<span class="sd">                    }</span>
+<span class="sd">                    ...</span>
+<span class="sd">                ]</span>
+<span class="sd">                ...</span>
+<span class="sd">            }</span>
+
+<span class="sd">    **Returns**:</span>
+<span class="sd">        dict: A dictionary mapping students to cumulative statistics,</span>
+<span class="sd">        The dictionary has the following form: ::</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;name1&quot;: {</span>
+<span class="sd">                    &quot;additions&quot;: int,</span>
+<span class="sd">                    &quot;deletions&quot;: int,</span>
+<span class="sd">                    &quot;commit_count&quot;: int,</span>
+<span class="sd">                    &quot;time_spent&quot;: int (seconds)</span>
+<span class="sd">                }</span>
+<span class="sd">                ...</span>
+<span class="sd">            }</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">student</span> <span class="ow">in</span> <span class="n">commit_data</span><span class="p">:</span>
+        <span class="n">commits</span> <span class="o">=</span> <span class="n">commit_data</span><span class="p">[</span><span class="n">student</span><span class="p">]</span>
+        <span class="n">total_add</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">total_del</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">total_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">total_time</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">commit</span> <span class="ow">in</span> <span class="n">commits</span><span class="p">:</span>
+            <span class="n">total_add</span> <span class="o">+=</span> <span class="n">commit</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span>
+            <span class="n">total_del</span> <span class="o">+=</span> <span class="n">commit</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span>
+            <span class="n">total_time</span> <span class="o">+=</span> <span class="n">commit</span><span class="p">[</span><span class="s2">&quot;time_spent&quot;</span><span class="p">]</span>
+            <span class="n">total_count</span> <span class="o">+=</span> <span class="n">commit</span><span class="p">[</span><span class="s2">&quot;commit_count&quot;</span><span class="p">]</span>
+        <span class="n">student_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">student_data</span><span class="p">[</span><span class="s2">&quot;additions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_add</span>
+        <span class="n">student_data</span><span class="p">[</span><span class="s2">&quot;deletions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_del</span>
+        <span class="n">student_data</span><span class="p">[</span><span class="s2">&quot;commit_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_count</span>
+        <span class="n">student_data</span><span class="p">[</span><span class="s2">&quot;time_spent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_time</span>
+        <span class="n">new_data</span><span class="p">[</span><span class="n">student</span><span class="p">]</span> <span class="o">=</span> <span class="n">student_data</span>
+    <span class="k">return</span> <span class="n">new_data</span></div>
+
+
+<span class="c1"># Runs on file call</span>
+<div class="viewcode-block" id="jsonprint"><a class="viewcode-back" href="../../API.html#API.stats.jsonprint">[docs]</a><span class="k">def</span> <span class="nf">jsonprint</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">student_id</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">commit_date_file</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">timefile</span>
+    <span class="n">commit_data_file</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">logfile</span>
+    <span class="n">test_case_string</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">tests</span>
+
+    <span class="n">dates_dict</span> <span class="o">=</span> <span class="n">GitLog</span><span class="o">.</span><span class="n">startend</span><span class="o">.</span><span class="n">startend</span><span class="p">(</span><span class="n">commit_date_file</span><span class="p">)</span>
+    <span class="c1"># for user in dates_dict.keys():</span>
+    <span class="c1">#    start_end = dates_dict[user]</span>
+    <span class="c1">#    print(&quot;{} -&gt; {}&quot;.format(user, start_end))</span>
+
+    <span class="c1"># print(counts_dict)</span>
+
+    <span class="n">student_data</span> <span class="o">=</span> <span class="n">GitLog</span><span class="o">.</span><span class="n">daily</span><span class="o">.</span><span class="n">daily</span><span class="p">(</span>
+        <span class="n">commit_data_file</span><span class="p">,</span> <span class="n">max_change</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">limit</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">timeout</span>
+    <span class="p">)</span>
+    <span class="n">formatted_student_data</span> <span class="o">=</span> <span class="n">sum_statistics</span><span class="p">(</span><span class="n">student_data</span><span class="p">)</span>
+    <span class="c1"># TODO: check for valid dicts</span>
+
+    <span class="n">test_data</span> <span class="o">=</span> <span class="n">Progress</span><span class="o">.</span><span class="n">currentprogress</span><span class="o">.</span><span class="n">progress_from_string</span><span class="p">(</span><span class="n">test_case_string</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">combine_statistics</span><span class="p">(</span><span class="n">dates_dict</span><span class="p">,</span> <span class="n">formatted_student_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">)</span>
+    <span class="c1"># print(data)</span>
+    <span class="n">api_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">student_id</span><span class="p">])</span>
+    <span class="c1"># Outputs json to stdout</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">api_json</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Ryan Sullivan
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

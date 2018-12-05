@@ -9,7 +9,7 @@ import {
 	getStudentCommitHistory,
 	isLastCommitsPage
 } from "../../../redux/state-peekers/student"
-import {getCurrentProject} from "../../../redux/state-peekers/project"
+import {getCurrentProject} from "../../../redux/state-peekers/projects"
 
 class StudentCommitHistory extends Component {
 
@@ -38,9 +38,13 @@ class StudentCommitHistory extends Component {
         }
     }
 
+    clickCommitDay = (commit) => {
+        console.log(commit)
+    }
+
     render() {
         return (
-            <CommitHistory isLoading={ this.props.history.loading && !this.props.history.data.content } data={ this.props.history.data.content } onPaginate={ this.scrolledToBottom }/>
+            <CommitHistory isLoading={ this.props.history.loading && !this.props.history.data.content } data={ this.props.history.data.content } onPaginate={ this.scrolledToBottom } onClick={this.clickCommitDay}/>
         )
     }
 }

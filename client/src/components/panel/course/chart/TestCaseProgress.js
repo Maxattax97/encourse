@@ -3,9 +3,10 @@ import { ComposedChart, Bar, Brush, Cell, XAxis, YAxis, CartesianGrid, Tooltip, 
 import { connect } from 'react-redux'
 import {
 	retrieveCourseTestProgress,
-	retrieveStudentsTestProgress
+	retrieveStudentsTestProgress,
+	retrieveStudentsTestProgressSpecific
 } from "../../../../redux/retrievals/course"
-import {getCurrentProject} from "../../../../redux/state-peekers/project"
+import {getCurrentProject} from "../../../../redux/state-peekers/projects"
 import {
 	getCourseTestProgress,
 	getStudentsTestProgress
@@ -22,8 +23,13 @@ class StudentsTestCaseProgress extends Component {
 		if(this.props.project){
 			if(this.props.anon)
 				retrieveCourseTestProgress(this.props.project)
-			else
-				retrieveStudentsTestProgress(this.props.project)
+			else {
+				if(this.props.isAnySelected) {
+					retrieveStudentsTestProgressSpecific(this.props.project, Object.keys(this.props.selected))
+				} else {
+					retrieveStudentsTestProgress(this.props.project)
+				}
+			}
 		}
 	}
 
@@ -31,8 +37,13 @@ class StudentsTestCaseProgress extends Component {
 		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index)) {
 			if(prevProps.anon)
 				retrieveCourseTestProgress(this.props.project)
-			else
-				retrieveStudentsTestProgress(this.props.project)
+			else {
+				if(this.props.isAnySelected) {
+					retrieveStudentsTestProgressSpecific(this.props.project, Object.keys(this.props.selected))
+				} else {
+					retrieveStudentsTestProgress(this.props.project)
+				}
+			}
 		}
 	}
 
@@ -77,6 +88,7 @@ class StudentsTestCaseProgress extends Component {
 const mapStateToProps = (state, props) => {
 	return {
 		project: getCurrentProject(state),
+		selected: state.control && state.control.students ? state.control.students.selected : null,
 		chart: props.anon ? getCourseTestProgress(state) : getStudentsTestProgress(state)
 	}
 }

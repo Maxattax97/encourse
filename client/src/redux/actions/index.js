@@ -4,13 +4,13 @@ export {
     getSectionsData, syncRepositories, runTests, getDishonestyReport,
     updateCourseDishonestyPage, resetCourseDishonestyPage, updateStudentsPage,
     resetStudentsPage, getSimilarityPlot, getClassStatistics, submitStudents,
-    getClassCommitHistory, getClassProgressAnon, getTestBarGraphAnon,
+    getClassCommitHistory, getClassProgressAnon, getTestBarGraphAnon, getTeachingAssistants
 } from './course' 
 
 export {
     setCurrentProject, toggleHidden,
     getClassProjects, modifyProject, addProject, deleteProject,
-    addTest,
+    addTest, runTestSuite, getTestScripts
 } from './projects'
 
 export {
@@ -21,7 +21,7 @@ export {
     setCurrentStudent, clearStudent, updateCommitsPage, resetCommitsPage,
     getStudent, getProgressLine, getCodeFrequency, getCommitFrequency, getStatistics,
     getCommitHistory, getProgressPerTime, getProgressPerCommit,
-    syncStudentRepository, runStudentTests
+    syncStudentRepository, runStudentTests, getSource
 } from './student'
 
 export {
@@ -30,10 +30,6 @@ export {
 } from './admin'
 
 export {
-    getTeachingAssistants,
-} from './teaching_assistant'
-
-export {
     setModalState, toggleSelectAllCards, toggleSelectCard, resetAllCards,
-	setFilterState, resetFilterState
+	setFilterState, resetFilterState, toggleFiltersHaveChanged
 } from './control'

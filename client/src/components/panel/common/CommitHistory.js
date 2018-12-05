@@ -35,7 +35,7 @@ class CommitHistory extends Component {
                                 <div className="float-height overflow" ref={ this.setOverflowRef }>
                                     {
                                         this.props.data.map((commit) =>
-                                            <Card key={ commit.date }>
+                                            <Card key={ commit.date } onClick={this.props.onClick ? () => this.props.onClick(commit) : null} className={ this.props.onClick ? 'action' : null }>
                                                 <div className="student-commit-container">
                                                     <div>
                                                         <h5>

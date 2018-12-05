@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 
 import CoursesSummary from "./course-selection/CoursesSummary"
 
@@ -23,16 +22,4 @@ class CourseSelectionPanel extends Component {
 	}
 }
 
-const mapStateToProps = (state) => {
-	return {
-
-	}
-}
-
-const mapDispatchToProps = (dispatch) => {
-	return {
-
-	}
-}
-
-export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(CourseSelectionPanel)
+export default CourseSelectionPanel

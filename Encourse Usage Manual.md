@@ -12,12 +12,12 @@ Table of Contents
          * [NPM Package Manager](#npm-package-manager)
          * [Postgresql Database](#postgresql-database)
          * [Other Installations](#other-installations)
+      * [Setting up Accounts](#setting-up-accounts)
       * [Setting up the Database](#setting-up-the-database)
       * [Setting up Screens](#setting-up-screens)
       * [Setting up the Spring Server](#setting-up-the-spring-server)
       * [Setting up the React Server](#setting-up-the-react-server)
       * [Port Redirection](#port-redirection)
-      * [Testing Accounts](#testing-accounts)
    * [Using the Application](#using-the-application)
       * [Course Selection Page](#course-selection-page)
       * [Course Homepage](#course-homepage)
@@ -73,6 +73,7 @@ Table of Contents
             * [Service Component](#service-component)
             * [Util Component](#util-component)
          * [Bash Directory](#bash-directory)
+            * [Bash File Tree](#bash-file-tree)
          * [Python Directory](#python-directory)
 
 
@@ -153,6 +154,28 @@ As a final disclaimer, the nature of the application requires that the VM be set
 
 Additionally, while version numbers were listed in this documentation, the latest compatible version of each dependency should be used.
 
+## Setting up Accounts
+
+The main account used for running the React and Spring servers is `reed226`. Each course that uses the application also needs a course account and a course group, where the course group is the course identifier, such as `cs252`, and the course account is the group appended by `-account`, such as `cs252-account`. This is necessary since test scripts are run by the course account instead of the main account that runs the servers. This ensure that faulty test scripts can only cause harm to the projects made for that course, while protecting all other courses and users on the VM. Also note that the primary group of the course account should be the course group, since the group permission allows the course account to execute tests in the corresponding directory. Primary group can be set with the command:
+
+```
+sudo usermod -g group user
+```
+
+Each testing account also needs a copy of `testall.sh` in its home directory for execution, which can be copied from the file `encourse/server/src/main/bash/testall.sh` in this repository. In order for the main account to access the testing accounts through sudo, the following line should be added in `/etc/sudoers`:
+
+```
+reed226 ALL=({courseID}-account) NOPASSWD: /home/{courseID}-account/testall.sh
+```
+
+Where `{courseID}` is the course that the testing account is made for. Then, as added security to ensure that a testall cannot claim all available pids, each testing account should be limitted to about 50 processes, which can be set by adding the following line in `/etc/security/limits.conf`:
+
+```
+{courseID}-account hard nproc 50
+```
+
+With this, testing accounts should be properly setup for running the application.
+
 ## Setting up the Database
 
 Before the backend server can start, Postgresql must be running and have ports open for the backend server to access. This can be done with;
@@ -174,7 +197,13 @@ CREATE DATABASE encourse_production;
 sudo -u postgres createuser --interactive
 ```
 
-Then enter the user’s name and make the user a superuser for the database. Once this is done, type `\q` to close the terminal. The database will continue to run in the background so that the backend server can access it.
+Then enter the user’s name and make the user a superuser for the database. Once this is done, type `\q` to close the terminal. Replace `cs252` with your new superuser's name in the file `init.sql` and run the script to set up the authentication tables:
+
+```bash
+sudo -u postgres psql < init.sql
+```
+
+The database will continue to run in the background so that the backend server can access it.
 
 ## Setting up Screens
 
@@ -263,10 +292,6 @@ sudo iptables -A PREROUTING -t nat -p tcp --dport 8080 -j REDIRECT --to-port 300
 ```
 
 The first command maps port `80` to the port that the production React server listens to, the second maps port `443` to the port that the production Spring server listens to, and the final command maps port `8080` to the port that the testing React server listens to. A port does not need to be redirected for the Spring test server since it can directly listen to port `8443`.
-
-## Testing Accounts
-
-Each course that uses the application needs a course account and a course group, where the course group is the course identifier, such as `cs252`, and the course account is the group appended by `-account`, such as `cs252-account`. This is necessary since test scripts are run by the course account instead of the main account that runs the servers. This ensure that faulty test scripts can only cause damage to the projects made for that course, while protecting all other courses and users on the VM. Also note that the primary group of the course account should be the course group, since the group permission allows the course account to execute tests in the corresponding directory.
 
 # Using the Application
 
@@ -590,7 +615,7 @@ client/src
 │   │   ├── admin.js
 │   │   ├── control.js
 │   │   ├── course.js
-│   │   ├── project.js
+│   │   ├── projects.js
 │   │   └── student.js
 │   └── store.js
 ├── registerServiceWorker.js
@@ -829,7 +854,7 @@ The second virtual server managed by Spring is the security server. The file `Se
 
 ##### Scheduling Configuration
 
-This configuration is set up by two files, `Scheduler.java` and `SchedulingConfig.java`. The main logic is in `Scheduler.java`, and all this class does is run certain functions on an interval similar to cron jobs. Tasks can be scheduled to start at a fixed rate, at a fixed delay between one task ending and another starting, and with a cron expression. Refer to [this document ](https://www.baeldung.com/spring-scheduled-tasks)for further details on scheduling in Spring.
+This configuration is set up by two files, `Scheduler.java` and `SchedulingConfig.java`. The main logic is in `Scheduler.java`, and all this class does is run certain functions on an interval similar to cron jobs. Tasks can be scheduled to start at a fixed rate, at a fixed delay between one task ending and another starting, and with a cron expression. Refer to [this document ](https://www.baeldung.com/spring-scheduled-tasks) for further details on scheduling in Spring.
 
 ##### Database Configuration and Initialization
 
@@ -837,13 +862,7 @@ There are multiple files that assist in the setup of the database. Firstly, `Hib
 
 When creating a new account here, use a password encrypted with BCrypt for 4 rounds (use [this site](https://www.dailycred.com/article/bcrypt-calculator) to generate one). Authorities are specified as roles that can be enumerated from Account.Role_Names.
 
- Lastly, there are SQL files beneath `encourse/server/src/main/resources/db.migration.postgresql` to setup the security server to persist user and token data. Currently when Spring is first initialized, a migration tool called [Flyway](https://flywaydb.org/) attempts to recreate the tables used by the security server. More information about Flyway will be added in the future if we extend its capabilities to the resource server tables as well. The security server tables are defined in the following files:
-
-1. `V1_create_hibernate_sequence.sq` - required by Hibernate to generate unique IDs
-2. `V2_create_oauth2.sql` - creates tables used to persist resource and refresh tokens
-3. `V3_create_user.sql` - creates tables used to persist User information and authorities
-4. `V4_insert_authentication.sql` - inserts client access scope used by OAuth2 standards
-5. `V5_insert_authorites.sql` - inserts User authorities that will be used to grant access
+The OAuth client password was also generated this way and can be changed in `init.sql`. This SQL file should be ran when the database is first created to set up the appropriate authentication tables.
 
 #### Controller Component
 
@@ -891,6 +910,29 @@ The bash directory is located at `encourse/server/src/main/bash`, and contains a
 
 Bash scripts meant to executed independently should not be placed in this directory, they should be placed in a separate directory on the VM. The main purpose of these scripts is to run git commands and modify the state of the database which could not easily be done in Java. For example, bash scripts are used to execute test scripts as another user so that any error in the test scripts will not be catastrophic to the server due to restricted resources and privileges. Otherwise, the bash scripts are fairly simple compared to Java and Python, so should be easy to understand.
 
-**NOTE**: Be cautious about setting permissions and modifying the student repositories, since any failure to correctly maintain permissions or preserving the state of the student’s commit tree can disrupt their projects or expose their data. This is the only part of the project which directly accesses the student work, and as a result is the only part capable of disrupting students' work. Be sure to test any changes to these scripts separately and thoroughly before applying them to the production server.
+**NOTE**: Be cautious about setting permissions and modifying the student repositories, since any failure to correctly maintain permissions or preserving the state of the student’s commit tree can disrupt their projects or expose their data. This is the only part of the project which directly accesses the student work, and as a result is the only part capable of causing severe disruptions. Be sure to test any changes to these scripts separately and thoroughly before applying them to the production server.
+
+#### Bash File Tree
+
+```
+server/src/main/bash
+├── calculateDiffScore.sh
+├── checkoutPreviousCommit.sh
+├── cleanDirectory.sh
+├── cloneRepositories.sh
+├── countCommitsByDay.sh
+├── countCommits.sh
+├── getSourceChanges.sh
+├── killProcesses.sh
+├── listCommitHistoryByAuthor.sh
+├── listCommitsByTime.sh
+├── listTestUpdateHistory.sh
+├── pullRepositories.sh
+├── runMakefile.sh
+├── runTestallAsCourseAccount.sh
+├── setPermissions.sh
+├── temp.txt
+└── testall.sh
+```
 
 ### Python Directory

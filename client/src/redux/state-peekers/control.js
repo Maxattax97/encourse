@@ -21,3 +21,12 @@ export function isAnySelected(state, type) {
 export function getFilters(state) {
 	return state.control && state.control.filters ? state.control.filters : {}
 }
+
+export function getFiltersHaveChanged(state) {
+	return state.control ? state.control.filtersHaveChanged : false
+}
+
+
+export function getFilterModalType(state) {
+    return state.control && state.control.filterModal ? state.control.filterModal : null
+}

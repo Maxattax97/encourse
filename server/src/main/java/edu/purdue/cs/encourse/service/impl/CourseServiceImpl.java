@@ -6,6 +6,7 @@ import edu.purdue.cs.encourse.domain.relations.*;
 import edu.purdue.cs.encourse.service.CourseService;
 import edu.purdue.cs.encourse.service.HelperService;
 import edu.purdue.cs.encourse.service.helper.*;
+import edu.purdue.cs.encourse.util.ConfigurationManager;
 import edu.purdue.cs.encourse.util.JSONReturnable;
 import lombok.NonNull;
 import org.json.simple.JSONArray;
@@ -26,6 +27,10 @@ import java.util.*;
 @Service(value = CourseServiceImpl.NAME)
 public class CourseServiceImpl implements CourseService {
     public final static String NAME = "CourseService";
+    private final static String pythonPath = "src/main/python/encourse/";
+    private final static String tailFilePath = "src/main/temp/";
+    private final static Boolean DEBUG = ConfigurationManager.getInstance().debug;
+    private final static String pythonCommand = DEBUG ? "/anaconda3/bin/python" : "python3";
 
     @Autowired
     private HelperService helperService;
@@ -311,6 +316,27 @@ public class CourseServiceImpl implements CourseService {
         return studentsJSON;
     }
 
+    public JSONArray getSuitesData(String userName, String projectID) {
+        Student student = studentRepository.findByUserName(userName);
+        if(student == null) {
+            return null;
+        }
+        List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID());
+        JSONArray suitesJSON = new JSONArray();
+        for(StudentProject p : projects) {
+            JSONObject suiteJSON = new JSONObject();
+            suiteJSON.put("suite_name", p.getSuite().toUpperCase());
+            suiteJSON.put("grade", p.getBestVisibleGrade());
+            suiteJSON.put("points", p.getBestVisiblePoints());
+            suiteJSON.put("total", p.getVisiblePointTotal());
+            suiteJSON.put("hiddenGrade", p.getBestHiddenGrade());
+            suiteJSON.put("hiddenPoints", p.getBestHiddenPoints());
+            suiteJSON.put("hiddenTotal", p.getHiddenPointTotal());
+            suitesJSON.add(suiteJSON);
+        }
+        return suitesJSON;
+    }
+
     /**
      * Obtains data for all test scripts associated with a project
      * Primarily used to show existing test scripts that a project has
@@ -379,24 +405,26 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getProgress(@NonNull String projectID, List<String> userNames) {
+        JSONReturnable json = null;
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
         try {
             helperService.createTestFiles(visibleTestFile, hiddenTestFile, projects);
         } catch (IOException e) {
-            return new JSONReturnable(-1, null);
+            json = new JSONReturnable(-1, (JSONObject) null);
         }
 
         if (helperService.getDebug()) {
-            visibleTestFile = helperService.getPythonPath() + "/test_datasets/sampleVisibleTestCases.txt";
-            hiddenTestFile = helperService.getPythonPath() + "/test_datasets/sampleHiddenTestCases.txt";
+            visibleTestFile = helperService.getPythonPath() + "data/sampleVisibleTestCases.txt";
+            hiddenTestFile = helperService.getPythonPath() + "data/sampleHiddenTestCases.txt";
+        } else if (json != null) {
+            return json;
         }
 
         // TODO: Check that test results work as expected
-        String pyPath = helperService.getPythonPath() + "get_class_progress.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
-        JSONReturnable json = helperService.runPython(command);
+        String command = helperService.getPythonCommand() + " class-progress " + visibleTestFile + " " + hiddenTestFile;
+        json = helperService.runPython(command);
         return json;
     }
 
@@ -412,11 +440,11 @@ public class CourseServiceImpl implements CourseService {
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
         Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
-            return new JSONReturnable(-1, null);
+            return new JSONReturnable(-1, (JSONObject) null);
         }
         List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         if(sections.isEmpty()) {
-            return new JSONReturnable(-2, null);
+            return new JSONReturnable(-2, (JSONObject) null);
         }
         String diffsFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_codeDiffs.txt";
         List<StudentProject> temp = new ArrayList<>(projects);
@@ -449,10 +477,9 @@ public class CourseServiceImpl implements CourseService {
             }
             writer.close();
         } catch (Exception e) {
-            return new JSONReturnable(-3, null);
+            return new JSONReturnable(-3, (JSONObject) null);
         }
-        String pyPath = helperService.getPythonPath() + "get_identical_count.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + diffsFile;
+        String command = helperService.getPythonCommand() + " identical " + helperService.getPythonPath() + diffsFile;
         JSONReturnable json = helperService.runPython(command);
         return json;
     }
@@ -470,10 +497,10 @@ public class CourseServiceImpl implements CourseService {
         String dailyCountsFile = helperService.countAllCommitsByDay(projectID, projects);
         String commitLogFile = helperService.listAllCommitsByTime(projectID, projects);
         if(dailyCountsFile == null) {
-            return new JSONReturnable(-1, null);
+            return new JSONReturnable(-1, (JSONObject) null);
         }
         if(commitLogFile == null) {
-            return new JSONReturnable(-2, null);
+            return new JSONReturnable(-2, (JSONObject) null);
         }
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestsDates.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestsDates.txt";
@@ -495,10 +522,9 @@ public class CourseServiceImpl implements CourseService {
             visibleWriter.close();
             hiddenWriter.close();
         } catch (IOException e) {
-            return new JSONReturnable(-3, null);
+            return new JSONReturnable(-3, (JSONObject) null);
         }
-        String pyPath = helperService.getPythonPath() + "get_class_statistics.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -t 1.0 -l 200";
+        String command = helperService.getPythonCommand() + " stats " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         JSONReturnable json = helperService.runPython(command);
         return json;
     }
@@ -512,21 +538,23 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getTestSummary(@NonNull String projectID, List<String> userNames) {
+        JSONReturnable json = null;
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
         try {
             helperService.createTestFiles(visibleTestFile, hiddenTestFile, projects);
         } catch (IOException e) {
-            return new JSONReturnable(-1, null);
+            json = new JSONReturnable(-1, (JSONObject) null);
         }
         if (helperService.getDebug()) {
-            visibleTestFile = helperService.getPythonPath() + "/test_datasets/sampleVisibleTestCases.txt";
-            hiddenTestFile = helperService.getPythonPath() + "/test_datasets/sampleHiddenTestCases.txt";
+            visibleTestFile = helperService.getPythonPath() + "data/sampleVisibleTestCases.txt";
+            hiddenTestFile = helperService.getPythonPath() + "data/sampleHiddenTestCases.txt";
+        } else if (json != null) {
+            return json;
         }
-        String pyPath = helperService.getPythonPath() + "get_test_summary.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile;
-        JSONReturnable json = helperService.runPython(command);
+        String command = helperService.getPythonCommand() + " test-summary " + visibleTestFile + " " + hiddenTestFile;
+        json = helperService.runPython(command);
         return json;
     }
 
@@ -539,14 +567,17 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getCommitList(@NonNull String projectID, List<String> userNames) {
+        JSONReturnable json = null;
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
         String commitLogFile = helperService.listAllCommitsByTime(projectID, projects);
         if(commitLogFile == null) {
-            return new JSONReturnable(-1, null);
+            json = new JSONReturnable(-1, (JSONObject) null);
         }
-        String pyPath = helperService.getPythonPath() + "get_git_commit_list.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + commitLogFile;
-        JSONReturnable json = helperService.runPython(command);
+        if (!helperService.getDebug() && json != null) {
+            return json;
+        }
+        String command = helperService.getPythonCommand() + " gitlist " + commitLogFile;
+        json = helperService.runPython(command);
         return json;
     }
 
@@ -559,50 +590,57 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getCheating(@NonNull String projectID, List<String> userNames) {
-        List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
-        Project project = projectRepository.findByProjectID(projectID);
-        if(project == null) {
-            return new JSONReturnable(-1, null);
-        }
-        List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
-        if(sections.isEmpty()) {
-            return new JSONReturnable(-2, null);
-        }
-        String commitLogFile = helperService.listAllCommitsByTime(projectID, projects);
-        if(commitLogFile == null) {
-            return new JSONReturnable(-3, null);
-        }
-        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestsDates.txt";
-        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestsDates.txt";
-        try {
-            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-            for(StudentProject p : projects) {
-                Student student = studentRepository.findByUserID(p.getStudentID());
-                List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID());
-                visibleWriter.write("Start " + student.getUserName() + "\n");
-                hiddenWriter.write("Start " + student.getUserName() + "\n");
-                for (StudentProjectDate d : projectDates) {
-                    visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
-                    hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
-                }
-                visibleWriter.write("End " + student.getUserName() + "\n");
-                hiddenWriter.write("End " + student.getUserName() + "\n");
+        JSONReturnable json = null;
+        String visibleTestFile = null;
+        String hiddenTestFile = null;
+        String commitLogFile = null;
+        if (!helperService.getDebug()) {
+            List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
+            Project project = projectRepository.findByProjectID(projectID);
+            if (project == null) {
+                json = new JSONReturnable(-1, (JSONObject) null);
             }
-            visibleWriter.close();
-            hiddenWriter.close();
-        } catch (IOException e) {
-            return new JSONReturnable(-3, null);
+            List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
+            if (sections.isEmpty()) {
+                json = new JSONReturnable(-2, (JSONObject) null);
+            }
+            commitLogFile = helperService.listAllCommitsByTime(projectID, projects);
+            if (commitLogFile == null) {
+                json = new JSONReturnable(-3, (JSONObject) null);
+            }
+            visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestsDates.txt";
+            hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestsDates.txt";
+            try {
+                BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+                BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+                for (StudentProject p : projects) {
+                    Student student = studentRepository.findByUserID(p.getStudentID());
+                    List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID());
+                    visibleWriter.write("Start " + student.getUserName() + "\n");
+                    hiddenWriter.write("Start " + student.getUserName() + "\n");
+                    for (StudentProjectDate d : projectDates) {
+                        visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
+                        hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
+                    }
+                    visibleWriter.write("End " + student.getUserName() + "\n");
+                    hiddenWriter.write("End " + student.getUserName() + "\n");
+                }
+                visibleWriter.close();
+                hiddenWriter.close();
+            } catch (IOException e) {
+                json = new JSONReturnable(-3, (JSONObject) null);
+            }
         }
 
         if (helperService.getDebug()){
-            commitLogFile = helperService.getPythonPath() + "/test_datasets/sampleCommitList.txt";
-            visibleTestFile = helperService.getPythonPath() + "/test_datasets/sampleTestsDay.txt";
-            hiddenTestFile = helperService.getPythonPath() + "/test_datasets/sampleTestsDay.txt";
+            commitLogFile = helperService.getPythonPath() + "data/sampleCommitList.txt";
+            visibleTestFile = helperService.getPythonPath() + "data/sampleTestsDay.txt";
+            hiddenTestFile = helperService.getPythonPath() + "data/sampleTestsDay.txt";
+        } else if (json != null) {
+            return json;
         }
-        String pyPath = helperService.getPythonPath() + "get_class_cheating.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -l 1000";
-        JSONReturnable json = helperService.runPython(command);
+        String command = helperService.getPythonCommand() + " cheating " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -l 1000";
+        json = helperService.runPython(command);
         return json;
     }
 
@@ -615,16 +653,19 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getStudentAdditionsAndDeletions(@NonNull String projectID, @NonNull String userName) {
+        JSONReturnable json = null;
         String dailyCountsFile = helperService.countStudentCommitsByDay(projectID, userName);
         String commitLogFile = helperService.listStudentCommitsByTime(projectID, userName);
         if(dailyCountsFile == null) {
-            return new JSONReturnable(-1, null);
+            json = new JSONReturnable(-1, (JSONObject) null);
         }
         if(commitLogFile == null) {
-            return new JSONReturnable(-2, null);
+            json = new JSONReturnable(-2, (JSONObject) null);
         }
-        String pyPath = helperService.getPythonPath() + "get_add_del.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " -l 200";
+        if (!helperService.getDebug() && json != null) {
+            return json;
+        }
+        String command = helperService.getPythonCommand() + " changes " + commitLogFile + " " + dailyCountsFile + " " + userName + " -l 200";
         return helperService.runPython(command);
     }
 
@@ -637,12 +678,15 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getStudentCommitCounts(@NonNull String projectID, @NonNull String userName) {
+        JSONReturnable json = null;;
         String commitLogFile = helperService.listStudentCommitsByTime(projectID, userName);
         if(commitLogFile == null) {
-            return new JSONReturnable(-2, null);
+            json = new JSONReturnable(-2, (JSONObject) null);
         }
-        String pyPath = helperService.getPythonPath() + "get_git_commits.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + commitLogFile + " " + userName;
+        if (!helperService.getDebug() && json != null) {
+            return json;
+        }
+        String command = helperService.getPythonCommand() + " commitcount " + commitLogFile + " " + userName;
         return helperService.runPython(command);
     }
 
@@ -655,12 +699,15 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getStudentCommitList(@NonNull String projectID, @NonNull String userName) {
+        JSONReturnable json = null;
         String commitLogFile = helperService.listStudentCommitsByTime(projectID, userName);
         if(commitLogFile == null) {
-            return new JSONReturnable(-1, null);
+            json = new JSONReturnable(-1, (JSONObject) null);
         }
-        String pyPath = helperService.getPythonPath() + "get_git_commit_list.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + commitLogFile + " " + userName;
+        if (!helperService.getDebug() && json != null) {
+            return json;
+        }
+        String command = helperService.getPythonCommand() + " gitlist " + commitLogFile + " " + userName;
         return helperService.runPython(command);
     }
 
@@ -673,48 +720,52 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getStudentCommitVelocity(@NonNull String projectID, @NonNull String userName) {
+        JSONReturnable json = null;
         String dailyCountsFile = helperService.countStudentCommitsByDay(projectID, userName);
         String commitLogFile = helperService.listStudentCommitsByTime(projectID, userName);
         if(dailyCountsFile == null) {
-            return new JSONReturnable(-1, null);
+            json = new JSONReturnable(-1, (JSONObject) null);
         }
         if(commitLogFile == null) {
-            return new JSONReturnable(-2, null);
+            json = new JSONReturnable(-2, (JSONObject) null);
         }
         if(!projectRepository.existsByProjectID(projectID)) {
-            return new JSONReturnable(-1, null);
+            json = new JSONReturnable(-1, (JSONObject) null);
         }
         Student student = studentRepository.findByUserName(userName);
         if(student == null) {
-            return new JSONReturnable(-2, null);
+            json = new JSONReturnable(-2, (JSONObject) null);
         }
-        List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID());
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestDates.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestDates.txt";
         if (helperService.getDebug()) {
-            visibleTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
-            hiddenTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
+            visibleTestFile = "src/main/python/encourse/data/sampleTestsDay.txt";
+            hiddenTestFile = "src/main/python/encourse/data/sampleTestsDay.txt";
         }
-        try {
-            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-            visibleWriter.write("Start " + userName + "\n");
-            hiddenWriter.write("Start " + userName + "\n");
-            for (StudentProjectDate d : projectDates) {
-                visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
-                hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
+        else {
+            try {
+                List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID());
+                BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+                BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
+                visibleWriter.write("Start " + userName + "\n");
+                hiddenWriter.write("Start " + userName + "\n");
+                for (StudentProjectDate d : projectDates) {
+                    visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
+                    hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
+                }
+                visibleWriter.write("End " + userName + "\n");
+                hiddenWriter.write("End " + userName + "\n");
+                visibleWriter.close();
+                hiddenWriter.close();
+            } catch (IOException e) {
+                json = new JSONReturnable(-3, (JSONObject) null);
             }
-            visibleWriter.write("End " + userName + "\n");
-            hiddenWriter.write("End " + userName + "\n");
-            visibleWriter.close();
-            hiddenWriter.close();
         }
-        catch(IOException e) {
-            return new JSONReturnable(-3, null);
+        if (!helperService.getDebug() && json != null) {
+            return json;
         }
 
-        String pyPath = helperService.getPythonPath() + "get_velocity.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + userName;
+        String command = helperService.getPythonCommand() + " velocity " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " " + userName;
         return helperService.runPython(command);
     }
 
@@ -727,21 +778,22 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getStudentProgress(@NonNull String projectID, @NonNull String userName) {
+        JSONReturnable json = null;
         String visibleTestFile;
         String hiddenTestFile;
         String dailyCountsFile;
         if (helperService.getDebug()) {
-            visibleTestFile = "src/main//python/test_datasets/sampleTestsDay.txt";
-            hiddenTestFile = "src/main/python/test_datasets/sampleTestsDay.txt";
-            dailyCountsFile = "src/main/python/test_datasets/sampleCountsDay.txt";
+            visibleTestFile = "src/main/python/encourse/data/sampleTestsDay.txt";
+            hiddenTestFile = "src/main/python/encourse/data/sampleTestsDay.txt";
+            dailyCountsFile = "src/main/python/encourse/data/sampleCountsDay.txt";
         } else {
             dailyCountsFile = helperService.countStudentCommitsByDay(projectID, userName);
             if (!projectRepository.existsByProjectID(projectID)) {
-                return new JSONReturnable(-1, null);
+                return new JSONReturnable(-1, (JSONObject) null);
             }
             Student student = studentRepository.findByUserName(userName);
             if (student == null) {
-                return new JSONReturnable(-2, null);
+                return new JSONReturnable(-2, (JSONObject) null);
             }
             List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID());
             visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestDates.txt";
@@ -761,12 +813,11 @@ public class CourseServiceImpl implements CourseService {
                 hiddenWriter.close();
             }
             catch(IOException e) {
-                return new JSONReturnable(-3, null);
+                return new JSONReturnable(-3, (JSONObject) null);
             }
         }
 
-        String pyPath = helperService.getPythonPath() + "get_individual_progress.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + visibleTestFile + " " + hiddenTestFile + " " + dailyCountsFile + " " + userName;
+        String command = helperService.getPythonCommand() + " student-progress " + visibleTestFile + " " + hiddenTestFile + " " + dailyCountsFile + " " + userName;
         return helperService.runPython(command);
     }
 
@@ -779,41 +830,45 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getStudentStatistics(@NonNull String projectID, @NonNull String userName) {
+        JSONReturnable json = null;
         String dailyCountsFile = helperService.countStudentCommitsByDay(projectID, userName);
         String commitLogFile = helperService.listStudentCommitsByTime(projectID, userName);
         if(dailyCountsFile == null) {
-            return new JSONReturnable(-1, null);
+            json = new JSONReturnable(-1, (JSONObject) null);
         }
         if(commitLogFile == null) {
-            return new JSONReturnable(-2, null);
+            json = new JSONReturnable(-2, (JSONObject) null);
         }
-        String testResult;
+        String visibleTestFile;
+        String hiddenTestFile;
         if (helperService.getDebug()) {
-            testResult = "cutz;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0";
+            visibleTestFile = "src/main/python/encourse/data/sampleVisibleTestCases.txt";
+            hiddenTestFile = "src/main/python/encourse/data/sampleHiddenTestCases.txt";
         } else {
+            if (json != null) {
+                return json;
+            }
+            visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+            hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
             Student student = studentRepository.findByUserName(userName);
             StudentProject project = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
-            StringBuilder builder = new StringBuilder();
-            builder.append(student.getUserName());
-            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), false);
-            for(StudentProjectTest t : testResults) {
-                builder.append(";").append(t.getTestResultString());
+            List<StudentProject> projects = new ArrayList<>();
+            projects.add(project);
+            try {
+                helperService.createTestFiles(visibleTestFile, hiddenTestFile, projects);
             }
-            testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), true);
-            for(StudentProjectTest t : testResults) {
-                builder.append(";").append(t.getTestResultString());
+            catch (IOException e) {
+                return new JSONReturnable(-1, (JSONObject) null);
             }
-            testResult = builder.toString();
         }
-        String pyPath = helperService.getPythonPath() + "get_statistics.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
+        String command = helperService.getPythonCommand() + " stats " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         return helperService.runPython(command);
     }
 
     /**
      * Obtains a specified source file with changes between specified commit hashes
-     * Hashes will typically be the last commit on the previous day for start and last commit on the current dsy for end
-     * Primerily used to show a file with all changes between the hashes
+     * Hashes will typically be the last commit on the previous day for start and last commit on the current day for end
+     * Primarily used to show a file with all changes between the hashes
      *
      * @param projectID         Identifier for project that source is being taken from
      * @param userName          Front-end identifier for student whose source is being shown
@@ -837,7 +892,23 @@ public class CourseServiceImpl implements CourseService {
         }
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
         String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_sourceChanges.txt";
-        if(helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + startCommitHash + " " + endCommitHash + " " + sourceName) < 0) {
+        if(helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + startCommitHash + " " + endCommitHash) < 0) {
+            return null;
+        }
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            int count = 0;
+            while(reader.readLine() != null && count < 3) {
+                count++;
+            }
+            reader.close();
+            if(count < 3) {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+                writer.write("No changes found from commit hash " + startCommitHash + " to hash " + endCommitHash);
+                writer.close();
+            }
+        }
+        catch(IOException e) {
             return null;
         }
         return fileName;

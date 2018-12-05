@@ -17,8 +17,8 @@ class CoursesSummary extends Component {
             retrieveAllStudents(this.props.project, this.props.course, this.props.semester)
     }*/
 
-    clickCourseCard = (student) => {
-        history.push(`/course/${course.id}`)
+    clickCourseCard = (course) => {
+        history.push(`/${course.id}/${course.semester}/course`)
     };
 
     renderPreview = (course) => {

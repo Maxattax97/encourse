@@ -11,15 +11,9 @@ import StudentDishonestyCharts from "./student-dishonesty/StudentDishonestyChart
 import ShareReportModal from "./common/ShareReportModal"
 import {getCurrentStudent} from '../../redux/state-peekers/student'
 import TaskModal from './common/TaskModal'
-import {getCurrentProject} from '../../redux/state-peekers/project'
+import {getCurrentProject} from '../../redux/state-peekers/projects'
 
 class StudentDishonestyPanel extends Component {
-
-    componentDidMount = () => {
-        if(!this.props.student) {
-            this.props.getStudent(`${url}/api/studentsData?courseID=${this.props.currentCourseId}&semester=${this.props.currentSemesterId}&userName=${this.props.match.params.id}`)
-        }
-    }
 
     back = () => {
         history.goBack()
@@ -81,7 +75,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getStudent: (url, headers, body) => dispatch(getStudent(url, headers, body)),
+        getStudent: (url, body) => dispatch(getStudent(url, {}, body)),
         syncStudentRepository: (url, headers, body) => dispatch(syncStudentRepository(url, headers, body)),
         runStudentTests: (url, headers, body) => dispatch(runStudentTests(url, headers, body)),
         clearStudent: () => dispatch(clearStudent),

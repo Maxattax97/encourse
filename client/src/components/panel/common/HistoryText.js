@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { getClassProjects } from '../../../redux/actions'
-import {getCurrentProject} from '../../../redux/state-peekers/project'
+import {getCurrentProject} from '../../../redux/state-peekers/projects'
 
 class HistoryText extends Component {
 

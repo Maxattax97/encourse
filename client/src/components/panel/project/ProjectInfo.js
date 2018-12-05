@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import Statistics from "../common/Statistics"
-import {getCurrentProject} from "../../../redux/state-peekers/project"
+import {getCurrentProject} from "../../../redux/state-peekers/projects"
 
 class ProjectInfo extends Component {
 

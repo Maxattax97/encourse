@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import {Title} from '../../Helpers'
 import {history} from '../../../redux/store'
 import {getStudentPreviews, clearStudent} from '../../../redux/actions'
-import {getCurrentProject} from "../../../redux/state-peekers/project"
+import {getCurrentProject} from "../../../redux/state-peekers/projects"
 import {getCurrentCourseId, getCurrentSemesterId} from "../../../redux/state-peekers/course"
 import SelectableCardSummary from "../common/SelectableCardSummary"
 import {retrieveAllStudents} from "../../../redux/retrievals/course"
@@ -22,10 +22,12 @@ class StudentReportSummary extends Component {
 
     clickStudentCard = (student) => {
 	    this.props.clearStudent()
-        history.push(`/student-dishonesty/${student.id}`)
+        history.push(`/${this.props.course}/${this.props.semester}/student-dishonesty/${student.id}`)
     }
 
 	renderPreview = (student) => {
+	    const bar = Math.min(Math.abs(student.score) / 3.0, 1.0)
+
 		return (
 			<div>
 				<Title>
@@ -35,6 +37,20 @@ class StudentReportSummary extends Component {
 				<div className="preview-content">
 					<h5>Score: { student.score }</h5>
 				</div>
+                <div className="student-preview-progress">
+                    <div className="progress-bar">
+                        <div style={{width: (bar * 100.0) + '%'}} />
+                    </div>
+                    <h6 className="progress-text">
+                        {
+                            bar < .33 ?
+                                'Low'
+                                : bar < .66 ?
+                                'Medium'
+                                : 'High'
+                        }
+                    </h6>
+                </div>
 			</div>
 		)
 	}

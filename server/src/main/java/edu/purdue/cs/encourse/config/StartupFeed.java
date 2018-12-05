@@ -68,44 +68,81 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             adminService.addAccount("6", "sullil96", "Ryan", "Sullivan", Account.Role_Names.ADMIN, "P", "sulli196@purdue.edu");
 
             adminService.addUser("grr", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "PROFESSOR", false, false, false, true);
-            adminService.addUser("buckmast", "$2a$04$9c76evM3G9DGPy0SoSvA7uH567Raz6Tuv5vTeV/BxL.3gNSel1POK", "ADMIN", false, false, false, true);
-            adminService.addUser("kleclain", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
-            adminService.addUser("lee2363", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
-            adminService.addUser("montgo38", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
-            adminService.addUser("reed226", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "TA", false, false, false, true);
-            adminService.addUser("sullil96", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
+            adminService.addUser("buckmast-a", "$2a$04$9c76evM3G9DGPy0SoSvA7uH567Raz6Tuv5vTeV/BxL.3gNSel1POK", "ADMIN", false, false, false, true);
+            adminService.addUser("kleclain-a", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
+            adminService.addUser("lee2363-a", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
+            adminService.addUser("montgo38-a", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
+            adminService.addUser("reed226-t", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "TA", false, false, false, true);
+            adminService.addUser("sullil96-a", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
 
-            Section section = adminService.addSection("1001", "Fall2018", "cs252", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
-            adminService.assignProfessorToCourse("grr", "cs252", "Fall2018");
-            adminService.assignTeachingAssistantToCourse("reed226", "cs252", "Fall2018");
-            professorService.assignTeachingAssistantToSection("reed226", section.getSectionID());
+            Section section;
+            Project malloc;
+            Project shell;
+            if(ConfigurationManager.getInstance().testing) {
+                section = adminService.addSection("1001", "Fall2018", "testing", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
+                adminService.assignProfessorToCourse("grr", "testing", "Fall2018");
+                adminService.assignTeachingAssistantToCourse("reed226-t", "testing", "Fall2018");
+                professorService.assignTeachingAssistantToSection("reed226-t", section.getSectionID());
 
-            try {
-                BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/students.txt"));
-                String student = null;
-                int count = 1;
-                while((student = fileReader.readLine()) != null && count <= ConfigurationManager.getInstance().limit) {
-                    if(student.equals("grr")) {
-                        continue;
+                adminService.addAccount("101", "reed226", "William", "Reed", Account.Role_Names.STUDENT, "J", "reed226@purdue.edu");
+                adminService.registerStudentToSection("reed226", section.getSectionID());
+
+                adminService.addAccount("102", "kleclain", "Killian", "LeClainche", Account.Role_Names.STUDENT, "A", "kleclain@purdue.edu");
+                adminService.registerStudentToSection("kleclain", section.getSectionID());
+
+                adminService.addAccount("103", "lee2363", "Jarett", "Lee", Account.Role_Names.STUDENT, "B", "lee2363@purdue.edu");
+                adminService.registerStudentToSection("lee2363", section.getSectionID());
+
+                adminService.addAccount("104", "montgo38", "Shawn", "Montgomery", Account.Role_Names.STUDENT, "K", "montgo38@purdue.edu");
+                adminService.registerStudentToSection("montgo38", section.getSectionID());
+
+                adminService.addAccount("105", "buckmast", "Jordan", "Buckmaster", Account.Role_Names.STUDENT, "M", "buckmast@purdue.edu");
+                adminService.registerStudentToSection("buckmast", section.getSectionID());
+
+                adminService.addAccount("106", "sulli196", "Ryan", "Sullivan", Account.Role_Names.STUDENT, "P", "sulli196@purdue.edu");
+                adminService.registerStudentToSection("sulli196", section.getSectionID());
+
+                professorService.assignTeachingAssistantToStudentInSection("reed226-t", "kleclain", section.getSectionID());
+                professorService.assignTeachingAssistantToStudentInSection("reed226-t", "buckmast", section.getSectionID());
+                professorService.assignTeachingAssistantToStudentInSection("reed226-t", "montgo38", section.getSectionID());
+
+                courseService.setSectionRemotePaths("Fall2018", "testing", "/homes/cs252/sourcecontrol/work_2017Fall");
+                courseService.setDirectory("Fall2018", "testing");
+                shell = professorService.addProject("testing", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
+
+            }
+            else {
+                section = adminService.addSection("1001", "Fall2018", "cs252", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
+                adminService.assignProfessorToCourse("grr", "cs252", "Fall2018");
+                adminService.assignTeachingAssistantToCourse("reed226", "cs252", "Fall2018");
+                professorService.assignTeachingAssistantToSection("reed226", section.getSectionID());
+
+                try {
+                    BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/students.txt"));
+                    String student = null;
+                    int count = 1;
+                    while ((student = fileReader.readLine()) != null && count <= ConfigurationManager.getInstance().limit) {
+                        if (student.equals("grr")) {
+                            continue;
+                        }
+                        //adminService.addAccount(Integer.toString(100 + count), student, "Student", Integer.toString(count),
+                        adminService.addAccount(Integer.toString(100 + count), student, "Student", student,
+                                Account.Role_Names.STUDENT, null, student + "@purdue.edu");
+                        adminService.registerStudentToSection(student, section.getSectionID());
+                        if (count == 5) {
+                            professorService.assignTeachingAssistantToAllStudentsInSection("reed226", section.getSectionID());
+                        }
+                        count++;
                     }
-                    //adminService.addAccount(Integer.toString(100 + count), student, "Student", Integer.toString(count),
-                    adminService.addAccount(Integer.toString(100 + count), student, "Student", student,
-                            Account.Role_Names.STUDENT, null, student + "@purdue.edu");
-                    adminService.registerStudentToSection(student, section.getSectionID());
-                    if(count == 5) {
-                        professorService.assignTeachingAssistantToAllStudentsInSection("reed226", section.getSectionID());
-                    }
-                    count++;
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }
-            catch(IOException e) {
-                e.printStackTrace();
-            }
 
-            courseService.setSectionRemotePaths("Fall2018", "cs252", "/homes/cs252/sourcecontrol/work");
-            courseService.setDirectory("Fall2018", "cs252");
-            //Project malloc = professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/27/2018", "9/10/2018", 0);
-            Project shell = professorService.addProject("cs252", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
+                courseService.setSectionRemotePaths("Fall2018", "cs252", "/homes/cs252/sourcecontrol/work");
+                courseService.setDirectory("Fall2018", "cs252");
+                //Project malloc = professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/27/2018", "9/10/2018", 0);
+                shell = professorService.addProject("cs252", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
+            }
             //professorService.assignProject(malloc.getProjectID());
             professorService.assignProject(shell.getProjectID());
             /*professorService.uploadTestScript(malloc.getProjectID(), "Test1.sh",
@@ -181,7 +218,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 professorService.updateStudentInformation(p.getProjectID(), student.getUserName());
             }*/
             List<StudentProject> projects = studentProjectRepository.findByIdProjectID(shell.getProjectID());
-            for(StudentProject p : projects) {
+            for (StudentProject p : projects) {
                 Student student = studentRepository.findByUserID(p.getStudentID());
                 helperService.updateStudentInformation(p.getProjectID(), student.getUserName());
             }

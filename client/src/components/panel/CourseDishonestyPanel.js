@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {history} from '../../redux/store'
 import {BackNav, SettingsIcon, Title} from '../Helpers'
-import CourseDishonestyModal from '../modal/CourseDishonestyModal'
 import {getStudentPreviews, setCurrentStudent, setModalState, getDishonestyReport, updateCourseDishonestyPage, resetCourseDishonestyPage} from '../../redux/actions'
 import {getCurrentCourseId} from '../../redux/state-peekers/course'
 import url from '../../server'
@@ -12,6 +11,8 @@ import CourseDishonestyCharts from './course-dishonesty/CourseDishonestyCharts'
 import HistoryText from './common/HistoryText'
 import ShareReportModal from './common/ShareReportModal'
 import TaskModal from './common/TaskModal'
+import ProjectNavigation from '../navigation/ProjectNavigation'
+import {getCurrentProject} from '../../redux/state-peekers/projects'
 
 class CourseDishonestyPanel extends Component {
 
@@ -31,11 +32,12 @@ class CourseDishonestyPanel extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.currentProjectId}`)
+        if(this.props.project)
+            this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.project.id}`)
     }
 
     scrolledToBottom = () => {
-        if(!this.props.last) {
+        if(this.props.project && !this.props.last) {
             this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}&page=${this.props.page + 1}`)
             this.props.updateCourseDishonestyPage()
         }
@@ -86,6 +88,7 @@ class CourseDishonestyPanel extends Component {
 
                 <div className='panel-left-nav'>
                     <BackNav back='Course' backClick={ this.back }/>
+                    <ProjectNavigation/>
                     <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
 
@@ -110,7 +113,6 @@ class CourseDishonestyPanel extends Component {
 
                         <div className='h1 break-line' />
 
-                        <h3 className='header'>Students Summary</h3>
                         <StudentReportFilter report={this.props.report}/>
                     </div>
                 </div>
@@ -124,7 +126,7 @@ const mapStateToProps = (state) => {
         students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : [],
         currentCourseId: getCurrentCourseId(state),
         report: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.content : [],
-        currentProjectId: state.projects ? state.projects.currentProjectId : null,
+        project: getCurrentProject(state),
         page: state.course && state.course.dishonestyPage ? state.course.dishonestyPage : 1,
         last: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.last : true,
     }

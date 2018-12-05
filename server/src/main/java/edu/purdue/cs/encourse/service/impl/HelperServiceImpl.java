@@ -34,8 +34,8 @@ public class HelperServiceImpl implements HelperService {
 
     public final Boolean DEBUG = ConfigurationManager.getInstance().debug;
     public final Boolean OBFUSCATE = false;
-    public final String pythonCommand = DEBUG ? "/anaconda3/bin/python" : "python3";
-    public final String pythonPath = "src/main/python/";
+    public final String pythonPath = "src/main/python/encourse/";
+    public final String pythonCommand = DEBUG ? "/anaconda3/bin/python " + pythonPath + "encourse.py": "python3 " + pythonPath + "encourse.py";
     public final String tailFilePath = "src/main/temp/";
     public final String testDir = "test-shell";
 
@@ -122,8 +122,16 @@ public class HelperServiceImpl implements HelperService {
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String output;
             String error;
-            while ((error = stdError.readLine()) != null) {
-                //System.out.println("Error: " + error);
+            try {
+                BufferedWriter errorWriter = new BufferedWriter(new FileWriter("errorlog.txt", true));
+                errorWriter.write(command);
+                errorWriter.write("\n");
+                while ((error = stdError.readLine()) != null) {
+                    errorWriter.write(error);
+                    errorWriter.write("\n");
+                }
+                errorWriter.close();
+            } catch (IOException e) {
             }
             while ((output = stdInput.readLine()) != null) {
                 System.out.println("Output: " + output);
@@ -132,26 +140,26 @@ public class HelperServiceImpl implements HelperService {
                 try {
                     obj = jsonParser.parse(output);
                 } catch (ParseException e) {
-                    e.printStackTrace();
-                    json =  new JSONReturnable(-3, null);
+                    //e.printStackTrace();
+                    json =  new JSONReturnable(-3, (JSONObject) null);
                 }
                 if (obj != null) {
                     JSONObject jsonObject = null;
                     if (obj.getClass() == JSONObject.class) {
                         jsonObject = (JSONObject)obj;
+                        json = new JSONReturnable(1, jsonObject);
                     } else if (obj.getClass() == JSONArray.class) {
                         jsonObject = new JSONObject();
                         JSONArray jsonArray = (JSONArray)obj;
-                        jsonObject.put("data", jsonArray);
+                        json = new JSONReturnable(1, jsonArray);
                     } else {
-                        json = new JSONReturnable(-4, null);
+                        json = new JSONReturnable(-4, (JSONObject) null);
                     }
-                    json = new JSONReturnable(1, jsonObject);
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            json = new JSONReturnable(-2, null);
+            //e.printStackTrace();
+            json = new JSONReturnable(-2, (JSONObject) null);
         }
         return json;
     }
@@ -222,21 +230,20 @@ public class HelperServiceImpl implements HelperService {
         if(commitLogFile == null) {
             return -2;
         }
+
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
         Student student = studentRepository.findByUserName(userName);
         StudentProject project = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
-        StringBuilder builder = new StringBuilder();
-        builder.append(student.getUserName());
-        List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), false);
-        for(StudentProjectTest t : testResults) {
-            builder.append(";").append(t.getTestResultString());
+        List<StudentProject> projects = new ArrayList<>();
+        projects.add(project);
+        try {
+            createTestFiles(visibleTestFile, hiddenTestFile, projects);
         }
-        testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), true);
-        for(StudentProjectTest t : testResults) {
-            builder.append(";").append(t.getTestResultString());
+        catch (IOException e) {
+            return -3;
         }
-        String testResult = builder.toString();
-        String pyPath = getPythonPath() + "get_statistics.py";
-        String command = getPythonCommand() + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
+        String command = getPythonCommand() + " stats " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);
         if(json == null || json.getJsonObject() == null) {
             return 0;
@@ -550,7 +557,7 @@ public class HelperServiceImpl implements HelperService {
      */
     public String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName) {
         if (DEBUG) {
-            return pythonPath + "test_datasets/sampleCountsDay.txt";
+            return pythonPath + "data/sampleCountsDay.txt";
         }
 
         Project project = projectRepository.findByProjectID(projectID);
@@ -587,7 +594,7 @@ public class HelperServiceImpl implements HelperService {
      */
     public String listAllCommitsByTime(@NonNull String projectID, List<StudentProject> projects) {
         if (DEBUG) {
-            return pythonPath + "test_datasets/sampleCommitList.txt";
+            return pythonPath + "data/sampleCommitList.txt";
         }
 
         Project project = projectRepository.findByProjectID(projectID);
@@ -618,7 +625,7 @@ public class HelperServiceImpl implements HelperService {
      */
     public String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName) {
         if (DEBUG) {
-            return pythonPath + "test_datasets/sampleCommitList.txt";
+            return pythonPath + "data/sampleCommitList.txt";
         }
 
         Project project = projectRepository.findByProjectID(projectID);

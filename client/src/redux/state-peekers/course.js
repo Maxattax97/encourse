@@ -7,9 +7,9 @@ export const getCourseStats = createPeeker('stats')
 
 export const getStudentsStats = createPeeker('studentsStats')
 
-export function getStudents(state) {
-	return state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : []
-}
+export const getStudents = createPeeker('students')
+
+export const getSections = createPeeker('sections')
 
 export const getCourseProgress = createPeeker('courseProgress')
 
@@ -21,10 +21,21 @@ export const getStudentsTestProgress = createPeeker('studentsTestProgress')
 
 export const getStudentsSimilarity = createPeeker('studentsSimilarity')
 
+export const getTeachingAssistants = createPeeker('teachingAssistants')
+
 export function getCurrentCourseId(state) {
 	return state.course && state.currentCourseId ? state.course.currentCourseId : defaultCourse
 }
 
 export function getCurrentSemesterId(state) {
 	return state.course && state.currentSemesterId ? state.course.currentSemesterId : defaultSemester
+}
+
+export function getCurrentTAIndex(state) {
+    return state.course && state.course.currentTAIndex ? state.course.currentTAIndex : 0
+}
+
+export function getCurrentTA(state) {
+    const tas = getTeachingAssistants(state)
+    return tas.data.length ? state.course.currentTA ? state.course.currentTA : tas.data[getCurrentTAIndex(state)] : null
 }

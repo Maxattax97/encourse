@@ -57,39 +57,31 @@ class Main extends Component {
                             onClick={ this.props.closeModal }
                         />
                         <Switch>
-                            <Route path="/panel" render={(/* navProps */) => {
-                                //determine logic for course panel, student panel, or admin panel. For now, use course panel
-                                return <Redirect to={`/course/${defaultCourse}`} />
-                            }}/>
-                            <Route path="/course/:courseID/:semesterID" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/course" render={(navProps) =>
                                 <CoursePanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/course/:courseID" render={() => 
-                                //TODO: get current semester from API
-                                <Redirect to={`/course/${defaultCourse}/${defaultSemester}`} />
-                            }/>
-                            <Route path="/student/:id" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/student/:id" render={(navProps) =>
                                 <StudentPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/admin" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/admin" render={(navProps) =>
                                 <AdminPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/projects" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/projects" render={(navProps) =>
                                 <ProjectPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/manage-tas" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/manage-tas" render={(navProps) =>
                                 <ManageTAPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/course-dishonesty" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/course-dishonesty" render={(navProps) =>
                                 <CourseDishonestyPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/student-dishonesty/:id" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/student-dishonesty/:id" render={(navProps) =>
                                 <StudentDishonestyPanel ref={ this.setChild } {...navProps}/>
                             }/>
-                            <Route path="/settings" render={(/* navProps */) =>
+                            <Route path="/:courseID/:semesterID/settings" render={(/* navProps */) =>
                                 <PreferencePanel ref={ this.setChild } />
                             }/>
-                            <Route path='/' render={(/* navProps */) => <Redirect to="/panel" />}/>
+                            <Route path='/' render={(/* navProps */) => <Redirect to={`/${defaultCourse}/${defaultSemester}/course`}/>}/>
                         </Switch>
                     </div>
                 </div>

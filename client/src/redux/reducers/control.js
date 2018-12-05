@@ -67,14 +67,34 @@ function setFilterState(state, action) {
 		filters: {
 			...state.filters,
 			[action.id]: action.value
-		}
+		},
+		filtersHaveChanged: true
 	}
 }
 
 function resetFilterState(state, action) {
 	return {
 		...state,
-		filters: {}
+		filters: {},
+		filterModal: null,
+		filtersHaveChanged: true
+	}
+}
+
+function setFilterModal(state, action) {
+    return {
+        ...state,
+        filterModal: {
+            id: action.id,
+            value: action.value
+        }
+    }
+}
+
+function toggleFiltersHaveChanged(state, action) {
+	return {
+		...state,
+		filtersHaveChanged: !state.filtersHaveChanged,
 	}
 }
 
@@ -95,6 +115,10 @@ export default function control(state = {}, action) {
 			return setFilterState(state, action)
 		case 'RESET_FILTER_STATE':
 			return resetFilterState(state, action)
+        case 'SET_CUSTOM_FILTER_MODAL':
+			return setFilterModal(state, action)
+		case 'TOGGLE_FILTERS_CHANGED':
+			return toggleFiltersHaveChanged(state, action)
 		default:
 			return unknownAction(state, action)
 	}

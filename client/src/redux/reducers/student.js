@@ -4,7 +4,11 @@ import moment from "moment"
 function setCurrentStudent(state, action) {
 	return {
 		...state,
-		...resetData('student')
+		student: {
+		    loading: false,
+            data: action.student,
+            error: null
+        }
 	}
 }
 
@@ -26,7 +30,7 @@ function formatCommitFrequency(udata) {
 	if (!udata) {
 		return []
 	}
-	let data = udata.data
+	let data = udata
 
 	if (!data || data.length === 0) {
 		return []
@@ -40,10 +44,10 @@ function formatCommitFrequency(udata) {
 }
 
 function formatCodeChanges(udata) {
-	if (!udata || !udata.data) {
+	if (!udata || !udata) {
 		return []
 	}
-	const data = udata.data
+	const data = udata
 
 	for (let entry of data) {
 		entry.date = moment(entry.date).valueOf()
@@ -81,10 +85,10 @@ function formatCodeChanges(udata) {
 }
 
 function formatStudentProgress(udata) {
-	if (!udata || !udata.data) {
+	if (!udata || !udata) {
 		return []
 	}
-	const data = udata.data
+	const data = udata
 	for (let entry of data) {
 		entry.date = moment(entry.date).valueOf()
 	}
@@ -201,7 +205,9 @@ export default function student(state = {}, action) {
     case 'SYNC':
         return getData(state, action, 'syncStudentRepository')
     case 'RUN_TESTS':
-        return getData(state, action, 'runStudentTests')
+		return getData(state, action, 'runStudentTests')
+	case 'GET_SOURCE':
+		return getData(state, action, 'getSource')
     default:
         return unknownAction(state, action)
     }
