@@ -235,8 +235,8 @@ public class HelperServiceImpl implements HelperService {
             builder.append(";").append(t.getTestResultString());
         }
         String testResult = builder.toString();
-        String pyPath = getPythonPath() + "get_statistics.py";
-        String command = getPythonCommand() + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
+        //TODO: REED Add in visible and hidden references
+        String command = getPythonCommand() + " stats " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);
         if(json == null || json.getJsonObject() == null) {
             return 0;
