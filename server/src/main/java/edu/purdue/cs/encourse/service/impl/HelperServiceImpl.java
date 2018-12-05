@@ -222,19 +222,19 @@ public class HelperServiceImpl implements HelperService {
         if(commitLogFile == null) {
             return -2;
         }
+
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
         Student student = studentRepository.findByUserName(userName);
         StudentProject project = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
-        StringBuilder builder = new StringBuilder();
-        builder.append(student.getUserName());
-        List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), false);
-        for(StudentProjectTest t : testResults) {
-            builder.append(";").append(t.getTestResultString());
+        List<StudentProject> projects = new ArrayList<>();
+        projects.add(project);
+        try {
+            createTestFiles(visibleTestFile, hiddenTestFile, projects);
         }
-        testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), true);
-        for(StudentProjectTest t : testResults) {
-            builder.append(";").append(t.getTestResultString());
+        catch (IOException e) {
+            return -3;
         }
-        String testResult = builder.toString();
         //TODO: REED Add in visible and hidden references
         String command = getPythonCommand() + " stats " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);

@@ -839,8 +839,8 @@ public class CourseServiceImpl implements CourseService {
         if(commitLogFile == null) {
             json = new JSONReturnable(-2, (JSONObject) null);
         }
-        String visibleTestFile = null;
-        String hiddenTestFile = null;
+        String visibleTestFile;
+        String hiddenTestFile;
         if (helperService.getDebug()) {
             visibleTestFile = "src/main/python/encourse/data/sampleVisibleTestCases.txt";
             hiddenTestFile = "src/main/python/encourse/data/sampleHiddenTestCases.txt";
