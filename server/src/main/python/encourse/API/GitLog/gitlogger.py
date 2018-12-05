@@ -43,7 +43,7 @@ class GitParser:
                 )
                 self.student_log[student_name] = GitLog(student_commits, student_name)
                 student_commits = []
-            elif len(line.split(" ")) == 3:
+            elif len(line.split(" ")) == 4:
                 # This line is a commit time
                 words = line.strip().split(" ")
                 # Check type of line
@@ -251,8 +251,7 @@ class GitCommit:
     @time_delta.setter
     def time_delta(self, time_delta):
         # print("timedelta" + str(time_delta))
-        if isinstance(time_delta, timedelta):
-            self._time_delta = time_delta
+        self._time_delta = time_delta
 
     additions = property(operator.attrgetter("_additions"))
 

@@ -6,7 +6,6 @@ from datetime import datetime
 from datetime import date
 from API import GitLog
 from API import Progress
-from API import CheatDetection
 from API import helper
 from API import stats
 from API import commitcount
