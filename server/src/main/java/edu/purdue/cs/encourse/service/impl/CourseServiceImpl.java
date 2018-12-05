@@ -524,7 +524,7 @@ public class CourseServiceImpl implements CourseService {
         } catch (IOException e) {
             return new JSONReturnable(-3, null);
         }
-        String command = helperService.getPythonCommand() + " statistics " + visibleTestFile + " " + hiddenTestFile + " " + commitLogFile + " -t 1.0 -l 200";
+        String command = helperService.getPythonCommand() + " statistics " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         JSONReturnable json = helperService.runPython(command);
         return json;
     }
@@ -839,28 +839,29 @@ public class CourseServiceImpl implements CourseService {
         if(commitLogFile == null) {
             json = new JSONReturnable(-2, null);
         }
-        String testResult;
+        String visibleTestFile = null;
+        String hiddenTestFile = null;
         if (helperService.getDebug()) {
-            testResult = "cutz;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0";
+            visibleTestFile = "src/main/python/encourse/data/sampleTestsDay.txt";
+            hiddenTestFile = "src/main/python/encourse/data/sampleTestsDay.txt";
         } else {
             if (json != null) {
                 return json;
             }
+            visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+            hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
             Student student = studentRepository.findByUserName(userName);
             StudentProject project = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
-            StringBuilder builder = new StringBuilder();
-            builder.append(student.getUserName());
-            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), false);
-            for(StudentProjectTest t : testResults) {
-                builder.append(";").append(t.getTestResultString());
+            List<StudentProject> projects = new ArrayList<>();
+            projects.add(project);
+            try {
+                helperService.createTestFiles(visibleTestFile, hiddenTestFile, projects);
             }
-            testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), true);
-            for(StudentProjectTest t : testResults) {
-                builder.append(";").append(t.getTestResultString());
+            catch (IOException e) {
+                return new JSONReturnable(-1, null);
             }
-            testResult = builder.toString();
         }
-        String command = helperService.getPythonCommand() + " stats " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
+        String command = helperService.getPythonCommand() + " stats " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         return helperService.runPython(command);
     }
 
