@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {history} from '../../redux/store'
 import {BackNav, SettingsIcon, Title} from '../Helpers'
-import CourseDishonestyModal from '../modal/CourseDishonestyModal'
 import {getStudentPreviews, setCurrentStudent, setModalState, getDishonestyReport, updateCourseDishonestyPage, resetCourseDishonestyPage} from '../../redux/actions'
 import {getCurrentCourseId} from '../../redux/state-peekers/course'
 import url from '../../server'
@@ -12,6 +11,7 @@ import CourseDishonestyCharts from './course-dishonesty/CourseDishonestyCharts'
 import HistoryText from './common/HistoryText'
 import ShareReportModal from './common/ShareReportModal'
 import TaskModal from './common/TaskModal'
+import ProjectNavigation from '../navigation/ProjectNavigation'
 
 class CourseDishonestyPanel extends Component {
 
@@ -86,6 +86,7 @@ class CourseDishonestyPanel extends Component {
 
                 <div className='panel-left-nav'>
                     <BackNav back='Course' backClick={ this.back }/>
+                    <ProjectNavigation/>
                     <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
 

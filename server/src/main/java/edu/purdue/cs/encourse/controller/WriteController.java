@@ -11,6 +11,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.*;
@@ -50,6 +53,9 @@ public class WriteController {
 
     @Autowired
     private HelperService helperService;
+
+    @Autowired
+    private FileService fileService;
 
     /**
      * Create a new Section
@@ -232,6 +238,28 @@ public class WriteController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/add/zip", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
+        String fileName = fileService.storeFile(file);
+
+        if (fileName == null) {
+            return new ResponseEntity<>("{\"errors\": \"Could not save file " + file.getName() + "\"}", HttpStatus.NOT_MODIFIED);
+        }
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/downloadFile/")
+                .path(fileName)
+                .toUriString();
+
+        JSONObject json = new JSONObject();
+        json.put("fileName", fileName);
+        json.put("fileSize", file.getSize());
+        json.put("fileType", file.getContentType());
+
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")

@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {Card, Checkbox, CheckmarkIcon, Summary, Title} from '../../Helpers'
-import {fuzzing} from '../../../fuzz'
 import {getCurrentProject, getTestScripts} from '../../../redux/state-peekers/projects'
 import {retrieveTestScripts} from '../../../redux/retrievals/projects'
-import PreviewCard from "../common/PreviewCard"
+import SelectableCardSummary from '../common/SelectableCardSummary'
+import {Title} from '../../Helpers'
+import {setModalState} from '../../../redux/actions'
 
 class ProjectTestSummary extends Component {
 
@@ -17,13 +17,35 @@ class ProjectTestSummary extends Component {
 		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
 			retrieveTestScripts(this.props.project)
 	}
+
+	clickTestScriptCard = (testscript) => {
+        this.props.setModalState(4)
+    }
+
+	renderPreview = (testscript) => {
+	    return (
+            <div>
+                <Title>
+                    <h4>{ testscript.id }</h4>
+                </Title>
+                <div className="h4 break-line header" />
+                <div className="preview-content">
+                    <h5>Points: { testscript.points }</h5>
+                    <h5>Visibility: { testscript.hidden ? 'Hidden' : 'Visible' }</h5>
+                    <h5>Test Suites: { testscript.suites.map((id, index) => (id + (index === testscript.suites.length - 1 ? '' : ', '))) }</h5>
+                </div>
+            </div>
+        )
+    }
 	
 	render() {
 		return (
-			<Summary columns={ 5 }>
-				{
-				}
-			</Summary>
+		    <SelectableCardSummary
+                type='testscripts'
+                values={this.props.testScripts}
+                render={this.renderPreview}
+                onClick={this.clickTestScriptCard}
+            />
 		)
 	}
 }
@@ -35,4 +57,10 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps)(ProjectTestSummary)
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setModalState: (id) => dispatch(setModalState(id)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectTestSummary)

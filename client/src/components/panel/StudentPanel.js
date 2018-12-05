@@ -24,9 +24,9 @@ import ProgressModal from './common/TaskModal'
 class StudentPanel extends Component {
 
     componentDidMount = () => {
-        if(!this.props.currentStudent) {
-            retrieveStudent({id: this.props.match.params.id}, this.props.currentCourseId, this.props.currentSemesterId)
-        }
+   //     if(!this.props.currentStudent) {
+     //       retrieveStudent({id: this.props.match.params.id}, this.props.currentCourseId, this.props.currentSemesterId)
+       // }
     }
 
 	componentWillUnmount() {
