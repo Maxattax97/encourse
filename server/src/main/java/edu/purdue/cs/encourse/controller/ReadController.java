@@ -428,7 +428,10 @@ public class ReadController {
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        String json = returnJson.getJsonObject().toJSONString();
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        String json = returnJson.jsonObject.toJSONString();
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
     
@@ -444,7 +447,7 @@ public class ReadController {
         if (userNames != null) {
             if (userNames.size() == 1) {
                 returnJson = courseService.getStudentCommitList(projectID, userNames.get(0));
-                if (returnJson == null) {
+                if (returnJson == null || returnJson.jsonObject == null) {
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             } else {
@@ -461,7 +464,7 @@ public class ReadController {
             }
         }
 
-        JSONArray json = returnJson.getJsonArray();
+        JSONArray json = (JSONArray) returnJson.getJsonObject().get("data");
         if (json == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -542,11 +545,11 @@ public class ReadController {
         for (String userName: userNames) {
             if (hasPermissionOverAccount(userName)) {
                 JSONReturnable returnJson = courseService.getStudentCommitCounts(projectID, userName);
-                if (returnJson == null) {
+                if (returnJson == null || returnJson.jsonObject == null) {
                     errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
-                String json = returnJson.getJsonObject().toJSONString();
+                String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
                 errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
@@ -584,7 +587,7 @@ public class ReadController {
                         JSONReturnable curr = courseService.getStudentStatistics(projectID, userName);
                         System.out.println(curr);
                         if (curr != null && curr.getJsonObject() != null) {
-                            JSONArray a = curr.getJsonArray();
+                            JSONArray a = (JSONArray) curr.getJsonObject().get("data");
                             JSONObject obj = new JSONObject();
                             obj.put(userName, a);
                             returnJson.add(obj);
@@ -609,7 +612,7 @@ public class ReadController {
                     for (String userName: userNames) {
                         JSONReturnable curr = courseService.getStudentStatistics(projectID, userName);
                         if (curr != null && curr.getJsonObject() != null) {
-                            JSONArray a = curr.getJsonArray();
+                            JSONArray a = (JSONArray) curr.getJsonObject().get("data");
                             JSONObject obj = new JSONObject();
                             obj.put(userName, a);
                             returnJson.add(obj);
@@ -633,7 +636,10 @@ public class ReadController {
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        String json = returnJson.getJsonObject().toJSONString();
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        String json = returnJson.jsonObject.toJSONString();
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
@@ -682,11 +688,11 @@ public class ReadController {
         for (String userName: userNames) {
             if (hasPermissionOverAccount(userName)) {
                 JSONReturnable returnJson = courseService.getStudentAdditionsAndDeletions(projectID, userName);
-                if (returnJson == null) {
+                if (returnJson == null || returnJson.jsonObject == null) {
                     errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
-                String json = returnJson.getJsonObject().toJSONString();
+                String json = returnJson.jsonObject.toJSONString();
                 correct.add(json);
             } else {
                 errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
@@ -706,13 +712,13 @@ public class ReadController {
         JSONReturnable returnJson = null;
         if (hasPermissionOverAccount(userName)) {
             returnJson = courseService.getStudentCommitVelocity(projectID, userName);
-            if (returnJson == null) {
+            if (returnJson == null || returnJson.jsonObject == null) {
                 return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
             }
         } else {
             return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(returnJson.getJsonObject().toJSONString(), HttpStatus.OK);
+        return new ResponseEntity<>(returnJson.jsonObject.toJSONString(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
@@ -839,7 +845,10 @@ public class ReadController {
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        String json = returnJson.getJsonObject().toJSONString();
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        String json = returnJson.jsonObject.toJSONString();
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
     
@@ -866,7 +875,10 @@ public class ReadController {
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        String json = returnJson.getJsonObject().toJSONString();
+        if (returnJson.jsonObject == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        }
+        String json = returnJson.jsonObject.toJSONString();
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
@@ -888,11 +900,11 @@ public class ReadController {
                 break;
             }
         }
-        if (returnJson == null) {
+        if (returnJson == null || returnJson.jsonObject == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        JSONArray json = returnJson.getJsonArray();
+        JSONArray json = (JSONArray) returnJson.getJsonObject().get("data");
         List<JSONObject> jsonValues = new ArrayList<>();
         for (int i = 0; i < json.size(); i++) {
             JSONObject obj = (JSONObject) json.get(i);
