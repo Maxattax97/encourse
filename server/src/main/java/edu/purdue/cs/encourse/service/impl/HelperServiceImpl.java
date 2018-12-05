@@ -34,8 +34,8 @@ public class HelperServiceImpl implements HelperService {
 
     public final Boolean DEBUG = ConfigurationManager.getInstance().debug;
     public final Boolean OBFUSCATE = false;
-    public final String pythonCommand = DEBUG ? "/anaconda3/bin/python" : "python3";
-    public final String pythonPath = "src/main/python/";
+    public final String pythonPath = "src/main/python/encourse/";
+    public final String pythonCommand = DEBUG ? "/anaconda3/bin/python " + pythonPath + "encourse.py": "python3" + pythonPath + "encourse.py";
     public final String tailFilePath = "src/main/temp/";
     public final String testDir = "test-shell";
 
@@ -123,7 +123,7 @@ public class HelperServiceImpl implements HelperService {
             String output;
             String error;
             while ((error = stdError.readLine()) != null) {
-                //System.out.println("Error: " + error);
+                System.out.println("Error: " + error);
             }
             while ((output = stdInput.readLine()) != null) {
                 System.out.println("Output: " + output);
@@ -132,7 +132,7 @@ public class HelperServiceImpl implements HelperService {
                 try {
                     obj = jsonParser.parse(output);
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     json =  new JSONReturnable(-3, null);
                 }
                 if (obj != null) {
@@ -150,7 +150,7 @@ public class HelperServiceImpl implements HelperService {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             json = new JSONReturnable(-2, null);
         }
         return json;
@@ -550,7 +550,7 @@ public class HelperServiceImpl implements HelperService {
      */
     public String countStudentCommitsByDay(@NonNull String projectID, @NonNull String userName) {
         if (DEBUG) {
-            return pythonPath + "test_datasets/sampleCountsDay.txt";
+            return pythonPath + "data/sampleCountsDay.txt";
         }
 
         Project project = projectRepository.findByProjectID(projectID);
@@ -587,7 +587,7 @@ public class HelperServiceImpl implements HelperService {
      */
     public String listAllCommitsByTime(@NonNull String projectID, List<StudentProject> projects) {
         if (DEBUG) {
-            return pythonPath + "test_datasets/sampleCommitList.txt";
+            return pythonPath + "data/sampleCommitList.txt";
         }
 
         Project project = projectRepository.findByProjectID(projectID);
@@ -618,7 +618,7 @@ public class HelperServiceImpl implements HelperService {
      */
     public String listStudentCommitsByTime(@NonNull String projectID, @NonNull String userName) {
         if (DEBUG) {
-            return pythonPath + "test_datasets/sampleCommitList.txt";
+            return pythonPath + "data/sampleCommitList.txt";
         }
 
         Project project = projectRepository.findByProjectID(projectID);
