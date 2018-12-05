@@ -16,7 +16,7 @@ class ProjectNavigation extends Component {
     }
 
     openProjectOptions = () => {
-        history.push('/projects')
+        history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/projects`)
     };
 
     render() {

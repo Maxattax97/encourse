@@ -22,7 +22,7 @@ class StudentReportSummary extends Component {
 
     clickStudentCard = (student) => {
 	    this.props.clearStudent()
-        history.push(`/student-dishonesty/${student.id}`)
+        history.push(`/${this.props.course}/${this.props.semester}/student-dishonesty/${student.id}`)
     }
 
 	renderPreview = (student) => {

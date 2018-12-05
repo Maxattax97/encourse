@@ -25,7 +25,7 @@ class StudentSummary extends Component {
 
 	clickStudentCard = (student) => {
 	    this.props.setCurrentStudent(student)
-	    history.push(`/student/${student.id}`)
+	    history.push(`/${this.props.course}/${this.props.semester}/student/${student.id}`)
 	};
 
 	renderPreview = (student) => {
