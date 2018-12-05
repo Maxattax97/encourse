@@ -614,14 +614,14 @@ public class ReadController {
                                                      @RequestParam(name = "endHash") String endHash,
                                                      @RequestParam(name = "file") String file) {
         String sourceFile;
-        if (hasPermissionOverAccount(userName)) {
+        //if (hasPermissionOverAccount(userName)) {
             sourceFile = courseService.getSourceWithChanges(projectID, userName, startHash, endHash, file);
             if (sourceFile == null) {
                 return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
             }
-        } else {
-            return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
-        }
+        //} else {
+        //    return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
+        //}
 
         String source = "";
         try {
