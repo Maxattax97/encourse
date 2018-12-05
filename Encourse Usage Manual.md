@@ -364,6 +364,10 @@ To view the students summary, scroll the center panel past the **“Course Stati
 
 ### Charts
 
+1. **Student Progress Line Plot**: The y-axis is the estimated grade of the student if they were to be graded at that moment. In order to avoid running too many tests, we only run the tests in the morning at <8 am> after the students have fallen asleep and take the score of the latest code that compiled. The x-axis contains the date previous to when the test was run. As in, if the test was run at 8 am of 1/2, then we're testing the progress made on 1/1, so the test is recorded as progress made on 1/1. The fact that the tests update at 8 am is unique to this statistic - unless specified, other charts use midnight to determine dates.
+2. **Lines of Code Added/Deleted Plot**: The y-axis shows the number of lines of code added in green and the number of lines of code deleted in red. This value is cumulative over every commit up to the date on the x-axis.
+3. **Commit Frequency Plot**: The y-axis shows the number of commits made on a given day.
+
 ### Statistics
 
 ### Feedback
