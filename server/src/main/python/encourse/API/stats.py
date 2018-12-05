@@ -22,7 +22,7 @@ priorities = {
 }
 
 
-def average_statistics(parser, visible, hidden=None, max_changes=None):
+def average_statistics(parser, visible, hidden=None, max_changes=None, timeout=None):
     """Creates a list of statistics for each user
 
     Combines the data from multiple sources into a set of statistics per student
@@ -71,6 +71,9 @@ def average_statistics(parser, visible, hidden=None, max_changes=None):
     """
     if not max_changes:
         max_changes = sys.maxsize
+    if not timeout:
+        timeout = sys.maxsize
+
     users = len(parser.student_log.keys())
     total_additions = 0
     total_deletions = 0
@@ -93,12 +96,12 @@ def average_statistics(parser, visible, hidden=None, max_changes=None):
         start = daily_commits[0]["timestamp"]
         if start < start_date:
             start_date = start
-        end = daily_commits[len(daily_commits)-1]["timestamp"]
+        end = daily_commits[len(daily_commits) - 1]["timestamp"]
         if end > end_date:
             end_date = end
 
         total_commits += len(log.commits)
-        total_time += log.time_estimate
+        total_time += log.estimate_time(log.commits, timeout=timeout)
 
         if user in visible:
             total_vscore += visible[user]["total"]
@@ -110,13 +113,21 @@ def average_statistics(parser, visible, hidden=None, max_changes=None):
     statistics = {
         "Start Date": format_date(start_date),
         "End Date": format_date(end_date),
-        "Additions": "{} lines".format(round(total_additions/float(users))),
-        "Deletions": "{} lines".format(round(total_deletions/float(users))),
-        "Commit Count": "{} commits".format(round(total_commits/float(users))),
-        "Estimated Time Spent" : "{} hours".format(round(total_time/float(users))),
-        "Current Test Score": round(total_vscore/float(vscored_users)) if vscored_users > 0 else 0,
-        "Current Hidden Score": round(total_hscore/float(hscored_users)) if hscored_users > 0 else 0,
-        "Current Total Score": round((total_vscore + total_hscore) / float(vscored_users + hscored_users)) if vscored_users + hscored_users > 0 else 0
+        "Additions": "{} lines".format(round(total_additions / float(users))),
+        "Deletions": "{} lines".format(round(total_deletions / float(users))),
+        "Commit Count": "{} commits".format(round(total_commits / float(users))),
+        "Estimated Time Spent": "{} hours".format(round(total_time / float(users))),
+        "Current Test Score": round(total_vscore / float(vscored_users))
+        if vscored_users > 0
+        else 0,
+        "Current Hidden Score": round(total_hscore / float(hscored_users))
+        if hscored_users > 0
+        else 0,
+        "Current Total Score": round(
+            (total_vscore + total_hscore) / float(vscored_users + hscored_users)
+        )
+        if vscored_users + hscored_users > 0
+        else 0,
     }
 
     stat_array = []
@@ -153,6 +164,7 @@ def jsonprint(args):
     visible_file = args.visiblefile
     hidden_file = args.hiddenfile
     limit = args.limit
+    timeout = args.timeout
 
     parser = GitLog.GitParser(commit_data_file)
     # TODO: check for valid dicts
@@ -160,7 +172,9 @@ def jsonprint(args):
     visible_scores = Progress.currentprogress.progress_from_file(visible_file)
     hidden_scores = Progress.currentprogress.progress_from_file(hidden_file)
 
-    stats = average_statistics(parser, visible_scores, hidden=hidden_scores, max_changes=limit)
+    stats = average_statistics(
+        parser, visible_scores, hidden=hidden_scores, max_changes=limit, timeout=timeout
+    )
     # print(data)
     api_json = json.dumps(stats)
     # Outputs json to stdout

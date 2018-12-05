@@ -71,6 +71,7 @@ def setup_gitlist(parser):
     parser.add_argument("name", help="user name")
     parser.set_defaults(func=API.gitlist.jsonprint)
 
+
 def setup_identical(parser):
     """ Configure identical parser"""
     parser.add_argument(
@@ -91,7 +92,9 @@ def setup_stats(parser):
         "hiddenfile", type=argparse.FileType("r"), help="path to hidden test file"
     )
     parser.add_argument("-t", "--timeout", type=float, help="time spent timeout")
-    parser.add_argument("-l", "--limit", type=int, help="ignore file changes above limit")
+    parser.add_argument(
+        "-l", "--limit", type=int, help="ignore file changes above limit"
+    )
     parser.set_defaults(func=API.stats.jsonprint)
 
 

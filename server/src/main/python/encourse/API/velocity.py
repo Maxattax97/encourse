@@ -29,7 +29,9 @@ def jsonify(
 
     scores = {helper.date_string(x["date"]): x for x in scores}
     hidden_scores = {helper.date_string(x["date"]): x for x in hidden_scores}
-    daily_data = {helper.date_string(day["timestamp"]): day for day in daily_data.commitsByDay()}
+    daily_data = {
+        helper.date_string(day["timestamp"]): day for day in daily_data.commitsByDay()
+    }
 
     velocity_data = []
     cumulative_progress = 0
