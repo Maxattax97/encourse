@@ -35,7 +35,7 @@ export function retrieveStudentsProgressSpecific(project, usernames) {
 }
 
 export function retrieveStudentsTestProgress(project) {
-	store.dispatch(getTestBarGraph(`${api_v1}testSummary?${projectID_v1(project)}}`))
+	store.dispatch(getTestBarGraph(`${api_v1}testSummary?${projectID_v1(project)}`))
 }
 
 export function retrieveStudentsTestProgressSpecific(project, usernames) {
