@@ -542,11 +542,11 @@ public class ReadController {
         for (String userName: userNames) {
             if (hasPermissionOverAccount(userName)) {
                 JSONReturnable returnJson = courseService.getStudentCommitCounts(projectID, userName);
-                if (returnJson == null) {
+                if (returnJson == null || returnJson.getJsonArray() == null) {
                     errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
-                String json = returnJson.getJsonObject().toJSONString();
+                String json = returnJson.getJsonArray().toJSONString();
                 correct.add(json);
             } else {
                 errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
@@ -683,11 +683,11 @@ public class ReadController {
         for (String userName: userNames) {
             if (hasPermissionOverAccount(userName)) {
                 JSONReturnable returnJson = courseService.getStudentAdditionsAndDeletions(projectID, userName);
-                if (returnJson == null) {
+                if (returnJson == null || returnJson.getJsonArray() == null) {
                     errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
-                String json = returnJson.getJsonObject().toJSONString();
+                String json = returnJson.getJsonArray().toJSONString();
                 correct.add(json);
             } else {
                 errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
@@ -816,11 +816,11 @@ public class ReadController {
                 break;
             }
         }
-        if (returnJson == null || returnJson.getJsonArray() == null) {
+        if (returnJson == null || returnJson.getJsonObject() == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
+        return new ResponseEntity<>(returnJson.getJsonObject(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
