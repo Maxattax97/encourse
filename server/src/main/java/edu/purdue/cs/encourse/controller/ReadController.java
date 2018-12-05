@@ -569,6 +569,7 @@ public class ReadController {
             if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                 if (userNames == null) {
                     JSONReturnable curr = professorService.getClassStatistics(projectID);
+                    System.out.println("STATISTICS: " + curr);
                     if (curr != null && curr.getJsonObject() != null) {
                         returnJson.add(curr.getJsonObject());
                     }
@@ -866,8 +867,9 @@ public class ReadController {
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        String json = returnJson.getJsonObject().toJSONString();
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        // TODO: Change back to returnJson.getJsonObject().toJSONString();
+
+        return new ResponseEntity<>(returnJson, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")

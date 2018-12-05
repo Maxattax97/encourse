@@ -30,4 +30,11 @@ public JSONArray getJsonArray() {
     return jsonArray;
 }
 
+@Override
+public String toString() {
+    return "\"errorCode\": " + errorCode + ",\n" +
+            "\"jsonObject\": " + jsonObject.toJSONString() + ",\n" +
+            "\"jsonArray\": " + jsonArray.toJSONString();
+}
+
 }
