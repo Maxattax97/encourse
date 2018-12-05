@@ -92,7 +92,7 @@ The first topic that shall be discussed for this section is file structure. All 
 
 ## Accessing Repositories
 
-Next, proper setup needs to be done in order to automate cloning and pulling git repositories. Since the application does these operations over SSH, the account that is used to run the application should have SSH keys setup to access the server containing the .git files, so that a password is not required for SSH. Also, the scripts used for cloning and pulling, namely `cloneRepositories.sh` and `pullRepositories.sh` in the directory `encourse/server/src/main/bash/` should be changed to the username of the account being SSH’s into on the university server. This setup is required for the application to clone and pull repositories, however it may be desirable to manually initiate cloning and pulling the repositories, which could be done with simple shell scripts. Examples of such scripts can be found in the home directory `reed226` on the VM. 
+Next, proper setup needs to be done in order to automate cloning and pulling git repositories. Since the application does these operations over SSH, the account that is used to run the application should have SSH keys setup to access the server containing the .git files, so that a password is not required for SSH. Also, the scripts used for cloning and pulling, namely `cloneRepositories.sh` and `pullRepositories.sh` in the directory `encourse/server/src/main/bash/` should be changed to the username of the account being SSH’s into on the university server. This setup is required for the application to clone and pull repositories, however it may be desirable to manually initiate cloning and pulling the repositories, which could be done with simple shell scripts. Examples of such scripts can be found in the home directory `reed226` on the VM.
 
 ## Necessary Installations
 
@@ -187,7 +187,7 @@ sudo -u postgres psql
 This  will start the database, if it is not already running, and open a terminal to query the database. If this is a fresh installation of Postgresql, you will need to create databases for the application:
 
 ```plsql
-CREATE DATABASE encourse; 
+CREATE DATABASE encourse;
 CREATE DATABASE encourse_production;
 ```
 
@@ -238,7 +238,7 @@ local.smtp.username={username for email}
 local.smtp.password={password for email}
 ```
 
-Replace the phrases enclosed in braces`{}` with the developer's own account usernames and passwords.  Note that the default settings might need to be changed, for example set `sprint.datasource.url=jdbc:postgresql://localhost:5432/encourse_production` to use the production server, and` local.smtp.host` can be set to other email servers. 
+Replace the phrases enclosed in braces`{}` with the developer's own account usernames and passwords.  Note that the default settings might need to be changed, for example set `sprint.datasource.url=jdbc:postgresql://localhost:5432/encourse_production` to use the production server, and` local.smtp.host` can be set to other email servers.
 
 Once the secret properties are set, the server can be built and tested by going to the `encourse/server/` directory. The following command will builds the Spring application and runs test cases, failing the build if any test case fails:
 
@@ -252,11 +252,11 @@ The next command builds and starts the backend server:
 mvn spring-boot:run
 ```
 
-We recommend that you only run this command on the screen named `production` for the production server, and `testing` for the test server, to avoid confusion. At this point, the backend server should now be running. 
+We recommend that you only run this command on the screen named `production` for the production server, and `testing` for the test server, to avoid confusion. At this point, the backend server should now be running.
 
-* To access the test server, use the URL `vm2.cs.purdue.edu:18443`, which maps to port `443` on the VM. 
+* To access the test server, use the URL `vm2.cs.purdue.edu:18443`, which maps to port `443` on the VM.
 
-* To access the production server, use the URL `vm2.cs.purdue.edu:44389`, which maps to port `443` on the VM. We then redirect this to port `40797` so that the server can listen to the port without root privileges. 
+* To access the production server, use the URL `vm2.cs.purdue.edu:44389`, which maps to port `443` on the VM. We then redirect this to port `40797` so that the server can listen to the port without root privileges.
 
 For a different server, the available ports may be different, so redirect ports accordingly. These URLs should be placed in `encourse/client/src/server.js` so that the client can connect to the server.
 
@@ -269,7 +269,7 @@ npm install
 npm start
 ```
 
-This client can be accessed from a web browser with the URL `vm2.cs.purdue.edu:18080`, which maps to port `8080` on the VM and then redirected to port `3000` which the client then uses. 
+This client can be accessed from a web browser with the URL `vm2.cs.purdue.edu:18080`, which maps to port `8080` on the VM and then redirected to port `3000` which the client then uses.
 
 For the production client, use the screen `client`, change directory to `encourse/client/`, then run the following commands:
 
@@ -279,7 +279,7 @@ npm run-script build
 serve -s build
 ```
 
-This will create a production client to serve, and begin serving the client files. This client can be accessed from a web browser with the URL `vm2.cs.purdue.edu:8089`, which maps to port `80` on the VM and then redirected to port `5000` which the client then uses. 
+This will create a production client to serve, and begin serving the client files. This client can be accessed from a web browser with the URL `vm2.cs.purdue.edu:8089`, which maps to port `80` on the VM and then redirected to port `5000` which the client then uses.
 
 ## Port Redirection
 
@@ -332,13 +332,13 @@ To view the students summary, scroll the center panel past the **“Course Stati
 5. **Selecting the Student Preview**: When hovering over any student preview card, there will be a checkbox input in the top right of the card. Clicking this checkbox will cause a checkmark to appear and the preview to turn blue. This means that the card is now selected. Selecting at least one student preview will make all student preview cards show their respective checkbox input in the top right.
 6. **Clicking the Student Preview**: Clicking anywhere in the student preview card, except for the checkbox, will open that specific students summary page. When you hover over a student preview, a blue outline should appear.
 
-###Filtering and Sorting
+### Filtering and Sorting
 
-You can also use the filter and sort students using the interface just below the header **“Students Summary”**. 
+You can also use the filter and sort students using the interface just below the header **“Students Summary”**.
 
-* The first option is **“Sort by …”** in which you can sort students by their full name, time spent, commit count, or progress made for the current selected project. 
-* The second option, **“... Order”**, allows you to sort the students in ascending or descending order. 
-* For filtering, you can filter by commit count, time spent, or progress. 
+* The first option is **“Sort by …”** in which you can sort students by their full name, time spent, commit count, or progress made for the current selected project.
+* The second option, **“... Order”**, allows you to sort the students in ascending or descending order.
+* For filtering, you can filter by commit count, time spent, or progress.
 
 ### Last Sync & Last Test Ran
 
@@ -346,9 +346,9 @@ The **Last Sync** and **Last Test Ran** values float at the top right section of
 
 ### Projects
 
-All projects are located in the top left section of the screen. 
+All projects are located in the top left section of the screen.
 
-**Switch Projects** - click on any of the available project to display that project's data. 
+**Switch Projects** - click on any of the available project to display that project's data.
 
 **Add A New Project** - click the title section named **“Projects”** or the gear icon. This will open the project settings page for this particular course.
 
@@ -388,6 +388,10 @@ To view the students summary, scroll the center panel past the **“Course Stati
 ### Overview
 
 ### Charts
+
+1. **Student Progress Line Plot**: The y-axis is the estimated grade of the student if they were to be graded at that moment. In order to avoid running too many tests, we only run the tests in the morning at <8 am> after the students have fallen asleep and take the score of the latest code that compiled. The x-axis contains the date previous to when the test was run. As in, if the test was run at 8 am of 1/2, then we're testing the progress made on 1/1, so the test is recorded as progress made on 1/1. The fact that the tests update at 8 am is unique to this statistic - unless specified, other charts use midnight to determine dates.
+2. **Lines of Code Added/Deleted Plot**: The y-axis shows the number of lines of code added in green and the number of lines of code deleted in red. This value is cumulative over every commit up to the date on the x-axis.
+3. **Commit Frequency Plot**: The y-axis shows the number of commits made on a given day.
 
 ### Statistics
 
@@ -429,7 +433,7 @@ All projects are located in the top left section of the screen, fixed there so t
 
 ## Introduction
 
-To maintain the backend server code, a developer should have a solid understanding of Java, Python, and Bash. Likewise, JavaScript, CSS, and HTML are the main languages used on the frontend client. The frontend code, backend Java, Bash, and Python each utilize different coding styles, which will be documented below. As such, an explanation of the code will also be divided between these sections. 
+To maintain the backend server code, a developer should have a solid understanding of Java, Python, and Bash. Likewise, JavaScript, CSS, and HTML are the main languages used on the frontend client. The frontend code, backend Java, Bash, and Python each utilize different coding styles, which will be documented below. As such, an explanation of the code will also be divided between these sections.
 
 **For the remainder of this documentation**:
 
@@ -854,7 +858,7 @@ This configuration is set up by two files, `Scheduler.java` and `SchedulingConfi
 
 ##### Database Configuration and Initialization
 
-There are multiple files that assist in the setup of the database. Firstly, `HibernateConfig.java` specifies the JPA implementation we will use for the application which is Hibernate. [Hibernate](http://hibernate.org/orm/) handles the serialization and deserialization of data structures between Spring and PostgreSQL. Secondly, `StartupFeed.java` populates the database with initial users and accounts for those users. Although it currently is used for testing purposes, least one admin account must be created here in order to authenticate before new accounts are created. 
+There are multiple files that assist in the setup of the database. Firstly, `HibernateConfig.java` specifies the JPA implementation we will use for the application which is Hibernate. [Hibernate](http://hibernate.org/orm/) handles the serialization and deserialization of data structures between Spring and PostgreSQL. Secondly, `StartupFeed.java` populates the database with initial users and accounts for those users. Although it currently is used for testing purposes, least one admin account must be created here in order to authenticate before new accounts are created.
 
 When creating a new account here, use a password encrypted with BCrypt for 4 rounds (use [this site](https://www.dailycred.com/article/bcrypt-calculator) to generate one). Authorities are specified as roles that can be enumerated from Account.Role_Names.
 
@@ -864,7 +868,7 @@ The OAuth client password was also generated this way and can be changed in `ini
 
 The controller component refers to all Java files beneath `encourse/server/src/main/java/edu/purdue/cs/encourse/controller`
 
-There are four java files here named to specify what functions they contain. Most HTTP GET request will be handled by the `ReadController.java` and most HTTP POST requests will be handled by `WriteController.java`. The only exception to this is AuthController.java handles all requests surrounding authentication. 
+There are four java files here named to specify what functions they contain. Most HTTP GET request will be handled by the `ReadController.java` and most HTTP POST requests will be handled by `WriteController.java`. The only exception to this is AuthController.java handles all requests surrounding authentication.
 
 Within these controller classes are methods annotated to handle most of the heavy lifting for the API endpoints. These annotations are described below with a brief description to aid the development process:
 
@@ -884,7 +888,7 @@ The first thing to note about this component is that each Java file is just an i
 
 The domain component refers to all Java classes beneath `encourse/server/src/main/java/edu/purdue/cs/encourse/domain`
 
-This component contains all of the object files used on the backend, so any new objects or relations should be added in this directory. Additionally, the subdirectory named `relations` is also found here, which contains the objects the representing the relations in the database. It is advised that the main (non-relation) objects use a single primary key for accessing it from the database, while the relations have a set of attributes for the key. 
+This component contains all of the object files used on the backend, so any new objects or relations should be added in this directory. Additionally, the subdirectory named `relations` is also found here, which contains the objects the representing the relations in the database. It is advised that the main (non-relation) objects use a single primary key for accessing it from the database, while the relations have a set of attributes for the key.
 
 A single key can represent a set of keys by using the` @EmbeddableId` annotation, which marks an attribute as a key and also allows the attributes within the key to be referenced using `IdAttribute`. For example, to find a list of `StudentProject` with the same student ID, add the function `findByIdStudentID(@NonNull String studentID)` in the corresponding interface. Additionally, relations may also use other attributes such as dates in the key for storing multiple records for the same relation, such as a student project score for each date the project was active. Also note that lombok annotations, [documented here](https://projectlombok.org/features/all), are used for all objects so that boilerplate code such as getters and setters may be avoided. With these annotations, the getters and setters generated are the attribute name prepended by get/set in camelcase, for example, the `@Getter` annotation generates `getDate()` for the attribute date. Otherwise, all object files under this directory follow standard Java conventions.
 
@@ -892,9 +896,9 @@ A single key can represent a set of keys by using the` @EmbeddableId` annotation
 
 The service component refers to all Java classes beneath `encourse/server/src/main/java/edu/purdue/cs/encourse/service`
 
-This component serves as the logic which connects all of the other components, Python, and Bash, so it can be considered to provide the main functionality of the backend. Most of the files under this directory follow the Spring conventions for providing services, which requires an interface for accessing each service. As a result all services have an interface, found directly under this path, and a corresponding class with a name ending in "Impl", found in the `impl` subdirectory. 
+This component serves as the logic which connects all of the other components, Python, and Bash, so it can be considered to provide the main functionality of the backend. Most of the files under this directory follow the Spring conventions for providing services, which requires an interface for accessing each service. As a result all services have an interface, found directly under this path, and a corresponding class with a name ending in "Impl", found in the `impl` subdirectory.
 
-Beneath `impl` is another subdirectory named `helper`, which contains helper classes for the services. For the Impl classes, note that all of the necessary interfaces from the database component are injected using the `@Autowired` annotation. This allows the class to not have a constructor, so that the services themselves can be injected into the controller component. All logic which accesses the database should be placed here, as well as the logic that wraps around Python and Bash scripts so that Java can prep data for the scripts to consume and send the output to the frontend. 
+Beneath `impl` is another subdirectory named `helper`, which contains helper classes for the services. For the Impl classes, note that all of the necessary interfaces from the database component are injected using the `@Autowired` annotation. This allows the class to not have a constructor, so that the services themselves can be injected into the controller component. All logic which accesses the database should be placed here, as well as the logic that wraps around Python and Bash scripts so that Java can prep data for the scripts to consume and send the output to the frontend.
 
 A good way to determine what logic should go into the services is considering if objects must be retrieved from database and/or modified. If so, the logic goes into a service. If not, it might be more fitting to place the code in a script or endpoint. For details on all of the logic currently provided, refer to the Javadocs for EnCourse.
 
@@ -902,9 +906,9 @@ A good way to determine what logic should go into the services is considering if
 
 ### Bash Directory
 
-The bash directory is located at `encourse/server/src/main/bash`, and contains all of the bash scripts which are executed by the Java code. 
+The bash directory is located at `encourse/server/src/main/bash`, and contains all of the bash scripts which are executed by the Java code.
 
-Bash scripts meant to executed independently should not be placed in this directory, they should be placed in a separate directory on the VM. The main purpose of these scripts is to run git commands and modify the state of the database which could not easily be done in Java. For example, bash scripts are used to execute test scripts as another user so that any error in the test scripts will not be catastrophic to the server due to restricted resources and privileges. Otherwise, the bash scripts are fairly simple compared to Java and Python, so should be easy to understand. 
+Bash scripts meant to executed independently should not be placed in this directory, they should be placed in a separate directory on the VM. The main purpose of these scripts is to run git commands and modify the state of the database which could not easily be done in Java. For example, bash scripts are used to execute test scripts as another user so that any error in the test scripts will not be catastrophic to the server due to restricted resources and privileges. Otherwise, the bash scripts are fairly simple compared to Java and Python, so should be easy to understand.
 
 **NOTE**: Be cautious about setting permissions and modifying the student repositories, since any failure to correctly maintain permissions or preserving the state of the student’s commit tree can disrupt their projects or expose their data. This is the only part of the project which directly accesses the student work, and as a result is the only part capable of causing severe disruptions. Be sure to test any changes to these scripts separately and thoroughly before applying them to the production server.
 
