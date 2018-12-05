@@ -104,7 +104,7 @@ public class ReadController {
                 options.put("grades", arr);
             }
 
-        } catch (org.json.simple.parser.ParseException e) {
+        } catch (Exception e) {
             return new ResponseEntity<>("{\"errors\": \"Could not parse body\"}", HttpStatus.BAD_REQUEST);
         }
 
@@ -147,7 +147,7 @@ public class ReadController {
 
         // Filtering
         Map<String, List<Integer>> filters = new HashMap<>();
-        if (projectID != null) {
+        if (projectID != null && !jsonValues.isEmpty()) {
             filters.put("commitCounts", new ArrayList<>());
             filters.put("timeSpent", new ArrayList<>());
             filters.put("grades", new ArrayList<>());
@@ -168,11 +168,11 @@ public class ReadController {
                 int q1 = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() / 4).get(sortName)).get(projectID)).doubleValue();
                 int q3 = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() * 3 / 4).get(sortName)).get(projectID)).doubleValue();
                 int max = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() - 1).get(sortName)).get(projectID)).doubleValue();
-                filters.get(sortName).add(min);
-                filters.get(sortName).add(q1);
-                filters.get(sortName).add(median);
-                filters.get(sortName).add(q3);
-                filters.get(sortName).add(max);
+                filters.get(sortName).add(min > 99 ? (int) Math.floor(min / 100) * 100 : (int) Math.floor(min / 10) * 10);
+                filters.get(sortName).add(q1 > 99 ? Math.round(q1 / 100) * 100 : Math.round(q1 / 10) * 10);
+                filters.get(sortName).add(median > 99 ? Math.round(median / 100) * 100 : Math.round(median / 10) * 10);
+                filters.get(sortName).add(q3 > 99 ? Math.round(q3 / 100) * 100 : Math.round(q3 / 10) * 10);
+                filters.get(sortName).add(max > 99 ? (int) Math.ceil(max / 100) * 100 : (int) Math.ceil(max / 10) * 10);
 
                 if (options.keySet().contains(sortName)) {
                     if (options.get(sortName)[0] < min) {
