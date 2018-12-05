@@ -808,26 +808,20 @@ public class CourseServiceImpl implements CourseService {
         if(commitLogFile == null) {
             return new JSONReturnable(-2, null);
         }
-        String testResult;
-        if (helperService.getDebug()) {
-            testResult = "cutz;Test1:P:1.0;Test2:P:0.5;Test3:P:3.0;Test4:P:1.0;Test5:P:2.0";
-        } else {
-            Student student = studentRepository.findByUserName(userName);
-            StudentProject project = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
-            StringBuilder builder = new StringBuilder();
-            builder.append(student.getUserName());
-            List<StudentProjectTest> testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), false);
-            for(StudentProjectTest t : testResults) {
-                builder.append(";").append(t.getTestResultString());
-            }
-            testResults = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(project.getProjectID(), project.getStudentID(), true);
-            for(StudentProjectTest t : testResults) {
-                builder.append(";").append(t.getTestResultString());
-            }
-            testResult = builder.toString();
+        String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
+        String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
+        Student student = studentRepository.findByUserName(userName);
+        StudentProject project = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(projectID, student.getUserID(), "testall");
+        List<StudentProject> projects = new ArrayList<>();
+        projects.add(project);
+        try {
+            helperService.createTestFiles(visibleTestFile, hiddenTestFile, projects);
+        }
+        catch (IOException e) {
+            return new JSONReturnable(-1, null);
         }
         String pyPath = helperService.getPythonPath() + "get_statistics.py";
-        String command = helperService.getPythonCommand() + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + testResult + " -t 1.0 -l 200";
+        String command = helperService.getPythonCommand() + " " + pyPath + " " + commitLogFile + " " + dailyCountsFile + " " + userName + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         return helperService.runPython(command);
     }
 
