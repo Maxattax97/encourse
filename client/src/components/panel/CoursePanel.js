@@ -12,6 +12,7 @@ import HistoryText from './common/HistoryText'
 import {Title, SettingsIcon, BackNav} from '../Helpers'
 import ProgressModal from "./common/TaskModal"
 import {isAnySelected} from '../../redux/state-peekers/control'
+import CustomRangeModal from './common/CustomRangeModal'
 
 class CoursePanel extends Component {
     render() {
@@ -43,6 +44,7 @@ class CoursePanel extends Component {
 
                 <CourseModal id={1}/>
 				<ProgressModal id={2} />
+                <CustomRangeModal />
 
                 <div className='panel-center-content'>
 

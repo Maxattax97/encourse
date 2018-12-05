@@ -114,9 +114,9 @@ def average_statistics(parser, visible, hidden=None, max_changes=None):
         "Deletions": "{} lines".format(round(total_deletions/float(users))),
         "Commit Count": "{} commits".format(round(total_commits/float(users))),
         "Estimated Time Spent" : "{} hourse".format(round(total_time/float(users))),
-        "Current Test Score": round(total_vscore/float(vscored_users)),
-        "Current Hidden Score": round(total_hscore/float(hscored_users)),
-        "Current Total Score": round((total_vscore + total_hscore) / float(vscored_users + hscored_users))
+        "Current Test Score": round(total_vscore/float(vscored_users)) if vscored_users > 0 else 0,
+        "Current Hidden Score": round(total_hscore/float(hscored_users)) if hscored_users > 0 else 0,
+        "Current Total Score": round((total_vscore + total_hscore) / float(vscored_users + hscored_users)) if vscored_users + hscored_users > 0 else 0
     }
 
     stat_array = []

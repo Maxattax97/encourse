@@ -5,6 +5,8 @@ import moment from 'moment'
 import { connect } from 'react-redux'
 
 import { getProgressPerTime } from '../../../../redux/actions/index'
+import { getCurrentStudent } from '../../../../redux/state-peekers/student'
+import { getCurrentProject } from "../../../../redux/state-peekers/projects"
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
 
@@ -41,14 +43,14 @@ class StudentVelocityPerTime extends Component {
         if(prevProps.isLoading && !this.props.isLoading) {
             this.setState({ formattedData: this.formatApiData(this.props.data) })
         }
-        if (this.props.currentProjectId !== prevProps.currentProjectId) {
+        if (this.props.project.id !== prevProps.project.id) {
             this.fetch(this.props)
         }
     }
 
     fetch = (props) => {
-        if(props.currentProjectId) {
-            props.getData(`${url}/api/velocity?projectID=${props.currentProjectId}&userName=${props.currentStudent.id}`)
+        if(props.project.id && props.student) {
+            props.getData(`${url}/api/velocity?projectID=${props.project.id}&userName=${props.student.id}`)
         }  
     }
 
@@ -116,8 +118,8 @@ class StudentVelocityPerTime extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        student: getCurrentStudent(state),
+		project: getCurrentProject(state),
         data: state.student && state.student.getProgressPerTimeData ? state.student.getProgressPerTimeData : null,
         isLoading: state.student ? state.student.getProgressPerTimeIsLoading : false,
     }

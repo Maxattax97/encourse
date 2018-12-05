@@ -32,7 +32,7 @@ export function clearStudent() {
 }
 
 export const getStudent = genericDispatch(
-    class_type, 'GET', 'GET'
+    class_type, 'GET', 'POST'
 )
 
 export const getProgressLine = genericDispatch(
@@ -69,4 +69,8 @@ export const syncStudentRepository = genericDispatch(
 
 export const runStudentTests = genericDispatch(
     class_type, 'RUN_TESTS', 'POST'
+)
+
+export const getSource = genericDispatch(
+    class_type, 'GET_SOURCE', 'GET'
 )

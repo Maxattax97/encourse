@@ -48,3 +48,12 @@ export function resetFilterState() {
 		type: 'RESET_FILTER_STATE'
 	}
 }
+
+export function setCustomFilterModal(id, value) {
+    return {
+        class: class_type,
+        type: 'SET_CUSTOM_FILTER_MODAL',
+        id,
+        value
+    }
+}

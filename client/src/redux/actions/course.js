@@ -55,7 +55,7 @@ export function setCurrentTA(ta, index) {
 }
 
 export const getStudentPreviews = genericDispatch(
-    class_type, 'GET_STUDENTS', 'GET'
+    class_type, 'GET_STUDENTS', 'POST'
 )
 
 export const getSectionsData = genericDispatch(

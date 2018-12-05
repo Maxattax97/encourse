@@ -133,7 +133,7 @@ public class HelperServiceImpl implements HelperService {
                     obj = jsonParser.parse(output);
                 } catch (ParseException e) {
                     //e.printStackTrace();
-                    json =  new JSONReturnable(-3, null);
+                    json =  new JSONReturnable(-3, (JSONObject) null);
                 }
                 if (obj != null) {
                     JSONObject jsonObject = null;
@@ -144,14 +144,14 @@ public class HelperServiceImpl implements HelperService {
                         JSONArray jsonArray = (JSONArray)obj;
                         jsonObject.put("data", jsonArray);
                     } else {
-                        json = new JSONReturnable(-4, null);
+                        json = new JSONReturnable(-4, (JSONObject) null);
                     }
                     json = new JSONReturnable(1, jsonObject);
                 }
             }
         } catch (IOException e) {
             //e.printStackTrace();
-            json = new JSONReturnable(-2, null);
+            json = new JSONReturnable(-2, (JSONObject) null);
         }
         return json;
     }

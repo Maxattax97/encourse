@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
-import {setModalState} from '../redux/actions'
+import {setFilterState, setModalState} from '../redux/actions'
 import connect from 'react-redux/es/connect/connect'
 import PreviewCard from './panel/common/PreviewCard'
+import {getFilters} from '../redux/state-peekers/control'
+import {setCustomFilterModal} from '../redux/actions/control'
 
 export class Title extends Component {
     render() {
@@ -133,7 +135,7 @@ export class Checkbox extends Component {
     }
 }
 
-export class Dropdown extends Component {
+class DropdownClass extends Component {
 
     constructor(props) {
         super(props)
@@ -161,11 +163,12 @@ export class Dropdown extends Component {
     }
 
     render() {
-        const index = this.props.currentIndex || 0
+        const index = this.props.filters[this.props.filter] || 0
+        const onCustom = typeof index === 'object' && this.props.addCustom
 
 	    const DropdownHeader = React.createElement(this.props.header,
 		    {},
-		    this.props.left ?
+		    onCustom ? 'Custom Range' : this.props.left ?
 			    this.props.text + ' ' + this.props.values[index] :
 			    this.props.values[index] + ' ' + this.props.text
 	    )
@@ -190,18 +193,48 @@ export class Dropdown extends Component {
                     {
                         React.Children.map(options, (child, index) =>
                             <li className='action' onClick={ () => {
-                                this.props.onClick(index)
+                                this.props.setFilterState(this.props.filter, index)
+                                if(this.props.onClick)
+                                    this.props.onClick(index)
                                 this.setState({ show: false })
                             } }>
                                 { child }
                             </li>
                         )
                     }
+                    {
+                        this.props.addCustom ?
+                            <li className='action' onClick={ () => {
+                                console.log(this.props.filters[this.props.filter], onCustom)
+                                this.props.setCustomModal(this.props.filter, onCustom ? this.props.filters[this.props.filter] : null)
+                                this.props.setModalState(-1)
+                                this.setState({ show: false })
+                            } }>
+                                { React.createElement(this.props.header, {}, 'Custom Range') }
+                            </li>
+                            : null
+                    }
                 </ul>
             </div>
         )
     }
+
+    static mapStateToProps = (state) => {
+        return {
+            filters: getFilters(state)
+        }
+    }
+
+    static mapDispatchToProps = (dispatch) => {
+        return {
+            setFilterState: (id, value) => dispatch(setFilterState(id, value)),
+            setCustomModal: (id, value) => dispatch(setCustomFilterModal(id, value)),
+            setModalState: (id) => dispatch(setModalState(id))
+        }
+    }
 }
+
+export const Dropdown = connect(DropdownClass.mapStateToProps, DropdownClass.mapDispatchToProps)(DropdownClass)
 
 export class Chart extends Component {
     render() {

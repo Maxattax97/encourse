@@ -18,6 +18,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -425,11 +428,8 @@ public class ReadController {
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        if (returnJson.jsonObject == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-        }
-        String json = returnJson.jsonObject.toJSONString();
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        // TODO: check if null String json = returnJson.getJsonObject().toJSONString();
+        return new ResponseEntity<>(returnJson, HttpStatus.OK);
     }
     
     @PreAuthorize("isAuthenticated()")
@@ -444,7 +444,7 @@ public class ReadController {
         if (userNames != null) {
             if (userNames.size() == 1) {
                 returnJson = courseService.getStudentCommitList(projectID, userNames.get(0));
-                if (returnJson == null || returnJson.jsonObject == null) {
+                if (returnJson == null) {
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             } else {
@@ -461,7 +461,7 @@ public class ReadController {
             }
         }
 
-        JSONObject json = returnJson.getJsonObject();
+        JSONArray json = returnJson.getJsonArray();
         if (json == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -542,11 +542,11 @@ public class ReadController {
         for (String userName: userNames) {
             if (hasPermissionOverAccount(userName)) {
                 JSONReturnable returnJson = courseService.getStudentCommitCounts(projectID, userName);
-                if (returnJson == null || returnJson.jsonObject == null) {
+                if (returnJson == null) {
                     errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
-                String json = returnJson.jsonObject.toJSONString();
+                String json = returnJson.getJsonObject().toJSONString();
                 correct.add(json);
             } else {
                 errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
@@ -569,6 +569,7 @@ public class ReadController {
             if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                 if (userNames == null) {
                     JSONReturnable curr = professorService.getClassStatistics(projectID);
+                    System.out.println("STATISTICS: " + curr);
                     if (curr != null && curr.getJsonObject() != null) {
                         returnJson.add(curr.getJsonObject());
                     }
@@ -582,8 +583,9 @@ public class ReadController {
                     }
                     for (String userName: userNames) {
                         JSONReturnable curr = courseService.getStudentStatistics(projectID, userName);
+                        System.out.println(curr);
                         if (curr != null && curr.getJsonObject() != null) {
-                            JSONArray a = (JSONArray) curr.getJsonObject().get("data");
+                            JSONArray a = curr.getJsonArray();
                             JSONObject obj = new JSONObject();
                             obj.put(userName, a);
                             returnJson.add(obj);
@@ -608,7 +610,7 @@ public class ReadController {
                     for (String userName: userNames) {
                         JSONReturnable curr = courseService.getStudentStatistics(projectID, userName);
                         if (curr != null && curr.getJsonObject() != null) {
-                            JSONArray a = (JSONArray) curr.getJsonObject().get("data");
+                            JSONArray a = curr.getJsonArray();
                             JSONObject obj = new JSONObject();
                             obj.put(userName, a);
                             returnJson.add(obj);
@@ -632,11 +634,8 @@ public class ReadController {
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        if (returnJson.jsonObject == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-        }
-        String json = returnJson.jsonObject.toJSONString();
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        // TODO: check which type String json = returnJson.getJsonObject().toJSONString();
+        return new ResponseEntity<>(returnJson, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -646,15 +645,32 @@ public class ReadController {
                                                      @RequestParam(name = "startHash") String startHash,
                                                      @RequestParam(name = "endHash") String endHash,
                                                      @RequestParam(name = "file") String file) {
-        String source;
+        String sourceFile;
         if (hasPermissionOverAccount(userName)) {
-            source = courseService.getSourceWithChanges(projectID, userName, startHash, endHash, file);
-            if (source == null) {
+            sourceFile = courseService.getSourceWithChanges(projectID, userName, startHash, endHash, file);
+            if (sourceFile == null) {
                 return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
             }
         } else {
             return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
         }
+
+        String source = "";
+        try {
+            File tempFile = new File(sourceFile);
+            if (tempFile.exists()) {
+                System.out.println("FILE " + sourceFile + " EXISTS");
+            }
+            BufferedReader reader = new BufferedReader(new FileReader(tempFile));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                source += line;
+            }
+            System.out.println("FILE CONTENTS: " + source);
+        } catch (Exception e) {
+            return new ResponseEntity<>("{\"errors\": \"" + sourceFile + " does not have content\"}", HttpStatus.NO_CONTENT);
+        }
+
         return new ResponseEntity<>(source, HttpStatus.OK);
     }
 
@@ -667,11 +683,11 @@ public class ReadController {
         for (String userName: userNames) {
             if (hasPermissionOverAccount(userName)) {
                 JSONReturnable returnJson = courseService.getStudentAdditionsAndDeletions(projectID, userName);
-                if (returnJson == null || returnJson.jsonObject == null) {
+                if (returnJson == null) {
                     errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
-                String json = returnJson.jsonObject.toJSONString();
+                String json = returnJson.getJsonObject().toJSONString();
                 correct.add(json);
             } else {
                 errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
@@ -691,13 +707,13 @@ public class ReadController {
         JSONReturnable returnJson = null;
         if (hasPermissionOverAccount(userName)) {
             returnJson = courseService.getStudentCommitVelocity(projectID, userName);
-            if (returnJson == null || returnJson.jsonObject == null) {
+            if (returnJson == null) {
                 return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
             }
         } else {
             return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(returnJson.jsonObject.toJSONString(), HttpStatus.OK);
+        return new ResponseEntity<>(returnJson.getJsonObject().toJSONString(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
@@ -824,10 +840,7 @@ public class ReadController {
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        if (returnJson.jsonObject == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-        }
-        String json = returnJson.jsonObject.toJSONString();
+        String json = returnJson.getJsonObject().toJSONString();
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
     
@@ -851,14 +864,11 @@ public class ReadController {
                 break;
             }
         }
-        if (returnJson == null) {
+        if (returnJson == null || returnJson.getJsonArray() == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        if (returnJson.jsonObject == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-        }
-        String json = returnJson.jsonObject.toJSONString();
-        return new ResponseEntity<>(json, HttpStatus.OK);
+
+        return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
@@ -879,11 +889,11 @@ public class ReadController {
                 break;
             }
         }
-        if (returnJson == null || returnJson.jsonObject == null) {
+        if (returnJson == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        JSONArray json = (JSONArray) returnJson.getJsonObject().get("data");
+        JSONArray json = returnJson.getJsonArray();
         List<JSONObject> jsonValues = new ArrayList<>();
         for (int i = 0; i < json.size(); i++) {
             JSONObject obj = (JSONObject) json.get(i);

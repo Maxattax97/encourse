@@ -1,14 +1,21 @@
 package edu.purdue.cs.encourse.util;
 
 import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
 
 public class JSONReturnable {
 public int errorCode;
-public JSONObject jsonObject;
+private JSONObject jsonObject;
+private JSONArray jsonArray;
 
 public JSONReturnable(int errorCode, JSONObject jsonObject) {
     this.errorCode = errorCode;
     this.jsonObject = jsonObject;
+}
+
+public JSONReturnable(int errorCode, JSONArray jsonArray) {
+    this.errorCode = errorCode;
+    this.jsonArray = jsonArray;
 }
 
 public int getErrorCode() {
@@ -16,6 +23,18 @@ public int getErrorCode() {
                                          }
 
 public JSONObject getJsonObject() {
-                                return jsonObject;
-                                                  }
+    return jsonObject;
+}
+
+public JSONArray getJsonArray() {
+    return jsonArray;
+}
+
+@Override
+public String toString() {
+    return "\"errorCode\": " + errorCode + ",\n" +
+            "\"jsonObject\": " + jsonObject + ",\n" +
+            "\"jsonArray\": " + jsonArray;
+}
+
 }
