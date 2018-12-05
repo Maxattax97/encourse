@@ -10,7 +10,9 @@ import {
 import {api_v1, page_v1, projectID_v1, size_v1, studentID_v1, courseID_v1, semester_v1} from "./retrieval-utils"
 
 export function retrieveStudent(student, courseID, semester) {
-	store.dispatch(getStudent(`${api_v1}studentsData?${courseID_v1(courseID)}&${semester_v1(semester)}&${studentID_v1(student)}`))
+	store.dispatch(getStudent(`${api_v1}studentsData?${courseID_v1(courseID)}&${semester_v1(semester)}`), {}, JSON.stringify({
+		userNames: [student.id]
+	}))
 }
 
 export function retrieveStudentStats(student, project) {

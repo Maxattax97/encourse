@@ -1,5 +1,5 @@
 export function genericDispatch(actionClass, type, method) {
-	return (url, headers = {}, body, extra) => {
+	return (url, headers, body, extra) => {
 		return {
             type,
             class: actionClass,

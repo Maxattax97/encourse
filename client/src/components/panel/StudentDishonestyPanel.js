@@ -17,7 +17,9 @@ class StudentDishonestyPanel extends Component {
 
     componentDidMount = () => {
         if(!this.props.student) {
-            this.props.getStudent(`${url}/api/studentsData?courseID=${this.props.currentCourseId}&semester=${this.props.currentSemesterId}&userName=${this.props.match.params.id}`)
+            this.props.getStudent(`${url}/api/studentsData?courseID=${this.props.currentCourseId}&semester=${this.props.currentSemesterId}`, JSON.stringify({
+                userNames: [this.props.match.params.id]
+            }))
         }
     }
 
@@ -81,7 +83,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getStudent: (url, headers, body) => dispatch(getStudent(url, headers, body)),
+        getStudent: (url, body) => dispatch(getStudent(url, {}, body)),
         syncStudentRepository: (url, headers, body) => dispatch(syncStudentRepository(url, headers, body)),
         runStudentTests: (url, headers, body) => dispatch(runStudentTests(url, headers, body)),
         clearStudent: () => dispatch(clearStudent),
