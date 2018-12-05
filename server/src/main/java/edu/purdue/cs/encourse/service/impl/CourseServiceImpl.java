@@ -867,8 +867,8 @@ public class CourseServiceImpl implements CourseService {
 
     /**
      * Obtains a specified source file with changes between specified commit hashes
-     * Hashes will typically be the last commit on the previous day for start and last commit on the current dsy for end
-     * Primerily used to show a file with all changes between the hashes
+     * Hashes will typically be the last commit on the previous day for start and last commit on the current day for end
+     * Primarily used to show a file with all changes between the hashes
      *
      * @param projectID         Identifier for project that source is being taken from
      * @param userName          Front-end identifier for student whose source is being shown
