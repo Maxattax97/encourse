@@ -12,6 +12,7 @@ from API import stats
 from API import commitcount
 from API import changes
 from API import gitlist
+from API import identical
 from API import student_progress
 from API import class_progress
 from API import test_summary
@@ -34,6 +35,7 @@ __all__ = [
     "commitcounts",
     "changes",
     "gitlist",
+    "identical",
     "student_progress",
     "class_progress",
     "test_summary",

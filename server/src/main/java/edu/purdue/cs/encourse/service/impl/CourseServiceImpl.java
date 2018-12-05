@@ -479,7 +479,7 @@ public class CourseServiceImpl implements CourseService {
         } catch (Exception e) {
             return new JSONReturnable(-3, (JSONObject) null);
         }
-        String command = helperService.getPythonCommand() + " cheating " + helperService.getPythonPath() + diffsFile;
+        String command = helperService.getPythonCommand() + " identical " + helperService.getPythonPath() + diffsFile;
         JSONReturnable json = helperService.runPython(command);
         return json;
     }
