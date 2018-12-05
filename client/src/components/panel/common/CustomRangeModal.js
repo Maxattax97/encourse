@@ -57,7 +57,7 @@ class CustomRangeModal extends Component {
         this.props.setModalState(0)
 
         if(this.props.type && (this.state.start || this.state.end))
-            this.props.setFilterState(this.props.type.id, {start: start || 0, end: end || start})
+            this.props.setFilterState(this.props.type.id, {min: start || 0, max: end || start})
     }
 
     render() {
