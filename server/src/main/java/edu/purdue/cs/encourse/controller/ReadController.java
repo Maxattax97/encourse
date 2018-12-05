@@ -428,8 +428,8 @@ public class ReadController {
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        String json = returnJson.getJsonObject().toJSONString();
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        // TODO: check if null String json = returnJson.getJsonObject().toJSONString();
+        return new ResponseEntity<>(returnJson, HttpStatus.OK);
     }
     
     @PreAuthorize("isAuthenticated()")
@@ -634,8 +634,8 @@ public class ReadController {
         if (returnJson == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        String json = returnJson.getJsonObject().toJSONString();
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        // TODO: check which type String json = returnJson.getJsonObject().toJSONString();
+        return new ResponseEntity<>(returnJson, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -864,12 +864,11 @@ public class ReadController {
                 break;
             }
         }
-        if (returnJson == null) {
+        if (returnJson == null || returnJson.getJsonArray() == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        // TODO: Change back to returnJson.getJsonObject().toJSONString();
 
-        return new ResponseEntity<>(returnJson, HttpStatus.OK);
+        return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
