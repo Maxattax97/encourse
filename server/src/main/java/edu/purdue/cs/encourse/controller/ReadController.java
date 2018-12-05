@@ -51,7 +51,7 @@ public class ReadController {
     public @ResponseBody ResponseEntity<?> getStudentData(@RequestParam(name = "courseID") String courseID,
                                                           @RequestParam(name = "semester") String semester,
                                                           @RequestParam(name = "projectID", required = false) String projectID,
-                                                          @RequestBody String body) {
+                                                          @RequestBody(required = false) String body) {
         List<String> userNames = new ArrayList<>();
         Map<String, int[]> options = new HashMap<>(); // option: [min, max]
         int page = 1;
@@ -161,7 +161,7 @@ public class ReadController {
                     double valB = ((Number) jsonB.get(projectID)).doubleValue();
                     return Double.compare(valA, valB);
                 };
-                jsonValues.sort(order == 0 ? compare : compare.reversed());
+                jsonValues.sort(compare);
 
                 int min = (int) ((Number) ((TreeMap) jsonValues.get(0).get(sortName)).get(projectID)).doubleValue();
                 int median = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() / 2).get(sortName)).get(projectID)).doubleValue();
@@ -173,6 +173,7 @@ public class ReadController {
                 filters.get(sortName).add(median > 99 ? Math.round(median / 100) * 100 : Math.round(median / 10) * 10);
                 filters.get(sortName).add(q3 > 99 ? Math.round(q3 / 100) * 100 : Math.round(q3 / 10) * 10);
                 filters.get(sortName).add(max > 99 ? (int) Math.ceil(max / 100) * 100 : (int) Math.ceil(max / 10) * 10);
+                filters.replace(sortName, new ArrayList<>(new HashSet<>(filters.get(sortName))));
 
                 if (options.keySet().contains(sortName)) {
                     if (options.get(sortName)[0] < min) {
