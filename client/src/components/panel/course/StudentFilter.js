@@ -24,7 +24,7 @@ class StudentFilter extends Component {
             <div className='course-students'>
                 <h3 className='header'>Students Summary</h3>
                 {
-                    this.props.students.length ?
+                    this.props.students.data ?
                         <Filter>
 	                        <Checkbox onClick={() => this.props.toggleSelectAllCards()}>
                                 {

@@ -5,7 +5,7 @@ import {
 	retrieveCourseTestProgress,
 	retrieveStudentsTestProgress
 } from "../../../../redux/retrievals/course"
-import {getCurrentProject} from "../../../../redux/state-peekers/project"
+import {getCurrentProject} from "../../../../redux/state-peekers/projects"
 import {
 	getCourseTestProgress,
 	getStudentsTestProgress

@@ -11,7 +11,7 @@ import StudentDishonestyCharts from "./student-dishonesty/StudentDishonestyChart
 import ShareReportModal from "./common/ShareReportModal"
 import {getCurrentStudent} from '../../redux/state-peekers/student'
 import TaskModal from './common/TaskModal'
-import {getCurrentProject} from '../../redux/state-peekers/project'
+import {getCurrentProject} from '../../redux/state-peekers/projects'
 
 class StudentDishonestyPanel extends Component {
 

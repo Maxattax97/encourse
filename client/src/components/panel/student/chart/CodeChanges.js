@@ -9,7 +9,7 @@ import {
 	getCurrentStudent,
 	getStudentCodeChanges
 } from "../../../../redux/state-peekers/student"
-import {getCurrentProject} from "../../../../redux/state-peekers/project"
+import {getCurrentProject} from "../../../../redux/state-peekers/projects"
 
 class CodeChanges extends Component {
 

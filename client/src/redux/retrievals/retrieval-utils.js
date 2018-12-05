@@ -13,3 +13,5 @@ export const semester_v1 = semester => 'semester=' + semester
 export const page_v1 = page => 'page=' + page
 
 export const size_v1 = size => 'size=' + size
+
+export const anon_v1 = 'anonymous=true'

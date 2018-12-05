@@ -8,7 +8,7 @@ import {
 	retrieveStudentsSimilarity
 } from "../../../../redux/retrievals/course"
 import {getStudentsSimilarity} from "../../../../redux/state-peekers/course"
-import {getCurrentProject} from "../../../../redux/state-peekers/project"
+import {getCurrentProject} from "../../../../redux/state-peekers/projects"
 
 class StudentsSimilarity extends Component {
 

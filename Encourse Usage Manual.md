@@ -586,7 +586,7 @@ client/src
 │   │   ├── admin.js
 │   │   ├── control.js
 │   │   ├── course.js
-│   │   ├── project.js
+│   │   ├── projects.js
 │   │   └── student.js
 │   └── store.js
 ├── registerServiceWorker.js

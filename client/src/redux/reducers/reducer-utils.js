@@ -31,8 +31,8 @@ export function resetData(type) {
 	}
 }
 
-export function forwardData(state, action, name, dataFunction) {
-    const data = (action.data ? dataFunction ? dataFunction(action.data, action.extra, state) : action.data : state[name] ? state[name].data : [])
+export function forwardData(state, action, name, dataFunction, pagination) {
+    let data = (action.data ? dataFunction ? dataFunction(pagination ? action.data.content : action.data, action.extra, state) : pagination ? action.data.content : action.data : state[name] ? state[name].data : [])
 
 	return {
 		...state,
@@ -40,6 +40,7 @@ export function forwardData(state, action, name, dataFunction) {
 			[name]: {
 				error: action.hasError,
 				loading: !(action.hasError) && !(action.data),
+                page: pagination && action.data ? {...action.data, content: null} : null,
 				data: data
 			}
 		}

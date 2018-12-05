@@ -2,10 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
-import { defaultCourse, defaultSemester } from '../../defaults'
 import { getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, 
-        runTests, syncRepositories, updateStudentsPage, resetStudentsPage,
-        setCurrentCourse, setCurrentSemester } from '../../redux/actions'
+        runTests, syncRepositories } from '../../redux/actions'
 import { getCurrentCourseId, getCurrentSemesterId } from '../../redux/state-peekers/course'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import {CourseModal, AnonymousCharts, Charts, CourseStatistics, CourseStudentFilter} from './course'
@@ -13,26 +11,9 @@ import ActionNavigation from '../navigation/ActionNavigation'
 import HistoryText from './common/HistoryText'
 import {Title, SettingsIcon, BackNav} from '../Helpers'
 import ProgressModal from "./common/TaskModal"
+import {isAnySelected} from '../../redux/state-peekers/control'
 
 class CoursePanel extends Component {
-
-    componentDidMount = () => {
-        const course = this.props.match.params.courseID
-        const semester = this.props.match.params.semesterID
-        if(/^((Fall)|(Spring)|(Summer))2[0-9][0-9][0-9]$/.test(semester)) {
-            this.props.setCurrentSemester(semester)
-        } else {
-            history.push(`/course/${course}/${defaultSemester}`)
-        }
-
-        if(/^[a-z]+[0-9]{3,}$/.test(course)) {
-            this.props.setCurrentCourse(course)
-        } else {
-            history.push(`/course/${defaultCourse}/${semester}`)
-        }
-
-    }
-
     render() {
 
         const action_names = [
@@ -42,9 +23,9 @@ class CoursePanel extends Component {
         ]
 
         const actions = [
-            () => { history.push('/manage-tas') },
+            () => { history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/manage-tas`) },
             () => { this.props.setModalState(2) },
-            () => { history.push('/course-dishonesty') }
+            () => { history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/course-dishonesty`) }
         ]
 
         return (
@@ -75,17 +56,30 @@ class CoursePanel extends Component {
                         <h3 className='header'>Course Charts Summary</h3>
                         <AnonymousCharts />
 
-	                    <div className='h1 break-line' />
-	                    <h3 className='header'>Students Charts Summary</h3>
-                        <Charts/>
+                        {
+                            this.props.isAnySelected ?
+                                <div>
+                                    <div className='h1 break-line' />
+                                    <h3 className='header'>Students Charts Summary</h3>
+                                    <Charts/>
+                                </div>
+                                : null
+                        }
 
                         <div className='h1 break-line' />
                         <h3 className='header'>Course Statistics</h3>
                         <CourseStatistics anon />
 
-                        <div className='h1 break-line' />
-                        <h3 className='header'>Students Statistics</h3>
-                        <CourseStatistics />
+                        {
+                            this.props.isAnySelected ?
+                                <div>
+                                    <div className='h1 break-line' />
+                                    <h3 className='header'>Students Statistics</h3>
+                                    <CourseStatistics />
+                                </div>
+                                : null
+                        }
+
 
                         <div className='h1 break-line' />
 
@@ -101,6 +95,7 @@ const mapStateToProps = (state) => {
     return {
         currentCourseId: getCurrentCourseId(state),
         currentSemesterId: getCurrentSemesterId(state),
+        isAnySelected: isAnySelected(state, 'students')
     }
 }
 
@@ -109,13 +104,9 @@ const mapDispatchToProps = (dispatch) => {
         getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
         setCurrentProject: (id, index) => dispatch(setCurrentProject(id, index)),
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
-        setCurrentCourse: (id) => dispatch(setCurrentCourse(id)),
-        setCurrentSemester: (id) => dispatch(setCurrentSemester(id)),
         setModalState: (id) => dispatch(setModalState(id)),
         runTests: (url, headers, body) => dispatch(runTests(url, headers, body)),
         syncRepositories: (url, headers, body) => dispatch(syncRepositories(url, headers, body)),
-        updateStudentsPage: () => dispatch(updateStudentsPage()),
-        resetStudentsPage: () => dispatch(resetStudentsPage()),
     }
 }
 
