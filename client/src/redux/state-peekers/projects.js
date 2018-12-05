@@ -10,3 +10,7 @@ export function getCurrentProject(state) {
 	const projects = getProjects(state)
 	return projects.length ? projects[getCurrentProjectIndex(state)] : null
 }
+
+export function getTestScripts(state) {
+	return state.projects && state.projects.getTestScriptsData ? state.projects.getTestScriptsData : []
+}

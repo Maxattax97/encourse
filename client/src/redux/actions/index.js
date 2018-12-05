@@ -10,7 +10,7 @@ export {
 export {
     setCurrentProject, toggleHidden,
     getClassProjects, modifyProject, addProject, deleteProject,
-    addTest, runTestSuite
+    addTest, runTestSuite, getTestScripts
 } from './projects'
 
 export {
