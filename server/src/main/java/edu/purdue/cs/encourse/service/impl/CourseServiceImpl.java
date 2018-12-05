@@ -895,6 +895,22 @@ public class CourseServiceImpl implements CourseService {
         if(helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + startCommitHash + " " + endCommitHash + " " + sourceName) < 0) {
             return null;
         }
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            int count = 0;
+            while(reader.readLine() != null && count < 3) {
+                count++;
+            }
+            reader.close();
+            if(count < 3) {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+                writer.write("No changes found from commit hash " + startCommitHash + " to hash " + endCommitHash + " for file " + sourceName);
+                writer.close();
+            }
+        }
+        catch(IOException e) {
+            return null;
+        }
         return fileName;
     }
 
