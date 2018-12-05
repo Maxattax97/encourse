@@ -32,15 +32,13 @@ class StudentReportFilter extends Component {
 	                        <Dropdown header='h5'
 	                                  text='Sort by'
 	                                  values={ this.sort_by_ranges }
-	                                  currentIndex={this.props.filters.sort_by}
-							          onClick={ (index) => this.props.setFilterState('sort_by', index) }
+                                      filter='sort_by'
 							          left />
 
 	                        <Dropdown header='h5'
 	                                  text='Order'
 	                                  values={ this.order_ranges }
-	                                  currentIndex={ this.props.filters.order_by }
-							          onClick={ (index) => this.props.setFilterState('order_by', index) }
+                                      filter='order_by'
 							          right />
 	                    </Filter>
 	                    :

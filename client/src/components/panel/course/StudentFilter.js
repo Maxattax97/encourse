@@ -37,43 +37,41 @@ class StudentFilter extends Component {
 	                        <Dropdown header='h5'
 	                                  text='Sort by'
 	                                  values={this.sort_by_values}
-	                                  currentIndex={this.props.filters.sort_by}
-	                                  onClick={ (index) => this.props.setFilterState('sort_by', index) }
+                                      filter='sort_by'
 	                                  left/>
 
                             <Dropdown header='h5'
                                       text='Order'
                                       values={this.order_values}
-                                      currentIndex={this.props.filters.order_by}
-                                      onClick={ (index) => this.props.setFilterState('order_by', index) }
+                                      filter='order_by'
                                       right />
 
                             <Dropdown header='h5'
                                       text='Commits'
                                       values={this.commit_values}
-                                      currentIndex={this.props.filters.commit_filter}
-                                      onClick={ (index) => this.props.setFilterState('commit_filter', index) }
+                                      filter='commit_filter'
+                                      addCustom
                                       right />
 
                             <Dropdown header='h5'
                                       text='Hours'
                                       values={this.time_values}
-                                      currentIndex={this.props.filters.hour_filter}
-                                      onClick={ (index) => this.props.setFilterState('hour_filter', index) }
+                                      filter='hour_filter'
+                                      addCustom
                                       right/>
 
                             <Dropdown header='h5'
                                       text='Progress'
                                       values={this.progress_values}
-                                      currentIndex={this.props.filters.progress_filter}
-                                      onClick={ (index) => this.props.setFilterState('progress_filter', index) }
+                                      filter='progress_filter'
+                                      addCustom
                                       right />
 
 	                        <Dropdown header='h5'
 	                                  text='View'
 	                                  values={this.view_values}
-	                                  currentIndex={this.props.filters.view_filter}
-	                                  onClick={ (index) => this.props.setFilterState('view_filter', index) }
+                                      filter='view_filter'
+                                      addCustom
 	                                  left/>
                         </Filter>
                         :
@@ -88,15 +86,13 @@ class StudentFilter extends Component {
 const mapStateToProps = (state) => {
     return {
         students: getStudents(state),
-        selectedAllStudents: getAllSelected(state, 'students'),
-        filters: getFilters(state)
+        selectedAllStudents: getAllSelected(state, 'students')
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
 	    toggleSelectAllCards: () => dispatch(toggleSelectAllCards('students')),
-        setFilterState: (id, value) => dispatch(setFilterState(id, value)),
         resetFilterState: () => dispatch(resetFilterState())
     }
 }

@@ -32,8 +32,7 @@ class StudentAssignFilter extends Component {
                             <Dropdown header='h5'
                                       text='Order'
                                       values={this.order_values}
-                                      currentIndex={this.props.filters.order_by}
-                                      onClick={ (index) => this.props.setFilterState('order_by', index) }
+                                      filter='order_by'
                                       right />
 
                         </Filter>

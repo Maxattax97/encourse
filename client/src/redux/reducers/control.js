@@ -74,8 +74,19 @@ function setFilterState(state, action) {
 function resetFilterState(state, action) {
 	return {
 		...state,
-		filters: {}
+		filters: {},
+        filterModal: null
 	}
+}
+
+function setFilterModal(state, action) {
+    return {
+        ...state,
+        filterModal: {
+            id: action.id,
+            value: action.value
+        }
+    }
 }
 
 export default function control(state = {}, action) {
@@ -95,6 +106,8 @@ export default function control(state = {}, action) {
 			return setFilterState(state, action)
 		case 'RESET_FILTER_STATE':
 			return resetFilterState(state, action)
+        case 'SET_CUSTOM_FILTER_MODAL':
+            return setFilterModal(state, action)
 		default:
 			return unknownAction(state, action)
 	}
