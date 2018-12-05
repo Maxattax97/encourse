@@ -65,17 +65,19 @@ public class ReadController {
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(body);
             if (json.keySet().contains("userNames")) {
-                String[] names = (String[]) json.get("userNames");
+                String[] names = new String[2];
+                ((JSONArray) json.get("userNames")).toArray(names);
                 for(String name: names) userNames.add(name);
             }
+
             if (json.keySet().contains("page")) {
-                page = (Integer) json.get("page");
+                page = ((Number) json.get("page")).intValue();
             }
             if (json.keySet().contains("size")) {
-                size = (Integer) json.get("size");
+                size = ((Number) json.get("size")).intValue();
             }
             if (json.keySet().contains("order")) {
-                order = (Integer) json.get("order");
+                order = ((Number) json.get("order")).intValue();
             }
             if (json.keySet().contains("sortBy")) {
                 sortBy = (String) json.get("sortBy");
@@ -87,18 +89,18 @@ public class ReadController {
             }
 
             if (json.keySet().contains("commit")) {
-                Map<String, Integer> values = (TreeMap) json.get("commit");
-                int[] arr = {values.get("min"), values.get("max")};
+                Map<String, Integer> values = (Map) json.get("commit");
+                int[] arr = {((Number) values.get("min")).intValue(), ((Number) values.get("max")).intValue()};
                 options.put("commit", arr);
             }
             if (json.keySet().contains("hours")) {
-                Map<String, Integer> values = (TreeMap) json.get("hours");
-                int[] arr = {values.get("min"), values.get("max")};
+                Map<String, Integer> values = (Map) json.get("hours");
+                int[] arr = {((Number) values.get("min")).intValue(), ((Number) values.get("max")).intValue()};
                 options.put("hours", arr);
             }
             if (json.keySet().contains("progress")) {
-                Map<String, Integer> values = (TreeMap) json.get("progress");
-                int[] arr = {values.get("min"), values.get("max")};
+                Map<String, Integer> values = (Map) json.get("progress");
+                int[] arr = {((Number) values.get("min")).intValue(), ((Number) values.get("max")).intValue()};
                 options.put("progress", arr);
             }
 
