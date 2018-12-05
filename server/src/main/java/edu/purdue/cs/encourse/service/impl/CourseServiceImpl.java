@@ -524,7 +524,7 @@ public class CourseServiceImpl implements CourseService {
         } catch (IOException e) {
             return new JSONReturnable(-3, (JSONObject) null);
         }
-        String command = helperService.getPythonCommand() + " statistics " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
+        String command = helperService.getPythonCommand() + " stats " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         JSONReturnable json = helperService.runPython(command);
         return json;
     }
