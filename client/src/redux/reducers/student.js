@@ -30,7 +30,7 @@ function formatCommitFrequency(udata) {
 	if (!udata) {
 		return []
 	}
-	let data = udata.data
+	let data = udata
 
 	if (!data || data.length === 0) {
 		return []
@@ -44,10 +44,10 @@ function formatCommitFrequency(udata) {
 }
 
 function formatCodeChanges(udata) {
-	if (!udata || !udata.data) {
+	if (!udata || !udata) {
 		return []
 	}
-	const data = udata.data
+	const data = udata
 
 	for (let entry of data) {
 		entry.date = moment(entry.date).valueOf()
@@ -85,10 +85,10 @@ function formatCodeChanges(udata) {
 }
 
 function formatStudentProgress(udata) {
-	if (!udata || !udata.data) {
+	if (!udata || !udata) {
 		return []
 	}
-	const data = udata.data
+	const data = udata
 	for (let entry of data) {
 		entry.date = moment(entry.date).valueOf()
 	}

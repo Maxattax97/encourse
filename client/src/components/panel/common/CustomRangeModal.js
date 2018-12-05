@@ -17,15 +17,28 @@ class CustomRangeModal extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if(this.props.type && this.props.type.value && (!prevProps.type || !prevProps.type.value || this.props.type.id !== prevProps.type.id || this.props.type.value.start !== prevProps.type.value.start || this.props.type.value.end !== prevProps.type.value.end))
+        if(!this.props.type)
+            return
+
+        const start = (this.props.type.value || {}).start
+        const end = (this.props.type.value || {}).end
+
+        if(!prevProps.type) {
             this.setState({
-                start: this.props.type.value.start,
-                end: this.props.type.value.end
+                start,
+                end
             })
-    }
+            return
+        }
 
-    clear = () => {
+        const prevStart = (prevProps.type.value || {}).start
+        const prevEnd = (prevProps.type.value || {}).end
 
+        if(prevProps.type.id !== this.props.type.id || prevStart !== start || prevEnd !== end)
+            this.setState({
+                start,
+                end
+            })
     }
 
     onChange = (event) => {
@@ -43,8 +56,8 @@ class CustomRangeModal extends Component {
 
         this.props.setModalState(0)
 
-        if(this.props.type)
-            this.props.setFilterState(this.props.type.id, {start, end})
+        if(this.props.type && (this.state.start || this.state.end))
+            this.props.setFilterState(this.props.type.id, {start: start || 0, end: end || start})
     }
 
     render() {

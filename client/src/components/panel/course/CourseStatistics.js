@@ -6,7 +6,7 @@ import {retrieveCourseStats} from "../../../redux/retrievals/course"
 import {getCourseStats, getStudentsStats} from '../../../redux/state-peekers/course'
 import {getCurrentProject} from "../../../redux/state-peekers/projects"
 
-class StudentStatistics extends Component {
+class CourseStatistics extends Component {
 
 	componentDidMount() {
 		if(this.props.project)
@@ -32,4 +32,4 @@ const mapStateToProps = (state, props) => {
 	}
 }
 
-export default connect(mapStateToProps, null)(StudentStatistics)
+export default connect(mapStateToProps, null)(CourseStatistics)
