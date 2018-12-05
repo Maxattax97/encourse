@@ -8,6 +8,6 @@ import admin from './admin'
 import teachingAssistant from './teaching_assistant'
 import control from './control'
 
-const rootReducer = combineReducers({ student, auth, course, projects, admin, teachingAssistant, control: control })
+const rootReducer = combineReducers({ student, auth, course, projects, admin, teachingAssistant, control })
 
 export default rootReducer

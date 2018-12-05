@@ -133,7 +133,9 @@ export default function projects(state = {}, action) {
     case 'DELETE':
         return deleteProject(state, action)
     case 'ADD_TEST':
-        return getData(state, action, 'addTest')
+		return getData(state, action, 'addTest')
+	case 'RUN_TEST_SUITE':
+		return getData(state, action, 'runTestSuite')
     default:
 	    return Object.assign({}, state, {
 		    reduxError: action

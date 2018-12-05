@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
 import { logOut } from '../../redux/actions/index'
+import { getCurrentCourseId, getCurrentSemesterId } from '../../redux/state-peekers/course'
 import url from '../../server'
-import { defaultCourse } from '../../defaults'
 import {LogoutIcon, SettingsIcon} from '../Helpers'
 
 class TopNavigation extends Component {
@@ -18,8 +18,8 @@ class TopNavigation extends Component {
             <div className="nav">
                 <div className="nav-options">
                     <div className="action" onClick={() => {
-                        if(this.props.path === '/settings') history.push(`/course/${defaultCourse}`)
-                        else history.push('/settings')
+                        if(this.props.path.includes('/settings')) history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/course`)
+                        else history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/settings`)
                     }}>
                         <SettingsIcon/>
                     </div>
@@ -27,7 +27,7 @@ class TopNavigation extends Component {
                         <LogoutIcon/>
                     </div>
                 </div>
-                <div className="nav-title" onClick={ () => history.push(`/course/${defaultCourse}`)}>
+                <div className="nav-title" onClick={ () => history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/course`)}>
                     <span className="nav-en">En</span>
                     <span className="nav-course">Course</span>
                 </div>
@@ -38,7 +38,9 @@ class TopNavigation extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        path: state.router && state.router.location ? state.router.location.pathname : null,
+        path: state.router && state.router.location ? state.router.location.pathname : null,    
+        currentCourseId: getCurrentCourseId(state),
+        currentSemesterId: getCurrentSemesterId(state),
     }
 }
 

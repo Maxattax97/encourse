@@ -205,7 +205,9 @@ export default function student(state = {}, action) {
     case 'SYNC':
         return getData(state, action, 'syncStudentRepository')
     case 'RUN_TESTS':
-        return getData(state, action, 'runStudentTests')
+		return getData(state, action, 'runStudentTests')
+	case 'GET_SOURCE':
+		return getData(state, action, 'getSource')
     default:
         return unknownAction(state, action)
     }

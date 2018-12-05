@@ -37,3 +37,7 @@ export const modifyProject = genericDispatch(
 export const addTest = genericDispatch(
     class_type, 'ADD_TEST', 'POST'
 )
+
+export const runTestSuite = genericDispatch(
+    class_type, 'RUN_TEST_SUITE', 'POST'
+)

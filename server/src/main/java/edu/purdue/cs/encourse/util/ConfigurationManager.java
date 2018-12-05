@@ -6,6 +6,7 @@ import java.nio.Buffer;
 public class ConfigurationManager {
     private static ConfigurationManager sharedInstance = null;
     public Boolean debug = false;
+    public Boolean testing = false;
     public int limit = 1000;
     public final static String ßuserID = "cutz";
     public final static String projectID = "cs252";
@@ -26,6 +27,10 @@ public class ConfigurationManager {
                 else if (words[0].equals("LIMIT")) {
                     limit = Integer.parseInt(words[1]);
                     System.out.println("LIMIT = " + limit);
+                }
+                else if (words[0].equals("TESTING")) {
+                    testing = words[1].equals("1") ? true : false;
+                    System.out.println("TESTING = " + limit);
                 }
             }
         } catch (IOException e) {

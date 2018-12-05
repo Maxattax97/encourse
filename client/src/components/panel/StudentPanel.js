@@ -11,7 +11,6 @@ import {
     syncStudentRepository,
     setModalState
 } from '../../redux/actions/index'
-import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
 import SyncItem from './common/HistoryText'
@@ -19,7 +18,6 @@ import {retrieveStudent} from "../../redux/retrievals/student"
 import {getCurrentStudent} from "../../redux/state-peekers/student"
 import {getCurrentProject} from "../../redux/state-peekers/projects"
 import {getCurrentCourseId, getCurrentSemesterId} from "../../redux/state-peekers/course"
-import {CourseModal} from './course'
 import ProgressModal from './common/TaskModal'
 
 
@@ -46,7 +44,7 @@ class StudentPanel extends Component {
             'Academic Dishonesty Report'
         ]
 
-        let studentDishonestyRedirect = () => { history.push('/student-dishonesty/' + this.props.student.id) }
+        let studentDishonestyRedirect = () => { history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/student-dishonesty/${this.props.student.id}`)}
 
         const actions = [
             () => {
