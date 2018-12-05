@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react'
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label, Brush, ResponsiveContainer } from 'recharts'
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import moment from 'moment'
 import { connect } from 'react-redux'
 
@@ -37,16 +37,16 @@ class StudentVelocityPerCommit extends Component {
         this.fetch(this.props)
     }
 
-    componentWillReceiveProps = (nextProps) => {
-        if(this.props.isLoading && !nextProps.isLoading) {
-            const data = this.formatApiData(nextProps.data)
+    componentDidUpdate = (prevProps) => {
+        if(prevProps.isLoading && !this.props.isLoading) {
+            const data = this.formatApiData(this.props.data)
 
             if(data)
                 this.setState({ formattedData: data })
         }
 
-        if (nextProps.currentProjectId !== this.props.currentProjectId)
-            this.fetch(nextProps)
+        if (this.props.currentProjectId !== prevProps.currentProjectId)
+            this.fetch(this.props)
     }
 
     fetch = (props) => {

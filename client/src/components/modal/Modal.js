@@ -26,7 +26,7 @@ class Modal extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        currentModal: state.modal && state.modal.getCurrentModal ? state.modal.getCurrentModal : 0,
+        currentModal: state.control && state.control.getCurrentModal ? state.control.getCurrentModal : 0,
     }
 }
 

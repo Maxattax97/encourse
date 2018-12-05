@@ -1,21 +1,16 @@
+import {getData} from "./reducer-utils"
+
 function teachingAssistant(state = {}, action) {
-    switch(action.type) {
-    case 'GET_TEACHING_ASSISTANTS':
-        return Object.assign({}, state, {
-            getTeachingAssistantsIsLoading: true,
-        })
-    case 'GET_TEACHING_ASSISTANTS_HAS_ERROR':
-        return Object.assign({}, state, {
-            getTeachingAssistantsHasError: action.hasError,
-            getTeachingAssistantsIsLoading: false,
-        })
-    case 'GET_TEACHING_ASSISTANTS_SUCCESS':
-        return Object.assign({}, state, {
-            getTeachingAssistantsData: action.data,
-            getTeachingAssistantsIsLoading: false,
-        })
-    default:
+    if(action.class !== 'TEACHING_ASSISTANT')
         return state
+
+    switch(action.type) {
+    case 'GET_ALL':
+        return getData(state, action, 'getTeachingAssistants')
+    default:
+	    return Object.assign({}, state, {
+		    reduxError: action
+	    })
     }
 }
 

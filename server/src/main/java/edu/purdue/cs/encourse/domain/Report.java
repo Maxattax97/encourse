@@ -7,6 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Represents a report that was created to show evidence of academic dishonesty.
+ * Primarily used for a professor to temporarily provide evidence of dishonesty to an admin using magic links.
+ *
+ * @author Shawn Montgomery
+ * @author montgo38@purdue.edu
+ */
 @Getter
 @Entity
 @Table(name = "REPORT")

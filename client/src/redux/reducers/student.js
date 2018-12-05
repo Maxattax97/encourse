@@ -1,184 +1,212 @@
-function student(state = {}, action) {
-    let content
-    let contains
-    switch(action.type) {
-    case 'SET_CURRENT_STUDENT':
-        return Object.assign({}, state, {
-            currentStudent: action.student,
-        })
-    case 'CLEAR_STUDENT':
-        return Object.assign({}, state, {
-            currentStudent: null,
-            getProgressLineData: null,
-            getCommitFrequencyData: null,
-            getCodeFrequencyData: null,
-            getStatisticsData: null,
-            getCommitHistoryData: null,
-        })
-    case 'GET_STUDENT':
-        return Object.assign({}, state, {
-            getStudentIsLoading: true,
-        })
-    case 'GET_STUDENT_HAS_ERROR':
-        return Object.assign({}, state, {
-            getStudentHasError: action.hasError,
-            getStudentIsLoading: false,
-        })
-    case 'GET_STUDENT_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getStudentData: action.data,
-            currentStudent: action.data,
-            getStudentIsLoading: false,
-        })
-    case 'GET_PROGRESS_LINE':
-        return Object.assign({}, state, {
-            getProgressLineIsLoading: true,
-        })
-    case 'GET_PROGRESS_LINE_HAS_ERROR':
-        return Object.assign({}, state, {
-            getProgressLineHasError: action.hasError,
-            getProgressLineIsLoading: false,
-        })
-    case 'GET_PROGRESS_LINE_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getProgressLineData: action.data,
-            getProgressLineIsLoading: false,
-        })
-    case 'GET_COMMIT_FREQUENCY':
-        return Object.assign({}, state, {
-            getCommitFrequencyIsLoading: true,
-        })
-    case 'GET_COMMIT_FREQUENCY_HAS_ERROR':
-        return Object.assign({}, state, {
-            getCommitFrequencyHasError: action.hasError,
-            getCommitFrequencyIsLoading: false,
-        })
-    case 'GET_COMMIT_FREQUENCY_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getCommitFrequencyData: action.data,
-            getCommitFrequencyIsLoading: false,
-        })
-    case 'GET_CODE_FREQUENCY':
-        return Object.assign({}, state, {
-            getCodeFrequencyIsLoading: true,
-        })
-    case 'GET_CODE_FREQUENCY_HAS_ERROR':
-        return Object.assign({}, state, {
-            getCodeFrequencyHasError: action.hasError,
-            getCodeFrequencyIsLoading: false,
-        })
-    case 'GET_CODE_FREQUENCY_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getCodeFrequencyData: action.data,
-            getCodeFrequencyIsLoading: false,
-        })
-    case 'GET_STATISTICS':
-        return Object.assign({}, state, {
-            getStatisticsIsLoading: true,
-        })
-    case 'GET_STATISTICS_HAS_ERROR':
-        return Object.assign({}, state, {
-            getStatisticsHasError: action.hasError,
-            getStatisticsIsLoading: false,
-        })
-    case 'GET_STATISTICS_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getStatisticsData: action.data,
-            getStatisticsIsLoading: false,
-        })
-    case 'GET_COMMIT_HISTORY':
-        return Object.assign({}, state, {
-            getCommitHistoryIsLoading: true,
-        })
-    case 'GET_COMMIT_HISTORY_HAS_ERROR':
-        return Object.assign({}, state, {
-            getCommitHistoryHasError: action.hasError,
-            getCommitHistoryIsLoading: false,
-        })
-    case 'GET_COMMIT_HISTORY_DATA_SUCCESS':
-        content = state.getCommitHistoryData ? [...state.getCommitHistoryData.content] : []
-        contains = false
-        for(let value of content) {
-            if(value.date === action.data.content[0].date) {
-                contains = true
-                break
-            }
+import {forwardData, getData, resetData, unknownAction} from "./reducer-utils"
+import moment from "moment"
+
+function setCurrentStudent(state, action) {
+	return {
+		...state,
+		student: {
+		    loading: false,
+            data: action.student,
+            error: null
         }
-        if(!contains) {
-            content = content.concat(action.data.content)
-        } 
-        action.data.content = content;
-        return Object.assign({}, state, {
-            getCommitHistoryData: action.data,
-            getCommitHistoryIsLoading: false,
-        })
-    case 'GET_PROGRESS_PER_TIME':
-        return Object.assign({}, state, {
-            getProgressPerTimeIsLoading: true,
-        })
-    case 'GET_PROGRESS_PER_TIME_HAS_ERROR':
-        return Object.assign({}, state, {
-            getProgressPerTimeHasError: action.hasError,
-            getProgressPerTimeIsLoading: false,
-        })
-    case 'GET_PROGRESS_PER_TIME_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getProgressPerTimeData: action.data,
-            getProgressPerTimeIsLoading: false,
-        })
-    case 'GET_PROGRESS_PER_COMMIT':
-        return Object.assign({}, state, {
-            getProgressPerCommitIsLoading: true,
-        })
-    case 'GET_PROGRESS_PER_COMMIT_HAS_ERROR':
-        return Object.assign({}, state, {
-            getProgressPerCommitHasError: action.hasError,
-            getProgressPerCommitIsLoading: false,
-        })
-    case 'GET_PROGRESS_PER_COMMIT_DATA_SUCCESS':
-        return Object.assign({}, state, {
-            getProgressPerCommitData: action.data,
-            getProgressPerCommitIsLoading: false,
-        })
-    case 'UPDATE_COMMITS_PAGE':
-        return Object.assign({}, state, {
-            commitsPage: state.commitsPage ? state.commitsPage + 1 : 2,
-        })
-    case 'RESET_COMMITS_PAGE':
-        return Object.assign({}, state, {
-            commitsPage: 1,
-        })
-    case 'SYNC_STUDENT_REPOSITORY':
-		return Object.assign({}, state, {
-			syncStudentRepositoryIsLoading: true
-		})
-    case 'SYNC_STUDENT_REPOSITORY_HAS_ERROR':
-        return Object.assign({}, state, {
-            syncStudentRepositoryIsLoading: false,
-            syncStudentRepositoryHasError: action.hasError
-        })
-    case 'SYNC_STUDENT_REPOSITORY_SUCCESS':
-        return Object.assign({}, state, {
-            syncStudentRepositoryData: action.data,
-            syncStudentRepositoryIsLoading: false
-        })
-    case 'RUN_STUDENT_TESTS':
-        return Object.assign({}, state, {
-            runStudentTestsIsLoading: true
-        })
-    case 'RUN_STUDENT_TESTS_HAS_ERROR':
-        return Object.assign({}, state, {
-            runStudentTestsIsLoading: false,
-            runStudentTestsHasError: action.hasError
-        })
-    case 'RUN_STUDENT_TESTS_SUCCESS':
-        return Object.assign({}, state, {
-            runStudentTestsData: action.data,
-            runStudentTestsIsLoading: false
-        })
-    default:
-        return state
-    }
+	}
 }
 
-export default student
+function clearStudent(state, action) {
+	return {
+		...state,
+		...resetData('student'),
+		...resetData('studentProgress'),
+		...resetData('commitFrequency'),
+		...resetData('codeChanges'),
+		...resetData('commitHistory'),
+		...resetData('getProgressPerTime'),
+		...resetData('stats'),
+		...resetData('getProgressPerCommit'),
+	}
+}
+
+function formatCommitFrequency(udata) {
+	if (!udata) {
+		return []
+	}
+	let data = udata.data
+
+	if (!data || data.length === 0) {
+		return []
+	}
+
+	for (let entry of data) {
+		entry.date = moment(entry.date).valueOf()
+	}
+
+	return data
+}
+
+function formatCodeChanges(udata) {
+	if (!udata || !udata.data) {
+		return []
+	}
+	const data = udata.data
+
+	for (let entry of data) {
+		entry.date = moment(entry.date).valueOf()
+		entry.deletions = -entry.deletions
+	}
+
+	if (!data || data.length === 0) {
+		return []
+	}
+
+	const minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date)
+	const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date)
+
+	const formattedData = []
+
+	let inputIndex = 0
+	for (let m = moment(minDate); m.diff(moment(maxDate), 'days') <= 0; m.add(1, 'days')) {
+		const inputEntry = data[inputIndex]
+		const inputDate = inputEntry.date
+
+		if (m.isSame(inputDate, 'day')) {
+			formattedData.push(inputEntry)
+			inputIndex++
+		}
+		else {
+			formattedData.push({
+				date: m.valueOf(),
+				additions: data[inputIndex - 1] || 0,
+				deletions: data[inputIndex - 1] || 0,
+			})
+		}
+	}
+
+	return formattedData
+}
+
+function formatStudentProgress(udata) {
+	if (!udata || !udata.data) {
+		return []
+	}
+	const data = udata.data
+	for (let entry of data) {
+		entry.date = moment(entry.date).valueOf()
+	}
+
+	if (!data || data.length === 0) {
+		return []
+	}
+
+	const minDate = data.reduce((min, p) => p.date < min ? p.date : min, data[0].date)
+	const maxDate = data.reduce((max, p) => p.date > max ? p.date : max, data[0].date)
+
+	const formattedData = []
+
+	let inputIndex = 0
+	for (let m = moment(minDate); m.diff(moment(maxDate), 'days') <= 0; m.add(1, 'days')) {
+		const inputEntry = data[inputIndex]
+		const inputDate = inputEntry.date
+
+		if (m.isSame(inputDate, 'day')) {
+			formattedData.push(inputEntry)
+			inputIndex++
+		}
+		else {
+			formattedData.push({
+				date: m.valueOf(),
+				progress: inputEntry.progress,
+			})
+		}
+	}
+
+	return formattedData
+}
+
+function sortStatistics(udata) {
+	if (!udata)
+		return []
+
+	const data = udata[0].data
+
+	data.sort((d1, d2) => d1.index - d2.index)
+
+	return data
+}
+
+function formatCommitHistory(udata, extra, state) {
+	if(!udata)
+		return {}
+
+	if(!udata.content)
+		return {
+			...udata,
+			content: {}
+		}
+
+	let content = state.commitHistory && state.commitHistory.data.content ? [...state.commitHistory.data.content] : []
+
+	let contains = false
+	for(let value of content) {
+		if(value.date === udata.content[0].date) {
+			contains = true
+			break
+		}
+	}
+	if(!contains)
+		content = content.concat(udata.content)
+
+	return {
+		...udata,
+		content: content
+	}
+}
+
+function updateCommitsPage(state, action) {
+	return Object.assign({}, state, {
+		commitsPage: state.commitsPage ? state.commitsPage + 1 : 2,
+	})
+}
+
+function resetCommitsPage(state, action) {
+	return Object.assign({}, state, {
+		commitsPage: 1,
+	})
+}
+
+export default function student(state = {}, action) {
+    if(action.class !== 'STUDENT')
+        return state
+
+    switch(action.type) {
+    case 'SET_CURRENT':
+        return setCurrentStudent(state, action)
+    case 'CLEAR':
+        return clearStudent(state, action)
+    case 'GET':
+        return forwardData(state, action, 'student')
+    case 'GET_PROGRESS_LINE':
+        return forwardData(state, action, 'studentProgress', formatStudentProgress)
+    case 'GET_COMMIT_FREQUENCY':
+        return forwardData(state, action, 'commitFrequency', formatCommitFrequency)
+    case 'GET_CODE_FREQUENCY':
+        return forwardData(state, action, 'codeChanges', formatCodeChanges)
+    case 'GET_STATISTICS':
+        return forwardData(state, action, 'stats', sortStatistics)
+    case 'GET_COMMIT_HISTORY':
+        return forwardData(state, action, 'commitHistory', formatCommitHistory)
+    case 'GET_PROGRESS_PER_TIME':
+        return getData(state, action, 'getProgressPerTime')
+    case 'GET_PROGRESS_PER_COMMIT':
+        return getData(state, action, 'getProgressPerCommit')
+    case 'UPDATE_COMMITS_PAGE':
+        return updateCommitsPage(state, action)
+    case 'RESET_COMMITS_PAGE':
+        return resetCommitsPage(state, action)
+    case 'SYNC':
+        return getData(state, action, 'syncStudentRepository')
+    case 'RUN_TESTS':
+        return getData(state, action, 'runStudentTests')
+    default:
+        return unknownAction(state, action)
+    }
+}

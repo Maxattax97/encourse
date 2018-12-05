@@ -15,6 +15,7 @@ import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 
 import { history } from '../../redux/store'
+import { getCurrentSemesterId } from '../../redux/state-peekers/course'
 import ChangePasswordModal from './preference/ChangePasswordModal'
 
 class PreferencePanel extends Component {
@@ -46,7 +47,7 @@ class PreferencePanel extends Component {
         this.setState(
             {
                 name: '',
-                semester: 'Fall2018',
+                semester: this.props.currentSemesterId,
                 account_type: 'student',
                 show_course_options: false,
                 show_account_options: false,
@@ -350,8 +351,7 @@ class PreferencePanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        courses: state.admin && state.admin.getCoursesData ? state.admin.getCoursesData : [],
-        accounts: state.admin && state.admin.getAccountsData ? state.admin.getAccountsData : []
+        currentSemesterId: getCurrentSemesterId(state)
     }
 }
 

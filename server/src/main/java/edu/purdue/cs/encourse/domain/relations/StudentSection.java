@@ -8,15 +8,23 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+/**
+ * Represents a relation between a student and a section that they are currently or have been enrolled in.
+ * Primarily used for grouping students by section and finding all students taking a particular course.
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 @Getter
 @Entity
 @Table(name = "STUDENT_SECTION")
 public class StudentSection {
+    /** Primary key for relation in database. Never used directly */
     @EmbeddedId
-    StudentSectionID id;
+    private StudentSectionID id;
 
-    public StudentSection(String studentID, String sectionIdentifier) {
-        this.id = new StudentSectionID(studentID, sectionIdentifier);
+    public StudentSection(String studentID, String sectionID) {
+        this.id = new StudentSectionID(studentID, sectionID);
     }
 
     public StudentSection() {
@@ -27,26 +35,26 @@ public class StudentSection {
         return id.getStudentID();
     }
 
-    public String getSectionIdentifier() {
-        return id.getSectionIdentifier();
+    public String getSectionID() {
+        return id.getSectionID();
     }
 
     @Override
-    public String toString() { return getStudentID() + " | " + getSectionIdentifier(); }
+    public String toString() { return getStudentID() + " | " + getSectionID(); }
 }
 
 @Getter
 @Embeddable
 class StudentSectionID implements Serializable {
-    /** Key used to identify the student **/
+    /** Key used to identify the student */
     private String studentID;
 
-    /** Key used to identify section that student is in **/
-    private String sectionIdentifier;
+    /** Key used to identify the section */
+    private String sectionID;
 
-    public StudentSectionID(String studentID, String sectionIdentifier) {
+    public StudentSectionID(String studentID, String sectionID) {
         this.studentID = studentID;
-        this.sectionIdentifier = sectionIdentifier;
+        this.sectionID = sectionID;
     }
 
     public StudentSectionID() {

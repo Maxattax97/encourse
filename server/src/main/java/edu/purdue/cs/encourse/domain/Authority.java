@@ -7,6 +7,13 @@ import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 
+/**
+ * Represents an authorization level for an account.
+ * Primarily used in authentication and privilege checking.
+ *
+ * @author Shawn Montgomery
+ * @author montgo38@purdue.edu
+ */
 @Entity
 @Table(name = "AUTHORITY", uniqueConstraints = {@UniqueConstraint(columnNames = {"NAME"})})
 @Getter

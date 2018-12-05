@@ -1,54 +1,54 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import {BackNav, Card} from '../Helpers'
+import {BackNav} from '../Helpers'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import { history } from '../../redux/store'
-import { getStudent, clearStudent, runStudentTests, syncStudentRepository } from '../../redux/actions/index'
-import url from '../../server'
+import {
+    getStudent,
+    clearStudent,
+    runStudentTests,
+    syncStudentRepository,
+    setModalState
+} from '../../redux/actions/index'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {StudentFeedback, StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
-import SyncItem from './common/SyncItem'
-import { fuzzing } from '../../fuzz'
+import {StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
+import SyncItem from './common/HistoryText'
+import {retrieveStudent} from "../../redux/retrievals/student"
+import {getCurrentStudent} from "../../redux/state-peekers/student"
+import {getCurrentProject} from "../../redux/state-peekers/projects"
+import {getCurrentCourseId, getCurrentSemesterId} from "../../redux/state-peekers/course"
+import ProgressModal from './common/TaskModal'
 
 
 class StudentPanel extends Component {
 
-    componentWillMount = () => this.clear()
-    componentWillUnmount = () => this.clear()
-    clear = () => this.props.clearStudent()
-
     componentDidMount = () => {
         if(!this.props.currentStudent) {
-            this.props.getStudent(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&userName=${this.props.match.params.id}`)
+            retrieveStudent({id: this.props.match.params.id}, this.props.currentCourseId, this.props.currentSemesterId)
         }
     }
 
-    back = () => {
+	componentWillUnmount() {
+		this.props.clearStudent()
+	}
+
+	back = () => {
         history.goBack()
     }
 
     render() {
 
         const action_names = [
-            'Sync Repository',
-            'Run Tests',
+            'View Current Task',
             'Academic Dishonesty Report'
         ]
 
-        let studentDishonestyRedirect = () => { history.push('/student-dishonesty/' + this.props.currentStudent.id) }
-        if (fuzzing) {
-            studentDishonestyRedirect = () => { history.push('/student-dishonesty/student') }
-        }
+        let studentDishonestyRedirect = () => { history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/student-dishonesty/${this.props.student.id}`)}
 
         const actions = [
-            () => { 
-                if(this.props.currentProjectId && this.props.currentStudent)
-                    this.props.syncStudentRepository(`${url}/api/pull/project?projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
-            },
             () => {
-                if(this.props.currentProjectId && this.props.currentStudent)
-                    this.props.runStudentTests(`${url}/api/run/testall?projectID=${this.props.currentProjectId}&userName=${this.props.currentStudent.id}`)
+                this.props.setModalState(2)
             },
             studentDishonestyRedirect
         ]
@@ -68,11 +68,13 @@ class StudentPanel extends Component {
                     <StudentCommitHistory />
                 </div>
 
+                <ProgressModal id={2} />
+
                 <div className="panel-center-content">
                     <div className='panel-student-content'>
                         <h1 className='header'>
                             {
-                                `CS252 - ${this.props.currentStudent ? `${this.props.currentStudent.first_name} ${this.props.currentStudent.last_name}` : ''}`
+                                 this.props.student ? `${this.props.student.first_name} ${this.props.student.last_name}` : ''
                             }
                         </h1>
                         <div className="h1 break-line header" />
@@ -81,14 +83,11 @@ class StudentPanel extends Component {
                         <StudentCharts />
 
                         <div className="h1 break-line" />
-                        <div className="student-stats-comments float-height">
-                            <Card>
-                                <StudentStatistics/>
-                            </Card>
-                            <Card>
-                                <StudentFeedback/>
-                            </Card>
-                        </div>
+                        <h3 className='header'>Student Statistics</h3>
+	                    <StudentStatistics />
+
+                        <div className='h1 break-line' />
+                        <h3 className='header'>Test Suite Results</h3>
                     </div>
                 </div>
             </div>
@@ -98,13 +97,16 @@ class StudentPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
+        student: getCurrentStudent(state),
+        project: getCurrentProject(state),
+        currentCourseId: getCurrentCourseId(state),
+        currentSemesterId: getCurrentSemesterId(state),
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        setModalState: (id) => dispatch(setModalState(id)),
         getStudent: (url, headers, body) => dispatch(getStudent(url, headers, body)),
         syncStudentRepository: (url, headers, body) => dispatch(syncStudentRepository(url, headers, body)),
         runStudentTests: (url, headers, body) => dispatch(runStudentTests(url, headers, body)),

@@ -16,6 +16,6 @@
 DIRECTORY="$(pwd)"
 cd "$1"
 echo "Start $3" >> "${DIRECTORY}/$2"
-git log --perl-regexp --author='^((?!CS252).*)$' --reverse --numstat --date=iso --pretty=format:%ad >> "${DIRECTORY}/$2"
+git log --perl-regexp --author='^((?!CS252).*)$' --reverse --numstat --date=iso --pretty=format:"%ad %h" >> "${DIRECTORY}/$2"
 echo "End $3" >> "${DIRECTORY}/$2"
 cd "${DIRECTORY}"

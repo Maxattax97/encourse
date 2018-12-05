@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {setModalState} from '../redux/actions'
 import connect from 'react-redux/es/connect/connect'
+import PreviewCard from './panel/common/PreviewCard'
 
 export class Title extends Component {
     render() {
@@ -26,17 +27,35 @@ export class Card extends Component {
 
 class ModalClass extends Component {
 
+    previousModal = 0
+
+    close = () => {
+        if(!this.props.onClose || this.props.onClose())
+            this.props.closeModal()
+    }
+
     render() {
+        const show = this.props.modalState === this.props.id
+        const openedModal = this.previousModal !== this.props.modalState
+	    this.previousModal = this.props.modalState
+
+        if(show && openedModal && this.props.onOpen)
+            this.props.onOpen()
+
         return (
-            <div className='modal' style={this.props.currentModal === this.props.id ? {} : {display: 'none'}} onClick={ this.props.closeModal }>
+            <div className='modal' style={show ? {} : {display: 'none'}} onClick={ this.props.closeModal }>
                 <div className={this.props.left ? 'modal-left' : this.props.right ? 'modal-right' : 'modal-center'} onClick={(e) => e.stopPropagation()}>
                     <Card>
                         <div className={'modal-container'}>
                             {this.props.children}
                         </div>
-                        <div className="action svg-icon exit-nav" onClick={ this.props.closeModal }>
-                            <XIcon/>
-                        </div>
+                        {
+                            !this.props.noExit ?
+	                            <div className="action svg-icon exit-nav" onClick={ this.close }>
+		                            <XIcon/>
+	                            </div>
+                                : null
+                        }
                     </Card>
                 </div>
             </div>
@@ -45,7 +64,7 @@ class ModalClass extends Component {
 
     static mapStateToProps = (state) => {
         return {
-            currentModal: state.modal && state.modal.getCurrentModal ? state.modal.getCurrentModal : 0,
+            modalState: state.control && state.control.modalState ? state.control.modalState : 0,
         }
     }
 
@@ -59,11 +78,6 @@ class ModalClass extends Component {
 export const Modal = connect(ModalClass.mapStateToProps, ModalClass.mapDispatchToProps)(ModalClass)
 
 export class Summary extends Component {
-
-    constructor(props) {
-        super(props)
-    }
-
     render() {
         return (
             <div className={ `summary ${this.props.className ? this.props.className : ''}` }>
@@ -78,11 +92,6 @@ export class Summary extends Component {
 }
 
 export class Filter extends Component {
-
-    constructor(props) {
-        super(props)
-    }
-
     render() {
         return (
             <div className='filter'>
@@ -114,11 +123,11 @@ export class Checkbox extends Component {
     render() {
         return (
             <div className={ this.props.className ? 'checkbox ' + this.props.className : 'checkbox' } onClick={ this.props.onClick }>
-                <div className='checkbox-value'>
-                    {
-                        this.props.children
-                    }
-                </div>
+	            <div className='checkbox-value'>
+		            {
+			            this.props.children
+		            }
+	            </div>
             </div>
         )
     }
@@ -147,22 +156,39 @@ export class Dropdown extends Component {
     }
 
     clickEvent = (event) => {
-        if(this.dropdown && this.state.show && !this.dropdown.contains(event.target)) {
+        if(this.dropdown && this.state.show && !this.dropdown.contains(event.target))
             this.setState({ show: false })
-        }
     }
 
     render() {
+        const index = this.props.currentIndex || 0
+
+	    const DropdownHeader = React.createElement(this.props.header,
+		    {},
+		    this.props.left ?
+			    this.props.text + ' ' + this.props.values[index] :
+			    this.props.values[index] + ' ' + this.props.text
+	    )
+
+	    const options = this.props.values.map((item) =>
+		    React.createElement(this.props.header,
+			    {},
+			    this.props.left ?
+				    this.props.text + ' ' + item :
+				    item + ' ' + this.props.text
+		    )
+	    )
+
         return (
             <div ref={ this.setDropdownRef } className='dropdown'>
                 <div className='dropdown-toggle' onClick={ () => this.setState({ show: !this.state.show }) }>
-                    { this.props.header }
+                    {DropdownHeader}
                     <DropdownIcon/>
                 </div>
-                <ul className={ 'dropdown-menu ' + ( this.props.rightAnchor ? 'dropdown-menu-right' : 'dropdown-menu-left' ) }
+                <ul className={ 'dropdown-menu ' + ( this.props.right ? 'dropdown-menu-right' : 'dropdown-menu-left' ) }
                     style={ this.state.show ? null : { display: 'none' } }>
                     {
-                        React.Children.map(this.props.children, (child, index) =>
+                        React.Children.map(options, (child, index) =>
                             <li className='action' onClick={ () => {
                                 this.props.onClick(index)
                                 this.setState({ show: false })
@@ -175,6 +201,64 @@ export class Dropdown extends Component {
             </div>
         )
     }
+}
+
+export class Chart extends Component {
+    render() {
+	    if(this.props.chart.loading)
+		    return (
+			    <div className='chart-container loading' title={ this.props.title ? this.props.title : null}>
+				    <LoadingIcon/>
+			    </div>
+		    )
+
+        return (
+	        <div className="chart-container" title={ this.props.title ? this.props.title : null}>
+                {
+                    this.props.children
+                }
+            </div>
+        )
+    }
+}
+
+export class ChartList extends Component {
+
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            resize: {
+
+            }
+        }
+    }
+
+	render() {
+		return (
+			<Summary columns={ 2 } className='charts'>
+				{
+					React.Children.map(this.props.children, (child, index) =>
+						<Card key={ index } className={ this.state.resize[index] ? 'big-graph' : ''}>
+                            {
+                                child
+                            }
+                            <Checkbox
+                                className='card-select'
+                                onClick={ () => { this.setState({ resize: { ...this.state.resize, [index]: !this.state.resize[index]} })} }
+                            >
+                                {
+                                    this.state.resize[index] ?
+                                        <PlusIcon />
+                                        : null
+                                }
+                            </Checkbox>
+						</Card>
+					)
+				}
+			</Summary>
+		)
+	}
 }
 
 export class SVG extends Component {

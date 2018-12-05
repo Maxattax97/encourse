@@ -1,11 +1,8 @@
 package edu.purdue.cs.encourse.service.impl;
 
-import edu.purdue.cs.encourse.database.AccountRepository;
-import edu.purdue.cs.encourse.database.UserRepository;
-import edu.purdue.cs.encourse.domain.Account;
-import edu.purdue.cs.encourse.domain.User;
-import edu.purdue.cs.encourse.service.EmailService;
-import edu.purdue.cs.encourse.service.ReportService;
+import edu.purdue.cs.encourse.database.*;
+import edu.purdue.cs.encourse.domain.*;
+import edu.purdue.cs.encourse.service.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Route, Redirect, Switch } from 'react-router'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
+import { defaultCourse, defaultSemester } from '../defaults'
 
 import { setModalState, getAccount } from '../redux/actions'
 import url from '../server'
@@ -9,14 +10,7 @@ import url from '../server'
 import '../styles/css/base.css'
 import '../styles/css/main.css'
 import Navbar from './navigation/TopNavigation'
-import CoursePanel from './panel/CoursePanel'
-import StudentPanel from './panel/StudentPanel'
-import AdminPanel from './panel/AdminPanel'
-import PreferencePanel from './panel/PreferencePanel'
-import ProjectPanel from './panel/ProjectPanel'
-import ManageTAPanel from './panel/ManageTAPanel'
-import CourseDishonestyPanel from './panel/CourseDishonestyPanel'
-import StudentDishonestyPanel from './panel/StudentDishonestyPanel'
+import {AdminPanel, CoursePanel, CourseDishonestyPanel, ManageTAPanel, PreferencePanel, ProjectPanel, StudentDishonestyPanel, StudentPanel} from "./panel"
 
 class Main extends Component {
 
@@ -53,7 +47,6 @@ class Main extends Component {
     }
 
     render() {
-
         return (
             <div className="main">
                 <Navbar />
@@ -64,35 +57,31 @@ class Main extends Component {
                             onClick={ this.props.closeModal }
                         />
                         <Switch>
-                            <Route path="/panel" render={(/* navProps */) => {
-                                //determine logic for course panel, student panel, or admin panel. For now, use course panel
-                                return <Redirect to="/course"/>
-                            }}/>
-                            <Route path="/course" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/course" render={(navProps) =>
                                 <CoursePanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/student/:id" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/student/:id" render={(navProps) =>
                                 <StudentPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/admin" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/admin" render={(navProps) =>
                                 <AdminPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/projects" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/projects" render={(navProps) =>
                                 <ProjectPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/manage-tas" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/manage-tas" render={(navProps) =>
                                 <ManageTAPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/course-dishonesty" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/course-dishonesty" render={(navProps) =>
                                 <CourseDishonestyPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/student-dishonesty/:id" render={(navProps) =>
+                            <Route path="/:courseID/:semesterID/student-dishonesty/:id" render={(navProps) =>
                                 <StudentDishonestyPanel ref={ this.setChild } {...navProps}/>
                             }/>
-                            <Route path="/settings" render={(/* navProps */) =>
+                            <Route path="/:courseID/:semesterID/settings" render={(/* navProps */) =>
                                 <PreferencePanel ref={ this.setChild } />
                             }/>
-                            <Route path='/' render={(/* navProps */) => <Redirect to="/panel" />}/>
+                            <Route path='/' render={(/* navProps */) => <Redirect to={`/${defaultCourse}/${defaultSemester}/course`}/>}/>
                         </Switch>
                     </div>
                 </div>
@@ -104,7 +93,7 @@ class Main extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        isModalFocused: state.modal && state.modal.isModalFocused ? state.modal.isModalFocused : false,
+        isModalFocused: !!(state.control && state.control.modalState),
         account: state.auth && state.auth.getAccountData ? state.auth.getAccountData : null,
     }
 }

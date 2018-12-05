@@ -48,6 +48,9 @@ public class WriteController {
     @Autowired
     private TeachingAssistantService taService;
 
+    @Autowired
+    private HelperService helperService;
+
     /**
      * Create a new Section
      *
@@ -308,7 +311,7 @@ public class WriteController {
             p = new ObjectMapper().readValue(json, Project.class);
             result = professorService.addProject(p.getCourseID(), p.getSemester(), p.getProjectName(), p.getRepoName(), p.getStartDate(), p.getDueDate(), p.getTestRate());
             if (result != null) {
-                professorService.assignProject(p.getProjectIdentifier());
+                professorService.assignProject(p.getProjectID());
             }
         } catch (IOException e) {
             System.out.println(e);
@@ -381,7 +384,7 @@ public class WriteController {
             result = professorService.pullProjects(projectID);
         } else {
             for (String userName: userNames) {
-                result = professorService.updateStudentInformation(projectID, userName);
+                result = helperService.updateStudentInformation(projectID, userName);
             }
         }
         if (result == 0) {
@@ -415,17 +418,7 @@ public class WriteController {
             if (projectID != null && userName == null) {
                 result = professorService.runTestall(projectID);
             } else if (projectID != null) {
-                Iterator<Authority> iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = iter.next().getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        result = professorService.runTestallForStudent(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        result = taService.runTestallForStudent(projectID, userName, getUserFromAuth().getUsername());
-                        break;
-                    }
-                }
+                result = courseService.runTestallForStudent(projectID, userName);
             }
         }
         if (result == 0) {

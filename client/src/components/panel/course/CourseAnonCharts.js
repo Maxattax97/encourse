@@ -1,25 +1,16 @@
-import React, { Component } from 'react'
-import {Card, Summary} from '../../Helpers'
-import ClassProgressHistogram from './chart/CourseCompletionProgress'
-import ClassTestCasePercentDone from './chart/CourseTestCaseProgress'
+import React, {Component} from 'react'
+import CompletionProgress from './chart/CompletionProgress'
+import TestCaseProgress from './chart/TestCaseProgress'
+import {ChartList} from "../../Helpers"
 
 class CourseCharts extends Component {
-	render() {
-		const chartList = [
-			<ClassProgressHistogram anon={true} key={1}/>,
-			<ClassTestCasePercentDone anon={true} key={2}/>
-		]
 
+	render() {
 		return (
-			<Summary columns={ 2 } className='charts'>
-				{
-					chartList.map( (chart) =>
-						<Card key={ chart.key }>
-							{ chart }
-						</Card>
-					)
-				}
-			</Summary>
+			<ChartList>
+				<CompletionProgress anon/>
+				<TestCaseProgress anon/>
+			</ChartList>
 		)
 	}
 }

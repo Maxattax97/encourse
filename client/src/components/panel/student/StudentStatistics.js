@@ -1,95 +1,36 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { getStatistics } from '../../../redux/actions/index'
-import url from '../../../server'
-import {LoadingIcon} from "../../Helpers"
+import Statistics from "../common/Statistics"
+import {getCurrentStudent, getStudentStatistics} from "../../../redux/state-peekers/student"
+import {getCurrentProject} from "../../../redux/state-peekers/projects"
+import {retrieveStudentStats} from "../../../redux/retrievals/student"
 
 class StudentStatistics extends Component {
 
-    constructor(props) {
-        super(props)
+	componentDidMount() {
+		if(this.props.student && this.props.project)
+			retrieveStudentStats(this.props.student, this.props.project)
+	}
 
-        this.state = {
-            formattedData: [],
-        }
-    }
-
-    componentDidMount = () => {
-        this.fetch(this.props)
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if(this.props.isLoading && !nextProps.isLoading) {
-            const data = this.formatApiData(nextProps.stats)
-            if(data)
-                this.setState({ formattedData: data })
-        }
-        if (nextProps.currentProjectId !== this.props.currentProjectId) {
-            this.fetch(nextProps)
-        }
-    }
-
-    fetch = (props) => {
-        if(props.currentProjectId) {
-            props.getStatistics(`${url}/api/statistics?projectID=${props.currentProjectId}&userName=${props.currentStudent.id}`)
-        }
-    }
-
-    formatApiData = (udata) => {
-        if (!udata) {
-            return null
-        }
-        udata = udata[0]
-        if (!udata || !udata.data) {
-            return null
-        }
-        const data = udata.data
-        if (!data) {
-            return null
-        }
-
-        data.sort((d1, d2) => d1.index - d2.index)
-
-        return data.slice()
-    }
+	componentDidUpdate(prevProps) {
+		if(this.props.student && this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
+			retrieveStudentStats(this.props.student, this.props.project)
+	}
 
     render() {
         return (
-            <div className="student-stats-container">
-                <h3 className='header'>Statistics</h3>
-                <div className="h3 break-line header" />
-                {
-                    !this.props.isLoading && this.state.formattedData && this.state.formattedData.map ?
-                        this.state.formattedData.map((stat)  =>
-                            <div key={stat.stat_name} className="stat float-height">
-                                <h5>{stat.stat_name}</h5>
-                                <h5>{stat.stat_value}</h5>
-                            </div>
-                        )
-                        :
-	                    <div className='loading'>
-		                    <LoadingIcon/>
-	                    </div>
-                }
-            </div>
+            <Statistics stats={this.props.stats} />
         )
     }
 }
 
 const mapStateToProps = (state) => {
     return {
-        currentStudent: state.student && state.student.currentStudent !== undefined ? state.student.currentStudent : undefined,
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
-        stats: state.student && state.student.getStatisticsData ? state.student.getStatisticsData : [],
-        isLoading: state.student ? state.student.getStatisticsIsLoading : false,
+        student: getCurrentStudent(state),
+        project: getCurrentProject(state),
+        stats: getStudentStatistics(state)
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        getStatistics: (url, headers, body) => dispatch(getStatistics(url, headers, body))
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(StudentStatistics)
+export default connect(mapStateToProps)(StudentStatistics)

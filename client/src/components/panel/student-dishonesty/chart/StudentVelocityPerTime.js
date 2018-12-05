@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react'
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label, Brush, ResponsiveContainer } from 'recharts'
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import moment from 'moment'
 import { connect } from 'react-redux'
 
@@ -37,12 +37,12 @@ class StudentVelocityPerTime extends Component {
         this.fetch(this.props)
     }
 
-    componentWillReceiveProps = (nextProps) => {
-        if(this.props.isLoading && !nextProps.isLoading) {
-            this.setState({ formattedData: this.formatApiData(nextProps.data) })
+    componentDidUpdate = (prevProps) => {
+        if(prevProps.isLoading && !this.props.isLoading) {
+            this.setState({ formattedData: this.formatApiData(this.props.data) })
         }
-        if (nextProps.currentProjectId !== this.props.currentProjectId) {
-            this.fetch(nextProps)
+        if (this.props.currentProjectId !== prevProps.currentProjectId) {
+            this.fetch(this.props)
         }
     }
 
@@ -75,7 +75,7 @@ class StudentVelocityPerTime extends Component {
 
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf()
-            entry.timeSpent = parseInt(entry.time_spent / 1000)
+            entry.timeSpent = parseInt(entry.time_spent / 1000, 10)
             // progress per time spent
             entry.ppts = entry.timeSpent > 0 ? entry.progress / entry.timeSpent : 0
         }

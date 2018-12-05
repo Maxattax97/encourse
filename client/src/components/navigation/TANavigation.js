@@ -1,40 +1,70 @@
 import React, { Component } from 'react'
 
-import {Card} from '../Helpers'
+import {Card, LoadingIcon} from '../Helpers'
+import {
+    getCurrentCourseId,
+    getCurrentSemesterId, getCurrentTA,
+    getTeachingAssistants
+} from '../../redux/state-peekers/course'
+import connect from 'react-redux/es/connect/connect'
+import {retrieveAllTeachingAssistants} from '../../redux/retrievals/course'
+import {setCurrentTA} from '../../redux/actions/course'
 
 class TANavigation extends Component {
 
-    changeTA = (index) => {
-        this.props.change(index)
+    componentDidMount = () => {
+        retrieveAllTeachingAssistants(this.props.courseId, this.props.semesterId)
     }
 
     render() {
+        const textListDiv =
+            this.props.teaching_assistants.loading && !this.props.teaching_assistants.data.length ?
+                <div className='loading'>
+                    <LoadingIcon/>
+                </div>
+                :
+                this.props.teaching_assistants.data.map((ta, index) =>
+                    <div key={ ta.id }
+                         onClick={ () => this.props.setCurrentTA(ta, index) }
+                         className={ `action${this.props.ta === ta ? ' list-highlight' : ''}` }>
+                        <h4>
+                            { ta.id }
+                        </h4>
+                    </div>
+                )
+
         return (
             <div className="list-nav side-nav-left">
                 <Card>
-                    { !this.props.isLoading
-                        ? <div className="list-container">
-                            <h3 className='header'>Teaching Assistants</h3>
-                            <div className="h3 break-line header"/>
-                            <div className='text-list'>
-                                {
-                                    this.props.teaching_assistants &&
-                                        this.props.teaching_assistants.map((ta, index) =>
-                                            <div key={ ta.id }
-                                                onClick={ () => this.changeTA(index) }
-                                                className={ `action${this.props.current_ta === index ? ' list-highlight' : ''}` }>
-                                                <h4>
-                                                    { `${ta.first_name} ${ta.last_name}` }
-                                                </h4>
-                                            </div>)
-                                }
-                            </div>
+                    <div className="list-container">
+                        <h3 className='header'>TA List</h3>
+                        <div className="h3 break-line header"/>
+
+                        <div className='text-list'>
+                            {
+                                textListDiv
+                            }
                         </div>
-                        : <div>Loading</div>}
+                    </div>
                 </Card>
             </div>
         )
     }
 }
 
-export default TANavigation
+const mapStateToProps = (state) => {
+    return {
+        courseId: getCurrentCourseId(state),
+        semesterId: getCurrentSemesterId(state),
+        teaching_assistants: getTeachingAssistants(state),
+        ta: getCurrentTA(state)
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setCurrentTA: (ta, index) => dispatch(setCurrentTA(ta, index))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TANavigation)

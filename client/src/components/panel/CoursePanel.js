@@ -2,85 +2,30 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { history } from '../../redux/store'
-import url from '../../server'
-import {getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, runTests, syncRepositories, updateStudentsPage, resetStudentsPage} from '../../redux/actions'
+import { getStudentPreviews, setCurrentProject, setCurrentStudent, setModalState, 
+        runTests, syncRepositories } from '../../redux/actions'
+import { getCurrentCourseId, getCurrentSemesterId } from '../../redux/state-peekers/course'
 import ProjectNavigation from '../navigation/ProjectNavigation'
-import {CourseModal, CourseAnonCharts, CourseCharts, CourseStatistics, CourseStudentFilter} from './course'
+import {CourseModal, AnonymousCharts, Charts, CourseStatistics, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
-import SyncItem from './common/SyncItem'
+import HistoryText from './common/HistoryText'
 import {Title, SettingsIcon, BackNav} from '../Helpers'
-import CourseCommitHistory from './course/CourseCommitHistory'
+import ProgressModal from "./common/TaskModal"
+import {isAnySelected} from '../../redux/state-peekers/control'
 
 class CoursePanel extends Component {
-
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            filters: {
-                sort_by: 0,
-                order_by: 0,
-                commit_filter: 0,
-                hour_filter: 0,
-                progress_filter: 0
-            }
-        }
-    }
-
-    componentDidMount = () => {
-        this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&projectID=${this.props.currentProjectId}`)
-    }
-
-    scrolledToBottom = () => {
-        if(!this.props.last) {
-            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=${this.props.page + 1}&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}`)
-            this.props.updateStudentsPage()
-        }
-    }
-
-    getSortBy = (value) => {
-        let id = value ? value : this.state.filters.sort_by
-        switch(id) {
-            case 0:
-                return 'id'
-            case 1:
-                return 'timeSpent'
-            case 2:
-                return 'commitCounts'
-            case 3:
-                return 'grades'
-            
-        }
-    }
-
-    changeFilter = (key, value) => {
-        this.state.filters[key] = value
-        this.setState({ filters: Object.assign({}, this.state.filters) }, () => {
-            this.props.resetStudentsPage()
-            this.props.getStudentPreviews(`${url}/api/studentsData?courseID=cs252&semester=Fall2018&size=10&page=1&projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}&order=${this.state.filters.order_by}&commit=${this.state.filters.commit_filter}&progress=${this.state.filters.progress_filter}&hour=${this.state.filters.hour_filter}`)
-        })
-    }
-
     render() {
 
         const action_names = [
             'Manage Teaching Assistants',
-            'Sync Project Repositories',
-            'Run Project Tests',
+            'View Current Task',
             'Academic Dishonesty Report'
         ]
 
         const actions = [
-            () => { history.push('/manage-tas') },
-            () => {
-                if(this.props.currentProjectId)
-                    this.props.syncRepositories(`${url}/api/pull/project?projectID=${this.props.currentProjectId}`)
-            },
-            () => {
-                if(this.props.currentProjectId)
-                    this.props.runTests(`${url}/api/run/testall?projectID=${this.props.currentProjectId}`)
-            },
-            () => { history.push('/course-dishonesty') }
+            () => { history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/manage-tas`) },
+            () => { this.props.setModalState(2) },
+            () => { history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/course-dishonesty`) }
         ]
 
         return (
@@ -93,36 +38,52 @@ class CoursePanel extends Component {
                 </div>
 
                 <div className='panel-right-nav'>
-                    <SyncItem />
-                    <CourseCommitHistory/>
+                    <HistoryText />
                 </div>
 
                 <CourseModal id={1}/>
+				<ProgressModal id={2} />
 
                 <div className='panel-center-content'>
 
                     <div className='panel-course-content'>
                         <Title onClick={ () => this.props.setModalState(1) }>
-                            <h1 className='header'>CS252</h1>
+                            <h1 className='header'>{this.props.currentCourseId.toUpperCase()}</h1>
                             <SettingsIcon/>
                         </Title>
                         <div className='h1 break-line header' />
 
                         <h3 className='header'>Course Charts Summary</h3>
-                        <CourseAnonCharts />
+                        <AnonymousCharts />
 
-	                    <div className='h1 break-line header' />
+                        {
+                            this.props.isAnySelected ?
+                                <div>
+                                    <div className='h1 break-line' />
+                                    <h3 className='header'>Students Charts Summary</h3>
+                                    <Charts/>
+                                </div>
+                                : null
+                        }
 
-	                    <h3 className='header'>Students Charts Summary</h3>
-                        <CourseCharts/>
-
-                        <div className='h1 break-line header' />
+                        <div className='h1 break-line' />
                         <h3 className='header'>Course Statistics</h3>
-                        <CourseStatistics />
+                        <CourseStatistics anon />
+
+                        {
+                            this.props.isAnySelected ?
+                                <div>
+                                    <div className='h1 break-line' />
+                                    <h3 className='header'>Students Statistics</h3>
+                                    <CourseStatistics />
+                                </div>
+                                : null
+                        }
+
 
                         <div className='h1 break-line' />
 
-                        <CourseStudentFilter onChange={ this.changeFilter } filters={ this.state.filters } />
+                        <CourseStudentFilter />
                     </div>
                 </div>
             </div>
@@ -132,11 +93,9 @@ class CoursePanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-	    projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
-	    currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
-        currentProjectId: state.projects && state.projects.currentProjectId ? state.projects.currentProjectId : null,
-        page: state.course && state.course.studentsPage ? state.course.studentsPage : 1,
-        last: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.last : true,
+        currentCourseId: getCurrentCourseId(state),
+        currentSemesterId: getCurrentSemesterId(state),
+        isAnySelected: isAnySelected(state, 'students')
     }
 }
 
@@ -148,8 +107,6 @@ const mapDispatchToProps = (dispatch) => {
         setModalState: (id) => dispatch(setModalState(id)),
         runTests: (url, headers, body) => dispatch(runTests(url, headers, body)),
         syncRepositories: (url, headers, body) => dispatch(syncRepositories(url, headers, body)),
-        updateStudentsPage: () => dispatch(updateStudentsPage()),
-        resetStudentsPage: () => dispatch(resetStudentsPage()),
     }
 }
 

@@ -1,9 +1,9 @@
 export {
-    default as CourseAnonCharts
+    default as AnonymousCharts
 } from './CourseAnonCharts'
 
 export {
-    default as CourseCharts
+    default as Charts
 } from './CourseCharts'
 
 export {
@@ -16,11 +16,11 @@ export {
 
 export {
     default as CourseStudentFilter
-} from './CourseStudentFilter'
+} from './StudentFilter'
 
 export {
     default as StudentPreview
-} from './CourseStudentSummary'
+} from './StudentSummary'
 
 export {
     CourseCompletionProgress,

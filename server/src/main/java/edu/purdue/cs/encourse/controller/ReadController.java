@@ -50,15 +50,65 @@ public class ReadController {
     @RequestMapping(value = "/studentsData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentData(@RequestParam(name = "courseID") String courseID,
                                                           @RequestParam(name = "semester") String semester,
-                                                          @RequestParam(name = "page", defaultValue = "1", required = false) int page,
-                                                          @RequestParam(name = "size", defaultValue = "100", required = false) int size,
-                                                          @RequestParam(name = "sortBy", defaultValue = "id", required = false) String sortBy,
                                                           @RequestParam(name = "projectID", required = false) String projectID,
-                                                          @RequestParam(name = "userName", required = false) List<String> userNames,
-                                                          @RequestParam(name = "order", defaultValue = "0", required = false) int order,
-                                                          @RequestParam(name = "commit", defaultValue = "0", required = false) int commit,
-                                                          @RequestParam(name = "hours", defaultValue = "0", required = false) int hour,
-                                                          @RequestParam(name = "progress", defaultValue = "0", required = false) int progress) {
+                                                          @RequestBody String body) {
+        List<String> userNames = new ArrayList<>();
+        Map<String, int[]> options = new HashMap<>(); // option: [min, max]
+        int page = 1;
+        int size = 100;
+        String sortBy;
+        boolean selectAll = true;
+        int order = 0;
+
+        // Parse request body for parameters
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject json = (JSONObject) parser.parse(body);
+            if (json.keySet().contains("userNames")) {
+                String[] names = new String[2];
+                ((JSONArray) json.get("userNames")).toArray(names);
+                for(String name: names) userNames.add(name);
+            }
+
+            if (json.keySet().contains("page")) {
+                page = ((Number) json.get("page")).intValue();
+            }
+            if (json.keySet().contains("size")) {
+                size = ((Number) json.get("size")).intValue();
+            }
+            if (json.keySet().contains("order")) {
+                order = ((Number) json.get("order")).intValue();
+            }
+            if (json.keySet().contains("sortBy")) {
+                sortBy = (String) json.get("sortBy");
+            } else {
+                sortBy = "id";
+            }
+            if (json.keySet().contains("selectAll")) {
+                selectAll = (Boolean) json.get("selectAll");
+            }
+
+            if (json.keySet().contains("commitCounts")) {
+                Map<String, Integer> values = (Map) json.get("commitCounts");
+                int[] arr = {((Number) values.get("min")).intValue(), ((Number) values.get("max")).intValue()};
+                options.put("commitCounts", arr);
+            }
+            if (json.keySet().contains("timeSpent")) {
+                Map<String, Integer> values = (Map) json.get("timeSpent");
+                int[] arr = {((Number) values.get("min")).intValue(), ((Number) values.get("max")).intValue()};
+                options.put("timeSpent", arr);
+            }
+            if (json.keySet().contains("grades")) {
+                Map<String, Integer> values = (Map) json.get("grades");
+                int[] arr = {((Number) values.get("min")).intValue(), ((Number) values.get("max")).intValue()};
+                options.put("grades", arr);
+            }
+
+        } catch (org.json.simple.parser.ParseException e) {
+            return new ResponseEntity<>("{\"errors\": \"Could not parse body\"}", HttpStatus.BAD_REQUEST);
+        }
+
+        // Get the appropriate data based on account type
         JSONArray returnJson = null;
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
@@ -75,83 +125,129 @@ public class ReadController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
+        // Select specified students
         List<JSONObject> jsonValues = new ArrayList<>();
-        List<JSONObject> specifiedStudents = new ArrayList<>();
-        boolean specificStudent = false;
         for (int i = 0; i < returnJson.size(); i++) {
             JSONObject json = (JSONObject)returnJson.get(i);
-            if (userNames != null) {
-                if (userNames.contains(json.get("id"))) {
-                    specifiedStudents.add(json);
-                    specificStudent = true;
-                    continue;
+            if (selectAll) {
+                if (userNames != null) {
+                    if (userNames.contains(json.get("id"))) {
+                        continue;
+                    }
+                }
+                jsonValues.add(json);
+            } else {
+                if (userNames != null) {
+                    if (userNames.contains(json.get("id"))) {
+                        jsonValues.add(json);
+                    }
                 }
             }
-            jsonValues.add(json);
         }
-        if (specificStudent) {
-            return new ResponseEntity<>(specifiedStudents, HttpStatus.OK);
-        }
+
         // Filtering
-        int[] commits = {0, 10, 25, 100, 500};
-        int[] hours = {0, 5, 10, 25};
-        int[] progresses = {0, 25, 50, 75};
+        Map<String, List<Integer>> filters = new HashMap<>();
+        if (projectID != null) {
+            filters.put("commitCounts", new ArrayList<>());
+            filters.put("timeSpent", new ArrayList<>());
+            filters.put("grades", new ArrayList<>());
 
-        if (commit != 0) {
-            if (commit >= commits.length) {
-                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commits.length - 1] );
-            } else {
-                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() > commits[commit] ||
-                                          ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commit - 1]);
-            }
-        }
+            for (String sortName : filters.keySet()) {
+                Comparator<JSONObject> compare = (a, b) -> {
+                    TreeMap jsonA = (TreeMap) a.get(sortName);
+                    TreeMap jsonB = (TreeMap) b.get(sortName);
 
-        if (hour != 0) {
-            if (hour >= hours.length) {
-                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hours.length - 1] );
-            } else {
-                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() > hours[hour] ||
-                                          ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hour - 1]);
-            }
-        }
-
-        if (progress != 0) {
-            if (progress >= progresses.length) {
-                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progresses.length - 1] );
-            } else {
-                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() > progresses[progress] ||
-                                          ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progress - 1]);
-            }
-        }
-
-        // Sorting
-        Comparator<JSONObject> compare;
-        switch(sortBy) {
-            case "timeSpent":
-            case "grades":
-            case "commitCounts":
-                if (projectID == null) {
-                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                }
-                compare = (a, b) -> {
-                    TreeMap jsonA = (TreeMap) a.get(sortBy);
-                    TreeMap jsonB = (TreeMap) b.get(sortBy);
-
-                    double valA = ((Number)jsonA.get(projectID)).doubleValue();
-                    double valB = ((Number)jsonB.get(projectID)).doubleValue();
+                    double valA = ((Number) jsonA.get(projectID)).doubleValue();
+                    double valB = ((Number) jsonB.get(projectID)).doubleValue();
                     return Double.compare(valA, valB);
                 };
-                break;
-            case "id":
-            default:
-                compare = (JSONObject a, JSONObject b) -> {
-                    String valA = (String) a.get(sortBy);
-                    String valB = (String) b.get(sortBy);
-                    return valA.compareTo(valB);
-                };
-                break;
+                jsonValues.sort(order == 0 ? compare : compare.reversed());
+
+                int min = (int) ((Number) ((TreeMap) jsonValues.get(0).get(sortName)).get(projectID)).doubleValue();
+                int median = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() / 2).get(sortName)).get(projectID)).doubleValue();
+                int q1 = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() / 4).get(sortName)).get(projectID)).doubleValue();
+                int q3 = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() * 3 / 4).get(sortName)).get(projectID)).doubleValue();
+                int max = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() - 1).get(sortName)).get(projectID)).doubleValue();
+                filters.get(sortName).add(min);
+                filters.get(sortName).add(q1);
+                filters.get(sortName).add(median);
+                filters.get(sortName).add(q3);
+                filters.get(sortName).add(max);
+
+                if (options.keySet().contains(sortName)) {
+                    if (options.get(sortName)[0] < min) {
+                        options.get(sortName)[0] = min;
+                    }
+                    if (options.get(sortName)[1] > max) {
+                        options.get(sortName)[1] = max;
+                    }
+                    jsonValues.removeIf(i -> ((Number) ((TreeMap) i.get(sortName)).get(projectID)).doubleValue() > options.get(sortName)[1] ||
+                                             ((Number) ((TreeMap) i.get(sortName)).get(projectID)).doubleValue() < options.get(sortName)[0]);
+                }
+            }
         }
-        jsonValues.sort(order == 0 ? compare : compare.reversed());
+
+//        int[] commits = {0, 10, 25, 100, 500};
+//        int[] hours = {0, 5, 10, 25};
+//        int[] progresses = {0, 25, 50, 75};
+//
+//        if (commit != 0) {
+//            if (commit >= commits.length) {
+//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commits.length - 1] );
+//            } else {
+//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() > commits[commit] ||
+//                                          ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commit - 1]);
+//            }
+//        }
+//
+//        if (hour != 0) {
+//            if (hour >= hours.length) {
+//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hours.length - 1] );
+//            } else {
+//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() > hours[hour] ||
+//                                          ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hour - 1]);
+//            }
+//        }
+//
+//        if (progress != 0) {
+//            if (progress >= progresses.length) {
+//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progresses.length - 1] );
+//            } else {
+//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() > progresses[progress] ||
+//                                          ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progress - 1]);
+//            }
+//        }
+
+        // Sorting
+        if (projectID != null) {
+            Comparator<JSONObject> compare;
+            switch (sortBy) {
+                case "timeSpent":
+                case "grades":
+                case "commitCounts":
+                    if (projectID == null) {
+                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                    }
+                    compare = (a, b) -> {
+                        TreeMap jsonA = (TreeMap) a.get(sortBy);
+                        TreeMap jsonB = (TreeMap) b.get(sortBy);
+
+                        double valA = ((Number) jsonA.get(projectID)).doubleValue();
+                        double valB = ((Number) jsonB.get(projectID)).doubleValue();
+                        return Double.compare(valA, valB);
+                    };
+                    break;
+                case "id":
+                default:
+                    compare = (JSONObject a, JSONObject b) -> {
+                        String valA = (String) a.get(sortBy);
+                        String valB = (String) b.get(sortBy);
+                        return valA.compareTo(valB);
+                    };
+                    break;
+            }
+            jsonValues.sort(order == 0 ? compare : compare.reversed());
+        }
 
         JSONArray sortedAndPagedJsonArray = new JSONArray();
         page = (page > jsonValues.size() / size + 1) ? jsonValues.size() / size + 1 : page;
@@ -172,6 +268,7 @@ public class ReadController {
         response.put("sortedBy", sortBy);
         response.put("last", (page >= jsonValues.size() / size));
         response.put("first", (page == 1));
+        response.put("filters", filters);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -283,17 +380,17 @@ public class ReadController {
             String auth = ((Authority) iter.next()).getAuthority();
             if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                 if (userNames != null) {
-                    returnJson = professorService.getGroupTestSummary(projectID, userNames);
+                    returnJson = courseService.getTestSummary(projectID, userNames);
                 } else {
-                    returnJson = professorService.getTestSummary(projectID);
+                    returnJson = professorService.getClassTestSummary(projectID);
                 }
                 break;
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
                 if (anon) {
-                    returnJson = professorService.getTestSummary(projectID);
+                    returnJson = professorService.getClassTestSummary(projectID);
                 } else {
                     if (userNames != null) {
-                        returnJson = taService.getGroupTestSummary(projectID, userNames, getUserFromAuth().getUsername());
+                        returnJson = courseService.getTestSummary(projectID, userNames);
                     } else {
                         returnJson = taService.getAssignmentsTestSummary(projectID, getUserFromAuth().getUsername());
                     }
@@ -324,18 +421,7 @@ public class ReadController {
 
         if (userName != null) {
             if (hasPermissionOverAccount(userName)) {
-                Iterator iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        returnJson = professorService.getCommitList(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        returnJson = taService.getCommitList(projectID, userName, getUserFromAuth().getUsername());
-                        break;
-                    }
-                }
-
+                returnJson = courseService.getStudentCommitList(projectID, userName);
                 if (returnJson == null || returnJson.jsonObject == null) {
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
@@ -433,19 +519,7 @@ public class ReadController {
         List<String> correct = new ArrayList<>();
         for (String userName: userNames) {
             if (hasPermissionOverAccount(userName)) {
-                JSONReturnable returnJson = null;
-                Iterator iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        returnJson = professorService.getCommitCounts(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        returnJson = taService.getCommitCounts(projectID, userName, getUserFromAuth().getUsername());
-                        break;
-                    }
-                }
-
+                JSONReturnable returnJson = courseService.getStudentCommitCounts(projectID, userName);
                 if (returnJson == null || returnJson.jsonObject == null) {
                     errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
@@ -478,14 +552,14 @@ public class ReadController {
                     }
                 } else {
                     if (userNames.size() == 1) {
-                        JSONReturnable curr = professorService.getStatistics(projectID, userNames.get(0));
+                        JSONReturnable curr = courseService.getStudentStatistics(projectID, userNames.get(0));
                         if (curr != null && curr.getJsonObject() != null) {
                             returnJson.add(curr.getJsonObject());
                         }
                         break;
                     }
                     for (String userName: userNames) {
-                        JSONReturnable curr = professorService.getStatistics(projectID, userName);
+                        JSONReturnable curr = courseService.getStudentStatistics(projectID, userName);
                         if (curr != null && curr.getJsonObject() != null) {
                             JSONArray a = (JSONArray) curr.getJsonObject().get("data");
                             JSONObject obj = new JSONObject();
@@ -503,14 +577,14 @@ public class ReadController {
                     }
                 } else {
                     if (userNames.size() == 1) {
-                        JSONReturnable curr = professorService.getStatistics(projectID, userNames.get(0));
+                        JSONReturnable curr = courseService.getStudentStatistics(projectID, userNames.get(0));
                         if (curr != null && curr.getJsonObject() != null) {
                             returnJson.add(curr.getJsonObject());
                         }
                         break;
                     }
                     for (String userName: userNames) {
-                        JSONReturnable curr = taService.getStatistics(projectID, userName, getUserFromAuth().getUsername());
+                        JSONReturnable curr = courseService.getStudentStatistics(projectID, userName);
                         if (curr != null && curr.getJsonObject() != null) {
                             JSONArray a = (JSONArray) curr.getJsonObject().get("data");
                             JSONObject obj = new JSONObject();
@@ -527,38 +601,6 @@ public class ReadController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(returnJson, HttpStatus.OK);
-
-//        List<String> errors = new ArrayList<>();
-//        List<String> correct = new ArrayList<>();
-//        for (String userName: userNames) {
-//            if (hasPermissionOverAccount(userName)) {
-//                JSONReturnable returnJson = null;
-//                Iterator iter = getUserAuthorities().iterator();
-//                while (iter.hasNext()) {
-//                    String auth = ((Authority) iter.next()).getAuthority();
-//                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-//                        returnJson = professorService.getStatistics(projectID, userName);
-//                        break;
-//                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-//                        returnJson = taService.getStatistics(projectID, userName, getUserFromAuth().getUsername());
-//                        break;
-//                    }
-//                }
-//
-//                if (returnJson == null || returnJson.jsonObject == null) {
-//                    errors.add("\"" + userName + " does not have content" + "\"");
-//                    continue;
-//                }
-//                String json = returnJson.jsonObject.toJSONString();
-//                correct.add(json);
-//            } else {
-//                errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
-//            }
-//        }
-//        if (errors.isEmpty()) {
-//            return new ResponseEntity<>(correct.get(0), HttpStatus.OK);
-//        }
-//        return new ResponseEntity<>("{\"errors\": " + errors + ", \"correct\": " + correct + "}", HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
@@ -576,6 +618,25 @@ public class ReadController {
     }
 
     @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/source", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getSource(@RequestParam(name = "projectID") String projectID,
+                                                     @RequestParam(name = "userName") String userName,
+                                                     @RequestParam(name = "startHash") String startHash,
+                                                     @RequestParam(name = "endHash") String endHash,
+                                                     @RequestParam(name = "file") String file) {
+        String source;
+        if (hasPermissionOverAccount(userName)) {
+            source = courseService.getSourceWithChanges(projectID, userName, startHash, endHash, file);
+            if (source == null) {
+                return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(source, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/diffs", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getDiffs(@RequestParam(name = "projectID") String projectID,
                                                     @RequestParam(name = "userName") List<String> userNames) {
@@ -583,19 +644,7 @@ public class ReadController {
         List<String> correct = new ArrayList<>();
         for (String userName: userNames) {
             if (hasPermissionOverAccount(userName)) {
-                JSONReturnable returnJson = null;
-                Iterator iter = getUserAuthorities().iterator();
-                while (iter.hasNext()) {
-                    String auth = ((Authority) iter.next()).getAuthority();
-                    if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                        returnJson = professorService.getAdditionsAndDeletions(projectID, userName);
-                        break;
-                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                        returnJson = taService.getAdditionsAndDeletions(projectID, userName, getUserFromAuth().getUsername());
-                        break;
-                    }
-                }
-
+                JSONReturnable returnJson = courseService.getStudentAdditionsAndDeletions(projectID, userName);
                 if (returnJson == null || returnJson.jsonObject == null) {
                     errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
@@ -619,18 +668,7 @@ public class ReadController {
                                                        @RequestParam(name = "userName") String userName) {
         JSONReturnable returnJson = null;
         if (hasPermissionOverAccount(userName)) {
-            Iterator iter = getUserAuthorities().iterator();
-            while (iter.hasNext()) {
-                String auth = ((Authority) iter.next()).getAuthority();
-                if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
-                    returnJson = professorService.getCommitVelocity(projectID, userName);
-                    break;
-                } else if (auth.contentEquals(Account.Role_Names.TA)) {
-                    returnJson = null;
-                    break;
-                }
-            }
-
+            returnJson = courseService.getStudentCommitVelocity(projectID, userName);
             if (returnJson == null || returnJson.jsonObject == null) {
                 return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
             }
@@ -651,18 +689,18 @@ public class ReadController {
             String auth = ((Authority) iter.next()).getAuthority();
             if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                 if (userNames != null && userNames.size() == 1) {
-                    returnJson = professorService.getStudentProgress(projectID, userNames.get(0));
+                    returnJson = courseService.getStudentProgress(projectID, userNames.get(0));
                 } else if (userNames != null) {
-                    returnJson = professorService.getGroupProgress(projectID, userNames);
+                    returnJson = courseService.getProgress(projectID, userNames);
                 } else {
                     returnJson = professorService.getClassProgress(projectID);
                 }
                 break;
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
                 if (userNames != null && userNames.size() == 1) {
-                    returnJson = taService.getStudentProgress(projectID, userNames.get(0), getUserFromAuth().getUsername());
+                    returnJson = courseService.getStudentProgress(projectID, userNames.get(0));
                 } else if (userNames != null) {
-                    returnJson = taService.getGroupProgress(projectID, userNames, getUserFromAuth().getUsername());
+                    returnJson = courseService.getProgress(projectID, userNames);
                 } else {
                     returnJson = taService.getAssignmentsProgress(projectID, getUserFromAuth().getUsername());
                 }

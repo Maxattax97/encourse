@@ -1,0 +1,53 @@
+Should each graph have a completely description? This might involve passing a description as a property or something
+
+
+Other
+=====
+Last Sync - The last time that the server moved the git project files from data.cs.purdue.edu to vm2
+Last Test Ran - The last time the server ran the testall scripts on each project
+
+
+Project page
+=====
+
+Graphs
+-----
+Histogram of all students in the course grouped by the percentage of tests they are passing (progress).
+Histogram of selected students grouped by the percentage of tests they are passing (progress).
+
+Histogram of students grouped by the percentage of tests they are passing (progress).
+
+Test cases by pass
+Most passed test cases
+Least passed test cases
+
+Stats
+------
+Average Additions
+    Average number of added lines of code so far per student
+Average Deletions
+    Average number of deleted lines of code so far per student
+Average Commit Count
+    Average number of commits so far per student
+Average Estimated Time Spent
+    Average number of time spent so far per student. Estimated by (recording an hour of work if there is a commit between two hours | recording time if there is a commit within an hour of another commit)
+
+
+Student page
+======
+
+Graphs
+-----
+Percentage of test cases passed by day. This graph is strictly increasing since it ignores changes that break the code.
+Number of commits by day
+Cumulative number of lines added or deleted by day
+
+Stats
+------
+Start Date - The date of the student's first commit
+End Date - The date of the student's last commit
+Estimated Time Spent - Estimated time spent on the project. Estimated by (recording an hour of work if there is a commit between two hours | recording time if there is a commit within an hour of another commit)
+Current Test Score - Score calculated by summing the points given for each passing test case
+Commit Count - Number of commits made the by student so far
+Deletions - Number of deleted lines of code made the by student so far
+Additions - Number of added lines of code made the by student so far

@@ -4,7 +4,7 @@
   .float-height {
     > div {
       float:left;
-      padding: 12px;
+      @include set-rem-safe(padding, .75rem);
     }
   }
 
@@ -19,6 +19,10 @@
     > div {
       width: 50%;
     }
+  }
+
+  .cols-2 .big-graph {
+    width: 100%;
   }
 
   .summary-preview {

@@ -4,6 +4,12 @@ import edu.purdue.cs.encourse.service.ProfessorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
+/**
+ * Class that contains tasks which are scheduled to run automatically
+ *
+ * @author William Jordan Reed
+ * @author reed226@purdue.edu
+ */
 public class Scheduler {
     @Autowired
     ProfessorService professorService;

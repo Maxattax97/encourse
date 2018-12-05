@@ -2,38 +2,40 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { getClassProjects, setCurrentProject } from '../../redux/actions'
-import {Title, Card, BackIcon, SettingsIcon, PlusIcon, LoadingIcon} from '../Helpers'
+import { getCurrentCourseId, getCurrentSemesterId } from "../../redux/state-peekers/course"
+import {Title, Card, SettingsIcon, LoadingIcon} from '../Helpers'
 import { history } from '../../redux/store'
-import url from '../../server'
+import {getCurrentProject, getProjects} from '../../redux/state-peekers/projects'
+import {retrieveAllProjects} from '../../redux/retrievals/projects'
 
 class ProjectNavigation extends Component {
 
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            show_project_options : false,
-            new_project : false
-        }
-    }
-
     componentDidMount = () => {
-        if(this.props.projects.length === 0) {
-            //TODO: remove classid and semester hardcoding
-            this.props.getClassProjects(`${url}/api/projectsData?courseID=cs252&semester=Fall2018`)
-        }
+        if(!this.props.projects.length)
+            retrieveAllProjects(this.props.currentCourseId, this.props.currentSemesterId)
     }
-
-    changeProject = (project_id, project_index) => {
-        this.setState({ new_project: false })
-        this.props.setCurrentProject(project_id, project_index)
-    };
 
     openProjectOptions = () => {
-        history.push('/projects')
+        history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/projects`)
     };
 
     render() {
+        const textListDiv =
+            this.props.isLoading && !this.props.projects.length ?
+                <div className='loading'>
+                    <LoadingIcon/>
+                </div>
+                :
+                this.props.projects.map((project, index) =>
+                    <div key={ project.id }
+                         onClick={ () => this.props.setCurrentProject(project.id, index) }
+                         className={ `action${this.props.project === project ? ' list-highlight' : ''}` }>
+                        <h4>
+                            { project.project_name }
+                        </h4>
+                    </div>
+                )
+
         return (
             <div className="list-nav side-nav-left">
                 <Card>
@@ -42,27 +44,13 @@ class ProjectNavigation extends Component {
                             <h3 className='header'>Projects</h3>
                             <SettingsIcon/>
                         </Title>
+
                         <div className="h3 break-line header"/>
-                        {
-                            !this.props.isLoading ?
-                                <div className='text-list'>
-                                    {
-                                        this.props.projects &&
-                                        this.props.projects.map((project, index) =>
-                                            <div key={ project.id }
-                                                onClick={ () => this.changeProject(project.id, index) }
-                                                className={ `action${this.props.currentProjectIndex === index && !this.state.new_project ? ' list-highlight' : ''}` }>
-                                                <h4>
-                                                    { project.project_name }
-                                                </h4>
-                                            </div>)
-                                    }
-                                </div>
-                                :
-                                <div className='loading'>
-                                    <LoadingIcon/>
-                                </div>
-                        }
+                        <div className='text-list'>
+                            {
+                                textListDiv
+                            }
+                        </div>
                     </div>
                 </Card>
             </div>
@@ -72,8 +60,10 @@ class ProjectNavigation extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        projects: state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : [],
-        currentProjectIndex: state.projects && state.projects.currentProjectIndex ? state.projects.currentProjectIndex : 0,
+        projects: getProjects(state),
+        currentCourseId: getCurrentCourseId(state),
+        currentSemesterId: getCurrentSemesterId(state),
+        project: getCurrentProject(state),
         isLoading: state.projects ? state.projects.getClassProjectsIsLoading : false,
     }
 }

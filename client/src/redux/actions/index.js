@@ -1,9 +1,10 @@
-export { 
+export {
+    setCurrentCourse, setCurrentSemester,
     getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, 
     getSectionsData, syncRepositories, runTests, getDishonestyReport,
     updateCourseDishonestyPage, resetCourseDishonestyPage, updateStudentsPage,
     resetStudentsPage, getSimilarityPlot, getClassStatistics, submitStudents,
-    getClassCommitHistory, getClassProgressAnon, getTestBarGraphAnon,
+    getClassCommitHistory, getClassProgressAnon, getTestBarGraphAnon, getTeachingAssistants
 } from './course' 
 
 export {
@@ -29,9 +30,6 @@ export {
 } from './admin'
 
 export {
-    getTeachingAssistants,
-} from './teaching_assistant'
-
-export {
-    setModalState
-} from './modal'
+    setModalState, toggleSelectAllCards, toggleSelectCard, resetAllCards,
+	setFilterState, resetFilterState
+} from './control'
