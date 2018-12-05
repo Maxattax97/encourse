@@ -18,6 +18,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -646,15 +649,27 @@ public class ReadController {
                                                      @RequestParam(name = "startHash") String startHash,
                                                      @RequestParam(name = "endHash") String endHash,
                                                      @RequestParam(name = "file") String file) {
-        String source;
+        String sourceFile;
         if (hasPermissionOverAccount(userName)) {
-            source = courseService.getSourceWithChanges(projectID, userName, startHash, endHash, file);
-            if (source == null) {
+            sourceFile = courseService.getSourceWithChanges(projectID, userName, startHash, endHash, file);
+            if (sourceFile == null) {
                 return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
             }
         } else {
             return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
         }
+
+        String source = "";
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(new File(sourceFile)));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                source += line;
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("{\"errors\": \"" + sourceFile + " does not have content\"}", HttpStatus.NO_CONTENT);
+        }
+
         return new ResponseEntity<>(source, HttpStatus.OK);
     }
 
