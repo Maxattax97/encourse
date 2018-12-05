@@ -139,14 +139,14 @@ public class HelperServiceImpl implements HelperService {
                     JSONObject jsonObject = null;
                     if (obj.getClass() == JSONObject.class) {
                         jsonObject = (JSONObject)obj;
+                        json = new JSONReturnable(1, jsonObject);
                     } else if (obj.getClass() == JSONArray.class) {
                         jsonObject = new JSONObject();
                         JSONArray jsonArray = (JSONArray)obj;
-                        jsonObject.put("data", jsonArray);
+                        json = new JSONReturnable(1, jsonArray);
                     } else {
                         json = new JSONReturnable(-4, null);
                     }
-                    json = new JSONReturnable(1, jsonObject);
                 }
             }
         } catch (IOException e) {
