@@ -461,7 +461,7 @@ public class ReadController {
             }
         }
 
-        JSONObject json = returnJson.getJsonObject();
+        JSONArray json = (JSONArray) returnJson.getJsonObject().get("data");
         if (json == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
