@@ -108,20 +108,18 @@ const statDict = {
 }
 
 function formatStatistics(udata) {
-    if (!udata || !udata.data)
+    if (!udata)
         return null
 
-    const data = udata.data
+    udata.sort((d1, d2) => d1.index - d2.index)
 
-    data.sort((d1, d2) => d1.index - d2.index)
-
-    for (let item of data) {
+    for (let item of udata) {
         if (statDict[item.stat_name]) {
             item.stat_desc = statDict[item.stat_name]
         }
     }
 
-    return data
+    return udata
 }
 
 function submitStudents(state, action) {
