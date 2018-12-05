@@ -44,6 +44,7 @@ class GitParser:
                     GitCommit(commit_files, commit_timestamp, commit_timedelta, commit_hash)
                 )
                 self.student_log[student_name] = GitLog(student_commits, student_name)
+                print(student_commits)
                 student_commits = []
             elif len(line.split(" ")) == 4:
                 # This line is a commit time
@@ -149,12 +150,22 @@ class GitLog:
         current_date = 0
         current_day = {}
         current_commits = []
+        first_commit = None
+        last_commit = None
         for commit in self.commits:
+            print(commit)
             if commit.timestamp.date() != current_date:
                 if current_date != 0:
                     current_day["time_spent"] = self._estimate_time(current_commits, timeout=1)
                     current_day["commit_count"] = len(current_commits)
+                    current_day["first_commit"] = first_commit.commit_hash
+                    current_day["last_commit"] = last_commit.commit_hash
                     days.append(current_day)
+
+                if not first_commit:
+                    first_commit = commit
+                    last_commit = commit
+
                 current_date = commit.timestamp.date()
                 current_day = {
                     "timestamp": current_date,
@@ -162,13 +173,23 @@ class GitLog:
                     "deletions": 0,
                     "files": [],
                     "time_spent": 0.0,
-                    "commit_count": 1
+                    "commit_count": 1,
+                    "first_commit": "",
+                    "last_commit": "",
                 }
                 current_commits = [commit]
+                first_commit = commit
+                last_commit = commit
             else:
                 current_commits.append(commit)
                 current_day["additions"] += commit.additions
                 current_day["deletions"] += commit.deletions
+
+                if commit.timestamp < first_commit.timestamp:
+                    first_commit = commit
+                if commit.timestamp > last_commit.timestamp:
+                    last_commit = commit
+                
                 for f in commit.files:
                     if f.name not in [n.name for n in current_day["files"]]:
                         current_day["files"].append(f)
