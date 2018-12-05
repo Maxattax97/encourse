@@ -207,10 +207,10 @@ function formatProgress(udata) {
 }
 
 function formatTestProgress(udata) {
-    if(!udata || !udata.data || udata.data.length === 0)
+    if(!udata)
         return []
 
-    const data = udata.data
+    const data = udata
     const formattedData = []
 
     for (let apiEntry of data) {
@@ -228,9 +228,9 @@ function formatTestProgress(udata) {
 }
 
 function formatStudentsSimilarity(udata) {
-    if(!udata || udata.data)
+    if(!udata)
         return []
-    let data = udata.data
+    let data = udata
     for (let item of data) {
         item.similarity_bin *= 10
     }

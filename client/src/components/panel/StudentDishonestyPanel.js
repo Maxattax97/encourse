@@ -15,14 +15,6 @@ import {getCurrentProject} from '../../redux/state-peekers/projects'
 
 class StudentDishonestyPanel extends Component {
 
-    componentDidMount = () => {
-        if(!this.props.student) {
-            this.props.getStudent(`${url}/api/studentsData?courseID=${this.props.currentCourseId}&semester=${this.props.currentSemesterId}`, JSON.stringify({
-                userNames: [this.props.match.params.id]
-            }))
-        }
-    }
-
     back = () => {
         history.goBack()
     }

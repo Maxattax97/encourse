@@ -6,6 +6,7 @@ import CustomTooltipContent from './CustomTooltipContent';
 import {getCurrentProject} from "../../../../redux/state-peekers/projects"
 import {getCourseProgress, getStudentsProgress} from "../../../../redux/state-peekers/course"
 import {retrieveCourseProgress, retrieveStudentsProgress} from "../../../../redux/retrievals/course"
+import {isAnySelected} from '../../../../redux/state-peekers/control'
 import {Chart} from "../../../Helpers"
 
 class CompletionProgress extends Component {
@@ -14,8 +15,14 @@ class CompletionProgress extends Component {
 		if (this.props.project) {
 			if (this.props.anon)
 				retrieveCourseProgress(this.props.project)
-			else
-				retrieveStudentsProgress(this.props.project)
+			else {
+				if(this.props.isAnySelected) {
+					//TODO: modify for selected students
+					retrieveStudentsProgress(this.props.project)
+				} else {
+					retrieveStudentsProgress(this.props.project)
+				}
+			}	
 		}
 	}
 
@@ -23,8 +30,14 @@ class CompletionProgress extends Component {
 		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index)) {
 			if(prevProps.anon)
 				retrieveCourseProgress(this.props.project)
-			else
-				retrieveStudentsProgress(this.props.project)
+			else {
+				if(this.props.isAnySelected) {
+					//TODO: modify for selected students
+					retrieveStudentsProgress(this.props.project)
+				} else {
+					retrieveStudentsProgress(this.props.project)
+				}
+			}		
 		}
 	}
 
@@ -66,7 +79,8 @@ class CompletionProgress extends Component {
 const mapStateToProps = (state, props) => {
 	return {
 		project: getCurrentProject(state),
-		chart: props.anon ? getCourseProgress(state) : getStudentsProgress(state)
+		chart: props.anon ? getCourseProgress(state) : getStudentsProgress(state),
+		isAnySelected: isAnySelected(state, 'students')
 	}
 }
 

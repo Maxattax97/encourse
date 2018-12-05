@@ -72,7 +72,7 @@ class StudentVelocityPerCommit extends Component {
         if (!udata) {
             return defaultData
         }
-        let data = udata.data
+        let data = udata
 
         if (!data || data.length === 0) {
             return defaultData

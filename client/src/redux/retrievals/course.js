@@ -7,7 +7,7 @@ import {
     getStudentPreviews, getTestBarGraph,
     getTestBarGraphAnon
 } from '../actions'
-import {api_v1, projectID_v1, semester_v1, courseID_v1, size_v1, anon_v1} from './retrieval-utils'
+import {api_v1, projectID_v1, semester_v1, courseID_v1, size_v1, anon_v1, userList_v1} from './retrieval-utils'
 import {getTeachingAssistants} from '../actions/course'
 
 export function retrieveAllStudents(project, courseID, semester, body = { size: 200 }) {
@@ -23,15 +23,23 @@ export function retrieveCourseProgress(project) {
 }
 
 export function retrieveCourseTestProgress(project) {
-	store.dispatch(getTestBarGraphAnon(`${api_v1}testSummary?${projectID_v1(project)}`))
+	store.dispatch(getTestBarGraphAnon(`${api_v1}testSummary?${projectID_v1(project)}&${anon_v1}`))
 }
 
 export function retrieveStudentsProgress(project) {
 	store.dispatch(getClassProgress(`${api_v1}progress?${projectID_v1(project)}`))
 }
 
+export function retrieveStudentsProgressSpecific(project, usernames) {
+	store.dispatch(getClassProgress(`${api_v1}progress?${projectID_v1(project)}&${userList_v1(usernames)}`))
+}
+
 export function retrieveStudentsTestProgress(project) {
-	store.dispatch(getTestBarGraph(`${api_v1}testSummary?${projectID_v1(project)}`))
+	store.dispatch(getTestBarGraph(`${api_v1}testSummary?${projectID_v1(project)}}`))
+}
+
+export function retrieveStudentsTestProgressSpecific(project, usernames) {
+	store.dispatch(getTestBarGraph(`${api_v1}testSummary?${projectID_v1(project)}&${userList_v1(usernames)}`))
 }
 
 export function retrieveStudentsSimilarity(project) {
