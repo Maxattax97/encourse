@@ -101,7 +101,7 @@ def average_statistics(parser, visible, hidden=None, max_changes=None, timeout=N
             end_date = end
 
         total_commits += len(log.commits)
-        total_time += log.estimate_time(log.commits, timeout=timeout)
+        total_time += sum([day["time_spent"] for day in daily_commits])
 
         if user in visible:
             total_vscore += visible[user]["total"]
