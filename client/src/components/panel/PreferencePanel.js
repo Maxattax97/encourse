@@ -351,7 +351,9 @@ class PreferencePanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        currentSemesterId: getCurrentSemesterId(state)
+        currentSemesterId: getCurrentSemesterId(state),
+        courses: state.admin && state.admin.courses ? state.admin.courses.data.content : [],
+        accounts: state.admin && state.admin.accounts ? state.admin.accounts.data.content : [],
     }
 }
 
