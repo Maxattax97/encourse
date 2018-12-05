@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {Card, Checkbox, CheckmarkIcon, Summary, Title} from '../../Helpers'
 import {fuzzing} from '../../../fuzz'
-import {history} from '../../../redux/store'
-import {getCurrentProject, getTestScripts} from '../../../redux/state-peekers'
+import {getCurrentProject, getTestScripts} from '../../../redux/state-peekers/projects'
 import {retrieveTestScripts} from '../../../redux/retrievals/projects'
 import PreviewCard from "../common/PreviewCard"
 
