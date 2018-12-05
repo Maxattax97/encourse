@@ -892,7 +892,7 @@ public class CourseServiceImpl implements CourseService {
         }
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
         String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_sourceChanges.txt";
-        if(helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + startCommitHash + " " + endCommitHash + " " + sourceName) < 0) {
+        if(helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + startCommitHash + " " + endCommitHash) < 0) {
             return null;
         }
         try {
@@ -904,7 +904,7 @@ public class CourseServiceImpl implements CourseService {
             reader.close();
             if(count < 3) {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-                writer.write("No changes found from commit hash " + startCommitHash + " to hash " + endCommitHash + " for file " + sourceName);
+                writer.write("No changes found from commit hash " + startCommitHash + " to hash " + endCommitHash);
                 writer.close();
             }
         }
