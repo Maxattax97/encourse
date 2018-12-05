@@ -33,8 +33,8 @@ public JSONArray getJsonArray() {
 @Override
 public String toString() {
     return "\"errorCode\": " + errorCode + ",\n" +
-            "\"jsonObject\": " + jsonObject.toJSONString() + ",\n" +
-            "\"jsonArray\": " + jsonArray.toJSONString();
+            "\"jsonObject\": " + jsonObject + ",\n" +
+            "\"jsonArray\": " + jsonArray;
 }
 
 }

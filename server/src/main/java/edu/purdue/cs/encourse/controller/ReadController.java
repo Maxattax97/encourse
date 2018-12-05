@@ -425,11 +425,11 @@ public class ReadController {
             }
         }
 
-        if (returnJson == null) {
+        if (returnJson == null || returnJson.getJsonArray() == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        String json = returnJson.getJsonObject().toJSONString();
-        return new ResponseEntity<>(json, HttpStatus.OK);
+
+        return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
     }
     
     @PreAuthorize("isAuthenticated()")
@@ -569,22 +569,21 @@ public class ReadController {
             if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                 if (userNames == null) {
                     JSONReturnable curr = professorService.getClassStatistics(projectID);
-                    System.out.println("STATISTICS: " + curr);
-                    if (curr != null && curr.getJsonObject() != null) {
-                        returnJson.add(curr.getJsonObject());
+                    if (curr != null && curr.getJsonArray() != null) {
+                        returnJson.add(curr.getJsonArray());
                     }
                 } else {
                     if (userNames.size() == 1) {
                         JSONReturnable curr = courseService.getStudentStatistics(projectID, userNames.get(0));
-                        if (curr != null && curr.getJsonObject() != null) {
-                            returnJson.add(curr.getJsonObject());
+                        if (curr != null && curr.getJsonArray() != null) {
+                            returnJson.add(curr.getJsonArray());
                         }
                         break;
                     }
                     for (String userName: userNames) {
                         JSONReturnable curr = courseService.getStudentStatistics(projectID, userName);
                         System.out.println(curr);
-                        if (curr != null && curr.getJsonObject() != null) {
+                        if (curr != null && curr.getJsonArray() != null) {
                             JSONArray a = curr.getJsonArray();
                             JSONObject obj = new JSONObject();
                             obj.put(userName, a);
@@ -596,20 +595,20 @@ public class ReadController {
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
                 if (userNames == null) {
                     JSONReturnable curr = taService.getAssignmentsStatistics(projectID, getUserFromAuth().getUsername());
-                    if (curr != null && curr.getJsonObject() != null) {
-                        returnJson.add(curr.getJsonObject());
+                    if (curr != null && curr.getJsonArray() != null) {
+                        returnJson.add(curr.getJsonArray());
                     }
                 } else {
                     if (userNames.size() == 1) {
                         JSONReturnable curr = courseService.getStudentStatistics(projectID, userNames.get(0));
-                        if (curr != null && curr.getJsonObject() != null) {
-                            returnJson.add(curr.getJsonObject());
+                        if (curr != null && curr.getJsonArray()!= null) {
+                            returnJson.add(curr.getJsonArray());
                         }
                         break;
                     }
                     for (String userName: userNames) {
                         JSONReturnable curr = courseService.getStudentStatistics(projectID, userName);
-                        if (curr != null && curr.getJsonObject() != null) {
+                        if (curr != null && curr.getJsonArray() != null) {
                             JSONArray a = curr.getJsonArray();
                             JSONObject obj = new JSONObject();
                             obj.put(userName, a);
@@ -631,11 +630,11 @@ public class ReadController {
     @RequestMapping(value = "/classStatistics", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getClassStatistics(@RequestParam(name = "projectID") String projectID) {
         JSONReturnable returnJson = professorService.getClassStatistics(projectID);
-        if (returnJson == null) {
+        if (returnJson == null || returnJson.getJsonArray() == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        String json = returnJson.getJsonObject().toJSONString();
-        return new ResponseEntity<>(json, HttpStatus.OK);
+
+        return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -756,10 +755,10 @@ public class ReadController {
             }
         }
 
-        if (returnJson == null || returnJson.getJsonObject() == null) {
+        if (returnJson == null || returnJson.getJsonArray() == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(returnJson.getJsonObject().toJSONString(), HttpStatus.OK);
+        return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
 
 //        List<String> errors = new ArrayList<>();
 //        List<String> correct = new ArrayList<>();
@@ -793,7 +792,6 @@ public class ReadController {
 //                        //returnJson = professorService.getStudentProgress(projectID, userName);
 //                        break;
 //                    } else if (auth.contentEquals(Account.Role_Names.TA)) {
-//                        // TODO: Change this back once fixed
 //                        //returnJson = professorService.getStudentProgress(projectID, userName);
 //                        //returnJson = taService.getStudentProgress(projectID, userName, getUserFromAuth().getUsername());
 //                        break;
@@ -864,12 +862,11 @@ public class ReadController {
                 break;
             }
         }
-        if (returnJson == null) {
+        if (returnJson == null || returnJson.getJsonArray() == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
-        // TODO: Change back to returnJson.getJsonObject().toJSONString();
 
-        return new ResponseEntity<>(returnJson, HttpStatus.OK);
+        return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
