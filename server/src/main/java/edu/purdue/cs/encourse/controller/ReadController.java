@@ -88,20 +88,20 @@ public class ReadController {
                 selectAll = (Boolean) json.get("selectAll");
             }
 
-            if (json.keySet().contains("commit")) {
-                Map<String, Integer> values = (Map) json.get("commit");
+            if (json.keySet().contains("commitCounts")) {
+                Map<String, Integer> values = (Map) json.get("commitCounts");
                 int[] arr = {((Number) values.get("min")).intValue(), ((Number) values.get("max")).intValue()};
-                options.put("commit", arr);
+                options.put("commitCounts", arr);
             }
-            if (json.keySet().contains("hours")) {
-                Map<String, Integer> values = (Map) json.get("hours");
+            if (json.keySet().contains("timeSpent")) {
+                Map<String, Integer> values = (Map) json.get("timeSpent");
                 int[] arr = {((Number) values.get("min")).intValue(), ((Number) values.get("max")).intValue()};
-                options.put("hours", arr);
+                options.put("timeSpent", arr);
             }
-            if (json.keySet().contains("progress")) {
-                Map<String, Integer> values = (Map) json.get("progress");
+            if (json.keySet().contains("grades")) {
+                Map<String, Integer> values = (Map) json.get("grades");
                 int[] arr = {((Number) values.get("min")).intValue(), ((Number) values.get("max")).intValue()};
-                options.put("progress", arr);
+                options.put("grades", arr);
             }
 
         } catch (org.json.simple.parser.ParseException e) {
@@ -175,15 +175,14 @@ public class ReadController {
                 filters.get(sortName).add(max);
 
                 if (options.keySet().contains(sortName)) {
-                    if (options.get(sortName)[0] < 0) {
-                        options.get(sortName)[0] = 0;
+                    if (options.get(sortName)[0] < min) {
+                        options.get(sortName)[0] = min;
                     }
                     if (options.get(sortName)[1] > max) {
                         options.get(sortName)[1] = max;
                     }
                     jsonValues.removeIf(i -> ((Number) ((TreeMap) i.get(sortName)).get(projectID)).doubleValue() > options.get(sortName)[1] ||
                                              ((Number) ((TreeMap) i.get(sortName)).get(projectID)).doubleValue() < options.get(sortName)[0]);
-                    filters.get(sortName).set(0, 0);
                 }
             }
         }
