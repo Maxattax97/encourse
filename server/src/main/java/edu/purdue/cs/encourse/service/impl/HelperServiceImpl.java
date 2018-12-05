@@ -123,7 +123,7 @@ public class HelperServiceImpl implements HelperService {
             String output;
             String error;
             try {
-                BufferedWriter errorWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+                BufferedWriter errorWriter = new BufferedWriter(new FileWriter("errorlog.txt"));
                 while ((error = stdError.readLine()) != null) {
                     errorWriter.write(error);
                 }
