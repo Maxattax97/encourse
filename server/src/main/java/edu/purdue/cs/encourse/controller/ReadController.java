@@ -573,7 +573,6 @@ public class ReadController {
                         returnJson.add(curr.getJsonArray());
                     }
                 } else {
-                    // TODO: Check data exists when specifying userName
                     if (userNames.size() == 1) {
                         JSONReturnable curr = courseService.getStudentStatistics(projectID, userNames.get(0));
                         if (curr != null && curr.getJsonArray() != null) {
@@ -732,12 +731,14 @@ public class ReadController {
     public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
                                                        @RequestParam(name = "userName", required = false) List<String> userNames) {
         JSONReturnable returnJson = null;
+        boolean isArray = false;
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
             String auth = ((Authority) iter.next()).getAuthority();
             if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                 if (userNames != null && userNames.size() == 1) {
                     returnJson = courseService.getStudentProgress(projectID, userNames.get(0));
+                    isArray = true;
                 } else if (userNames != null) {
                     returnJson = courseService.getProgress(projectID, userNames);
                 } else {
@@ -747,6 +748,7 @@ public class ReadController {
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
                 if (userNames != null && userNames.size() == 1) {
                     returnJson = courseService.getStudentProgress(projectID, userNames.get(0));
+                    isArray = true;
                 } else if (userNames != null) {
                     returnJson = courseService.getProgress(projectID, userNames);
                 } else {
@@ -756,17 +758,24 @@ public class ReadController {
             }
         }
 
-        if (returnJson == null || returnJson.getJsonObject() == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
-        }
+        if (isArray) {
+            if (returnJson == null || returnJson.getJsonArray() == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(returnJson.getJsonArray().get(0), HttpStatus.OK);
+        } else {
+            if (returnJson == null || returnJson.getJsonObject() == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
 
-        JSONObject toReturn = new JSONObject();
-        for (Object key: returnJson.getJsonObject().keySet()) {
-            List<String> names = (List<String>) returnJson.getJsonObject().get(key);
-            toReturn.put(key, names.size());
+            // TODO: Revert back to return entire jsonObject after front-end updates
+            JSONObject toReturn = new JSONObject();
+            for (Object key : returnJson.getJsonObject().keySet()) {
+                List<String> names = (List<String>) returnJson.getJsonObject().get(key);
+                toReturn.put(key, names.size());
+            }
+            return new ResponseEntity<>(toReturn, HttpStatus.OK);
         }
-
-        return new ResponseEntity<>(toReturn, HttpStatus.OK);
     }
     
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
