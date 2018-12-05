@@ -47,7 +47,7 @@ public class ReadController {
     private TeachingAssistantService taService;
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-    @RequestMapping(value = "/studentsData", method = RequestMethod.GET)
+    @RequestMapping(value = "/studentsData", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> getStudentData(@RequestParam(name = "courseID") String courseID,
                                                           @RequestParam(name = "semester") String semester,
                                                           @RequestParam(name = "projectID", required = false) String projectID,
