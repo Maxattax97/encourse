@@ -122,8 +122,13 @@ public class HelperServiceImpl implements HelperService {
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String output;
             String error;
-            while ((error = stdError.readLine()) != null) {
-                System.out.println("Error: " + error);
+            try {
+                BufferedWriter errorWriter = new BufferedWriter(new FileWriter(visibleTestFile));
+                while ((error = stdError.readLine()) != null) {
+                    errorWriter.write(error);
+                }
+                errorWriter.close();
+            } catch (IOException e) {
             }
             while ((output = stdInput.readLine()) != null) {
                 System.out.println("Output: " + output);
