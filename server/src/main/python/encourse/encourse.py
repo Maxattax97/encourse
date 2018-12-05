@@ -78,10 +78,11 @@ def setup_stats(parser):
         "logfile", type=argparse.FileType("r"), help="path to commit log file"
     )
     parser.add_argument(
-        "timefile", type=argparse.FileType("r"), help="path to commit time file"
+        "visiblefile", type=argparse.FileType("r"), help="path to visible test file"
     )
-    parser.add_argument("name", help="user name")
-    parser.add_argument("tests", help="test case string")
+    parser.add_argument(
+        "hiddenfile", type=argparse.FileType("r"), help="path to hidden test file"
+    )
     parser.add_argument("-t", "--timeout", help="time spent timeout")
     parser.add_argument("-l", "--limit", help="ignore file changes above limit")
     parser.set_defaults(func=API.stats.jsonprint)

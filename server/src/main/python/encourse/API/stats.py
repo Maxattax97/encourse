@@ -17,10 +17,12 @@ priorities = {
     "Commit Count": 4,
     "Estimated Time Spent": 5,
     "Current Test Score": 6,
+    "Current Hidden Score": 7,
+    "Current Total Score": 8,
 }
 
 
-def combine_statistics(dates, stats, tests):
+def average_statistics(parser, visible, hidden=None):
     """Creates a list of statistics for each user
 
     Combines the data from multiple sources into a set of statistics per student
@@ -67,137 +69,97 @@ def combine_statistics(dates, stats, tests):
             }
         
     """
+    users = len(parser.student_log.keys())
+    print(users)
+    total_additions = 0
+    total_deletions = 0
+    start_date = date.today()
+    end_date = date.fromtimestamp(0)
+    total_commits = 0
+    total_time = 0
+    total_vscore = 0
+    total_hscore = 0
+    vscored_users = 0
+    hscored_users = 0
+    for user in parser.student_log:
+        log = parser.student_log[user]
 
-    data = {}
-    for user in dates.keys():
-        user_dates = dates[user]
-        additions = 0
-        deletions = 0
-        count = 0
-        time = 0
-        if user in stats:
-            info = stats[user]
-            additions = info["additions"]
-            deletions = info["deletions"]
-            count = info["commit_count"]
-            time = info["time_spent"]
-        test_score = 0
-        # This if else is dumb, fix it. strings and files should both be handled gracefully
-        if user in tests:
-            info = tests[user]
-            test_score = info["total"]
-        elif "total" in tests:
-            test_score = tests["total"]
-        user_data = {}
-        if len(user_dates) == 2:
-            user_data["Start Date"] = format_date(user_dates[0])
-            user_data["End Date"] = format_date(user_dates[1])
-        user_data["Additions"] = "{} lines".format(additions)
-        user_data["Deletions"] = "{} lines".format(deletions)
-        user_data["Commit Count"] = "{} commits".format(count)
-        user_data["Estimated Time Spent"] = helper.time_string(time)
-        user_data["Current Test Score"] = "{}%".format(int(test_score))
+        additions, deletions = log.count_changes()
+        total_additions += additions
+        total_deletions += deletions
 
-        array_data = []
-        for stat_name in user_data:
-            stat_value = user_data[stat_name]
-            array_data.append(
+        daily_commits = log.commitsByDay()
+        start = daily_commits[0]["timestamp"]
+        if start < start_date:
+            start_date = start
+        end = daily_commits[len(daily_commits)-1]["timestamp"]
+        if end > end_date:
+            end_date = end
+
+        total_commits += len(log.commits)
+        total_time += log.time_estimate
+
+        if user in visible:
+            total_vscore += visible[user]["total"]
+            vscored_users += 1
+        if hidden and user in hidden:
+            total_hscore += hidden[user]["total"]
+            hscored_users += 1
+
+    statistics = {
+        "Start Date": format_date(start_date),
+        "End Date": format_date(end_date),
+        "Additions": "{} lines".format(round(total_additions/float(users))),
+        "Deletions": "{} lines".format(round(total_deletions/float(users))),
+        "Commit Count": "{} commits".format(round(total_commits/float(users))),
+        "Estimated Time Spent" : "{} hourse".format(round(total_time/float(users))),
+        "Current Test Score": round(total_vscore/float(vscored_users)),
+        "Current Hidden Score": round(total_hscore/float(hscored_users)),
+        "Current Total Score": round((total_vscore + total_hscore) / float(vscored_users + hscored_users))
+    }
+
+    stat_array = []
+    for stat_name in statistics:
+        stat_value = statistics[stat_name]
+        if users > 1 and stat_name != "Start Date" and stat_name != "End Date":
+            stat_array.append(
+                {
+                    "stat_name": "Average " + stat_name,
+                    "stat_value": stat_value,
+                    "index": priorities[stat_name],
+                }
+            )
+        else:
+            stat_array.append(
                 {
                     "stat_name": stat_name,
                     "stat_value": stat_value,
                     "index": priorities[stat_name],
                 }
             )
-        data[user] = array_data
-
-    return data
+    return stat_array
 
 
 def format_date(date):
     """Converts a git date string to the iso format date string"""
 
-    date_data = datetime.strptime(date, "%Y-%m-%d")
-    return date_data.date().isoformat()
-
-
-def sum_statistics(parser):
-    """Converts data per student per commit into cumulative statistics per student
-
-    **Args**:
-        **commit_data** (dict): A dictionary of students mapped to lists of commit data
-        The dict has the following form: ::
-            
-            {
-                "name1": [
-                    {
-                        "additions": int,
-                        "deletions": int,
-                        "commit_count": int,
-                        "time_spent": int (seconds)
-                    }
-                    ...
-                ]
-                ...
-            }
-
-    **Returns**:
-        dict: A dictionary mapping students to cumulative statistics,
-        The dictionary has the following form: ::
-
-            {
-                "name1": {
-                    "additions": int,
-                    "deletions": int,
-                    "commit_count": int,
-                    "time_spent": int (seconds)
-                }
-                ...
-            }
-        
-    """
-    new_data = {}
-    for student in parser.student_log:
-        log = parser.student_log[student]
-        total_add = 0
-        total_del = 0
-        total_count = 0
-        total_time = 0
-        for day in log.commitsByDay():
-            total_add += day["additions"]
-            total_del += day["deletions"]
-            total_time += day["time_spent"]
-            total_count += day["commit_count"]
-        student_data = {}
-        student_data["additions"] = total_add
-        student_data["deletions"] = total_del
-        student_data["commit_count"] = total_count
-        student_data["time_spent"] = total_time * 3600.0
-        new_data[student] = student_data
-    return new_data
+    return date.isoformat()
 
 
 # Runs on file call
 def jsonprint(args):
-    student_id = args.name
-    commit_date_file = args.timefile
     commit_data_file = args.logfile
-    test_case_string = args.tests
+    visible_file = args.visiblefile
+    hidden_file = args.hiddenfile
 
-    dates_dict = GitLog.startend.startend(commit_date_file)
-    # for user in dates_dict.keys():
-    #    start_end = dates_dict[user]
-    #    print("{} -> {}".format(user, start_end))
-
-    # print(counts_dict)
-
-    student_data = GitLog.GitParser(commit_data_file)
-    formatted_student_data = sum_statistics(student_data)
+    parser = GitLog.GitParser(commit_data_file)
     # TODO: check for valid dicts
 
-    test_data = Progress.currentprogress.progress_from_string(test_case_string)
+    visible_scores = Progress.currentprogress.progress_from_file(visible_file)
+    hidden_scores = Progress.currentprogress.progress_from_file(hidden_file)
 
-    data = combine_statistics(dates_dict, formatted_student_data, test_data)
+    stats = average_statistics(parser, visible_scores, hidden=hidden_scores)
     # print(data)
-    api_json = json.dumps(data[student_id])
+    api_json = json.dumps(stats)
     # Outputs json to stdout
     print(api_json)

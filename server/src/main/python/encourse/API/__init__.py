@@ -3,6 +3,7 @@ import json
 import argparse
 import random
 from datetime import datetime
+from datetime import date
 from API import GitLog
 from API import Progress
 from API import CheatDetection
@@ -23,6 +24,7 @@ __all__ = [
     "json",
     "argparse",
     "datetime",
+    "date",
     "random",
     "GitLog",
     "Progress",
