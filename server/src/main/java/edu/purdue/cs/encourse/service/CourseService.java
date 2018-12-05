@@ -21,6 +21,7 @@ public interface CourseService {
     JSONArray getProjectData(@NonNull String semester, @NonNull String courseID);
     JSONArray getSectionData(@NonNull String semester, @NonNull String courseID);
     JSONArray getStudentData(List<String> userNameStudents);
+    JSONArray getSuitesData(String userName, String projectID);
     JSONArray getTestScriptData(@NonNull String projectID);
 
     JSONObject getOperationData(@NonNull String projectID);
