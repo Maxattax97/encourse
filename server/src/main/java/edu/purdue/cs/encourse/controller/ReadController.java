@@ -585,6 +585,7 @@ public class ReadController {
                     }
                     for (String userName: userNames) {
                         JSONReturnable curr = courseService.getStudentStatistics(projectID, userName);
+                        System.out.println(curr);
                         if (curr != null && curr.getJsonObject() != null) {
                             JSONArray a = (JSONArray) curr.getJsonObject().get("data");
                             JSONObject obj = new JSONObject();
@@ -661,11 +662,16 @@ public class ReadController {
 
         String source = "";
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File(sourceFile)));
+            File tempFile = new File(sourceFile);
+            if (tempFile.exists()) {
+                System.out.println("FILE " + sourceFile + " EXISTS");
+            }
+            BufferedReader reader = new BufferedReader(new FileReader(tempFile));
             String line;
             while ((line = reader.readLine()) != null) {
                 source += line;
             }
+            System.out.println("FILE CONTENTS: " + source);
         } catch (Exception e) {
             return new ResponseEntity<>("{\"errors\": \"" + sourceFile + " does not have content\"}", HttpStatus.NO_CONTENT);
         }
