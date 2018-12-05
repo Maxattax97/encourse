@@ -5,7 +5,8 @@ import {
 	getCommitHistory,
 	getProgressLine,
 	getStatistics,
-	getStudent
+	getStudent,
+	getSource
 } from "../actions"
 import {api_v1, page_v1, projectID_v1, size_v1, studentID_v1, courseID_v1, semester_v1} from "./retrieval-utils"
 
@@ -33,4 +34,8 @@ export function retrieveStudentProgress(student, project) {
 
 export function retrieveStudentCommitHistory(student, project, page, size) {
 	store.dispatch(getCommitHistory(`${api_v1}commitList?${projectID_v1(project)}&${studentID_v1(student)}&${page_v1(page)}&${size_v1(size)}`))
+}
+
+export function retrieveSource(student, project, startHash, endHash, file) {
+	store.dispatch(getSource(`${api_v1}source?${projectID_v1(project)}&${studentID_v1(student)}&startHash=${startHash}&endHash=${endHash}&file=${file}`))
 }
