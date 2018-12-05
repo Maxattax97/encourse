@@ -431,25 +431,24 @@ public class ReadController {
         String json = returnJson.jsonObject.toJSONString();
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
-
-    //TODO: Update to consume list of students
+    
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/commitList", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
-                                                                  @RequestParam(name = "userName", required = false) String userName,
+                                                                  @RequestParam(name = "userName") List<String> userNames,
                                                                   @RequestParam(name = "page", defaultValue = "1", required = false) int page,
                                                                   @RequestParam(name = "size", defaultValue = "10", required = false) int size,
                                                                   @RequestParam(name = "sortBy", defaultValue = "date", required = false) String sortBy) {
         JSONReturnable returnJson = null;
 
-        if (userName != null) {
-            if (hasPermissionOverAccount(userName)) {
-                returnJson = courseService.getStudentCommitList(projectID, userName);
+        if (userNames != null) {
+            if (userNames.size() == 1) {
+                returnJson = courseService.getStudentCommitList(projectID, userNames.get(0));
                 if (returnJson == null || returnJson.jsonObject == null) {
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             } else {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                returnJson = courseService.getCommitList(projectID, userNames);
             }
         } else {
             Iterator iter = getUserAuthorities().iterator();
@@ -462,7 +461,7 @@ public class ReadController {
             }
         }
 
-        JSONArray json = (JSONArray) returnJson.getJsonObject().get("data");
+        JSONObject json = returnJson.getJsonObject();
         if (json == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
