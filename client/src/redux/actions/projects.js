@@ -41,3 +41,7 @@ export const addTest = genericDispatch(
 export const runTestSuite = genericDispatch(
     class_type, 'RUN_TEST_SUITE', 'POST'
 )
+
+export const getTestScripts = genericDispatch(
+    class_type, 'GET_TEST_SCRIPTS', 'GET'
+)

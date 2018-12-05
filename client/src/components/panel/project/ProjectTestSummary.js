@@ -3,11 +3,22 @@ import { connect } from 'react-redux'
 import {Card, Checkbox, CheckmarkIcon, Summary, Title} from '../../Helpers'
 import {fuzzing} from '../../../fuzz'
 import {history} from '../../../redux/store'
-import {getStudentPreviews, setCurrentStudent} from '../../../redux/actions'
+import {getCurrentProject, getTestScripts} from '../../../redux/state-peekers'
+import {retrieveTestScripts} from '../../../redux/retrievals/projects'
 import PreviewCard from "../common/PreviewCard"
 
 class ProjectTestSummary extends Component {
 
+	componentDidMount() {
+		if(this.props.project)
+			retrieveTestScripts(this.props.project)
+	}
+
+	componentDidUpdate(prevProps) {
+		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
+			retrieveTestScripts(this.props.project)
+	}
+	
 	render() {
 		return (
 			<Summary columns={ 5 }>
@@ -20,13 +31,9 @@ class ProjectTestSummary extends Component {
 
 const mapStateToProps = (state) => {
 	return {
+		project: getCurrentProject(state),
+		testScripts: getTestScripts(state),
 	}
 }
 
-const mapDispatchToProps = (dispatch) => {
-	return {
-
-	}
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectTestSummary)
+export default connect(mapStateToProps)(ProjectTestSummary)
