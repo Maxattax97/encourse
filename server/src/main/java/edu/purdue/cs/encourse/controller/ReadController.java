@@ -614,32 +614,34 @@ public class ReadController {
                                                      @RequestParam(name = "endHash") String endHash,
                                                      @RequestParam(name = "file") String file) {
         String sourceFile;
-        //if (hasPermissionOverAccount(userName)) {
+        if (hasPermissionOverAccount(userName)) {
             sourceFile = courseService.getSourceWithChanges(projectID, userName, startHash, endHash, file);
             if (sourceFile == null) {
                 return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
             }
-        //} else {
-        //    return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
-        //}
+        } else {
+            return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
+        }
 
         String source = "";
         try {
             File tempFile = new File(sourceFile);
-            if (tempFile.exists()) {
-                System.out.println("FILE " + sourceFile + " EXISTS");
-            }
             BufferedReader reader = new BufferedReader(new FileReader(tempFile));
             String line;
             while ((line = reader.readLine()) != null) {
                 source += line;
             }
-            System.out.println("FILE CONTENTS: " + source);
         } catch (Exception e) {
+            return new ResponseEntity<>("{\"errors\": \"" + sourceFile + " could not be read\"}", HttpStatus.BAD_REQUEST);
+        }
+
+        if (source.isEmpty()) {
             return new ResponseEntity<>("{\"errors\": \"" + sourceFile + " does not have content\"}", HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(source, HttpStatus.OK);
+        JSONObject json = new JSONObject();
+        json.put("contents", source);
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @PreAuthorize("isAuthenticated()")
