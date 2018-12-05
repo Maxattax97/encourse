@@ -173,7 +173,9 @@ public class ReadController {
                 filters.get(sortName).add(median > 99 ? Math.round(median / 100) * 100 : Math.round(median / 10) * 10);
                 filters.get(sortName).add(q3 > 99 ? Math.round(q3 / 100) * 100 : Math.round(q3 / 10) * 10);
                 filters.get(sortName).add(max > 99 ? (int) Math.ceil(max / 100) * 100 : (int) Math.ceil(max / 10) * 10);
-                filters.replace(sortName, new ArrayList<>(new HashSet<>(filters.get(sortName))));
+                List<Integer> arr = new ArrayList<>(new HashSet<>(filters.get(sortName)));
+                Collections.sort(arr);
+                filters.replace(sortName, arr);
 
                 if (options.keySet().contains(sortName)) {
                     if (options.get(sortName)[0] < min) {
