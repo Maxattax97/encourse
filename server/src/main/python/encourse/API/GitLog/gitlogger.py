@@ -43,9 +43,7 @@ class GitParser:
                 student_commits.append(
                     GitCommit(commit_files, commit_timestamp, commit_timedelta, commit_hash)
                 )
-                print(student_name)
                 self.student_log[student_name] = GitLog(student_commits, student_name)
-                print(student_name)
                 student_commits = []
             elif len(line.split(" ")) == 4:
                 # This line is a commit time
@@ -216,9 +214,7 @@ class GitLog:
 class GitCommit:
     def __init__(self, files, timestamp, time_delta, commit_hash):
         self.files = files  # Recounts changes in setter
-        print("Timestamp ", timestamp)
         self.timestamp = timestamp
-        print("Timedelta ",time_delta)
         self.time_delta = time_delta
         self.commit_hash = commit_hash
 
