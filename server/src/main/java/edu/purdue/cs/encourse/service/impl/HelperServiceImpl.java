@@ -122,8 +122,16 @@ public class HelperServiceImpl implements HelperService {
             BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String output;
             String error;
-            while ((error = stdError.readLine()) != null) {
-                System.out.println("Error: " + error);
+            try {
+                BufferedWriter errorWriter = new BufferedWriter(new FileWriter("errorlog.txt", true));
+                errorWriter.write(command);
+                errorWriter.write("\n");
+                while ((error = stdError.readLine()) != null) {
+                    errorWriter.write(error);
+                    errorWriter.write("\n");
+                }
+                errorWriter.close();
+            } catch (IOException e) {
             }
             while ((output = stdInput.readLine()) != null) {
                 System.out.println("Output: " + output);
@@ -139,14 +147,14 @@ public class HelperServiceImpl implements HelperService {
                     JSONObject jsonObject = null;
                     if (obj.getClass() == JSONObject.class) {
                         jsonObject = (JSONObject)obj;
+                        json = new JSONReturnable(1, jsonObject);
                     } else if (obj.getClass() == JSONArray.class) {
                         jsonObject = new JSONObject();
                         JSONArray jsonArray = (JSONArray)obj;
-                        jsonObject.put("data", jsonArray);
+                        json = new JSONReturnable(1, jsonArray);
                     } else {
                         json = new JSONReturnable(-4, (JSONObject) null);
                     }
-                    json = new JSONReturnable(1, jsonObject);
                 }
             }
         } catch (IOException e) {
@@ -235,7 +243,6 @@ public class HelperServiceImpl implements HelperService {
         catch (IOException e) {
             return -3;
         }
-        //TODO: REED Add in visible and hidden references
         String command = getPythonCommand() + " stats " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);
         if(json == null || json.getJsonObject() == null) {

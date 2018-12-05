@@ -71,6 +71,13 @@ def setup_gitlist(parser):
     parser.add_argument("name", help="user name")
     parser.set_defaults(func=API.gitlist.jsonprint)
 
+def setup_identical(parser):
+    """ Configure identical parser"""
+    parser.add_argument(
+        "diff_file", type=argparse.FileType("r"), help="path to diff file"
+    )
+    parser.set_defaults(func=API.identical.jsonprint)
+
 
 def setup_stats(parser):
     """Configure stats parser"""
@@ -164,6 +171,9 @@ if __name__ == "__main__":
 
     gitlist_parser = subparsers.add_parser("gitlist")
     setup_gitlist(gitlist_parser)
+
+    identical_parser = subparsers.add_parser("identical")
+    setup_identical(identical_parser)
 
     stats_parser = subparsers.add_parser("stats")
     setup_stats(stats_parser)

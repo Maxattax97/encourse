@@ -38,13 +38,18 @@ class SelectableCardSummary extends Component {
 					this.props.values.map( (value) =>
 						<PreviewCard onClick={ () => this.clickCard(value) } isSelected={ this.isSelected(value) } key={ value.id }>
 							{ this.props.render(value) }
-							<Checkbox className={ this.props.isAnySelected ? 'card-select selectable' : 'card-select' } onClick={ (e) => this.clickSelect(e, value) }>
-								{
-									this.isSelected(value) ?
-										<CheckmarkIcon/>
-										: null
-								}
-							</Checkbox>
+                            {
+                                !this.props.noCheckmark ?
+                                    <Checkbox className={ this.props.isAnySelected ? 'card-select selectable' : 'card-select' } onClick={ (e) => this.clickSelect(e, value) }>
+                                        {
+                                            this.isSelected(value) ?
+                                                <CheckmarkIcon/>
+                                                : null
+                                        }
+                                    </Checkbox>
+                                    : null
+                            }
+
 						</PreviewCard>
 					)
 				}

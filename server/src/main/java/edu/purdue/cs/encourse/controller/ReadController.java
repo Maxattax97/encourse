@@ -193,37 +193,6 @@ public class ReadController {
             }
         }
 
-//        int[] commits = {0, 10, 25, 100, 500};
-//        int[] hours = {0, 5, 10, 25};
-//        int[] progresses = {0, 25, 50, 75};
-//
-//        if (commit != 0) {
-//            if (commit >= commits.length) {
-//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commits.length - 1] );
-//            } else {
-//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() > commits[commit] ||
-//                                          ((Number)((TreeMap)i.get("commitCounts")).get(projectID)).doubleValue() < commits[commit - 1]);
-//            }
-//        }
-//
-//        if (hour != 0) {
-//            if (hour >= hours.length) {
-//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hours.length - 1] );
-//            } else {
-//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() > hours[hour] ||
-//                                          ((Number)((TreeMap)i.get("timeSpent")).get(projectID)).doubleValue() < hours[hour - 1]);
-//            }
-//        }
-//
-//        if (progress != 0) {
-//            if (progress >= progresses.length) {
-//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progresses.length - 1] );
-//            } else {
-//                jsonValues.removeIf( i -> ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() > progresses[progress] ||
-//                                          ((Number)((TreeMap)i.get("grades")).get(projectID)).doubleValue() < progresses[progress - 1]);
-//            }
-//        }
-
         // Sorting
         if (projectID != null) {
             Comparator<JSONObject> compare;
@@ -542,11 +511,11 @@ public class ReadController {
         for (String userName: userNames) {
             if (hasPermissionOverAccount(userName)) {
                 JSONReturnable returnJson = courseService.getStudentCommitCounts(projectID, userName);
-                if (returnJson == null) {
+                if (returnJson == null || returnJson.getJsonArray() == null) {
                     errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
-                String json = returnJson.getJsonObject().toJSONString();
+                String json = returnJson.getJsonArray().toJSONString();
                 correct.add(json);
             } else {
                 errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
@@ -573,7 +542,6 @@ public class ReadController {
                         returnJson.add(curr.getJsonArray());
                     }
                 } else {
-                    // TODO: Check data exists when specifying userName
                     if (userNames.size() == 1) {
                         JSONReturnable curr = courseService.getStudentStatistics(projectID, userNames.get(0));
                         if (curr != null && curr.getJsonArray() != null) {
@@ -646,14 +614,14 @@ public class ReadController {
                                                      @RequestParam(name = "endHash") String endHash,
                                                      @RequestParam(name = "file") String file) {
         String sourceFile;
-        if (hasPermissionOverAccount(userName)) {
+        //if (hasPermissionOverAccount(userName)) {
             sourceFile = courseService.getSourceWithChanges(projectID, userName, startHash, endHash, file);
             if (sourceFile == null) {
                 return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
             }
-        } else {
-            return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
-        }
+        //} else {
+        //    return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
+        //}
 
         String source = "";
         try {
@@ -683,11 +651,11 @@ public class ReadController {
         for (String userName: userNames) {
             if (hasPermissionOverAccount(userName)) {
                 JSONReturnable returnJson = courseService.getStudentAdditionsAndDeletions(projectID, userName);
-                if (returnJson == null) {
+                if (returnJson == null || returnJson.getJsonArray() == null) {
                     errors.add("\"" + userName + " does not have content" + "\"");
                     continue;
                 }
-                String json = returnJson.getJsonObject().toJSONString();
+                String json = returnJson.getJsonArray().toJSONString();
                 correct.add(json);
             } else {
                 errors.add("\"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"");
@@ -708,12 +676,15 @@ public class ReadController {
         if (hasPermissionOverAccount(userName)) {
             returnJson = courseService.getStudentCommitVelocity(projectID, userName);
             if (returnJson == null) {
-                return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.NO_CONTENT);
             }
         } else {
             return new ResponseEntity<>("{\"errors\": \"" + getUserFromAuth().getUsername() + " does not have access over " + userName + "\"}", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(returnJson.getJsonObject().toJSONString(), HttpStatus.OK);
+        if (returnJson == null || returnJson.getJsonArray() == null) {
+            return new ResponseEntity<>("{\"errors\": \"" + userName + " does not have content\"}", HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
@@ -732,12 +703,14 @@ public class ReadController {
     public @ResponseBody ResponseEntity<?> getProgress(@RequestParam(name = "projectID") String projectID,
                                                        @RequestParam(name = "userName", required = false) List<String> userNames) {
         JSONReturnable returnJson = null;
+        boolean isArray = false;
         Iterator iter = getUserAuthorities().iterator();
         while (iter.hasNext()) {
             String auth = ((Authority) iter.next()).getAuthority();
             if (auth.contentEquals(Account.Role_Names.PROFESSOR) || auth.contentEquals(Account.Role_Names.ADMIN)) {
                 if (userNames != null && userNames.size() == 1) {
                     returnJson = courseService.getStudentProgress(projectID, userNames.get(0));
+                    isArray = true;
                 } else if (userNames != null) {
                     returnJson = courseService.getProgress(projectID, userNames);
                 } else {
@@ -747,6 +720,7 @@ public class ReadController {
             } else if (auth.contentEquals(Account.Role_Names.TA)) {
                 if (userNames != null && userNames.size() == 1) {
                     returnJson = courseService.getStudentProgress(projectID, userNames.get(0));
+                    isArray = true;
                 } else if (userNames != null) {
                     returnJson = courseService.getProgress(projectID, userNames);
                 } else {
@@ -756,10 +730,24 @@ public class ReadController {
             }
         }
 
-        if (returnJson == null || returnJson.getJsonObject() == null) {
-            return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+        if (isArray) {
+            if (returnJson == null || returnJson.getJsonArray() == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
+        } else {
+            if (returnJson == null || returnJson.getJsonObject() == null) {
+                return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
+            }
+
+            // TODO: Revert back to return entire jsonObject after front-end updates
+            JSONObject toReturn = new JSONObject();
+            for (Object key : returnJson.getJsonObject().keySet()) {
+                List<String> names = (List<String>) returnJson.getJsonObject().get(key);
+                toReturn.put(key, names.size());
+            }
+            return new ResponseEntity<>(toReturn, HttpStatus.OK);
         }
-        return new ResponseEntity<>(returnJson.getJsonObject(), HttpStatus.OK);
     }
     
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
@@ -809,11 +797,11 @@ public class ReadController {
                 break;
             }
         }
-        if (returnJson == null || returnJson.getJsonArray() == null) {
+        if (returnJson == null || returnJson.getJsonObject() == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
+        return new ResponseEntity<>(returnJson.getJsonObject(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")

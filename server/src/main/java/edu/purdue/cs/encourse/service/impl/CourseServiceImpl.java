@@ -479,7 +479,7 @@ public class CourseServiceImpl implements CourseService {
         } catch (Exception e) {
             return new JSONReturnable(-3, (JSONObject) null);
         }
-        String command = helperService.getPythonCommand() + " diff " + helperService.getPythonPath() + diffsFile;
+        String command = helperService.getPythonCommand() + " identical " + helperService.getPythonPath() + diffsFile;
         JSONReturnable json = helperService.runPython(command);
         return json;
     }
@@ -573,7 +573,7 @@ public class CourseServiceImpl implements CourseService {
         if(commitLogFile == null) {
             json = new JSONReturnable(-1, (JSONObject) null);
         }
-        if (!helperService.getDebug()) {
+        if (!helperService.getDebug() && json != null) {
             return json;
         }
         String command = helperService.getPythonCommand() + " gitlist " + commitLogFile;
@@ -662,7 +662,7 @@ public class CourseServiceImpl implements CourseService {
         if(commitLogFile == null) {
             json = new JSONReturnable(-2, (JSONObject) null);
         }
-        if (!helperService.getDebug()) {
+        if (!helperService.getDebug() && json != null) {
             return json;
         }
         String command = helperService.getPythonCommand() + " changes " + commitLogFile + " " + dailyCountsFile + " " + userName + " -l 200";
@@ -683,7 +683,7 @@ public class CourseServiceImpl implements CourseService {
         if(commitLogFile == null) {
             json = new JSONReturnable(-2, (JSONObject) null);
         }
-        if (!helperService.getDebug()) {
+        if (!helperService.getDebug() && json != null) {
             return json;
         }
         String command = helperService.getPythonCommand() + " commitcount " + commitLogFile + " " + userName;
@@ -704,7 +704,7 @@ public class CourseServiceImpl implements CourseService {
         if(commitLogFile == null) {
             json = new JSONReturnable(-1, (JSONObject) null);
         }
-        if (!helperService.getDebug()) {
+        if (!helperService.getDebug() && json != null) {
             return json;
         }
         String command = helperService.getPythonCommand() + " gitlist " + commitLogFile + " " + userName;
@@ -867,8 +867,8 @@ public class CourseServiceImpl implements CourseService {
 
     /**
      * Obtains a specified source file with changes between specified commit hashes
-     * Hashes will typically be the last commit on the previous day for start and last commit on the current dsy for end
-     * Primerily used to show a file with all changes between the hashes
+     * Hashes will typically be the last commit on the previous day for start and last commit on the current day for end
+     * Primarily used to show a file with all changes between the hashes
      *
      * @param projectID         Identifier for project that source is being taken from
      * @param userName          Front-end identifier for student whose source is being shown

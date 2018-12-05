@@ -197,7 +197,13 @@ CREATE DATABASE encourse_production;
 sudo -u postgres createuser --interactive
 ```
 
-Then enter the user’s name and make the user a superuser for the database. Once this is done, type `\q` to close the terminal. The database will continue to run in the background so that the backend server can access it.
+Then enter the user’s name and make the user a superuser for the database. Once this is done, type `\q` to close the terminal. Replace `cs252` with your new superuser's name in the file `init.sql` and run the script to set up the authentication tables:
+
+```bash
+sudo -u postgres psql < init.sql
+```
+
+The database will continue to run in the background so that the backend server can access it.
 
 ## Setting up Screens
 
@@ -844,7 +850,7 @@ The second virtual server managed by Spring is the security server. The file `Se
 
 ##### Scheduling Configuration
 
-This configuration is set up by two files, `Scheduler.java` and `SchedulingConfig.java`. The main logic is in `Scheduler.java`, and all this class does is run certain functions on an interval similar to cron jobs. Tasks can be scheduled to start at a fixed rate, at a fixed delay between one task ending and another starting, and with a cron expression. Refer to [this document ](https://www.baeldung.com/spring-scheduled-tasks)for further details on scheduling in Spring.
+This configuration is set up by two files, `Scheduler.java` and `SchedulingConfig.java`. The main logic is in `Scheduler.java`, and all this class does is run certain functions on an interval similar to cron jobs. Tasks can be scheduled to start at a fixed rate, at a fixed delay between one task ending and another starting, and with a cron expression. Refer to [this document ](https://www.baeldung.com/spring-scheduled-tasks) for further details on scheduling in Spring.
 
 ##### Database Configuration and Initialization
 
@@ -852,13 +858,7 @@ There are multiple files that assist in the setup of the database. Firstly, `Hib
 
 When creating a new account here, use a password encrypted with BCrypt for 4 rounds (use [this site](https://www.dailycred.com/article/bcrypt-calculator) to generate one). Authorities are specified as roles that can be enumerated from Account.Role_Names.
 
- Lastly, there are SQL files beneath `encourse/server/src/main/resources/db.migration.postgresql` to setup the security server to persist user and token data. Currently when Spring is first initialized, a migration tool called [Flyway](https://flywaydb.org/) attempts to recreate the tables used by the security server. More information about Flyway will be added in the future if we extend its capabilities to the resource server tables as well. The security server tables are defined in the following files:
-
-1. `V1_create_hibernate_sequence.sq` - required by Hibernate to generate unique IDs
-2. `V2_create_oauth2.sql` - creates tables used to persist resource and refresh tokens
-3. `V3_create_user.sql` - creates tables used to persist User information and authorities
-4. `V4_insert_authentication.sql` - inserts client access scope used by OAuth2 standards
-5. `V5_insert_authorites.sql` - inserts User authorities that will be used to grant access
+The OAuth client password was also generated this way and can be changed in `init.sql`. This SQL file should be ran when the database is first created to set up the appropriate authentication tables.
 
 #### Controller Component
 
