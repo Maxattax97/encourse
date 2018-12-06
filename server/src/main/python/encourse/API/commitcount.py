@@ -41,11 +41,11 @@ def jsonify(log):
         new_data.append(new_bar)
 
     # Replace the counts for each date with actual data
-    for day in log.commitsByDay():
-        date = helper.date_string(day["timestamp"])
-        count = day["commit_count"]
+    commits = log.commits_by_day();
+    for day in commits:
+        count = len(commits[day])
         for e in new_data:
-            if e["date"] == date:
+            if e["date"] == day:
                 e["count"] = count
                 break
 

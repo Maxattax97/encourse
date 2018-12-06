@@ -493,14 +493,15 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getStatistics(@NonNull String projectID, List<String> userNames) {
+        JSONReturnable json = null;
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
         String dailyCountsFile = helperService.countAllCommitsByDay(projectID, projects);
         String commitLogFile = helperService.listAllCommitsByTime(projectID, projects);
         if(dailyCountsFile == null) {
-            return new JSONReturnable(-1, (JSONObject) null);
+            json = new JSONReturnable(-1, (JSONObject) null);
         }
         if(commitLogFile == null) {
-            return new JSONReturnable(-2, (JSONObject) null);
+            json = new JSONReturnable(-2, (JSONObject) null);
         }
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestsDates.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestsDates.txt";
@@ -522,10 +523,14 @@ public class CourseServiceImpl implements CourseService {
             visibleWriter.close();
             hiddenWriter.close();
         } catch (IOException e) {
-            return new JSONReturnable(-3, (JSONObject) null);
+            json = new JSONReturnable(-3, (JSONObject) null);
+        }
+        if (helperService.getDebug()) {
+            visibleTestFile = "src/main/python/encourse/data/sampleVisibleTestCases.txt";
+            hiddenTestFile = "src/main/python/encourse/data/sampleHiddenTestCases.txt";
         }
         String command = helperService.getPythonCommand() + " stats " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
-        JSONReturnable json = helperService.runPython(command);
+        json = helperService.runPython(command);
         return json;
     }
 
@@ -845,9 +850,6 @@ public class CourseServiceImpl implements CourseService {
             visibleTestFile = "src/main/python/encourse/data/sampleVisibleTestCases.txt";
             hiddenTestFile = "src/main/python/encourse/data/sampleHiddenTestCases.txt";
         } else {
-            if (json != null) {
-                return json;
-            }
             visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTests.txt";
             hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTests.txt";
             Student student = studentRepository.findByUserName(userName);
@@ -858,7 +860,10 @@ public class CourseServiceImpl implements CourseService {
                 helperService.createTestFiles(visibleTestFile, hiddenTestFile, projects);
             }
             catch (IOException e) {
-                return new JSONReturnable(-1, (JSONObject) null);
+                json = new JSONReturnable(-1, (JSONObject) null);
+            }
+            if (json != null) {
+                return json;
             }
         }
         String command = helperService.getPythonCommand() + " stats " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
@@ -892,8 +897,15 @@ public class CourseServiceImpl implements CourseService {
         }
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
         String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_sourceChanges.txt";
-        if(helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + startCommitHash + " " + endCommitHash) < 0) {
-            return null;
+        if(sourceName == null) {
+            if (helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + startCommitHash + " " + endCommitHash) < 0) {
+                return null;
+            }
+        }
+        else {
+            if (helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + startCommitHash + " " + endCommitHash + " " + sourceName) < 0) {
+                return null;
+            }
         }
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -904,7 +916,12 @@ public class CourseServiceImpl implements CourseService {
             reader.close();
             if(count < 3) {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-                writer.write("No changes found from commit hash " + startCommitHash + " to hash " + endCommitHash);
+                if(sourceName == null) {
+                    writer.write("No changes found from commit hash " + startCommitHash + " to hash " + endCommitHash);
+                }
+                else {
+                    writer.write("No changes found from commit hash " + startCommitHash + " to hash " + endCommitHash + " for file " + sourceName);
+                }
                 writer.close();
             }
         }

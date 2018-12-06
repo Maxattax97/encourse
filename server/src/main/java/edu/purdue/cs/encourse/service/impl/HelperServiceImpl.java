@@ -149,13 +149,15 @@ public class HelperServiceImpl implements HelperService {
                         jsonObject = (JSONObject)obj;
                         json = new JSONReturnable(1, jsonObject);
                     } else if (obj.getClass() == JSONArray.class) {
-                        jsonObject = new JSONObject();
                         JSONArray jsonArray = (JSONArray)obj;
                         json = new JSONReturnable(1, jsonArray);
                     } else {
                         json = new JSONReturnable(-4, (JSONObject) null);
                     }
                 }
+            }
+            if (json == null) {
+                json = new JSONReturnable(-5, (JSONObject) null);
             }
         } catch (IOException e) {
             //e.printStackTrace();
@@ -245,14 +247,14 @@ public class HelperServiceImpl implements HelperService {
         }
         String command = getPythonCommand() + " stats " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);
-        if(json == null || json.getJsonObject() == null) {
-            return 0;
+        if(json == null || json.getJsonArray() == null) {
+            return -4;
         }
         if (getDebug()) {
             executeBashScript("cleanDirectory.sh src/main/temp");
-            return 0;
+            return -5;
         }
-        JSONArray array = (JSONArray)json.getJsonObject().get("data");
+        JSONArray array = json.getJsonArray();
         for(int i = 0; i < array.size(); i++) {
             JSONObject data = (JSONObject)array.get(i);
             if (data.get("stat_name").equals("End Date")) {
@@ -454,6 +456,9 @@ public class HelperServiceImpl implements HelperService {
      * @return          Projects associated with each username
      */
     public List<StudentProject> getStudentProjects(String projectID, List<String> userNames) {
+        if (getDebug()) {
+            return new ArrayList<StudentProject>();
+        }
         List<StudentProject> projects = new ArrayList<>();
         for(String userName: userNames) {
             Student student = studentRepository.findByUserName(userName);
@@ -530,6 +535,9 @@ public class HelperServiceImpl implements HelperService {
      * @return          Filename for the temporary file created to store daily commit counts
      */
     public String countAllCommitsByDay(@NonNull String projectID, List<StudentProject> projects) {
+        if (getDebug()) {
+            return pythonPath + "data/sampleCountsDay.txt";
+        }
         Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return null;

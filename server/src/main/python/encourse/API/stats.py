@@ -141,6 +141,7 @@ def average_statistics(parser, visible, hidden=None, max_changes=None, timeout=N
     stat_array = []
     for stat_name in statistics:
         stat_value = statistics[stat_name]
+        description = descriptions[stat_name]
 
         stat_item = {
             "stat_value": stat_value,
