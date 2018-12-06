@@ -133,6 +133,7 @@ class GitLog:
         # Check if commits are the right format
         if all(isinstance(element, GitCommit) for element in commits):
             self._commits = commits
+            self._commits.sort(key=lambda x: x.timestamp)
 
     time_estimate = property(operator.attrgetter("_time_estimate"))
 
@@ -151,7 +152,7 @@ class GitLog:
             deletions += commit_deletions
         return additions, deletions
 
-    def commitsByDay(self):
+    def commits_by_day(self):
         """Generates a list of commit objects with aggregated date from every commit from that day"""
         current_date = None
         daily_commits = {}
