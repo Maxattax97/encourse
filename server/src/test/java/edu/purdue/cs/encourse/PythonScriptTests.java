@@ -16,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestPropertySource(locations="classpath:application-dev.properties")
@@ -89,6 +91,7 @@ public class PythonScriptTests {
             JSONReturnable jsonReturn = null;
             System.out.println("=============================   Individual Progress Test    ============================\n");
             jsonReturn = courseService.getStudentProgress(projectID, studentID);
+            assertNotEquals("jsonReturn is null", null, jsonReturn);
             assertEquals("Failed to generate individual progress data", 1, jsonReturn.errorCode);
         }
 
@@ -99,6 +102,7 @@ public class PythonScriptTests {
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Class Progress Test    ============================\n");
             jsonReturn = professorService.getClassProgress(projectID);
+            assertNotEquals("jsonReturn is null", null, jsonReturn);
             assertEquals("Failed to generate class progress histogram data", 1, jsonReturn.errorCode);
         }
 
@@ -109,6 +113,7 @@ public class PythonScriptTests {
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Test Summary Test    ============================\n");
             jsonReturn = professorService.getClassTestSummary(projectID);
+            assertNotEquals("jsonReturn is null", null, jsonReturn);
             assertEquals("Failed to generate class progress histogram data", 1, jsonReturn.errorCode);
         }
 
@@ -119,7 +124,23 @@ public class PythonScriptTests {
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Statistics Test    ============================\n");
             jsonReturn = courseService.getStudentStatistics(projectID, studentID);
+            assertNotEquals("jsonReturn is null", null, jsonReturn);
             assertEquals("Failed to generate individual statistics", 1, jsonReturn.errorCode);
+        }
+
+        @Test
+        public void testClassStatisticsData() {
+            String projectID = DEBUG ? "cs252" : proj1.getProjectID();
+            ArrayList<String> usernames = new ArrayList<>();
+            usernames.add("cutz");
+            usernames.add("kjasani");
+            usernames.add("qoconnor");
+            usernames.add("xu878");
+            JSONReturnable jsonReturn = null;
+            System.out.println("=============================  Class Statistics Test    ============================\n");
+            jsonReturn = courseService.getStatistics(projectID, usernames);
+            assertNotEquals("jsonReturn is null", null, jsonReturn);
+            assertEquals("Failed to generate class statistics", 1, jsonReturn.errorCode);
         }
 
         @Test
@@ -129,6 +150,7 @@ public class PythonScriptTests {
             JSONReturnable jsonReturn = null;
             System.out.println("=============================   Addition Deletion Test    ============================\n");
             jsonReturn = courseService.getStudentAdditionsAndDeletions(projectID, studentID);
+            assertNotEquals("jsonReturn is null", null, jsonReturn);
             assertEquals("Failed to generate addition/deletion data", 1, jsonReturn.errorCode);
         }
 
@@ -139,6 +161,7 @@ public class PythonScriptTests {
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Git Commit List Test    ============================\n");
             jsonReturn = courseService.getStudentCommitList(projectID, studentID);
+            assertNotEquals("jsonReturn is null", null, jsonReturn);
             assertEquals("Failed to generate git commit list data", 1, jsonReturn.errorCode);
         }
 
@@ -150,6 +173,7 @@ public class PythonScriptTests {
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Git Commit Count Test    ============================\n");
             jsonReturn = courseService.getStudentCommitCounts(projectID, studentID);
+            assertNotEquals("jsonReturn is null", null, jsonReturn);
             assertEquals("Failed to generate git commit count data", 1, jsonReturn.errorCode);
         }
 
@@ -160,6 +184,7 @@ public class PythonScriptTests {
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Commit Velocity Test    ============================\n");
             jsonReturn = courseService.getStudentCommitVelocity(projectID, studentID);
+            assertNotEquals("jsonReturn is null", null, jsonReturn);
             assertEquals("Failed to generate commit velocity data", 1, jsonReturn.errorCode);
         }
 
@@ -169,6 +194,7 @@ public class PythonScriptTests {
             JSONReturnable jsonReturn = null;
             System.out.println("=============================  Class Cheating Test    ============================\n");
             jsonReturn = professorService.getClassCheating(projectID);
+            assertNotEquals("jsonReturn is null", null, jsonReturn);
             assertEquals("Failed to generate class cheating report", 1, jsonReturn.errorCode);
         }
 }
