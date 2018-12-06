@@ -47,7 +47,7 @@ def jsonify(gitlogs, student_id=None):
         git_dict[student] = student_days
     # TODO: Short circuit if student is defined and his or her data is parsed
     if student_id:
-        return json.dumps(git_dict[student])
+        return json.dumps(git_dict[student_id])
     return json.dumps(git_dict)
 
 
