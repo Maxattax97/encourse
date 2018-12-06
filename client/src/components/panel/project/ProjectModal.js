@@ -85,10 +85,12 @@ class ProjectModal extends Component {
 									Name
 								</h4>
 								<input type="text" className="h3-size" value={this.props.courseID} name="name" autoComplete="off"/>
+                                <div className="h5 break-line"/>
 								<h4 className="header">
 									Repository
 								</h4>
 								<input type="number" className="h3-size" value={this.state.source_name} onChange={this.onChange} name="source_name" ref="interval"/>
+                                <div className="h5 break-line"/>
 								<h4 className='header'>
 									Deadline
 								</h4>

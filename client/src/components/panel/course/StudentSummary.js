@@ -20,7 +20,10 @@ class StudentSummary extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index)) {
+        if(!this.props.project)
+            return;
+
+        if(!(prevProps.project) || prevProps.project.index !== this.props.project.index) {
 			retrieveAllStudents(this.props.project, this.props.course, this.props.semester)
 		} else if(this.props.filtersHaveChanged) {
 			let body = {}

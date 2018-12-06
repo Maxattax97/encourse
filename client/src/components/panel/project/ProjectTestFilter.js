@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import ProjectTestSummary from "./ProjectTestSummary"
 import {getAllSelected, getFilters} from "../../../redux/state-peekers/control"
-import {resetFilterState, setFilterState, toggleSelectAllCards} from "../../../redux/actions"
+import {resetFilterState, toggleSelectAllCards} from "../../../redux/actions"
 
 class ProjectTestFilter extends Component {
 
@@ -64,7 +64,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
 	return {
 		toggleSelectAllCards: () => dispatch(toggleSelectAllCards('tests')),
-		setFilterState: (id, value) => dispatch(setFilterState(id, value)),
 		resetFilterState: () => dispatch(resetFilterState())
 	}
 }

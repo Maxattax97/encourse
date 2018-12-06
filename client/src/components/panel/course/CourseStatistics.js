@@ -20,7 +20,14 @@ class CourseStatistics extends Component {
 
 	render() {
 		return (
-			<Statistics stats={this.props.stats} />
+			<Statistics stats={this.props.stats}>
+                {
+                    this.props.anon ?
+                        <h4 className='header'>Course Information</h4>
+                        : <h4 className='header'>Student Information</h4>
+                }
+                <div className='h5 break-line'/>
+            </Statistics>
 		)
 	}
 }

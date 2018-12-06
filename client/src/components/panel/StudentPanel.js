@@ -11,12 +11,15 @@ import {
     setModalState
 } from '../../redux/actions/index'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {StudentCharts, StudentStatistics} from './student'
+import {StudentCharts, StudentProjectInfo} from './student'
 import {getCurrentStudent} from "../../redux/state-peekers/student"
 import {getCurrentProject} from "../../redux/state-peekers/projects"
 import {getCurrentCourseId, getCurrentSemesterId} from "../../redux/state-peekers/course"
 import ProgressModal from './common/TaskModal'
 import BackNavigation from '../navigation/BackNavigation'
+import {Summary} from '../Helpers'
+import StudentSuiteInfo from './student/StudentSuiteInfo'
+import StudentCommitFilter from './student/StudentCommitFilter'
 
 
 class StudentPanel extends Component {
@@ -67,15 +70,19 @@ class StudentPanel extends Component {
                         </h1>
                         <div className="h1 break-line header" />
 
-                        <h3 className='header'>Student Charts</h3>
+                        <h3 className='header'>Charts</h3>
                         <StudentCharts />
 
                         <div className="h1 break-line" />
-                        <h3 className='header'>Student Statistics</h3>
-	                    <StudentStatistics />
+                        <h3 className='header'>Statistics</h3>
+                        <Summary columns={2}>
+                            <StudentProjectInfo />
+                            <StudentSuiteInfo/>
+                        </Summary>
 
                         <div className='h1 break-line' />
-                        <h3 className='header'>Test Suite Results</h3>
+                        <StudentCommitFilter/>
+
                     </div>
                 </div>
             </div>

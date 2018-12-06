@@ -8,7 +8,7 @@ import { getCurrentCourseId, getCurrentSemesterId } from '../../redux/state-peek
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import {CourseModal, AnonymousCharts, Charts, CourseStatistics, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {Title} from '../Helpers'
+import {Summary, Title} from '../Helpers'
 import ProgressModal from "./common/TaskModal"
 import {isAnySelected} from '../../redux/state-peekers/control'
 import CustomRangeModal from './common/CustomRangeModal'
@@ -50,33 +50,29 @@ class CoursePanel extends Component {
                         </Title>
                         <div className='h1 break-line header' />
 
-                        <h3 className='header'>Course Charts Summary</h3>
+                        <h3 className='header'>Course Charts</h3>
                         <AnonymousCharts />
 
                         {
                             this.props.isAnySelected ?
                                 <div>
                                     <div className='h1 break-line' />
-                                    <h3 className='header'>Students Charts Summary</h3>
+                                    <h3 className='header'>Students Charts</h3>
                                     <Charts/>
                                 </div>
                                 : null
                         }
 
                         <div className='h1 break-line' />
-                        <h3 className='header'>Course Statistics</h3>
-                        <CourseStatistics anon />
-
-                        {
-                            this.props.isAnySelected ?
-                                <div>
-                                    <div className='h1 break-line' />
-                                    <h3 className='header'>Students Statistics</h3>
+                        <h3 className='header'>Statistics</h3>
+                        <Summary columns={2}>
+                            <CourseStatistics anon />
+                            {
+                                this.props.isAnySelected ?
                                     <CourseStatistics />
-                                </div>
-                                : null
-                        }
-
+                                    : null
+                            }
+                        </Summary>
 
                         <div className='h1 break-line' />
 
