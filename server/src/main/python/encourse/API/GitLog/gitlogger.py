@@ -164,7 +164,7 @@ class GitLog:
                 commits.append(commit)
             elif commit.timestamp.date() != current_date:
                 # Add commits to the dict under the date which they occurred
-                daily_commits[current_date.isoformat()] = current_commits
+                daily_commits[current_date.isoformat()] = commits
                 commits = []
 
                 # Update the date and add the current commit to the now empty list
@@ -173,6 +173,8 @@ class GitLog:
             elif commit.timestamp.date() == current_date:
                 commits.append(commit)
 
+        # Add remaining commits to output
+        daily_commits[current_date.isoformat()] = commits
         return daily_commits
 
     def commitsByDay_OLD(self):
