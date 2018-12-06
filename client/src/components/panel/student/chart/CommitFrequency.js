@@ -26,6 +26,7 @@ class CommitHistoryHistogram extends Component {
     }
 
     render() {
+		const yMax = Math.max(...this.props.chart.data.map((elem) => elem.count))
         return (
             <Chart
                 chart={this.props.chart}
@@ -40,7 +41,7 @@ class CommitHistoryHistogram extends Component {
 					            Commits
 				            </Label>
 			            </XAxis>
-			            <YAxis>
+			            <YAxis domain={[0, yMax]}>
 				            <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
 					            Date
 				            </Label>
