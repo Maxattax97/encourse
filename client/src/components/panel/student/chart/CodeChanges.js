@@ -29,7 +29,10 @@ class CodeChanges extends Component {
 
     render() {
         return (
-            <Chart chart={this.props.chart}>
+            <Chart
+                chart={this.props.chart}
+                title='Cumulative number of lines added or deleted by day.'
+            >
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={this.props.chart.data} margin={{top: 40, right: 35, left: 0, bottom: 25}}>
                             <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Lines of Code Added/Deleted</text>
