@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 
 import { getProgressPerCommit } from '../../../../redux/actions/index'
 import { getCurrentStudent } from '../../../../redux/state-peekers/student'
-import { getCurrentProject } from "../../../../redux/state-peekers/projects"
+import { getCurrentProject } from '../../../../redux/state-peekers/projects'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
 
@@ -121,8 +121,8 @@ class StudentVelocityPerCommit extends Component {
 
 const mapStateToProps = (state) => {
     return {
-		student: getCurrentStudent(state),
-		project: getCurrentProject(state),
+        student: getCurrentStudent(state),
+        project: getCurrentProject(state),
         data: state.student && state.student.getProgressPerCommitData ? state.student.getProgressPerCommitData : null,
         isLoading: state.student ? state.student.getProgressPerCommitIsLoading : false,
     }

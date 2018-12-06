@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 
 import { getProgressPerTime } from '../../../../redux/actions/index'
 import { getCurrentStudent } from '../../../../redux/state-peekers/student'
-import { getCurrentProject } from "../../../../redux/state-peekers/projects"
+import { getCurrentProject } from '../../../../redux/state-peekers/projects'
 import url from '../../../../server'
 import {LoadingIcon} from '../../../Helpers'
 
@@ -26,19 +26,19 @@ const defaultData = [
 ]
 
 class StudentVelocityPerTime extends Component {
-
+    
     constructor(props) {
         super(props)
-
+        
         this.state = {
             formattedData: defaultData,
         }
     }
-
+    
     componentDidMount = () => {
         this.fetch(this.props)
     }
-
+    
     componentDidUpdate = (prevProps) => {
         if(prevProps.isLoading && !this.props.isLoading) {
             this.setState({ formattedData: this.formatApiData(this.props.data) })
@@ -47,13 +47,13 @@ class StudentVelocityPerTime extends Component {
             this.fetch(this.props)
         }
     }
-
+    
     fetch = (props) => {
         if(props.project.id && props.student) {
             props.getData(`${url}/api/velocity?projectID=${props.project.id}&userName=${props.student.id}`)
         }  
     }
-
+    
     dateFormatter = (date) => {
         return moment(date).format('M-D')
     }
@@ -64,27 +64,27 @@ class StudentVelocityPerTime extends Component {
         }
         return value
     }
-
+    
     formatApiData = (udata) => {
         if (!udata) {
             return defaultData
         }
         let data = udata
-
+        
         if (!data || data.length === 0) {
             return defaultData
         }
-
+        
         for (let entry of data) {
             entry.date = moment(entry.date).valueOf()
             entry.timeSpent = parseInt(entry.time_spent / 1000, 10)
             // progress per time spent
             entry.ppts = entry.timeSpent > 0 ? entry.progress / entry.timeSpent : 0
         }
-
+        
         return data
     }
-
+    
     render() {
         return (
             this.props.isLoading !== undefined && !this.props.isLoading
@@ -95,12 +95,12 @@ class StudentVelocityPerTime extends Component {
                             <CartesianGrid/>
                             <XAxis dataKey="date" type="number" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
                                 <Label offset={-15} position="insideBottom">
-                                    Date
+                            Date
                                 </Label>
                             </XAxis>
                             <YAxis dataKey="ppts" type="number">
                                 <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
-                                    Progress per Time Spent
+                            Progress per Time Spent
                                 </Label>
                             </YAxis>
                             <Tooltip formatter={this.customDateFormatter}/>
@@ -119,7 +119,7 @@ class StudentVelocityPerTime extends Component {
 const mapStateToProps = (state) => {
     return {
         student: getCurrentStudent(state),
-		project: getCurrentProject(state),
+        project: getCurrentProject(state),
         data: state.student && state.student.getProgressPerTimeData ? state.student.getProgressPerTimeData : null,
         isLoading: state.student ? state.student.getProgressPerTimeIsLoading : false,
     }
