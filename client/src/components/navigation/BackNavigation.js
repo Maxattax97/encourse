@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 class BackNavigation extends Component {
     render() {
         return (
-            <div className={ `top-nav back-nav svg-icon float-height${ this.props.backClick ? ' action' : '' }` } onClick={ this.props.backClick }>
+            <div className='top-nav back-nav svg-icon float-height action'>
                 <h3>
                     { this.props.back }
                 </h3>
