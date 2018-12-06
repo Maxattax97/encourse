@@ -133,6 +133,7 @@ class GitLog:
         # Check if commits are the right format
         if all(isinstance(element, GitCommit) for element in commits):
             self._commits = commits
+            self._commits.sort(key=lambda x: x.timestamp)
 
     time_estimate = property(operator.attrgetter("_time_estimate"))
 
@@ -151,7 +152,32 @@ class GitLog:
             deletions += commit_deletions
         return additions, deletions
 
-    def commitsByDay(self):
+    def commits_by_day(self):
+        """Generates a list of commit objects with aggregated date from every commit from that day"""
+        current_date = None
+        daily_commits = {}
+        commits = []
+        for commit in self.commits:
+            if current_date == None:
+                # This is the first commit
+                current_date = commit.timestamp.date()
+                commits.append(commit)
+            elif commit.timestamp.date() != current_date:
+                # Add commits to the dict under the date which they occurred
+                daily_commits[current_date.isoformat()] = commits
+                commits = []
+
+                # Update the date and add the current commit to the now empty list
+                current_date = commit.timestamp.date()
+                commits.append(commit)
+            elif commit.timestamp.date() == current_date:
+                commits.append(commit)
+
+        # Add remaining commits to output
+        daily_commits[current_date.isoformat()] = commits
+        return daily_commits
+
+    def commitsByDay_OLD(self):
         days = []
         current_date = 0
         current_day = {}
@@ -267,8 +293,6 @@ class GitCommit:
                 )
         return file_list
 
-    timestamp = property(operator.attrgetter("_timestamp"))
-
     files = property(operator.attrgetter("_files"))
 
     @files.setter
@@ -282,6 +306,8 @@ class GitCommit:
     def timestamp(self, timestamp):
         if isinstance(timestamp, date):
             self._timestamp = timestamp
+        else:
+            print("timestamp is not a timestamp")
 
     time_delta = property(operator.attrgetter("_time_delta"))
 
@@ -291,6 +317,7 @@ class GitCommit:
         if isinstance(time_delta, timedelta):
             self._time_delta = time_delta
         else:
+            print("time_delta is not a time delta")
             self._time_delta = timedelta(0)
 
     additions = property(operator.attrgetter("_additions"))

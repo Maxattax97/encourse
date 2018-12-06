@@ -108,16 +108,8 @@ def average_statistics(parser, visible, hidden=None, max_changes=None, timeout=N
         total_additions += additions
         total_deletions += deletions
 
-        daily_commits = log.commitsByDay()
-        start = daily_commits[0]["timestamp"]
-        if start < start_date:
-            start_date = start
-        end = daily_commits[len(daily_commits) - 1]["timestamp"]
-        if end > end_date:
-            end_date = end
-
         total_commits += len(log.commits)
-        total_time += sum([day["time_spent"] for day in daily_commits])
+        total_time += log.estimate_time(log.commits, timeout=timeout)
 
         if user in visible:
             total_vscore += visible[user]["total"]
@@ -127,8 +119,8 @@ def average_statistics(parser, visible, hidden=None, max_changes=None, timeout=N
             hscored_users += 1
 
     statistics = {
-        "Start Date": format_date(start_date),
-        "End Date": format_date(end_date),
+        "Start Date": log.commits[0].timestamp.date().isoformat(),
+        "End Date": log.commits[-1].timestamp.date().isoformat(),
         "Additions": "{} lines".format(round(total_additions / float(users))),
         "Deletions": "{} lines".format(round(total_deletions / float(users))),
         "Commit Count": "{} commits".format(round(total_commits / float(users))),
