@@ -9,6 +9,8 @@ import connect from 'react-redux/es/connect/connect'
 import {ProjectInfo, ProjectModal, ProjectTestFilter, ProjectTestModal} from './project'
 import HistoryText from "./common/HistoryText"
 import {getCurrentProject} from '../../redux/state-peekers/projects'
+import ProjectSuiteModal from './project/ProjectSuiteModal'
+import ProjectSuiteSummary from './project/ProjectSuiteSummary'
 
 class ProjectPanel extends Component {
 
@@ -20,13 +22,15 @@ class ProjectPanel extends Component {
 
         const action_names = [
             'Add New Project',
+            'Add New Test Suite',
 	        'Add New Test Script',
             'Upload Test Zip'
         ]
 
         const actions = [
 	        () => this.props.setModalState(1),
-	        () => this.props.setModalState(3),
+            () => this.props.setModalState(3),
+	        () => this.props.setModalState(5),
             {},
         ]
 
@@ -45,8 +49,10 @@ class ProjectPanel extends Component {
 
 	            <ProjectModal id={1} newProject />
 	            <ProjectModal id={2} />
-	            <ProjectTestModal id={3} newTestScript />
-	            <ProjectTestModal id={4} />
+                <ProjectSuiteModal id={3} newTestSuite/>
+                <ProjectSuiteModal id={4}/>
+	            <ProjectTestModal id={5} newTestScript />
+	            <ProjectTestModal id={6} />
 
                 <div className='panel-center-content'>
 	                <Title onClick={ () => this.props.setModalState(2) }>
@@ -58,9 +64,11 @@ class ProjectPanel extends Component {
 	                <h3 className='header'>Project Information</h3>
 	                <ProjectInfo />
 
+                    <div className='h1 break-line' />
+                    <ProjectSuiteSummary/>
+
 	                <div className='h1 break-line' />
 
-	                <h3 className='header'>Test Scripts</h3>
                     <ProjectTestFilter />
                 </div>
             </div>

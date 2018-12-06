@@ -9,7 +9,6 @@ import {resetFilterState, setFilterState, toggleSelectAllCards} from "../../../r
 class ProjectTestFilter extends Component {
 
 	sort_by_values = ['Name', 'Points']
-	bundle_by_values = ['Nothing', 'Visibility', 'Points', 'Test Suite']
 	order_values = ['Ascending', 'Descending']
 	view_values = ['All Tests', 'Visible Tests', 'Hidden Tests']
 
@@ -20,6 +19,7 @@ class ProjectTestFilter extends Component {
 	render() {
 		return (
 			<div className='project-tests'>
+                <h3 className='header'>Test Scripts</h3>
 				<Filter>
 					<Checkbox onClick={() => this.props.toggleSelectAllCards()}>
 						{
@@ -33,12 +33,6 @@ class ProjectTestFilter extends Component {
 					          text='Sort by'
 					          values={this.sort_by_values}
                               filter='sort_by'
-					          left/>
-
-					<Dropdown header='h5'
-					          text='Bundle by'
-					          values={this.bundle_by_values}
-                              filter='bundle_by'
 					          left/>
 
 					<Dropdown header='h5'
