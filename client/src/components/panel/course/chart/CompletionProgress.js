@@ -54,7 +54,6 @@ class CompletionProgress extends Component {
 						margin={{top: 5, right: 30, left: 30, bottom: 35}}
 						barCategoryGap={0}
 					>
-						<CartesianGrid/>
 						<XAxis dataKey="progressBin" type="category">
 							<Label offset={-10} position="insideBottom">
 								Progress

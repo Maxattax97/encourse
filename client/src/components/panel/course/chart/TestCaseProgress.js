@@ -60,7 +60,6 @@ class StudentsTestCaseProgress extends Component {
 							data={this.props.chart.data}
 							margin={{top: 5, right: 30, left: 30, bottom: 35}}
 						>
-							<CartesianGrid/>
 							<XAxis dataKey="testName" type="category">
 								<Label offset={-10} position="insideBottom">
 									{/*Test Case*/}
