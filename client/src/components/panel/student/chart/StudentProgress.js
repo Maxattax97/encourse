@@ -27,10 +27,13 @@ class StudentProgress extends Component {
 
 	render() {
 		return (
-			<Chart chart={this.props.chart}>
+            <Chart
+                chart={this.props.chart}
+                title='Percentage of passed test cases over time. The score is calculated by looking at the latest commit that day that compiles, so the score can artificially fall if the student leaves the project on a broken commit.'
+            >
 				<ResponsiveContainer width="100%" height="100%">
 					<LineChart className="chart" width={730} height={500} data={this.props.chart.data}
-					           margin={{ top: 20, right: 35, left: 20, bottom: 20 }}>
+					           margin={{ top: 20, right: 35, left: 20, bottom: 20 }} syncId="date">
 						<text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Student Progress Over Time</text>
 						<CartesianGrid strokeDasharray="3 3" />
 						<XAxis dataKey="date" type="number" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
@@ -44,7 +47,6 @@ class StudentProgress extends Component {
 						<Tooltip labelFormatter={this.dateFormatter}/>
 						<Legend verticalAlign="top"/>
 						<Line type="monotone" dataKey="progress" stroke="#8884d8" />
-						<Brush dataKey="date" height={20} stroke="#8884d8" tickFormatter={this.dateFormatter}/>
 					</LineChart>
 				</ResponsiveContainer>
 			</Chart>

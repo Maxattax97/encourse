@@ -62,8 +62,9 @@ def daterange(start, end):
 def times_from_dailydata(log):
     """Generate a start and end time from commit daily commit log data"""
     dates = []
-    for day in log.commitsByDay():
-        dates.append(day["timestamp"])
+    commits = log.commits_by_day()
+    for day in commits:
+        dates.append(commits[day][0].timestamp.date())
 
     dates.sort()
     return (date_string(dates[0]), date_string(dates[-1]))

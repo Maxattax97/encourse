@@ -22,7 +22,7 @@ class StudentFilter extends Component {
 	render() {
         return (
             <div className='course-students'>
-                <h3 className='header'>Students Summary</h3>
+                <h3 className='header'>Students</h3>
                 {
                     this.props.students.data ?
                         <Filter>
@@ -71,7 +71,6 @@ class StudentFilter extends Component {
 	                                  text='View'
 	                                  values={this.view_values}
                                       filter='view_filter'
-                                      addCustom
 	                                  left/>
                         </Filter>
                         :

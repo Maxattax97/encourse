@@ -7,5 +7,5 @@ export {
 } from './StudentCommitHistory'
 
 export {
-    default as StudentStatistics
-} from './StudentStatistics'
+    default as StudentProjectInfo
+} from './StudentProjectInfo'

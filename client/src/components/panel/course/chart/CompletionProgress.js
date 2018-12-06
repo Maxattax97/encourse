@@ -43,7 +43,7 @@ class CompletionProgress extends Component {
 		return (
 			<Chart
                 chart={this.props.chart}
-                title='Histogram of all students in the course grouped by the percentage of tests they are passing (progress).'
+                title='Histogram of all students in the course grouped by their current visible test scores. Scores are calculated by summing the points given for each passing test case visible to the student.'
             >
 				<ResponsiveContainer
                     width="100%"

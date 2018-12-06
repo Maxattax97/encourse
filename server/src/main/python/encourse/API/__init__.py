@@ -4,9 +4,9 @@ import argparse
 import random
 from datetime import datetime
 from datetime import date
+from datetime import timedelta
 from API import GitLog
 from API import Progress
-from API import CheatDetection
 from API import helper
 from API import stats
 from API import commitcount
@@ -26,6 +26,7 @@ __all__ = [
     "argparse",
     "datetime",
     "date",
+    "timedelta",
     "random",
     "GitLog",
     "Progress",
@@ -42,4 +43,3 @@ __all__ = [
     "velocity",
     "cheating",
 ]
-

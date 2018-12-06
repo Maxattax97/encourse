@@ -1,7 +1,9 @@
 /.idea
 /client/build/
+/client/src/api/
 /client/node_modules/
 /client/package-lock.json
+**.old.*
 
 ./package-lock.json
 

@@ -29,7 +29,7 @@ def jsonify(
 
     scores = {helper.date_string(x["date"]): x for x in scores}
     hidden_scores = {helper.date_string(x["date"]): x for x in hidden_scores}
-    daily_data = {helper.date_string(day["timestamp"]): day for day in daily_data.commitsByDay()}
+    commits = daily_data.commits_by_day()
 
     velocity_data = []
     cumulative_progress = 0
@@ -62,9 +62,9 @@ def jsonify(
         # copy daily data
         new_entry["time_spent"] = 0
         new_entry["commit_count"] = 0
-        if day in daily_data:
-            new_entry["time_spent"] = daily_data[day]["time_spent"]
-            new_entry["commit_count"] = daily_data[day]["commit_count"]
+        if day in commits:
+            new_entry["time_spent"] = daily_data.estimate_time(commits[day], timeout=2)
+            new_entry["commit_count"] = len(commits[day])
 
         velocity_data.append(new_entry)
 

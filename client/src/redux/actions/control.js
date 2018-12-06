@@ -49,6 +49,13 @@ export function resetFilterState() {
 	}
 }
 
+export function toggleFiltersHaveChanged() {
+	return {
+		class: class_type,
+		type: 'TOGGLE_FILTERS_CHANGED',
+	}
+}
+
 export function setCustomFilterModal(id, value) {
     return {
         class: class_type,

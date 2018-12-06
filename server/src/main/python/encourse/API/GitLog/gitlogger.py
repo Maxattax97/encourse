@@ -31,19 +31,23 @@ class GitParser:
         commit_files = []
         commit_timestamp = None  # datetime.datetime
         commit_timedelta = None  # datetime.timedelta
+        commit_hash = ""
         for line in student_log:
             if line[:5] == "Start":
                 student_name = line[6:].strip()
                 commit_files = []
                 commit_timestamp = None  # datetime.datetime
                 commit_timedelta = None  # datetime.timedelta
+                commit_hash = ""
             elif line[:3] == "End":
                 student_commits.append(
-                    GitCommit(commit_files, commit_timestamp, commit_timedelta)
+                    GitCommit(
+                        commit_files, commit_timestamp, commit_timedelta, commit_hash
+                    )
                 )
                 self.student_log[student_name] = GitLog(student_commits, student_name)
                 student_commits = []
-            elif len(line.split(" ")) == 3:
+            elif len(line.split(" ")) == 4:
                 # This line is a commit time
                 words = line.strip().split(" ")
                 # Check type of line
@@ -53,16 +57,24 @@ class GitParser:
                     if commit_files:
                         # If a time is found, add the previously stored data as a commit
                         student_commits.append(
-                            GitCommit(commit_files, commit_timestamp, commit_timedelta)
+                            GitCommit(
+                                commit_files,
+                                commit_timestamp,
+                                commit_timedelta,
+                                commit_hash,
+                            )
                         )
                     # Since a commit was just added, start tracking data for a new commit
                     commit_files = []
+                    commit_hash = ""
                     if commit_timestamp:
                         commit_timedelta = timestamp - commit_timestamp
                     else:
                         # No previous timestamp exists (eg. the first commit)
                         commit_timedelta = timedelta(minutes=0)
                     commit_timestamp = timestamp
+                    commit_hash = words[3].strip()
+
                     timestamp = None
             elif len(line.split("\t")) == 3:
                 # This line is a commit file
@@ -87,7 +99,7 @@ class GitLog:
             self.commits = gitlog
         else:
             self.commits = parselog(gitlog)
-        self.time_estimate = self._estimate_time(self.commits)
+        self.time_estimate = self.estimate_time(self.commits)
 
     def __repr__(self):
         commits_repr = []
@@ -121,6 +133,7 @@ class GitLog:
         # Check if commits are the right format
         if all(isinstance(element, GitCommit) for element in commits):
             self._commits = commits
+            self._commits.sort(key=lambda x: x.timestamp)
 
     time_estimate = property(operator.attrgetter("_time_estimate"))
 
@@ -134,22 +147,58 @@ class GitLog:
         additions = 0
         deletions = 0
         for commit in self.commits:
-                commit_additions, commit_deletions = commit.count_changes(max_size=max_size)
-                additions += commit_additions
-                deletions += commit_deletions
+            commit_additions, commit_deletions = commit.count_changes(max_size=max_size)
+            additions += commit_additions
+            deletions += commit_deletions
         return additions, deletions
 
-    def commitsByDay(self):
+    def commits_by_day(self):
+        """Generates a list of commit objects with aggregated date from every commit from that day"""
+        current_date = None
+        daily_commits = {}
+        commits = []
+        for commit in self.commits:
+            if current_date == None:
+                # This is the first commit
+                current_date = commit.timestamp.date()
+                commits.append(commit)
+            elif commit.timestamp.date() != current_date:
+                # Add commits to the dict under the date which they occurred
+                daily_commits[current_date.isoformat()] = commits
+                commits = []
+
+                # Update the date and add the current commit to the now empty list
+                current_date = commit.timestamp.date()
+                commits.append(commit)
+            elif commit.timestamp.date() == current_date:
+                commits.append(commit)
+
+        # Add remaining commits to output
+        daily_commits[current_date.isoformat()] = commits
+        return daily_commits
+
+    def commitsByDay_OLD(self):
         days = []
         current_date = 0
         current_day = {}
         current_commits = []
+        first_commit = None
+        last_commit = None
         for commit in self.commits:
             if commit.timestamp.date() != current_date:
                 if current_date != 0:
-                    current_day["time_spent"] = self._estimate_time(current_commits, timeout=1)
+                    current_day["time_spent"] = self.estimate_time(
+                        current_commits, timeout=1
+                    )
                     current_day["commit_count"] = len(current_commits)
+                    current_day["first_commit"] = first_commit.commit_hash
+                    current_day["last_commit"] = last_commit.commit_hash
                     days.append(current_day)
+
+                if not first_commit:
+                    first_commit = commit
+                    last_commit = commit
+
                 current_date = commit.timestamp.date()
                 current_day = {
                     "timestamp": current_date,
@@ -157,13 +206,23 @@ class GitLog:
                     "deletions": 0,
                     "files": [],
                     "time_spent": 0.0,
-                    "commit_count": 1
+                    "commit_count": 1,
+                    "first_commit": "",
+                    "last_commit": "",
                 }
                 current_commits = [commit]
+                first_commit = commit
+                last_commit = commit
             else:
                 current_commits.append(commit)
                 current_day["additions"] += commit.additions
                 current_day["deletions"] += commit.deletions
+
+                if commit.timestamp < first_commit.timestamp:
+                    first_commit = commit
+                if commit.timestamp > last_commit.timestamp:
+                    last_commit = commit
+
                 for f in commit.files:
                     if f.name not in [n.name for n in current_day["files"]]:
                         current_day["files"].append(f)
@@ -173,16 +232,17 @@ class GitLog:
                                 match.additions += f.additions
                                 match.deletions += f.deletions
                                 break
-        current_day["time_spent"] = self._estimate_time(current_commits, timeout=1)
+        current_day["time_spent"] = self.estimate_time(current_commits, timeout=1)
         current_day["commit_count"] = len(current_commits)
         days.append(current_day)
         return days
 
     # TODO: Move to GitLog, add time range input
-    def _estimate_time(self, commits, timeout=None):
+    def estimate_time(self, commits, timeout=None):
         total_time = 0
         if not timeout:
             timeout = sys.maxsize
+
         for commit in commits:
             # TODO: Improve time estimate heuristic
             hours = commit.time_delta.seconds / 3600
@@ -207,10 +267,11 @@ class GitLog:
 
 
 class GitCommit:
-    def __init__(self, files, timestamp, time_delta):
+    def __init__(self, files, timestamp, time_delta, commit_hash):
         self.files = files  # Recounts changes in setter
         self.timestamp = timestamp
         self.time_delta = time_delta
+        self.commit_hash = commit_hash
 
     def __repr__(self):
         return "GitCommit({}, {}, {})".format(
@@ -245,6 +306,8 @@ class GitCommit:
     def timestamp(self, timestamp):
         if isinstance(timestamp, date):
             self._timestamp = timestamp
+        else:
+            print("timestamp is not a timestamp")
 
     time_delta = property(operator.attrgetter("_time_delta"))
 
@@ -253,6 +316,9 @@ class GitCommit:
         # print("timedelta" + str(time_delta))
         if isinstance(time_delta, timedelta):
             self._time_delta = time_delta
+        else:
+            print("time_delta is not a time delta")
+            self._time_delta = timedelta(0)
 
     additions = property(operator.attrgetter("_additions"))
 
@@ -267,6 +333,12 @@ class GitCommit:
     def deletions(self, deletions):
         if deletions >= 0:
             self._deletions = deletions
+
+    commit_hash = property(operator.attrgetter("_commit_hash"))
+
+    @commit_hash.setter
+    def commit_hash(self, commit_hash):
+        self._commit_hash = commit_hash
 
     def count_changes(self, max_size=None):
         # sum up additions and deletionsfor each file

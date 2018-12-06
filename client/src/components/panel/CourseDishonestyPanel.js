@@ -1,17 +1,17 @@
 import React, { Component } from 'react'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {history} from '../../redux/store'
-import {BackNav, SettingsIcon, Title} from '../Helpers'
+import {Title} from '../Helpers'
 import {getStudentPreviews, setCurrentStudent, setModalState, getDishonestyReport, updateCourseDishonestyPage, resetCourseDishonestyPage} from '../../redux/actions'
-import {getCurrentCourseId} from '../../redux/state-peekers/course'
+import {getCurrentCourseId, getStudents} from '../../redux/state-peekers/course'
 import url from '../../server'
 import { connect } from 'react-redux'
 import StudentReportFilter from './course-dishonesty/StudentReportFilter'
 import CourseDishonestyCharts from './course-dishonesty/CourseDishonestyCharts'
-import HistoryText from './common/HistoryText'
 import ShareReportModal from './common/ShareReportModal'
 import TaskModal from './common/TaskModal'
 import ProjectNavigation from '../navigation/ProjectNavigation'
+import {getCurrentProject} from '../../redux/state-peekers/projects'
+import BackNavigation from '../navigation/BackNavigation'
 
 class CourseDishonestyPanel extends Component {
 
@@ -26,16 +26,13 @@ class CourseDishonestyPanel extends Component {
         }
     }
 
-    back = () => {
-        history.goBack()
-    }
-
     componentDidMount = () => {
-        this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.currentProjectId}`)
+        if(this.props.project)
+            this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.project.id}`)
     }
 
     scrolledToBottom = () => {
-        if(!this.props.last) {
+        if(this.props.project && !this.props.last) {
             this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}&page=${this.props.page + 1}`)
             this.props.updateCourseDishonestyPage()
         }
@@ -85,13 +82,9 @@ class CourseDishonestyPanel extends Component {
             <div className="class-dishonesty-panel">
 
                 <div className='panel-left-nav'>
-                    <BackNav back='Course' backClick={ this.back }/>
+                    <BackNavigation/>
                     <ProjectNavigation/>
                     <ActionNavigation actions={ actions } action_names={ action_names }/>
-                </div>
-
-                <div className='panel-right-nav'>
-                    <HistoryText />
                 </div>
 
                 <TaskModal id={1} />
@@ -102,7 +95,6 @@ class CourseDishonestyPanel extends Component {
                     <div className='panel-course-report'>
                         <Title>
                             <h1 className='header'>Academic Dishonesty Report</h1>
-                            <SettingsIcon/>
                         </Title>
                         <div className='h1 break-line header' />
 
@@ -111,7 +103,6 @@ class CourseDishonestyPanel extends Component {
 
                         <div className='h1 break-line' />
 
-                        <h3 className='header'>Students Summary</h3>
                         <StudentReportFilter report={this.props.report}/>
                     </div>
                 </div>
@@ -122,10 +113,10 @@ class CourseDishonestyPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        students: state.course && state.course.getStudentPreviewsData ? state.course.getStudentPreviewsData.content : [],
+        students: getStudents(state),
         currentCourseId: getCurrentCourseId(state),
         report: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.content : [],
-        currentProjectId: state.projects ? state.projects.currentProjectId : null,
+        project: getCurrentProject(state),
         page: state.course && state.course.dishonestyPage ? state.course.dishonestyPage : 1,
         last: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.last : true,
     }

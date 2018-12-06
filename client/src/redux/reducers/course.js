@@ -100,24 +100,11 @@ function resetStudentsPage(state, action) {
     })
 }
 
-const statDict = {
-    "Average Additions": "Average number of line of code added over the entire project",
-    "Average Deletions": "Average number of line of code deleted over the entire project",
-    "Average Commit Count": "Average number of commits",
-    "Average Estimated Time Spent": "Average estimated time spent. Estimated by recording the time between commits that appear less than an hour appart",
-}
-
 function formatStatistics(udata) {
     if (!udata)
         return null
 
     udata.sort((d1, d2) => d1.index - d2.index)
-
-    for (let item of udata) {
-        if (statDict[item.stat_name]) {
-            item.stat_desc = statDict[item.stat_name]
-        }
-    }
 
     return udata
 }

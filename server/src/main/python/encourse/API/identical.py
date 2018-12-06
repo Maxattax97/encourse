@@ -1,5 +1,6 @@
 from API import *
 
+
 def jsonify(data):
     out = []
     bins = {}

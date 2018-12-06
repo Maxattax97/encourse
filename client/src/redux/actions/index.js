@@ -31,5 +31,5 @@ export {
 
 export {
     setModalState, toggleSelectAllCards, toggleSelectCard, resetAllCards,
-	setFilterState, resetFilterState
+	setFilterState, resetFilterState, toggleFiltersHaveChanged
 } from './control'
