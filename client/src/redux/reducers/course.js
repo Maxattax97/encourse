@@ -100,35 +100,11 @@ function resetStudentsPage(state, action) {
     })
 }
 
-const statDict = {
-	"Average Additions": "Average number of line of code added over the entire project",
-	"Average Deletions": "Average number of line of code deleted over the entire project",
-	"Average Commit Count": "Average number of commits",
-	"Average Estimated Time Spent": "Average estimated time spent. Estimated by recording the time between commits that appear less than an hour appart",
-	"Start Date": "The date of the student's first commit",
-	"End Date": "The date of the student's last commit",
-	"Estimated Time Spent": "Estimated time spent on the project. Estimated by (recording an hour of work if there is a commit between two hours | recording time if there is a commit within an hour of another commit)",
-	"Current Test Score": "Score calculated by summing the points given for each passing test case",
-	"Commit Count": "Number of commits made the by student so far",
-	"Deletions": "Number of deleted lines of code made the by student so far",
-	"Additions": "Number of added lines of code made the by student so far",
-    "Average Additions": "Average number of line of code added over the entire project",
-    "Average Deletions": "Average number of line of code deleted over the entire project",
-    "Average Commit Count": "Average number of commits",
-    "Average Estimated Time Spent": "Average estimated time spent. Estimated by recording the time between commits that appear less than an hour appart",
-}
-
 function formatStatistics(udata) {
     if (!udata)
         return null
 
     udata.sort((d1, d2) => d1.index - d2.index)
-
-    for (let item of udata) {
-        if (statDict[item.stat_name]) {
-            item.stat_desc = statDict[item.stat_name]
-        }
-    }
 
     return udata
 }

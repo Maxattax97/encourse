@@ -21,6 +21,22 @@ priorities = {
     "Current Total Score": 8,
 }
 
+descriptions = {
+    "Start Date": "The date of the student's first commit",
+    "End Date": "The date of the student's last commit",
+    "Additions": "Number of added lines of code made the by student so far",
+    "Deletions": "Number of deleted lines of code made the by student so far",
+    "Commit Count": "Number of commits made the by student so far",
+    "Estimated Time Spent": "Estimated by recording the time between commits that appear less than an hour appart",
+    "Current Test Score": "Score calculated by summing the points given for each passing test case visible to the student",
+    "Current Hidden Score": "Score calculated by summing the points given for each passing test case hidden from the student",
+    "Current Total Score": "Score calculated by summing the points given for each passing test case visible and hidden from the student",
+    "Average Additions": "Average number of line of code added over the entire project",
+    "Average Deletions": "Average number of line of code deleted over the entire project",
+    "Average Commit Count": "Average number of commits",
+    "Average Estimated Time Spent": "Average estimated time spent. Estimated by recording the time between commits that appear less than an hour appart",
+}
+
 
 def average_statistics(parser, visible, hidden=None, max_changes=None, timeout=None):
     """Creates a list of statistics for each user
@@ -133,22 +149,22 @@ def average_statistics(parser, visible, hidden=None, max_changes=None, timeout=N
     stat_array = []
     for stat_name in statistics:
         stat_value = statistics[stat_name]
+
+        stat_item = {
+            "stat_value": stat_value,
+            "index": priorities[stat_name],
+            "stat_desc": description,
+        }
+
         if users > 1 and stat_name != "Start Date" and stat_name != "End Date":
-            stat_array.append(
-                {
-                    "stat_name": "Average " + stat_name,
-                    "stat_value": stat_value,
-                    "index": priorities[stat_name],
-                }
-            )
+            stat_item["stat_name"] = "Average " + stat_name
         else:
-            stat_array.append(
-                {
-                    "stat_name": stat_name,
-                    "stat_value": stat_value,
-                    "index": priorities[stat_name],
-                }
-            )
+            stat_item["stat_name"] = stat_name
+
+        if stat_item["stat_name"] in descriptions and descriptions[stat_name] != None:
+            stat_item["stat_desc"] = descriptions[stat_name]
+
+        stat_array.append(stat_item)
     return stat_array
 
 
