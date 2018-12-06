@@ -2,23 +2,52 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import {Modal} from '../../Helpers'
+import {getCurrentProject} from '../../../redux/state-peekers/projects'
 
 class CourseModal extends Component {
 
 	render() {
+	    if(!this.props.project)
+	        return (
+	            <div className='course-modal'>
+                    <h3>
+                        No current project
+                    </h3>
+                </div>
+            )
+
 		return (
 			<div className="course-modal">
 				<Modal center id={this.props.id} noExit>
-                    <h2 className='header'>Current Task</h2>
-                    <div className="h4 break-line header"/>
                     <h4 className='header'>
-                        {
-                            this.props.task.operation === 'sync' ? 'Sync' :
-                                this.props.task.operation === 'test' ? 'Test' :
-                                    this.props.task.operation === 'analyze' ? 'Analyze' :
-                                        'None'
-                        }
+                        Last Sync
                     </h4>
+                    <div>
+                        <h5>
+                            { this.props.project.last_sync}
+                        </h5>
+                    </div>
+                    <div className="h5 break-line"/>
+                    <h4 className='header'>
+                        Last Testall
+                    </h4>
+                    <div>
+                        <h5>
+                            { this.props.project.last_test}
+                        </h5>
+                    </div>
+                    <div className="h5 break-line"/>
+                    <h4 className='header'>Current Task</h4>
+                    <div>
+                        <h5 className='header'>
+                            {
+                                this.props.task.operation === 'sync' ? 'Sync' :
+                                    this.props.task.operation === 'test' ? 'Test' :
+                                        this.props.task.operation === 'analyze' ? 'Analyze' :
+                                            'None'
+                            }
+                        </h5>
+                    </div>
 					<div className="student-preview-progress">
 						<div className="progress-bar">
 							<div style={{width: (this.props.task.progress + '%')}} />
@@ -36,7 +65,8 @@ class CourseModal extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        task: { operation: 'sync', progress: 10, estimated_time_remaining: '1 day'}
+        task: { operation: 'sync', progress: 10, estimated_time_remaining: '1 day'},
+        project: getCurrentProject(state)
     }
 }
 

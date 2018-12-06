@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import {BackNav} from '../Helpers'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import { history } from '../../redux/store'
 import {
@@ -12,14 +11,17 @@ import {
     setModalState
 } from '../../redux/actions/index'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
+import {StudentCharts, StudentProjectInfo} from './student'
 import StudentChartSlider from './student/chart/BrushSlider'
-import SyncItem from './common/HistoryText'
-import {retrieveStudent} from "../../redux/retrievals/student"
+// import {retrieveStudent} from "../../redux/retrievals/student"
 import {getCurrentStudent} from "../../redux/state-peekers/student"
 import {getCurrentProject} from "../../redux/state-peekers/projects"
 import {getCurrentCourseId, getCurrentSemesterId} from "../../redux/state-peekers/course"
 import ProgressModal from './common/TaskModal'
+import BackNavigation from '../navigation/BackNavigation'
+import {Summary} from '../Helpers'
+import StudentSuiteInfo from './student/StudentSuiteInfo'
+import StudentCommitFilter from './student/StudentCommitFilter'
 
 
 class StudentPanel extends Component {
@@ -33,10 +35,6 @@ class StudentPanel extends Component {
 	componentWillUnmount() {
 		this.props.clearStudent()
 	}
-
-	back = () => {
-        history.goBack()
-    }
 
     render() {
 
@@ -58,15 +56,9 @@ class StudentPanel extends Component {
             <div className="panel-student">
 
                 <div className='panel-left-nav'>
-                    <BackNav back="Course"
-                        backClick={ this.back }/>
+                    <BackNavigation/>
                     <ProjectNavigation/>
                     <ActionNavigation actions={ actions } action_names={ action_names }/>
-                </div>
-
-                <div className="panel-right-nav">
-                    <SyncItem />
-                    <StudentCommitHistory />
                 </div>
 
                 <ProgressModal id={2} />
@@ -80,16 +72,20 @@ class StudentPanel extends Component {
                         </h1>
                         <div className="h1 break-line header" />
 
-                        <h3 className='header'>Student Charts</h3>
+                        <h3 className='header'>Charts</h3>
                         <StudentChartSlider/>
                         <StudentCharts />
 
                         <div className="h1 break-line" />
-                        <h3 className='header'>Student Statistics</h3>
-	                    <StudentStatistics />
+                        <h3 className='header'>Statistics</h3>
+                        <Summary columns={2}>
+                            <StudentProjectInfo />
+                            <StudentSuiteInfo/>
+                        </Summary>
 
                         <div className='h1 break-line' />
-                        <h3 className='header'>Test Suite Results</h3>
+                        <StudentCommitFilter/>
+
                     </div>
                 </div>
             </div>

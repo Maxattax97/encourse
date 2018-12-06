@@ -1,23 +1,16 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {BackNav} from '../Helpers'
-import {history} from '../../redux/store'
 import {clearStudent, getStudent, syncStudentRepository, runStudentTests, setModalState} from '../../redux/actions'
 import {getCurrentCourseId, getCurrentSemesterId} from '../../redux/state-peekers/course'
-import url from '../../server'
-import HistoryText from './common/HistoryText'
 import StudentDishonestyCharts from "./student-dishonesty/StudentDishonestyCharts"
 import ShareReportModal from "./common/ShareReportModal"
 import {getCurrentStudent} from '../../redux/state-peekers/student'
 import TaskModal from './common/TaskModal'
 import {getCurrentProject} from '../../redux/state-peekers/projects'
+import BackNavigation from '../navigation/BackNavigation'
 
 class StudentDishonestyPanel extends Component {
-
-    back = () => {
-        history.goBack()
-    }
 
     share = () => {
         this.props.setModalState(1)
@@ -38,12 +31,8 @@ class StudentDishonestyPanel extends Component {
         return (
             <div className="student-dishonesty-panel">
                 <div className='panel-left-nav'>
-                    <BackNav back='Course' backClick={ this.back }/>
+                    <BackNavigation/>
                     <ActionNavigation actions={ actions } action_names={ action_names }/>
-                </div>
-
-                <div className='panel-right-nav'>
-                    <HistoryText />
                 </div>
 
                 <ShareReportModal id={1} link={null}/>

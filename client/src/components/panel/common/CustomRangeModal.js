@@ -20,8 +20,8 @@ class CustomRangeModal extends Component {
         if(!this.props.type)
             return
 
-        const start = (this.props.type.value || {}).start
-        const end = (this.props.type.value || {}).end
+        const start = (this.props.type.value || {}).min
+        const end = (this.props.type.value || {}).max
 
         if(!prevProps.type) {
             this.setState({
@@ -31,8 +31,8 @@ class CustomRangeModal extends Component {
             return
         }
 
-        const prevStart = (prevProps.type.value || {}).start
-        const prevEnd = (prevProps.type.value || {}).end
+        const prevStart = (prevProps.type.value || {}).min
+        const prevEnd = (prevProps.type.value || {}).max
 
         if(prevProps.type.id !== this.props.type.id || prevStart !== start || prevEnd !== end)
             this.setState({
@@ -69,11 +69,12 @@ class CustomRangeModal extends Component {
                     <h4 className='header'>
                         Start
                     </h4>
-                    <input type="number" className="h3-size" value={String(this.state.start)} onChange={this.onChange} name="start" autoComplete="off" placeholder='Start number'/>
+                    <input type="number" className="h3-size" value={String(this.state.start)} onChange={this.onChange} name="start" autoComplete="off" placeholder='###'/>
+                    <div className="h5 break-line"/>
                     <h4 className='header'>
                         End
                     </h4>
-                    <input type="number" className="h3-size" value={String(this.state.end)} onChange={this.onChange} name="end" autoComplete="off" placeholder='End number'/>
+                    <input type="number" className="h3-size" value={String(this.state.end)} onChange={this.onChange} name="end" autoComplete="off" placeholder='###'/>
                     <div className="modal-buttons float-height">
                         <div className="svg-icon action" onClick={ this.saveCustomRange }>
                             <CheckmarkIcon/>

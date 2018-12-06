@@ -41,10 +41,12 @@ class ProjectTestModal extends Component {
 						Name
 					</h4>
 					<input type="text" className="h3-size" value={this.props.courseID} name="name" autoComplete="off"/>
+                    <div className="h5 break-line"/>
 					<h4 className="header">
 						Visibility
 					</h4>
 					<input type="number" className="h3-size" value={this.state.interval} onChange={this.onChange} name="interval" ref="interval"/>
+                    <div className="h5 break-line"/>
 					<h4 className='header'>
 						Upload
 					</h4>

@@ -6,7 +6,7 @@ import {getCurrentStudent, getStudentStatistics} from "../../../redux/state-peek
 import {getCurrentProject} from "../../../redux/state-peekers/projects"
 import {retrieveStudentStats} from "../../../redux/retrievals/student"
 
-class StudentStatistics extends Component {
+class StudentProjectInfo extends Component {
 
 	componentDidMount() {
 		if(this.props.student && this.props.project)
@@ -20,7 +20,12 @@ class StudentStatistics extends Component {
 
     render() {
         return (
-            <Statistics stats={this.props.stats} />
+            <Statistics stats={this.props.stats} noColumns>
+                <h4 className='header'>
+                    Project Information
+                </h4>
+                <div className='h5 break-line' />
+            </Statistics>
         )
     }
 }
@@ -33,4 +38,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(StudentStatistics)
+export default connect(mapStateToProps)(StudentProjectInfo)

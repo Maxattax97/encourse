@@ -574,7 +574,7 @@ client/src
 │       │   ├── index.js
 │       │   ├── StudentCharts.js
 │       │   ├── StudentCommitHistory.js
-│       │   └── StudentStatistics.js
+│       │   └── StudentProjectInfoo.js
 │       ├── student-dishonesty
 │       │   ├── chart
 │       │   │   ├── StudentVelocityPerCommit.js

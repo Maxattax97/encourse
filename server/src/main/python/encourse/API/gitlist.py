@@ -31,26 +31,30 @@ def jsonify(gitlogs, student_id=None):
     git_dict = {}
     for student in gitlogs.student_log:
         log = gitlogs.student_log[student]
-        daily_commits = log.commitsByDay()
+        daily_commits = log.commits_by_day()
+        student_days = []
         for day in daily_commits:
-            day["date"] = helper.date_string(day["timestamp"])
-            del day["timestamp"]
-            files = day["files"]
-            day["files"] = []
-            for f in files:
-                day["files"].append(f.name)
-            day["time_spent"] = day["time_spent"]
-        git_dict[student] = daily_commits
+            commits = daily_commits[day]
+            daily_dict = {}
+            daily_dict["date"] = day
+            daily_dict["files"] = []
+            files = set()
+            for commit in commits:
+                files = files.union(set([f.name for f in commit.files]))
+            daily_dict["files"] = list(files)
+            daily_dict["time_spent"] = log.estimate_time(commits)
+            student_days.append(daily_dict)
+        git_dict[student] = student_days
     # TODO: Short circuit if student is defined and his or her data is parsed
     if student_id:
-        return json.dumps(git_dict[student])
+        return json.dumps(git_dict[student_id])
     return json.dumps(git_dict)
 
 
 def jsonprint(args):
     student_id = args.name
     commit_data_file = args.logfile
-    students = GitLog.GitParser(commit_data_file)
+    parser = GitLog.GitParser(commit_data_file)
 
-    api_json = jsonify(students, student_id)
+    api_json = jsonify(parser, student_id)
     print(api_json)

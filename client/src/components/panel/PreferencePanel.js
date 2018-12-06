@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import {BackNav} from '../Helpers'
 import {
     addCourse,
     addAccount,
@@ -14,9 +13,9 @@ import {
 import url from '../../server'
 import ActionNavigation from '../navigation/ActionNavigation'
 
-import { history } from '../../redux/store'
 import { getCurrentSemesterId } from '../../redux/state-peekers/course'
 import ChangePasswordModal from './preference/ChangePasswordModal'
+import BackNavigation from '../navigation/BackNavigation'
 
 class PreferencePanel extends Component {
 
@@ -179,10 +178,6 @@ class PreferencePanel extends Component {
         this.resetOptions()
     };
 
-    back = () => {
-        history.goBack()
-    }
-
     render() {
 
         const action_names = [
@@ -197,7 +192,7 @@ class PreferencePanel extends Component {
             <div className="panel-preference">
 
                 <div className='panel-left-nav'>
-                    <BackNav back='Course' backClick={ this.back }/>
+                    <BackNavigation/>
                     <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
 

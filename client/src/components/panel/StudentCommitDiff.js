@@ -1,15 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import {BackNav} from '../Helpers'
-import { history } from '../../redux/store'
 import {
     getStudent,
 } from '../../redux/actions/index'
-import SyncItem from './common/HistoryText'
 import {retrieveStudent} from "../../redux/retrievals/student"
 import {getCurrentStudent} from "../../redux/state-peekers/student"
 import {getCurrentCourseId, getCurrentSemesterId} from "../../redux/state-peekers/course"
+import BackNavigation from '../navigation/BackNavigation'
 
 
 class StudentPanel extends Component {
@@ -20,10 +18,6 @@ class StudentPanel extends Component {
         }
     }
 
-    back = () => {
-        history.goBack()
-    }
-
     render() {
 
 
@@ -31,12 +25,7 @@ class StudentPanel extends Component {
             <div className="panel-student">
 
                 <div className='panel-left-nav'>
-                    <BackNav back="Course"
-                             backClick={ this.back }/>
-                </div>
-
-                <div className="panel-right-nav">
-                    <SyncItem />
+                    <BackNavigation/>
                 </div>
 
                 <div className="panel-center-content">
