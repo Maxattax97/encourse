@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import {BackNav} from '../Helpers'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import { history } from '../../redux/store'
 import {
@@ -12,13 +11,12 @@ import {
     setModalState
 } from '../../redux/actions/index'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
-import SyncItem from './common/HistoryText'
-import {retrieveStudent} from "../../redux/retrievals/student"
+import {StudentCharts, StudentStatistics} from './student'
 import {getCurrentStudent} from "../../redux/state-peekers/student"
 import {getCurrentProject} from "../../redux/state-peekers/projects"
 import {getCurrentCourseId, getCurrentSemesterId} from "../../redux/state-peekers/course"
 import ProgressModal from './common/TaskModal'
+import BackNavigation from '../navigation/BackNavigation'
 
 
 class StudentPanel extends Component {
@@ -32,10 +30,6 @@ class StudentPanel extends Component {
 	componentWillUnmount() {
 		this.props.clearStudent()
 	}
-
-	back = () => {
-        history.goBack()
-    }
 
     render() {
 
@@ -57,15 +51,9 @@ class StudentPanel extends Component {
             <div className="panel-student">
 
                 <div className='panel-left-nav'>
-                    <BackNav back="Course"
-                        backClick={ this.back }/>
+                    <BackNavigation/>
                     <ProjectNavigation/>
                     <ActionNavigation actions={ actions } action_names={ action_names }/>
-                </div>
-
-                <div className="panel-right-nav">
-                    <SyncItem />
-                    <StudentCommitHistory />
                 </div>
 
                 <ProgressModal id={2} />

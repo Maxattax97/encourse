@@ -1,22 +1,18 @@
 import React, {Component} from 'react'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {BackNav, SettingsIcon, Title} from '../Helpers'
-import {history} from '../../redux/store'
+import {Title} from '../Helpers'
 import {getClassProjects, setCurrentProject, setModalState} from '../../redux/actions'
 import {getCurrentCourseId} from '../../redux/state-peekers/course'
 import connect from 'react-redux/es/connect/connect'
 import {ProjectInfo, ProjectModal, ProjectTestFilter, ProjectTestModal} from './project'
-import HistoryText from "./common/HistoryText"
 import {getCurrentProject} from '../../redux/state-peekers/projects'
 import ProjectSuiteModal from './project/ProjectSuiteModal'
 import ProjectSuiteSummary from './project/ProjectSuiteSummary'
+import BackNavigation from '../navigation/BackNavigation'
 
 class ProjectPanel extends Component {
 
-    back = () => {
-        history.goBack()
-    };
 
     render() {
 
@@ -38,14 +34,10 @@ class ProjectPanel extends Component {
             <div className='panel-projects'>
 
                 <div className='panel-left-nav'>
-                    <BackNav back='Course' backClick={ this.back }/>
+                    <BackNavigation/>
                     <ProjectNavigation/>
                     <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
-
-	            <div className='panel-right-nav'>
-		            <HistoryText />
-	            </div>
 
 	            <ProjectModal id={1} newProject />
 	            <ProjectModal id={2} />
@@ -57,7 +49,6 @@ class ProjectPanel extends Component {
                 <div className='panel-center-content'>
 	                <Title onClick={ () => this.props.setModalState(2) }>
 		                <h1 className='header'>{ this.props.project ? this.props.project.project_name : '' }</h1>
-		                <SettingsIcon/>
 	                </Title>
                     <div className='h1 break-line header' />
 

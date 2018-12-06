@@ -8,11 +8,11 @@ import { getCurrentCourseId, getCurrentSemesterId } from '../../redux/state-peek
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import {CourseModal, AnonymousCharts, Charts, CourseStatistics, CourseStudentFilter} from './course'
 import ActionNavigation from '../navigation/ActionNavigation'
-import HistoryText from './common/HistoryText'
-import {Title, SettingsIcon, BackNav} from '../Helpers'
+import {Title} from '../Helpers'
 import ProgressModal from "./common/TaskModal"
 import {isAnySelected} from '../../redux/state-peekers/control'
 import CustomRangeModal from './common/CustomRangeModal'
+import BackNavigation from '../navigation/BackNavigation'
 
 class CoursePanel extends Component {
     render() {
@@ -33,13 +33,9 @@ class CoursePanel extends Component {
             <div className='panel-course'>
 
                 <div className='panel-left-nav'>
-                    <BackNav/>
+                    <BackNavigation/>
                     <ProjectNavigation/>
                     <ActionNavigation actions={ actions } action_names={ action_names }/>
-                </div>
-
-                <div className='panel-right-nav'>
-                    <HistoryText />
                 </div>
 
                 <CourseModal id={1}/>
@@ -51,7 +47,6 @@ class CoursePanel extends Component {
                     <div className='panel-course-content'>
                         <Title onClick={ () => this.props.setModalState(1) }>
                             <h1 className='header'>{this.props.currentCourseId.toUpperCase()}</h1>
-                            <SettingsIcon/>
                         </Title>
                         <div className='h1 break-line header' />
 

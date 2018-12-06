@@ -3,8 +3,6 @@ import { connect } from 'react-redux'
 
 import ActionNavigation from '../navigation/ActionNavigation'
 import TANavigation from '../navigation/TANavigation'
-import {BackNav} from '../Helpers'
-import {history} from '../../redux/store'
 import url from '../../server'
 import { getStudentPreviews, getTeachingAssistants, submitStudents, updateStudentsPage, resetStudentsPage } from '../../redux/actions'
 import {
@@ -16,12 +14,9 @@ import {
 } from '../../redux/state-peekers/course'
 import SectionSummary from './manage-ta/SectionSummary'
 import StudentAssignFilter from './manage-ta/StudentAssignFilter'
+import BackNavigation from '../navigation/BackNavigation'
 
 class ManageTAPanel extends Component {
-
-    back = () => {
-        history.goBack()
-    }
 
     discard = () => {
         const students = [].concat(this.props.ta.students)
@@ -60,17 +55,13 @@ class ManageTAPanel extends Component {
             <div className='manage-ta-panel'>
 
                 <div className='panel-left-nav'>
-                    <BackNav back='Course' backClick={ this.back }/>
+                    <BackNavigation/>
 
                     <TANavigation />
 
                     <ActionNavigation
                         actions={ actions }
                         action_names={ action_names } />
-                </div>
-
-                <div className='panel-right-nav'>
-                    <div className='top-nav' />
                 </div>
 
                 <div className="panel-center-content">
