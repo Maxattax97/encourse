@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { LineChart, CartesianGrid, XAxis, YAxis, Brush,
+import { LineChart, CartesianGrid, XAxis, YAxis,
 	Tooltip, Legend, Line, Label, ResponsiveContainer } from 'recharts'
 import moment from 'moment'
 import { connect } from 'react-redux'
