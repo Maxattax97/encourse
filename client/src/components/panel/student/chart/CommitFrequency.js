@@ -32,7 +32,7 @@ class CommitHistoryHistogram extends Component {
                 title='Number of commits made by day.'
             >
 	            <ResponsiveContainer width="100%" height="100%">
-		            <BarChart data={this.props.chart.data} margin={{top: 40, right: 35, left: 20, bottom: 30}}>
+		            <BarChart data={this.props.chart.data} margin={{top: 40, right: 35, left: 20, bottom: 30}} syncId="date">
 			            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Commit Frequency</text>
 			            <CartesianGrid/>
 			            <XAxis dataKey="date" tickFormatter={this.dateFormatter}>
@@ -47,7 +47,6 @@ class CommitHistoryHistogram extends Component {
 			            </YAxis>
 			            <Tooltip labelFormatter={this.dateFormatter} animationDuration={500}/>
 			            <Bar dataKey="count" fill="#8884d8"/>
-			            <Brush dataKey="date" height={20} stroke="#8884d8" tickFormatter={this.dateFormatter}/>
 		            </BarChart>
 	            </ResponsiveContainer>
             </Chart>

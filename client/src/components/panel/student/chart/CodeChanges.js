@@ -34,7 +34,7 @@ class CodeChanges extends Component {
                 title='Cumulative number of lines added or deleted by day.'
             >
                     <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={this.props.chart.data} margin={{top: 40, right: 35, left: 0, bottom: 25}}>
+                        <AreaChart data={this.props.chart.data} margin={{top: 40, right: 35, left: 0, bottom: 25}} syncId="date">
                             <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Lines of Code Added/Deleted</text>
                             <CartesianGrid strokeDasharray="3 3"/>
                             <XAxis type="number" dataKey="date" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
@@ -44,7 +44,6 @@ class CodeChanges extends Component {
                             <Tooltip labelFormatter={this.dateFormatter}/>
                             <Area name="deletions" type="monotone" dataKey="deletions" stroke="none" fill="red" />
                             <Area name="additions" type="monotone" dataKey="additions" stroke="none" fill="green" />
-                            <Brush dataKey="date" height={20} stroke="#8884d8" tickFormatter={this.dateFormatter}/>
                         </AreaChart>
                     </ResponsiveContainer>
             </Chart>

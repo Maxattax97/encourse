@@ -13,6 +13,7 @@ import {
 } from '../../redux/actions/index'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {StudentCharts, StudentCommitHistory, StudentStatistics} from './student'
+import StudentChartSlider from './student/chart/BrushSlider'
 import SyncItem from './common/HistoryText'
 import {retrieveStudent} from "../../redux/retrievals/student"
 import {getCurrentStudent} from "../../redux/state-peekers/student"
@@ -80,6 +81,7 @@ class StudentPanel extends Component {
                         <div className="h1 break-line header" />
 
                         <h3 className='header'>Student Charts</h3>
+                        <StudentChartSlider/>
                         <StudentCharts />
 
                         <div className="h1 break-line" />

@@ -49,38 +49,41 @@ class StudentsTestCaseProgress extends Component {
 
 	render() {
 		return (
-			<Chart
-				chart={this.props.chart}
-				title='Bar graph of each test that indicates how many people passed each test.'
-			>
-				<ResponsiveContainer width="100%" height="100%">
-					<ComposedChart
-						data={this.props.chart.data}
-						margin={{top: 5, right: 30, left: 30, bottom: 35}}
-					>
-						<CartesianGrid/>
-						<XAxis dataKey="testName" type="category">
-							<Label offset={-10} position="insideBottom">
-								{/*Test Case*/}
-							</Label>
-						</XAxis>
-						<YAxis tickFormatter={toPercent} domain={[0, 1]}>
-							<Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
-								% of Class
-							</Label>
-						</YAxis>
-						<Tooltip/>
-						<Bar dataKey="percent">
-							{
-								this.props.chart.data.map((entry, index) =>
-									<Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#8884d8' }/>
-								)
-							}
-						</Bar>
-						<Brush dataKey="testName" height={40} stroke="#8884d8"/>
-					</ComposedChart>
-				</ResponsiveContainer>
-			</Chart>
+			<div>
+				<Chart
+					chart={this.props.chart}
+					title='Bar graph of each test that indicates how many people passed each test.'
+					style={{'padding': '40px'}}
+				>
+					<ResponsiveContainer width="100%" height="100%">
+						<ComposedChart
+							data={this.props.chart.data}
+							margin={{top: 5, right: 30, left: 30, bottom: 35}}
+						>
+							<CartesianGrid/>
+							<XAxis dataKey="testName" type="category">
+								<Label offset={-10} position="insideBottom">
+									{/*Test Case*/}
+								</Label>
+							</XAxis>
+							<YAxis tickFormatter={toPercent} domain={[0, 1]}>
+								<Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+									% of Class
+								</Label>
+							</YAxis>
+							<Tooltip/>
+							<Bar dataKey="percent">
+								{
+									this.props.chart.data.map((entry, index) =>
+										<Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#8884d8' }/>
+									)
+								}
+							</Bar>
+							<Brush dataKey="testName" height={40} stroke="#8884d8"/>
+						</ComposedChart>
+					</ResponsiveContainer>
+				</Chart>
+			</div>
 		)
 	}
 }
