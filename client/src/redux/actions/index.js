@@ -1,5 +1,5 @@
 export {
-    setCurrentCourse, setCurrentSemester,
+    setCurrentCourse, setCurrentSemester, clearCurrentCourse, clearCurrentSemester,
     getStudentPreviews, getClassProgress, getTestBarGraph, setDirectory, 
     getSectionsData, syncRepositories, runTests, getDishonestyReport,
     updateCourseDishonestyPage, resetCourseDishonestyPage, updateStudentsPage,

@@ -17,6 +17,20 @@ export function setCurrentSemester(id) {
     }
 }
 
+export function clearCurrentCourse() {
+    return {
+        class: class_type,
+        type: 'CLEAR_CURRENT_COURSE'
+    }
+}
+
+export function clearCurrentSemester() {
+    return {
+        class: class_type,
+        type: 'CLEAR_CURRENT_SEMESTER'
+    }
+}
+
 export function updateCourseDishonestyPage() {
     return {
         class: class_type,

@@ -126,7 +126,7 @@ function sortStatistics(udata) {
 	if (!udata)
 		return []
 
-	const data = udata[0].data
+	const data = udata[0]
 
 	data.sort((d1, d2) => d1.index - d2.index)
 

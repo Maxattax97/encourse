@@ -24,11 +24,11 @@ export const getStudentsSimilarity = createPeeker('studentsSimilarity')
 export const getTeachingAssistants = createPeeker('teachingAssistants')
 
 export function getCurrentCourseId(state) {
-	return state.course && state.currentCourseId ? state.course.currentCourseId : defaultCourse
+	return state.course && state.course.currentCourseId ? state.course.currentCourseId : defaultCourse
 }
 
 export function getCurrentSemesterId(state) {
-	return state.course && state.currentSemesterId ? state.course.currentSemesterId : defaultSemester
+	return state.course && state.course.currentSemesterId ? state.course.currentSemesterId : defaultSemester
 }
 
 export function getCurrentTAIndex(state) {

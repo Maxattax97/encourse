@@ -12,6 +12,18 @@ function setCurrentSemester(state, action) {
     })
 }
 
+function clearCurrentCourse(state, action) {
+    return Object.assign({}, state, {
+        currentCourseId: null,
+    })
+}
+
+function clearCurrentSemester(state, action) {
+    return Object.assign({}, state, {
+        currentSemesterId: null,
+    })
+}
+
 function formatStudents(udata, extra, state) {
     /*
      * TODO Jordan Buckmaster: this should replace and resort. To be precise, replacing is such that any time a value
@@ -247,6 +259,10 @@ export default function course(state = {}, action) {
             return setCurrentCourse(state, action)
         case 'SET_CURRENT_SEMESTER':
             return setCurrentSemester(state, action)
+        case 'CLEAR_CURRENT_COURSE':
+            return clearCurrentCourse(state, action)
+        case 'CLEAR_CURRENT_SEMESTER':
+            return clearCurrentSemester(state, action)
         case 'GET_STUDENTS':
             return forwardData(state, action, 'students', formatStudents, true)
         case 'GET_SECTIONS':
