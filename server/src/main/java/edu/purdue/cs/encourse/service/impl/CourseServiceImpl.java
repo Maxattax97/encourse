@@ -515,23 +515,9 @@ public class CourseServiceImpl implements CourseService {
         String visibleTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_visibleTestsDates.txt";
         String hiddenTestFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_hiddenTestsDates.txt";
         try {
-            BufferedWriter visibleWriter = new BufferedWriter(new FileWriter(visibleTestFile));
-            BufferedWriter hiddenWriter = new BufferedWriter(new FileWriter(hiddenTestFile));
-            for(StudentProject project : projects) {
-                Student student = studentRepository.findByUserID(project.getStudentID());
-                List<StudentProjectDate> projectDates = studentProjectDateRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID());
-                visibleWriter.write("Start " + student.getUserName() + "\n");
-                hiddenWriter.write("Start " + student.getUserName() + "\n");
-                for (StudentProjectDate d : projectDates) {
-                    visibleWriter.write(d.getDate() + " " + d.getDateVisibleGrade() + "\n");
-                    hiddenWriter.write(d.getDate() + " " + d.getDateHiddenGrade() + "\n");
-                }
-                visibleWriter.write("End " + student.getUserName() + "\n");
-                hiddenWriter.write("End " + student.getUserName() + "\n");
-            }
-            visibleWriter.close();
-            hiddenWriter.close();
-        } catch (IOException e) {
+            helperService.createTestFiles(visibleTestFile, hiddenTestFile, projects);
+        }
+        catch (IOException e) {
             json = new JSONReturnable(-3, (JSONObject) null);
         }
         if (helperService.getDebug()) {
