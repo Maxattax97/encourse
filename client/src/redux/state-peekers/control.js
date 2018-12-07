@@ -2,8 +2,16 @@ export function getAllSelected(state, type) {
 	return state.control && state.control[type] ? state.control[type].selectedAll === 2 : false
 }
 
-const selectedIfPresent = (selected) => (id) => selected[id]
-const selectedIfNotPresent = (selected) => (id) => !selected[id]
+const selectedIfPresent = (selected) => {
+	const out = (id) => selected[id]
+	out.explict = selected
+	return out
+}
+const selectedIfNotPresent = (selected) => {
+	const out = (id) => !selected[id]
+	out.explict = selected
+	return out
+}
 
 export function getSelected(state, type) {
 	if(!state.control || !state.control[type])
