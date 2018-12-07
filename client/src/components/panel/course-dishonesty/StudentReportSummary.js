@@ -4,20 +4,20 @@ import {Title} from '../../Helpers'
 import {history} from '../../../redux/store'
 import {getStudentPreviews, clearStudent} from '../../../redux/actions'
 import {getCurrentProject} from "../../../redux/state-peekers/projects"
-import {getCurrentCourseId, getCurrentSemesterId} from "../../../redux/state-peekers/course"
+import {getCurrentCourseId, getCurrentSemesterId, getDishonestyReport} from '../../../redux/state-peekers/course'
 import SelectableCardSummary from "../common/SelectableCardSummary"
-import {retrieveAllStudents} from "../../../redux/retrievals/course"
+import {retrieveDishonestyReport} from '../../../redux/retrievals/course'
 
 class StudentReportSummary extends Component {
 
 	componentDidMount() {
 		if(this.props.project)
-			retrieveAllStudents(this.props.project, this.props.course, this.props.semester)
+			retrieveDishonestyReport(this.props.project)
 	}
 
 	componentDidUpdate(prevProps) {
 		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
-			retrieveAllStudents(this.props.project, this.props.course, this.props.semester)
+            retrieveDishonestyReport(this.props.project)
 	}
 
     clickStudentCard = (student) => {
@@ -65,11 +65,15 @@ class StudentReportSummary extends Component {
 	}
 
     render() {
+	    if(!this.props.project)
+	        return null
+
         return (
 	        <SelectableCardSummary type='students'
-	                               values={this.props.report}
+	                               values={this.props.report.data}
 	                               render={this.renderPreview}
-	                               onClick={this.clickStudentCard} />
+	                               onClick={this.clickStudentCard}
+                                   noCheckmark />
         )
     }
 }
@@ -78,7 +82,7 @@ class StudentReportSummary extends Component {
 const mapStateToProps = (state) => {
     return {
         project: getCurrentProject(state),
-        report: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.content : [],
+        report: getDishonestyReport(state),
 		course: getCurrentCourseId(state),
 		semester: getCurrentSemesterId(state),
     }

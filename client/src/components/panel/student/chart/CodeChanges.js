@@ -36,7 +36,6 @@ class CodeChanges extends Component {
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={this.props.chart.data} margin={{top: 40, right: 35, left: 0, bottom: 25}} syncId="date">
                         <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Lines of Code Added/Deleted</text>
-                        <CartesianGrid strokeDasharray="3 3"/>
                         <XAxis type="number" dataKey="date" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
                             <Label position="insideBottom" offset={-15} value="Date"/>
                         </XAxis>
