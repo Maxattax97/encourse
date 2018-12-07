@@ -144,6 +144,8 @@ export default function projects(state = {}, action) {
             return getData(state, action, 'getTestScripts')
         case 'GET_TEST_SUITES':
             return forwardData(state, action, 'getTestSuites', formatTestSuites)
+        case 'GET_OPERATION':
+            return forwardData(state, action, 'getOperation')
         default:
             return unknownAction(state, action)
     }
