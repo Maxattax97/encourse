@@ -10,6 +10,7 @@ import {getCurrentProject, getProjects} from '../../redux/state-peekers/projects
 import ProjectSuiteModal from './project/ProjectSuiteModal'
 import ProjectSuiteSummary from './project/ProjectSuiteSummary'
 import BackNavigation from '../navigation/BackNavigation'
+import ProjectZipModal from './project/ProjectZipModal'
 
 class ProjectPanel extends Component {
 
@@ -27,7 +28,7 @@ class ProjectPanel extends Component {
 	        () => this.props.setModalState(1),
             () => this.props.setModalState(3),
 	        () => this.props.setModalState(5),
-            {},
+            () => this.props.setModalState(7),
         ]
 
         return (
@@ -45,6 +46,7 @@ class ProjectPanel extends Component {
                 <ProjectSuiteModal id={4}/>
 	            <ProjectTestModal id={5} newTestScript />
 	            <ProjectTestModal id={6} />
+                <ProjectZipModal id={7}/>
 
                 {
                     this.props.projects.length ?

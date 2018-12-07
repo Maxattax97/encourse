@@ -71,8 +71,8 @@ class StudentsTestCaseProgress extends Component {
 									% of Class
 								</Label>
 							</YAxis>
-							<Tooltip/>
-							<Bar dataKey="percent">
+							<Tooltip animationDuration={100}/>
+							<Bar dataKey="percent" isAnimationActive={false}>
 								{
 									this.props.chart.data.map((entry, index) =>
 										<Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#0057A7CC' }/>
