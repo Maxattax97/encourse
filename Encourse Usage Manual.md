@@ -183,17 +183,41 @@ apt-get install postgresql postgresql-contrib
 
 This is the database that is used by the Spring server. It is an SQL database, so most other SQL databases could be used as alternatives, since many of the schemas and configurations will apply to SQL databases. You should not change to a NoSQL database since this may require significant changes in the schemas and configuration. The product was developed using `PostgreSQL 10.5`.
 
+### Python
+
+Encourse uses Python 3 to parse git information and do data analysis. You can check if it is installed by typing:
+
+```bash
+python3 -V
+```
+
+The output should be of the form `Python 3.X.X`.
+
+You will also need to install some python pacakges for the application to run. To do this, we need Pip, the Python package manager. You can install it with the following command:
+
+```
+sudo apt get install python3-pip
+```
+
+Once pip is installed we need to install the packages used by the Encourse command line interface:
+
+```
+pip3 install scipy
+```
+
 ### Other Installations
 
 As a final disclaimer, the nature of the application requires that the VM be setup to mimic the environment of the university’s server in order to accurately run the test cases. This may require additional installations not detailed in this documentation. For example, the standard C and C++ libraries may change with updates to the GNU compiler, and students may use some of the newer additions in their projects, so the compiler version should exactly match the version used by the university server.
 
 Additionally, while version numbers were listed in this documentation, the latest compatible version of each dependency should be used.
 
+---
+
 ## Setting up the Database
 
-Before the backend server can start, Postgresql must be running and have ports open for the backend server to access. This can be done with;
+Before the backend server can start, Postgresql must be running and have ports open for the backend server to access. This can be done with:
 
-```bash
+```
 sudo -u postgres psql
 ```
 
@@ -700,8 +724,6 @@ client/src
 
 Since the backend server is built using Spring, which is a Java framework, most of the Java code is based heavily around Spring conventions. Most of the conventions used in this application are those seen in typical Spring applications, so for a more in depth guide about developing for a Spring project, see the [Spring documentation](https://spring.io/docs). For this manual, the focus will be on quick guidelines to continue development for the Java code, and will be split into explanations for each subcomponent in the Java code. The file tree for the Java components is shown starting on the next page. Each component subdirectory will then be explained in detail.
 
-
-
 #### Java File Tree
 
 Java Directory Tree:
@@ -947,3 +969,4 @@ server/src/main/bash
 ```
 
 ### Python Directory
+
