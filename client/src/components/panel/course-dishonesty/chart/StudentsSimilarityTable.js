@@ -9,10 +9,11 @@ import {
 import {getStudentsSimilarity} from '../../../../redux/state-peekers/course'
 import {getCurrentProject} from '../../../../redux/state-peekers/projects'
 
+import Statistics from "../../common/Statistics"
+
 class StudentsSimilarityTable extends Component {
     
     componentDidMount() {
-        // Done in StudentsSimilarity
         // if (this.props.project)
         //     retrieveStudentsSimilarity(this.props.project)
     }
@@ -33,31 +34,26 @@ class StudentsSimilarityTable extends Component {
             )
         }
         
-        const average = (chart.data.reduce((sum, item) => sum + item.similarity, 0) / chart.data.length).toFixed(0)
+        // TODO move this to redux
+        // const average = (chart.data.reduce((sum, item) => sum + item.similarity, 0) / chart.data.length).toFixed(0)
+        chart.data.sort((a, b) => b.similarity - a.similarity)
+        const data = chart.data.slice(0, 10)
+        const stats = {
+            data: data.map((item) => {
+                item.stat_name = `${item.user1} ${item.user2}`
+                item.stat_value = item.similarity
+                return item
+            }),
+            loading: false,
+        }
+        // title='Histogram of all students in the course grouped by the percentage of tests they are passing (progress).'
         return (
-            <div
-                title='Histogram of all students in the course grouped by the percentage of tests they are passing (progress).'
-                style={{'padding': '10px'}}
-            >
-                <table>
-                    <tbody>
-                        {chart.data.reverse().slice(0, 10).map((item, index)=>{
-                            return(
-                                <tr key={item.user1 + ' ' + item.user2}>
-                                    <td style={{'padding': '3px'}}>{item.user1}</td>
-                                    <td style={{'padding': '3px'}}>{item.user2}</td>
-                                    <td style={{'padding': '3px'}}>{item.similarity}</td>
-                                </tr>
-                            )
-                        })}
-                        <tr>
-                            <td style={{'padding': '3px'}}>Average</td>
-                            <td style={{'padding': '3px'}}></td>
-                            <td style={{'padding': '3px'}}>{average}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <Statistics stats={stats} noColumns>
+                <h4 className='header'>
+                    Students with Identical Lines
+                </h4>
+                <div className='h5 break-line' />
+            </Statistics>
         )
     }
 }
