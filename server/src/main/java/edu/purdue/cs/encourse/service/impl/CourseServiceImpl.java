@@ -488,7 +488,7 @@ public class CourseServiceImpl implements CourseService {
         if (!helperService.getDebug() && json != null) {
             return json;
         }
-        String command = helperService.getPythonCommand() + " identical " + helperService.getPythonPath() + diffsFile;
+        String command = helperService.getPythonCommand() + " identical "  + diffsFile;
         json = helperService.runPython(command);
         return json;
     }
