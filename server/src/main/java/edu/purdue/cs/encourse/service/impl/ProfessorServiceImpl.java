@@ -638,7 +638,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         int count = 0;
         long start = System.currentTimeMillis();
         project.setTesting(true);
-        project = projectRepository.save(project);
+        projectRepository.save(project);
         String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_gitHashes.txt";
         for(StudentProject p : projects) {
             count++;
@@ -742,10 +742,13 @@ public class ProfessorServiceImpl implements ProfessorService {
                 reader.close();
                 project.setOperationProgress(1.0 * count / projects.size());
                 project.setOperationTime((System.currentTimeMillis() - start) / 1000);
-                project = projectRepository.save(project);
+                projectRepository.save(project);
             }
             catch(Exception e) {
                 code = -6;
+                project.setOperationProgress(1.0 * count / projects.size());
+                project.setOperationTime((System.currentTimeMillis() - start) / 1000);
+                projectRepository.save(project);
                 System.out.println("\nException at testall\n");
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             }
@@ -921,9 +924,13 @@ public class ProfessorServiceImpl implements ProfessorService {
                 runTestall(project.getProjectID());
                 List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(project.getProjectID(), "testall");
                 project.setTestCount(project.getTestRate() - 1);
+                project.setOperationProgress(0);
+                project.setOperationTime(0);
+                projectRepository.save(project);
             }
             else {
                 project.setTestCount(project.getTestCount() - 1);
+                projectRepository.save(project);
             }
         }
         helperService.executeBashScript("cleanDirectory.sh src/main/temp");

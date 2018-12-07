@@ -13,9 +13,7 @@ export function getCurrentProject(state) {
 	return projects.length ? projects[getCurrentProjectIndex(state)] : null
 }
 
-export function getTestScripts(state) {
-	return state.projects && state.projects.getTestScriptsData ? state.projects.getTestScriptsData : []
-}
+export const getTestScripts = createPeeker('getTestScripts')
 
 export const getTestSuites = createPeeker('getTestSuites')
 
