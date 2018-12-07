@@ -527,7 +527,10 @@ public class ReadController {
         } else {
             JSONObject single = returnJson.getJsonObject();
             String key = (String) single.keySet().iterator().next();
-            jsonValues.add((JSONObject) single.get(key));
+            JSONArray arr = (JSONArray) single.get(key);
+            for (Object o: arr) {
+                jsonValues.add((JSONObject) o);
+            }
         }
 
         Comparator<JSONObject> compare;
