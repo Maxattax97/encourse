@@ -36,7 +36,6 @@ class Main extends Component {
 
         let course = this.props.match.params.courseID ? this.props.match.params.courseID : defaultCourse
         let semester = this.props.match.params.semesterID ? this.props.match.params.semesterID : defaultSemester
-        console.log(course, semester)
         const page = this.props.path.substring(this.props.path.lastIndexOf('/') + 1)
 
         if(!/^((Fall)|(Spring)|(Summer))2[0-9][0-9][0-9]$/.test(semester)) {
@@ -50,7 +49,12 @@ class Main extends Component {
         this.props.setCurrentSemester(semester)
         this.props.setCurrentCourse(course)
         
-        history.push(`/${course}/${semester}/${page}`)
+        if(page !== semester) {
+            history.push(`/${course}/${semester}/${page}`)
+        } else {
+            history.push(`/${course}/${semester}/course`)
+        }
+        
     
         if(!this.props.account) {
             this.props.getAccount(`${url}/api/account`)
