@@ -86,7 +86,7 @@ class Main extends Component {
                             <Route path="/:courseID/:semesterID/course" render={(navProps) =>
                                 <CoursePanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/:courseID/:semesterID/student/:id" render={(navProps) =>
+                            <Route exact path="/:courseID/:semesterID/student/:id" render={(navProps) =>
                                 <StudentPanel ref={ this.setChild } {...navProps} />
                             }/>
                             <Route path='/:courseID/:semesterID/student/:studentID/commit/:commitID' render={(navProps) =>
