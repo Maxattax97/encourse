@@ -1,80 +1,101 @@
-Table of Contents
-=================
+   * * * # Table of Contents
 
-   * [Introduction](#introduction)
-   * [Server Setup](#server-setup)
-      * [Setting up Accounts](#setting-up-accounts)
-      * [File Structure](#file-structure)
-      * [Accessing Repositories](#accessing-repositories)
-      * [Necessary Installations](#necessary-installations)
-         * [Java Development Kit](#java-development-kit)
-         * [Maven Package Manager](#maven-package-manager)
-         * [Node.js Runtime Environment](#nodejs-runtime-environment)
-         * [NPM Package Manager](#npm-package-manager)
-         * [Postgresql Database](#postgresql-database)
-         * [Other Installations](#other-installations)   
-      * [Setting up the Database](#setting-up-the-database)
-      * [Setting up Screens](#setting-up-screens)
-      * [Setting up the Spring Server](#setting-up-the-spring-server)
-      * [Setting up the React Server](#setting-up-the-react-server)
-      * [Port Redirection](#port-redirection)
-   * [Using the Application](#using-the-application)
-      * [Course Selection Page](#course-selection-page)
-      * [Course Homepage](#course-homepage)
-         * [Overview](#overview)
-         * [Options](#options)
-         * [Charts](#charts)
-         * [Statistics](#statistics)
-         * [Students Summary](#students-summary)
-         * [Last Sync &amp; Last Test Ran](#last-sync--last-test-ran)
-         * [Projects](#projects)
-         * [Actions](#actions)
-      * [Manage Teaching Assistants Page](#manage-teaching-assistants-page)
-      * [Course Academic Dishonesty Report Page](#course-academic-dishonesty-report-page)
-         * [Overview](#overview-1)
-         * [Options](#options-1)
-         * [Charts](#charts-1)
-         * [Students Summary](#students-summary-1)
-         * [Actions](#actions-1)
-      * [Student Course Page](#student-course-page)
-         * [Overview](#overview-2)
-         * [Charts](#charts-2)
-         * [Statistics](#statistics-1)
-         * [Feedback](#feedback)
-         * [Commit History](#commit-history)
-         * [Projects](#projects-1)
-         * [Actions](#actions-2)
-      * [Student Course Academic Dishonesty Report Page](#student-course-academic-dishonesty-report-page)
-         * [Overview](#overview-3)
-         * [Charts](#charts-3)
-         * [Last Sync &amp; Last Test Ran](#last-sync--last-test-ran-1)
-         * [Actions](#actions-3)
-      * [Preferences Page](#preferences-page)
-         * [Overview](#overview-4)
-         * [Actions](#actions-4)
-      * [Administrator Role Management Page](#administrator-role-management-page)
-      * [Administrator Course Management Page](#administrator-course-management-page)
-   * [Understanding the Code](#understanding-the-code)
-      * [Introduction](#introduction-1)
-      * [Frontend Organization](#frontend-organization)
-         * [Frontend File Tree](#frontend-file-tree)
-      * [Backend Organization](#backend-organization)
-         * [Java Overview](#java-overview)
-            * [Java File Tree](#java-file-tree)
-            * [Config Component](#config-component)
-               * [Filter Configuration](#filter-configuration)
-               * [Resource Configuration](#resource-configuration)
-               * [Security Configuration](#security-configuration)
-               * [Scheduling Configuration](#scheduling-configuration)
-               * [Database Configuration and Initialization](#database-configuration-and-initialization)
-            * [Controller Component](#controller-component)
-            * [Database Component](#database-component)
-            * [Domain Component](#domain-component)
-            * [Service Component](#service-component)
-            * [Util Component](#util-component)
-         * [Bash Directory](#bash-directory)
-            * [Bash File Tree](#bash-file-tree)
-         * [Python Directory](#python-directory)
+            - [Table of Contents](#table-of-contents)
+            - [Introduction](#introduction)
+            - [Server Setup](#server-setup)
+              - [Setting up Accounts](#setting-up-accounts)
+              - [File Structure](#file-structure)
+              - [Accessing Repositories](#accessing-repositories)
+              - [Necessary Installations](#necessary-installations)
+                - [Java Development Kit](#java-development-kit)
+                - [Maven Package Manager](#maven-package-manager)
+                - [Node.js Runtime Environment](#nodejs-runtime-environment)
+                - [NPM Package Manager](#npm-package-manager)
+                - [Postgresql Database](#postgresql-database)
+                - [Python](#python)
+                - [Other Installations](#other-installations)
+              - [Setting up the Database](#setting-up-the-database)
+              - [Setting up Screens](#setting-up-screens)
+              - [Setting up the Spring Server](#setting-up-the-spring-server)
+              - [Setting up the React Server](#setting-up-the-react-server)
+              - [Port Redirection](#port-redirection)
+            - [Using the Application](#using-the-application)
+              - [Course Selection Page](#course-selection-page)
+              - [Course Homepage](#course-homepage)
+                - [Overview](#overview)
+                - [Options](#options)
+                - [Charts](#charts)
+                - [Statistics](#statistics)
+                - [Students Summary](#students-summary)
+                - [Filtering and Sorting](#filtering-and-sorting)
+                - [Last Sync &amp; Last Test Ran](#last-sync--last-test-ran)
+                - [Projects](#projects)
+                - [Actions](#actions)
+              - [Manage Teaching Assistants Page](#manage-teaching-assistants-page)
+              - [Course Academic Dishonesty Report Page](#course-academic-dishonesty-report-page)
+                - [Overview](#overview-1)
+                - [Options](#options-1)
+                - [Charts](#charts-1)
+                - [Students Summary](#students-summary-1)
+                - [Actions](#actions-1)
+              - [Student Course Page](#student-course-page)
+                - [Overview](#overview-2)
+                - [Charts](#charts-2)
+                - [Statistics](#statistics-1)
+                - [Feedback](#feedback)
+                - [Commit History](#commit-history)
+                - [Projects](#projects-1)
+                - [Actions](#actions-2)
+              - [Student Course Academic Dishonesty Report Page](#student-course-academic-dishonesty-report-page)
+                - [Overview](#overview-3)
+                - [Charts](#charts-3)
+                - [Last Sync &amp; Last Test Ran](#last-sync--last-test-ran-1)
+                - [Actions](#actions-3)
+              - [Preferences Page](#preferences-page)
+                - [Overview](#overview-4)
+                - [Actions](#actions-4)
+              - [Administrator Role Management Page](#administrator-role-management-page)
+              - [Administrator Course Management Page](#administrator-course-management-page)
+            - [Understanding the Code](#understanding-the-code)
+              - [Introduction](#introduction-1)
+              - [Frontend Organization](#frontend-organization)
+                - [Frontend File Tree](#frontend-file-tree)
+              - [Backend Organization](#backend-organization)
+                - [Java Overview](#java-overview)
+                  - [Java File Tree](#java-file-tree)
+                  - [Config Component](#config-component)
+                    - [Filter Configuration](#filter-configuration)
+                    - [Resource Configuration](#resource-configuration)
+                    - [Security Configuration](#security-configuration)
+                    - [Scheduling Configuration](#scheduling-configuration)
+                    - [Database Configuration and Initialization](#database-configuration-and-initialization)
+                  - [Controller Component](#controller-component)
+                  - [Database Component](#database-component)
+                  - [Domain Component](#domain-component)
+                  - [Service Component](#service-component)
+                  - [Util Component](#util-component)
+                - [Bash Directory](#bash-directory)
+                  - [Bash File Tree](#bash-file-tree)
+                - [Python Directory](#python-directory)
+            - [Encourse Python Interface](#encourse-python-interface)
+              - [Usage](#usage)
+                - [changes](#changes)
+                - [cheating](#cheating)
+                - [class-progress](#class-progress)
+                - [commitcount](#commitcount)
+                - [gitlist](#gitlist)
+                - [stats](#stats)
+                - [student-progress](#student-progress)
+                - [test-summary](#test-summary)
+                - [velocity](#velocity)
+              - [Troubleshooting](#troubleshooting)
+              - [Maintainer Manual](#maintainer-manual)
+              - [Developer Manual](#developer-manual)
+                - [GitLog](#gitlog)
+                  - [GitParser](#gitparser)
+                  - [GitLog](#gitlog-1)
+                  - [GitCommit](#gitcommit)
+                  - [GitFile](#gitfile)
 
 
 
@@ -969,4 +990,617 @@ server/src/main/bash
 ```
 
 ### Python Directory
+
+The python used by the server is a full command line interface (CLI). It is explained in greater detail in the [following section](#encourse-python-interface).
+
+
+
+# Encourse Python Interface
+
+This is a user manual for the encourse command line interface (CLI), written in Python.
+
+Here is the file tree:
+
+```bash
+encourse
+├── API
+│   ├── GitLog
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   ├── count.py
+│   │   ├── daily.py
+│   │   ├── gitlogger.py
+│   │   ├── helper.py
+│   │   └── startend.py
+│   ├── Progress
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   ├── currentprogress.py
+│   │   ├── helper.py
+│   │   └── pastprogress.py
+│   ├── __init__.py
+│   ├── __pycache__
+│   ├── changes.py
+│   ├── cheating.py
+│   ├── class_progress.py
+│   ├── commitcount.py
+│   ├── gitlist.py
+│   ├── helper.py
+│   ├── identical.py
+│   ├── stats.py
+│   ├── student_progress.py
+│   ├── test_summary.py
+│   └── velocity.py
+├── __pycache__
+├── dist
+├── encourse.py
+├── setup.py
+└── tests
+```
+
+
+
+## Usage
+
+The encourse CLI is controller by the `encourse.py file`. You may need to give it executable permissions:
+
+```bash
+chmod +x encourse.py
+```
+
+If you have Python 3 installed, you can run it from the command line:
+
+```bash
+./encourse.py
+```
+
+which should return the following help information:
+
+```
+usage: encourse [-h]
+                {changes,cheating,class-progress,commitcount,gitlist,stats,student-progress,test-summary,velocity}
+                ...
+
+positional arguments:
+  {changes,cheating,class-progress,commitcount,gitlist,stats,student-progress,test-summary,velocity}
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
+
+
+
+Now we will cover the different sub commands that you can use.
+
+------
+
+### changes
+
+The `changes` subcommand takes the git log and the name of a student, and returns their daily additions and deletions as a json. The data for each day is cumulative based, so it includes additions and deletions from previous days. If a day between the first and last day had no changes, it takes on the values of the previous day. 
+
+```
+usage: encourse changes [-h][-l LIMIT] logfile timefile name
+```
+
+An example output looks like this:
+
+```
+[
+  {
+    "date": "2018-09-02",
+    "additions": 2219,
+    "deletions": 102
+  },
+  {
+    "date": "2018-09-03",
+    "additions": 2219,
+    "deletions": 102
+  },
+  {
+    "date": "2018-09-04",
+    "additions": 2366,
+    "deletions": 147
+  },
+  {
+    "date": "2018-09-05",
+    "additions": 2645,
+    "deletions": 279
+  },
+  {
+    "date": "2018-09-06",
+    "additions": 3717,
+    "deletions": 431
+  }
+]
+```
+
+
+
+### cheating
+
+The `cheating` subcommand takes in a commit log and a record of past progress scores, and outputs metrics for each student indicating the likelihood that they cheated.
+
+```bash
+usage: encourse cheating [-h] [-t TIMEOUT] [-l LIMIT] [-v VELOCITY] [-r RATE]
+                         visiblefile hiddenfile logfile
+```
+
+An example output looks like this:
+
+```
+[
+  {
+    "id": "user1",
+    "score": 0.8413447460685429,
+    "metrics": {
+      "rate": {
+        "raw": 13.0,
+        "percentile": 0.8413447460685429
+      },
+      "veloctiy": {
+        "raw": 110.98814229249012,
+        "percentile": 0.8413447460685429
+      }
+    }
+  },
+  {
+    "id": "user2",
+    "score": 0.15865525393145707,
+    "metrics": {
+      "rate": {
+        "raw": 0.0,
+        "percentile": 0.15865525393145707
+      },
+      "veloctiy": {
+        "raw": 0.0,
+        "percentile": 0.15865525393145707
+      }
+    }
+  }
+]
+```
+
+
+
+### class-progress
+
+The `class-progress` subcommand returns a frequency chart of the percentage scores of a set of students.  It organizes students into bins based on their current progress in a course.
+
+```
+usage: encourse class-progress [-h] visible hidden
+```
+
+Here is an example output:
+
+```
+{
+  "0-10%": [
+    "user4"
+  ],
+  "10-20%": [],
+  "20-30%": [],
+  "30-40%": [
+    "user1",
+    "user3"
+  ],
+  "40-50%": [
+    "user2"
+  ],
+  "50-60%": [],
+  "60-70%": [],
+  "70-80%": [],
+  "80-90%": [],
+  "90-100%": []
+}
+```
+
+### commitcount
+
+The `commitcount` subcommand takes the git log and the name of a student, and returns the commit count by day for that student. This number is not cumulative.
+
+```
+[
+  {
+    "date": "2018-09-02",
+    "count": 0
+  },
+  {
+    "date": "2018-09-03",
+    "count": 0
+  },
+  {
+    "date": "2018-09-04",
+    "count": 15
+  },
+  {
+    "date": "2018-09-05",
+    "count": 28
+  },
+  {
+    "date": "2018-09-06",
+    "count": 29
+  }
+]
+```
+
+
+
+### gitlist
+
+The `gitlist` subcommand takes a git log and returns a list of commits for each student in that log.
+
+```
+usage: encourse gitlist [-h] logfile
+```
+
+Here is an example output:
+
+```
+{
+  "user1": [
+    {
+      "additions": 2051,
+      "deletions": 0,
+      "hash": "a714d6e",
+      "date": "2018-08-25"
+    },
+    {
+      "additions": 8,
+      "deletions": 1,
+      "hash": "a714d6e",
+      "date": "2018-08-25"
+    },
+    {
+      "additions": 1,
+      "deletions": 1,
+      "hash": "a714d6e",
+      "date": "2018-08-25"
+    }
+  ],
+  "user2": [
+    {
+      "additions": 2051,
+      "deletions": 0,
+      "hash": "a714d6e",
+      "date": "2018-08-26"
+    },
+    {
+      "additions": 8,
+      "deletions": 1,
+      "hash": "a714d6e",
+      "date": "2018-08-26"
+    },
+    {
+      "additions": 1,
+      "deletions": 1,
+      "hash": "a714d6e",
+      "date": "2018-08-26"
+    }
+  ]
+}
+```
+
+
+
+### stats
+
+The `stats` subcommand returns averaged statistics for a given set of students. If there is only one student, it returns the same data, with slightly different names for the statistics.
+
+```
+usage: encourse stats [-h] [-t TIMEOUT] [-l LIMIT]
+                      logfile visiblefile hiddenfile
+```
+
+Here is an example output:
+
+```
+[
+  {
+    "stat_value": "2018-08-26",
+    "index": 0,
+    "stat_desc": "The date of the student's first commit",
+    "stat_name": "Start Date"
+  },
+  {
+    "stat_value": "1416 lines",
+    "index": 1,
+    "stat_desc": "Number of added lines of code made the by student so far",
+    "stat_name": "Average Additions"
+  },
+  {
+    "stat_value": "2 lines",
+    "index": 2,
+    "stat_desc": "Number of deleted lines of code made the by student so far",
+    "stat_name": "Average Deletions"
+  },
+  {
+    "stat_value": "3 commits",
+    "index": 3,
+    "stat_desc": "Number of commits made the by student so far",
+    "stat_name": "Average Commit Count"
+  },
+  {
+    "stat_value": "0 hours",
+    "index": 4,
+    "stat_desc": "Estimated by recording the time between commits that appear less than an hour appart",
+    "stat_name": "Average Estimated Time Spent"
+  },
+  {
+    "stat_value": 41,
+    "index": 5,
+    "stat_desc": "Score calculated by summing the points given for each passing test case visible to the student",
+    "stat_name": "Average Current Test Score"
+  },
+]
+```
+
+
+
+### student-progress
+
+The `student-progress` subcommand takes in the progress records for a particular student and uses them to generate line chart data of their past progress. The script will fill any days between the first and last date with 0's if no progress was made.
+
+```
+usage: encourse student-progress [-h] visiblefile hiddenfile timefile name
+```
+
+Here is an example output:
+
+```
+[
+  {
+    "date": "2018-08-25",
+    "visible": 0,
+    "hidden": 0,
+    "progress": 0
+  },
+  {
+    "date": "2018-08-26",
+    "visible": 0,
+    "hidden": 0,
+    "progress": 0
+  },
+  {
+    "date": "2018-08-27",
+    "visible": 0,
+    "hidden": 0,
+    "progress": 0
+  },
+  {
+    "date": "2018-08-28",
+    "visible": 0,
+    "hidden": 0,
+    "progress": 0
+  },
+  {
+    "date": "2018-08-29",
+    "visible": 0,
+    "hidden": 0,
+    "progress": 0
+  },
+  {
+    "date": "2018-08-30",
+    "visible": 24,
+    "hidden": 24,
+    "progress": 24
+  },
+  {
+    "date": "2018-08-31",
+    "visible": 24,
+    "hidden": 24,
+    "progress": 24
+  },
+  {
+    "date": "2018-09-01",
+    "visible": 24,
+    "hidden": 24,
+    "progress": 24
+  },
+  {
+    "date": "2018-09-02",
+    "visible": 24,
+    "hidden": 24,
+    "progress": 24
+  },
+  {
+    "date": "2018-09-03",
+    "visible": 24,
+    "hidden": 24,
+    "progress": 24
+  },
+  {
+    "date": "2018-09-04",
+    "visible": 46,
+    "hidden": 46,
+    "progress": 46
+  },
+  {
+    "date": "2018-09-05",
+    "visible": 46,
+    "hidden": 46,
+    "progress": 46
+  },
+  {
+    "date": "2018-09-06",
+    "visible": 98,
+    "hidden": 98,
+    "progress": 98
+  }
+]
+```
+
+
+
+### test-summary
+
+The `test-summary` subcommand returns a bar graph measuring the percentage of students that passed each test case.
+
+```
+usage: encourse test-summary [-h] visible hidden
+```
+
+Here is an example output:
+
+```
+[
+  {
+    "testName": "Test1",
+    "hidden": false,
+    "score": 33
+  },
+  {
+    "testName": "Test2",
+    "hidden": false,
+    "score": 33
+  },
+  {
+    "testName": "Test3",
+    "hidden": false,
+    "score": 66
+  },
+  {
+    "testName": "Test4",
+    "hidden": false,
+    "score": 66
+  }
+]
+```
+
+
+
+### velocity
+
+The `velocity` subcommand takes in a list of students and returns the progress, time spent, and commit count for each day between the start and end of the project. The script will fill any date between the start and end without commits with 0's
+
+```
+usage: encourse velocity [-h] [-t TIMEOUT] [-l LIMIT] [-v VELOCITY] [-r RATE]
+                         visiblefile hiddenfile logfile name
+```
+
+Here is an example output:
+
+```
+[
+  {
+    "date": "2018-08-25",
+    "progress": 0,
+    "time_spent": 0.8472222222222222,
+    "commit_count": 3
+  },
+  {
+    "date": "2018-08-26",
+    "progress": 0,
+    "time_spent": 0,
+    "commit_count": 0
+  },
+  {
+    "date": "2018-08-27",
+    "progress": 0,
+    "time_spent": 0,
+    "commit_count": 0
+  },
+  {
+    "date": "2018-08-28",
+    "progress": 0,
+    "time_spent": 0,
+    "commit_count": 0
+  },
+  {
+    "date": "2018-08-29",
+    "progress": 0,
+    "time_spent": 0,
+    "commit_count": 0
+  },
+  {
+    "date": "2018-08-30",
+    "progress": 24,
+    "time_spent": 4.181111111111111,
+    "commit_count": 25
+  },
+  {
+    "date": "2018-08-31",
+    "progress": 0,
+    "time_spent": 0,
+    "commit_count": 0
+  },
+  {
+    "date": "2018-09-01",
+    "progress": 0,
+    "time_spent": 0,
+    "commit_count": 0
+  },
+  {
+    "date": "2018-09-02",
+    "progress": 0,
+    "time_spent": 0,
+    "commit_count": 0
+  },
+  {
+    "date": "2018-09-03",
+    "progress": 0,
+    "time_spent": 0,
+    "commit_count": 0
+  },
+  {
+    "date": "2018-09-04",
+    "progress": 22,
+    "time_spent": 0.8702777777777777,
+    "commit_count": 15
+  },
+  {
+    "date": "2018-09-05",
+    "progress": 0,
+    "time_spent": 6.797777777777778,
+    "commit_count": 28
+  },
+  {
+    "date": "2018-09-06",
+    "progress": 52,
+    "time_spent": 3.0933333333333337,
+    "commit_count": 29
+  }
+]
+```
+
+
+
+## Troubleshooting
+
+1. Make sure you have Python3 installed, not Python2. You can check by running the command `python -V`. You should see some version of Python 3, for example, like the following output:
+
+   ```
+   Python 3.6.6 :: Anaconda, Inc.
+   ```
+
+2. If the Encourse server cannot find the `./encourse.py` file, check to see if the path to that file matches the path in the `pythonPath` variable in `CourseServiceImpl.java`
+
+## Maintainer Manual
+
+All you need to know is that the CLI runs using Python 3 (`Python3.6.6`). 
+
+## Developer Manual
+
+The Encourse CLI is broken up into several packages. The entire collection of API commands is in the `API` package. Within that, there is the `GitLog` package and the `Progress` package. GitLog is responsible for parsing git information for the API, and `Progress` is responsible for performing operations on sets of student test scores.
+
+### GitLog
+
+The GitLog package is contained in `encourse/API/GitLog`. All of the classes for this package are in `encourse/API/GitLog/gitlogger.py`. GitLog is designed to convert data from a git log file into a format that is easy to use in Python. It also encapsulate several frequently used functions and calculations on thsi data. These classes are used throughout the API to perform calculations using student git information. This section will discuss the classes in further detail.
+
+#### GitParser
+
+The `GitParser` class is the first class called by ost scripts. It is responsible for parsing the commit log file into several `GitLog` objects, one per student.
+
+#### GitLog
+
+The `GitLog` class holds all of the git data for a single git user. It stores multiple `GitCommit` objects, and encapsulates helpful operations to perform on those commits.
+
+#### GitCommit
+
+The `GitCommit` class stores information related to a single commit. It also tracks each file individually in `GitFile` objects.
+
+#### GitFile
+
+The `GitFile` stores information relating to a single file in a particular commit.
+
+
 
