@@ -542,8 +542,10 @@ public class ReadController {
                     Date parsedA;
                     Date parsedB;
                     try {
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        System.out.println("ORIGINAL DATE: " + valA);
                         parsedA = format.parse(valA);
+                        System.out.println("FORMATTED DATE: " + parsedA);
                         parsedB = format.parse(valB);
                     } catch (ParseException pe) {
                         throw new IllegalArgumentException(pe);
