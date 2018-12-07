@@ -4,13 +4,13 @@ import { connect } from 'react-redux'
 import ActionNavigation from '../navigation/ActionNavigation'
 import TANavigation from '../navigation/TANavigation'
 import url from '../../server'
-import { getStudentPreviews, getTeachingAssistants, submitStudents, updateStudentsPage, resetStudentsPage } from '../../redux/actions'
+import { submitStudents} from '../../redux/actions'
 import {
     getCurrentCourseId,
     getCurrentSemesterId,
     getCurrentTA,
     getSections,
-    getStudents
+    getStudents, getTeachingAssistants
 } from '../../redux/state-peekers/course'
 import SectionSummary from './manage-ta/SectionSummary'
 import StudentAssignFilter from './manage-ta/StudentAssignFilter'
@@ -65,7 +65,7 @@ class ManageTAPanel extends Component {
                 </div>
 
                 {
-                    this.props.teaching_assistants.length ?
+                    this.props.teaching_assistants.data.length ?
                         this.props.ta ?
                             <div className="panel-center-content">
                                 <h1 className='header'>{ `${this.props.ta.first_name} ${this.props.ta.last_name} (${this.props.ta.id})` }</h1>
@@ -109,8 +109,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
-        getTeachingAssistants: (url, headers, body) => dispatch(getTeachingAssistants(url, headers, body)),
         submitStudents: (url, body, data) => dispatch(submitStudents(url, null, body, data)),
     }
 }
