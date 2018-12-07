@@ -873,6 +873,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     if(hiddenGrade > p.getBestHiddenGrade()) {
                         helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectID(), true);
                     }
+                    p = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(p.getProjectID(), p.getStudentID(), "testall");
                 }
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
                 reader.close();
