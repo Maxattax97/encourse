@@ -86,7 +86,7 @@ class CourseModal extends Component {
 const mapStateToProps = (state) => {
     return {
         modalState: state.control && state.control.modalState ? state.control.modalState : 0,
-        task: getOperation(state),
+        task: getOperation(state).data,
         project: getCurrentProject(state)
     }
 }
