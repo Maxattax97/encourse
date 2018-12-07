@@ -35,6 +35,8 @@ class SelectableCardSummary extends Component {
 		return (
 			<Summary columns={ 5 }>
 				{
+					this.props.values &&
+					this.props.values.map && 
 					this.props.values.map( (value) =>
 						<PreviewCard onClick={ () => this.clickCard(value) } isSelected={ this.isSelected(value) } key={ value.id }>
 							{ this.props.render(value) }
