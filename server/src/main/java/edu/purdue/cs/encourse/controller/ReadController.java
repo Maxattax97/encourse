@@ -484,7 +484,7 @@ public class ReadController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/commitList", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getStudentCommitByTime(@RequestParam(name = "projectID") String projectID,
-                                                                  @RequestParam(name = "userName") List<String> userNames,
+                                                                  @RequestParam(name = "userName", required = false) List<String> userNames,
                                                                   @RequestParam(name = "page", defaultValue = "1", required = false) int page,
                                                                   @RequestParam(name = "size", defaultValue = "10", required = false) int size,
                                                                   @RequestParam(name = "sortBy", defaultValue = "date", required = false) String sortBy) {
@@ -498,9 +498,11 @@ public class ReadController {
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             } else {
+                // Deprecated
                 returnJson = courseService.getCommitList(projectID, userNames);
             }
         } else {
+            // Deprecated
             Iterator iter = getUserAuthorities().iterator();
             while (iter.hasNext()) {
                 String auth = ((Authority) iter.next()).getAuthority();
@@ -516,13 +518,19 @@ public class ReadController {
         List<JSONObject> jsonValues = new ArrayList<>();
 
         if (isArray) {
+            // Deprecated
             JSONArray json = returnJson.getJsonArray();
             for (int i = 0; i < json.size(); i++) {
                 JSONObject obj = (JSONObject) json.get(i);
                 jsonValues.add(obj);
             }
         } else {
-            jsonValues.add(returnJson.getJsonObject());
+            JSONObject single = returnJson.getJsonObject();
+            String key = (String) single.keySet().iterator().next();
+            JSONArray arr = (JSONArray) single.get(key);
+            for (Object o: arr) {
+                jsonValues.add((JSONObject) o);
+            }
         }
 
         Comparator<JSONObject> compare;
