@@ -1,12 +1,12 @@
 import React, {Component} from 'react'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {Title} from '../Helpers'
+import {Summary, Title} from '../Helpers'
 import {getClassProjects, setCurrentProject, setModalState} from '../../redux/actions'
 import {getCurrentCourseId} from '../../redux/state-peekers/course'
 import connect from 'react-redux/es/connect/connect'
 import {ProjectInfo, ProjectModal, ProjectTestFilter, ProjectTestModal} from './project'
-import {getCurrentProject} from '../../redux/state-peekers/projects'
+import {getCurrentProject, getProjects} from '../../redux/state-peekers/projects'
 import ProjectSuiteModal from './project/ProjectSuiteModal'
 import ProjectSuiteSummary from './project/ProjectSuiteSummary'
 import BackNavigation from '../navigation/BackNavigation'
@@ -46,22 +46,42 @@ class ProjectPanel extends Component {
 	            <ProjectTestModal id={5} newTestScript />
 	            <ProjectTestModal id={6} />
 
-                <div className='panel-center-content'>
-	                <Title onClick={ () => this.props.setModalState(2) }>
-		                <h1 className='header'>{ this.props.project ? this.props.project.project_name : '' }</h1>
-	                </Title>
-                    <div className='h1 break-line header' />
+                {
+                    this.props.projects.length ?
+                        this.props.project ?
+                            <div className='panel-center-content'>
+                                <Title onClick={ () => this.props.setModalState(2) }>
+                                    <h1 className='header'>{ this.props.project.project_name }</h1>
+                                </Title>
+                                <div className='h1 break-line header' />
 
-	                <h3 className='header'>Project Information</h3>
-	                <ProjectInfo />
+                                <h3 className='header'>Project Information</h3>
+                                <Summary columns={2}>
+                                    <ProjectInfo />
+                                </Summary>
 
-                    <div className='h1 break-line' />
-                    <ProjectSuiteSummary/>
+                                <div className='h1 break-line' />
+                                <ProjectSuiteSummary/>
 
-	                <div className='h1 break-line' />
+                                <div className='h1 break-line' />
 
-                    <ProjectTestFilter />
-                </div>
+                                <ProjectTestFilter />
+                            </div>
+                            :
+                            <div className='panel-center-content'>
+                                <Title onClick={ () => this.props.setModalState(1) }>
+                                    <h1 className='header'>{ 'Select a Project' }</h1>
+                                </Title>
+                                <div className='h1 break-line header' />
+                            </div>
+                        :
+                        <div className='panel-center-content'>
+                            <Title onClick={ () => this.props.setModalState(1) }>
+                                <h1 className='header'>{ 'New Project' }</h1>
+                            </Title>
+                            <div className='h1 break-line header' />
+                        </div>
+                }
             </div>
         )
     }
@@ -72,6 +92,7 @@ const mapStateToProps = (state) => {
     return {
         currentCourseId: getCurrentCourseId(state),
         project: getCurrentProject(state),
+        projects: getProjects(state)
     }
 }
 

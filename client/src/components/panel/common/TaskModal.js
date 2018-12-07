@@ -10,9 +10,11 @@ class CourseModal extends Component {
 	    if(!this.props.project)
 	        return (
 	            <div className='course-modal'>
-                    <h3>
-                        No current project
-                    </h3>
+                    <Modal center id={this.props.id} noExit>
+                        <h3>
+                            No current project
+                        </h3>
+                    </Modal>
                 </div>
             )
 

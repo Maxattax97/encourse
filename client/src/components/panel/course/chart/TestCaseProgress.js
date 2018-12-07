@@ -12,6 +12,7 @@ import {
 	getStudentsTestProgress
 } from "../../../../redux/state-peekers/course"
 import {Chart} from "../../../Helpers"
+import {getSelected} from '../../../../redux/state-peekers/control'
 
 const toPercent = (decimal, fixed = 0) => {
 	return `${(decimal * 100).toFixed(fixed)}%`
@@ -60,7 +61,6 @@ class StudentsTestCaseProgress extends Component {
 							data={this.props.chart.data}
 							margin={{top: 5, right: 30, left: 30, bottom: 35}}
 						>
-							<CartesianGrid/>
 							<XAxis dataKey="testName" type="category">
 								<Label offset={-10} position="insideBottom">
 									{/*Test Case*/}
@@ -91,7 +91,7 @@ class StudentsTestCaseProgress extends Component {
 const mapStateToProps = (state, props) => {
 	return {
 		project: getCurrentProject(state),
-		selected: state.control && state.control.students ? state.control.students.selected : null,
+		selected: getSelected(state, 'students'),
 		chart: props.anon ? getCourseTestProgress(state) : getStudentsTestProgress(state)
 	}
 }
