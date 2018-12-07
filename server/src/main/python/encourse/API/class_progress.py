@@ -132,6 +132,7 @@ def jsonify_with_names(visible_data, hidden_data):
     # we do not need to worry about appending duplicates to the bins
     for student in test_data:
         info = test_data[student]
+        print(student, ": ", info["total"])
         if info["total"] <= 10:
             histogram_data["0-10%"].append(student)
         elif info["total"] <= 20:

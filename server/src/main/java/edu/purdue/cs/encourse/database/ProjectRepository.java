@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ProjectRepository extends CrudRepository<Project, String> {
     Project findByProjectID(@NonNull String projectID);
+    List<Project> findBySemester(@NonNull String semester);
     List<Project> findBySemesterAndCourseID(@NonNull String semester, @NonNull String courseID);
     boolean existsByProjectID(@NonNull String projectID);
 }
