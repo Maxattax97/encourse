@@ -619,7 +619,7 @@ public class ProfessorServiceImpl implements ProfessorService {
         int count = 0;
         long start = System.currentTimeMillis();
         project.setTesting(true);
-        project = projectRepository.save(project);
+        projectRepository.save(project);
         String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_gitHashes.txt";
         for(StudentProject p : projects) {
             count++;
@@ -723,7 +723,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 reader.close();
                 project.setOperationProgress(1.0 * count / projects.size());
                 project.setOperationTime((System.currentTimeMillis() - start) / 1000);
-                project = projectRepository.save(project);
+                projectRepository.save(project);
             }
             catch(Exception e) {
                 code = -6;

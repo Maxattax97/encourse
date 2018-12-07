@@ -329,7 +329,7 @@ public class CourseServiceImpl implements CourseService {
             }
             JSONObject suiteJSON = new JSONObject();
             suiteJSON.put("stat_name", p.getSuite());
-            suiteJSON.put("stat_value", p.getBestVisibleGrade() + "/" + p.getVisiblePointTotal());
+            suiteJSON.put("stat_value", (p.getBestVisiblePoints() + p.getBestHiddenPoints()) + "/" + (p.getVisiblePointTotal() + p.getHiddenPointTotal()));
             suitesJSON.add(suiteJSON);
         }
         return suitesJSON;
