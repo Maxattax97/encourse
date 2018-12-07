@@ -37,5 +37,5 @@ export function retrieveStudentCommitHistory(student, project, page, size) {
 }
 
 export function retrieveSource(student, project, startHash) {
-	store.dispatch(getSource(`${api_v1}source?${projectID_v1(project)}&${studentID_v1(student)}&startHash=${startHash}`))
+	store.dispatch(getSource(`${api_v1}source?${projectID_v1(project)}&${studentID_v1(student)}&endHash=${startHash}`))
 }

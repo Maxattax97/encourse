@@ -34,7 +34,8 @@ export function clearStudent() {
 export function setCurrentCommit(commit) {
     return {
         class: class_type,
-        type: 'SET_CURRENT_COMMIT'
+        type: 'SET_CURRENT_COMMIT',
+	    commit
     }
 }
 

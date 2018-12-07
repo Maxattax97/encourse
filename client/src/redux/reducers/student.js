@@ -193,8 +193,9 @@ export default function student(state = {}, action) {
         case 'CLEAR':
             return clearStudent(state, action)
         case 'SET_CURRENT_COMMIT':
+            return setCurrentCommit(state, action)
         case 'CLEAR_COMMIT':
-
+            return clearCommit(state, action)
         case 'GET':
             return forwardData(state, action, 'student')
         case 'GET_PROGRESS_LINE':
@@ -220,7 +221,7 @@ export default function student(state = {}, action) {
         case 'RUN_TESTS':
             return getData(state, action, 'runStudentTests')
         case 'GET_SOURCE':
-            return getData(state, action, 'getSource')
+            return forwardData(state, action, 'source')
         default:
             return unknownAction(state, action)
     }
