@@ -9,6 +9,9 @@
 DIRECTORY="$(pwd)"
 cd "$1"
 #git show -U10000 "$3" -- "$4" >> "${DIRECTORY}/$2"
+if [[ $# -eq 3 ]]
+    then git diff -U10000 "$3^" "$3" >> "${DIRECTORY}/$2"
+fi
 if [[ $# -eq 4 ]]
     then git diff -U10000 "$3" "$4" >> "${DIRECTORY}/$2"
     else git diff -U10000 "$3" "$4" -p "$5" >> "${DIRECTORY}/$2"
