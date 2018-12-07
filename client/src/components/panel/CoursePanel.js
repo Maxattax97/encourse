@@ -68,7 +68,7 @@ class CoursePanel extends Component {
                         <Summary columns={2}>
                             <CourseStatistics anon />
                             {
-                                this.props.isAnySelected ?
+                                this.props.isAnySelected && false ?
                                     <CourseStatistics />
                                     : null
                             }
