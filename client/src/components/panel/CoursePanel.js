@@ -54,7 +54,7 @@ class CoursePanel extends Component {
                         <AnonymousCharts />
 
                         {
-                            this.props.isAnySelected && false ?
+                            this.props.isAnySelected ?
                                 <div>
                                     <div className='h1 break-line' />
                                     <h3 className='header'>Students Charts</h3>
