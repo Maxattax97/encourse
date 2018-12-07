@@ -59,7 +59,7 @@ class StudentsTestCaseProgress extends Component {
 					<ResponsiveContainer width="100%" height="100%">
 						<ComposedChart
 							data={this.props.chart.data}
-							margin={{top: 5, right: 30, left: 30, bottom: 35}}
+							margin={{top: 5, right: 15, left: 10, bottom: 15}}
 						>
 							<XAxis dataKey="testName" type="category">
 								<Label offset={-10} position="insideBottom">
@@ -71,8 +71,8 @@ class StudentsTestCaseProgress extends Component {
 									% of Class
 								</Label>
 							</YAxis>
-							<Tooltip/>
-							<Bar dataKey="percent">
+							<Tooltip animationDuration={100}/>
+							<Bar dataKey="percent" isAnimationActive={false}>
 								{
 									this.props.chart.data.map((entry, index) =>
 										<Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#0057A7CC' }/>

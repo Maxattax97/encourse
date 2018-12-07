@@ -179,24 +179,26 @@ public class ReadController {
                 int q1 = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() / 4).get(sortName)).get(projectID)).doubleValue();
                 int q3 = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() * 3 / 4).get(sortName)).get(projectID)).doubleValue();
                 int max = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() - 1).get(sortName)).get(projectID)).doubleValue();
-                filters.get(sortName).add(min > 99 ? (int) Math.floor(min / 100) * 100 : (int) Math.floor(min / 10) * 10);
+                filters.get(sortName).add(min);
                 filters.get(sortName).add(q1 > 99 ? Math.round(q1 / 100) * 100 : Math.round(q1 / 10) * 10);
                 filters.get(sortName).add(median > 99 ? Math.round(median / 100) * 100 : Math.round(median / 10) * 10);
                 filters.get(sortName).add(q3 > 99 ? Math.round(q3 / 100) * 100 : Math.round(q3 / 10) * 10);
-                filters.get(sortName).add(max > 99 ? (int) Math.ceil(max / 100) * 100 : (int) Math.ceil(max / 10) * 10);
+                filters.get(sortName).add(max);
                 List<Integer> arr = new ArrayList<>(new HashSet<>(filters.get(sortName)));
                 Collections.sort(arr);
                 filters.replace(sortName, arr);
+            }
 
+            for (String sortName: filters.keySet()) {
                 if (options.keySet().contains(sortName)) {
-                    if (options.get(sortName)[0] < min) {
-                        options.get(sortName)[0] = min;
+                    if (options.get(sortName)[0] < filters.get(sortName).get(0)) {
+                        options.get(sortName)[0] = filters.get(sortName).get(0);
                     }
-                    if (options.get(sortName)[1] > max) {
-                        options.get(sortName)[1] = max;
+                    if (options.get(sortName)[1] > filters.get(sortName).get(filters.get(sortName).size()-1)) {
+                        options.get(sortName)[1] = filters.get(sortName).get(filters.get(sortName).size()-1);
                     }
                     jsonValues.removeIf(i -> ((Number) ((TreeMap) i.get(sortName)).get(projectID)).doubleValue() > options.get(sortName)[1] ||
-                                             ((Number) ((TreeMap) i.get(sortName)).get(projectID)).doubleValue() < options.get(sortName)[0]);
+                            ((Number) ((TreeMap) i.get(sortName)).get(projectID)).doubleValue() < options.get(sortName)[0]);
                 }
             }
         }
@@ -286,12 +288,70 @@ public class ReadController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
     @RequestMapping(value = "/testScriptData", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<?> getTestScriptData(@RequestParam(name = "projectID") String projectID) {
-        JSONArray json = courseService.getTestScriptData(projectID);
-        if (json == null) {
-            return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
+    public @ResponseBody ResponseEntity<?> getTestScriptData(@RequestParam(name = "projectID") String projectID,
+                                                             @RequestParam(name = "page", defaultValue = "1", required = false) int page,
+                                                             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
+                                                             @RequestParam(name = "sortBy", defaultValue = "id", required = false) String sortBy,
+                                                             @RequestParam(name = "order", defaultValue = "0", required = false) int order) {
+        JSONArray returnJson = courseService.getTestScriptData(projectID);
+        if (returnJson == null) {
+            return new ResponseEntity<>(returnJson, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(json, HttpStatus.OK);
+
+        List<JSONObject> jsonValues = new ArrayList<>();
+        for (int i = 0; i < returnJson.size(); i++) {
+            JSONObject curr = (JSONObject) returnJson.get(i);
+            jsonValues.add(curr);
+        }
+
+        // Sorting
+        Comparator<JSONObject> compare;
+        switch (sortBy) {
+            case "points":
+                if (projectID == null) {
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+                compare = (a, b) -> {
+                    TreeMap jsonA = (TreeMap) a.get(sortBy);
+                    TreeMap jsonB = (TreeMap) b.get(sortBy);
+
+                    int valA = ((Number) jsonA.get(projectID)).intValue();
+                    int valB = ((Number) jsonB.get(projectID)).intValue();
+                    return Integer.compare(valA, valB);
+                };
+                break;
+            case "id":
+            default:
+                compare = (JSONObject a, JSONObject b) -> {
+                    String valA = (String) a.get(sortBy);
+                    String valB = (String) b.get(sortBy);
+                    return valA.compareTo(valB);
+                };
+                break;
+        }
+        jsonValues.sort(order == 0 ? compare : compare.reversed());
+
+        JSONArray sortedAndPagedJsonArray = new JSONArray();
+        page = (page > jsonValues.size() / size + 1) ? jsonValues.size() / size + 1 : page;
+        for (int i = (page - 1) * size; i < jsonValues.size(); i++) {
+            if (i >= page * size) {
+                break;
+            }
+            sortedAndPagedJsonArray.add(jsonValues.get(i));
+        }
+
+        JSONObject response = new JSONObject();
+        response.put("content", sortedAndPagedJsonArray);
+        response.put("totalPages", jsonValues.size() / size + ((jsonValues.size() % size == 0) ? 0 : 1));
+        response.put("page", page);
+        response.put("totalSize", jsonValues.size());
+        response.put("size", size);
+        response.put("elements", sortedAndPagedJsonArray.size());
+        response.put("sortedBy", sortBy);
+        response.put("last", (page >= jsonValues.size() / size));
+        response.put("first", (page == 1));
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
@@ -301,6 +361,18 @@ public class ReadController {
         if (json == null) {
             return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
+    @RequestMapping(value = "/suites", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getSuites(@RequestParam(name = "projectID") String projectID) {
+        Project project = courseService.getProject(projectID);
+        if (project == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        JSONObject json = new JSONObject();
+        json.put("suites", project.getSuites().split(","));
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
@@ -698,7 +770,7 @@ public class ReadController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-    @RequestMapping(value = "/suites", method = RequestMethod.GET)
+    @RequestMapping(value = "/suitesData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getSuiteData(@RequestParam(name = "projectID") String projectID,
                                                         @RequestParam(name = "userName") String userName) {
         JSONArray json = courseService.getSuitesData(userName, projectID);

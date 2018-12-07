@@ -18,3 +18,5 @@ export function getTestScripts(state) {
 }
 
 export const getTestSuites = createPeeker('getTestSuites')
+
+export const getOperation = createPeeker('getOperation')

@@ -2,9 +2,27 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import {Modal} from '../../Helpers'
-import {getCurrentProject} from '../../../redux/state-peekers/projects'
+import {getCurrentProject, getOperation} from '../../../redux/state-peekers/projects'
+import {retrieveOperation} from '../../../redux/retrievals/projects'
 
 class CourseModal extends Component {
+
+    requestInterval
+
+    requestFunc = () => {
+        if(this.props.project && this.props.id === this.props.modalState) {
+            retrieveOperation(this.props.project)
+        }
+    }
+
+    componentDidMount() {
+        this.requestFunc()
+        this.requestInterval = setInterval(this.requestFunc, 5000)
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.requestInterval)
+    }
 
 	render() {
 	    if(!this.props.project)
@@ -67,7 +85,8 @@ class CourseModal extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        task: { operation: 'sync', progress: 10, estimated_time_remaining: '1 day'},
+        modalState: state.control && state.control.modalState ? state.control.modalState : 0,
+        task: getOperation(state).data,
         project: getCurrentProject(state)
     }
 }

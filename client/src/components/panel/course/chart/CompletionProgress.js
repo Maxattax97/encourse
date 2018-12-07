@@ -51,7 +51,7 @@ class CompletionProgress extends Component {
                 >
 					<ComposedChart
 						data={this.props.chart.data}
-						margin={{top: 5, right: 30, left: 30, bottom: 35}}
+						margin={{top: 5, right: 10, left: 5, bottom: 15}}
 						barCategoryGap={0}
 					>
 						<XAxis dataKey="progressBin" type="category">
@@ -64,8 +64,8 @@ class CompletionProgress extends Component {
 								Students
 							</Label>
 						</YAxis>
-						<Tooltip content={<CustomTooltipContent />} />
-						<Bar dataKey="count" fill="#0057A7CC"/>
+						<Tooltip content={<CustomTooltipContent />} animationDuration={100}/>
+						<Bar dataKey="count" fill="#0057A7CC" isAnimationActive={false}/>
 					</ComposedChart>
 				</ResponsiveContainer>
 			</Chart>

@@ -10,6 +10,7 @@ import {getCurrentProject, getProjects} from '../../redux/state-peekers/projects
 import ProjectSuiteModal from './project/ProjectSuiteModal'
 import ProjectSuiteSummary from './project/ProjectSuiteSummary'
 import BackNavigation from '../navigation/BackNavigation'
+import ProjectZipModal from './project/ProjectZipModal'
 
 class ProjectPanel extends Component {
 
@@ -18,16 +19,14 @@ class ProjectPanel extends Component {
 
         const action_names = [
             'Add New Project',
-            'Add New Test Suite',
 	        'Add New Test Script',
             'Upload Test Zip'
         ]
 
         const actions = [
 	        () => this.props.setModalState(1),
-            () => this.props.setModalState(3),
 	        () => this.props.setModalState(5),
-            {},
+            () => this.props.setModalState(7),
         ]
 
         return (
@@ -41,10 +40,10 @@ class ProjectPanel extends Component {
 
 	            <ProjectModal id={1} newProject />
 	            <ProjectModal id={2} />
-                <ProjectSuiteModal id={3} newTestSuite/>
                 <ProjectSuiteModal id={4}/>
 	            <ProjectTestModal id={5} newTestScript />
 	            <ProjectTestModal id={6} />
+                <ProjectZipModal id={7}/>
 
                 {
                     this.props.projects.length ?

@@ -16,19 +16,19 @@ class StudentFilter extends Component {
         this.props.resetFilterState()
     }
 
-    componentDidUpdate() {
-        console.log(this.props.students)
-    }
-
     getFilterCommitValues = () => {
         let values = ['Any']
         if(this.props.students && this.props.students.page && 
             this.props.students.page.filters && this.props.students.page.filters.commitCounts) {
                 const commitCounts = this.props.students.page.filters.commitCounts
-                values =  ['Any', `${commitCounts[0]} - ${commitCounts[1]}`, 
-                                  `${commitCounts[1]+1} - ${commitCounts[2]}`,
-                                  `${commitCounts[2]+1} - ${commitCounts[3]}`,
-                                  `${commitCounts[3]+1}+`]
+                for(let i = 0; i < commitCounts.length - 1; i++) {
+                    if(i === commitCounts.length - 2) {
+                        values.push(`${commitCounts[i]}+`)
+                    } else {
+                        values.push(`${commitCounts[i]} - ${commitCounts[i+1]}`)
+                    } 
+                }
+
         }
 
         return values
@@ -39,10 +39,13 @@ class StudentFilter extends Component {
         if(this.props.students && this.props.students.page && 
             this.props.students.page.filters && this.props.students.page.filters.timeSpent) {
                 const timeSpent = this.props.students.page.filters.timeSpent
-                values =  ['Any', `${timeSpent[0]} - ${timeSpent[1]}`, 
-                                  `${timeSpent[1]+1} - ${timeSpent[2]}`,
-                                  `${timeSpent[2]+1} - ${timeSpent[3]}`,
-                                  `${timeSpent[3]+1}+`]
+                for(let i = 0; i < timeSpent.length - 1; i++) {
+                    if(i === timeSpent.length - 2) {
+                        values.push(`${timeSpent[i]}+`)
+                    } else {
+                        values.push(`${timeSpent[i]} - ${timeSpent[i+1]}`)
+                    } 
+                }
         }
 
         return values
@@ -53,10 +56,13 @@ class StudentFilter extends Component {
         if(this.props.students && this.props.students.page && 
             this.props.students.page.filters && this.props.students.page.filters.grades) {
                 const grades = this.props.students.page.filters.grades
-                values =  ['Any', `${grades[0]}% - ${grades[1]}%`, 
-                                  `${grades[1]+1}% - ${grades[2]}%`,
-                                  `${grades[2]+1}% - ${grades[3]}%`,
-                                  `${grades[3]+1}%+`]
+                for(let i = 0; i < grades.length - 1; i++) {
+                    if(i === grades.length - 2) {
+                        values.push(`${grades[i]}%+`)
+                    } else {
+                        values.push(`${grades[i]}% - ${grades[i+1]}%`)
+                    } 
+                }
         }
 
         return values
@@ -67,7 +73,7 @@ class StudentFilter extends Component {
             <div className='course-students'>
                 <h3 className='header'>Students</h3>
                 {
-                    this.props.students.data ?
+                    this.props.students.data.length ?
                         <Filter>
 	                        <Checkbox onClick={() => this.props.toggleSelectAllCards()}>
                                 {

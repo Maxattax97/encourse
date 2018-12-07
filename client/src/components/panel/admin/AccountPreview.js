@@ -8,7 +8,6 @@ import { connect } from 'react-redux'
 class AccountPreview extends Component {
 
     render() {
-        console.log(this.props.account)
         return (
             <div className="account-preview" >
                 <div className="title">

@@ -19,7 +19,7 @@ class ProjectTestSummary extends Component {
 	}
 
 	clickTestScriptCard = (testscript) => {
-        this.props.setModalState(4)
+        this.props.setModalState(6)
     }
 
 	renderPreview = (testscript) => {

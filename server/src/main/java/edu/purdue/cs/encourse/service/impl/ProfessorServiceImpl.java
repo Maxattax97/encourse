@@ -560,6 +560,25 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     /**
+     * Adds a testing suite to a project
+     *
+     * @param projectID Identifier for project
+     * @param suite     Name of the suite. Can be a new or existing suite
+     * @return          Error code
+     */
+    public int addSuiteToProject(@NonNull String projectID, @NonNull String suite) {
+        Project project = projectRepository.findByProjectID(projectID);
+        if(project == null) {
+            return -1;
+        }
+        if(!project.hasSuite(suite)) {
+            project.addSuite(suite);
+        }
+        projectRepository.save(project);
+        return 0;
+    }
+
+    /**
      * Adds a test script to a testing suite
      *
      * @param projectID Identifier for project that test script is made for
@@ -902,9 +921,13 @@ public class ProfessorServiceImpl implements ProfessorService {
                 runTestall(project.getProjectID());
                 List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(project.getProjectID(), "testall");
                 project.setTestCount(project.getTestRate() - 1);
+                project.setOperationProgress(0);
+                project.setOperationTime(0);
+                projectRepository.save(project);
             }
             else {
                 project.setTestCount(project.getTestCount() - 1);
+                projectRepository.save(project);
             }
         }
         helperService.executeBashScript("cleanDirectory.sh src/main/temp");
