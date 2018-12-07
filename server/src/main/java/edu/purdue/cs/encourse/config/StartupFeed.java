@@ -60,12 +60,12 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
         System.out.println("CONDITIONAL RAN");
         if (adminService.findAllUsers().isEmpty()) {
             adminService.addAccount("0", "grr", "Gustavo", "Rodriguez-Rivera", Account.Role_Names.PROFESSOR, "A", "grr@purdue.edu");
-            adminService.addAccount("1", "buckmast", "Jordan", "Buckmaster", Account.Role_Names.ADMIN, "M", "buckmast@purdue.edu");
-            adminService.addAccount("2", "kleclain", "Killian", "LeClainche", Account.Role_Names.ADMIN, "A", "kleclain@purdue.edu");
-            adminService.addAccount("3", "lee2363", "Jarett", "Lee", Account.Role_Names.ADMIN, "B", "lee2363@purdue.edu");
-            adminService.addAccount("4", "montgo38", "Shawn", "Montgomery", Account.Role_Names.ADMIN, "K", "montgo38@purdue.edu");
-            adminService.addAccount("5", "reed226", "William", "Reed", Account.Role_Names.TA, "J", "reed226@purdue.edu");
-            adminService.addAccount("6", "sullil96", "Ryan", "Sullivan", Account.Role_Names.ADMIN, "P", "sulli196@purdue.edu");
+            adminService.addAccount("1", "buckmast-a", "Jordan", "Buckmaster", Account.Role_Names.ADMIN, "M", "buckmast@purdue.edu");
+            adminService.addAccount("2", "kleclain-a", "Killian", "LeClainche", Account.Role_Names.ADMIN, "A", "kleclain@purdue.edu");
+            adminService.addAccount("3", "lee2363-a", "Jarett", "Lee", Account.Role_Names.ADMIN, "B", "lee2363@purdue.edu");
+            adminService.addAccount("4", "montgo38-a", "Shawn", "Montgomery", Account.Role_Names.ADMIN, "K", "montgo38@purdue.edu");
+            adminService.addAccount("5", "reed226-t", "William", "Reed", Account.Role_Names.TA, "J", "reed226@purdue.edu");
+            adminService.addAccount("6", "sullil96-a", "Ryan", "Sullivan", Account.Role_Names.ADMIN, "P", "sulli196@purdue.edu");
 
             adminService.addUser("grr", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "PROFESSOR", false, false, false, true);
             adminService.addUser("buckmast-a", "$2a$04$9c76evM3G9DGPy0SoSvA7uH567Raz6Tuv5vTeV/BxL.3gNSel1POK", "ADMIN", false, false, false, true);
@@ -79,9 +79,9 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             Project malloc;
             Project shell;
             if(ConfigurationManager.getInstance().testing) {
-                section = adminService.addSection("1001", "Fall2018", "testing", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
-                adminService.assignProfessorToCourse("grr", "testing", "Fall2018");
-                adminService.assignTeachingAssistantToCourse("reed226-t", "testing", "Fall2018");
+                section = adminService.addSection("1001", "Fall2018", "testing101", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
+                adminService.assignProfessorToCourse("grr", "testing101", "Fall2018");
+                adminService.assignTeachingAssistantToCourse("reed226-t", "testing101", "Fall2018");
                 professorService.assignTeachingAssistantToSection("reed226-t", section.getSectionID());
 
                 adminService.addAccount("101", "reed226", "William", "Reed", Account.Role_Names.STUDENT, "J", "reed226@purdue.edu");
@@ -106,9 +106,9 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 professorService.assignTeachingAssistantToStudentInSection("reed226-t", "buckmast", section.getSectionID());
                 professorService.assignTeachingAssistantToStudentInSection("reed226-t", "montgo38", section.getSectionID());
 
-                courseService.setSectionRemotePaths("Fall2018", "testing", "/homes/cs252/sourcecontrol/work_2017Fall");
-                courseService.setDirectory("Fall2018", "testing");
-                shell = professorService.addProject("testing", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
+                courseService.setSectionRemotePaths("Fall2018", "testing101", "/homes/cs252/sourcecontrol/work_2017Fall");
+                courseService.setDirectory("Fall2018", "testing101");
+                shell = professorService.addProject("testing101", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
 
             }
             else {

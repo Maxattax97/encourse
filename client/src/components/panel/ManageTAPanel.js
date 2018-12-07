@@ -64,17 +64,33 @@ class ManageTAPanel extends Component {
                         action_names={ action_names } />
                 </div>
 
-                <div className="panel-center-content">
-                    <h1 className='header'>{ this.props.ta ? `${this.props.ta.first_name} ${this.props.ta.last_name} (${this.props.ta.id})` : '' }</h1>
-                    <div className='h1 break-line header' />
+                {
+                    this.props.teaching_assistants.length ?
+                        this.props.ta ?
+                            <div className="panel-center-content">
+                                <h1 className='header'>{ `${this.props.ta.first_name} ${this.props.ta.last_name} (${this.props.ta.id})` }</h1>
+                                <div className='h1 break-line header' />
 
-                    <h3 className='header'>Assign Sections</h3>
-                    <SectionSummary/>
+                                <h3 className='header'>Assign Sections</h3>
+                                <SectionSummary/>
 
-                    <div className='h1 break-line header' />
-                    <StudentAssignFilter/>
+                                <div className='h1 break-line header' />
+                                <StudentAssignFilter/>
 
-                </div>
+                            </div>
+                            :
+                            <div className="panel-center-content">
+                                <h1 className='header'>{ 'Select a Teaching Assistant' }</h1>
+                                <div className='h1 break-line header' />
+                            </div>
+                        :
+                        <div className="panel-center-content">
+                            <h1 className='header'>{ 'No Teaching Assistants Assigned' }</h1>
+                            <div className='h1 break-line header' />
+                        </div>
+                }
+
+
 
             </div>)
     }
