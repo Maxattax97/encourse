@@ -9,6 +9,7 @@ class CourseCharts extends Component {
 		return (
 			<ChartList>
 				<CompletionProgress/>
+				<TestCaseProgress/>
 			</ChartList>
 		)
 	}

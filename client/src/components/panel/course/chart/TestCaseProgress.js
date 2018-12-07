@@ -12,7 +12,7 @@ import {
 	getStudentsTestProgress
 } from "../../../../redux/state-peekers/course"
 import {Chart} from "../../../Helpers"
-import {getSelected} from '../../../../redux/state-peekers/control'
+import {getSelected, isAnySelected} from '../../../../redux/state-peekers/control'
 
 const toPercent = (decimal, fixed = 0) => {
 	return `${(decimal * 100).toFixed(fixed)}%`
@@ -25,8 +25,9 @@ class StudentsTestCaseProgress extends Component {
 			if(this.props.anon)
 				retrieveCourseTestProgress(this.props.project)
 			else {
-				if(this.props.isAnySelected) {
-					retrieveStudentsTestProgressSpecific(this.props.project, Object.keys(this.props.selected))
+				if(this.props.isAnySelected && this.props.isAnySelected >= 2) {
+					let a = Object.keys(this.props.selected.explict)
+					retrieveStudentsTestProgressSpecific(this.props.project, a)
 				} else {
 					retrieveStudentsTestProgress(this.props.project)
 				}
@@ -35,12 +36,18 @@ class StudentsTestCaseProgress extends Component {
 	}
 
 	componentDidUpdate = (prevProps) => {
-		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index)) {
-			if(prevProps.anon)
+		if (prevProps.anon) {
+			if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index)) {
 				retrieveCourseTestProgress(this.props.project)
-			else {
-				if(this.props.isAnySelected) {
-					retrieveStudentsTestProgressSpecific(this.props.project, Object.keys(this.props.selected))
+			}
+		}
+		else {
+			console.log(prevProps, this.props);
+			if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index) || prevProps.isAnySelected !== this.props.isAnySelected) {
+				console.log('update');
+				if(this.props.isAnySelected && this.props.isAnySelected >= 2) {
+					let a = Object.keys(this.props.selected.explict)
+					retrieveStudentsTestProgressSpecific(this.props.project, a)
 				} else {
 					retrieveStudentsTestProgress(this.props.project)
 				}
@@ -92,7 +99,8 @@ const mapStateToProps = (state, props) => {
 	return {
 		project: getCurrentProject(state),
 		selected: getSelected(state, 'students'),
-		chart: props.anon ? getCourseTestProgress(state) : getStudentsTestProgress(state)
+		chart: props.anon ? getCourseTestProgress(state) : getStudentsTestProgress(state),
+		isAnySelected: isAnySelected(state, 'students'),
 	}
 }
 
