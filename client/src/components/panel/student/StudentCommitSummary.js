@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import {history} from '../../../redux/store'
 import {getStudentPreviews, clearStudent, updateCommitsPage, resetCommitsPage} from '../../../redux/actions'
 import {getCurrentProject} from "../../../redux/state-peekers/projects"
 import {getCurrentCourseId, getCurrentSemesterId} from "../../../redux/state-peekers/course"
@@ -7,6 +8,7 @@ import SelectableCardSummary from "../common/SelectableCardSummary"
 import {retrieveStudentCommitHistory} from '../../../redux/retrievals/student'
 import {getCurrentStudent, getStudentCommitHistory} from '../../../redux/state-peekers/student'
 import {Title} from '../../Helpers'
+import {setCurrentCommit} from '../../../redux/actions/student'
 
 class StudentCommitSummary extends Component {
 
@@ -24,7 +26,9 @@ class StudentCommitSummary extends Component {
         }
     }
 
-    clickCommitCard = (student) => {
+    clickCommitCard = (commit) => {
+        this.props.setCurrentCommit(commit)
+        history.push(`/${this.props.course}/${this.props.semester}/student/${this.props.student.id}/commit/${commit.hash}`)
     }
 
     renderPreview = (commit) => {
@@ -68,8 +72,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getStudentPreviews: (url, headers, body) => dispatch(getStudentPreviews(url, headers, body)),
-        clearStudent: () => dispatch(clearStudent),
+        setCurrentCommit: (commit) => dispatch(setCurrentCommit(commit)),
         updateCommitsPage: () => dispatch(updateCommitsPage()),
         resetCommitsPage: () => dispatch(resetCommitsPage()),
     }

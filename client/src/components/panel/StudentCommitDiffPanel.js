@@ -8,24 +8,42 @@ import {retrieveStudent} from "../../redux/retrievals/student"
 import {getCurrentStudent} from "../../redux/state-peekers/student"
 import {getCurrentCourseId, getCurrentSemesterId} from "../../redux/state-peekers/course"
 import BackNavigation from '../navigation/BackNavigation'
+import ActionNavigation from '../navigation/ActionNavigation'
+import {history} from '../../redux/store'
 
 
 class StudentPanel extends Component {
 
     componentDidMount = () => {
-        if(!this.props.currentStudent) {
-            retrieveStudent({id: this.props.match.params.id}, this.props.currentCourseId, this.props.currentSemesterId)
-        }
+        if(!this.props.currentStudent)
+            retrieveStudent({id: this.props.match.params.studentID}, this.props.currentCourseId, this.props.currentSemesterId)
     }
 
     render() {
+        const action_names = [
+            'View Current Task',
+            'Student Page',
+            'Academic Dishonesty Report'
+        ]
 
+        let studentDishonestyRedirect = () => { history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/student-dishonesty/${this.props.student.id}`)}
+
+        const actions = [
+            () => {
+                this.props.setModalState(2)
+            },
+            () => {
+                history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/student/${this.props.student.id}`)
+            },
+            studentDishonestyRedirect
+        ]
 
         return (
             <div className="panel-student">
 
                 <div className='panel-left-nav'>
                     <BackNavigation/>
+                    <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
 
                 <div className="panel-center-content">

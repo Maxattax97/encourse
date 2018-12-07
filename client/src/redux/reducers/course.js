@@ -180,7 +180,12 @@ function formatProgress(udata) {
     const data = udata
     const formattedData = []
     const data2 = Object.entries(data)
-    const total = data2.reduce((sum, p) => sum + p[1], 0)
+    const total1 = data2.reduce((sum, p) => sum + p[1], 0)
+    const total = Math.max(total1, 1)
+
+    if (total1 == 0) {
+        console.warn('No progress data', data);
+    }
 
     for (let apiEntry of data2) {
         const entry = {
