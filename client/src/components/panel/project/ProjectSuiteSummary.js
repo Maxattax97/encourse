@@ -1,52 +1,51 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {getCurrentProject, getTestScripts} from '../../../redux/state-peekers/projects'
-import {retrieveTestScripts} from '../../../redux/retrievals/projects'
+import {getCurrentProject, getTestSuites} from '../../../redux/state-peekers/projects'
 import SelectableCardSummary from '../common/SelectableCardSummary'
 import {Title} from '../../Helpers'
 import {setModalState} from '../../../redux/actions'
+import {retrieveTestSuites} from '../../../redux/retrievals/projects'
 
 class ProjectSuiteSummary extends Component {
 
     componentDidMount() {
         if(this.props.project)
-            retrieveTestScripts(this.props.project)
+            retrieveTestSuites(this.props.project)
     }
 
     componentDidUpdate(prevProps) {
         if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
-            retrieveTestScripts(this.props.project)
+            retrieveTestSuites(this.props.project)
     }
 
-    clickTestScriptCard = (testscript) => {
+    clickSuiteCard = () => {
         this.props.setModalState(4)
     }
 
-    renderPreview = (testscript) => {
+    renderPreview = (suite) => {
         return (
             <div>
                 <Title>
-                    <h4>{ testscript.id }</h4>
+                    <h4>{ suite }</h4>
                 </Title>
                 <div className="h4 break-line header" />
-                <div className="preview-content">
-                    <h5>Points: { testscript.points }</h5>
-                    <h5>Visibility: { testscript.hidden ? 'Hidden' : 'Visible' }</h5>
-                    <h5>Test Suites: { testscript.suites.map((id, index) => (id + (index === testscript.suites.length - 1 ? '' : ', '))) }</h5>
-                </div>
             </div>
         )
     }
 
     render() {
+        if(!this.props.project || !this.props.students.data)
+            return null
+
+        console.log(this.props.suites.data, typeof this.props.suites.data)
         return (
             <div className='project-test-suites'>
                 <h3 className='header'>Test Suites</h3>
                 <SelectableCardSummary
                     type='testscripts'
-                    values={this.props.testScripts}
+                    values={this.props.suites.data}
                     render={this.renderPreview}
-                    onClick={this.clickTestScriptCard}
+                    onClick={this.clickSuiteCard}
                     noReset
                 />
             </div>
@@ -57,7 +56,7 @@ class ProjectSuiteSummary extends Component {
 const mapStateToProps = (state) => {
     return {
         project: getCurrentProject(state),
-        testScripts: getTestScripts(state),
+        suites: getTestSuites(state),
     }
 }
 

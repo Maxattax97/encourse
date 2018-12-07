@@ -3,19 +3,19 @@ import { connect } from 'react-redux'
 
 import Statistics from "../common/Statistics"
 import {getCurrentStudent} from "../../../redux/state-peekers/student"
-import {getCurrentProject, getTestSuites} from '../../../redux/state-peekers/projects'
-import {retrieveTestSuites} from '../../../redux/retrievals/projects'
+import {getCurrentProject, getSuiteGrades} from '../../../redux/state-peekers/projects'
+import {retrieveSuitesScore} from '../../../redux/retrievals/projects'
 
 class StudentSuiteInfo extends Component {
 
     componentDidMount() {
         if(this.props.student && this.props.project)
-            retrieveTestSuites(this.props.student, this.props.project)
+            retrieveSuitesScore(this.props.student, this.props.project)
     }
 
     componentDidUpdate(prevProps) {
         if(this.props.student && this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
-            retrieveTestSuites(this.props.student, this.props.project)
+            retrieveSuitesScore(this.props.student, this.props.project)
     }
 
     render() {
@@ -34,7 +34,7 @@ const mapStateToProps = (state) => {
     return {
         student: getCurrentStudent(state),
         project: getCurrentProject(state),
-        stats: getTestSuites(state)
+        stats: getSuiteGrades(state)
     }
 }
 
