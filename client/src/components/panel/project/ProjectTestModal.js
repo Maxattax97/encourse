@@ -43,24 +43,20 @@ class ProjectTestModal extends Component {
 						Name
 					</h4>
 					<input type="text" className="h3-size" value={this.props.name} name="name" autoComplete="off"/>
-                    {
-                        this.props.suites.length ?
-                            <div>
-                                <div className="h5 break-line"/>
-                                <h4 className="header">
-                                    Test Suite
-                                </h4>
-                                <input type="text" className="h3-size" value={this.state.suite} onChange={this.onChange} name="suite" list="test-suites" />
-                                <datalist id="test-suites">
-                                    {
-                                        this.props.suites.map(suite =>
-                                            <option value={suite}/>
-                                        )
-                                    }
-                                </datalist>
-                            </div>
-                            : null
-                    }
+                    <div>
+                        <div className="h5 break-line"/>
+                        <h4 className="header">
+                            Test Suite
+                        </h4>
+                        <input type="text" className="h3-size" value={this.state.suite} onChange={this.onChange} name="suite" list="test-suites" />
+                        <datalist id="test-suites">
+                            {
+                                this.props.suites.map(suite =>
+                                    <option value={suite}/>
+                                )
+                            }
+                        </datalist>
+                    </div>
                     <div className="h5 break-line"/>
                     <h4 className="header">
                         Point Value
