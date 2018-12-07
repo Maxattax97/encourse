@@ -6,7 +6,7 @@ def jsonify(data):
     bins = {}
     for username1, user_data in data.items():
         for username2, identical_count in user_data.items():
-            similarity_bin = identical_count // 10
+            similarity_bin = identical_count // 5
 
             if similarity_bin not in bins:
                 bins[similarity_bin] = 0
