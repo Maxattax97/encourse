@@ -34,10 +34,9 @@ class ProjectSuiteSummary extends Component {
     }
 
     render() {
-        if(!this.props.project || !this.props.students.data)
+        if(!this.props.project)
             return null
 
-        console.log(this.props.suites.data, typeof this.props.suites.data)
         return (
             <div className='project-test-suites'>
                 <h3 className='header'>Test Suites</h3>

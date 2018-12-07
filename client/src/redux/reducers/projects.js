@@ -141,7 +141,7 @@ export default function projects(state = {}, action) {
         case 'RUN_TEST_SUITE':
             return getData(state, action, 'runTestSuite')
         case 'GET_TEST_SCRIPTS':
-            return getData(state, action, 'getTestScripts')
+            return forwardData(state, action, 'getTestScripts', (udata) => udata, true)
         case 'GET_SUITE_GRADES':
             return forwardData(state, action, 'getSuiteGrades', formatTestSuites)
         case 'GET_OPERATION':

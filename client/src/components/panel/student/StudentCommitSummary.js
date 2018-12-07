@@ -6,6 +6,7 @@ import {getCurrentCourseId, getCurrentSemesterId} from "../../../redux/state-pee
 import SelectableCardSummary from "../common/SelectableCardSummary"
 import {retrieveStudentCommitHistory} from '../../../redux/retrievals/student'
 import {getCurrentStudent, getStudentCommitHistory} from '../../../redux/state-peekers/student'
+import {Title} from '../../Helpers'
 
 class StudentCommitSummary extends Component {
 
@@ -30,17 +31,26 @@ class StudentCommitSummary extends Component {
 
         return (
             <div>
+                <Title>
+                    <h4>{ commit.hash }</h4>
+                    <h4>{ commit.date }</h4>
+                </Title>
+                <div className="h4 break-line header" />
+                <div className="preview-content">
+                    <h5>Additions: { commit.additions }</h5>
+                    <h5>Deletions: { commit.deletions }</h5>
+                </div>
             </div>
         )
     }
 
     render() {
-        console.log(this.props.history)
         return (
             <SelectableCardSummary type='students'
                                    values={this.props.history.data}
                                    render={this.renderPreview}
-                                   onClick={this.clickCommitCard} />
+                                   onClick={this.clickCommitCard}
+                                   noCheckmark />
         )
     }
 }
