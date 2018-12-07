@@ -29,8 +29,8 @@ def setup_cheating(parser):
         help="path to historic progress file for hidden test cases",
     )
     parser.add_argument("logfile", type=argparse.FileType("r"), help="path to log file")
-    parser.add_argument("-t", "--timeout", help="time spent timeout")
-    parser.add_argument("-l", "--limit", help="ignore file changes above limit")
+    parser.add_argument("-t", "--timeout", type=float, help="time spent timeout")
+    parser.add_argument("-l", "--limit", type=int, help="ignore file changes above limit")
     parser.add_argument(
         "-v",
         "--velocity",
