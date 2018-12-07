@@ -3,6 +3,7 @@ Table of Contents
 
    * [Introduction](#introduction)
    * [Server Setup](#server-setup)
+      * [Setting up Accounts](#setting-up-accounts)
       * [File Structure](#file-structure)
       * [Accessing Repositories](#accessing-repositories)
       * [Necessary Installations](#necessary-installations)
@@ -11,8 +12,7 @@ Table of Contents
          * [Node.js Runtime Environment](#nodejs-runtime-environment)
          * [NPM Package Manager](#npm-package-manager)
          * [Postgresql Database](#postgresql-database)
-         * [Other Installations](#other-installations)
-      * [Setting up Accounts](#setting-up-accounts)
+         * [Other Installations](#other-installations)   
       * [Setting up the Database](#setting-up-the-database)
       * [Setting up Screens](#setting-up-screens)
       * [Setting up the Spring Server](#setting-up-the-spring-server)
@@ -86,13 +86,48 @@ The purpose of this manual is to explain to the developer how to set up, use, an
 
 This section will serve as an in depth guide for server setup, and specifically in the context of a virtual machine (VM) accessing data on Purdue’s server hosted on data.cs.purdue.edu. Parts of this guide may not apply in general for other universities, nor would it apply if the application is directly hosted on a university server. The differences that cannot be generalized are restricted to the bash scripts used by the application, so any changes that are needed to make the application fit other environments should be restricted to bash scripts. Otherwise, the Java, JavaScript, and Python code are already generalized and should not pose an issue for portability.
 
+## Setting up Accounts
+
+The main account used for running the React and Spring servers is `reed226`. Each course that uses the application also needs a course account and a course group, where the course group is the course identifier, such as `cs252`, and the course account is the group appended by `-account`, such as `cs252-account`. This is necessary since test scripts are run by the course account instead of the main account that runs the servers. This ensure that faulty test scripts can only cause harm to the projects made for that course, while protecting all other courses and users on the VM. Also note that the primary group of the course account should be the course group, since the group permission allows the course account to execute tests in the corresponding directory. Primary group can be set with the command:
+
+```
+sudo usermod -g group user
+```
+
+Each testing account also needs a copy of `testall.sh` in its home directory for execution, which can be copied from the file `encourse/server/src/main/bash/testall.sh` in this repository. In order for the main account to access the testing accounts through sudo, the following line should be added in `/etc/sudoers`:
+
+```
+reed226 ALL=({courseID}-account) NOPASSWD: /home/{courseID}-account/testall.sh
+```
+
+Where `{courseID}` is the course that the testing account is made for. Then, as added security to ensure that a testall cannot claim all available pids, each testing account should be limitted to about 50 processes, which can be set by adding the following line in `/etc/security/limits.conf`:
+
+```
+{courseID}-account hard nproc 50
+```
+
+With this, testing accounts should be properly setup for running the application.
+
 ## File Structure
 
 The first topic that shall be discussed for this section is file structure. All course repositories will use the path ``/sourcecontrol/{CourseID}/{Semester}/``, where `CourseID` is the university’s designated code for a course, for example `cs252`, while semester is the term and year that the course data pertains to, for example `Fall2018`. If a course has multiple semesters where the application is used, then it will have multiple subdirectories under `/sourcecontrol/{CourseID}/`, one for each semester. An example of a full path to course repositories will thus be `/sourcecontrol/cs252/Fall2018/`. Under this directory, every student in the course will have a directory containing all of the cloned git repositories for that student in the course. Additionally, there are `testcases`, `hidden_testcases`, and `makefiles` directories which contain scripts necessary for testing code. The testcases directory has a subdirectory for every project assigned in using the application, and within each of these directories are the visible test scripts uploaded by the professor. Similarly, `hidden_testcases` contains hidden scripts, ie scripts that do not have their results shown to students, for each product. The makefiles directory contains the Makefile for building each assigned project.
 
 ## Accessing Repositories
 
-Next, proper setup needs to be done in order to automate cloning and pulling git repositories. Since the application does these operations over SSH, the account that is used to run the application should have SSH keys setup to access the server containing the .git files, so that a password is not required for SSH. Also, the scripts used for cloning and pulling, namely `cloneRepositories.sh` and `pullRepositories.sh` in the directory `encourse/server/src/main/bash/` should be changed to the username of the account being SSH’s into on the university server. This setup is required for the application to clone and pull repositories, however it may be desirable to manually initiate cloning and pulling the repositories, which could be done with simple shell scripts. Examples of such scripts can be found in the home directory `reed226` on the VM.
+Next, proper setup needs to be done in order to automate cloning and pulling git repositories. Since the application does these operations over SSH, the account that is used to run the application should have SSH keys setup to access the server containing the .git files, so that a password is not required for SSH. Keys can be generated with the command:
+
+```
+ssh-keygen
+```
+Then, it will prompt for a file to save the keys, so either enter a path or just press enter to save it to `~/.ssh`. Then it will ask for a passphrase, but since the application requires passwordless SSH access to the university server, press enter so that SSHing does not require a password. After the keys are created, copy the public key to the university server with:
+
+```
+ssh-copy-id username@data.cs.purdue.edu
+```
+
+For universities besides Purdue, replace `data.cs.purdue.edu` with the domain of the university server. After entering the password for the server, the public key will be copied and the application can now use git operations over SSH without needing a password.
+
+After doing this, the scripts used for cloning and pulling, namely `cloneRepositories.sh` and `pullRepositories.sh` in the directory `encourse/server/src/main/bash/` should be changed to the username of the account being SSH’d into on the university server. This setup is required for the application to clone and pull repositories, however it may be desirable to manually initiate cloning and pulling the repositories, which could be done with simple shell scripts. Examples of such scripts can be found in the home directory `reed226` on the VM.
 
 ## Necessary Installations
 
@@ -153,28 +188,6 @@ This is the database that is used by the Spring server. It is an SQL database, s
 As a final disclaimer, the nature of the application requires that the VM be setup to mimic the environment of the university’s server in order to accurately run the test cases. This may require additional installations not detailed in this documentation. For example, the standard C and C++ libraries may change with updates to the GNU compiler, and students may use some of the newer additions in their projects, so the compiler version should exactly match the version used by the university server.
 
 Additionally, while version numbers were listed in this documentation, the latest compatible version of each dependency should be used.
-
-## Setting up Accounts
-
-The main account used for running the React and Spring servers is `reed226`. Each course that uses the application also needs a course account and a course group, where the course group is the course identifier, such as `cs252`, and the course account is the group appended by `-account`, such as `cs252-account`. This is necessary since test scripts are run by the course account instead of the main account that runs the servers. This ensure that faulty test scripts can only cause harm to the projects made for that course, while protecting all other courses and users on the VM. Also note that the primary group of the course account should be the course group, since the group permission allows the course account to execute tests in the corresponding directory. Primary group can be set with the command:
-
-```
-sudo usermod -g group user
-```
-
-Each testing account also needs a copy of `testall.sh` in its home directory for execution, which can be copied from the file `encourse/server/src/main/bash/testall.sh` in this repository. In order for the main account to access the testing accounts through sudo, the following line should be added in `/etc/sudoers`:
-
-```
-reed226 ALL=({courseID}-account) NOPASSWD: /home/{courseID}-account/testall.sh
-```
-
-Where `{courseID}` is the course that the testing account is made for. Then, as added security to ensure that a testall cannot claim all available pids, each testing account should be limitted to about 50 processes, which can be set by adding the following line in `/etc/security/limits.conf`:
-
-```
-{courseID}-account hard nproc 50
-```
-
-With this, testing accounts should be properly setup for running the application.
 
 ## Setting up the Database
 
