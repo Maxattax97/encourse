@@ -702,7 +702,7 @@ public class ReadController {
     @RequestMapping(value = "/source", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getSource(@RequestParam(name = "projectID") String projectID,
                                                      @RequestParam(name = "userName") String userName,
-                                                     @RequestParam(name = "startHash") String startHash,
+                                                     @RequestParam(name = "startHash", required = false) String startHash,
                                                      @RequestParam(name = "endHash") String endHash,
                                                      @RequestParam(name = "file", required = false) String file) {
         String sourceFile;
