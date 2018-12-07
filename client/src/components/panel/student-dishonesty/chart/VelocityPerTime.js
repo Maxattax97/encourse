@@ -1,6 +1,16 @@
 
 import React, { Component } from 'react'
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
+import {
+    ScatterChart,
+    Scatter,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Label,
+    ResponsiveContainer,
+    LineChart, Legend, Line
+} from 'recharts'
 import moment from 'moment'
 import { connect } from 'react-redux'
 
@@ -93,22 +103,21 @@ class VelocityPerTime extends Component {
                     title="Amount of progress made per day"
                 >
                     <ResponsiveContainer width="100%" height="100%">
-                        <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
-                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Time Spent</text>
-                            <CartesianGrid/>
+                        <LineChart className="chart" width={730} height={500} data={this.state.formattedData}
+                                   margin={{ top: 20, right: 35, left: 20, bottom: 20 }} syncId="date">
+                            <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Student Progress Over Time</text>
                             <XAxis dataKey="date" type="number" domain={['dataMin', 'dataMax']} tickFormatter={this.dateFormatter}>
-                                <Label offset={-15} position="insideBottom">
-                            Date
-                                </Label>
+                                <Label value="Date" position="bottom" />
                             </XAxis>
-                            <YAxis dataKey="ppts" type="number">
+                            <YAxis domain={[0, 100]}>
                                 <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
-                            Progress per Time Spent
+                                    % Completion
                                 </Label>
                             </YAxis>
-                            <Tooltip formatter={this.customDateFormatter}/>
-                            <Scatter type="number" fill="#8884d8"/>
-                        </ScatterChart>
+                            <Tooltip labelFormatter={this.dateFormatter}/>
+                            <Legend verticalAlign="top"/>
+                            <Line type="monotone" dataKey="progress" stroke="#0057A7CC" />
+                        </LineChart>
                     </ResponsiveContainer>
                 </div>
                 :

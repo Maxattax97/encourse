@@ -35,7 +35,6 @@ class CommitHistoryHistogram extends Component {
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={this.props.chart.data} margin={{top: 40, right: 35, left: 20, bottom: 30}} syncId="date">
                         <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Commit Frequency</text>
-                        <CartesianGrid/>
                         <XAxis dataKey="date" tickFormatter={this.dateFormatter}>
                             <Label offset={-15} position="insideBottom">
                                 Commits
