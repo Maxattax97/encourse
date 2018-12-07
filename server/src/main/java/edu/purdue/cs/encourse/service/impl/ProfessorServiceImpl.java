@@ -727,7 +727,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
             catch(Exception e) {
                 code = -6;
-                System.out.println("\n\nException at historic testall\n\n");
+                System.out.println("\nException at testall\n");
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             }
         }
@@ -879,6 +879,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
             catch(Exception e) {
                 code = -6;
+                System.out.println("\nException at historic testall\n");
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             }
         }

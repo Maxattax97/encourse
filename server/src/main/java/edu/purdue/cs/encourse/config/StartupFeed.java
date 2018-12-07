@@ -221,7 +221,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
         professorService.addTestScriptToSuite(shell.getProjectID(), "test_cd1", "Part 2");
         professorService.addTestScript(shell.getProjectID(), "test_cd2", false, 0.5);
         professorService.addTestScriptToSuite(shell.getProjectID(), "test_cd2", "cd");
-        professorService.addTestScriptToSuite(shell.getProjectID(), "test_cd1", "Part 2");
+        professorService.addTestScriptToSuite(shell.getProjectID(), "test_cd2", "Part 2");
         professorService.addTestScript(shell.getProjectID(), "test_cd3", false, 0.5);
         professorService.addTestScriptToSuite(shell.getProjectID(), "test_cd3", "cd");
         professorService.addTestScriptToSuite(shell.getProjectID(), "test_cd3", "Part 2");
