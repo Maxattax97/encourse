@@ -187,16 +187,18 @@ public class ReadController {
                 List<Integer> arr = new ArrayList<>(new HashSet<>(filters.get(sortName)));
                 Collections.sort(arr);
                 filters.replace(sortName, arr);
+            }
 
+            for (String sortName: filters.keySet()) {
                 if (options.keySet().contains(sortName)) {
-                    if (options.get(sortName)[0] < min) {
-                        options.get(sortName)[0] = min;
+                    if (options.get(sortName)[0] < filters.get(sortName).get(0)) {
+                        options.get(sortName)[0] = filters.get(sortName).get(0);
                     }
-                    if (options.get(sortName)[1] > max) {
-                        options.get(sortName)[1] = max;
+                    if (options.get(sortName)[1] > filters.get(sortName).get(filters.get(sortName).size()-1)) {
+                        options.get(sortName)[1] = filters.get(sortName).get(filters.get(sortName).size()-1);
                     }
                     jsonValues.removeIf(i -> ((Number) ((TreeMap) i.get(sortName)).get(projectID)).doubleValue() > options.get(sortName)[1] ||
-                                             ((Number) ((TreeMap) i.get(sortName)).get(projectID)).doubleValue() < options.get(sortName)[0]);
+                            ((Number) ((TreeMap) i.get(sortName)).get(projectID)).doubleValue() < options.get(sortName)[0]);
                 }
             }
         }
@@ -698,7 +700,7 @@ public class ReadController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-    @RequestMapping(value = "/suites", method = RequestMethod.GET)
+    @RequestMapping(value = "/suitesData", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getSuiteData(@RequestParam(name = "projectID") String projectID,
                                                         @RequestParam(name = "userName") String userName) {
         JSONArray json = courseService.getSuitesData(userName, projectID);

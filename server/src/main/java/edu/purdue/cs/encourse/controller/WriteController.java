@@ -259,7 +259,6 @@ public class WriteController {
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(body);
             for (Object k: json.keySet()) {
-                System.out.println("KEY: " + k);
                 String key = (String)k;
                 JSONObject info = (JSONObject) json.get(key);
                 String testName = (String) info.get("testName");
