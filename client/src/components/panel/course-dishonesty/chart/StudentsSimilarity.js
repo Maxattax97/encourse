@@ -1,54 +1,62 @@
 import React, { Component } from 'react' 
 import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, Label, ResponsiveContainer } from 'recharts'
 import { connect } from 'react-redux'
-import CustomTooltipContent from './CustomTooltipContent';
 
-import {Chart, LoadingIcon} from '../../../Helpers'
+import {LoadingIcon} from '../../../Helpers'
 import {
-	retrieveStudentsSimilarity
-} from "../../../../redux/retrievals/course"
-import {getStudentsSimilarity} from "../../../../redux/state-peekers/course"
-import {getCurrentProject} from "../../../../redux/state-peekers/projects"
+    retrieveStudentsSimilarity
+} from '../../../../redux/retrievals/course'
+import {getStudentsSimilarity} from '../../../../redux/state-peekers/course'
+import {getCurrentProject} from '../../../../redux/state-peekers/projects'
 
 class StudentsSimilarity extends Component {
-
-	componentDidMount() {
-		if (this.props.project)
-			retrieveStudentsSimilarity(this.props.project)
-	}
-
-	componentDidUpdate = (prevProps) => {
-		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
-		    retrieveStudentsSimilarity(this.props.project)
-	}
-
+    
+    componentDidMount() {
+        if (this.props.project)
+            retrieveStudentsSimilarity(this.props.project)
+    }
+    
+    componentDidUpdate = (prevProps) => {
+        if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
+            retrieveStudentsSimilarity(this.props.project)
+    }
+    
     render() {
+        const {chart} = this.props
+        
+        if (chart.loading) {
+            return (
+            <div className='chart-container loading' title={ this.props.title ? this.props.title : null}>
+            <LoadingIcon/>
+            </div>
+            )
+        }
+        
+        const average = (chart.data.reduce((sum, item) => sum + item.similarity, 0) / chart.data.length).toFixed(0)
         return (
-	        <Chart
-		        chart={this.props.chart}
-		        title='Histogram of all students in the course grouped by the percentage of tests they are passing (progress).'
-	        >
-		        <ResponsiveContainer width="100%" height="100%">
-			        <ScatterChart
-				        data={this.props.chart.data}
-				        margin={{top: 5, right: 30, left: 30, bottom: 35}}
-				        barCategoryGap={0}
-			        >
-				        <XAxis dataKey="similarity_bin" type="number">
-					        <Label offset={-10} position="insideBottom">
-						        Identical lines of code
-					        </Label>
-				        </XAxis>
-				        <YAxis dataKey="height" type="number">
-					        <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
-						        Count
-					        </Label>
-				        </YAxis>
-				        <Tooltip content={<CustomTooltipContent />} />
-				        <Scatter dataKey="height" fill="#0057A7CC"/>
-			        </ScatterChart>
-		        </ResponsiveContainer>
-            </Chart>
+            <div
+                title='Histogram of all students in the course grouped by the percentage of tests they are passing (progress).'
+                style={{'padding': '10px'}}
+            >
+                <table>
+                    <tbody>
+                        {chart.data.reverse().slice(0, 10).map((item, index)=>{
+                            return(
+                                <tr key={item.user1 + ' ' + item.user2}>
+                                    <td style={{'padding': '3px'}}>{item.user1}</td>
+                                    <td style={{'padding': '3px'}}>{item.user2}</td>
+                                    <td style={{'padding': '3px'}}>{item.similarity}</td>
+                                </tr>
+                            )
+                        })}
+                        <tr>
+                            <td style={{'padding': '3px'}}>Average</td>
+                            <td style={{'padding': '3px'}}></td>
+                            <td style={{'padding': '3px'}}>{average}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         )
     }
 }
