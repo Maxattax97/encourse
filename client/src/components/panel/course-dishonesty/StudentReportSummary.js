@@ -55,7 +55,7 @@ class StudentReportSummary extends Component {
                             bar <= .67 ?
                                 'Low'
                                 : bar <= .83 ?
-                                'Medium'
+                          -      'Medium'
                                 : 'High'
                         }
                     </h6>

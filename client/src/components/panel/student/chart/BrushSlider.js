@@ -17,7 +17,7 @@ const BrushSlider = (props) => {
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chart.data} syncId="date" margin={{top: 0, right: 60, left: 60, bottom: 0}}>
                         <Line style={{'display': 'none'}} dataKey="date" />
-                        <Brush dataKey="date" height={60} stroke="#8884d8" tickFormatter={dateFormatter} x={60} y={20}/>
+                        <Brush dataKey="date" height={60} stroke="#008000" tickFormatter={dateFormatter} x={60} y={20}/>
                     </LineChart>
                 </ResponsiveContainer>
             </Chart>
