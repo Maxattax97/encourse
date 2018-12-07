@@ -746,6 +746,9 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
             catch(Exception e) {
                 code = -6;
+                project.setOperationProgress(1.0 * count / projects.size());
+                project.setOperationTime((System.currentTimeMillis() - start) / 1000);
+                projectRepository.save(project);
                 System.out.println("\nException at testall\n");
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             }
