@@ -23,6 +23,8 @@ export const getStudentsSimilarity = createPeeker('studentsSimilarity')
 
 export const getTeachingAssistants = createPeeker('teachingAssistants')
 
+export const getDishonestyReport = createPeeker('dishonestyReport')
+
 export function getCurrentCourseId(state) {
 	return state.course && state.course.currentCourseId ? state.course.currentCourseId : defaultCourse
 }

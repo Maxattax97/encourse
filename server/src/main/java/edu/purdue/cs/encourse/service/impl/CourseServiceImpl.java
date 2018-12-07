@@ -705,7 +705,7 @@ public class CourseServiceImpl implements CourseService {
         if (!helperService.getDebug() && json != null) {
             return json;
         }
-        String command = helperService.getPythonCommand() + " gitlist " + commitLogFile + " " + userName;
+        String command = helperService.getPythonCommand() + " gitlist " + commitLogFile;
         return helperService.runPython(command);
     }
 

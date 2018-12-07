@@ -2,7 +2,7 @@ from API import *
 import copy
 
 
-def jsonify(gitlogs, student_id=None):
+def jsonify(gitlogs):
     """ Converts git log data json formatted for the /commitList endpoint
 
     Description
@@ -45,19 +45,14 @@ def jsonify(gitlogs, student_id=None):
             daily_dict["time_spent"] = log.estimate_time(commits)
             student_days.append(daily_dict)
         git_dict[student] = student_days
-    # TODO: Short circuit if student is defined and his or her data is parsed
-    if student_id:
-        return json.dumps(git_dict[student_id])
     return json.dumps(git_dict)
 
 
-def hash_list(parser, student_id=None):
-    if student_id:
-        return json.dumps({student_id: create_entries(parser.student_log[student_id])})
+def hash_list(parser):
     students = {}
     for student in parser.student_log:
         log = parser.student_log[student]
-        students[student_id] = create_entries(log)
+        students[student] = create_entries(log)
     return json.dumps(students)
 
 
@@ -77,9 +72,8 @@ def create_entries(log, max_changes=None):
 
 
 def jsonprint(args):
-    student_id = args.name
     commit_data_file = args.logfile
     parser = GitLog.GitParser(commit_data_file)
 
-    api_json = hash_list(parser, student_id=student_id)
+    api_json = hash_list(parser)
     print(api_json)

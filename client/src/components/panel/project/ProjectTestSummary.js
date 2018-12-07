@@ -42,7 +42,7 @@ class ProjectTestSummary extends Component {
 		return (
 		    <SelectableCardSummary
                 type='testscripts'
-                values={this.props.testScripts}
+                values={this.props.testScripts.data}
                 render={this.renderPreview}
                 onClick={this.clickTestScriptCard}
             />

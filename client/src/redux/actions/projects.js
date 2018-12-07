@@ -50,6 +50,10 @@ export const getTestSuites = genericDispatch(
     class_type, 'GET_TEST_SUITES', 'GET'
 )
 
+export const getSuiteGrades = genericDispatch(
+    class_type, 'GET_SUITE_GRADES', 'GET'
+)
+
 export const getOperation = genericDispatch(
     class_type, 'GET_OPERATION', 'GET'
 )

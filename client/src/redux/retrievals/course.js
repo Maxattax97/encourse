@@ -3,11 +3,11 @@ import store from "../store"
 import {
     getClassProgress,
     getClassProgressAnon,
-    getClassStatistics, getSectionsData, getSimilarityPlot,
+    getClassStatistics, getDishonestyReport, getSectionsData, getSimilarityPlot,
     getStudentPreviews, getTestBarGraph,
     getTestBarGraphAnon
 } from '../actions'
-import {api_v1, projectID_v1, semester_v1, courseID_v1, size_v1, anon_v1, userList_v1} from './retrieval-utils'
+import {api_v1, projectID_v1, semester_v1, courseID_v1, size_v1, anon_v1, userList_v1, page_v1} from './retrieval-utils'
 import {getTeachingAssistants} from '../actions/course'
 
 export function retrieveAllStudents(project, courseID, semester, body = { size: 200 }) {
@@ -52,4 +52,8 @@ export function retrieveAllTeachingAssistants(courseID, semester) {
 
 export function retrieveAllSections(courseID, semester) {
     store.dispatch(getSectionsData(`${api_v1}sectionsData?${courseID_v1(courseID)}&${semester_v1(semester)}`))
+}
+
+export function retrieveDishonestyReport(project, page = 1, size = 200) {
+    store.dispatch(getDishonestyReport(`${api_v1}classCheating?${projectID_v1(project)}&${page_v1(page)}&${size_v1(size)}`))
 }

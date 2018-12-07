@@ -137,28 +137,19 @@ function formatCommitHistory(udata, extra, state) {
 	if(!udata)
 		return {}
 
-	if(!udata.content)
-		return {
-			...udata,
-			content: {}
-		}
-
-	let content = state.commitHistory && state.commitHistory.data.content ? [...state.commitHistory.data.content] : []
+	let content = state.commitHistory && state.commitHistory.data ? [...state.commitHistory.data] : []
 
 	let contains = false
 	for(let value of content) {
-		if(value.date === udata.content[0].date) {
+		if(value.date === udata[0].date) {
 			contains = true
 			break
 		}
 	}
 	if(!contains)
-		content = content.concat(udata.content)
+		content = content.concat(udata)
 
-	return {
-		...udata,
-		content: content
-	}
+	return content
 }
 
 function updateCommitsPage(state, action) {
@@ -193,7 +184,7 @@ export default function student(state = {}, action) {
     case 'GET_STATISTICS':
         return forwardData(state, action, 'stats', sortStatistics)
     case 'GET_COMMIT_HISTORY':
-        return forwardData(state, action, 'commitHistory', formatCommitHistory)
+        return forwardData(state, action, 'commitHistory', formatCommitHistory, true)
     case 'GET_PROGRESS_PER_TIME':
         return getData(state, action, 'getProgressPerTime')
     case 'GET_PROGRESS_PER_COMMIT':
