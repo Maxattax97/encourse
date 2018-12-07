@@ -41,7 +41,7 @@ def jsonify(log):
         new_data.append(new_bar)
 
     # Replace the counts for each date with actual data
-    commits = log.commits_by_day();
+    commits = log.commits_by_day()
     for day in commits:
         count = len(commits[day])
         for e in new_data:
