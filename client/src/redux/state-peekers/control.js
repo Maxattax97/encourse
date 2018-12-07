@@ -5,11 +5,13 @@ export function getAllSelected(state, type) {
 const selectedIfPresent = (selected) => {
 	const out = (id) => selected[id]
 	out.explict = selected
+	out.selectedAll = false
 	return out
 }
 const selectedIfNotPresent = (selected) => {
 	const out = (id) => !selected[id]
 	out.explict = selected
+	out.selectedAll = true
 	return out
 }
 
