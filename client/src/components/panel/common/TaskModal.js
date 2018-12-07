@@ -70,10 +70,10 @@ class CourseModal extends Component {
                     </div>
 					<div className="student-preview-progress">
 						<div className="progress-bar">
-							<div style={{width: (this.props.task.progress + '%')}} />
+							<div style={{width: ((this.props.task.progress * 100) + '%')}} />
 						</div>
 						<h6 className="progress-text">
-							{ this.props.task.estimated_time_remaining }
+							{ this.props.task.estimated_time_remaining }{this.props.task.estimated_time_remaining ? 's left' : ''}
 						</h6>
 					</div>
 				</Modal>

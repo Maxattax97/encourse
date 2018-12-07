@@ -13,7 +13,6 @@ import {
 import ActionNavigation from '../navigation/ActionNavigation'
 import {StudentCharts, StudentProjectInfo} from './student'
 import StudentChartSlider from './student/chart/BrushSlider'
-// import {retrieveStudent} from "../../redux/retrievals/student"
 import {getCurrentStudent} from "../../redux/state-peekers/student"
 import {getCurrentProject} from "../../redux/state-peekers/projects"
 import {getCurrentCourseId, getCurrentSemesterId} from "../../redux/state-peekers/course"

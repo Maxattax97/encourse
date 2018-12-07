@@ -9,6 +9,7 @@ import {getCurrentStudent} from '../../redux/state-peekers/student'
 import TaskModal from './common/TaskModal'
 import {getCurrentProject} from '../../redux/state-peekers/projects'
 import BackNavigation from '../navigation/BackNavigation'
+import ProjectNavigation from '../navigation/ProjectNavigation'
 
 class StudentDishonestyPanel extends Component {
 
@@ -32,6 +33,7 @@ class StudentDishonestyPanel extends Component {
             <div className="student-dishonesty-panel">
                 <div className='panel-left-nav'>
                     <BackNavigation/>
+                    <ProjectNavigation/>
                     <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
 
@@ -44,7 +46,7 @@ class StudentDishonestyPanel extends Component {
                         <h1 className='header'>'{ this.props.student ? this.props.student.last_name : 'Student' }' Dishonesty Report</h1>
                         <div className='h1 break-line header' />
 
-                        <h3 className='header'>Student Charts Summary</h3>
+                        <h3 className='header'>Charts</h3>
                         <StudentDishonestyCharts/>
                     </div>
                 </div>

@@ -1,20 +1,18 @@
 import React, { Component } from 'react'
-import {Card, Summary} from '../../Helpers'
+import {ChartList} from '../../Helpers'
 import VelocityPerCommit from "./chart/VelocityPerCommit"
 import VelocityPerTime from "./chart/VelocityPerTime"
+import PercentileRadar from './chart/PercentileRadar'
 
 class StudentDishonestyCharts extends Component {
 
 	render() {
 		return (
-			<Summary columns={ 2 } className='charts'>
-				<Card>
-					<VelocityPerCommit/>
-				</Card>
-				<Card>
-					<VelocityPerTime/>
-				</Card>
-			</Summary>
+		    <ChartList>
+                <VelocityPerCommit/>
+                <VelocityPerTime/>
+                <PercentileRadar/>
+            </ChartList>
 		)
 	}
 
