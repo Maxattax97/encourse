@@ -79,9 +79,9 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             Project malloc;
             Project shell;
             if(ConfigurationManager.getInstance().testing) {
-                section = adminService.addSection("1001", "Fall2018", "testing", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
-                adminService.assignProfessorToCourse("grr", "testing", "Fall2018");
-                adminService.assignTeachingAssistantToCourse("reed226-t", "testing", "Fall2018");
+                section = adminService.addSection("1001", "Fall2018", "testing101", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
+                adminService.assignProfessorToCourse("grr", "testing101", "Fall2018");
+                adminService.assignTeachingAssistantToCourse("reed226-t", "testing101", "Fall2018");
                 professorService.assignTeachingAssistantToSection("reed226-t", section.getSectionID());
 
                 adminService.addAccount("101", "reed226", "William", "Reed", Account.Role_Names.STUDENT, "J", "reed226@purdue.edu");
@@ -106,9 +106,9 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 professorService.assignTeachingAssistantToStudentInSection("reed226-t", "buckmast", section.getSectionID());
                 professorService.assignTeachingAssistantToStudentInSection("reed226-t", "montgo38", section.getSectionID());
 
-                courseService.setSectionRemotePaths("Fall2018", "testing", "/homes/cs252/sourcecontrol/work_2017Fall");
-                courseService.setDirectory("Fall2018", "testing");
-                shell = professorService.addProject("testing", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
+                courseService.setSectionRemotePaths("Fall2018", "testing101", "/homes/cs252/sourcecontrol/work_2017Fall");
+                courseService.setDirectory("Fall2018", "testing101");
+                shell = professorService.addProject("testing101", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
 
             }
             else {
