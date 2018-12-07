@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { defaultCourse, defaultSemester } from '../defaults'
 import { history } from '../redux/store'
-import { setModalState, getAccount, setCurrentCourse, setCurrentSemester } from '../redux/actions'
+import { setModalState, getAccount, setCurrentCourse, setCurrentSemester, clearCurrentCourse, clearCurrentSemester } from '../redux/actions'
 import { getCurrentCourseId, getCurrentSemesterId } from '../redux/state-peekers/course'
 import url from '../server'
 import '../styles/css/base.css'
@@ -30,18 +30,26 @@ class Main extends Component {
     }
 
     componentDidMount = () => {
-        const course = this.props.match.params.courseID ? this.props.match.params.courseID : defaultCourse
-        const semester = this.props.match.params.semesterID ? this.props.match.params.semesterID : defaultSemester
+
+        this.props.clearCurrentCourse()
+        this.props.clearCurrentSemester()
+
+        let course = this.props.match.params.courseID ? this.props.match.params.courseID : defaultCourse
+        let semester = this.props.match.params.semesterID ? this.props.match.params.semesterID : defaultSemester
+        console.log(course, semester)
         const page = this.props.path.substring(this.props.path.lastIndexOf('/') + 1)
 
-        if(/^((Fall)|(Spring)|(Summer))2[0-9][0-9][0-9]$/.test(semester)) {
-            this.props.setCurrentSemester(semester)
-        } 
+        if(!/^((Fall)|(Spring)|(Summer))2[0-9][0-9][0-9]$/.test(semester)) {
+           semester = defaultSemester
+        }
 
-        if(/^[a-z]+[0-9]{3,}$/.test(course)) {
-            this.props.setCurrentCourse(course)
-        } 
-
+        if(!/^[a-z]+[0-9]{3,}$/.test(course)) {
+            course = defaultCourse
+        }
+            
+        this.props.setCurrentSemester(semester)
+        this.props.setCurrentCourse(course)
+        
         history.push(`/${course}/${semester}/${page}`)
     
         if(!this.props.account) {
@@ -120,6 +128,8 @@ const mapDispatchToProps = (dispatch) => {
         getAccount: (url, headers, body) => dispatch(getAccount(url, headers, body)),
         setCurrentCourse: (id) => dispatch(setCurrentCourse(id)),
         setCurrentSemester: (id) => dispatch(setCurrentSemester(id)),
+        clearCurrentCourse: () => dispatch(clearCurrentCourse()),
+        clearCurrentSemester: () => dispatch(clearCurrentSemester()),
     }
 }
 

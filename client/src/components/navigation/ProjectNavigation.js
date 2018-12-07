@@ -11,7 +11,12 @@ import {retrieveAllProjects} from '../../redux/retrievals/projects'
 class ProjectNavigation extends Component {
 
     componentDidMount = () => {
-        if(!this.props.projects.length)
+        if(!this.props.projects.length && this.props.currentCourseId && this.props.currentSemesterId)
+            retrieveAllProjects(this.props.currentCourseId, this.props.currentSemesterId)
+    }
+
+    componentDidUpdate = (prevProps) => {
+        if(this.props.currentCourseId !== prevProps.currentCourseId || this.props.currentSemesterId !== prevProps.currentSemesterId)
             retrieveAllProjects(this.props.currentCourseId, this.props.currentSemesterId)
     }
 
