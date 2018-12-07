@@ -8,8 +8,9 @@
   }
 }
 
-div.action:not(.card):hover {
-  background: rgba(#1f1e1c, 12 / 255.0)
+div.action:not(.card):hover *{
+  text-decoration: underline;
+  //background: rgba(#1f1e1c, 12 / 255.0)
   /*h1, h2, h3, h4, h5, h6 {
     color: $hover-color;
     padding-left: 3px;

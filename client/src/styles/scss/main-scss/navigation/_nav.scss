@@ -7,14 +7,13 @@
 }
 
 .back-nav {
-  svg {
-    @include set-rem-safe(margin-top, 1.25rem);
-    float: right;
-  }
-
-  h3 {
+  float:right;
+  width: 100%;
+  min-width: 180px;
+  max-width: 240px;
+  h1 {
     @include set-rem-safe(margin-top, 1.35rem);
-    float:right;
+    float:left;
   }
 }
 
