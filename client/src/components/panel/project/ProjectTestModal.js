@@ -2,6 +2,10 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import url from '../../../server'
 import { defaultCourse } from '../../../defaults'
+
+
+import {getCurrentProject} from '../../../redux/state-peekers/projects'
+import {addTest} from '../../../redux/actions'
 import {CheckmarkIcon, Modal} from '../../Helpers'
 
 class ProjectTestModal extends Component {
@@ -23,14 +27,27 @@ class ProjectTestModal extends Component {
 		this.setState({ [event.target.name]: event.target.value })
 	};
 
+	addFile = (event) => {
+        this.setState({ file: this.refs.fileUploader.files[0]})
+    }
+
 	saveSettings = () => {
-		if(this.state.name === defaultCourse) {
-			this.props.setDirectory(`${url}`)
+		let json = {
+			[this.state.file.name]: {
+				testName: this.state.name,
+				suite: this.state.suite,
+				isHidden: this.state.visibility !== 'Visible',
+				points: this.state.points,
+				projectID: this.props.project.id
+			}
 		}
-		for(let project of this.props.projects) {
-			// console.log(project)
-			this.props.modifyProject(`${url}/api/modify/project?projectID=${project.id}&field=testRate&value=${this.state.interval}`)
-		}
+
+		if(this.state.file) {
+            let form = new FormData()
+            form.append('json', JSON.stringify(json))
+            form.append('file', this.state.file)
+            this.props.addTest(`${url}/api/add/tests`, {}, form)
+        }
 	};
 
 	render() {
@@ -42,7 +59,7 @@ class ProjectTestModal extends Component {
 					<h4 className="header">
 						Name
 					</h4>
-					<input type="text" className="h3-size" value={this.props.name} name="name" autoComplete="off"/>
+					<input type="text" className="h3-size" value={this.state.name} onChange={this.onChange} name="name" autoComplete="off"/>
                     <div>
                         <div className="h5 break-line"/>
                         <h4 className="header">
@@ -76,7 +93,7 @@ class ProjectTestModal extends Component {
 						Upload
 					</h4>
                     <input type="text" className="h3-size" value={this.state.filename} onClick={ () => this.refs.fileUploader.click()}/>
-                    <input type="file" style={{display:'none'}} ref="fileUploader" onChange={ (e) => console.log(e) }/>
+                    <input type="file" style={{display:'none'}} ref="fileUploader" onChange={ this.addFile }/>
 					<div className="modal-buttons float-height">
 						<div className="svg-icon action" onClick={ this.saveSettings }>
 							<CheckmarkIcon/>
@@ -91,13 +108,15 @@ class ProjectTestModal extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-	    suites: ['Part 1']
+		suites: ['Part 1'],
+		project: getCurrentProject(state),
 	}
 }
 
 const mapDispatchToProps = (dispatch) => {
-	return {
-	}
+    return {
+        addTest: (url, headers, body) => dispatch(addTest(url, headers, body)),
+    }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectTestModal)
