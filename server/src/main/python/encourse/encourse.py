@@ -70,7 +70,6 @@ def setup_gitlist(parser):
     parser.add_argument(
         "logfile", type=argparse.FileType("r"), help="path to commit log file"
     )
-    parser.add_argument("name", help="user name")
     parser.set_defaults(func=API.gitlist.jsonprint)
 
 
