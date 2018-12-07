@@ -590,9 +590,7 @@ client/src
 │       │   └── StudentProjectInfoo.js
 │       ├── student-dishonesty
 │       │   ├── chart
-│       │   │   ├── StudentVelocityPerCommit.js
-│       │   │   └── StudentVelocityPerTime.js
-│       │   └── StudentDishonestyCharts.js
+│       │   │   ├── VelocityPerCommit     │   │   └── VelocityPerTime     │   └── StudentDishonestyCharts.js
 │       ├── StudentDishonestyPanel.js
 │       └── StudentPanel.js
 ├── defaults.js

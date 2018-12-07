@@ -64,8 +64,8 @@ class CompletionProgress extends Component {
 								Students
 							</Label>
 						</YAxis>
-						<Tooltip content={<CustomTooltipContent />} />
-						<Bar dataKey="count" fill="#0057A7CC"/>
+						<Tooltip content={<CustomTooltipContent />} animationDuration={100}/>
+						<Bar dataKey="count" fill="#0057A7CC" isAnimationActive={false}/>
 					</ComposedChart>
 				</ResponsiveContainer>
 			</Chart>

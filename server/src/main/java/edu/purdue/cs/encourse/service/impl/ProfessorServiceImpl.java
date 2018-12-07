@@ -727,7 +727,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
             catch(Exception e) {
                 code = -6;
-                System.out.println("\n\nException at historic testall\n\n");
+                System.out.println("\nException at testall\n");
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             }
         }
@@ -873,12 +873,14 @@ public class ProfessorServiceImpl implements ProfessorService {
                     if(hiddenGrade > p.getBestHiddenGrade()) {
                         helperService.updateTestResults(hiddenResult, p.getStudentID(), p.getProjectID(), true);
                     }
+                    p = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(p.getProjectID(), p.getStudentID(), "testall");
                 }
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
                 reader.close();
             }
             catch(Exception e) {
                 code = -6;
+                System.out.println("\nException at historic testall\n");
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             }
         }

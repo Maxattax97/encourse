@@ -26,8 +26,6 @@ class StudentReportSummary extends Component {
     }
 
 	renderPreview = (student) => {
-	    const bar = Math.min(Math.max(0, student.score + 3) / 6.0, 1.0)
-
 		return (
 			<div>
 				<Title>
@@ -35,16 +33,18 @@ class StudentReportSummary extends Component {
 				</Title>
 				<div className="h4 break-line header" />
 				<div className="preview-content">
+                    <h5>Rate: { student.metrics.rate.percentile.toFixed(2) }</h5>
+                    <h5>Velocity: {student.metrics.veloctiy.percentile.toFixed(2) }</h5>
 					<h5>Score: { student.score.toFixed(2) }</h5>
 				</div>
                 <div className="student-preview-progress">
                     <div className="progress-bar">
                         <div style={
                             {
-                                width: (bar * 100.0) + '%',
-                                background: bar <= .67 ?
+                                width: (student.score * 100.0) + '%',
+                                background: student.score <= .75 ?
                                     '#4caf50'
-                                    : bar <= .83 ?
+                                    : student.score <= .9 ?
                                         '#FF7900'
                                         : '#FF2323'
                             }
@@ -52,10 +52,10 @@ class StudentReportSummary extends Component {
                     </div>
                     <h6 className="progress-text">
                         {
-                            bar <= .67 ?
+                            student.score <= .75 ?
                                 'Low'
-                                : bar <= .83 ?
-                          -      'Medium'
+                                : student.score <= .9 ?
+                                'Medium'
                                 : 'High'
                         }
                     </h6>

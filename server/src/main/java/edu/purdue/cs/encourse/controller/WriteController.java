@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
@@ -241,25 +244,44 @@ public class WriteController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    @RequestMapping(value = "/add/zip", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
+    @RequestMapping(value = "/add/tests", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file,
+                                                      @RequestParam("json") String body) {
+
         String fileName = fileService.storeFile(file);
 
         if (fileName == null) {
             return new ResponseEntity<>("{\"errors\": \"Could not save file " + file.getName() + "\"}", HttpStatus.NOT_MODIFIED);
         }
 
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/")
-                .path(fileName)
-                .toUriString();
+        List<JSONObject> successes = new ArrayList<>();
+        if (file.getOriginalFilename().contains("zip")) {
+            // TODO
+        } else {
+            String filePath = ServletUriComponentsBuilder.fromPath(fileName).toUriString();
+            String contents = "";
+            try {
+                File saved = new File(filePath);
+                BufferedReader br = new BufferedReader(new FileReader(saved));
 
-        JSONObject json = new JSONObject();
-        json.put("fileName", fileName);
-        json.put("fileSize", file.getSize());
-        json.put("fileType", file.getContentType());
+                String line;
+                while ((line = br.readLine()) != null) {
+                    contents += line;
+                }
+            } catch (IOException e) {
+                System.out.println("Could not read file: " + e.getMessage());
+                return new ResponseEntity<>("{\"errors\": \"Could not read file " + fileName + "'s contents\"}", HttpStatus.NOT_MODIFIED);
+            }
 
-        return new ResponseEntity<>(json, HttpStatus.OK);
+            JSONObject json = new JSONObject();
+            json.put("fileName", fileName);
+            json.put("filePath", filePath);
+            json.put("fileSize", file.getSize());
+            json.put("fileType", file.getContentType());
+            successes.add(json);
+        }
+
+        return new ResponseEntity<>(successes, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")

@@ -1,3 +1,5 @@
+const createPeeker = (name) => (state) => state.projects && state.projects[name] ? state.projects[name] : { loading: true, data: [] }
+
 export function getProjects(state) {
 	return state.projects && state.projects.getClassProjectsData ? state.projects.getClassProjectsData : []
 }
@@ -14,3 +16,7 @@ export function getCurrentProject(state) {
 export function getTestScripts(state) {
 	return state.projects && state.projects.getTestScriptsData ? state.projects.getTestScriptsData : []
 }
+
+export const getTestSuites = createPeeker('getTestSuites')
+
+export const getOperation = createPeeker('getOperation')

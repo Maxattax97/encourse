@@ -10,14 +10,18 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -25,6 +29,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -48,6 +53,9 @@ public class ReadController {
 
     @Autowired
     private TeachingAssistantService taService;
+
+    @Autowired
+    private FileService fileService;
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
     @RequestMapping(value = "/studentsData", method = RequestMethod.POST)
@@ -612,7 +620,7 @@ public class ReadController {
                                                      @RequestParam(name = "userName") String userName,
                                                      @RequestParam(name = "startHash") String startHash,
                                                      @RequestParam(name = "endHash") String endHash,
-                                                     @RequestParam(name = "file") String file) {
+                                                     @RequestParam(name = "file", required = false) String file) {
         String sourceFile;
         if (hasPermissionOverAccount(userName)) {
             sourceFile = courseService.getSourceWithChanges(projectID, userName, startHash, endHash, file);
@@ -799,11 +807,11 @@ public class ReadController {
                 break;
             }
         }
-        if (returnJson == null || returnJson.getJsonObject() == null) {
+        if (returnJson == null || returnJson.getJsonArray() == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(returnJson.getJsonObject(), HttpStatus.OK);
+        return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
@@ -877,6 +885,34 @@ public class ReadController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public ResponseEntity<?> downloadFile(@RequestParam(name = "file") String fileName,
+                                          HttpServletRequest request) {
+
+        Resource resource = fileService.loadFileAsResource(fileName);
+
+        if (resource == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        String contentType = null;
+        try {
+            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException ex) {
+            System.out.println("Could not determine file type");
+        }
+
+        if(contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")

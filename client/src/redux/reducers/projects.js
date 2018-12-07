@@ -1,4 +1,4 @@
-import {getData} from "./reducer-utils"
+import {forwardData, getData, unknownAction} from './reducer-utils'
 
 function setCurrentProject(state, action) {
 	return Object.assign({}, state, {
@@ -115,32 +115,38 @@ function deleteProject(state, action) {
 	})
 }
 
+function formatTestSuites(udata) {
+    return udata.sort((a, b) => a.stat_name.localeCompare(b.stat_name))
+}
+
 export default function projects(state = {}, action) {
     if(action.class !== 'PROJECT')
         return state
 
     switch(action.type) {
-    case 'SET_CURRENT':
-        return setCurrentProject(state, action)
-    case 'TOGGLE_HIDDEN':
-        return toggleHidden(state, action)
-    case 'GET_ALL':
-        return getClassProjects(state, action)
-    case 'MODIFY':
-        return modifyProject(state, action)
-    case 'ADD':
-        return addProject(state, action)
-    case 'DELETE':
-        return deleteProject(state, action)
-    case 'ADD_TEST':
-		return getData(state, action, 'addTest')
-	case 'RUN_TEST_SUITE':
-		return getData(state, action, 'runTestSuite')
-	case 'GET_TEST_SCRIPTS':
-		return getData(state, action, 'getTestScripts')
-    default:
-	    return Object.assign({}, state, {
-		    reduxError: action
-	    })
+        case 'SET_CURRENT':
+            return setCurrentProject(state, action)
+        case 'TOGGLE_HIDDEN':
+            return toggleHidden(state, action)
+        case 'GET_ALL':
+            return getClassProjects(state, action)
+        case 'MODIFY':
+            return modifyProject(state, action)
+        case 'ADD':
+            return addProject(state, action)
+        case 'DELETE':
+            return deleteProject(state, action)
+        case 'ADD_TEST':
+            return getData(state, action, 'addTest')
+        case 'RUN_TEST_SUITE':
+            return getData(state, action, 'runTestSuite')
+        case 'GET_TEST_SCRIPTS':
+            return getData(state, action, 'getTestScripts')
+        case 'GET_TEST_SUITES':
+            return forwardData(state, action, 'getTestSuites', formatTestSuites)
+        case 'GET_OPERATION':
+            return forwardData(state, action, 'getOperation')
+        default:
+            return unknownAction(state, action)
     }
 }

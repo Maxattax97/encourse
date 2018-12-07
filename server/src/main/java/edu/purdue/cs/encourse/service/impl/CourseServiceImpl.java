@@ -324,14 +324,12 @@ public class CourseServiceImpl implements CourseService {
         List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdStudentID(projectID, student.getUserID());
         JSONArray suitesJSON = new JSONArray();
         for(StudentProject p : projects) {
+            if(p.getSuite().equals("testall")) {
+                continue;
+            }
             JSONObject suiteJSON = new JSONObject();
-            suiteJSON.put("suite_name", p.getSuite().toUpperCase());
-            suiteJSON.put("grade", p.getBestVisibleGrade());
-            suiteJSON.put("points", p.getBestVisiblePoints());
-            suiteJSON.put("total", p.getVisiblePointTotal());
-            suiteJSON.put("hiddenGrade", p.getBestHiddenGrade());
-            suiteJSON.put("hiddenPoints", p.getBestHiddenPoints());
-            suiteJSON.put("hiddenTotal", p.getHiddenPointTotal());
+            suiteJSON.put("stat_name", p.getSuite());
+            suiteJSON.put("stat_value", p.getBestVisibleGrade() + "/" + p.getVisiblePointTotal());
             suitesJSON.add(suiteJSON);
         }
         return suitesJSON;
@@ -488,7 +486,7 @@ public class CourseServiceImpl implements CourseService {
         if (!helperService.getDebug() && json != null) {
             return json;
         }
-        String command = helperService.getPythonCommand() + " identical " + helperService.getPythonPath() + diffsFile;
+        String command = helperService.getPythonCommand() + " identical "  + diffsFile;
         json = helperService.runPython(command);
         return json;
     }

@@ -51,7 +51,9 @@ public class FileServiceImpl implements FileService {
             Path targetLocation = fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            unzipFile(targetLocation.toString());
+            if (file.getOriginalFilename().contains("zip")) {
+                unzipFile(targetLocation.toString());
+            }
 
             return fileName;
         } catch (Exception e) {

@@ -11,6 +11,8 @@ class ProjectTestModal extends Component {
 
 		this.state = {
 			name: '',
+            suite: null,
+            points: 5,
             visibility: '',
             filename: '',
             file: null
@@ -40,7 +42,7 @@ class ProjectTestModal extends Component {
 					<h4 className="header">
 						Name
 					</h4>
-					<input type="text" className="h3-size" value={this.props.courseID} name="name" autoComplete="off"/>
+					<input type="text" className="h3-size" value={this.props.name} name="name" autoComplete="off"/>
                     {
                         this.props.suites.length ?
                             <div>
@@ -48,7 +50,7 @@ class ProjectTestModal extends Component {
                                 <h4 className="header">
                                     Test Suite
                                 </h4>
-                                <input type="text" className="h3-size" value={this.state.interval} onChange={this.onChange} name="visibility" list="test-suites" />
+                                <input type="text" className="h3-size" value={this.state.suite} onChange={this.onChange} name="suite" list="test-suites" />
                                 <datalist id="test-suites">
                                     {
                                         this.props.suites.map(suite =>
@@ -60,10 +62,15 @@ class ProjectTestModal extends Component {
                             : null
                     }
                     <div className="h5 break-line"/>
+                    <h4 className="header">
+                        Point Value
+                    </h4>
+                    <input type="number" className="h3-size" value={this.state.points} onChange={this.onChange} name="points" ref="interval"/>
+                    <div className="h5 break-line"/>
 					<h4 className="header">
 						Visibility
 					</h4>
-                    <input type="text" className="h3-size" value={this.state.interval} onChange={this.onChange} name="visibility" list="visibility" />
+                    <input type="text" className="h3-size" value={this.state.visibility} onChange={this.onChange} name="visibility" list="visibility" />
                     <datalist id="visibility">
                         <option value="Visible" />
                         <option value="Hidden" />
