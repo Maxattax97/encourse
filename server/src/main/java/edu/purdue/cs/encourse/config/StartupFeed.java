@@ -60,12 +60,12 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
         System.out.println("CONDITIONAL RAN");
         if (adminService.findAllUsers().isEmpty()) {
             adminService.addAccount("0", "grr", "Gustavo", "Rodriguez-Rivera", Account.Role_Names.PROFESSOR, "A", "grr@purdue.edu");
-            adminService.addAccount("1", "buckmast", "Jordan", "Buckmaster", Account.Role_Names.ADMIN, "M", "buckmast@purdue.edu");
-            adminService.addAccount("2", "kleclain", "Killian", "LeClainche", Account.Role_Names.ADMIN, "A", "kleclain@purdue.edu");
-            adminService.addAccount("3", "lee2363", "Jarett", "Lee", Account.Role_Names.ADMIN, "B", "lee2363@purdue.edu");
-            adminService.addAccount("4", "montgo38", "Shawn", "Montgomery", Account.Role_Names.ADMIN, "K", "montgo38@purdue.edu");
-            adminService.addAccount("5", "reed226", "William", "Reed", Account.Role_Names.TA, "J", "reed226@purdue.edu");
-            adminService.addAccount("6", "sullil96", "Ryan", "Sullivan", Account.Role_Names.ADMIN, "P", "sulli196@purdue.edu");
+            adminService.addAccount("1", "buckmast-a", "Jordan", "Buckmaster", Account.Role_Names.ADMIN, "M", "buckmast@purdue.edu");
+            adminService.addAccount("2", "kleclain-a", "Killian", "LeClainche", Account.Role_Names.ADMIN, "A", "kleclain@purdue.edu");
+            adminService.addAccount("3", "lee2363-a", "Jarett", "Lee", Account.Role_Names.ADMIN, "B", "lee2363@purdue.edu");
+            adminService.addAccount("4", "montgo38-a", "Shawn", "Montgomery", Account.Role_Names.ADMIN, "K", "montgo38@purdue.edu");
+            adminService.addAccount("5", "reed226-t", "William", "Reed", Account.Role_Names.TA, "J", "reed226@purdue.edu");
+            adminService.addAccount("6", "sullil96-a", "Ryan", "Sullivan", Account.Role_Names.ADMIN, "P", "sulli196@purdue.edu");
 
             adminService.addUser("grr", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "PROFESSOR", false, false, false, true);
             adminService.addUser("buckmast-a", "$2a$04$9c76evM3G9DGPy0SoSvA7uH567Raz6Tuv5vTeV/BxL.3gNSel1POK", "ADMIN", false, false, false, true);
@@ -76,12 +76,11 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             adminService.addUser("sullil96-a", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
 
             Section section;
-            Project malloc;
             Project shell;
             if(ConfigurationManager.getInstance().testing) {
-                section = adminService.addSection("1001", "Fall2018", "testing", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
-                adminService.assignProfessorToCourse("grr", "testing", "Fall2018");
-                adminService.assignTeachingAssistantToCourse("reed226-t", "testing", "Fall2018");
+                section = adminService.addSection("1001", "Fall2018", "testing101", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
+                adminService.assignProfessorToCourse("grr", "testing101", "Fall2018");
+                adminService.assignTeachingAssistantToCourse("reed226-t", "testing101", "Fall2018");
                 professorService.assignTeachingAssistantToSection("reed226-t", section.getSectionID());
 
                 adminService.addAccount("101", "reed226", "William", "Reed", Account.Role_Names.STUDENT, "J", "reed226@purdue.edu");
@@ -106,66 +105,92 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 professorService.assignTeachingAssistantToStudentInSection("reed226-t", "buckmast", section.getSectionID());
                 professorService.assignTeachingAssistantToStudentInSection("reed226-t", "montgo38", section.getSectionID());
 
-                courseService.setSectionRemotePaths("Fall2018", "testing", "/homes/cs252/sourcecontrol/work_2017Fall");
-                courseService.setDirectory("Fall2018", "testing");
-                shell = professorService.addProject("testing", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
+                courseService.setSectionRemotePaths("Fall2018", "testing101", "/homes/cs252/sourcecontrol/work_2017Fall");
+                courseService.setDirectory("Fall2018", "testing101");
+                shell = professorService.addProject("testing101", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
+                professorService.assignProject(shell.getProjectID());
 
-            }
-            else {
-                section = adminService.addSection("1001", "Fall2018", "cs252", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
-                adminService.assignProfessorToCourse("grr", "cs252", "Fall2018");
-                adminService.assignTeachingAssistantToCourse("reed226", "cs252", "Fall2018");
-                professorService.assignTeachingAssistantToSection("reed226", section.getSectionID());
+                //professorService.addTestScript(shell.getProjectID(), "test_redirect_input", false, 2);
+                professorService.addTestScript(shell.getProjectID(), "test_redirect_output", false, 2);
+                professorService.addTestScript(shell.getProjectID(), "test_redirect_error", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_redirect_error2", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_redirect_out_err", false, 2);
+                professorService.addTestScript(shell.getProjectID(), "test_redirect_multiple", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_append_output", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_pipes1", false, 2);
+                professorService.addTestScript(shell.getProjectID(), "test_pipes2", false, 2);
+                professorService.addTestScript(shell.getProjectID(), "test_pipes_redirect_out", false, 2);
+                professorService.addTestScript(shell.getProjectID(), "test_pipes_redirect_err", false, 2);
+                professorService.addTestScript(shell.getProjectID(), "test_background", false, 2);
+                //professorService.addTestScript(shell.getProjectID(), "test_zombie", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_printenv", false, 1);
+                //professorService.addTestScript(shell.getProjectID(), "test_setenv", false, 0.5);
+                professorService.addTestScript(shell.getProjectID(), "test_unsetenv", false, 0.5);
+                //professorService.addTestScript(shell.getProjectID(), "test_source", false, 2);
+                professorService.addTestScript(shell.getProjectID(), "test_cd1", false, 0.5);
+                professorService.addTestScript(shell.getProjectID(), "test_cd2", false, 0.5);
+                professorService.addTestScript(shell.getProjectID(), "test_cd3", false, 0.5);
+                //professorService.addTestScript(shell.getProjectID(), "test_cd4", false, 0.5);
+                professorService.addTestScript(shell.getProjectID(), "test_parsing1", false, 0.5);
+                professorService.addTestScript(shell.getProjectID(), "test_parsing2", false, 0.5);
+                //professorService.addTestScript(shell.getProjectID(), "test_quotes1", false, 1);
+                //professorService.addTestScript(shell.getProjectID(), "test_quotes2", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_escape", false, 2);
+                //professorService.addTestScript(shell.getProjectID(), "test_subshell", false, 10);
+                professorService.addTestScript(shell.getProjectID(), "test_env_expand1", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_env_expand2", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_env_var_shell", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_env_var_dollar", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_env_var_question", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_env_var_bang", false, 1);
+                //professorService.addTestScript(shell.getProjectID(), "test_env_var_uscore", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_wildcards1", false, 3);
+                professorService.addTestScript(shell.getProjectID(), "test_wildcards2", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_wildcards3", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_wildcards4", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_wildcards5", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_wildcards6", false, 1);
+                professorService.addTestScript(shell.getProjectID(), "test_wildcards7", false, 1);
+                //professorService.addTestScript(shell.getProjectID(), "test_tilde", false, 2);
+                //professorService.addTestScript(shell.getProjectID(), "test_robustness", false, 10);
+                professorService.runHistoricTestall(shell.getProjectID());
 
-                try {
-                    BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/students.txt"));
-                    String student = null;
-                    int count = 1;
-                    while ((student = fileReader.readLine()) != null && count <= ConfigurationManager.getInstance().limit) {
-                        if (student.equals("grr")) {
-                            continue;
-                        }
-                        //adminService.addAccount(Integer.toString(100 + count), student, "Student", Integer.toString(count),
-                        adminService.addAccount(Integer.toString(100 + count), student, "Student", student,
-                                Account.Role_Names.STUDENT, null, student + "@purdue.edu");
-                        adminService.registerStudentToSection(student, section.getSectionID());
-                        if (count == 5) {
-                            professorService.assignTeachingAssistantToAllStudentsInSection("reed226", section.getSectionID());
-                        }
-                        count++;
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                List<StudentProject> projects = studentProjectRepository.findByIdProjectID(shell.getProjectID());
+                for (StudentProject p : projects) {
+                    Student student = studentRepository.findByUserID(p.getStudentID());
+                    helperService.updateStudentInformation(p.getProjectID(), student.getUserName());
                 }
-
-                courseService.setSectionRemotePaths("Fall2018", "cs252", "/homes/cs252/sourcecontrol/work");
-                courseService.setDirectory("Fall2018", "cs252");
-                //Project malloc = professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/27/2018", "9/10/2018", 0);
-                shell = professorService.addProject("cs252", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
             }
-            //professorService.assignProject(malloc.getProjectID());
+            section = adminService.addSection("1001", "Fall2018", "cs252", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
+            adminService.assignProfessorToCourse("grr", "cs252", "Fall2018");
+            adminService.assignTeachingAssistantToCourse("reed226-t", "cs252", "Fall2018");
+            professorService.assignTeachingAssistantToSection("reed226-t", section.getSectionID());
+
+            try {
+                BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Fall2018/students.txt"));
+                String student = null;
+                int count = 1;
+                while ((student = fileReader.readLine()) != null && count <= ConfigurationManager.getInstance().limit) {
+                    if (student.equals("grr")) {
+                        continue;
+                    }
+                    //adminService.addAccount(Integer.toString(100 + count), student, "Student", Integer.toString(count),
+                    adminService.addAccount(Integer.toString(100 + count), student, "Student", student,
+                            Account.Role_Names.STUDENT, null, student + "@purdue.edu");
+                    adminService.registerStudentToSection(student, section.getSectionID());
+                    if (count == 5) {
+                        professorService.assignTeachingAssistantToAllStudentsInSection("reed226-t", section.getSectionID());
+                    }
+                    count++;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            courseService.setSectionRemotePaths("Fall2018", "cs252", "/homes/cs252/sourcecontrol/work");
+            courseService.setDirectory("Fall2018", "cs252");
+            //Project malloc = professorService.addProject("cs252", "Fall2018", "MyMalloc", "lab1-src", "8/27/2018", "9/10/2018", 0);
+            shell = professorService.addProject("cs252", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
             professorService.assignProject(shell.getProjectID());
-            /*professorService.uploadTestScript(malloc.getProjectID(), "Test1.sh",
-                    "#!/bin/bash\nif[[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 5);
-            professorService.uploadTestScript(malloc.getProjectID(), "Test2.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
-            professorService.uploadTestScript(malloc.getProjectID(), "Test3.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
-            professorService.uploadTestScript(malloc.getProjectID(), "Test4.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 10);
-            professorService.uploadTestScript(malloc.getProjectID(), "Test5.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", false, 20);
-            professorService.uploadTestScript(malloc.getProjectID(), "Test6.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 10);
-            professorService.uploadTestScript(malloc.getProjectID(), "Test7.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 20);
-            professorService.uploadTestScript(malloc.getProjectID(), "Test8.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 20);
-            professorService.uploadTestScript(malloc.getProjectID(), "Test9.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 25);
-            professorService.uploadTestScript(malloc.getProjectID(), "Test10.sh",
-                    "#!/bin/bash\nif [[ $(($RANDOM % 2)) == 0 ]]\nthen echo \"\"\nelse echo \"Failure\"\nfi\n", true, 30);
-            professorService.runTestall(malloc.getProjectID());*/
 
             //professorService.addTestScript(shell.getProjectID(), "test_redirect_input", false, 2);
             professorService.addTestScript(shell.getProjectID(), "test_redirect_output", false, 2);
@@ -212,11 +237,6 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             //professorService.addTestScript(shell.getProjectID(), "test_robustness", false, 10);
             professorService.runHistoricTestall(shell.getProjectID());
 
-            /*List<StudentProject> projects = studentProjectRepository.findByIdProjectID(malloc.getProjectID());
-            for(StudentProject p : projects) {
-                Student student = studentRepository.findByUserID(p.getStudentID());
-                professorService.updateStudentInformation(p.getProjectID(), student.getUserName());
-            }*/
             List<StudentProject> projects = studentProjectRepository.findByIdProjectID(shell.getProjectID());
             for (StudentProject p : projects) {
                 Student student = studentRepository.findByUserID(p.getStudentID());

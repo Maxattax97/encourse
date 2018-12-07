@@ -238,7 +238,7 @@ public class AdminServiceImpl implements AdminService {
         if(accountRepository.existsByUserID(student.getUserID())) {
             return -2;
         }
-        if(accountRepository.existsByUserName(student.getUserID())) {
+        if(accountRepository.existsByUserName(student.getUserName())) {
             return -3;
         }
         if(accountRepository.save(student) == null) {
@@ -264,7 +264,7 @@ public class AdminServiceImpl implements AdminService {
         if(accountRepository.existsByUserID(teachingAssistant.getUserID())) {
             return -5;
         }
-        if(accountRepository.existsByUserName(teachingAssistant.getUserID())) {
+        if(accountRepository.existsByUserName(teachingAssistant.getUserName())) {
             return -6;
         }
         if(accountRepository.save(teachingAssistant) == null) {
@@ -290,7 +290,7 @@ public class AdminServiceImpl implements AdminService {
         if(accountRepository.existsByUserID(professor.getUserID())) {
             return -8;
         }
-        if(accountRepository.existsByUserName(professor.getUserID())) {
+        if(accountRepository.existsByUserName(professor.getUserName())) {
             return -9;
         }
         if(accountRepository.save(professor) == null) {
@@ -316,7 +316,7 @@ public class AdminServiceImpl implements AdminService {
         if(accountRepository.existsByUserID(admin.getUserID())) {
             return -11;
         }
-        if(accountRepository.existsByUserName(admin.getUserID())) {
+        if(accountRepository.existsByUserName(admin.getUserName())) {
             return -12;
         }
         if(accountRepository.save(admin) == null) {

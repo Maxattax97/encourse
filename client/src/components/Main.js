@@ -3,15 +3,14 @@ import { Route, Redirect, Switch } from 'react-router'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { defaultCourse, defaultSemester } from '../defaults'
-
-import { setModalState, getAccount } from '../redux/actions'
+import { history } from '../redux/store'
+import { setModalState, getAccount, setCurrentCourse, setCurrentSemester } from '../redux/actions'
+import { getCurrentCourseId, getCurrentSemesterId } from '../redux/state-peekers/course'
 import url from '../server'
-
 import '../styles/css/base.css'
 import '../styles/css/main.css'
 import Navbar from './navigation/TopNavigation'
 import {AdminPanel, CoursePanel, CourseDishonestyPanel, ManageTAPanel, PreferencePanel, ProjectPanel, StudentDishonestyPanel, StudentPanel} from "./panel"
-
 class Main extends Component {
 
     createPanelRef = (node) => {
@@ -31,6 +30,20 @@ class Main extends Component {
     }
 
     componentDidMount = () => {
+        const course = this.props.match.params.courseID ? this.props.match.params.courseID : defaultCourse
+        const semester = this.props.match.params.semesterID ? this.props.match.params.semesterID : defaultSemester
+        const page = this.props.path.substring(this.props.path.lastIndexOf('/') + 1)
+
+        if(/^((Fall)|(Spring)|(Summer))2[0-9][0-9][0-9]$/.test(semester)) {
+            this.props.setCurrentSemester(semester)
+        } 
+
+        if(/^[a-z]+[0-9]{3,}$/.test(course)) {
+            this.props.setCurrentCourse(course)
+        } 
+
+        history.push(`/${course}/${semester}/${page}`)
+    
         if(!this.props.account) {
             this.props.getAccount(`${url}/api/account`)
         }
@@ -95,6 +108,9 @@ const mapStateToProps = (state) => {
     return {
         isModalFocused: !!(state.control && state.control.modalState),
         account: state.auth && state.auth.getAccountData ? state.auth.getAccountData : null,
+        currentCourseId: getCurrentCourseId(state),
+        currentSemesterId: getCurrentSemesterId(state),
+        path: state.router && state.router.location ? state.router.location.pathname : null, 
     }
 }
 
@@ -102,6 +118,8 @@ const mapDispatchToProps = (dispatch) => {
     return {
         closeModal: () => dispatch(setModalState(0)),
         getAccount: (url, headers, body) => dispatch(getAccount(url, headers, body)),
+        setCurrentCourse: (id) => dispatch(setCurrentCourse(id)),
+        setCurrentSemester: (id) => dispatch(setCurrentSemester(id)),
     }
 }
 

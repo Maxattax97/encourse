@@ -1,6 +1,7 @@
 package edu.purdue.cs.encourse;
 
 import edu.purdue.cs.encourse.database.*;
+import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
@@ -69,31 +70,35 @@ public class ProfessorServicesTests {
 
     @Before
     public void populateDatabase() {
-        adminRepository.deleteAll();
-        professorRepository.deleteAll();
-        studentRepository.deleteAll();
-        teachingAssistantRepository.deleteAll();
-        projectRepository.deleteAll();
-        sectionRepository.deleteAll();
-        studentSectionRepository.deleteAll();
-        studentProjectRepository.deleteAll();
-        teachingAssistantStudentRepository.deleteAll();
-        assertEquals(0, adminService.addAccount("1", "rravind","Student", "One",
-                "STUDENT", null, "rravind@purdue.edu"));
-        assertEquals(0, adminService.addAccount("2", "grr", "Gustavo", "Rodriguez-Rivera",
-                "PROFESSOR", null, "grr@purdue.edu"));
-        assertEquals(0, adminService.addAccount("3", "dwyork", "Student", "Two",
-                "STUDENT", null, "dwyork@purdue.edu"));
-        assertEquals(0, adminService.addAccount("4", "dkrolopp", "Daniel", "Krolopp",
-                "TA", "J", "dkrolopp@purdue.edu"));
-        sect1 = adminService.addSection("12345", "Fall2018", "cs250", "Hardware", "Lab1", "MWF 12:30 - 1:20");
-        proj1 = professorService.addProject("cs250", "Fall2018", "MyMalloc", "lab1-src",
-                "9/10/2018", "9/24/2018", 0);
-        assertEquals(0, adminService.registerStudentToSection("dwyork", sect1.getSectionID()));
-        assertEquals(0, adminService.registerStudentToSection("rravind", sect1.getSectionID()));
-        assertEquals(0, adminService.assignTeachingAssistantToCourse("dkrolopp", "cs250", "Fall2018"));
-        assertEquals(0, professorService.assignProject(proj1.getProjectID()));
-        assertEquals(0, professorService.assignTeachingAssistantToSection("dkrolopp", sect1.getSectionID()));
+        adminService.addAccount("0", "grr", "Gustavo", "Rodriguez-Rivera", Account.Role_Names.PROFESSOR, "A", "grr@purdue.edu");
+        adminService.addAccount("1", "reed226-t", "William", "Reed", Account.Role_Names.TA, "J", "reed226@purdue.edu");
+        adminService.addAccount("2", "kleclain-a", "Killian", "LeClainche", Account.Role_Names.ADMIN, "A", "kleclain@purdue.edu");
+
+        sect1 = adminService.addSection("1001", "Fall2018", "testing", "Systems Programming", "LE1", "MWF 12:30 - 1:20");
+        adminService.assignProfessorToCourse("grr", "testing", "Fall2018");
+
+        adminService.addAccount("101", "reed226", "William", "Reed", Account.Role_Names.STUDENT, "J", "reed226@purdue.edu");
+        adminService.registerStudentToSection("reed226", sect1.getSectionID());
+
+        adminService.addAccount("102", "kleclain", "Killian", "LeClainche", Account.Role_Names.STUDENT, "A", "kleclain@purdue.edu");
+        adminService.registerStudentToSection("kleclain", sect1.getSectionID());
+
+        adminService.addAccount("103", "lee2363", "Jarett", "Lee", Account.Role_Names.STUDENT, "B", "lee2363@purdue.edu");
+        adminService.registerStudentToSection("lee2363", sect1.getSectionID());
+
+        adminService.addAccount("104", "montgo38", "Shawn", "Montgomery", Account.Role_Names.STUDENT, "K", "montgo38@purdue.edu");
+        adminService.registerStudentToSection("montgo38", sect1.getSectionID());
+
+        adminService.addAccount("105", "buckmast", "Jordan", "Buckmaster", Account.Role_Names.STUDENT, "M", "buckmast@purdue.edu");
+        adminService.registerStudentToSection("buckmast", sect1.getSectionID());
+
+        adminService.addAccount("106", "sulli196", "Ryan", "Sullivan", Account.Role_Names.STUDENT, "P", "sulli196@purdue.edu");
+        adminService.registerStudentToSection("sulli196", sect1.getSectionID());
+
+        courseService.setSectionRemotePaths("Fall2018", "testing", "/homes/cs252/sourcecontrol/work_2017Fall");
+        courseService.setDirectory("Fall2018", "testing");
+        proj1 = professorService.addProject("testing", "Fall2018", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
+        professorService.assignProject(proj1.getProjectID());
     }
 
     @After
@@ -139,15 +144,18 @@ public class ProfessorServicesTests {
 
     @Test
     public void testAssigningTeachingAssistant() {
-        assertEquals(0, professorService.assignTeachingAssistantToStudentInSection("dkrolopp", "rravind", sect1.getSectionID()));
-        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID("4");
+        assertEquals(0, adminService.assignTeachingAssistantToCourse("reed226-t", "testing", "Fall2018"));
+        assertEquals(-3,professorService.assignTeachingAssistantToStudentInSection("reed226-t", "montgo38", sect1.getSectionID()));
+        assertEquals(0, professorService.assignTeachingAssistantToSection("reed226-t", sect1.getSectionID()));
+        assertEquals(0, professorService.assignTeachingAssistantToStudentInSection("reed226-t", "montgo38", sect1.getSectionID()));
+        List<TeachingAssistantStudent> assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID("1");
         assertEquals(1, assignments.size());
-        assertEquals("1", assignments.get(0).getStudentID());
-        assertEquals(0, professorService.assignTeachingAssistantToStudentInSection("dkrolopp", "dwyork", sect1.getSectionID()));
-        assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID("4");
+        assertEquals("104", assignments.get(0).getStudentID());
+        assertEquals(0, professorService.assignTeachingAssistantToStudentInSection("reed226-t", "kleclain", sect1.getSectionID()));
+        assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID("1");
         assertEquals(2, assignments.size());
-        assertEquals(0, professorService.assignTeachingAssistantToStudentInSection("dkrolopp", "dwyork", sect1.getSectionID()));
-        assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID("4");
+        assertEquals(0, professorService.assignTeachingAssistantToStudentInSection("reed226-t", "kleclain", sect1.getSectionID()));
+        assignments = teachingAssistantStudentRepository.findByIdTeachingAssistantID("1");
         assertEquals(2, assignments.size());
     }
 

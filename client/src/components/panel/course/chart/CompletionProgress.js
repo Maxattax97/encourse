@@ -6,7 +6,7 @@ import CustomTooltipContent from './CustomTooltipContent';
 import {getCurrentProject} from "../../../../redux/state-peekers/projects"
 import {getCourseProgress, getStudentsProgress} from "../../../../redux/state-peekers/course"
 import {retrieveCourseProgress, retrieveStudentsProgress, retrieveStudentsProgressSpecific} from "../../../../redux/retrievals/course"
-import {isAnySelected} from '../../../../redux/state-peekers/control'
+import {getSelected, isAnySelected} from '../../../../redux/state-peekers/control'
 import {Chart} from "../../../Helpers"
 
 class CompletionProgress extends Component {
@@ -54,7 +54,6 @@ class CompletionProgress extends Component {
 						margin={{top: 5, right: 30, left: 30, bottom: 35}}
 						barCategoryGap={0}
 					>
-						<CartesianGrid/>
 						<XAxis dataKey="progressBin" type="category">
 							<Label offset={-10} position="insideBottom">
 								Progress
@@ -77,7 +76,7 @@ class CompletionProgress extends Component {
 const mapStateToProps = (state, props) => {
 	return {
 		project: getCurrentProject(state),
-		selected: state.control && state.control.students ? state.control.students.selected : null,
+		selected: getSelected(state, 'students'),
 		chart: props.anon ? getCourseProgress(state) : getStudentsProgress(state),
 		isAnySelected: isAnySelected(state, 'students')
 	}

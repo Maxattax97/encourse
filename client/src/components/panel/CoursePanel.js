@@ -46,7 +46,7 @@ class CoursePanel extends Component {
 
                     <div className='panel-course-content'>
                         <Title onClick={ () => this.props.setModalState(1) }>
-                            <h1 className='header'>{this.props.currentCourseId.toUpperCase()}</h1>
+                            <h1 className='header'>Course</h1>
                         </Title>
                         <div className='h1 break-line header' />
 

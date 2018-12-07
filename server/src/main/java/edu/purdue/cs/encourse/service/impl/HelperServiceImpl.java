@@ -247,14 +247,14 @@ public class HelperServiceImpl implements HelperService {
         }
         String command = getPythonCommand() + " stats " + commitLogFile + " " + visibleTestFile + " " + hiddenTestFile + " -t 1.0 -l 200";
         JSONReturnable json = runPython(command);
-        if(json == null || json.getJsonObject() == null) {
-            return 0;
+        if(json == null || json.getJsonArray() == null) {
+            return -4;
         }
         if (getDebug()) {
             executeBashScript("cleanDirectory.sh src/main/temp");
-            return 0;
+            return -5;
         }
-        JSONArray array = (JSONArray)json.getJsonObject().get("data");
+        JSONArray array = json.getJsonArray();
         for(int i = 0; i < array.size(); i++) {
             JSONObject data = (JSONObject)array.get(i);
             if (data.get("stat_name").equals("End Date")) {
