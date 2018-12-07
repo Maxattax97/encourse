@@ -59,7 +59,7 @@ class StudentsTestCaseProgress extends Component {
 					<ResponsiveContainer width="100%" height="100%">
 						<ComposedChart
 							data={this.props.chart.data}
-							margin={{top: 5, right: 30, left: 30, bottom: 35}}
+							margin={{top: 5, right: 15, left: 10, bottom: 15}}
 						>
 							<XAxis dataKey="testName" type="category">
 								<Label offset={-10} position="insideBottom">
