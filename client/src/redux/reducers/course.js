@@ -34,18 +34,25 @@ function formatStudents(udata, extra, state) {
      * as expected. I've already noticed problems on the front-end because of this (this is a two-fold problem with the
      * back-end involved as well).
     */
-    let content = state.students && state.students.data ? [...state.students.data] : []
-    let contains = false
-    for(let value of content) {
-        if(value.id === udata[0].id) {
-            contains = true
-            break
+
+    /*let content = state.students && state.students.data ? [...state.students.data] : []
+    if(udata.length < content.length) {
+        content = udata
+    } else {
+        let contains = false
+        for(let value of content) {
+            if(value.id === udata[0].id) {
+                contains = true
+                break
+            }
         }
-    }
-    if(!contains) {
-        content = content.concat(udata)
-    }
-    return content
+        if(!contains) {
+            content = content.concat(udata)
+        }
+    }*/
+
+
+    return udata
 }
 
 function getDishonestyReport(state, action) {

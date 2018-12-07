@@ -5,6 +5,7 @@ export function genericDispatch(actionClass, type, method) {
             class: actionClass,
 			request: (accessToken, dispatch, auth) => {
 				if(typeof dispatch !== 'function') return
+				if(type === 'GET_STUDENTS') console.log(url)
 				dispatch({
                     type,
                     class: actionClass
@@ -21,6 +22,7 @@ export function genericDispatch(actionClass, type, method) {
 						if(response.type !== 'basic') return response.json()
 					})
 					.then((data) => {
+						if(type === 'GET_STUDENTS') console.log(data)
 						dispatch({
                             type,
                             class: actionClass,
