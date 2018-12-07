@@ -245,8 +245,8 @@ public class WriteController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/tests", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file,
-                                                      @RequestPart("json") String body) {
+    public @ResponseBody ResponseEntity<?> uploadFile(@RequestParam(value = "file", required = false) MultipartFile file,
+                                                      @RequestParam(value = "json", required = false) String body) {
 
         String fileName = fileService.storeFile(file);
 
