@@ -79,7 +79,7 @@ class StudentsTestCaseProgress extends Component {
 									)
 								}
 							</Bar>
-							<Brush dataKey="testName" height={40} stroke="#008000"/>
+							<Brush dataKey="testName" height={40} stroke="#4caf50"/>
 						</ComposedChart>
 					</ResponsiveContainer>
 				</Chart>
