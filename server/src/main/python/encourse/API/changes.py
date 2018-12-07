@@ -1,7 +1,7 @@
 from API import *
 
 
-def reformat(gitlog) -> dict:
+def reformat(gitlog, max_change=None) -> dict:
     """Reformats a list of dates into a dictionary
     
     **Args**:
@@ -22,13 +22,18 @@ def reformat(gitlog) -> dict:
             }
 
     """
+    if not max_change:
+        max_change = sys.maxsize
     commit_dict = {}
-    for commit in gitlog.commits:
-        new_entry = {}
-        new_entry["additions"] = commit.additions
-        new_entry["deletions"] = commit.deletions
-        date = helper.date_string(commit.timestamp.date())
-        commit_dict[date] = new_entry
+    daily_commits = gitlog.commits_by_day()
+    for day in daily_commits:
+        commits = daily_commits[day]
+        new_entry = {"additions": 0, "deletions": 0}
+        for commit in commits:
+            additions, deletions = commit.count_changes(max_size=max_change)
+            new_entry["additions"] += additions
+            new_entry["deletions"] += deletions
+        commit_dict[day] = new_entry
     return commit_dict
 
 
@@ -93,12 +98,8 @@ def jsonprint(args):
     commit_times_file = args.timefile
     student_id = args.name
 
-    data = (
-        GitLog.daily.daily(commit_data_file, max_change=int(args.limit))
-        if args.limit
-        else GitLog.daily.daily(commit_data_file)
-    )
-    individual_data = data[student_id]
+    parser = GitLog.GitParser(commit_data_file)
+    individual_data = parser.student_log[student_id]
 
     reformatted_data = reformat(individual_data)
 
