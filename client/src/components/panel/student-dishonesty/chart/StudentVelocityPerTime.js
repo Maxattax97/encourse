@@ -88,7 +88,10 @@ class StudentVelocityPerTime extends Component {
     render() {
         return (
             this.props.isLoading !== undefined && !this.props.isLoading
-                ? <div className="chart-container">
+                ? <div
+                    className="chart-container"
+                    title="Amount of progress made per day"
+                >
                     <ResponsiveContainer width="100%" height="100%">
                         <ScatterChart data={this.state.formattedData} margin={{top: 40, right: 30, left: 20, bottom: 30}}>
                             <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress per Time Spent</text>
