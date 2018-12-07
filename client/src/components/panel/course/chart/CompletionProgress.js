@@ -16,8 +16,9 @@ class CompletionProgress extends Component {
 			if (this.props.anon)
 				retrieveCourseProgress(this.props.project)
 			else {
-				if(this.props.isAnySelected && this.props.selected) {
-					retrieveStudentsProgressSpecific(this.props.project, Object.keys(this.props.selected))
+				if(this.props.isAnySelected && this.props.selected && this.props.isAnySelected >= 2) {
+					let a = Object.keys(this.props.selected.explict)
+					retrieveStudentsProgressSpecific(this.props.project, a)
 				} else {
 					retrieveStudentsProgress(this.props.project)
 				}
@@ -26,16 +27,20 @@ class CompletionProgress extends Component {
 	}
 
 	componentDidUpdate = (prevProps) => {
-		if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index)) {
-			if(prevProps.anon)
+		if (prevProps.anon) {
+			if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index)) {
 				retrieveCourseProgress(this.props.project)
-			else {
-				if(this.props.isAnySelected) {
-					retrieveStudentsProgressSpecific(this.props.project, Object.keys(this.props.selected))
+			}
+		}
+		else {
+			if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index) || prevProps.isAnySelected !== this.props.isAnySelected) {
+				if(this.props.isAnySelected && this.props.isAnySelected >= 2) {
+					let a = Object.keys(this.props.selected.explict)
+					retrieveStudentsProgressSpecific(this.props.project, a)
 				} else {
 					retrieveStudentsProgress(this.props.project)
 				}
-			}		
+			}
 		}
 	}
 
