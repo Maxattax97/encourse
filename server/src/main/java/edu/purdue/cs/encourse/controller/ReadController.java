@@ -498,12 +498,7 @@ public class ReadController {
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             } else {
-                JSONArray arr = new JSONArray();
-                for (String userName: userNames) {
-                    JSONReturnable curr = courseService.getStudentCommitList(projectID, userName);
-                    arr.add(curr.getJsonObject());
-                }
-                returnJson = new JSONReturnable(0, arr);
+                returnJson = courseService.getCommitList(projectID, userNames);
             }
         } else {
             Iterator iter = getUserAuthorities().iterator();
