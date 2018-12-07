@@ -437,14 +437,20 @@ public class CourseServiceImpl implements CourseService {
      * @return          JSON for front-end to parse
      */
     public JSONReturnable getSimilar(@NonNull String projectID, List<String> userNames) {
+        JSONReturnable json = null;
+        if (helperService.getDebug()) {
+            String command = helperService.getPythonCommand() + " identical " + helperService.getPythonPath() + "data/sampleDiffs.txt";
+            return helperService.runPython(command);
+        }
+
         List<StudentProject> projects = helperService.getStudentProjects(projectID, userNames);
         Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
-            return new JSONReturnable(-1, (JSONObject) null);
+            json = new JSONReturnable(-1, (JSONObject) null);
         }
         List<Section> sections = sectionRepository.findBySemesterAndCourseID(project.getSemester(), project.getCourseID());
         if(sections.isEmpty()) {
-            return new JSONReturnable(-2, (JSONObject) null);
+            json = new JSONReturnable(-2, (JSONObject) null);
         }
         String diffsFile = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_codeDiffs.txt";
         List<StudentProject> temp = new ArrayList<>(projects);
@@ -477,10 +483,13 @@ public class CourseServiceImpl implements CourseService {
             }
             writer.close();
         } catch (Exception e) {
-            return new JSONReturnable(-3, (JSONObject) null);
+            json = new JSONReturnable(-3, (JSONObject) null);
+        }
+        if (!helperService.getDebug() && json != null) {
+            return json;
         }
         String command = helperService.getPythonCommand() + " identical " + helperService.getPythonPath() + diffsFile;
-        JSONReturnable json = helperService.runPython(command);
+        json = helperService.runPython(command);
         return json;
     }
 
