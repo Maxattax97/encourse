@@ -871,8 +871,8 @@ public class CourseServiceImpl implements CourseService {
      * @param projectID         Identifier for project that source is being taken from
      * @param userName          Front-end identifier for student whose source is being shown
      * @param startCommitHash   Hash corresponding to the commit with the initial state of the file
-     * @param endCommitHash     Hash corresponding to the commit with the final state of the file
-     * @param sourceName        Name of the source file being analyzed
+     * @param endCommitHash     (optional) Hash corresponding to the commit with the final state of the file
+     * @param sourceName        (optional) Name of the source file being analyzed
      * @return                  Path to a new file with the entire source file and additions and deletion shown inline
      */
     public String getSourceWithChanges(@NonNull String projectID, @NonNull String userName, @NonNull String startCommitHash, @NonNull String endCommitHash, @NonNull String sourceName) {
@@ -890,7 +890,12 @@ public class CourseServiceImpl implements CourseService {
         }
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
         String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_sourceChanges.txt";
-        if(sourceName == null) {
+        if(startCommitHash == null) {
+            if (helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + endCommitHash) < 0) {
+                return null;
+            }
+        }
+        else if(sourceName == null) {
             if (helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + startCommitHash + " " + endCommitHash) < 0) {
                 return null;
             }

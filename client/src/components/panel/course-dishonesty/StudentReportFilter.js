@@ -2,14 +2,15 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {Checkbox, CheckmarkIcon, Dropdown, Filter} from '../../Helpers'
 import StudentReportSummary from './StudentReportSummary'
-import {getStudents} from "../../../redux/state-peekers/course"
+import {getDishonestyReport, getStudents} from '../../../redux/state-peekers/course'
 import {getAllSelected, getFilters} from "../../../redux/state-peekers/control"
 import {resetFilterState, setFilterState, toggleSelectAllCards} from "../../../redux/actions"
 
 class StudentReportFilter extends Component {
 
-	sort_by_ranges = ['Name', 'Score']
+	sort_by_ranges = ['Name', 'Score', 'Rate', 'Velocity']
 	order_ranges = ['Ascending', 'Descending']
+
 
 	componentWillUnmount() {
 		this.props.resetFilterState()
@@ -20,7 +21,7 @@ class StudentReportFilter extends Component {
 	        <div className='course-students-report'>
                 <h3 className='header'>Students</h3>
 	            {
-	                this.props.report.length ?
+	                this.props.report.data.length ?
 	                    <Filter>
 		                    <Checkbox onClick={() => this.props.toggleSelectAllCards()}>
 			                    {
@@ -56,6 +57,7 @@ const mapStateToProps = (state) => {
 	return {
 		students: getStudents(state),
 		selectedAllStudents: getAllSelected(state, 'students'),
+        report: getDishonestyReport(state),
 		filters: getFilters(state)
 	}
 }

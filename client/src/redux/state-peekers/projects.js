@@ -17,4 +17,6 @@ export const getTestScripts = createPeeker('getTestScripts')
 
 export const getTestSuites = createPeeker('getTestSuites')
 
+export const getSuiteGrades = createPeeker('getSuiteGrades')
+
 export const getOperation = createPeeker('getOperation')

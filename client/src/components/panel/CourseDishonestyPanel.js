@@ -27,47 +27,6 @@ class CourseDishonestyPanel extends Component {
         }
     }
 
-    componentDidMount = () => {
-        if(this.props.project)
-            this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.project.id}`)
-    }
-
-    componentDidUpdate(prevProps) {
-        if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
-            this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.project.id}`)
-    }
-
-    scrolledToBottom = () => {
-        if(this.props.project && !this.props.last) {
-            this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy()}&page=${this.props.page + 1}`)
-            this.props.updateCourseDishonestyPage()
-        }
-    }
-
-    getSortBy = (value) => {
-        let id = value ? value : this.state.filters.sort_by
-        switch(id) {
-            case 0:
-                return 'id'
-            case 1:
-                return 'score' 
-            default:
-                return 'id'
-        }
-    }
-
-    changeFilter = (key, value) => {
-        const filters = [...this.state.filters]
-        filters[key] = value
-
-        if(key === 'sort_by') {
-            this.props.resetCourseDishonestyPage()
-            this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.currentProjectId}&sortBy=${this.getSortBy(value)}&page=1`)
-        }
-
-        this.setState({ filters })
-    }
-
     share = () => {
         this.props.setModalState(2)
     }
@@ -109,7 +68,7 @@ class CourseDishonestyPanel extends Component {
 
                         <div className='h1 break-line' />
 
-                        <StudentReportFilter report={this.props.report}/>
+                        <StudentReportFilter/>
                     </div>
                 </div>
             </div>
@@ -121,7 +80,6 @@ const mapStateToProps = (state) => {
     return {
         students: getStudents(state),
         currentCourseId: getCurrentCourseId(state),
-        report: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.content : [],
         project: getCurrentProject(state),
         page: state.course && state.course.dishonestyPage ? state.course.dishonestyPage : 1,
         last: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.last : true,

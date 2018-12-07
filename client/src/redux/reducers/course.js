@@ -55,13 +55,7 @@ function formatStudents(udata, extra, state) {
     return udata
 }
 
-function getDishonestyReport(state, action) {
-    if(action.hasError)
-        return Object.assign({}, state, {
-            getDishonestyReportHasError: action.hasError,
-            getDishonestyReportIsLoading: false,
-        })
-    if(action.data) {
+function formatDishonestyReport(udata, extra, state) {
         /*
  * TODO Jordan Buckmaster: this should replace and resort. To be precise, replacing is such that any time a value
  * is already present inside inside the getStudentPreviewsData variable, we replace with the newer copy.
@@ -71,26 +65,18 @@ function getDishonestyReport(state, action) {
  * as expected. I've already noticed problems on the front-end because of this (this is a two-fold problem with the
  * back-end involved as well).
 */
-        let content = state.getDishonestyReportData ? [...state.getDishonestyReportData.content] : []
+        let content = state.getDishonestyReport && state.getDishonestyReport.data ? [...state.getDishonestyReport.data] : []
         let contains = false
         for(let value of content) {
-            if(value.id === action.data.content[0].id) {
+            if(value.id === udata[0].id) {
                 contains = true
                 break
             }
         }
         if(!contains) {
-            content = content.concat(action.data.content)
+            content = content.concat(udata)
         }
-        action.data.content = content;
-        return Object.assign({}, state, {
-            getDishonestyReportData: action.data,
-            getDishonestyReportIsLoading: false,
-        })
-    }
-    return Object.assign({}, state, {
-        getDishonestyReportIsLoading: true,
-    })
+        return content
 }
 
 function updateCourseDishonestyPage(state, action) {
@@ -290,7 +276,7 @@ export default function course(state = {}, action) {
         case 'RUN_TESTS':
             return getData(state, action, 'runTests')
         case 'GET_DISHONESTY_REPORT':
-            return getDishonestyReport(state, action)
+            return forwardData(state, action, 'dishonestyReport', formatDishonestyReport, true)
         case 'UPDATE_COURSE_DISHONESTY_PAGE':
             return updateCourseDishonestyPage(state, action)
         case 'RESET_COURSE_DISHONESTY_PAGE':

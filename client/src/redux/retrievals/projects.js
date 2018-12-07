@@ -1,18 +1,22 @@
 import store from '../store'
 import {getClassProjects, getTestScripts} from '../actions'
-import {api_v1, courseID_v1, semester_v1, projectID_v1, studentID_v1} from './retrieval-utils'
-import {getOperation, getTestSuites} from '../actions/projects'
+import {api_v1, courseID_v1, semester_v1, projectID_v1, studentID_v1, page_v1, size_v1} from './retrieval-utils'
+import {getOperation, getSuiteGrades, getTestSuites} from '../actions/projects'
 
 export function retrieveAllProjects(courseID, semester) {
     store.dispatch(getClassProjects(`${api_v1}projectsData?${courseID_v1(courseID)}&${semester_v1(semester)}`))
 }
 
 export function retrieveTestScripts(project) {
-    store.dispatch(getTestScripts(`${api_v1}testScriptData?${projectID_v1(project)}`))
+    store.dispatch(getTestScripts(`${api_v1}testScriptData?${projectID_v1(project)}&${page_v1(1)}&${size_v1(200)}`))
 }
 
-export function retrieveTestSuites(student, project) {
-    store.dispatch(getTestSuites(`${api_v1}suites?${projectID_v1(project)}&${studentID_v1(student)}`))
+export function retrieveTestSuites(project) {
+    store.dispatch(getTestSuites(`${api_v1}suites?${projectID_v1(project)}&${page_v1(1)}&${size_v1(200)}`))
+}
+
+export function retrieveSuitesScore(student, project) {
+    store.dispatch(getSuiteGrades(`${api_v1}suitesData?${projectID_v1(project)}&${studentID_v1(student)}`))
 }
 
 export function retrieveOperation(project) {
