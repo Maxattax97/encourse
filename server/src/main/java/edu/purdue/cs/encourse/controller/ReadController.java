@@ -489,9 +489,10 @@ public class ReadController {
                                                                   @RequestParam(name = "size", defaultValue = "10", required = false) int size,
                                                                   @RequestParam(name = "sortBy", defaultValue = "date", required = false) String sortBy) {
         JSONReturnable returnJson = null;
-
+        boolean isArray = true;
         if (userNames != null) {
             if (userNames.size() == 1) {
+                isArray = false;
                 returnJson = courseService.getStudentCommitList(projectID, userNames.get(0));
                 if (returnJson == null) {
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -509,16 +510,19 @@ public class ReadController {
                 }
             }
         }
-
-        JSONArray json = returnJson.getJsonArray();
-        if (json == null) {
+        if (returnJson == null || (returnJson.getJsonArray() == null && returnJson.getJsonObject() == null)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         List<JSONObject> jsonValues = new ArrayList<>();
-        for (int i = 0; i < json.size(); i++) {
-            JSONObject obj = (JSONObject) json.get(i);
-            jsonValues.add(obj);
+
+        if (isArray) {
+            JSONArray json = returnJson.getJsonArray();
+            for (int i = 0; i < json.size(); i++) {
+                JSONObject obj = (JSONObject) json.get(i);
+                jsonValues.add(obj);
+            }
+        } else {
+            jsonValues.add(returnJson.getJsonObject());
         }
 
         Comparator<JSONObject> compare;
