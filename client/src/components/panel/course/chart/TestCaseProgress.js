@@ -75,11 +75,11 @@ class StudentsTestCaseProgress extends Component {
 							<Bar dataKey="percent">
 								{
 									this.props.chart.data.map((entry, index) =>
-										<Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#8884d8' }/>
+										<Cell key={Date.now()+index} fill={entry.hidden ? '#005599' : '#0057A7CC' }/>
 									)
 								}
 							</Bar>
-							<Brush dataKey="testName" height={40} stroke="#8884d8"/>
+							<Brush dataKey="testName" height={40} stroke="#4caf50"/>
 						</ComposedChart>
 					</ResponsiveContainer>
 				</Chart>

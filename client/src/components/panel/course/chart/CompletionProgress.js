@@ -65,7 +65,7 @@ class CompletionProgress extends Component {
 							</Label>
 						</YAxis>
 						<Tooltip content={<CustomTooltipContent />} />
-						<Bar dataKey="count" fill="#8884d8"/>
+						<Bar dataKey="count" fill="#0057A7CC"/>
 					</ComposedChart>
 				</ResponsiveContainer>
 			</Chart>

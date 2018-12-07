@@ -45,7 +45,7 @@ class StudentsSimilarity extends Component {
 					        </Label>
 				        </YAxis>
 				        <Tooltip content={<CustomTooltipContent />} />
-				        <Scatter dataKey="height" fill="#8884d8"/>
+				        <Scatter dataKey="height" fill="#0057A7CC"/>
 			        </ScatterChart>
 		        </ResponsiveContainer>
             </Chart>

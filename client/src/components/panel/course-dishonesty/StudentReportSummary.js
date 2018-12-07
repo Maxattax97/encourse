@@ -43,7 +43,7 @@ class StudentReportSummary extends Component {
                             {
                                 width: (bar * 100.0) + '%',
                                 background: bar <= .67 ?
-                                    '#008000'
+                                    '#4caf50'
                                     : bar <= .83 ?
                                         '#FF7900'
                                         : '#FF2323'
@@ -55,7 +55,7 @@ class StudentReportSummary extends Component {
                             bar <= .67 ?
                                 'Low'
                                 : bar <= .83 ?
-                                'Medium'
+                          -      'Medium'
                                 : 'High'
                         }
                     </h6>
