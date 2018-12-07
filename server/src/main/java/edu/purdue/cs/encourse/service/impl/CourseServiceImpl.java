@@ -890,8 +890,8 @@ public class CourseServiceImpl implements CourseService {
         }
         String destPath = (sections.get(0).getCourseHub() + "/" + student.getUserName() + "/" + project.getRepoName());
         String fileName = "src/main/temp/" + Long.toString(Math.round(Math.random() * Long.MAX_VALUE)) + "_sourceChanges.txt";
-        if(endCommitHash == null) {
-            if (helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + startCommitHash) < 0) {
+        if(startCommitHash == null) {
+            if (helperService.executeBashScript("getSourceChanges.sh " + destPath + " " + fileName + " " + endCommitHash) < 0) {
                 return null;
             }
         }
