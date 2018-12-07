@@ -197,4 +197,14 @@ public class PythonScriptTests {
             assertNotEquals("jsonReturn is null", null, jsonReturn);
             assertEquals("Failed to generate class cheating report", 1, jsonReturn.errorCode);
         }
+
+        @Test
+        public void testSimilarity() {
+            String projectID = DEBUG ? "cs252" : proj1.getProjectID();
+            JSONReturnable jsonReturn = null;
+            System.out.println("=============================  Class Similar Test    ============================\n");
+            jsonReturn = professorService.getClassSimilar(projectID);
+            assertNotEquals("jsonReturn is null", null, jsonReturn);
+            assertEquals("Failed to generate class similar data", 1, jsonReturn.errorCode);
+        }
 }

@@ -46,7 +46,7 @@ class StudentProgress extends Component {
                             </YAxis>
                             <Tooltip labelFormatter={this.dateFormatter}/>
                             <Legend verticalAlign="top"/>
-                            <Line type="monotone" dataKey="progress" stroke="#8884d8" />
+                            <Line type="monotone" dataKey="progress" stroke="#0057A7CC" />
                         </LineChart>
                     </ResponsiveContainer>
                 </Chart>

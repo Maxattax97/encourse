@@ -20,7 +20,7 @@ const BrushSlider = (props) => {
                     <LineChart data={chart.data} syncId="date" margin={{top: 0, right: 60, left: 60, bottom: 0}}>
                         <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Slider to change selected dates</text>
                         <Line style={{'display': 'none'}} dataKey="date" />
-                        <Brush dataKey="date" height={50} stroke="#8884d8" tickFormatter={dateFormatter} x={60} y={30}/>
+                        <Brush dataKey="date" height={50} stroke="#4caf50" tickFormatter={dateFormatter} x={60} y={30}/>
                     </LineChart>
                 </ResponsiveContainer>
             </Chart>

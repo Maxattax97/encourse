@@ -1,6 +1,7 @@
 from API import *
 
 import statistics
+import scipy.stats as st
 
 # TODO: Refactor so that this api is not dependent on velocity
 
@@ -49,7 +50,6 @@ def jsonify(git_data, test_progress, hidden_progress=None):
             commit_count += day["commit_count"]
 
         # Convert time_spent from seconds to hours
-        time_spent /= 3600
         velocity_averages.append(progress / time_spent)
         rate_averages.append(progress / commit_count)
 
@@ -95,7 +95,22 @@ def jsonify(git_data, test_progress, hidden_progress=None):
         score = (std_rate + std_velocity) / 2
 
         # Add student to the list
-        student_list.append({"id": student, "score": score})
+        student_list.append(
+            {
+                "id": student,
+                "score": st.norm.cdf(score),
+                "metrics": {
+                    "rate": {
+                        "raw": student_rate, 
+                        "percentile": st.norm.cdf(std_rate)
+                    },
+                    "veloctiy": {
+                        "raw": student_velocity,
+                        "percentile": st.norm.cdf(std_velocity),
+                    },
+                },
+            }
+        )
 
     return json.dumps(student_list)
 

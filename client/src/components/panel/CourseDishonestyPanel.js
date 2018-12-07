@@ -12,6 +12,7 @@ import TaskModal from './common/TaskModal'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import {getCurrentProject} from '../../redux/state-peekers/projects'
 import BackNavigation from '../navigation/BackNavigation'
+import {retrieveTestScripts} from '../../redux/retrievals/projects'
 
 class CourseDishonestyPanel extends Component {
 
@@ -28,6 +29,11 @@ class CourseDishonestyPanel extends Component {
 
     componentDidMount = () => {
         if(this.props.project)
+            this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.project.id}`)
+    }
+
+    componentDidUpdate(prevProps) {
+        if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index))
             this.props.getDishonestyReport(`${url}/api/classCheating?projectID=${this.props.project.id}`)
     }
 
