@@ -349,6 +349,19 @@ public class WriteController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/add/suite", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> addSuite(@RequestParam(name = "projectID") String projectID,
+                                                    @RequestParam(name = "suite") String suite) {
+
+        int result = professorService.addSuiteToProject(projectID, suite);
+        if (result == 0) {
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     @RequestMapping(value = "/add/directory", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> modifyProject(@RequestParam(name = "courseID") String courseID,
                                                          @RequestParam(name = "semester") String semester) {

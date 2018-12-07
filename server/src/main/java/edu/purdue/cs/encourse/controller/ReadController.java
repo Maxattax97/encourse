@@ -179,11 +179,11 @@ public class ReadController {
                 int q1 = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() / 4).get(sortName)).get(projectID)).doubleValue();
                 int q3 = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() * 3 / 4).get(sortName)).get(projectID)).doubleValue();
                 int max = (int) ((Number) ((TreeMap) jsonValues.get(jsonValues.size() - 1).get(sortName)).get(projectID)).doubleValue();
-                filters.get(sortName).add(min > 99 ? (int) Math.floor(min / 100) * 100 : (int) Math.floor(min / 10) * 10);
+                filters.get(sortName).add(min);
                 filters.get(sortName).add(q1 > 99 ? Math.round(q1 / 100) * 100 : Math.round(q1 / 10) * 10);
                 filters.get(sortName).add(median > 99 ? Math.round(median / 100) * 100 : Math.round(median / 10) * 10);
                 filters.get(sortName).add(q3 > 99 ? Math.round(q3 / 100) * 100 : Math.round(q3 / 10) * 10);
-                filters.get(sortName).add(max > 99 ? (int) Math.ceil(max / 100) * 100 : (int) Math.ceil(max / 10) * 10);
+                filters.get(sortName).add(max);
                 List<Integer> arr = new ArrayList<>(new HashSet<>(filters.get(sortName)));
                 Collections.sort(arr);
                 filters.replace(sortName, arr);
@@ -303,6 +303,18 @@ public class ReadController {
         if (json == null) {
             return new ResponseEntity<>(json, HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
+    @RequestMapping(value = "/suites", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<?> getSuites(@RequestParam(name = "projectID") String projectID) {
+        Project project = courseService.getProject(projectID);
+        if (project == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        JSONObject json = new JSONObject();
+        json.put("suites", project.getSuites());
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
