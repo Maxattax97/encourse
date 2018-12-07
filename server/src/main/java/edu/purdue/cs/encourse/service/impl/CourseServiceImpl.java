@@ -875,7 +875,7 @@ public class CourseServiceImpl implements CourseService {
      * @param sourceName        (optional) Name of the source file being analyzed
      * @return                  Path to a new file with the entire source file and additions and deletion shown inline
      */
-    public String getSourceWithChanges(@NonNull String projectID, @NonNull String userName, @NonNull String startCommitHash, @NonNull String endCommitHash, @NonNull String sourceName) {
+    public String getSourceWithChanges(@NonNull String projectID, @NonNull String userName, String startCommitHash, @NonNull String endCommitHash, String sourceName) {
         Project project = projectRepository.findByProjectID(projectID);
         if(project == null) {
             return null;
