@@ -581,11 +581,6 @@ public class ProfessorServiceImpl implements ProfessorService {
         }
         if(!project.hasSuite(suite)) {
             project.addSuite(suite);
-            List<StudentProject> studentProjects = studentProjectRepository.findByIdProjectIDAndIdSuite(projectID, "testall");
-            for(StudentProject p : studentProjects) {
-                StudentProject studentProject = new StudentProject(p.getStudentID(), p.getProjectID(), suite);
-                studentProjectRepository.save(studentProject);
-            }
         }
         projectTestScriptRepository.save(testScript);
         projectRepository.save(project);
@@ -732,6 +727,7 @@ public class ProfessorServiceImpl implements ProfessorService {
             }
             catch(Exception e) {
                 code = -6;
+                System.out.println("\n\nException at historic testall\n\n");
                 helperService.executeBashScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
             }
         }

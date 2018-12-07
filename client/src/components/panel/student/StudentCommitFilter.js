@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 
 import {getAllSelected, getFilters} from "../../../redux/state-peekers/control"
 import {resetFilterState, setFilterState, toggleSelectAllCards} from "../../../redux/actions"
+import StudentCommitSummary from './StudentCommitSummary'
 
 class StudentCommitFilter extends Component {
 
@@ -62,6 +63,7 @@ class StudentCommitFilter extends Component {
                               filter='deletion_filter'
                               addCustom />
                 </Filter>
+                <StudentCommitSummary/>
             </div>
         )
     }

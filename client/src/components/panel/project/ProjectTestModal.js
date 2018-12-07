@@ -11,9 +11,9 @@ class ProjectTestModal extends Component {
 
 		this.state = {
 			name: '',
-			source_name: '',
-			created_date: '',
-			due_date: '',
+            visibility: '',
+            filename: '',
+            file: null
 		}
 	}
 
@@ -41,15 +41,39 @@ class ProjectTestModal extends Component {
 						Name
 					</h4>
 					<input type="text" className="h3-size" value={this.props.courseID} name="name" autoComplete="off"/>
+                    {
+                        this.props.suites.length ?
+                            <div>
+                                <div className="h5 break-line"/>
+                                <h4 className="header">
+                                    Test Suite
+                                </h4>
+                                <input type="text" className="h3-size" value={this.state.interval} onChange={this.onChange} name="visibility" list="test-suites" />
+                                <datalist id="test-suites">
+                                    {
+                                        this.props.suites.map(suite =>
+                                            <option value={suite}/>
+                                        )
+                                    }
+                                </datalist>
+                            </div>
+                            : null
+                    }
                     <div className="h5 break-line"/>
 					<h4 className="header">
 						Visibility
 					</h4>
-					<input type="number" className="h3-size" value={this.state.interval} onChange={this.onChange} name="interval" ref="interval"/>
+                    <input type="text" className="h3-size" value={this.state.interval} onChange={this.onChange} name="visibility" list="visibility" />
+                    <datalist id="visibility">
+                        <option value="Visible" />
+                        <option value="Hidden" />
+                    </datalist>
                     <div className="h5 break-line"/>
 					<h4 className='header'>
 						Upload
 					</h4>
+                    <input type="text" className="h3-size" value={this.state.filename} onClick={ () => this.refs.fileUploader.click()}/>
+                    <input type="file" style={{display:'none'}} ref="fileUploader" onChange={ (e) => console.log(e) }/>
 					<div className="modal-buttons float-height">
 						<div className="svg-icon action" onClick={ this.saveSettings }>
 							<CheckmarkIcon/>
@@ -64,6 +88,7 @@ class ProjectTestModal extends Component {
 
 const mapStateToProps = (state) => {
 	return {
+	    suites: ['Part 1']
 	}
 }
 

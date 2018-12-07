@@ -331,6 +331,9 @@ public class HelperServiceImpl implements HelperService {
         String[] suites = project.getSuites().split(",");
         for(String s : suites) {
             StudentProject suiteProject = studentProjectRepository.findByIdProjectIDAndIdStudentIDAndIdSuite(projectID, studentID, s);
+            if(suiteProject == null) {
+                suiteProject = new StudentProject(studentID, projectID, s);
+            }
             List<StudentProjectTest> testScores = studentProjectTestRepository.findByIdProjectIDAndIdStudentIDAndIsHidden(projectID, studentID, isHidden);
             double earnedPoints = 0.0;
             double maxPoints = 0.0;
