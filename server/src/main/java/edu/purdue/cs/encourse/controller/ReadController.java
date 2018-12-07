@@ -487,7 +487,8 @@ public class ReadController {
                                                                   @RequestParam(name = "userName", required = false) List<String> userNames,
                                                                   @RequestParam(name = "page", defaultValue = "1", required = false) int page,
                                                                   @RequestParam(name = "size", defaultValue = "10", required = false) int size,
-                                                                  @RequestParam(name = "sortBy", defaultValue = "date", required = false) String sortBy) {
+                                                                  @RequestParam(name = "sortBy", defaultValue = "date", required = false) String sortBy,
+                                                                  @RequestParam(name = "order", defaultValue = "0", required = false) int order) {
         JSONReturnable returnJson = null;
         boolean isArray = true;
         if (userNames != null) {
@@ -571,7 +572,7 @@ public class ReadController {
                 };
                 break;
         }
-        jsonValues.sort(compare);
+        jsonValues.sort(order == 0 ? compare : compare.reversed());
 
         JSONArray sortedAndPagedJsonArray = new JSONArray();
         page = (page > jsonValues.size() / size + 1) ? jsonValues.size() / size + 1 : page;
