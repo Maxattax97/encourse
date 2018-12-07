@@ -807,11 +807,11 @@ public class ReadController {
                 break;
             }
         }
-        if (returnJson == null || returnJson.getJsonObject() == null) {
+        if (returnJson == null || returnJson.getJsonArray() == null) {
             return new ResponseEntity<>(returnJson, HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<>(returnJson.getJsonObject(), HttpStatus.OK);
+        return new ResponseEntity<>(returnJson.getJsonArray(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
