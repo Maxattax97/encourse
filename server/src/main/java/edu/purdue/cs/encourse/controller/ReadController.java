@@ -703,7 +703,7 @@ public class ReadController {
     public @ResponseBody ResponseEntity<?> getSource(@RequestParam(name = "projectID") String projectID,
                                                      @RequestParam(name = "userName") String userName,
                                                      @RequestParam(name = "startHash") String startHash,
-                                                     @RequestParam(name = "endHash") String endHash,
+                                                     @RequestParam(name = "endHash", required = false) String endHash,
                                                      @RequestParam(name = "file", required = false) String file) {
         String sourceFile;
         if (hasPermissionOverAccount(userName)) {
