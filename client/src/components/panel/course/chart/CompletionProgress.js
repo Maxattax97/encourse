@@ -34,7 +34,7 @@ class CompletionProgress extends Component {
 		}
 		else {
 			if(this.props.project && (!(prevProps.project) || prevProps.project.index !== this.props.project.index) || prevProps.isAnySelected !== this.props.isAnySelected) {
-				if(this.props.isAnySelected && this.props.isAnySelected >= 2) {
+				if(this.props.isAnySelected && this.props.isAnySelected >= 2 && !this.props.selected.selectedAll) {
 					let a = Object.keys(this.props.selected.explict)
 					retrieveStudentsProgressSpecific(this.props.project, a)
 				} else {
