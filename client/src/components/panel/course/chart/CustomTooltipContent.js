@@ -13,6 +13,7 @@ const CustomTooltipContent = (props) => {
         value: ((props.payload[0].payload.percent) * 100).toFixed(2),
         // you can also add "unit" here if you need it
         unit: '%',
+        color: '#0057A7CC',
       },
       ...props.payload,
     ]
