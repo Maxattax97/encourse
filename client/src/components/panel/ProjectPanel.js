@@ -19,14 +19,12 @@ class ProjectPanel extends Component {
 
         const action_names = [
             'Add New Project',
-            'Add New Test Suite',
 	        'Add New Test Script',
             'Upload Test Zip'
         ]
 
         const actions = [
 	        () => this.props.setModalState(1),
-            () => this.props.setModalState(3),
 	        () => this.props.setModalState(5),
             () => this.props.setModalState(7),
         ]
@@ -42,7 +40,6 @@ class ProjectPanel extends Component {
 
 	            <ProjectModal id={1} newProject />
 	            <ProjectModal id={2} />
-                <ProjectSuiteModal id={3} newTestSuite/>
                 <ProjectSuiteModal id={4}/>
 	            <ProjectTestModal id={5} newTestScript />
 	            <ProjectTestModal id={6} />

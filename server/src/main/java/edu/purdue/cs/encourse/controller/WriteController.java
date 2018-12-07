@@ -255,30 +255,46 @@ public class WriteController {
         }
 
         List<JSONObject> successes = new ArrayList<>();
-        if (file.getOriginalFilename().contains("zip")) {
-            // TODO
-        } else {
-            String filePath = ServletUriComponentsBuilder.fromPath(fileName).toUriString();
-            String contents = "";
-            try {
-                File saved = new File(filePath);
-                BufferedReader br = new BufferedReader(new FileReader(saved));
-
-                String line;
-                while ((line = br.readLine()) != null) {
-                    contents += line;
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject json = (JSONObject) parser.parse(body);
+            for (Object k: json.keySet()) {
+                String key = (String)k;
+                JSONObject info = (JSONObject) json.get(key);
+                String testName = (String) info.get("testName");
+                String id = (String) info.get("projectID");
+                boolean isHidden = (boolean) info.get("isHidden");
+                double points = (double) info.get("points");
+                String suite = null;
+                if (info.keySet().contains("suite")) {
+                    suite = (String) info.get("suite");
                 }
-            } catch (IOException e) {
-                System.out.println("Could not read file: " + e.getMessage());
-                return new ResponseEntity<>("{\"errors\": \"Could not read file " + fileName + "'s contents\"}", HttpStatus.NOT_MODIFIED);
-            }
+                String contents = "";
+                try {
+                    File saved = fileService.loadFileAsResource(key).getFile();
+                    BufferedReader br = new BufferedReader(new FileReader(saved));
 
-            JSONObject json = new JSONObject();
-            json.put("fileName", fileName);
-            json.put("filePath", filePath);
-            json.put("fileSize", file.getSize());
-            json.put("fileType", file.getContentType());
-            successes.add(json);
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        contents += line;
+                    }
+                    br.close();
+                } catch (IOException e) {
+                    System.out.println("Could not read file: " + e.getMessage());
+                }
+
+                ProjectTestScript result = professorService.uploadTestScript(id, testName, contents, isHidden, points);
+                if (result != null && suite != null) {
+                    professorService.addTestScriptToSuite(id, testName, suite);
+                }
+                JSONObject curr = new JSONObject();
+                curr.put("fileName", key);
+                curr.put("fileSize", file.getSize());
+                curr.put("fileType", file.getContentType());
+                successes.add(curr);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("{\"errors\": \"Could not parse json\"}", HttpStatus.NOT_MODIFIED);
         }
 
         return new ResponseEntity<>(successes, HttpStatus.OK);
@@ -327,6 +343,19 @@ public class WriteController {
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else if (result == -1) {
             return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    @RequestMapping(value = "/add/suite", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> addSuite(@RequestParam(name = "projectID") String projectID,
+                                                    @RequestParam(name = "suite") String suite) {
+
+        int result = professorService.addSuiteToProject(projectID, suite);
+        if (result == 0) {
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }

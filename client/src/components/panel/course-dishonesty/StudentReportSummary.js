@@ -34,7 +34,7 @@ class StudentReportSummary extends Component {
 				<div className="h4 break-line header" />
 				<div className="preview-content">
                     <h5>Rate: { student.metrics.rate.percentile.toFixed(2) }</h5>
-                    <h5>Velocity: {student.metrics.veloctiy.percentile.toFixed(2) }</h5>
+                    <h5>Velocity: {student.metrics.velocity.percentile.toFixed(2) }</h5>
 					<h5>Score: { student.score.toFixed(2) }</h5>
 				</div>
                 <div className="student-preview-progress">
