@@ -21,14 +21,14 @@ import BackNavigation from '../navigation/BackNavigation'
 import {Summary} from '../Helpers'
 import StudentSuiteInfo from './student/StudentSuiteInfo'
 import StudentCommitFilter from './student/StudentCommitFilter'
+import {retrieveStudent} from '../../redux/retrievals/student'
 
 
 class StudentPanel extends Component {
 
     componentDidMount = () => {
-   //     if(!this.props.currentStudent) {
-     //       retrieveStudent({id: this.props.match.params.id}, this.props.currentCourseId, this.props.currentSemesterId)
-       // }
+        if(!this.props.currentStudent)
+            retrieveStudent({id: this.props.match.params.id}, this.props.currentCourseId, this.props.currentSemesterId)
     }
 
 	componentWillUnmount() {
