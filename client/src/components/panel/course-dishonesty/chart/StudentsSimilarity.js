@@ -22,7 +22,9 @@ class StudentsSimilarity extends Component {
     }
     
     render() {
-        if (this.props.chart.loading) {
+        const {chart} = this.props
+        
+        if (chart.loading) {
             return (
             <div className='chart-container loading' title={ this.props.title ? this.props.title : null}>
             <LoadingIcon/>
@@ -30,6 +32,7 @@ class StudentsSimilarity extends Component {
             )
         }
         
+        const average = (chart.data.reduce((sum, item) => sum + item.similarity, 0) / chart.data.length).toFixed(0)
         return (
             <div
                 title='Histogram of all students in the course grouped by the percentage of tests they are passing (progress).'
@@ -37,15 +40,20 @@ class StudentsSimilarity extends Component {
             >
                 <table>
                     <tbody>
-                        {this.props.chart.data.reverse().slice(0, 10).map((item, index)=>{
+                        {chart.data.reverse().slice(0, 10).map((item, index)=>{
                             return(
-                                <tr>
+                                <tr key={item.user1 + ' ' + item.user2}>
                                     <td style={{'padding': '3px'}}>{item.user1}</td>
                                     <td style={{'padding': '3px'}}>{item.user2}</td>
-                                    <td style={{'padding': '3px'}}>{item.similarity_bin}</td>
+                                    <td style={{'padding': '3px'}}>{item.similarity}</td>
                                 </tr>
                             )
                         })}
+                        <tr>
+                            <td style={{'padding': '3px'}}>Average</td>
+                            <td style={{'padding': '3px'}}></td>
+                            <td style={{'padding': '3px'}}>{average}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
