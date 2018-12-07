@@ -11,6 +11,7 @@ import '../styles/css/base.css'
 import '../styles/css/main.css'
 import Navbar from './navigation/TopNavigation'
 import {AdminPanel, CoursePanel, CourseDishonestyPanel, ManageTAPanel, PreferencePanel, ProjectPanel, StudentDishonestyPanel, StudentPanel} from "./panel"
+import StudentCommitDiffPanel from './panel/StudentCommitDiffPanel'
 class Main extends Component {
 
     createPanelRef = (node) => {
@@ -87,6 +88,9 @@ class Main extends Component {
                             }/>
                             <Route path="/:courseID/:semesterID/student/:id" render={(navProps) =>
                                 <StudentPanel ref={ this.setChild } {...navProps} />
+                            }/>
+                            <Route path='/:courseID/:semesterID/student/:studentID/commit/:commitID' render={(navProps) =>
+                                <StudentCommitDiffPanel ref={ this.setChild } {...navProps} />
                             }/>
                             <Route path="/:courseID/:semesterID/admin" render={(navProps) =>
                                 <AdminPanel ref={ this.setChild } {...navProps} />
