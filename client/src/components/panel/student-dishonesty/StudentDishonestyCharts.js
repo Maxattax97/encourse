@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {Card, Summary} from '../../Helpers'
-import StudentVelocityPerCommit from "./chart/StudentVelocityPerCommit"
-import StudentVelocityPerTime from "./chart/StudentVelocityPerTime"
+import VelocityPerCommit from "./chart/VelocityPerCommit"
+import VelocityPerTime from "./chart/VelocityPerTime"
 
 class StudentDishonestyCharts extends Component {
 
@@ -9,10 +9,10 @@ class StudentDishonestyCharts extends Component {
 		return (
 			<Summary columns={ 2 } className='charts'>
 				<Card>
-					<StudentVelocityPerCommit/>
+					<VelocityPerCommit/>
 				</Card>
 				<Card>
-					<StudentVelocityPerTime/>
+					<VelocityPerTime/>
 				</Card>
 			</Summary>
 		)

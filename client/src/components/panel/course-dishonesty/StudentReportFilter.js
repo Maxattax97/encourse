@@ -18,7 +18,7 @@ class StudentReportFilter extends Component {
 	render() {
 	    return (
 	        <div className='course-students-report'>
-                <h3 className='header'>Students Summary</h3>
+                <h3 className='header'>Students</h3>
 	            {
 	                this.props.report.length ?
 	                    <Filter>

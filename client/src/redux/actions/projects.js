@@ -45,3 +45,7 @@ export const runTestSuite = genericDispatch(
 export const getTestScripts = genericDispatch(
     class_type, 'GET_TEST_SCRIPTS', 'GET'
 )
+
+export const getTestSuites = genericDispatch(
+    class_type, 'GET_TEST_SUITES', 'GET'
+)

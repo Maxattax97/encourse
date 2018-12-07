@@ -104,7 +104,7 @@ class CourseDishonestyPanel extends Component {
                         </Title>
                         <div className='h1 break-line header' />
 
-                        <h3 className='header'>Course Charts Summary</h3>
+                        <h3 className='header'>Charts</h3>
                         <CourseDishonestyCharts/>
 
                         <div className='h1 break-line' />

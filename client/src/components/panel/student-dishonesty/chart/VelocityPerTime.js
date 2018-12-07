@@ -25,7 +25,7 @@ const defaultData = [
     {date: moment('2018-09-27').valueOf(), progress: 0, timeSpent: 0, commitCount: 0},
 ]
 
-class StudentVelocityPerTime extends Component {
+class VelocityPerTime extends Component {
     
     constructor(props) {
         super(props)
@@ -134,4 +134,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(StudentVelocityPerTime)
+export default connect(mapStateToProps, mapDispatchToProps)(VelocityPerTime)
