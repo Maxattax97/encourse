@@ -160,7 +160,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
         else {
             List<Project> projects = projectRepository.findBySemester("Fall2018");
             for(Project p : projects) {
-                p.setTestRate(4);
+                p.setTestRate(ConfigurationManager.getInstance().rate);
                 p.setTestCount(0);
                 projectRepository.save(p);
                 List<StudentProject> studentProjects = studentProjectRepository.findByIdProjectID(p.getProjectID());

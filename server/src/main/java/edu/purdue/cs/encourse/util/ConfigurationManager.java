@@ -8,6 +8,7 @@ public class ConfigurationManager {
     public Boolean debug = false;
     public Boolean testing = false;
     public int limit = 1000;
+    public int rate = 0;
     public final static String ßuserID = "cutz";
     public final static String projectID = "cs252";
 
@@ -21,7 +22,7 @@ public class ConfigurationManager {
             while ((line = configReader.readLine()) != null) {
                 String[] words = line.split("=");
                 if (words[0].equals("DEBUG")) {
-                    debug = words[1].equals("1") ? true : false;
+                    debug = words[1].equals("1");
                     System.out.println("DEBUG = " + debug);
                 }
                 else if (words[0].equals("LIMIT")) {
@@ -29,8 +30,12 @@ public class ConfigurationManager {
                     System.out.println("LIMIT = " + limit);
                 }
                 else if (words[0].equals("TESTING")) {
-                    testing = words[1].equals("1") ? true : false;
+                    testing = words[1].equals("1");
                     System.out.println("TESTING = " + limit);
+                }
+                else if (words[0].equals("RATE")) {
+                    rate = Integer.parseInt(words[1]);
+                    System.out.println("RATE = " + rate);
                 }
             }
         } catch (IOException e) {
