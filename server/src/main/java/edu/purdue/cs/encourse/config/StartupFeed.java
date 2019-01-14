@@ -62,7 +62,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
         if (adminService.findAllUsers().isEmpty()) {
             adminService.addAccount("0", "grr", "Gustavo", "Rodriguez-Rivera", Account.Role_Names.PROFESSOR, "A", "grr@purdue.edu");
             adminService.addAccount("1", "kleclain-a", "Killian", "LeClainche", Account.Role_Names.ADMIN, "A", "kleclain@purdue.edu");
-            adminService.addAccount("2", "kleclain-t", "William", "Reed", Account.Role_Names.TA, "J", "reed226@purdue.edu");
+            adminService.addAccount("2", "kleclain-t", "William", "Reed", Account.Role_Names.TA, "J", "kleclain@purdue.edu");
             adminService.addAccount("3", "reed226-a", "William", "Reed", Account.Role_Names.ADMIN, "J", "reed226@purdue.edu");
             adminService.addAccount("4", "reed226-t", "William", "Reed", Account.Role_Names.TA, "J", "reed226@purdue.edu");
 

@@ -9,7 +9,7 @@ public class ConfigurationManager {
     public Boolean testing = false;
     public int limit = 1000;
     public int rate = 0;
-    public final static String ßuserID = "cutz";
+    public final static String userID = "cutz";
     public final static String projectID = "cs252";
 
     private ConfigurationManager() {
