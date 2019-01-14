@@ -921,8 +921,10 @@ public class ProfessorServiceImpl implements ProfessorService {
                 System.out.println("Pulling project " + project.getProjectName());
                 pullProjects(project.getProjectID());
                 System.out.println("Testing project " + project.getProjectName());
-                runTestall(project.getProjectID());
-                List<StudentProject> projects = studentProjectRepository.findByIdProjectIDAndIdSuite(project.getProjectID(), "testall");
+                List<ProjectTestScript> tests = projectTestScriptRepository.findByIdProjectID(project.getProjectID());
+                if(!tests.isEmpty()) {
+                    runTestall(project.getProjectID());
+                }
                 project.setTestCount(project.getTestRate() - 1);
                 project.setOperationProgress(0);
                 project.setOperationTime(0);
