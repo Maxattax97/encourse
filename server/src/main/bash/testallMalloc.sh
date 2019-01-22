@@ -17,7 +17,7 @@ rm printing.c
 cp -R "$2/tests/expected" tests
 cp -R "$2/tests/testsrc" tests
 cp -R "$2/utils" .
-cp "$2/tests/Makefile" .
+cp "$2/tests/Makefile" tests
 cp "$2/runtest.py" .
 cp "$2/testing.h" .
 cp "$2/testing.c" .
