@@ -658,7 +658,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 TestExecuter tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + helperService.getTestDir(), testCaseDirectory, hiddenTestCaseDirectory);
                 Thread thread = new Thread(tester);
                 thread.start();
-                Thread.sleep(5000);
+                Thread.sleep(project.getMaximumRuntime());
                 thread.interrupt();
                 helperService.executeBashScript("killProcesses.sh " + project.getCourseID());
                 String visibleResult = tester.getVisibleResult();
@@ -704,7 +704,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                 tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + helperService.getTestDir(), testCaseDirectory, hiddenTestCaseDirectory);
                 thread = new Thread(tester);
                 thread.start();
-                Thread.sleep(5000);
+                Thread.sleep(project.getMaximumRuntime());
                 thread.interrupt();
                 helperService.executeBashScript("killProcesses.sh " + project.getCourseID());
                 visibleResult = tester.getVisibleResult();
@@ -816,7 +816,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     TestExecuter tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + helperService.getTestDir(), testCaseDirectory, hiddenTestCaseDirectory);
                     Thread thread = new Thread(tester);
                     thread.start();
-                    Thread.sleep(5000);
+                    Thread.sleep(project.getMaximumRuntime());
                     thread.interrupt();
                     helperService.executeBashScript("killProcesses.sh " + project.getCourseID());
                     String visibleResult = tester.getVisibleResult();
@@ -861,7 +861,7 @@ public class ProfessorServiceImpl implements ProfessorService {
                     tester = new TestExecuter(project.getCourseID(), testingDirectory + "/" + helperService.getTestDir(), testCaseDirectory, hiddenTestCaseDirectory);
                     thread = new Thread(tester);
                     thread.start();
-                    Thread.sleep(5000);
+                    Thread.sleep(project.getMaximumRuntime());
                     thread.interrupt();
                     helperService.executeBashScript("killProcesses.sh " + project.getCourseID());
                     visibleResult = tester.getVisibleResult();

@@ -95,6 +95,10 @@ public class Project {
     @Setter
     private long operationTime;
 
+    /** Maximum amount of time a project is allowed to be tested before being given a 0 for the test */
+    @Setter
+    private int maximumRuntime;
+
     public Project(String courseID, String semester, String projectName,
                    String repoName, String startDate, String dueDate, int testRate) {
         this.courseID = courseID;
@@ -118,6 +122,7 @@ public class Project {
         this.analyzing = false;
         this.operationProgress = 0.0;
         this.operationTime = 0;
+        this.maximumRuntime = 5000;
     }
 
     public Project() {

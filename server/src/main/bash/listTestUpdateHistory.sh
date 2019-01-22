@@ -5,5 +5,6 @@
 
 DIRECTORY="$(pwd)"
 cd "$1"
-git log --perl-regexp --author='^((?!CS252).*)$' --date=iso --pretty=format:"@UPDATE %h %ad" -p test-shell/testall.out | grep "@UPDATE" > "${DIRECTORY}/$2"
+# git log --perl-regexp --author='^((?!CS252).*)$' --date=iso --pretty=format:"@UPDATE %h %ad" -p test-shell/testall.out | grep "@UPDATE" > "${DIRECTORY}/$2"
+git log --perl-regexp --author='^((?!CS252).*)$' --date=iso --pretty=format:"@UPDATE %h %ad" | grep "@UPDATE" > "${DIRECTORY}/$2"
 cd "${DIRECTORY}"
