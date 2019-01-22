@@ -14,8 +14,8 @@ rm testing.h
 rm testing.c
 rm printing.h
 rm printing.c
-cp -R "$2/tests/expected" .
-cp -R "$2/tests/testsrc" .
+cp -R "$2/tests/expected" tests
+cp -R "$2/tests/testsrc" tests
 cp -R "$2/utils" .
 cp "$2/tests/Makefile" .
 cp "$2/runtest.py" .
@@ -23,5 +23,5 @@ cp "$2/testing.h" .
 cp "$2/testing.c" .
 cp "$2/printing.h" .
 cp "$2/printing.c" .
-runtest.py | grep "TEST:" | awk '{printf $2 ":" substr($3,1,1) ";"}' 2> /dev/null
+python3 runtest.py | grep "TEST:" | awk '{printf $2 ":" substr($3,1,1) ";"}' 2> /dev/null
 cd "${DIRECTORY}"
