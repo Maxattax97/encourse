@@ -5,15 +5,19 @@
 
 DIRECTORY="$(pwd)"
 cd $1
-rm -rf tests
+rm -rf tests/expected
+rm -rf tests/testsrc
 rm -rf utils
+rm tests/Makefile
 rm runtest.py
 rm testing.h
 rm testing.c
 rm printing.h
 rm printing.c
-cp -R "$2/tests" .
+cp -R "$2/tests/expected" .
+cp -R "$2/tests/testsrc" .
 cp -R "$2/utils" .
+cp "$2/tests/Makefile" .
 cp "$2/runtest.py" .
 cp "$2/testing.h" .
 cp "$2/testing.c" .
