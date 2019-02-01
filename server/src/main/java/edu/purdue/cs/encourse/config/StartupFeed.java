@@ -100,19 +100,22 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                         adminService.addUser(info[0] + "-lab" + lab[2], lab[3], "TA", false, false, false, true);
                         adminService.assignTeachingAssistantToCourse(info[0] + "-lab" + lab[2], "cs252", "Spring2019");
                         professorService.assignTeachingAssistantToSection(info[0] + "-lab" + lab[2], section.getSectionID());
-                        teachingAssistants.add(teachingAssistantRepository.findByUserID(info[0] + "-lab" + lab[2]));
+                        teachingAssistants.add(teachingAssistantRepository.findByUserName(info[0] + "-lab" + lab[2]));
                         count++;
                     }
-                    String studentin;
-                    while ((studentin = studentReader.readLine()) != null) {
-                        String[] roster = studentin.split(" ");
+                    while ((input = studentReader.readLine()) != null) {
+                        String[] roster = input.split(" ");
                         if(!roster[0].equals("Start")) {
                             continue;
                         }
-                        String studentName;
-                        while (!(studentName = studentReader.readLine().split(",")[0]).equals("End")) {
+                        while ((input = studentReader.readLine()) != null) {
+                            roster = input.split(" ");
+                            if(roster[0].equals("End")) {
+                                break;
+                            }
+                            roster = input.split(",");
                             for(Account ta : teachingAssistants) {
-                                professorService.assignTeachingAssistantToStudentInSection(ta.getUserName(), studentName, section.getSectionID());
+                                professorService.assignTeachingAssistantToStudentInSection(ta.getUserName(), roster[0], section.getSectionID());
                             }
                         }
                     }
