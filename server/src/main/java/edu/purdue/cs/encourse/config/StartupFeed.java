@@ -118,6 +118,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                                 professorService.assignTeachingAssistantToStudentInSection(ta.getUserName(), roster[0], section.getSectionID());
                             }
                         }
+                        break;
                     }
                 }
                 taReader.close();
