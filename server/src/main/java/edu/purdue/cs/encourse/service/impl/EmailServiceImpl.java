@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.management.relation.InvalidRelationIdException;
 import java.security.SecureRandom;
 
 @Component
@@ -30,6 +31,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Autowired
     private ReportService reportService;
+    
+    @Autowired
+    private AccountService accountService;
 
     @Value("${spring.mail.username}")
     private String from;
@@ -46,11 +50,11 @@ public class EmailServiceImpl implements EmailService {
         return userPasswordEncoder.encode(password);
     }
 
-    public void sendGeneratedReportMessage(String accountID, String reportID) {
+    public void sendGeneratedReportMessage(Long accountID, String reportID) throws InvalidRelationIdException {
         String lock = reportService.shareReport(reportID);
         String link = "vm2.cs.purdue.edu/api/report?reportID=" + reportID + "&lock=" + lock;
 
-        Account account = accountRepository.findByUserID(accountID);
+        Account account = accountService.getAccount(accountID);
         if (account == null) {
             return;
         }

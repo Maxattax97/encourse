@@ -2,10 +2,17 @@ package edu.purdue.cs.encourse.config;
 
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.Account;
+import edu.purdue.cs.encourse.domain.CollegeAdmin;
+import edu.purdue.cs.encourse.domain.Course;
+import edu.purdue.cs.encourse.domain.Professor;
 import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.Student;
+import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
+import edu.purdue.cs.encourse.model.CourseModel;
+import edu.purdue.cs.encourse.model.CourseStudentModel;
+import edu.purdue.cs.encourse.model.SectionModel;
 import edu.purdue.cs.encourse.service.*;
 import edu.purdue.cs.encourse.util.ConfigurationManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +27,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.stereotype.Component;
 
+import javax.management.relation.RelationException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -32,25 +40,13 @@ import java.util.List;
 public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
 
     @Autowired
-    private AdminService adminService;
-
+    private AdminServiceV2 adminService;
+    
     @Autowired
-    private ProfessorService professorService;
-
+    private AccountService accountService;
+    
     @Autowired
-    private CourseService courseService;
-
-    @Autowired
-    private StudentProjectRepository studentProjectRepository;
-
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private ProjectRepository projectRepository;
-
-    @Autowired
-    private HelperService helperService;
+    private CourseServiceV2 courseService;
     
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
@@ -60,25 +56,35 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
     private void feedDatabase() {
         System.out.println("CONDITIONAL RAN");
         if (adminService.findAllUsers().isEmpty()) {
-            adminService.addAccount("0", "grr", "Gustavo", "Rodriguez-Rivera", Account.Role_Names.PROFESSOR, "A", "grr@purdue.edu");
-            adminService.addAccount("1", "kleclain-a", "Killian", "LeClainche", Account.Role_Names.ADMIN, "A", "kleclain@purdue.edu");
-            adminService.addAccount("2", "kleclain-t", "William", "Reed", Account.Role_Names.TA, "J", "kleclain@purdue.edu");
-            adminService.addAccount("3", "reed226-a", "William", "Reed", Account.Role_Names.ADMIN, "J", "reed226@purdue.edu");
-            adminService.addAccount("4", "reed226-t", "William", "Reed", Account.Role_Names.TA, "J", "reed226@purdue.edu");
-
-            adminService.addUser("grr", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "PROFESSOR", false, false, false, true);
-            adminService.addUser("kleclain-a", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
-            adminService.addUser("kleclain-t", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "TA", false, false, false, true);
-            adminService.addUser("reed226-a", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "ADMIN", false, false, false, true);
-            adminService.addUser("reed226-t", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", "TA", false, false, false, true);
-
-            Section section = adminService.addSection("1001", "Spring2019", "cs252", "Systems Programming", "All", "N/A");
-            adminService.assignProfessorToCourse("grr", "cs252", "Spring2019");
-            adminService.assignTeachingAssistantToCourse("kleclain-t", "cs252", "Spring2019");
-            adminService.assignTeachingAssistantToCourse("reed226-t", "cs252", "Spring2019");
-            professorService.assignTeachingAssistantToSection("kleclain-t", section.getSectionID());
-            professorService.assignTeachingAssistantToSection("reed226-t", section.getSectionID());
-
+            try {
+                Professor grr = new Professor("grr", "Gustavo", "Rodriguez-Rivera", "grr@purdue.edu");
+                CollegeAdmin killianAdmin = new CollegeAdmin("kleclain-a", "Killian", "Le Clainche", "kleclain@purdue.edu");
+                Student killianStudent = new Student("kleclain-t", "Killian", "Le Clainche", "kleclain@purdue.edu");
+                CollegeAdmin jordanAdmin = new CollegeAdmin("reed226-a", "William", "Reed", "reed226@purdue.edu");
+                Student jordanStudent = new Student("reed226-t", "William", "Reed", "reed226@purdue.edu");
+                
+                accountService.addAccount(grr);
+                accountService.addAccount(killianAdmin);
+                accountService.addAccount(killianStudent);
+                accountService.addAccount(jordanAdmin);
+                accountService.addAccount(jordanStudent);
+                
+                Course course = courseService.addCourse(new CourseModel(grr.getUserID(), "/homes/cs252/sourcecontrol/work", "1001", "System Programming", "cs252", "Spring2019"));
+                
+                courseService.addSection(new SectionModel(course.getCourseID(), "LE1/LE2", "N/A"));
+                
+                adminService.addUser(new User(grr.getUserID(), "grr", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", false, false, false, true));
+                adminService.addUser(new User(killianAdmin.getUserID(), "kleclain-a", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", false, false, false, true));
+                adminService.addUser(new User(killianStudent.getUserID(), "kleclain-t", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", false, false, false, true));
+                adminService.addUser(new User(jordanAdmin.getUserID(), "reed226-a", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", false, false, false, true));
+                adminService.addUser(new User(jordanStudent.getUserID(), "reed226-t", "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6", false, false, false, true));
+                
+                adminService.addCourseTA(new CourseStudentModel(killianStudent.getUserID(), course.getCourseID()));
+                adminService.addCourseTA(new CourseStudentModel(jordanStudent.getUserID(), course.getCourseID()));
+            }
+            catch (RelationException | IllegalArgumentException e) {
+                e.printStackTrace();
+            }
 
             try {
                 BufferedReader fileReader = new BufferedReader(new FileReader("/sourcecontrol/cs252/Spring2019/students.txt"));
@@ -94,8 +100,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            courseService.setSectionRemotePaths("Spring2019", "cs252", "/homes/cs252/sourcecontrol/work");
-            courseService.setDirectory("Spring2019", "cs252");
+            
             Project malloc = professorService.addProject("cs252", "Spring2019", "MyMalloc", "lab1-src", "8/27/2018", "9/10/2018", 0);
             //Project shell = professorService.addProject("cs252", "Spring2019", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
             //addTestScripts(shell);
