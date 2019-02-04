@@ -28,7 +28,7 @@ import java.util.List;
 @Conditional(value = {ProdProfileCondition.class})
 public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
 
-    @Autowired
+    /*@Autowired
     private AdminService adminService;
 
     @Autowired
@@ -50,7 +50,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
     private ProjectRepository projectRepository;
 
     @Autowired
-    private HelperService helperService;
+    private HelperService helperService;*/
     
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
@@ -58,7 +58,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
     }
     
     private void feedDatabase() {
-        System.out.println("CONDITIONAL RAN");
+        /*System.out.println("CONDITIONAL RAN");
         if (adminService.findAllUsers().isEmpty()) {
             adminService.addAccount("0", "grr", "Gustavo", "Rodriguez-Rivera", Account.Role_Names.PROFESSOR, "A", "grr@purdue.edu");
             adminService.addAccount("1", "kleclain-a", "Killian", "LeClainche", Account.Role_Names.ADMIN, "A", "kleclain@purdue.edu");
@@ -156,11 +156,11 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                     helperService.updateStudentInformation(s.getProjectID(), student.getUserName());
                 }
             }
-        }
+        }*/
     }
 
     private void addMallocTestScripts(Project project) {
-        professorService.addTestScript(project.getProjectID(), "test_simple0", false, 2);
+        /*professorService.addTestScript(project.getProjectID(), "test_simple0", false, 2);
         professorService.addTestScriptToSuite(project.getProjectID(), "test_simple0", "Simple Tests");
         professorService.addTestScriptToSuite(project.getProjectID(), "test_simple0", "Part 1");
         professorService.addTestScript(project.getProjectID(), "test_simple1", false, 3);
@@ -244,12 +244,12 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
         professorService.addTestScriptToSuite(project.getProjectID(), "test_double_free", "Part 2");
         professorService.addTestScript(project.getProjectID(), "test_out_of_ram", false, 2);
         professorService.addTestScriptToSuite(project.getProjectID(), "test_out_of_ram", "Other Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_out_of_ram", "Part 2");
+        professorService.addTestScriptToSuite(project.getProjectID(), "test_out_of_ram", "Part 2");*/
     }
 
     private void addShellTestScripts(Project project) {
         //professorService.addTestScript(project.getProjectID(), "test_redirect_input", false, 2);
-        professorService.addTestScript(project.getProjectID(), "test_redirect_output", false, 2);
+        /*professorService.addTestScript(project.getProjectID(), "test_redirect_output", false, 2);
         professorService.addTestScriptToSuite(project.getProjectID(), "test_redirect_output", "IO Redirection");
         professorService.addTestScriptToSuite(project.getProjectID(), "test_redirect_output", "Part 1");
         professorService.addTestScript(project.getProjectID(), "test_redirect_error", false, 1);
@@ -361,7 +361,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
         professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards7", "Wildcarding");
         professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards7", "Part 3");
         //professorService.addTestScript(project.getProjectID(), "test_tilde", false, 2);
-        //professorService.addTestScript(project.getProjectID(), "test_robustness", false, 10);
+        //professorService.addTestScript(project.getProjectID(), "test_robustness", false, 10);*/
     }
 }
 

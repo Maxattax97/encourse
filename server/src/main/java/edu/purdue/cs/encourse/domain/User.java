@@ -45,19 +45,15 @@ public class User implements UserDetails, Serializable {
     private String password;
 
     @Column(name = "ACCOUNT_EXPIRED")
-    @NonNull
     private boolean accountExpired;
 
     @Column(name = "ACCOUNT_LOCKED")
-    @NonNull
     private boolean accountLocked;
 
     @Column(name = "CREDENTIALS_EXPIRED")
-    @NonNull
     private boolean credentialsExpired;
 
     @Column(name = "ENABLED")
-    @NonNull
     private boolean enabled;
     
     @ManyToMany(fetch = FetchType.LAZY)

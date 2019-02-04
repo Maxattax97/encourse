@@ -35,7 +35,9 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "PROJECT_SUITES")
-@Data
+@Getter
+@Setter
+@ToString
 public class TestSuite {
 	
 	@Id
@@ -78,6 +80,11 @@ public class TestSuite {
 	@Override
 	public int hashCode() {
 		return Math.toIntExact(id);
+	}
+	
+	@Override
+	public boolean equals(Object testSuite) {
+		return testSuite instanceof TestSuite && ((TestSuite) testSuite).id.equals(this.id);
 	}
 	
 }

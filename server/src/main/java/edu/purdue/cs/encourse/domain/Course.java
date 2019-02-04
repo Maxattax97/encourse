@@ -28,9 +28,11 @@ import java.util.List;
  */
 @Entity
 @Table(name = "COURSE")
-@Data
-@NoArgsConstructor
+@Setter
+@Getter
+@ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class Course {
 	
 	@Id
@@ -79,7 +81,6 @@ public class Course {
 	@NonNull
 	private List<CourseStudent> teachingAssistants;
 	
-	
 	public Course(@NonNull Professor professor, @NonNull CourseModel courseModel) {
 		this.professor = professor;
 		this.remotePath = courseModel.getRemotePath();
@@ -102,6 +103,11 @@ public class Course {
 	
 	@Override
 	public boolean equals(Object course) {
-		return course instanceof Course && ((Course) course).getCourseID().equals(this.getCourseID());
+		return course instanceof Course && ((Course) course).courseID.equals(this.courseID);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Math.toIntExact(this.courseID);
 	}
 }
