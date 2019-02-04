@@ -30,22 +30,19 @@ import java.util.*;
 @RequestMapping(value="/api")
 public class AuthController {
 
-    @Autowired
-    private AccountService accountService;
+    private final AccountService accountService;
 
-    @Autowired
-    private TokenStore tokenStore;
+    private final TokenStore tokenStore;
 
-    @Autowired
-    private SessionRegistry sessionRegistry;
-
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
-    private EmailService emailService;
+    private final SessionRegistry sessionRegistry;
     
-
+    @Autowired
+    public AuthController(AccountService accountService, TokenStore tokenStore, SessionRegistry sessionRegistry) {
+        this.accountService = accountService;
+        this.tokenStore = tokenStore;
+        this.sessionRegistry = sessionRegistry;
+    }
+    
     /**
      * Retrieves Account of current logged in User
      *

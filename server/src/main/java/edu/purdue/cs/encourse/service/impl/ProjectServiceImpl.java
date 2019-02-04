@@ -431,7 +431,7 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 	}
 	
-	private void runAllStudentTestalls(Project project, Map<String, TestScript> testScripts, List<StudentProject> studentProjects, Map<StudentProject, List<StudentProjectDate>> studentProjectListMap) {
+	private void runAllStudentTestalls(Project project, Map<String, TestScript> testScripts, Map<StudentProject, List<StudentProjectDate>> studentProjectListMap) {
 		
 		File testCaseDirectory = new File(project.getCourse().getCourseHub() + "/testcases/" + project.getRepository());
 		File hiddenTestCaseDirectory = new File(project.getCourse().getCourseHub() + "/hidden_testcases/" + project.getRepository());
@@ -443,12 +443,9 @@ public class ProjectServiceImpl implements ProjectService {
 		if(!makefile.exists())
 			return;
 		
-		int processedStudentProjects = 0;
-		long startTime = System.currentTimeMillis();
-		
 		String courseHub = project.getCourse().getCourseHub();
 		
-		for(StudentProject studentProject : studentProjects) {
+		for(StudentProject studentProject : studentProjectListMap.keySet()) {
 			
 			String testingDirectory = courseHub + "/" + studentProject.getId();
 			
@@ -465,22 +462,8 @@ public class ProjectServiceImpl implements ProjectService {
 				runStudentTestall(project, studentProjectListMap.get(studentProject), testScripts, buildCommits[1], testingDirectory, testCaseDirectory, hiddenTestCaseDirectory, makefile);
 				
 				executeScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
-				
-				processedStudentProjects++;
-				
-				project.setOperationProgress(((double) processedStudentProjects) / studentProjects.size());
-				project.setOperationTime((System.currentTimeMillis() - startTime) / 1000);
-				
-				projectRepository.save(project);
 			}
 			catch(Exception e) {
-				processedStudentProjects++;
-				
-				project.setOperationProgress(((double) processedStudentProjects) / studentProjects.size());
-				project.setOperationTime((System.currentTimeMillis() - startTime) / 1000);
-				
-				projectRepository.save(project);
-				
 				System.out.println("\nException at testall\n");
 			}
 		}
@@ -543,7 +526,6 @@ public class ProjectServiceImpl implements ProjectService {
 				else if(measureChanges && line.length() > 1) {
 					if(line.charAt(0) == '+') {
 						additions++;
-						line = line.substring(1);
 						
 						hash = new BigInteger(1, md5.digest(line.getBytes())).toString();
 						
@@ -616,6 +598,8 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			if(commitList == null)
 				continue;
+			
+			additionHashRepository.saveAll(additionHashMap.values());
 			
 			commitList.sort(Comparator.comparing(Commit::getDate));
 			
@@ -779,6 +763,7 @@ public class ProjectServiceImpl implements ProjectService {
 			if(project.getStartDate().compareTo(project.getDueDate()) == 0)
 				continue;
 			
+			//Get all student project dates >= the analyze date time (the last recorded analysis run)
 			List<StudentProjectDate> studentProjectDates = studentProjectDateRepository.findByProjectAndDateGreaterThanEqual(project, project.getAnalyzeDateTime());
 			
 			if(studentProjectDates == null || studentProjectDates.isEmpty())
@@ -789,6 +774,12 @@ public class ProjectServiceImpl implements ProjectService {
 			if(projectDateList == null || projectDateList.isEmpty())
 				continue;
 			
+			//Collect the projects test scripts (which are lazily retrieved) and map them to the test name -> test script
+			Map<String, TestScript> testScripts = project.getTestScripts().stream().collect(Collectors.toMap(TestScript::getName, Function.identity()));
+			
+			//map StudentProjectDates to their parent student project
+			Map<StudentProject, List<StudentProjectDate>> studentProjectListMap = studentProjectDates.stream().collect(Collectors.groupingBy(StudentProjectDate::getStudentProject));
+			
 			try {
 				pullProject(project);
 			}
@@ -796,19 +787,13 @@ public class ProjectServiceImpl implements ProjectService {
 				continue;
 			}
 			
-			//Collect the projects test scripts (which are lazily retrieved) and map them to the test name -> test script
-			Map<String, TestScript> testScripts = project.getTestScripts().stream().collect(Collectors.toMap(TestScript::getName, Function.identity()));
-			
-			List<StudentProject> studentProjects = project.getStudentProjects();
-			
-			Map<StudentProject, List<StudentProjectDate>> studentProjectListMap = studentProjectDates.stream().collect(Collectors.groupingBy(StudentProjectDate::getStudentProject));
-			
 			//start processing the project
 			project.setAnalyzing(true);
 			project.setAnalyzeDateTime(currentDate);
 			projectRepository.save(project);
 			
-			runAllStudentTestalls(project, testScripts, studentProjects, studentProjectListMap);
+			//TODO, make this obsolete (except that MyMalloc kind of broke this paradigm)
+			runAllStudentTestalls(project, testScripts, studentProjectListMap);
 			
 			//populate all information not associated with the testall into the appropriate locations
 			calculateStudentDiffs(project, projectDateList, studentProjectListMap);
@@ -820,7 +805,7 @@ public class ProjectServiceImpl implements ProjectService {
 			studentProjectDateRepository.saveAll(studentProjectDates);
 			
 			//save the StudentProject objects
-			studentProjectRepository.saveAll(studentProjects);
+			studentProjectRepository.saveAll(studentProjectListMap.keySet());
 			
 			//stop analyzing the project and set the last time the project has been analyzed to today's date
 			project.setAnalyzing(false);

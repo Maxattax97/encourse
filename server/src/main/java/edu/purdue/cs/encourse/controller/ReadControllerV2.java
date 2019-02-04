@@ -3,7 +3,6 @@ package edu.purdue.cs.encourse.controller;
 import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.model.ProjectStudentSearchModel;
 import edu.purdue.cs.encourse.model.course.CourseStudentSearch;
-import edu.purdue.cs.encourse.service.AdminService;
 import edu.purdue.cs.encourse.service.CourseServiceV2;
 import edu.purdue.cs.encourse.service.ProfessorServiceV2;
 import edu.purdue.cs.encourse.service.ProjectService;
@@ -45,15 +44,12 @@ public class ReadControllerV2 {
 	
 	private final StudentService studentService;
 	
-	private final AdminService adminService;
-	
 	@Autowired
-	public ReadControllerV2(CourseServiceV2 courseService, ProfessorServiceV2 professorService, ProjectService projectService, StudentService studentService, AdminService adminService) {
+	public ReadControllerV2(CourseServiceV2 courseService, ProfessorServiceV2 professorService, ProjectService projectService, StudentService studentService) {
 		this.courseService = courseService;
 		this.professorService = professorService;
 		this.projectService = projectService;
 		this.studentService = studentService;
-		this.adminService = adminService;
 	}
 	
 	private User getUserFromAuth() {
