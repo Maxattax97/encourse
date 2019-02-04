@@ -4,12 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.purdue.cs.encourse.domain.Course;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.Student;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -33,7 +28,9 @@ import java.util.List;
 @Table(name = "COURSE_STUDENT")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Setter
+@Getter
+@ToString
 public class CourseStudent {
 	/** Primary key for relation in database. Never used directly */
 	@Id
@@ -102,7 +99,12 @@ public class CourseStudent {
 	
 	@Override
 	public boolean equals(Object courseStudent) {
-		return courseStudent instanceof CourseStudent && ((CourseStudent) courseStudent).getId().equals(this.getId());
+		return courseStudent instanceof CourseStudent && ((CourseStudent) courseStudent).id.equals(this.id);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Math.toIntExact(this.id);
 	}
 	
 }

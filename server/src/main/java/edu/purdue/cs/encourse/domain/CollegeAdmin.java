@@ -18,8 +18,6 @@ import java.util.ArrayList;
 @Getter
 @Entity
 @Table(name = "ADMINISTRATOR")
-@NoArgsConstructor
-@AllArgsConstructor
 public class CollegeAdmin extends Account {
     
     public CollegeAdmin(String username, String firstName, String lastName, String eduEmail) {
