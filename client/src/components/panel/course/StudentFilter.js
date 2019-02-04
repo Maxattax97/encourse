@@ -71,7 +71,7 @@ class StudentFilter extends Component {
 	render() {
         return (
             <div className='course-students'>
-                <h3 className='header'>Students</h3>
+                <h3 className='header'>Students { this.props.students.page ? '(' + this.props.students.page.totalSize + ')' : '' }</h3>
                 {
                     this.props.students.data.length ?
                         <Filter>

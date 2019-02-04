@@ -5,13 +5,23 @@
 
 DIRECTORY="$(pwd)"
 cd $1
-rm -rf tests
+rm -rf tests/expected
+rm -rf tests/testsrc
+rm -rf utils
+rm tests/Makefile
 rm runtest.py
 rm testing.h
 rm testing.c
-cp -R "$2/tests" .
+rm printing.h
+rm printing.c
+cp -R "$2/tests/expected" tests
+cp -R "$2/tests/testsrc" tests
+cp -R "$2/utils" .
+cp "$2/tests/Makefile" tests
 cp "$2/runtest.py" .
 cp "$2/testing.h" .
 cp "$2/testing.c" .
-runtest.py | grep "TEST:" | awk '{printf $2 ":" substr($3,1,1) ";"}' 2> /dev/null
+cp "$2/printing.h" .
+cp "$2/printing.c" .
+python3 runtest.py | grep "TEST:" | awk '{printf $2 ":" substr($3,1,1) ";"}' 2> /dev/null
 cd "${DIRECTORY}"
