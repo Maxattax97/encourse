@@ -1,5 +1,6 @@
 package edu.purdue.cs.encourse.domain;
 
+import edu.purdue.cs.encourse.domain.relations.CourseStudent;
 import edu.purdue.cs.encourse.model.SectionModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,7 +55,7 @@ public class Section {
             joinColumns=@JoinColumn(name="sectionID"),
             inverseJoinColumns=@JoinColumn(name="studentID")
     )
-    private List<TestSuite> testSuites;
+    private List<CourseStudent> students;
     
     /** Examples: LE1, LE2, Lab6, PSO9 */
     @NonNull
