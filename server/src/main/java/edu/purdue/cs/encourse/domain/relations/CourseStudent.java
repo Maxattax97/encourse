@@ -71,7 +71,7 @@ public class CourseStudent {
 	@ManyToMany(cascade = {
 			CascadeType.MERGE,
 			CascadeType.PERSIST
-	}, fetch = FetchType.LAZY, mappedBy = "students")
+	}, fetch = FetchType.LAZY)
 	@JoinTable(name="COURSE_STUDENT_STUDENT",
 			joinColumns=@JoinColumn(name="student_id"),
 			inverseJoinColumns=@JoinColumn(name="ta_id")
