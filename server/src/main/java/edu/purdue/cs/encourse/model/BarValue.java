@@ -14,8 +14,8 @@ import javax.persistence.Embeddable;
 @AllArgsConstructor
 public class BarValue {
 	
-	public byte index;
+	public int index;
 	
-	public short size;
+	public int size;
 	
 }

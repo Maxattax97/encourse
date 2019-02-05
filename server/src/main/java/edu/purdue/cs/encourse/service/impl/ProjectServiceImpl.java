@@ -469,11 +469,12 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 	}
 	
-	private List<Commit> createCommitObjects(Project project, CourseStudent student, Map<String, AdditionHash> additionHashMap, MessageDigest md5) throws IOException, InterruptedException {
+	private List<Commit> createCommitObjects(Project project, StudentProject studentProject, Map<String, AdditionHash> additionHashMap, MessageDigest md5, String testingDirectory) throws IOException, InterruptedException {
 		List<Commit> commitList = new ArrayList<>(30);
 		
-		//TODO Call proper bash script
-		Process process = executeScriptAndReturn("THE_NEW");
+		CourseStudent student = studentProject.getStudent();
+		
+		Process process = executeScriptAndReturn("generateDiffsAfterDate.sh " + testingDirectory + " " + studentProject.getMostRecentCommit());
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		
 		String line;
@@ -516,10 +517,8 @@ public class ProjectServiceImpl implements ProjectService {
 				if(line.startsWith("+++")) {
 					measureChanges = General.isSourceCodeExtension(line);
 					
-					if(additions < 500)
-						commit.setAdditions(commit.getAdditions() + additions);
-					if(deletions < 500)
-						commit.setDeletions(commit.getDeletions() + deletions);
+					commit.setAdditions(commit.getAdditions() + additions);
+					commit.setDeletions(commit.getDeletions() + deletions);
 					
 					additions = deletions = 0;
 				}
@@ -573,9 +572,12 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		Map<String, AdditionHash> additionHashMap = new HashMap<>();
 		
+		String courseHub = project.getCourse().getCourseHub();
+		
 		//iterate through all students in the project
 		for(StudentProject studentProject : studentProjectListMap.keySet()) {
-			CourseStudent student = studentProject.getStudent();
+			
+			String testingDirectory = courseHub + "/" + studentProject.getId();
 			
 			//ensure that all keys are present inside the map
 			if(studentProjectListMap.containsKey(studentProject))
@@ -590,7 +592,7 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			try {
 				//collect all commits and sort
-				commitList = createCommitObjects(project, student, additionHashMap, md5);
+				commitList = createCommitObjects(project, studentProject, additionHashMap, md5, testingDirectory);
 			}
 			catch(IOException | InterruptedException e) {
 			
@@ -599,7 +601,7 @@ public class ProjectServiceImpl implements ProjectService {
 			if(commitList == null)
 				continue;
 			
-			additionHashRepository.saveAll(additionHashMap.values());
+			project.getAdditionHashes().addAll(additionHashMap.values());
 			
 			commitList.sort(Comparator.comparing(Commit::getDate));
 			
@@ -627,7 +629,7 @@ public class ProjectServiceImpl implements ProjectService {
 				
 				//run the total time spent on the project between these two commits algorithm
 				if(time > Math.max(commit.getAdditions() * 3, 10))
-					time = Math.round(commit.getAdditions());
+					time = Math.round(commit.getAdditions() * 2);
 				
 				//make sure that the studentProject first commit is the earliest and not null
 				if(studentProject.getFirstCommit() == null || studentProject.getFirstCommit().compareTo(commit.getDate()) > 0)

@@ -1,6 +1,7 @@
 package edu.purdue.cs.encourse.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,8 +20,7 @@ import java.util.Set;
 /**
  * Created by Killian Le Clainche on 1/20/2019.
  */
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "ADDITION_HASH")
 @NoArgsConstructor
