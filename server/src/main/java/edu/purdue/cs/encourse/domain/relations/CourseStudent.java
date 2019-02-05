@@ -38,12 +38,12 @@ public class CourseStudent {
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "course_id")
+	@JoinColumn(name = "courseID")
 	@NonNull
 	private Course course;
 	
 	@ManyToOne
-	@JoinColumn(name = "student_id")
+	@JoinColumn(name = "studentID")
 	@NonNull
 	private Student student;
 	
@@ -72,8 +72,8 @@ public class CourseStudent {
 			CascadeType.PERSIST
 	}, fetch = FetchType.LAZY)
 	@JoinTable(name="COURSE_STUDENT_STUDENT",
-			joinColumns=@JoinColumn(name="student_id"),
-			inverseJoinColumns=@JoinColumn(name="ta_id")
+			joinColumns=@JoinColumn(name="studentID"),
+			inverseJoinColumns=@JoinColumn(name="taID")
 	)
 	@NonNull
 	private List<CourseStudent> teachingAssistants;
