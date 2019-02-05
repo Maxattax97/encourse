@@ -1,6 +1,7 @@
 package edu.purdue.cs.encourse.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.purdue.cs.encourse.model.AccountModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -66,4 +67,15 @@ public class Account {
     @Column(columnDefinition = "smallint")
     @NonNull
     private Role role;
+    
+    public Account(@NonNull AccountModel model) {
+        if(model.getUserID() != null)
+            this.userID = model.getUserID();
+        
+        this.username = model.getUsername();
+        this.firstName = model.getFirstName();
+        this.lastName = model.getLastName();
+        this.eduEmail = model.getEduEmail();
+        this.role = model.getRole() == 0 ? Role.STUDENT : model.getRole() == 1 ? Role.PROFESSOR : Role.ADMIN;
+    }
 }

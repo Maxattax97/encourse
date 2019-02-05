@@ -14,6 +14,7 @@ import edu.purdue.cs.encourse.domain.relations.CourseStudent;
 import edu.purdue.cs.encourse.model.CourseProfessorModel;
 import edu.purdue.cs.encourse.model.CourseStudentModel;
 import edu.purdue.cs.encourse.model.StudentTAModel;
+import edu.purdue.cs.encourse.model.UserModel;
 import edu.purdue.cs.encourse.service.AccountService;
 import edu.purdue.cs.encourse.service.AdminServiceV2;
 import edu.purdue.cs.encourse.service.CourseServiceV2;
@@ -58,8 +59,10 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	private AuthorityRepository authorityRepository;
 	
 	@Override
-	public User addUser(@NonNull User user) throws InvalidRelationIdException {
-		Account account = accountService.getAccount(user.getId());
+	public User addUser(@NonNull UserModel model) throws InvalidRelationIdException {
+		Account account = accountService.getAccount(model.getUserID());
+		
+		User user = new User(model);
 		
 		user.getAuthorities().add(authorityRepository.findDistinctByName(account.getRole().name()));
 		

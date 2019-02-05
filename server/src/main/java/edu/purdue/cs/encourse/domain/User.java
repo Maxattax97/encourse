@@ -1,6 +1,7 @@
 package edu.purdue.cs.encourse.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.purdue.cs.encourse.model.UserModel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -61,6 +62,16 @@ public class User implements UserDetails, Serializable {
     @OrderBy
     @JsonIgnore
     private List<Authority> authorities;
+    
+    public User(@NonNull UserModel model) {
+        this.id = model.getUserID();
+        this.username = model.getUsername();
+        this.password = model.getPassword();
+        this.accountExpired = model.getAccountExpired();
+        this.accountLocked = model.getAccountLocked();
+        this.credentialsExpired = model.getCredentialsExpired();
+        this.enabled = model.getEnabled();
+    }
     
     public User(@NonNull Long id, @NonNull String username, @NonNull String password, @NonNull Boolean accountExpired, @NonNull Boolean accountLocked, @NonNull Boolean credentialsExpired, @NonNull Boolean enabled) {
         this.id = id;

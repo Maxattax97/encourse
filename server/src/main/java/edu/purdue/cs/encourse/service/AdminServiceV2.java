@@ -4,6 +4,7 @@ import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.model.CourseProfessorModel;
 import edu.purdue.cs.encourse.model.CourseStudentModel;
 import edu.purdue.cs.encourse.model.StudentTAModel;
+import edu.purdue.cs.encourse.model.UserModel;
 import lombok.NonNull;
 
 import javax.management.relation.InvalidRelationIdException;
@@ -13,7 +14,7 @@ import javax.management.relation.InvalidRelationIdException;
  */
 public interface AdminServiceV2 {
 	
-	User addUser(@NonNull User user) throws InvalidRelationIdException;
+	User addUser(@NonNull UserModel model) throws InvalidRelationIdException;
 	
 	void setCourseProfessor(@NonNull CourseProfessorModel model) throws InvalidRelationIdException;
 	

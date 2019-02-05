@@ -3,6 +3,8 @@ package edu.purdue.cs.encourse.config;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
+import edu.purdue.cs.encourse.model.AccountModel;
+import edu.purdue.cs.encourse.model.UserModel;
 import edu.purdue.cs.encourse.service.*;
 import edu.purdue.cs.encourse.util.ConfigurationManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +54,31 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
     @Autowired
     private HelperService helperService;*/
     
+    @Autowired
+    private AccountService accountService;
+    
+    @Autowired
+    private AdminServiceV2 adminService;
+    
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
         feedDatabase();
     }
     
     private void feedDatabase() {
+        try {
+            Account grr = accountService.addAccount(new AccountModel(0L, "grr", "Gustavo", "Rodriguez-Rivera", "grr@purdue.edu", 1));
+            Account killian = accountService.addAccount(new AccountModel(1L, "kleclain-a", "Killian", "LeClainche", "kleclain@purdue.edu", 2));
+            Account jordan = accountService.addAccount(new AccountModel(2L, "reed226-a", "William", "Reed", "reed226@purdue.edu", 2));
+            
+            adminService.addUser(new UserModel(grr, "$2a$04$/zamuN8nrPT0qZ4jbaTTp..kBjKUtMu.Jbj2DAHZ..KLDON4REPJu"));
+            adminService.addUser(new UserModel(killian, "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6"));
+            adminService.addUser(new UserModel(jordan, "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6"));
+            
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
         /*System.out.println("CONDITIONAL RAN");
         if (adminService.findAllUsers().isEmpty()) {
             adminService.addAccount("0", "grr", "Gustavo", "Rodriguez-Rivera", Account.Role_Names.PROFESSOR, "A", "grr@purdue.edu");

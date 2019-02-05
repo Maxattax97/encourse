@@ -2,6 +2,7 @@ package edu.purdue.cs.encourse.service.impl;
 
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
+import edu.purdue.cs.encourse.model.AccountModel;
 import edu.purdue.cs.encourse.service.AccountService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,8 +84,8 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
-    public Account addAccount(@NonNull Account account) throws RelationException, IllegalArgumentException {
-        if(accountRepository.existsById(account.getUserID()))
+    public Account addAccount(@NonNull AccountModel account) throws RelationException, IllegalArgumentException {
+        if(account.getUserID() != null && accountRepository.existsById(account.getUserID()))
             throw new IllegalArgumentException("Account ID already present in the repository.");
         
         if(!emailPattern.matcher(account.getEduEmail()).matches())
@@ -96,7 +97,7 @@ public class AccountServiceImpl implements AccountService {
         if(account.getLastName().length() == 0)
             throw new IllegalArgumentException("Last name is invalid.");
         
-        Account savedAccount = accountRepository.save(account);
+        Account savedAccount = accountRepository.save(new Account(account));
         
         if(savedAccount == null)
             throw new RelationException("Could not create new account object in database.");
