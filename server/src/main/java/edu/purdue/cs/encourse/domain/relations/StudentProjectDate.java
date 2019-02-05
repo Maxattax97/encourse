@@ -48,7 +48,7 @@ public class StudentProjectDate {
     
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "studentID")
+    @JoinColumn(name = "studentProjectID")
     private StudentProject studentProject;
     
     @NonNull
@@ -64,7 +64,7 @@ public class StudentProjectDate {
     
     @NonNull
     @ElementCollection
-    @CollectionTable(name = "STUDENT_PROJECT_DATE_TESTS", joinColumns = @JoinColumn(name = "id"))
+    @CollectionTable(name = "STUDENT_PROJECT_DATE_TESTS", joinColumns = @JoinColumn(name = "studentProjectDateID"))
     private List<Long> testsPassing;
     
     @NonNull
