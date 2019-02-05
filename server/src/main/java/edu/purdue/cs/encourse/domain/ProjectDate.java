@@ -87,7 +87,7 @@ public class ProjectDate {
 	private BasicStatistics commitVelocityStats;
 	
 	@ElementCollection
-	@CollectionTable(name = "PROJECT_DATE_TESTS", joinColumns = @JoinColumn(name = "id"))
+	@CollectionTable(name = "PROJECT_DATE_TESTS", joinColumns = @JoinColumn(name = "projectID"))
 	private Map<String, Integer> testsTotal;
 	
 	public ProjectDate(Project project, LocalDate date) {
