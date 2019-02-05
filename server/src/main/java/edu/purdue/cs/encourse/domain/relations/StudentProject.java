@@ -68,12 +68,12 @@ public class StudentProject {
     
     @NonNull
     @ElementCollection
-    @CollectionTable(name = "STUDENT_PROJECT_TESTS", joinColumns = { @JoinColumn(name = "studentID"), @JoinColumn(name = "projectID") })
+    @CollectionTable(name = "STUDENT_PROJECT_TESTS", joinColumns = @JoinColumn(name = "studentProjectID"))
     private List<Long> testsPassing;
     
     @NonNull
     @ElementCollection
-    @CollectionTable(name = "STUDENT_PROJECT_COMMITS", joinColumns = { @JoinColumn(name = "studentID"), @JoinColumn(name = "projectID")})
+    @CollectionTable(name = "STUDENT_PROJECT_COMMITS", joinColumns = @JoinColumn(name = "studentProjectID"))
     private List<Commit> commits;
     
     @NonNull

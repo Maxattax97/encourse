@@ -36,7 +36,7 @@ public class Section {
     private Long sectionID;
     
     @ManyToOne
-    @JoinColumn(name = "course_id")
+    @JoinColumn(name = "courseID")
     @NonNull
     private Course course;
     

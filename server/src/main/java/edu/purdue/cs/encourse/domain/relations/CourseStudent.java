@@ -60,11 +60,10 @@ public class CourseStudent {
 	@JsonIgnore
 	private List<StudentProject> projects;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="COURSE_STUDENT_STUDENT",
-			joinColumns=@JoinColumn(name="ta_id"),
-			inverseJoinColumns=@JoinColumn(name="student_id")
-	)
+	@ManyToMany(cascade = {
+			CascadeType.MERGE,
+			CascadeType.PERSIST
+	}, fetch = FetchType.LAZY, mappedBy = "teachingAssistants")
 	@NonNull
 	private List<CourseStudent> students;
 	

@@ -31,6 +31,7 @@ import java.util.List;
  * Created by Killian Le Clainche on 1/18/2019.
  */
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -44,33 +45,26 @@ public class TestScript {
 	
 	@ManyToOne
 	@JoinColumn(name = "projectID")
-	@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "projectID")
-	@JsonIdentityReference(alwaysAsId=true)
 	private Project project;
 	
-	@Setter
 	@ManyToMany(fetch = FetchType.LAZY,
 			cascade = {
 					CascadeType.PERSIST,
 					CascadeType.MERGE
 			},
 			mappedBy = "testScripts")
-	@JsonIgnore
 	private List<TestSuite> testSuites;
 	
-	@Setter
 	@NonNull
 	private String name;
 	
-	@Setter
 	@NonNull
 	private Boolean hidden;
 	
-	@Setter
 	@NonNull
 	private Double value;
 	
-	public TestScript(Project project, TestScriptModel model) {
+	public TestScript(@NonNull Project project, @NonNull TestScriptModel model) {
 		this.project = project;
 		
 		this.testSuites = new ArrayList<>();

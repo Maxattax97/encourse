@@ -40,7 +40,7 @@ public class Course {
 	private Long courseID;
 	
 	@ManyToOne
-	@JoinColumn(name = "professor_id")
+	@JoinColumn(name = "professorID")
 	@NonNull
 	private Professor professor;
 	
