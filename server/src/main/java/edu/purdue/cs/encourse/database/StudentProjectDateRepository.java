@@ -25,7 +25,7 @@ public interface StudentProjectDateRepository extends JpaRepository<StudentProje
     Optional<StudentProjectDate> findByStudentProjectAndDateEquals(@NonNull StudentProject studentProject, @NonNull LocalDate date);
     
     
-    @Query("select s from StudentProjectDate s where s.date = (:#{#date}) and (:#{#project}) and " +
+    @Query("select s from StudentProjectDate s where s.date = (:#{#date}) and s.project = (:#{#project}) and " +
             "((:#{#filters.commits}) is null or (((:#{#filters.commits.begin}) is null or (:#{#filters.commits.begin}) <= s.currentCommits) and ((:#{#filters.commits.end}) is null or (:#{#filters.commits.end}) >= s.currentCommits))) and " +
             "((:#{#filters.time}) is null or (((:#{#filters.time.begin}) is null or (:#{#filters.time.begin}) <= s.currentMinutes) and ((:#{#filters.time.end}) is null or (:#{#filters.time.end}) >= s.currentMinutes))) and " +
             "((:#{#filters.progress}) is null or (((:#{#filters.progress.begin}) is null or (:#{#filters.progress.begin}) <= s.visiblePoints + s.hiddenPoints) and ((:#{#filters.progress.end}) is null or (:#{#filters.progress.end}) >= s.visiblePoints + s.hiddenPoints))) and " +
