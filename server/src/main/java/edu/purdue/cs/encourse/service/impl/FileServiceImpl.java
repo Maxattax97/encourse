@@ -62,7 +62,7 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-    public void unzipFile(String fileZip) {
+    private void unzipFile(String fileZip) {
         try {
             File destDir = new File(uploadDirectory);
             byte[] buffer = new byte[1024];
@@ -85,7 +85,7 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-    public File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
+    private File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
         File destFile = new File(destinationDir, zipEntry.getName());
 
         String destDirPath = destinationDir.getCanonicalPath();

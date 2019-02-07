@@ -1,19 +1,26 @@
 package edu.purdue.cs.encourse.service;
 
 import edu.purdue.cs.encourse.domain.*;
+import edu.purdue.cs.encourse.model.AccountModel;
 import lombok.NonNull;
 
-import java.util.List;
+import javax.management.relation.InvalidRelationIdException;
+import javax.management.relation.RelationException;
 
 public interface AccountService {
-
-    /** Services for retrieving account with specified type from database **/
-    Account retrieveAccount(@NonNull String userName);
-    Account retrieveAccountByID(@NonNull String userID);
-    Student retrieveStudent(@NonNull String userName);
-    TeachingAssistant retrieveTA(@NonNull String userName);
-    Professor retrieveProfessor(@NonNull String userName);
-    CollegeAdmin retrieveAdmin(@NonNull String userName);
-    List<Account> retrieveAllAccounts();
+    
+    Account getAccount(@NonNull Long userID) throws InvalidRelationIdException;
+    
+    Student getStudent(@NonNull Long userID) throws InvalidRelationIdException;
+    
+    Professor getProfessor(@NonNull Long userID) throws InvalidRelationIdException;
+    
+    CollegeAdmin getAdmin(@NonNull Long userID) throws InvalidRelationIdException;
+	
+	Account addAccount(@NonNull AccountModel account) throws RelationException, IllegalArgumentException;
+	
+	void removeAccount(@NonNull Long userID) throws InvalidRelationIdException;
+    
+    Account modifyAccount(@NonNull Account modifyAccount) throws InvalidRelationIdException;
 
 }

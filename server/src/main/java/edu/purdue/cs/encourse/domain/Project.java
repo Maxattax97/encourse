@@ -1,12 +1,36 @@
 package edu.purdue.cs.encourse.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import edu.purdue.cs.encourse.domain.relations.StudentProject;
+import edu.purdue.cs.encourse.model.CourseProjectModel;
+import edu.purdue.cs.encourse.model.ProjectModel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a project that has been created by a professor.
@@ -16,112 +40,93 @@ import java.util.UUID;
  * @author reed226@purdue.edu
  */
 @Getter
+@Setter
 @Entity
 @Table(name = "PROJECT")
+@NoArgsConstructor
+@ToString
+@AllArgsConstructor
 public class Project {
+    
     /** courseID + semester + projectName, forms the primary key */
     @Id
-    private String projectID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name  = "projectID")
+    private Long projectID;
 
-    /** Each piece of the project identifier */
-    private String courseID;
-    private String semester;
-    private String projectName;
-
-    /** Date that project is opened to students */
-    @Setter
-    private String startDate;
-
-    /** Deadline mainly stored for display purposes, hence it is two Strings and not a LocalDateTime */
-    @Setter
-    private String dueDate;
+    @ManyToOne
+    @JoinColumn(name = "courseID")
+    @NonNull
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "courseID")
+    @JsonIdentityReference(alwaysAsId=true)
+    private Course course;
+    
+    @NonNull
+    @Column(name  = "projectName")
+    private String name;
+    
+    @NonNull
+    @Column(name  = "startDate")
+    private LocalDate startDate;
+    
+    @NonNull
+    @Column(name  = "dueDate")
+    private LocalDate dueDate;
 
     /** The name of the directory that will store the project. Remove .git if this is included */
-    private String repoName;
+    @NonNull
+    @Column(name  = "repository")
+    private String repository;
 
     /** Rate in which projects will be pulled and tested, in hourse */
-    @Setter
+    @Column(name  = "testRate")
     private int testRate;
+    
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<TestScript> testScripts;
+    
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<TestSuite> testSuites;
+    
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<ProjectDate> dates;
+    
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<StudentProject> studentProjects;
+    
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<AdditionHash> additionHashes;
+    
+    @Column(name  = "analyzeDateTime")
+    private LocalDate analyzeDateTime;
+    
+    @Column(name  = "totalVisiblePoints")
+    private Double totalVisiblePoints;
+    
+    @Column(name = "totalHiddenPoints")
+    private Double totalHiddenPoints;
 
-    /** Current count towards pulling and testing */
-    @Setter
-    private int testCount;
-
-    /** Listing of suites for the project, separated by commas */
-    @Setter
-    private String suites;
-
-    /** True if a pull is currently happening for the project, false otherwise */
-    @Setter
-    private boolean syncing;
-
-    /** True if tests are currently being run for the project, false otherwise */
-    @Setter
-    private boolean testing;
-
-    /** True if academic dishonesty analysis if currently running for the project, false otherwise */
-    @Setter
-    private boolean analyzing;
-
-    /** Date project was last synced */
-    @Setter
-    private String syncDate;
-
-    /** Date project was last tested */
-    @Setter
-    private String testDate;
-
-    /** Date project last had academic dishonesty analysis ran */
-    @Setter
-    private String analyzeDate;
-
-    /** Time project was last synced */
-    @Setter
-    private String syncTime;
-
-    /** Time project was last tested */
-    @Setter
-    private String testTime;
-
-    /** Time project last had academic dishonesty analysis ran */
-    @Setter
-    private String analyzeTime;
-
-    /** Current progress for the active operation (sync, test, or analysis) */
-    @Setter
-    private double operationProgress;
-
-    /** Estimated run time for the active operation (sync, test, or analysis) */
-    @Setter
-    private long operationTime;
-
-    public Project(String courseID, String semester, String projectName,
-                   String repoName, String startDate, String dueDate, int testRate) {
-        this.courseID = courseID;
-        this.semester = semester;
-        this.projectName = projectName;
-        this.setRepoName(repoName);
-        this.projectID = UUID.randomUUID().toString();
-        this.startDate = startDate;
-        this.dueDate = dueDate;
-        if(testRate > 0) {
-            this.testRate = testRate;
-            this.testCount = testRate - 1;
-        }
-        else {
-            this.testRate = 0;
-            this.testCount = 0;
-        }
-        this.suites = "testall";
-        this.syncing = false;
-        this.testing = false;
-        this.analyzing = false;
-        this.operationProgress = 0.0;
-        this.operationTime = 0;
-    }
-
-    public Project() {
-
+    public Project(@NonNull Course course, @NonNull ProjectModel projectModel) {
+        this.course = course;
+        
+        this.name = projectModel.getName();
+    
+        this.startDate = projectModel.getStartDate();
+        this.dueDate = projectModel.getDueDate();
+    
+        this.setRepository(projectModel.getRepository());
+    
+        this.testRate = 6;
+        
+        this.testScripts = new ArrayList<>();
+        this.testSuites = new ArrayList<>();
+        this.dates = new ArrayList<>();
+        this.studentProjects = new ArrayList<>();
+        this.additionHashes = new HashSet<>();
+        
+        this.analyzeDateTime = LocalDate.ofYearDay(2000, 1);
+        this.totalVisiblePoints = 0.0;
+        this.totalHiddenPoints = 0.0;
     }
 
     /**
@@ -129,33 +134,14 @@ public class Project {
      *
      * @param repoName Name of the .git file on remote repository
      */
-    public void setRepoName(String repoName) {
-        if(repoName.indexOf('.') >= 0) {
-            this.repoName = repoName.substring(0, repoName.indexOf('.'));
-        }
-        else {
-            this.repoName = repoName;
-        }
+    public void setRepository(String repoName) {
+        if(repoName.indexOf('.') >= 0)
+            this.repository = repoName.substring(0, repoName.indexOf('.'));
+        else
+            this.repository = repoName;
     }
-
-    public void addSuite(String suiteName) {
-        suites += "," + suiteName;
-    }
-
-    public boolean hasSuite(String suiteName) {
-        String[] suiteArray = suites.split(",");
-        for(String s : suiteArray) {
-            if(s.equals(suiteName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public long getEstimatedTimeRemaining() {
-        if(operationProgress == 0.0) {
-            return 0;
-        }
-        return Math.round((operationTime / operationProgress) * (1.0 - operationProgress));
-    }
+    
+    public Long getCourseID() { return course.getCourseID(); }
+    
+    public String getCourseName() { return course.getName(); }
 }
