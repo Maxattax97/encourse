@@ -382,7 +382,7 @@ public class ProjectServiceImpl implements ProjectService {
 			return;
 		
 		//Parse the splitted line 3rd value, that being the local date or the yyyy-MM-dd
-		LocalDate date = ZonedDateTime.parse(commitInfo[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(TimeZone.getTimeZone("UTC").toZoneId()).toLocalDate();
+		LocalDate date = ZonedDateTime.parse(commitInfo[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(TimeZone.getTimeZone("EST").toZoneId()).toLocalDate();
 		
 		//checkout to previous commit based on the 2nd value of line, then run the makefile bash script
 		executeScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
@@ -475,10 +475,10 @@ public class ProjectServiceImpl implements ProjectService {
 	private List<Commit> createCommitObjects(Project project, StudentProject studentProject, Map<String, AdditionHash> additionHashMap, MessageDigest md5, String testingDirectory) throws IOException, InterruptedException {
 		List<Commit> commitList = new ArrayList<>(30);
 		
-		ZoneId utcZone = TimeZone.getTimeZone("UTC").toZoneId();
+		ZoneId estZone = TimeZone.getTimeZone("EST").toZoneId();
 		
 		CourseStudent student = studentProject.getStudent();
-		Process process = executeScriptAndReturn("generateDiffsAfterDate.sh " + testingDirectory + " " + ZonedDateTime.of(studentProject.getMostRecentCommit(), utcZone));
+		Process process = executeScriptAndReturn("generateDiffsAfterDate.sh " + testingDirectory + " " + ZonedDateTime.of(studentProject.getMostRecentCommit(), estZone));
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		
 		String line;
@@ -515,7 +515,7 @@ public class ProjectServiceImpl implements ProjectService {
 				additions = 0;
 				deletions = 0;
 				
-				commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(utcZone).toLocalDateTime(), Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL);
+				commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(estZone).toLocalDateTime(), Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL);
 			}
 			else if(commit != null) {
 				if(line.startsWith("+++")) {
