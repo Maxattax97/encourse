@@ -49,6 +49,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -59,6 +63,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -87,8 +92,6 @@ public class ProjectServiceImpl implements ProjectService {
 	private final AdditionHashRepository additionHashRepository;
 	
 	private final CourseServiceV2 courseService;
-	
-	private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss").withLocale(Locale.US);
 	
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, ProjectDateRepository projectDateRepository, StudentProjectRepository studentProjectRepository, StudentProjectDateRepository studentProjectDateRepository, CourseRepository courseRepository, TestScriptRepository testScriptRepository, TestSuiteRepository testSuiteRepository, AdditionHashRepository additionHashRepository, CourseServiceV2 courseService) {
@@ -354,14 +357,14 @@ public class ProjectServiceImpl implements ProjectService {
 		executeScript("setPermissions.sh " + course.getCourseID());
 	}
 	
-	private void pullProject(Project project) throws IOException, InterruptedException {
+	private void pullProject(@NonNull Project project) throws IOException, InterruptedException {
 		Course course = project.getCourse();
 		List<StudentProject> projects = project.getStudentProjects();
 		
-		for(StudentProject p : projects) {
-			String destPath = (course.getCourseHub() + "/" + p.getId());
-			executeScript("pullRepositories.sh " + destPath);
-		}
+		String courseHub = course.getCourseHub();
+		
+		for(StudentProject p : projects)
+			executeScript("pullRepositories.sh " + courseHub + "/" + p.getId());
 		
 		executeScript("setPermissions.sh " + course.getCourseID());
 	}
@@ -379,7 +382,7 @@ public class ProjectServiceImpl implements ProjectService {
 			return;
 		
 		//Parse the splitted line 3rd value, that being the local date or the yyyy-MM-dd
-		LocalDate date = LocalDate.parse(commitInfo[2], dtf);
+		LocalDate date = ZonedDateTime.parse(commitInfo[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(TimeZone.getTimeZone("UTC").toZoneId()).toLocalDate();
 		
 		//checkout to previous commit based on the 2nd value of line, then run the makefile bash script
 		executeScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
@@ -431,7 +434,7 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 	}
 	
-	private void runAllStudentTestalls(Project project, Map<String, TestScript> testScripts, Map<StudentProject, List<StudentProjectDate>> studentProjectListMap) {
+	private void runAllStudentTestalls(@NonNull Project project, @NonNull Map<String, TestScript> testScripts, @NonNull Map<StudentProject, List<StudentProjectDate>> studentProjects) {
 		
 		File testCaseDirectory = new File(project.getCourse().getCourseHub() + "/testcases/" + project.getRepository());
 		File hiddenTestCaseDirectory = new File(project.getCourse().getCourseHub() + "/hidden_testcases/" + project.getRepository());
@@ -445,7 +448,7 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		String courseHub = project.getCourse().getCourseHub();
 		
-		for(StudentProject studentProject : studentProjectListMap.keySet()) {
+		for(StudentProject studentProject : studentProjects.keySet()) {
 			
 			String testingDirectory = courseHub + "/" + studentProject.getId();
 			
@@ -458,8 +461,8 @@ public class ProjectServiceImpl implements ProjectService {
 				
 				process.waitFor();
 				
-				runStudentTestall(project, studentProjectListMap.get(studentProject), testScripts, buildCommits[0], testingDirectory, testCaseDirectory, hiddenTestCaseDirectory, makefile);
-				runStudentTestall(project, studentProjectListMap.get(studentProject), testScripts, buildCommits[1], testingDirectory, testCaseDirectory, hiddenTestCaseDirectory, makefile);
+				runStudentTestall(project, studentProjects.get(studentProject), testScripts, buildCommits[0], testingDirectory, testCaseDirectory, hiddenTestCaseDirectory, makefile);
+				runStudentTestall(project, studentProjects.get(studentProject), testScripts, buildCommits[1], testingDirectory, testCaseDirectory, hiddenTestCaseDirectory, makefile);
 				
 				executeScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
 			}
@@ -472,9 +475,10 @@ public class ProjectServiceImpl implements ProjectService {
 	private List<Commit> createCommitObjects(Project project, StudentProject studentProject, Map<String, AdditionHash> additionHashMap, MessageDigest md5, String testingDirectory) throws IOException, InterruptedException {
 		List<Commit> commitList = new ArrayList<>(30);
 		
-		CourseStudent student = studentProject.getStudent();
+		ZoneId utcZone = TimeZone.getTimeZone("UTC").toZoneId();
 		
-		Process process = executeScriptAndReturn("generateDiffsAfterDate.sh " + testingDirectory + " " + studentProject.getMostRecentCommit());
+		CourseStudent student = studentProject.getStudent();
+		Process process = executeScriptAndReturn("generateDiffsAfterDate.sh " + testingDirectory + " " + ZonedDateTime.of(studentProject.getMostRecentCommit(), utcZone));
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		
 		String line;
@@ -511,7 +515,7 @@ public class ProjectServiceImpl implements ProjectService {
 				additions = 0;
 				deletions = 0;
 				
-				commit = new Commit(split[1], LocalDateTime.parse(split[2], dtf), Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL);
+				commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(utcZone).toLocalDateTime(), Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL);
 			}
 			else if(commit != null) {
 				if(line.startsWith("+++")) {
@@ -768,12 +772,12 @@ public class ProjectServiceImpl implements ProjectService {
 			//Get all student project dates >= the analyze date time (the last recorded analysis run)
 			List<StudentProjectDate> studentProjectDates = studentProjectDateRepository.findByProjectAndDateGreaterThanEqual(project, project.getAnalyzeDateTime());
 			
-			if(studentProjectDates == null || studentProjectDates.isEmpty())
+			if(studentProjectDates.isEmpty())
 				continue;
 			
 			List<ProjectDate> projectDateList = projectDateRepository.findAllByProjectAndDateGreaterThanEqual(project, project.getAnalyzeDateTime());
 			
-			if(projectDateList == null || projectDateList.isEmpty())
+			if(projectDateList.isEmpty())
 				continue;
 			
 			//Collect the projects test scripts (which are lazily retrieved) and map them to the test name -> test script
@@ -790,9 +794,9 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 			
 			//start processing the project
-			project.setAnalyzing(true);
-			project.setAnalyzeDateTime(currentDate);
-			projectRepository.save(project);
+			//project.setAnalyzing(true);
+			//project.setAnalyzeDateTime(currentDate);
+			//projectRepository.save(project);
 			
 			//TODO, make this obsolete (except that MyMalloc kind of broke this paradigm)
 			runAllStudentTestalls(project, testScripts, studentProjectListMap);
@@ -810,7 +814,7 @@ public class ProjectServiceImpl implements ProjectService {
 			studentProjectRepository.saveAll(studentProjectListMap.keySet());
 			
 			//stop analyzing the project and set the last time the project has been analyzed to today's date
-			project.setAnalyzing(false);
+			//project.setAnalyzing(false);
 			projectRepository.save(project);
 		}
 	}

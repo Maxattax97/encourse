@@ -80,7 +80,7 @@ public class StudentProject {
     @OneToMany(mappedBy = "studentProject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StudentProjectDate> dates;
     
-    public StudentProject(Project project, CourseStudent student) {
+    public StudentProject(@NonNull Project project, @NonNull CourseStudent student) {
         this.project = project;
         this.student = student;
         
@@ -90,5 +90,16 @@ public class StudentProject {
         this.testsPassing = new ArrayList<>();
         this.dates = new ArrayList<>();
     }
+    
+    @Override
+    public int hashCode() {
+        return Math.toIntExact(this.id);
+    }
+    
+    @Override
+    public boolean equals(Object studentProject) {
+        return studentProject instanceof StudentProject && ((StudentProject) studentProject).id.equals(this.id);
+    }
+    
 }
 

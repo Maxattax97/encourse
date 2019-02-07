@@ -1,5 +1,6 @@
 package edu.purdue.cs.encourse.model;
 
+import edu.purdue.cs.encourse.domain.Account;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,5 +34,14 @@ public class AccountModel {
 	
 	@NonNull
 	private Integer role;
+	
+	public AccountModel(@NonNull Account account) {
+		this.userID = account.getUserID();
+		this.username = account.getUsername();
+		this.firstName = account.getFirstName();
+		this.lastName = account.getLastName();
+		this.eduEmail = account.getEduEmail();
+		this.role =  account.getRole() == Account.Role.STUDENT ? 0 : account.getRole() ==  Account.Role.PROFESSOR ? 1 : 2;
+	}
 
 }

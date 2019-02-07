@@ -96,25 +96,9 @@ public class Project {
     
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<AdditionHash> additionHashes;
-
-    /** True if academic dishonesty analysis if currently running for the project, false otherwise */
-    @Column(name  = "analyzing")
-    private boolean analyzing;
     
     @Column(name  = "analyzeDateTime")
     private LocalDate analyzeDateTime;
-
-    /** Time project last had academic dishonesty analysis ran */
-    @Column(name  = "analyzeTime")
-    private Long analyzeTime;
-
-    /** Current progress for the active operation (sync, test, or analysis) */
-    @Column(name  = "operationProgress")
-    private double operationProgress;
-
-    /** Estimated run time for the active operation (sync, test, or analysis) */
-    @Column(name  = "operationTime")
-    private long operationTime;
     
     @Column(name  = "totalVisiblePoints")
     private Double totalVisiblePoints;
@@ -140,10 +124,6 @@ public class Project {
         this.studentProjects = new ArrayList<>();
         this.additionHashes = new HashSet<>();
         
-        this.analyzing = false;
-        this.operationProgress = 0.0;
-        this.operationTime = 0;
-    
         this.analyzeDateTime = LocalDate.ofYearDay(2000, 1);
         this.totalVisiblePoints = 0.0;
         this.totalHiddenPoints = 0.0;
@@ -159,13 +139,6 @@ public class Project {
             this.repository = repoName.substring(0, repoName.indexOf('.'));
         else
             this.repository = repoName;
-    }
-
-    public long getEstimatedTimeRemaining() {
-        if(operationProgress == 0.0)
-            return 0;
-        
-        return Math.round((operationTime / operationProgress) * (1.0 - operationProgress));
     }
     
     public Long getCourseID() { return course.getCourseID(); }

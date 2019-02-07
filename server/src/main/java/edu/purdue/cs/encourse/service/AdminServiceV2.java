@@ -14,6 +14,8 @@ import javax.management.relation.InvalidRelationIdException;
  */
 public interface AdminServiceV2 {
 	
+	User getUser();
+	
 	User addUser(@NonNull UserModel model) throws InvalidRelationIdException;
 	
 	void setCourseProfessor(@NonNull CourseProfessorModel model) throws InvalidRelationIdException;

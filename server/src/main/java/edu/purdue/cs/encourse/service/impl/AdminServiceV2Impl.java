@@ -21,6 +21,8 @@ import edu.purdue.cs.encourse.service.CourseServiceV2;
 import edu.purdue.cs.encourse.service.StudentService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.management.relation.InvalidRelationIdException;
@@ -57,6 +59,12 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	
 	@Autowired
 	private AuthorityRepository authorityRepository;
+	
+	@Override
+	public User getUser() {
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		return ((User)securityContext.getAuthentication().getPrincipal());
+	}
 	
 	@Override
 	public User addUser(@NonNull UserModel model) throws InvalidRelationIdException {

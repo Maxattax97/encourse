@@ -5,5 +5,5 @@
 
 DIRECTORY="$(pwd)"
 cd "$1"
-git log --perl-regexp --author='^((?!CS252).*)$' --date=iso --pretty=format:"@UPDATE %H %ad" | grep "@UPDATE"
+git log --perl-regexp --author='^((?!CS252).*)$' --pretty=format:"@UPDATE %H %aI" | grep "@UPDATE"
 cd "${DIRECTORY}"
