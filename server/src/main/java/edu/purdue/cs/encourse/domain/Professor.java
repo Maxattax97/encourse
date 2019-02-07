@@ -1,8 +1,10 @@
 package edu.purdue.cs.encourse.domain;
 
+import edu.purdue.cs.encourse.model.AccountModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
@@ -31,8 +33,8 @@ public class Professor extends Account {
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Course> courses;
     
-    public Professor(String username, String firstName, String lastName, String eduEmail) {
-        super(username, firstName, lastName, eduEmail, Role.PROFESSOR);
+    public Professor(@NonNull AccountModel model) {
+        super(model);
         
         this.courses = new ArrayList<>();
     }

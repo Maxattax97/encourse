@@ -94,7 +94,7 @@ public class AccountServiceImpl implements AccountService {
         if(account.getLastName().length() == 0)
             throw new IllegalArgumentException("Last name is invalid.");
         
-        Account savedAccount = accountRepository.save(new Account(account));
+        Account savedAccount = accountRepository.save(account.getRole() == Account.Role.STUDENT.ordinal() ? new Student(account) : account.getRole() == Account.Role.PROFESSOR.ordinal() ? new Professor(account) : new CollegeAdmin(account));
         
         if(savedAccount == null)
             throw new RelationException("Could not create new account object in database.");

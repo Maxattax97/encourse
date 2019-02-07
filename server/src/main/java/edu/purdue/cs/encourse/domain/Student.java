@@ -3,9 +3,11 @@ package edu.purdue.cs.encourse.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.purdue.cs.encourse.domain.relations.CourseStudent;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
+import edu.purdue.cs.encourse.model.AccountModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
@@ -35,8 +37,8 @@ public class Student extends Account {
     @JsonIgnore
     private List<CourseStudent> courses;
 
-    public Student(String username, String firstName, String lastName, String eduEmail) {
-        super(username, firstName, lastName, eduEmail, Role.STUDENT);
+    public Student(@NonNull AccountModel model) {
+        super(model);
         
         this.courses = new ArrayList<>();
     }

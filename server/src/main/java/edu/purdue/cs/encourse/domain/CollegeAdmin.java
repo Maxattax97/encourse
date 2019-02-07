@@ -1,8 +1,10 @@
 package edu.purdue.cs.encourse.domain;
 
+import edu.purdue.cs.encourse.model.AccountModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -20,8 +22,8 @@ import java.util.ArrayList;
 @Table(name = "ADMINISTRATOR")
 public class CollegeAdmin extends Account {
     
-    public CollegeAdmin(String username, String firstName, String lastName, String eduEmail) {
-        super(username, firstName, lastName, eduEmail, Role.ADMIN);
+    public CollegeAdmin(@NonNull AccountModel model) {
+        super(model);
     }
 
 }
