@@ -76,8 +76,6 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 		
 		userRepository.save(user);
 		
-		user.setPassword(null);
-		
 		return user;
 	}
 	
