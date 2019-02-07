@@ -105,7 +105,6 @@ public class AccountServiceImpl implements AccountService {
         if(savedAccount == null)
             throw new RelationException("Could not create new account object in database.");
         
-        System.out.println("Added Account (" + savedAccount.getUserID() + ", " + savedAccount.getUsername() + ", " + savedAccount.getRole() + ")");
         
         switch(savedAccount.getRole()) {
             case STUDENT:
@@ -130,6 +129,8 @@ public class AccountServiceImpl implements AccountService {
                 
                 break;
         }
+        
+        System.out.println("Added Account (" + savedAccount.getUserID() + ", " + savedAccount.getUsername() + ", " + savedAccount.getRole() + ")");
         
         return savedAccount;
     }

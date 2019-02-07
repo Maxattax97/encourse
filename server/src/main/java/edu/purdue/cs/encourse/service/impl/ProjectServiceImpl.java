@@ -363,7 +363,7 @@ public class ProjectServiceImpl implements ProjectService {
 		for(StudentProject p : projects) {
 			Student s = p.getStudent().getStudent();
 			if(!(new File(course.getCourseHub() + "/" + s.getUsername() + "/" + project.getRepository()).exists())) {
-				String destPath = (course.getCourseHub() + "/" + p.getId());
+				String destPath = (course.getCourseHub() + "/" + s.getUsername() + "/" + project.getRepository());
 				String repoPath = (course.getRemotePath() + "/" + s.getUsername() + "/" + project.getRepository() + ".git");
 				executeScript("cloneRepositories.sh " + destPath + " " + repoPath);
 			}
@@ -379,7 +379,7 @@ public class ProjectServiceImpl implements ProjectService {
 		String courseHub = course.getCourseHub();
 		
 		for(StudentProject p : projects)
-			executeScript("pullRepositories.sh " + courseHub + "/" + p.getId());
+			executeScript("pullRepositories.sh " + courseHub + "/" + p.getStudent().getStudent().getUsername() + "/" + project.getRepository());
 		
 		executeScript("setPermissions.sh " + course.getCourseID());
 	}
@@ -465,7 +465,7 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		for(StudentProject studentProject : studentProjects.keySet()) {
 			
-			String testingDirectory = courseHub + "/" + studentProject.getId();
+			String testingDirectory = courseHub + "/" + studentProject.getStudent().getStudent().getUsername() + "/" + project.getRepository();
 			
 			try {
 				executeScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
@@ -596,7 +596,7 @@ public class ProjectServiceImpl implements ProjectService {
 		//iterate through all students in the project
 		for(StudentProject studentProject : studentProjectListMap.keySet()) {
 			
-			String testingDirectory = courseHub + "/" + studentProject.getId();
+			String testingDirectory = courseHub + "/" + studentProject.getStudent().getStudent().getUsername() + "/" + project.getRepository();
 			
 			//ensure that all keys are present inside the map
 			if(studentProjectListMap.containsKey(studentProject))
@@ -775,8 +775,6 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	@Transactional
 	public void analyzeProjects() {
-		LocalDate currentDate = LocalDate.now();
-		
 		//Find all projects in database that have an analyze date time that is less than the due date and less than or equal to today's date
 		List<Project> projects = projectRepository.findAllProjectsByAnalyzeDate();
 		
