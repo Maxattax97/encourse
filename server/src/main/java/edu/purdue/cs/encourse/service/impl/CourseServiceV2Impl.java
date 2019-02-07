@@ -160,7 +160,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		List<ProjectModel> projects = new ArrayList<>();
 		
 		for(Project project : course.getProjects()) {
-			ProjectModel model = new ProjectModel(project.getName(), project.getStartDate(), project.getDueDate(), project.getRepository());
+			ProjectModel model = new ProjectModel(project.getName(), project.getStartDate(), project.getDueDate(), project.getRepository(), project.getRunTestall());
 			
 			model.setProjectID(project.getProjectID());
 			
