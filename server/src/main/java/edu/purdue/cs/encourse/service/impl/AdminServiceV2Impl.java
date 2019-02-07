@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.InvalidRelationIdException;
 import java.util.List;
@@ -67,6 +68,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	}
 	
 	@Override
+	@Transactional
 	public User addUser(@NonNull UserModel model) throws InvalidRelationIdException {
 		Account account = accountService.getAccount(model.getUserID());
 		
@@ -80,6 +82,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	}
 	
 	@Override
+	@Transactional
 	public void setCourseProfessor(@NonNull CourseProfessorModel model) throws InvalidRelationIdException {
 		Course course = courseService.getCourse(model.getCourseID());
 		Professor currentProfessor = course.getProfessor();
@@ -95,6 +98,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	}
 	
 	@Override
+	@Transactional
 	public void addCourseTA(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
 		Course course = courseService.getCourse(model.getCourseID());
 		Student student = accountService.getStudent(model.getStudentID());
@@ -107,6 +111,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	}
 	
 	@Override
+	@Transactional
 	public void removeCourseTA(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
 		Course course = courseService.getCourse(model.getCourseID());
 		
@@ -133,6 +138,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	}
 	
 	@Override
+	@Transactional
 	public void addCourseStudent(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
 		Course course = courseService.getCourse(model.getCourseID());
 		Student student = accountService.getStudent(model.getStudentID());
@@ -146,6 +152,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	}
 	
 	@Override
+	@Transactional
 	public void removeCourseStudent(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
 		Course course = courseService.getCourse(model.getCourseID());
 		
@@ -170,6 +177,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	}
 	
 	@Override
+	@Transactional
 	public void addCourseStudentToTA(@NonNull StudentTAModel model) throws InvalidRelationIdException {
 		CourseStudent student = studentService.getStudent(model.getStudentID());
 		CourseStudent ta = studentService.getStudent(model.getTeachingAssistantID());
@@ -183,6 +191,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	}
 	
 	@Override
+	@Transactional
 	public void removeCourseStudentToTA(@NonNull StudentTAModel model) throws InvalidRelationIdException {
 		CourseStudent student = studentService.getStudent(model.getStudentID());
 		CourseStudent ta = studentService.getStudent(model.getTeachingAssistantID());

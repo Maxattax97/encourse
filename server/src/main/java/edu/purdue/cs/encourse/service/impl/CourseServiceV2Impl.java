@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.InvalidRelationIdException;
 import javax.management.relation.RelationException;
@@ -114,6 +115,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	}
 	
 	@Override
+	@Transactional
 	public Course addCourse(@NonNull CourseModel model) throws RelationException, IllegalArgumentException {
 		Professor professor = accountService.getProfessor(model.getProfessorID());
 		
@@ -126,6 +128,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	}
 	
 	@Override
+	@Transactional
 	public Section addSection(@NonNull SectionModel model) throws InvalidRelationIdException, IllegalArgumentException {
 		Course course = getCourse(model.getCourseID());
 		
@@ -144,11 +147,13 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public List<Section> getCourseSections(@NonNull Long courseID) throws InvalidRelationIdException {
 		return getCourse(courseID).getSections();
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public List<ProjectModel> getCourseProjects(@NonNull Long courseID) throws InvalidRelationIdException {
 		Course course = getCourse(courseID);
 		
@@ -185,6 +190,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public List<StudentInfoModel> getCourseProjectStudentInfo(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, NullPointerException {
 		Project project = validateCourseStudentSearch(courseStudentSearch);
 		
@@ -202,6 +208,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public ProjectInfoModel getCourseProjectInfoByDate(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, RelationNotFoundException {
 		ProjectInfoModel projectInfo = new ProjectInfoModel();
 		

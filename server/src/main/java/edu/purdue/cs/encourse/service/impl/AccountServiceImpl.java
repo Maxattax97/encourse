@@ -7,6 +7,7 @@ import edu.purdue.cs.encourse.service.AccountService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.InvalidRelationIdException;
 import javax.management.relation.RelationException;
@@ -44,6 +45,7 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
+    @Transactional(readOnly = true)
     public Account getAccount(@NonNull Long userID) throws InvalidRelationIdException {
         Optional<Account> accountOptional = accountRepository.findById(userID);
         
@@ -54,6 +56,7 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
+    @Transactional(readOnly = true)
     public Student getStudent(@NonNull Long userID) throws InvalidRelationIdException {
         Optional<Student> studentOptional = studentRepository.findById(userID);
         
@@ -64,6 +67,7 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
+    @Transactional(readOnly = true)
     public Professor getProfessor(@NonNull Long userID) throws InvalidRelationIdException {
         Optional<Professor> professorOptional = professorRepository.findById(userID);
         
@@ -74,6 +78,7 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
+    @Transactional(readOnly = true)
     public CollegeAdmin getAdmin(@NonNull Long userID) throws InvalidRelationIdException {
         Optional<CollegeAdmin> adminOptional = adminRepository.findById(userID);
         
@@ -84,6 +89,7 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
+    @Transactional
     public Account addAccount(@NonNull AccountModel account) throws RelationException, IllegalArgumentException {
         if(!emailPattern.matcher(account.getEduEmail()).matches())
             throw new IllegalArgumentException("Email is invalid.");
@@ -103,6 +109,7 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
+    @Transactional
     public void removeAccount(@NonNull Long userID) throws InvalidRelationIdException {
         Account account = getAccount(userID);
         
@@ -110,6 +117,7 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
+    @Transactional
     public Account modifyAccount(@NonNull Account modifyAccount) throws InvalidRelationIdException {
         Account account = getAccount(modifyAccount.getUserID());
         

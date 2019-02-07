@@ -37,6 +37,7 @@ import lombok.NonNull;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.InvalidRelationIdException;
 import javax.management.relation.RelationException;
@@ -107,6 +108,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Project getProject(@NonNull Long projectID) throws InvalidRelationIdException {
 		Optional<Project> projectOptional = projectRepository.findById(projectID);
 		
@@ -117,6 +119,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public TestScript getTestScript(@NonNull Long testScriptID) throws InvalidRelationIdException {
 		Optional<TestScript> testScriptOptional = testScriptRepository.findById(testScriptID);
 		
@@ -127,6 +130,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public TestSuite getTestSuite(@NonNull Long testSuiteID) throws InvalidRelationIdException {
 		Optional<TestSuite> testSuiteOptional = testSuiteRepository.findById(testSuiteID);
 		
@@ -137,16 +141,19 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestScript> getProjectTestScripts(@NonNull Long projectID) throws InvalidRelationIdException {
 		return getProject(projectID).getTestScripts();
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestSuite> getProjectTestSuites(@NonNull Long projectID) throws InvalidRelationIdException {
 		return getProject(projectID).getTestSuites();
 	}
 	
 	@Override
+	@Transactional
 	public Project addProject(@NonNull CourseProjectModel model) throws InvalidRelationIdException, IllegalArgumentException, IOException, InterruptedException {
 		if(model.getStartDate().compareTo(model.getDueDate()) >= 0)
 			throw new IllegalArgumentException("");
@@ -192,6 +199,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public void removeProject(@NonNull Long projectID) throws RelationException {
 		Project project = getProject(projectID);
 		Course course = project.getCourse();
@@ -210,6 +218,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public Project modifyProject(@NonNull ProjectModel model) throws RelationException, IllegalArgumentException {
 		if(model.getStartDate().compareTo(model.getDueDate()) >= 0)
 			throw new IllegalArgumentException("");
@@ -233,6 +242,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public TestScript addTestScript(@NonNull ProjectTestScriptModel model) throws RelationException {
 		Project project = getProject(model.getProjectID());
 		
@@ -254,6 +264,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public void removeTestScript(@NonNull Long testScriptID) throws RelationException {
 		TestScript testScript = getTestScript(testScriptID);
 		Project project = testScript.getProject();
@@ -267,6 +278,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public TestScript modifyTestScript(@NonNull TestScriptModel model) throws RelationException, IllegalArgumentException {
 		if(model.getTestScriptID() == null)
 			throw new IllegalArgumentException("");
@@ -286,6 +298,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public TestSuite addTestSuite(@NonNull ProjectTestSuiteModel model) throws RelationException {
 		Project project = getProject(model.getProjectID());
 		
@@ -302,6 +315,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public void removeTestSuite(Long testSuiteID) throws RelationException {
 		TestSuite testSuite = getTestSuite(testSuiteID);
 		Project project = testSuite.getProject();
@@ -315,6 +329,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public TestSuite modifyTestSuite(@NonNull TestSuiteModel model) throws RelationException, IllegalArgumentException {
 		if(model.getTestSuiteID() == null)
 			throw new IllegalArgumentException("");
@@ -758,6 +773,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public void analyzeProjects() {
 		LocalDate currentDate = LocalDate.now();
 		
