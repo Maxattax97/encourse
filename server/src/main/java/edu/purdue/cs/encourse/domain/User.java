@@ -71,6 +71,8 @@ public class User implements UserDetails, Serializable {
         this.accountLocked = model.getAccountLocked();
         this.credentialsExpired = model.getCredentialsExpired();
         this.enabled = model.getEnabled();
+        
+        this.authorities = new ArrayList<>();
     }
     
     public User(@NonNull Long id, @NonNull String username, @NonNull String password, @NonNull Boolean accountExpired, @NonNull Boolean accountLocked, @NonNull Boolean credentialsExpired, @NonNull Boolean enabled) {
