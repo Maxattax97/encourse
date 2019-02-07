@@ -13,7 +13,6 @@ import lombok.Setter;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 @Getter
 @Setter
 public class UserModel {
