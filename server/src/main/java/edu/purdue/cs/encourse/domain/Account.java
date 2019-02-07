@@ -32,9 +32,7 @@ import javax.persistence.Table;
 @Table(name = "ACCOUNT")
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class Account {
+public class Account {
     
     public enum Role {
         STUDENT("STUDENT"), PROFESSOR("PROFESSOR"), ADMIN("ADMIN");
@@ -81,6 +79,6 @@ public abstract class Account {
         this.firstName = model.getFirstName();
         this.lastName = model.getLastName();
         this.eduEmail = model.getEduEmail();
-        this.role = model.getRole() == 0 ? Role.STUDENT : model.getRole() == 1 ? Role.PROFESSOR : Role.ADMIN;
+        this.role = model.getRole() == Role.STUDENT.ordinal() ? Role.STUDENT : model.getRole() == Role.PROFESSOR.ordinal() ? Role.PROFESSOR : Role.ADMIN;
     }
 }

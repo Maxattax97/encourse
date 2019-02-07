@@ -100,10 +100,34 @@ public class AccountServiceImpl implements AccountService {
         if(account.getLastName().length() == 0)
             throw new IllegalArgumentException("Last name is invalid.");
         
-        Account savedAccount = (Account) accountRepository.save(account.getRole() == Account.Role.STUDENT.ordinal() ? new Student(account) : account.getRole() == Account.Role.PROFESSOR.ordinal() ? new Professor(account) : new CollegeAdmin(account));
+        Account savedAccount = accountRepository.save(new Account(account));
         
         if(savedAccount == null)
             throw new RelationException("Could not create new account object in database.");
+        
+        switch(savedAccount.getRole()) {
+            case STUDENT:
+                Student student = studentRepository.save(new Student(savedAccount.getUserID(), account));
+                
+                if(student == null)
+                    throw new RelationException("Could not create new student object in database.");
+                
+                break;
+            case PROFESSOR:
+                Professor professor = professorRepository.save(new Professor(savedAccount.getUserID(), account));
+                
+                if(professor == null)
+                    throw new RelationException("Could not create new professor object in database.");
+                
+                break;
+            case ADMIN:
+                CollegeAdmin admin = adminRepository.save(new CollegeAdmin(savedAccount.getUserID(), account));
+                
+                if(admin == null)
+                    throw new RelationException("Could not create new admin object in database.");
+                
+                break;
+        }
         
         return savedAccount;
     }
@@ -145,7 +169,7 @@ public class AccountServiceImpl implements AccountService {
         if(account.getRole() != null)
             account.setRole(modifyAccount.getRole());
         
-        account = (Account) accountRepository.save(account);
+        account = accountRepository.save(account);
         
         return account;
     }
