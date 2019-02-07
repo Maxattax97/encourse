@@ -99,7 +99,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	
 	@Override
 	@Transactional
-	public void addCourseTA(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
+	public CourseStudent addCourseTA(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
 		Course course = courseService.getCourse(model.getCourseID());
 		Student student = accountService.getStudent(model.getStudentID());
 		
@@ -108,6 +108,8 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 		course.getTeachingAssistants().add(courseStudent);
 		
 		courseRepository.save(course);
+		
+		return courseStudent;
 	}
 	
 	@Override
@@ -139,7 +141,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	
 	@Override
 	@Transactional
-	public void addCourseStudent(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
+	public CourseStudent addCourseStudent(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
 		Course course = courseService.getCourse(model.getCourseID());
 		Student student = accountService.getStudent(model.getStudentID());
 		
@@ -149,6 +151,8 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 		course.setStudentCount(course.getStudentCount() + 1);
 		
 		courseRepository.save(course);
+		
+		return courseStudent;
 	}
 	
 	@Override

@@ -2,6 +2,7 @@ package edu.purdue.cs.encourse.config;
 
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
+import edu.purdue.cs.encourse.domain.relations.CourseStudent;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.model.AccountModel;
 import edu.purdue.cs.encourse.model.CourseModel;
@@ -102,14 +103,12 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             
             String student;
             int count = 1;
-            List<Account> students = new ArrayList<>();
+            List<CourseStudent> students = new ArrayList<>();
             
             while((student = reader.readLine()) != null && count <= ConfigurationManager.getInstance().limit) {
                 Account studentAccount = accountService.addAccount(new AccountModel(student, "Student", student, student + "@purdue.edu", Account.Role.STUDENT.ordinal()));
                 
-                students.add(studentAccount);
-                
-                adminService.addCourseStudent(new CourseStudentModel(course.getCourseID(), studentAccount.getUserID()));
+                students.add(adminService.addCourseStudent(new CourseStudentModel(course.getCourseID(), studentAccount.getUserID())));
                 
                 count++;
             }
@@ -119,7 +118,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             reader = new BufferedReader(new FileReader("src/taconfig.txt"));
             BufferedReader studentReader = new BufferedReader(new FileReader("src/stuconfig.txt"));
             String input;
-            List<Account> tas = new ArrayList<>();
+            List<CourseStudent> tas = new ArrayList<>();
             while((student = reader.readLine()) != null) {
                 String[] lab = student.split(" ");
                 if(!lab[0].equals("Start")) {
@@ -130,8 +129,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 while (!(info = reader.readLine().split(" "))[0].equals("End")) {
                     Account ta = accountService.addAccount(new AccountModel(info[0] + "-lab" + lab[2], info[1], info[2], info[0] + "@purdue.edu", Account.Role.STUDENT.ordinal()));
                     adminService.addUser(new UserModel(ta, lab[3]));
-                    adminService.addCourseTA(new CourseStudentModel(course.getCourseID(), ta.getUserID()));
-                    tas.add(ta);
+                    tas.add(adminService.addCourseTA(new CourseStudentModel(course.getCourseID(), ta.getUserID())));
                 }
                 
                 while ((input = studentReader.readLine()) != null) {
@@ -145,16 +143,16 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                             break;
                         }
                         roster = input.split(",");
-                        Account studentAccount = null;
-                        for(Account studentIterator : students) {
-                            if(studentIterator.getUsername().equals(roster[0])) {
+                        CourseStudent studentAccount = null;
+                        for(CourseStudent studentIterator : students) {
+                            if(studentIterator.getStudent().getUsername().equals(roster[0])) {
                                 studentAccount = studentIterator;
                                 break;
                             }
                         }
                         if(studentAccount != null) {
-                            for(Account ta : tas) {
-                                adminService.addCourseStudentToTA(new StudentTAModel(studentAccount.getUserID(), ta.getUserID()));
+                            for(CourseStudent ta : tas) {
+                                adminService.addCourseStudentToTA(new StudentTAModel(studentAccount.getId(), ta.getId()));
                             }
                         }
                     }
