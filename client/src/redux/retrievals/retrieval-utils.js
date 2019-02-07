@@ -1,6 +1,7 @@
 import url from '../../server'
 
 export const api_v1 = url + '/api/'
+export const api_v2 = url + '/api/v2/'
 
 export const projectID_v1 = project => 'projectID=' + project.id
 

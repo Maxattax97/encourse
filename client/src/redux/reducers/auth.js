@@ -1,4 +1,4 @@
-import {getData} from "./reducer-utils"
+import {forwardData, getData} from './reducer-utils'
 
 function setTokens(state, action) {
 	const expires_at = Date.now() + (action.data.expires_in) * 1000
@@ -64,7 +64,7 @@ export default function auth(state = {}, action) {
 		case 'CHANGE_PASSWORD':
 		    return getData(state, action, 'changePassword')
 		case 'GET_ACCOUNT':
-		    return getData(state, action, 'getAccount')
+		    return forwardData(state, action, 'getAccount')
 		case 'SET_LOCATION':
 		    return setLocation(state, action)
 		default:

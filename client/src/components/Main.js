@@ -12,6 +12,7 @@ import '../styles/css/main.css'
 import Navbar from './navigation/TopNavigation'
 import {AdminPanel, CoursePanel, CourseDishonestyPanel, ManageTAPanel, PreferencePanel, ProjectPanel, StudentDishonestyPanel, StudentPanel} from "./panel"
 import StudentCommitDiffPanel from './panel/StudentCommitDiffPanel'
+
 class Main extends Component {
 
     createPanelRef = (node) => {
@@ -55,11 +56,13 @@ class Main extends Component {
         } else {
             history.push(`/${course}/${semester}/course`)
         }
-        
-    
-        if(!this.props.account) {
-            this.props.getAccount(`${url}/api/account`)
-        }
+
+        this.props.getAccount(`${url}/api/account`)
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.location.pathname !== prevProps.location.pathname)
+            this.panel.scrollTop = 0;
     }
 
     componentWillUnmount() {
