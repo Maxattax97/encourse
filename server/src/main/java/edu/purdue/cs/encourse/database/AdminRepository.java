@@ -4,5 +4,5 @@ import edu.purdue.cs.encourse.domain.CollegeAdmin;
 import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
 
-public interface AdminRepository extends CrudRepository<CollegeAdmin, Long> {
+public interface AdminRepository extends AccountRepository<CollegeAdmin> {
 }

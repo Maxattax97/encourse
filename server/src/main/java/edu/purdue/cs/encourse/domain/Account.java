@@ -15,6 +15,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 /**
@@ -31,7 +33,8 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class Account {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Account {
     
     public enum Role {
         STUDENT("STUDENT"), PROFESSOR("PROFESSOR"), ADMIN("ADMIN");
