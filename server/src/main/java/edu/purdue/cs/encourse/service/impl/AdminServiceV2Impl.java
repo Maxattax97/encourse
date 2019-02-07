@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.InvalidRelationIdException;
+import javax.management.relation.RelationException;
 import java.util.List;
 
 /**
@@ -99,11 +100,14 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	
 	@Override
 	@Transactional
-	public CourseStudent addCourseTA(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
+	public CourseStudent addCourseTA(@NonNull CourseStudentModel model) throws RelationException {
 		Course course = courseService.getCourse(model.getCourseID());
 		Student student = accountService.getStudent(model.getStudentID());
 		
-		CourseStudent courseStudent = new CourseStudent(course, student, false);
+		CourseStudent courseStudent = courseStudentRepository.save(new CourseStudent(course, student, false));
+		
+		if(courseStudent == null)
+			throw new RelationException("Could not create new course student object in database.");
 		
 		course.getTeachingAssistants().add(courseStudent);
 		
@@ -141,11 +145,14 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	
 	@Override
 	@Transactional
-	public CourseStudent addCourseStudent(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
+	public CourseStudent addCourseStudent(@NonNull CourseStudentModel model) throws RelationException {
 		Course course = courseService.getCourse(model.getCourseID());
 		Student student = accountService.getStudent(model.getStudentID());
 		
-		CourseStudent courseStudent = new CourseStudent(course, student, true);
+		CourseStudent courseStudent = courseStudentRepository.save(new CourseStudent(course, student, true));
+		
+		if(courseStudent == null)
+			throw new RelationException("Could not create new course student object in database.");
 		
 		course.getStudents().add(courseStudent);
 		course.setStudentCount(course.getStudentCount() + 1);
