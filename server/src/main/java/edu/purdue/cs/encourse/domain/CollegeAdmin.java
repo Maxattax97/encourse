@@ -20,12 +20,18 @@ import java.util.ArrayList;
 @Getter
 @Entity
 @Table(name = "ADMINISTRATOR")
-@NoArgsConstructor
-@AllArgsConstructor
 public class CollegeAdmin extends Account {
+    
+    public CollegeAdmin() {
+        super();
+    }
     
     public CollegeAdmin(@NonNull AccountModel model) {
         super(model);
+    }
+    
+    public CollegeAdmin(@NonNull Long id, @NonNull String username, @NonNull String firstName, @NonNull String lastName, @NonNull String eduEmail, @NonNull Role role) {
+        super(id, username, firstName, lastName, eduEmail, role);
     }
 
 }
