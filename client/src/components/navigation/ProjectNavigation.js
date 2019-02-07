@@ -7,6 +7,8 @@ import {Title, Card, SettingsIcon, LoadingIcon} from '../Helpers'
 import { history } from '../../redux/store'
 import {getCurrentProject, getProjects} from '../../redux/state-peekers/projects'
 import {retrieveAllProjects} from '../../redux/retrievals/projects'
+import {getAccount} from '../../redux/state-peekers/auth'
+import {isAccountNotTA} from '../../common/state-helpers'
 
 class ProjectNavigation extends Component {
 
@@ -41,13 +43,19 @@ class ProjectNavigation extends Component {
                     </div>
                 )
 
+        console.log(this.props.account);
+
         return (
             <div className="list-nav side-nav-left">
                 <Card>
                     <div className="list-container">
                         <Title onClick={ this.openProjectOptions }>
                             <h3 className='header'>Projects</h3>
-                            <SettingsIcon/>
+                            {
+                                isAccountNotTA(this.props.account) ?
+                                    <SettingsIcon/>
+                                    : null
+                            }
                         </Title>
 
                         <div className="h3 break-line header"/>
@@ -70,6 +78,7 @@ const mapStateToProps = (state) => {
         currentSemesterId: getCurrentSemesterId(state),
         project: getCurrentProject(state),
         isLoading: state.projects ? state.projects.getClassProjectsIsLoading : false,
+        account: getAccount(state),
     }
 }
 

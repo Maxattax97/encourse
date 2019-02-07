@@ -13,18 +13,31 @@ import ProgressModal from "./common/TaskModal"
 import {isAnySelected} from '../../redux/state-peekers/control'
 import CustomRangeModal from './common/CustomRangeModal'
 import BackNavigation from '../navigation/BackNavigation'
+import {getAccount} from '../../redux/state-peekers/auth'
+import {isAccountNotTA} from '../../common/state-helpers'
 
 class CoursePanel extends Component {
+
+    componentDidMount = () => {
+        window.scrollTo(0, 0);
+    }
+
     render() {
 
-        const action_names = [
+        const action_names = isAccountNotTA(this.props.account) ? [
             'Manage Teaching Assistants',
+            'View Current Task',
+            'Academic Dishonesty Report'
+        ] : [
             'View Current Task',
             'Academic Dishonesty Report'
         ]
 
-        const actions = [
+        const actions = isAccountNotTA(this.props.account) ? [
             () => { history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/manage-tas`) },
+            () => { this.props.setModalState(2) },
+            () => { history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/course-dishonesty`) }
+        ] : [
             () => { this.props.setModalState(2) },
             () => { history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/course-dishonesty`) }
         ]
@@ -88,7 +101,8 @@ const mapStateToProps = (state) => {
     return {
         currentCourseId: getCurrentCourseId(state),
         currentSemesterId: getCurrentSemesterId(state),
-        isAnySelected: isAnySelected(state, 'students')
+        isAnySelected: isAnySelected(state, 'students'),
+        account: getAccount(state),
     }
 }
 
