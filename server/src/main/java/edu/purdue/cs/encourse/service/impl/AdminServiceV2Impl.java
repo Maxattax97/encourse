@@ -1,9 +1,9 @@
 package edu.purdue.cs.encourse.service.impl;
 
-import edu.purdue.cs.encourse.database.AccountRepository;
 import edu.purdue.cs.encourse.database.AuthorityRepository;
 import edu.purdue.cs.encourse.database.CourseRepository;
 import edu.purdue.cs.encourse.database.CourseStudentRepository;
+import edu.purdue.cs.encourse.database.ProfessorRepository;
 import edu.purdue.cs.encourse.database.UserRepository;
 import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.Course;
@@ -53,7 +53,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	private CourseRepository courseRepository;
 	
 	@Autowired
-	private AccountRepository accountRepository;
+	private ProfessorRepository professorRepository;
 	
 	@Autowired
 	private StudentService studentService;
@@ -93,8 +93,8 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 		
 		course.setProfessor(professor);
 		
-		accountRepository.save(professor);
-		accountRepository.save(currentProfessor);
+		professorRepository.save(professor);
+		professorRepository.save(currentProfessor);
 	}
 	
 	@Override
