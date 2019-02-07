@@ -46,25 +46,30 @@ public class Account {
     /** Primary key for all account types in the database */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "USER_ID")
     private Long userID;
     
     @NonNull
+    @Column(name = "USERNAME")
     private String username;
     
     /** Name for display purposes */
     @NonNull
+    @Column(name = "FIRST_NAME")
     private String firstName;
     
     @NonNull
+    @Column(name = "LAST_NAME")
     private String lastName;
 
     /** Email settings */
     @NonNull
+    @Column(name = "EDU_EMAIL")
     private String eduEmail;
 
     /** Indicates whether account is student, TA, professor, or college admin */
     @Enumerated
-    @Column(columnDefinition = "smallint")
+    @Column(columnDefinition = "smallint", name = "ROLE")
     @NonNull
     private Role role;
     

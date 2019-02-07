@@ -51,35 +51,33 @@ public class Project {
     /** courseID + semester + projectName, forms the primary key */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name  = "projectID")
+    @Column(name  = "PROJECT_ID")
     private Long projectID;
 
     @ManyToOne
-    @JoinColumn(name = "courseID")
+    @JoinColumn(name = "COURSE_ID")
     @NonNull
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "courseID")
-    @JsonIdentityReference(alwaysAsId=true)
     private Course course;
     
     @NonNull
-    @Column(name  = "projectName")
+    @Column(name  = "PROJECT_NAME")
     private String name;
     
     @NonNull
-    @Column(name  = "startDate")
+    @Column(name  = "START_DATE")
     private LocalDate startDate;
     
     @NonNull
-    @Column(name  = "dueDate")
+    @Column(name  = "DUE_DATE")
     private LocalDate dueDate;
 
     /** The name of the directory that will store the project. Remove .git if this is included */
     @NonNull
-    @Column(name  = "repository")
+    @Column(name  = "REPOSITORY")
     private String repository;
 
     /** Rate in which projects will be pulled and tested, in hourse */
-    @Column(name  = "testRate")
+    @Column(name  = "TEST_RATE")
     private int testRate;
     
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -97,13 +95,13 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<AdditionHash> additionHashes;
     
-    @Column(name  = "analyzeDateTime")
+    @Column(name  = "ANALYZE_DATE_TIME")
     private LocalDate analyzeDateTime;
     
-    @Column(name  = "totalVisiblePoints")
+    @Column(name  = "TOTAL_VISIBLE_POINTS")
     private Double totalVisiblePoints;
     
-    @Column(name = "totalHiddenPoints")
+    @Column(name = "TOTAL_HIDDEN_POINTS")
     private Double totalHiddenPoints;
 
     public Project(@NonNull Course course, @NonNull ProjectModel projectModel) {

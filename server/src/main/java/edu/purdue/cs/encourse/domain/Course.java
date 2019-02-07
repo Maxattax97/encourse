@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -37,32 +38,39 @@ public class Course {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "COURSE_ID")
 	private Long courseID;
 	
 	@ManyToOne
-	@JoinColumn(name = "professorID")
+	@JoinColumn(name = "USER_ID")
 	@NonNull
 	private Professor professor;
 	
 	/** The path to the remote repositories on data.cs **/
 	@NonNull
+	@Column(name = "REMOTE_PATH")
 	private String remotePath;
 	
 	/** May be useful to track for registration purposes */
 	@NonNull
+	@Column(name = "CRN")
 	private String CRN;
 	
 	/** Use courseID or courseTitle to group together sections of the same course */
 	@NonNull
+	@Column(name = "TITLE")
 	private String title;
 	
 	@NonNull
+	@Column(name = "NAME")
 	private String name;
 	
 	@NonNull
+	@Column(name = "SEMESTER")
 	private String semester;
 	
 	@NonNull
+	@Column(name = "STUDENT_COUNT")
 	private Integer studentCount;
 	
 	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)

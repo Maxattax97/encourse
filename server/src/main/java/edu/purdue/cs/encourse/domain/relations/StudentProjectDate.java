@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,56 +40,68 @@ public class StudentProjectDate {
     /** Primary key for relation in database. Never used directly */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "STUDENT_PROJECT_DATE_ID")
     private Long id;
     
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "projectID")
+    @JoinColumn(name = "PROJECT_ID")
     private Project project;
     
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "studentProjectID")
+    @JoinColumn(name = "STUDENT_PROJECT_ID")
     private StudentProject studentProject;
     
     @NonNull
+    @Column(name = "DATE")
     private LocalDate date;
     
     /** Best visible grade output by testall on the given date */
     @NonNull
+    @Column(name = "VISIBLE_POINTS")
     private Double visiblePoints;
 
     /** Best hidden grade output by testall on the given date */
     @NonNull
+    @Column(name = "HIDDEN_POINTS")
     private Double hiddenPoints;
     
     @NonNull
     @ElementCollection
-    @CollectionTable(name = "STUDENT_PROJECT_DATE_TESTS", joinColumns = @JoinColumn(name = "studentProjectDateID"))
+    @CollectionTable(name = "STUDENT_PROJECT_DATE_TESTS", joinColumns = @JoinColumn(name = "STUDENT_PROJECT_DATE_ID"))
     private List<Long> testsPassing;
     
     @NonNull
+    @Column(name = "TOTAL_COMMITS")
     private Double totalCommits;
     
     @NonNull
+    @Column(name = "CURRENT_COMMITS")
     private Double currentCommits;
     
     @NonNull
+    @Column(name = "TOTAL_MINUTES")
     private Double totalMinutes;
     
     @NonNull
+    @Column(name = "CURRENT_MINUTES")
     private Double currentMinutes;
     
     @NonNull
+    @Column(name = "TOTAL_ADDITIONS")
     private Double totalAdditions;
     
     @NonNull
+    @Column(name = "CURRENT_ADDITIONS")
     private Double currentAdditions;
     
     @NonNull
+    @Column(name = "TOTAL_DELETIONS")
     private Double totalDeletions;
     
     @NonNull
+    @Column(name = "CURRENT_DELETIONS")
     private Double currentDeletions;
     
     public StudentProjectDate(@NonNull Project project, @NonNull StudentProject studentProject, @NonNull LocalDate date) {

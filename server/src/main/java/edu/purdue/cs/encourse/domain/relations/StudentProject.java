@@ -12,6 +12,7 @@ import lombok.ToString;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -46,34 +47,38 @@ public class StudentProject {
     /** Primary key for relation in database. Never used directly */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "STUDENT_PROJECT_ID")
     private Long id;
     
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "projectID")
+    @JoinColumn(name = "PROJECT_ID")
     private Project project;
     
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "studentID")
+    @JoinColumn(name = "COURSE_STUDENT_ID")
     private CourseStudent student;
 
     /** Date that student made first commit for the project */
+    @Column(name = "FIRST_COMMIT")
     private LocalDateTime firstCommit;
 
     /** Date that student most recently committed for the project */
+    @Column(name = "MOST_RECENT_COMMIT")
     private LocalDateTime mostRecentCommit;
     
+    @Column(name = "LAST_UPDATED_COMMIT")
     private String lastUpdatedCommit;
     
     @NonNull
     @ElementCollection
-    @CollectionTable(name = "STUDENT_PROJECT_TESTS", joinColumns = @JoinColumn(name = "studentProjectID"))
+    @CollectionTable(name = "STUDENT_PROJECT_TESTS", joinColumns = @JoinColumn(name = "STUDENT_PROJECT_ID"))
     private List<Long> testsPassing;
     
     @NonNull
     @ElementCollection
-    @CollectionTable(name = "STUDENT_PROJECT_COMMITS", joinColumns = @JoinColumn(name = "studentProjectID"))
+    @CollectionTable(name = "STUDENT_PROJECT_COMMITS", joinColumns = @JoinColumn(name = "STUDENT_PROJECT_ID"))
     private List<Commit> commits;
     
     @NonNull

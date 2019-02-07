@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,14 +29,15 @@ import java.util.Set;
 public class AdditionHash {
 	
 	@Id
+	@Column(name = "ADDITION_HASH_ID")
 	private String id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "projectID")
+	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
 	
-	@ElementCollection
-	@CollectionTable(name = "ADDITION_HASH_STUDENTS", joinColumns = @JoinColumn(name = "id"))
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "ADDITION_HASH_STUDENTS", joinColumns = @JoinColumn(name = "ADDITION_HASH_ID"))
 	private Map<Long, Integer> studentCounts;
 	
 }

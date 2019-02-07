@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -39,10 +40,11 @@ public class Section {
     /** Randomly generated String */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "SECTION_ID")
     private Long sectionID;
     
     @ManyToOne
-    @JoinColumn(name = "courseID")
+    @JoinColumn(name = "COURSE_ID")
     @NonNull
     private Course course;
     
@@ -52,17 +54,19 @@ public class Section {
                     CascadeType.MERGE
             })
     @JoinTable(name="SECTION_COURSE_STUDENTS",
-            joinColumns=@JoinColumn(name="sectionID"),
-            inverseJoinColumns=@JoinColumn(name="studentID")
+            joinColumns=@JoinColumn(name="SECTION_ID"),
+            inverseJoinColumns=@JoinColumn(name="USER_ID")
     )
     private List<CourseStudent> students;
     
     /** Examples: LE1, LE2, Lab6, PSO9 */
     @NonNull
+    @Column(name = "TYPE")
     private String type;
 
     /** Time that section meets during the week, Format is "D H:MM - H:MM", where D is M, T, W, R, or F */
     @NonNull
+    @Column(name = "TIME")
     private String time;
     
     public Section(@NonNull Course course, @NonNull SectionModel sectionModel) {
