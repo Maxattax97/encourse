@@ -69,9 +69,6 @@ public class Account {
     private Role role;
     
     public Account(@NonNull AccountModel model) {
-        if(model.getUserID() != null)
-            this.userID = model.getUserID();
-        
         this.username = model.getUsername();
         this.firstName = model.getFirstName();
         this.lastName = model.getLastName();
