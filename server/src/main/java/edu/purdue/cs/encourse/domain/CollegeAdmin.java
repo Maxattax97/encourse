@@ -20,6 +20,8 @@ import java.util.ArrayList;
 @Getter
 @Entity
 @Table(name = "ADMINISTRATOR")
+@NoArgsConstructor
+@AllArgsConstructor
 public class CollegeAdmin extends Account {
     
     public CollegeAdmin(@NonNull AccountModel model) {
