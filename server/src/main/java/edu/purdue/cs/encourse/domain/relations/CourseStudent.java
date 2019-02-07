@@ -35,7 +35,7 @@ import java.util.List;
 public class CourseStudent {
 	/** Primary key for relation in database. Never used directly */
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "COURSE_STUDENT_ID")
 	private Long id;
 	
