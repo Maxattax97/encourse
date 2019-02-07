@@ -160,8 +160,8 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 }
             }
             
-            Project mymalloc = projectService.addProject(new CourseProjectModel(course.getCourseID(), "MyMalloc", LocalDate.of(2019, 1, 8), LocalDate.of(2019, 1, 28), "lab1-src"));
-            Project bash = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Shell Scripting", LocalDate.of(2019, 1, 29), LocalDate.of(2019, 2, 11), "lab2-src"));
+            Project mymalloc = projectService.addProject(new CourseProjectModel(course.getCourseID(), "MyMalloc", LocalDate.of(2019, 1, 8), LocalDate.of(2019, 1, 28), "lab1-src", false));
+            Project bash = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Shell Scripting", LocalDate.of(2019, 1, 29), LocalDate.of(2019, 2, 11), "lab2-src", false));
         }
         catch(Exception e) {
             e.printStackTrace();

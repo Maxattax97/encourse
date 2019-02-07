@@ -25,6 +25,9 @@ public class ProjectModel {
 	@NonNull
 	private String repository;
 	
+	@NonNull
+	private Boolean runTestall;
+	
 	private Double totalVisiblePoints;
 	
 	private Double totalHiddenPoints;

@@ -160,7 +160,7 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		Course course = courseService.getCourse(model.getCourseID());
 		
-		Project project = new Project(course, model);
+		Project project = projectRepository.save(new Project(course, model));
 		
 		List<CourseStudent> students = course.getStudents();
 		
@@ -378,8 +378,10 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		String courseHub = course.getCourseHub();
 		
-		for(StudentProject p : projects)
+		for(StudentProject p : projects) {
+			System.out.println("PULLING STUDENT PROJECT (" + p.getId() + ", "+ p.getStudent().getStudent().getUsername() + ")");
 			executeScript("pullRepositories.sh " + courseHub + "/" + p.getStudent().getStudent().getUsername() + "/" + project.getRepository());
+		}
 		
 		executeScript("setPermissions.sh " + course.getCourseID());
 	}
@@ -783,6 +785,8 @@ public class ProjectServiceImpl implements ProjectService {
 			if(project.getStartDate().compareTo(project.getDueDate()) == 0)
 				continue;
 			
+			System.out.println("RUNNING ANALYSIS ON PROJECT (" + project.getProjectID() + ", " + project.getName() + ")");
+			
 			//Get all student project dates >= the analyze date time (the last recorded analysis run)
 			List<StudentProjectDate> studentProjectDates = studentProjectDateRepository.findByProjectAndDateGreaterThanEqual(project, project.getAnalyzeDateTime());
 			
@@ -813,7 +817,8 @@ public class ProjectServiceImpl implements ProjectService {
 			//projectRepository.save(project);
 			
 			//TODO, make this obsolete (except that MyMalloc kind of broke this paradigm)
-			runAllStudentTestalls(project, testScripts, studentProjectListMap);
+			if(project.getRunTestall())
+				runAllStudentTestalls(project, testScripts, studentProjectListMap);
 			
 			//populate all information not associated with the testall into the appropriate locations
 			calculateStudentDiffs(project, projectDateList, studentProjectListMap);

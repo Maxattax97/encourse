@@ -103,6 +103,9 @@ public class Project {
     
     @Column(name = "TOTAL_HIDDEN_POINTS")
     private Double totalHiddenPoints;
+    
+    @Column(name = "RUN_TESTALL")
+    private Boolean runTestall;
 
     public Project(@NonNull Course course, @NonNull ProjectModel projectModel) {
         this.course = course;
@@ -125,6 +128,8 @@ public class Project {
         this.analyzeDateTime = LocalDate.ofYearDay(2000, 1);
         this.totalVisiblePoints = 0.0;
         this.totalHiddenPoints = 0.0;
+        
+        this.runTestall = projectModel.getRunTestall();
     }
 
     /**
