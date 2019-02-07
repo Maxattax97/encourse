@@ -62,6 +62,9 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
     private HelperService helperService;*/
     
     @Autowired
+    private AccountRepository accountRepository;
+    
+    @Autowired
     private AccountService accountService;
     
     @Autowired
@@ -80,9 +83,12 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
     
     private void feedDatabase() {
         try {
-            Account grr = accountService.addAccount(new AccountModel(0L, "grr", "Gustavo", "Rodriguez-Rivera", "grr@purdue.edu", Account.Role.PROFESSOR.ordinal()));
-            Account killian = accountService.addAccount(new AccountModel(1L, "kleclain-a", "Killian", "LeClainche", "kleclain@purdue.edu", Account.Role.ADMIN.ordinal()));
-            Account jordan = accountService.addAccount(new AccountModel(2L, "reed226-a", "William", "Reed", "reed226@purdue.edu", Account.Role.ADMIN.ordinal()));
+            if(accountRepository.findAll().iterator().hasNext())
+                return;
+            
+            Account grr = accountService.addAccount(new AccountModel("grr", "Gustavo", "Rodriguez-Rivera", "grr@purdue.edu", Account.Role.PROFESSOR.ordinal()));
+            Account killian = accountService.addAccount(new AccountModel("kleclain-a", "Killian", "LeClainche", "kleclain@purdue.edu", Account.Role.ADMIN.ordinal()));
+            Account jordan = accountService.addAccount(new AccountModel("reed226-a", "William", "Reed", "reed226@purdue.edu", Account.Role.ADMIN.ordinal()));
             
             adminService.addUser(new UserModel(grr, "$2a$04$/zamuN8nrPT0qZ4jbaTTp..kBjKUtMu.Jbj2DAHZ..KLDON4REPJu"));
             adminService.addUser(new UserModel(killian, "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6"));

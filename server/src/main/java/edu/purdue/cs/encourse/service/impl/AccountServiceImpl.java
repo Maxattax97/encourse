@@ -85,9 +85,6 @@ public class AccountServiceImpl implements AccountService {
     
     @Override
     public Account addAccount(@NonNull AccountModel account) throws RelationException, IllegalArgumentException {
-        if(account.getUserID() != null && accountRepository.existsById(account.getUserID()))
-            throw new IllegalArgumentException("Account ID already present in the repository.");
-        
         if(!emailPattern.matcher(account.getEduEmail()).matches())
             throw new IllegalArgumentException("Email is invalid.");
         
@@ -102,8 +99,6 @@ public class AccountServiceImpl implements AccountService {
         if(savedAccount == null)
             throw new RelationException("Could not create new account object in database.");
         
-        account.setUserID(savedAccount.getUserID());
-    
         return savedAccount;
     }
     
