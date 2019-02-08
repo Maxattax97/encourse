@@ -606,11 +606,12 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			String testingDirectory = courseHub + "/" + studentProject.getStudent().getStudent().getUsername() + "/" + project.getRepository();
 			
-			//ensure that all keys are present inside the map
-			if(studentProjectListMap.containsKey(studentProject))
-				studentProjectListMap.put(studentProject, new ArrayList<>());
-			
 			List<StudentProjectDate> studentProjectDateList = studentProjectListMap.get(studentProject);
+			
+			if(studentProjectDateList.size() == 0) {
+				System.out.println(studentProject.getStudent().getStudent().getUsername() + " is not being calculated, this may create problems!");
+				continue;
+			}
 			
 			//makes sure that the first element in the list is the earliest student project date
 			studentProjectDateList.sort(Comparator.comparing(StudentProjectDate::getDate));
@@ -827,19 +828,6 @@ public class ProjectServiceImpl implements ProjectService {
 			System.out.println("Collected Project Date List");
 			for(ProjectDate projectDate : projectDateList) {
 				System.out.println(projectDate.getDate());
-			}
-			
-			System.out.println("Student Project Date Mapping");
-			for(StudentProject studentProject : studentProjectListMap.keySet()) {
-				System.out.println("Student Project : " + studentProject.getStudent().getStudent().getUsername());
-				System.out.println("Student Project Date Size : " + studentProjectListMap.get(studentProject).size());
-				if(studentProjectListMap.get(studentProject).size() != 0) {
-					System.out.println("Student Project Date Start Date : " + studentProjectListMap.get(studentProject).get(0).getDate());
-					System.out.println("Student Project Date End Date : " + studentProjectListMap.get(studentProject).get(studentProjectListMap.get(studentProject).size() - 1).getDate());
-				}
-				else {
-					System.out.println("--------------------------------------------------");
-				}
 			}
 			
 			//start processing the project
