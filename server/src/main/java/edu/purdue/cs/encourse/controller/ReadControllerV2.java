@@ -52,11 +52,6 @@ public class ReadControllerV2 {
 		this.studentService = studentService;
 	}
 	
-	private User getUserFromAuth() {
-		SecurityContext securityContext = SecurityContextHolder.getContext();
-		return ((User)securityContext.getAuthentication().getPrincipal());
-	}
-	
 	private boolean hasAccessToAccounts(Boolean selectedAllStudents, List<Long> accounts) {
 		if(accounts == null)
 			return true;
@@ -69,9 +64,8 @@ public class ReadControllerV2 {
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
-	@RequestMapping(value = "/courses",
+	@RequestMapping(value = "/course/all",
 			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<?> getCourses() {
 		return new ResponseEntity<>(courseService.getCourses(), HttpStatus.OK);

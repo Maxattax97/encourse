@@ -3,17 +3,16 @@ package edu.purdue.cs.encourse.config;
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
 import edu.purdue.cs.encourse.domain.relations.CourseStudent;
-import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.model.AccountModel;
 import edu.purdue.cs.encourse.model.CourseModel;
 import edu.purdue.cs.encourse.model.CourseProjectModel;
+import edu.purdue.cs.encourse.model.CourseSectionModel;
 import edu.purdue.cs.encourse.model.CourseStudentModel;
 import edu.purdue.cs.encourse.model.SectionModel;
 import edu.purdue.cs.encourse.model.StudentTAModel;
 import edu.purdue.cs.encourse.model.UserModel;
 import edu.purdue.cs.encourse.service.*;
 import edu.purdue.cs.encourse.util.ConfigurationManager;
-import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
@@ -21,14 +20,12 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,7 +94,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             
             Course course = courseService.addCourse(new CourseModel(grr.getUserID(), "1001", "Systems Programming", "cs252", "Spring2019", "/homes/cs252/sourcecontrol/work"));
             
-            courseService.addSection(new SectionModel(course.getCourseID(), "LE1/2", "N/A"));
+            courseService.addSection(new CourseSectionModel(course.getCourseID(), "LE1/2", "N/A"));
             
             BufferedReader reader = new BufferedReader(new FileReader(course.getCourseHub() + "/students.txt"));
             

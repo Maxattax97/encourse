@@ -4,6 +4,7 @@ import edu.purdue.cs.encourse.domain.Course;
 import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.model.CourseModel;
+import edu.purdue.cs.encourse.model.CourseSectionModel;
 import edu.purdue.cs.encourse.model.ProjectModel;
 import edu.purdue.cs.encourse.model.SectionModel;
 import edu.purdue.cs.encourse.model.StudentInfoModel;
@@ -27,11 +28,11 @@ public interface CourseServiceV2 {
 	
 	Course addCourse(@NonNull CourseModel course) throws RelationException, IllegalArgumentException;
 	
-	Section addSection(@NonNull SectionModel section) throws InvalidRelationIdException, IllegalArgumentException;
+	Section addSection(@NonNull CourseSectionModel section) throws InvalidRelationIdException, IllegalArgumentException;
 	
 	List<Course> getCourses();
 	
-	List<Section> getCourseSections(@NonNull Long courseID) throws InvalidRelationIdException;
+	List<SectionModel> getCourseSections(@NonNull Long courseID) throws InvalidRelationIdException;
 	
 	List<ProjectModel> getCourseProjects(Long courseID) throws InvalidRelationIdException;
 	

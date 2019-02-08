@@ -50,6 +50,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -528,7 +529,7 @@ public class ProjectServiceImpl implements ProjectService {
 			if(line.startsWith("@DIFF")) {
 				String[] split = line.split(",");
 				
-				if(commit != null && commit.getDate().toLocalDate().compareTo(project.getDueDate()) <= 0) {
+				if(commit != null) {
 					commit.setAdditions(commit.getAdditions() + additions);
 					commit.setDeletions(commit.getDeletions() + deletions);
 					
@@ -541,6 +542,11 @@ public class ProjectServiceImpl implements ProjectService {
 				
 				try {
 					commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(estZone).toLocalDateTime(), Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL);
+					
+					if(commit.getDate().toLocalDate().compareTo(project.getDueDate()) <= 0)
+						commit = null;
+					else if(commit.getDate().toLocalDate().compareTo(project.getStartDate()) > 0)
+						commit.setDate(LocalDateTime.of(project.getStartDate(), LocalTime.of(0, 0)));
 				}
 				catch(DateTimeParseException e) {
 					System.out.println("Student " + studentProject.getStudent().getStudent().getUsername() + " had a problem parsing. " + line);
@@ -581,7 +587,7 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 		}
 		
-		if(commit != null && commit.getDate().toLocalDate().compareTo(project.getDueDate()) <= 0) {
+		if(commit != null) {
 			commit.setAdditions(commit.getAdditions() + additions);
 			commit.setDeletions(commit.getDeletions() + deletions);
 			

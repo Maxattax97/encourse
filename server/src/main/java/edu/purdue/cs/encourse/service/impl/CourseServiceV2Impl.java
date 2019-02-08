@@ -10,10 +10,10 @@ import edu.purdue.cs.encourse.domain.Professor;
 import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.ProjectDate;
 import edu.purdue.cs.encourse.domain.Section;
-import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.BasicStatistics;
 import edu.purdue.cs.encourse.model.CourseModel;
+import edu.purdue.cs.encourse.model.CourseSectionModel;
 import edu.purdue.cs.encourse.model.ProjectModel;
 import edu.purdue.cs.encourse.model.SectionModel;
 import edu.purdue.cs.encourse.model.CourseBarChartModel;
@@ -27,8 +27,6 @@ import edu.purdue.cs.encourse.service.helper.ChartHelper;
 import lombok.NonNull;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +36,7 @@ import javax.management.relation.RelationNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by Killian Le Clainche on 1/15/2019.
@@ -109,11 +108,6 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		return null;
 	}
 	
-	private User getUserFromAuth() {
-		SecurityContext securityContext = SecurityContextHolder.getContext();
-		return ((User)securityContext.getAuthentication().getPrincipal());
-	}
-	
 	@Override
 	@Transactional
 	public Course addCourse(@NonNull CourseModel model) throws RelationException, IllegalArgumentException {
@@ -129,7 +123,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	
 	@Override
 	@Transactional
-	public Section addSection(@NonNull SectionModel model) throws InvalidRelationIdException, IllegalArgumentException {
+	public Section addSection(@NonNull CourseSectionModel model) throws InvalidRelationIdException, IllegalArgumentException {
 		Course course = getCourse(model.getCourseID());
 		
 		Section section = new Section(course, model);
@@ -148,8 +142,8 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<Section> getCourseSections(@NonNull Long courseID) throws InvalidRelationIdException {
-		return getCourse(courseID).getSections();
+	public List<SectionModel> getCourseSections(@NonNull Long courseID) throws InvalidRelationIdException {
+		return getCourse(courseID).getSections().stream().map(section -> new SectionModel(section.getSectionID(), section.getType(), section.getTime())).collect(Collectors.toList());
 	}
 	
 	@Override

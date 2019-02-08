@@ -21,7 +21,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Represents a section that has been added by an administrator.
