@@ -680,7 +680,7 @@ public class ProjectServiceImpl implements ProjectService {
 				studentProjectDate = null;
 				
 				for(StudentProjectDate studentProjectDate1 : studentProjectDateList) {
-					if (studentProjectDate1.getDate() == commit.getDate().toLocalDate()) {
+					if (studentProjectDate1.getDate().compareTo(commit.getDate().toLocalDate()) == 0) {
 						studentProjectDate = studentProjectDate1;
 						break;
 					}
