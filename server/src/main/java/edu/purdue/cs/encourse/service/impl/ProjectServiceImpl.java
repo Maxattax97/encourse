@@ -817,6 +817,31 @@ public class ProjectServiceImpl implements ProjectService {
 				continue;
 			}
 			
+			System.out.println("Project Analyze Date : " + project.getAnalyzeDateTime());
+			
+			System.out.println("Actual Project Date List");
+			for(ProjectDate projectDate : project.getDates()) {
+				System.out.println(projectDate.getDate());
+			}
+			
+			System.out.println("Collected Project Date List");
+			for(ProjectDate projectDate : projectDateList) {
+				System.out.println(projectDate.getDate());
+			}
+			
+			System.out.println("Student Project Date Mapping");
+			for(StudentProject studentProject : studentProjectListMap.keySet()) {
+				System.out.println("Student Project : " + studentProject.getStudent().getStudent().getUsername());
+				System.out.println("Student Project Date Size : " + studentProjectListMap.get(studentProject).size());
+				if(studentProjectListMap.get(studentProject).size() != 0) {
+					System.out.println("Student Project Date Start Date : " + studentProjectListMap.get(studentProject).get(0).getDate());
+					System.out.println("Student Project Date End Date : " + studentProjectListMap.get(studentProject).get(studentProjectListMap.get(studentProject).size() - 1).getDate());
+				}
+				else {
+					System.out.println("--------------------------------------------------");
+				}
+			}
+			
 			//start processing the project
 			//project.setAnalyzing(true);
 			//project.setAnalyzeDateTime(currentDate);
