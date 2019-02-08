@@ -608,7 +608,7 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			List<StudentProjectDate> studentProjectDateList = studentProjectListMap.get(studentProject);
 			
-			if(studentProjectDateList.size() == 0) {
+			if(studentProjectDateList.isEmpty()) {
 				System.out.println(studentProject.getStudent().getStudent().getUsername() + " is not being calculated, this may create problems!");
 				continue;
 			}
@@ -626,8 +626,10 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			}
 			
-			if(commitList == null)
+			if(commitList == null || commitList.isEmpty())
 				continue;
+			
+			System.out.println("Running calculation for student : " + studentProject.getStudent().getStudent().getUsername());
 			
 			project.getAdditionHashes().addAll(additionHashMap.values());
 			
@@ -738,8 +740,10 @@ public class ProjectServiceImpl implements ProjectService {
 		for(ProjectDate projectDate : projectDateList) {
 			List<StudentProjectDate> studentProjectDateList = dateToStudentDateMap.get(projectDate.getDate());
 			
-			if(studentProjectDateList == null)
+			if(studentProjectDateList == null || studentProjectDateList.isEmpty()) {
+				System.out.println("Couldn't find any project dates at date : " + projectDate.getDate());
 				continue;
+			}
 			
 			DescriptiveStatistics totalPointStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics visiblePointStats = new DescriptiveStatistics(studentProjectDateList.size());
