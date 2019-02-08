@@ -543,9 +543,9 @@ public class ProjectServiceImpl implements ProjectService {
 				try {
 					commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(estZone).toLocalDateTime(), Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL);
 					
-					if(commit.getDate().toLocalDate().compareTo(project.getDueDate()) <= 0)
+					if(commit.getDate().toLocalDate().compareTo(project.getDueDate()) > 0)
 						commit = null;
-					else if(commit.getDate().toLocalDate().compareTo(project.getStartDate()) > 0)
+					else if(commit.getDate().toLocalDate().compareTo(project.getStartDate()) < 0)
 						commit.setDate(LocalDateTime.of(project.getStartDate(), LocalTime.of(0, 0)));
 				}
 				catch(DateTimeParseException e) {
