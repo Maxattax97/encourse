@@ -11,5 +11,5 @@
 
 DIRECTORY="$(pwd)"
 cd "$1"
-git log --perl-regexp --author='^((?!CS252).*)$' --date=short --pretty=format:"@UPDATE %H %ad" --reverse --after="$2"
+git log --perl-regexp --author='^((?!CS252).*)$' --date=short --pretty=format:"@UPDATE %H %aI" --reverse --after="$2"
 cd "${DIRECTORY}"
