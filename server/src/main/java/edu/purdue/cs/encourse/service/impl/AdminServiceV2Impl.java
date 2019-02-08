@@ -109,7 +109,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 		if(courseStudent == null)
 			throw new RelationException("Could not create new course student object in database.");
 		
-		course.getTeachingAssistants().add(courseStudent);
+		course.getStudents().add(courseStudent);
 		
 		courseRepository.save(course);
 		
@@ -121,7 +121,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	public void removeCourseTA(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
 		Course course = courseService.getCourse(model.getCourseID());
 		
-		List<CourseStudent> tas = course.getTeachingAssistants();
+		List<CourseStudent> tas = course.getStudents();
 		
 		CourseStudent ta;
 		

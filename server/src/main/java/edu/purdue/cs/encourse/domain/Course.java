@@ -85,10 +85,6 @@ public class Course {
 	@NonNull
 	private List<CourseStudent> students;
 	
-	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@NonNull
-	private List<CourseStudent> teachingAssistants;
-	
 	public Course(@NonNull Professor professor, @NonNull CourseModel courseModel) {
 		this.professor = professor;
 		this.remotePath = courseModel.getRemotePath();
@@ -102,7 +98,6 @@ public class Course {
 		this.projects = new ArrayList<>();
 		this.sections = new ArrayList<>();
 		this.students = new ArrayList<>();
-		this.teachingAssistants = new ArrayList<>();
 	}
 	
 	public String getCourseHub() {

@@ -160,16 +160,18 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		Course course = courseService.getCourse(model.getCourseID());
 		
-		Project project = projectRepository.save(new Project(course, model));
+		Project project = new Project(course, model);
 		
 		List<CourseStudent> students = course.getStudents();
 		
 		for(CourseStudent student : students) {
-			StudentProject studentProject = new StudentProject(project, student);
-			
-			student.getProjects().add(studentProject);
-			
-			project.getStudentProjects().add(studentProject);
+			if(student.getIsStudent()) {
+				StudentProject studentProject = new StudentProject(project, student);
+				
+				student.getProjects().add(studentProject);
+				
+				project.getStudentProjects().add(studentProject);
+			}
 		}
 		
 		List<StudentProject> studentProjects = project.getStudentProjects();
@@ -179,6 +181,8 @@ public class ProjectServiceImpl implements ProjectService {
 		while(iteratorDate.compareTo(project.getDueDate()) != 0) {
 			
 			project.getDates().add(new ProjectDate(project, iteratorDate));
+			
+			System.out.println("Added Project Date (" + project.getRepository() + ", " + iteratorDate + ")");
 			
 			for(StudentProject studentProject : studentProjects) {
 				StudentProjectDate studentProjectDate = new StudentProjectDate(project, studentProject, iteratorDate);
@@ -192,6 +196,8 @@ public class ProjectServiceImpl implements ProjectService {
 		course.getProjects().add(project);
 		
 		cloneProject(project);
+		
+		project = projectRepository.save(project);
 		
 		courseRepository.save(course);
 		
