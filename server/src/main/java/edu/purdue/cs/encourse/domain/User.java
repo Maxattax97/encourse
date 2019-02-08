@@ -28,7 +28,6 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
-@SequenceGenerator(name = "user_id_gen", sequenceName = "user_id_gen",  initialValue = 10)
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails, Serializable {
@@ -38,11 +37,9 @@ public class User implements UserDetails, Serializable {
     private Long id;
     
     @Column(name = "USER_NAME")
-    @NonNull
     private String username;
 
     @Column(name = "PASSWORD")
-    @NonNull
     private String password;
 
     @Column(name = "ACCOUNT_EXPIRED")

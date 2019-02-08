@@ -734,10 +734,7 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		for(List<StudentProjectDate> studentProjectDates : studentProjectListMap.values()) {
 			for(StudentProjectDate studentProjectDate : studentProjectDates) {
-				List<StudentProjectDate> studentDateMapList = dateToStudentDateMap.get(studentProjectDate.getDate());
-				
-				if(studentDateMapList == null)
-					dateToStudentDateMap.put(studentProjectDate.getDate(), Collections.singletonList(studentProjectDate));
+				List<StudentProjectDate> studentDateMapList = dateToStudentDateMap.computeIfAbsent(studentProjectDate.getDate(), k -> new ArrayList<>());
 				
 				studentDateMapList.add(studentProjectDate);
 			}
