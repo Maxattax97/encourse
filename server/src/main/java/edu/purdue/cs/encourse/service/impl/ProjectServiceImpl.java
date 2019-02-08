@@ -55,6 +55,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -538,7 +539,12 @@ public class ProjectServiceImpl implements ProjectService {
 				additions = 0;
 				deletions = 0;
 				
-				commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(estZone).toLocalDateTime(), Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL);
+				try {
+					commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(estZone).toLocalDateTime(), Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL);
+				}
+				catch(DateTimeParseException e) {
+					System.out.println("Student " + studentProject.getStudent().getStudent().getUsername() + " had a problem parsing. " + line);
+				}
 			}
 			else if(commit != null) {
 				if(line.startsWith("+++")) {
@@ -816,7 +822,7 @@ public class ProjectServiceImpl implements ProjectService {
 			Map<StudentProject, List<StudentProjectDate>> studentProjectListMap = studentProjectDates.stream().collect(Collectors.groupingBy(StudentProjectDate::getStudentProject));
 			
 			try {
-				pullProject(project);
+				//pullProject(project);
 			}
 			catch(Exception e) {
 				continue;
