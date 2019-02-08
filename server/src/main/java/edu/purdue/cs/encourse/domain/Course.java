@@ -31,7 +31,6 @@ import java.util.List;
 @Table(name = "COURSE")
 @Setter
 @Getter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Course {
@@ -102,6 +101,10 @@ public class Course {
 	
 	public String getCourseHub() {
 		return "/sourcecontrol/" + name + "/" + semester;
+	}
+	
+	public String toString() {
+		return "Course (id=" + this.courseID + ", name=" + this.name + ", semester=" + this.semester + ", remote=" + this.remotePath + ")";
 	}
 	
 	@Override

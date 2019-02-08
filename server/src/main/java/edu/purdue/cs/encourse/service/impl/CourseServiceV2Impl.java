@@ -153,13 +153,18 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		
 		List<ProjectModel> projects = new ArrayList<>();
 		
+		System.out.println("GET PROJECTS");
+		
 		for(Project project : course.getProjects()) {
+			System.out.println("Found " + project);
 			ProjectModel model = new ProjectModel(project.getName(), project.getStartDate(), project.getDueDate(), project.getRepository(), project.getRunTestall());
 			
 			model.setProjectID(project.getProjectID());
 			
-			model.setTotalVisiblePoints(project.getTotalVisiblePoints());
-			model.setTotalHiddenPoints(project.getTotalHiddenPoints());
+			if(project.getRunTestall()) {
+				model.setTotalVisiblePoints(project.getTotalVisiblePoints());
+				model.setTotalHiddenPoints(project.getTotalHiddenPoints());
+			}
 		}
 		
 		return projects;

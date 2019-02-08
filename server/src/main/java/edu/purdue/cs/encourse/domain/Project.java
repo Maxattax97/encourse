@@ -44,7 +44,6 @@ import java.util.Set;
 @Entity
 @Table(name = "PROJECT")
 @NoArgsConstructor
-@ToString
 @AllArgsConstructor
 public class Project {
     
@@ -147,4 +146,8 @@ public class Project {
     public Long getCourseID() { return course.getCourseID(); }
     
     public String getCourseName() { return course.getName(); }
+    
+    public String toString() {
+        return "Project (id=" + this.projectID + ", start=" + this.startDate + ", due=" + this.dueDate + ", repo=" + this.repository + ")";
+    }
 }

@@ -162,7 +162,7 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		Course course = courseService.getCourse(model.getCourseID());
 		
-		Project project = new Project(course, model);
+		Project project = projectRepository.save(new Project(course, model));
 		
 		List<CourseStudent> students = course.getStudents();
 		
@@ -202,6 +202,8 @@ public class ProjectServiceImpl implements ProjectService {
 		project = projectRepository.save(project);
 		
 		courseRepository.save(course);
+		
+		System.out.println("Added " + project);
 		
 		return project;
 	}
@@ -736,7 +738,7 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 		}
 		
-		Map<LocalDate, List<StudentProjectDate>> dateToStudentDateMap = new HashMap<>(300);
+		Map<LocalDate, List<StudentProjectDate>> dateToStudentDateMap = new HashMap<>(50);
 		
 		for(List<StudentProjectDate> studentProjectDates : studentProjectListMap.values()) {
 			for(StudentProjectDate studentProjectDate : studentProjectDates) {
@@ -753,6 +755,8 @@ public class ProjectServiceImpl implements ProjectService {
 				System.out.println("Couldn't find any project dates at date : " + projectDate.getDate());
 				continue;
 			}
+			
+			System.out.println("Filling Project Date(" + projectDate.getDate() + ") with (" + studentProjectDateList.size() + ") entries");
 			
 			DescriptiveStatistics totalPointStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics visiblePointStats = new DescriptiveStatistics(studentProjectDateList.size());
@@ -825,7 +829,7 @@ public class ProjectServiceImpl implements ProjectService {
 			Map<StudentProject, List<StudentProjectDate>> studentProjectListMap = studentProjectDates.stream().collect(Collectors.groupingBy(StudentProjectDate::getStudentProject));
 			
 			try {
-				//pullProject(project);
+				pullProject(project);
 			}
 			catch(Exception e) {
 				continue;
