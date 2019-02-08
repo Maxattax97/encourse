@@ -178,7 +178,7 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		LocalDate iteratorDate = project.getStartDate();
 		
-		while(iteratorDate.compareTo(project.getDueDate()) != 0) {
+		while(iteratorDate.compareTo(project.getDueDate()) <= 0) {
 			
 			project.getDates().add(new ProjectDate(project, iteratorDate));
 			
@@ -527,7 +527,7 @@ public class ProjectServiceImpl implements ProjectService {
 			if(line.startsWith("@DIFF")) {
 				String[] split = line.split(",");
 				
-				if(commit != null) {
+				if(commit != null && commit.getDate().toLocalDate().compareTo(project.getDueDate()) <= 0) {
 					commit.setAdditions(commit.getAdditions() + additions);
 					commit.setDeletions(commit.getDeletions() + deletions);
 					
@@ -575,7 +575,7 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 		}
 		
-		if(commit != null) {
+		if(commit != null && commit.getDate().toLocalDate().compareTo(project.getDueDate()) <= 0) {
 			commit.setAdditions(commit.getAdditions() + additions);
 			commit.setDeletions(commit.getDeletions() + deletions);
 			
