@@ -40,6 +40,8 @@ import javax.management.relation.InvalidRelationIdException;
 import javax.management.relation.RelationException;
 import javax.management.relation.RelationNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -226,7 +228,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 				
 				if(filters.getStudents() == null) {
 					if(allowAnonymous) {
-						filters.setStudents(new ArrayList<>());
+						filters.setStudents(Collections.singletonList(-1L));
 						filters.setSelectedAll(true);
 					}
 					else {
@@ -262,7 +264,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		
 		if(filters.getStudents() == null || (filters.getStudents().size() == 0 && !filters.getSelectedAll())) {
 			filters.setSelectedAll(true);
-			filters.setStudents(new ArrayList<>());
+			filters.setStudents(Collections.singletonList(-1L));
 		}
 		
 		if(filters.getSelectedAll() == null)
