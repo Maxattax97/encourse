@@ -17,7 +17,7 @@ import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.BasicStatistics;
 import edu.purdue.cs.encourse.model.CourseModel;
 import edu.purdue.cs.encourse.model.CourseSectionModel;
-import edu.purdue.cs.encourse.model.IntegerRange;
+import edu.purdue.cs.encourse.model.DoubleRange;
 import edu.purdue.cs.encourse.model.ProjectModel;
 import edu.purdue.cs.encourse.model.SectionModel;
 import edu.purdue.cs.encourse.model.CourseBarChartModel;
@@ -237,17 +237,17 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		}
 		
 		if(filters.getCommits() == null)
-			filters.setCommits(new IntegerRange(-1, Integer.MAX_VALUE));
+			filters.setCommits(new DoubleRange(-1.0, 10000000.0));
 		
 		filters.getCommits().populate();
 		
 		if(filters.getTime() == null)
-			filters.setTime(new IntegerRange(-1, Integer.MAX_VALUE));
+			filters.setTime(new DoubleRange(-1.0, 10000000.0));
 		
 		filters.getTime().populate();
 		
 		if(filters.getProgress() == null)
-			filters.setProgress(new IntegerRange(-1, Integer.MAX_VALUE));
+			filters.setProgress(new DoubleRange(-1.0, 10000000.0));
 		
 		filters.getProgress().populate();
 		

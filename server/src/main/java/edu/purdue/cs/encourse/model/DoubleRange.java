@@ -12,17 +12,17 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class IntegerRange {
+public class DoubleRange {
 	
-	private Integer begin;
-	private Integer end;
+	private Double begin;
+	private Double end;
 	
 	public void populate() {
 		if(this.begin == null)
-			this.begin = -1;
+			this.begin = -1.0;
 		
 		if(this.end == null)
-			this.end = Integer.MAX_VALUE;
+			this.end = 10000000.0;
 	}
 	
 }

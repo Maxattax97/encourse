@@ -1,20 +1,16 @@
 package edu.purdue.cs.encourse.database;
 
 import edu.purdue.cs.encourse.domain.Project;
-import edu.purdue.cs.encourse.domain.Student;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
-import edu.purdue.cs.encourse.model.IntegerRange;
-import edu.purdue.cs.encourse.model.course.CourseStudentFilters;
+import edu.purdue.cs.encourse.model.DoubleRange;
 import edu.purdue.cs.encourse.model.course.CourseStudentSearch;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +27,7 @@ public interface StudentProjectDateRepository extends JpaRepository<StudentProje
             "(:#{#progress.begin} <= s.visiblePoints + s.hiddenPoints and :#{#progress.end} >= s.visiblePoints + s.hiddenPoints) and " +
             "((:#{#selectedAll} = false and s.studentProject.student.id in (:#{#students})) or (:#{#selectedAll} = true and not (s.studentProject.student.id in (:#{#students}))))")
     List<StudentProjectDate> findByProjectAndDateAndFilters(@Param("project") @NonNull Project project, @Param("date") LocalDate date,
-                                                            @Param("commits") IntegerRange commits, @Param("time") IntegerRange time, @Param("progress") IntegerRange progress,
+                                                            @Param("commits") DoubleRange commits, @Param("time") DoubleRange time, @Param("progress") DoubleRange progress,
                                                             @Param("students") List<Long> students, @Param("selectedAll") Boolean selectedAll);
     
     default List<StudentProjectDate> findAllByCourseStudentSearch(@NonNull Project project, @NonNull CourseStudentSearch courseStudentSearch) {

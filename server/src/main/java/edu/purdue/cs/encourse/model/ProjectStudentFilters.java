@@ -16,8 +16,8 @@ import java.time.LocalDate;
 @Setter
 public class ProjectStudentFilters {
 
-	IntegerRange additions;
-	IntegerRange deletions;
+	DoubleRange additions;
+	DoubleRange deletions;
 	LocalDate start;
 	LocalDate end;
 	Boolean bundleDays;
