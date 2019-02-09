@@ -179,6 +179,11 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 Student student = studentRepository.findByUserID(p.getStudentID());
                 helperService.updateStudentInformation(p.getProjectID(), student.getUserName());
             }
+            projects = studentProjectRepository.findByIdProjectID(bash.getProjectID());
+            for (StudentProject p : projects) {
+                Student student = studentRepository.findByUserID(p.getStudentID());
+                helperService.updateStudentInformation(p.getProjectID(), student.getUserName());
+            }
         }
         else {
             for(Project p : projectRepository.findAll()) {
