@@ -467,15 +467,13 @@ public class ProjectServiceImpl implements ProjectService {
 		File hiddenTestCaseDirectory = new File(project.getCourse().getCourseHub() + "/hidden_testcases/" + project.getRepository());
 		File makefile = new File(project.getCourse().getCourseHub() + "/makefiles/" + project.getRepository() + "/Makefile");
 		
-		if(!testCaseDirectory.isDirectory() || testCaseDirectory.listFiles().length == 0)
-			return;
+		if (!testCaseDirectory.isDirectory() || testCaseDirectory.listFiles().length == 0) return;
 		
-		if(!makefile.exists())
-			return;
+		if (!makefile.exists()) return;
 		
 		String courseHub = project.getCourse().getCourseHub();
 		
-		for(StudentProject studentProject : studentProjects.keySet()) {
+		for (StudentProject studentProject : studentProjects.keySet()) {
 			
 			String testingDirectory = courseHub + "/" + studentProject.getStudent().getStudent().getUsername() + "/" + project.getRepository();
 			
@@ -493,7 +491,7 @@ public class ProjectServiceImpl implements ProjectService {
 				
 				executeScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
 			}
-			catch(Exception e) {
+			catch (Exception e) {
 				System.out.println("\nException at testall\n");
 			}
 		}
@@ -535,8 +533,7 @@ public class ProjectServiceImpl implements ProjectService {
 					commit.setAdditions(commit.getAdditions() + additions);
 					commit.setDeletions(commit.getDeletions() + deletions);
 					
-					if(commit.getAdditions() != 0 || commit.getDeletions() != 0)
-						commitList.add(commit);
+					commitList.add(commit);
 				}
 				
 				additions = 0;
@@ -665,6 +662,13 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			//iterate through every commit
 			for(Commit commit : commitList) {
+				//make sure that the studentProject first commit is the earliest and not null
+				if(studentProject.getFirstCommit() == null || studentProject.getFirstCommit().compareTo(commit.getDate()) > 0)
+					studentProject.setFirstCommit(commit.getDate());
+				
+				if(commit.getAdditions() + commit.getDeletions() == 0)
+					continue;
+				
 				//find the distance between the previous commit (earlier in time) and the current
 				//this distance is measured in minutes
 				long time = Math.max(ChronoUnit.MINUTES.between(previousCommitTime, commit.getDate()), 0);
@@ -672,10 +676,6 @@ public class ProjectServiceImpl implements ProjectService {
 				//run the total time spent on the project between these two commits algorithm
 				if(time > Math.max(commit.getAdditions() * 3, 10))
 					time = Math.round(commit.getAdditions() * 2);
-				
-				//make sure that the studentProject first commit is the earliest and not null
-				if(studentProject.getFirstCommit() == null || studentProject.getFirstCommit().compareTo(commit.getDate()) > 0)
-					studentProject.setFirstCommit(commit.getDate());
 				
 				//add the commit additions/deletions and minutes
 				/*studentProject.setAdditions(studentProject.getAdditions() + commit.getAdditions());
@@ -707,6 +707,8 @@ public class ProjectServiceImpl implements ProjectService {
 				previousCommitTime = commit.getDate();
 			}
 			
+			previousCommitTime = commitList.get(commitList.size() - 1).getDate();
+			
 			//set most recent commit to latest commit
 			if(studentProject.getMostRecentCommit() == null || studentProject.getMostRecentCommit().compareTo(previousCommitTime) <= 0) {
 				studentProject.setMostRecentCommit(previousCommitTime);
@@ -717,7 +719,7 @@ public class ProjectServiceImpl implements ProjectService {
 			//studentProject.setCommitCount(studentProject.getCommitCount() + commitList.size());
 			
 			//add all found commits to student project
-			studentProject.getCommits().addAll(commitList);
+			studentProject.getCommits().addAll(commitList.stream().filter(commit -> commit.getAdditions() != 0 || commit.getDeletions() != 0).collect(Collectors.toList()));
 			//studentProject.setCommitCount((double) studentProject.getCommits().size());
 			
 			StudentProjectDate previousStudentDate = null;

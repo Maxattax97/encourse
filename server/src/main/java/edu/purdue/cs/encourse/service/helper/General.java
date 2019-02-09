@@ -21,7 +21,7 @@ import java.util.Optional;
 public class General {
 	
 	private static final HashSet<String> extensions = new HashSet<>(Arrays.asList(
-			"c", "y", "l", "cpp", "java", "h", "hpp", "cxx", "hxx", "js", "html", "css", "scss", "ll", "s", "yxx", "yy"
+			"c", "y", "l", "cpp", "java", "h", "hpp", "cxx", "hxx", "js", "html", "css", "scss", "ll", "s", "yxx", "yy", "sh"
 	));
 	
 	public static <T> T findFirst(List<T> list) {
