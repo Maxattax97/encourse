@@ -545,7 +545,7 @@ public class ProjectServiceImpl implements ProjectService {
 				try {
 					commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(estZone).toLocalDateTime(), Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL);
 					
-					if(commit.getDate().toLocalDate().compareTo(project.getDueDate()) > 0)
+					if(commit.getDate().toLocalDate().compareTo(project.getDueDate()) > 0 || commit.getDate().toLocalDate().compareTo(project.getAnalyzeDateTime()) < 0)
 						commit = null;
 					else if(commit.getDate().toLocalDate().compareTo(project.getStartDate()) < 0)
 						commit.setDate(LocalDateTime.of(project.getStartDate(), LocalTime.of(0, 0)));
@@ -690,6 +690,11 @@ public class ProjectServiceImpl implements ProjectService {
 						studentProjectDate = studentProjectDate1;
 						break;
 					}
+				}
+				
+				if(studentProjectDate == null) {
+					System.out.println("Skipping Commit (" + commit.getHash() + ", " + commit.getDate() + ")");
+					continue;
 				}
 				
 				//update commit count, additions/deletions, and minutes for the specific date
@@ -855,7 +860,7 @@ public class ProjectServiceImpl implements ProjectService {
 				continue;
 			}
 			
-			LocalDate currentDate = LocalDate.now();
+			LocalDate currentDate = LocalDate.now(TimeZone.getTimeZone("EST").toZoneId());
 			
 			System.out.println("Project Analyze Date : " + project.getAnalyzeDateTime());
 			
