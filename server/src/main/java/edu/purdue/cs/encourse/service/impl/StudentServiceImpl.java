@@ -229,7 +229,7 @@ public class StudentServiceImpl implements StudentService {
 		if(studentProject.getMostRecentCommit() == null || studentProject.getMostRecentCommit().compareTo(studentProject.getFirstCommit()) == 0)
 			return new StudentInfoModel();
 		
-		StudentProjectDate studentProjectDate = getStudentProjectDate(studentProject, studentProject.getMostRecentCommit().toLocalDate());
+		StudentProjectDate studentProjectDate = getStudentProjectDate(studentProject, model.getDate());
 		
 		return getStudentProjectInfo(studentProject, studentProjectDate, model);
 	}

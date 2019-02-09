@@ -185,7 +185,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		Project project = projectOptional.get();
 		
 		if(!courseStudentSearch.hasDate())
-			courseStudentSearch.setDate(project.getAnalyzeDateTime().compareTo(project.getDueDate()) < 0 ? project.getAnalyzeDateTime() : project.getDueDate());
+			courseStudentSearch.setDate(project.getAnalyzeDateTime().compareTo(project.getDueDate()) < 0 ? project.getAnalyzeDateTime().compareTo(project.getStartDate()) > 0 ? project.getAnalyzeDateTime() : project.getStartDate() : project.getDueDate());
 		
 		return project;
 	}

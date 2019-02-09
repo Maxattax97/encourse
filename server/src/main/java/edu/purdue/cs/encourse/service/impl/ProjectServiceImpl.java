@@ -640,7 +640,7 @@ public class ProjectServiceImpl implements ProjectService {
 			if(commitList == null || commitList.isEmpty())
 				continue;
 			
-			System.out.println("Running calculation for student : " + studentProject.getStudent().getStudent().getUsername());
+			System.out.println("Running calculation for student (" + studentProject.getStudent().getStudent().getUsername() + ", " + commitList.size() + ", " + commitList.get(0).getHash() + ")");
 			
 			commitList.sort(Comparator.comparing(Commit::getDate));
 			
