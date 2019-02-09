@@ -4,6 +4,7 @@ import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.Student;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
+import edu.purdue.cs.encourse.model.IntegerRange;
 import edu.purdue.cs.encourse.model.course.CourseStudentFilters;
 import edu.purdue.cs.encourse.model.course.CourseStudentSearch;
 import lombok.NonNull;
@@ -24,17 +25,20 @@ public interface StudentProjectDateRepository extends JpaRepository<StudentProje
     
     Optional<StudentProjectDate> findByStudentProjectAndDateEquals(@NonNull StudentProject studentProject, @NonNull LocalDate date);
     
-    
     @Query("select s from StudentProjectDate s where s.date = (:#{#date}) and s.project = (:#{#project}) and " +
-            "((:#{#filters.commits}) is null or (((:#{#filters.commits.begin}) is null or (:#{#filters.commits.begin}) <= s.currentCommits) and ((:#{#filters.commits.end}) is null or (:#{#filters.commits.end}) >= s.currentCommits))) and " +
-            "((:#{#filters.time}) is null or (((:#{#filters.time.begin}) is null or (:#{#filters.time.begin}) <= s.currentMinutes) and ((:#{#filters.time.end}) is null or (:#{#filters.time.end}) >= s.currentMinutes))) and " +
-            "((:#{#filters.progress}) is null or (((:#{#filters.progress.begin}) is null or (:#{#filters.progress.begin}) <= s.visiblePoints + s.hiddenPoints) and ((:#{#filters.progress.end}) is null or (:#{#filters.progress.end}) >= s.visiblePoints + s.hiddenPoints))) and " +
-            "((:#{#filters.students}) is null or (((:#{#filters.selectedAll}) is null and s.studentProject.student.id in (:#{#filters.students}))) or ((:#{#filters.selectedAll}) = false and s.studentProject.student.id in (:#{#filters.students})) or ((:#{#filters.selectedAll}) = true and not (s.studentProject.student.id in (:#{#filters.students}))))")
-    List<StudentProjectDate> findByProjectAndDateAndFilters(@Param("project") @NonNull Project project, @Param("date") LocalDate date, @Param("filters") @NonNull CourseStudentFilters filters);
+            "(:#{#commits.begin} <= s.currentCommits and :#{#commits.end} >= s.currentCommits) and " +
+            "(:#{#time.begin} <= s.currentMinutes and :#{#time.end} >= s.currentMinutes) and " +
+            "(:#{#progress.begin} <= s.visiblePoints + s.hiddenPoints and :#{#progress.end} >= s.visiblePoints + s.hiddenPoints) and " +
+            "((:#{#selectedAll} = false and s.studentProject.student.id in (:#{#students})) or (:#{#selectedAll} = true and not (s.studentProject.student.id in (:#{#students}))))")
+    List<StudentProjectDate> findByProjectAndDateAndFilters(@Param("project") @NonNull Project project, @Param("date") LocalDate date,
+                                                            @Param("commits") IntegerRange commits, @Param("time") IntegerRange time, @Param("progress") IntegerRange progress,
+                                                            @Param("students") List<Long> students, @Param("selectedAll") Boolean selectedAll);
     
     default List<StudentProjectDate> findAllByCourseStudentSearch(@NonNull Project project, @NonNull CourseStudentSearch courseStudentSearch) {
         if(courseStudentSearch.hasFilters())
-            return findByProjectAndDateAndFilters(project, courseStudentSearch.getDate(), courseStudentSearch.getFilters());
+            return findByProjectAndDateAndFilters(project, courseStudentSearch.getDate(),
+                    courseStudentSearch.getFilters().getCommits(), courseStudentSearch.getFilters().getTime(), courseStudentSearch.getFilters().getProgress(),
+                    courseStudentSearch.getFilters().getStudents(), courseStudentSearch.getFilters().getSelectedAll());
         
         return findByProjectAndDate(project, courseStudentSearch.getDate());
     }

@@ -17,4 +17,12 @@ public class IntegerRange {
 	private Integer begin;
 	private Integer end;
 	
+	public void populate() {
+		if(this.begin == null)
+			this.begin = -1;
+		
+		if(this.end == null)
+			this.end = Integer.MAX_VALUE;
+	}
+	
 }

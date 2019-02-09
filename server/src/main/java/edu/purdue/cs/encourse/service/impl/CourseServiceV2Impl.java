@@ -17,6 +17,7 @@ import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.BasicStatistics;
 import edu.purdue.cs.encourse.model.CourseModel;
 import edu.purdue.cs.encourse.model.CourseSectionModel;
+import edu.purdue.cs.encourse.model.IntegerRange;
 import edu.purdue.cs.encourse.model.ProjectModel;
 import edu.purdue.cs.encourse.model.SectionModel;
 import edu.purdue.cs.encourse.model.CourseBarChartModel;
@@ -197,6 +198,8 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		Account account = accountService.getAccount(adminService.getUser().getId());
 		Course course = project.getCourse();
 		
+		final CourseStudentFilters filters = courseStudentSearch.hasFilters() ? courseStudentSearch.getFilters() : new CourseStudentFilters();
+		
 		if(account.getRole() == Account.Role.PROFESSOR) {
 			Professor professor = accountService.getProfessor(account.getUserID());
 			
@@ -218,7 +221,6 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 			if(courseStudent == null || courseStudent.getIsStudent())
 				throw new IllegalAccessException("You are not a teaching assistant for this course.");
 			else {
-				final CourseStudentFilters filters = courseStudentSearch.hasFilters() ? courseStudentSearch.getFilters() : new CourseStudentFilters();
 				final List<CourseStudent> students = courseStudent.getStudents();
 				
 				if(filters.getStudents() == null) {
@@ -233,6 +235,29 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 				filters.setSelectedAll(false);
 			}
 		}
+		
+		if(filters.getCommits() == null)
+			filters.setCommits(new IntegerRange(-1, Integer.MAX_VALUE));
+		
+		filters.getCommits().populate();
+		
+		if(filters.getTime() == null)
+			filters.setTime(new IntegerRange(-1, Integer.MAX_VALUE));
+		
+		filters.getTime().populate();
+		
+		if(filters.getProgress() == null)
+			filters.setProgress(new IntegerRange(-1, Integer.MAX_VALUE));
+		
+		filters.getProgress().populate();
+		
+		if(filters.getStudents() == null) {
+			filters.setSelectedAll(true);
+			filters.setStudents(new ArrayList<>());
+		}
+		
+		if(filters.getSelectedAll() == null)
+			filters.setSelectedAll(false);
 		
 		return project;
 	}
