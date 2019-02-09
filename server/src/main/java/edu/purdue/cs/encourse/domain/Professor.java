@@ -59,7 +59,7 @@ public class Professor {
     private String eduEmail;
     
     @Setter
-    @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "professor", fetch = FetchType.LAZY)
     private List<Course> courses;
     
     public Professor(@NonNull Long id, @NonNull AccountModel model) {

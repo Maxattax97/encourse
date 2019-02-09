@@ -72,15 +72,15 @@ public class Course {
 	@Column(name = "STUDENT_COUNT")
 	private Integer studentCount;
 	
-	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "course", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY, orphanRemoval = true)
 	@NonNull
 	private List<Project> projects;
 	
-	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "course", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY, orphanRemoval = true)
 	@NonNull
 	private List<Section> sections;
 	
-	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "course", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY, orphanRemoval = true)
 	@NonNull
 	private List<CourseStudent> students;
 	

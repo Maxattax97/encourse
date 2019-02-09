@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.domain.Persistable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -79,19 +80,19 @@ public class Project {
     @Column(name  = "TEST_RATE")
     private int testRate;
     
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<TestScript> testScripts;
     
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<TestSuite> testSuites;
     
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ProjectDate> dates;
     
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<StudentProject> studentProjects;
     
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<AdditionHash> additionHashes;
     
     @Column(name  = "ANALYZE_DATE_TIME")

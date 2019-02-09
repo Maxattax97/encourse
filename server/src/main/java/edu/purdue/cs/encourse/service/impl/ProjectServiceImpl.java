@@ -167,12 +167,12 @@ public class ProjectServiceImpl implements ProjectService {
 		List<CourseStudent> students = course.getStudents();
 		
 		for(CourseStudent student : students) {
-			if(student.getIsStudent()) {
-				StudentProject studentProject = new StudentProject(project, student);
+			if (student.getIsStudent()) {
+				StudentProject studentProject = studentProjectRepository.save(new StudentProject(project, student));
 				
-				student.getProjects().add(studentProject);
+				//student.getProjects().add(studentProject);
 				
-				project.getStudentProjects().add(studentProject);
+				//project.getStudentProjects().add(studentProject);
 			}
 		}
 		
@@ -182,26 +182,22 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		while(iteratorDate.compareTo(project.getDueDate()) <= 0) {
 			
-			project.getDates().add(new ProjectDate(project, iteratorDate));
+			ProjectDate projectDate = projectDateRepository.save(new ProjectDate(project, iteratorDate));
+			
+			//project.getDates().add(projectDate);
 			
 			System.out.println("Added Project Date (" + project.getRepository() + ", " + iteratorDate + ")");
 			
 			for(StudentProject studentProject : studentProjects) {
-				StudentProjectDate studentProjectDate = new StudentProjectDate(project, studentProject, iteratorDate);
+				StudentProjectDate studentProjectDate = studentProjectDateRepository.save(new StudentProjectDate(project, studentProject, iteratorDate));
 				
-				studentProject.getDates().add(studentProjectDate);
+				//studentProject.getDates().add(studentProjectDate);
 			}
 			
 			iteratorDate = iteratorDate.plusDays(1);
 		}
 		
-		course.getProjects().add(project);
-		
 		cloneProject(project);
-		
-		project = projectRepository.save(project);
-		
-		courseRepository.save(course);
 		
 		System.out.println("Added " + project);
 		
@@ -814,10 +810,14 @@ public class ProjectServiceImpl implements ProjectService {
 			//Get all student project dates >= the analyze date time (the last recorded analysis run)
 			List<StudentProjectDate> studentProjectDates = studentProjectDateRepository.findByProjectAndDateGreaterThanEqual(project, project.getAnalyzeDateTime());
 			
+			System.out.println("Obtained (" + studentProjectDates.size() + ") Student Project Dates");
+			
 			if(studentProjectDates.isEmpty())
 				continue;
 			
 			List<ProjectDate> projectDateList = projectDateRepository.findAllByProjectAndDateGreaterThanEqual(project, project.getAnalyzeDateTime());
+			
+			System.out.println("Obtained (" + projectDateList.size() + ") Project Dates");
 			
 			if(projectDateList.isEmpty())
 				continue;
@@ -868,9 +868,11 @@ public class ProjectServiceImpl implements ProjectService {
 			//save the StudentProject objects
 			studentProjectRepository.saveAll(studentProjectListMap.keySet());
 			
+			System.out.println("Saving " + project);
+			
 			//stop analyzing the project and set the last time the project has been analyzed to today's date
 			//project.setAnalyzing(false);
-			projectRepository.save(project);
+			projectRepository.saveAndFlush(project);
 		}
 	}
 }

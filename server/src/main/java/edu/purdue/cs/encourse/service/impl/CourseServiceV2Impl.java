@@ -165,6 +165,8 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 				model.setTotalVisiblePoints(project.getTotalVisiblePoints());
 				model.setTotalHiddenPoints(project.getTotalHiddenPoints());
 			}
+			
+			projects.add(model);
 		}
 		
 		return projects;
