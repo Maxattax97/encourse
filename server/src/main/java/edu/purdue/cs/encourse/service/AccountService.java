@@ -1,19 +1,34 @@
 package edu.purdue.cs.encourse.service;
 
 import edu.purdue.cs.encourse.domain.*;
+import edu.purdue.cs.encourse.model.AccountModel;
 import lombok.NonNull;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import javax.management.relation.InvalidRelationIdException;
+import javax.management.relation.RelationException;
 
 public interface AccountService {
-
-    /** Services for retrieving account with specified type from database **/
-    Account retrieveAccount(@NonNull String userName);
-    Account retrieveAccountByID(@NonNull String userID);
-    Student retrieveStudent(@NonNull String userName);
-    TeachingAssistant retrieveTA(@NonNull String userName);
-    Professor retrieveProfessor(@NonNull String userName);
-    CollegeAdmin retrieveAdmin(@NonNull String userName);
-    List<Account> retrieveAllAccounts();
+	
+	@Transactional(readOnly = true)
+    Account getAccount(@NonNull Long userID) throws InvalidRelationIdException;
+	
+	@Transactional(readOnly = true)
+    Student getStudent(@NonNull Long userID) throws InvalidRelationIdException;
+	
+	@Transactional(readOnly = true)
+    Professor getProfessor(@NonNull Long userID) throws InvalidRelationIdException;
+	
+	@Transactional(readOnly = true)
+    CollegeAdmin getAdmin(@NonNull Long userID) throws InvalidRelationIdException;
+	
+	@Transactional
+	Account addAccount(@NonNull AccountModel account) throws RelationException, IllegalArgumentException;
+	
+	@Transactional
+	void removeAccount(@NonNull Long userID) throws InvalidRelationIdException;
+	
+	@Transactional
+    Account modifyAccount(@NonNull Account modifyAccount) throws InvalidRelationIdException;
 
 }

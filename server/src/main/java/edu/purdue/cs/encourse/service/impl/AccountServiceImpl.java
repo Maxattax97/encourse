@@ -2,12 +2,17 @@ package edu.purdue.cs.encourse.service.impl;
 
 import edu.purdue.cs.encourse.database.*;
 import edu.purdue.cs.encourse.domain.*;
+import edu.purdue.cs.encourse.model.AccountModel;
 import edu.purdue.cs.encourse.service.AccountService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import javax.management.relation.InvalidRelationIdException;
+import javax.management.relation.RelationException;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * Contains implementations for all services pertaining to account operations.
@@ -20,94 +25,155 @@ import java.util.List;
 public class AccountServiceImpl implements AccountService {
 
     public final static String NAME = "AccountService";
-
+    
+    private final Pattern emailPattern = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.edu$", Pattern.CASE_INSENSITIVE);
+    
+    private final AccountRepository accountRepository;
+    
+    private final StudentRepository studentRepository;
+    
+    private final ProfessorRepository professorRepository;
+    
+    private final AdminRepository adminRepository;
+    
     @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private TeachingAssistantRepository teachingAssistantRepository;
-
-    @Autowired
-    private ProfessorRepository professorRepository;
-
-    @Autowired
-    private AdminRepository adminRepository;
-
-    /**
-     * The primary method for retrieving an account from database
-     *
-     * @param userName Front-end identifier used for the account
-     * @return Account matching the specified userName
-     */
-    public Account retrieveAccount(@NonNull String userName) {
-        return accountRepository.findByUserName(userName);
+    public AccountServiceImpl(AccountRepository accountRepository, StudentRepository studentRepository, ProfessorRepository professorRepository, AdminRepository adminRepository) {
+        this.accountRepository = accountRepository;
+        this.studentRepository = studentRepository;
+        this.professorRepository = professorRepository;
+        this.adminRepository = adminRepository;
     }
-
-    /**
-     * A secondary method for retrieving an account
-     * Only useful for backend code, frontend does not have access to userIDs
-     *
-     * @param userID Back-end identifier used for the account
-     * @return Account matching the specified userID
-     */
-    public Account retrieveAccountByID(@NonNull String userID) {
-        return accountRepository.findByUserID(userID);
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Account getAccount(@NonNull Long userID) throws InvalidRelationIdException {
+        Optional<Account> accountOptional = accountRepository.findById(userID);
+        
+        if(!accountOptional.isPresent())
+            throw new InvalidRelationIdException("Account ID (" + userID + ") does not exist in the database.");
+        
+        return accountOptional.get();
     }
-
-    /**
-     * Retrieves an account as a student
-     *
-     * @param userName Front-end identifier used for the account
-     * @return Student account matching the specified userName
-     */
-    public Student retrieveStudent(@NonNull String userName) {
-        return studentRepository.findByUserName(userName);
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Student getStudent(@NonNull Long userID) throws InvalidRelationIdException {
+        Optional<Student> studentOptional = studentRepository.findById(userID);
+        
+        if(!studentOptional.isPresent())
+            throw new InvalidRelationIdException("Account ID (" + userID + ") does not exist in the database.");
+        
+        return studentOptional.get();
     }
-
-    /**
-     * Retrieves an account as a teaching assistant
-     *
-     * @param userName Front-end identifier used for the account
-     * @return Teaching assistant account matching the specified userName
-     */
-    public TeachingAssistant retrieveTA(@NonNull String userName) {
-        return teachingAssistantRepository.findByUserName(userName);
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Professor getProfessor(@NonNull Long userID) throws InvalidRelationIdException {
+        Optional<Professor> professorOptional = professorRepository.findById(userID);
+        
+        if(!professorOptional.isPresent())
+            throw new InvalidRelationIdException("Account ID (" + userID + ") does not exist in the database.");
+        
+        return professorOptional.get();
     }
-
-    /**
-     * Retrieves an account as a professor
-     *
-     * @param userName Front-end identifier used for the account
-     * @return Professor account matching the specified userName
-     */
-    public Professor retrieveProfessor(@NonNull String userName) {
-        return professorRepository.findByUserName(userName);
+    
+    @Override
+    @Transactional(readOnly = true)
+    public CollegeAdmin getAdmin(@NonNull Long userID) throws InvalidRelationIdException {
+        Optional<CollegeAdmin> adminOptional = adminRepository.findById(userID);
+        
+        if(!adminOptional.isPresent())
+            throw new InvalidRelationIdException("Account ID (" + userID + ") does not exist in the database.");
+        
+        return adminOptional.get();
     }
-
-    /**
-     * Retrieves an account as an administrator
-     *
-     * @param userName Front-end identifier used for the account
-     * @return Administrator account matching the specified userName
-     */
-    public CollegeAdmin retrieveAdmin(@NonNull String userName) {
-        return adminRepository.findByUserName(userName);
-    }
-
-    /**
-     * Retrieves all accounts currently in the database
-     * Used by administrators to see and manage accounts
-     *
-     * @return All accounts in the database
-     */
-    public List<Account> retrieveAllAccounts() {
-        List<Account> accounts = accountRepository.findAll();
-        if(accounts.isEmpty()) {
-            return null;
+    
+    @Override
+    @Transactional
+    public Account addAccount(@NonNull AccountModel account) throws RelationException, IllegalArgumentException {
+        if(!emailPattern.matcher(account.getEduEmail()).matches())
+            throw new IllegalArgumentException("Email is invalid.");
+        
+        if(account.getFirstName().length() == 0)
+            throw new IllegalArgumentException("First name is invalid.");
+        
+        if(account.getLastName().length() == 0)
+            throw new IllegalArgumentException("Last name is invalid.");
+        
+        Account savedAccount = accountRepository.save(new Account(account));
+        
+        if(savedAccount == null)
+            throw new RelationException("Could not create new account object in database.");
+        
+        
+        switch(savedAccount.getRole()) {
+            case STUDENT:
+                Student student = studentRepository.save(new Student(savedAccount.getUserID(), account));
+                
+                if(student == null)
+                    throw new RelationException("Could not create new student object in database.");
+                
+                break;
+            case PROFESSOR:
+                Professor professor = professorRepository.save(new Professor(savedAccount.getUserID(), account));
+                
+                if(professor == null)
+                    throw new RelationException("Could not create new professor object in database.");
+                
+                break;
+            case ADMIN:
+                CollegeAdmin admin = adminRepository.save(new CollegeAdmin(savedAccount.getUserID(), account));
+                
+                if(admin == null)
+                    throw new RelationException("Could not create new admin object in database.");
+                
+                break;
         }
-        return accounts;
+        
+        System.out.println("Added Account (" + savedAccount.getUserID() + ", " + savedAccount.getUsername() + ", " + savedAccount.getRole() + ")");
+        
+        return savedAccount;
+    }
+    
+    @Override
+    @Transactional
+    public void removeAccount(@NonNull Long userID) throws InvalidRelationIdException {
+        Account account = getAccount(userID);
+        
+        accountRepository.delete(account);
+    }
+    
+    @Override
+    @Transactional
+    public Account modifyAccount(@NonNull Account modifyAccount) throws InvalidRelationIdException {
+        Account account = getAccount(modifyAccount.getUserID());
+        
+        if(account.getEduEmail() != null) {
+            if(!emailPattern.matcher(account.getEduEmail()).matches())
+                throw new IllegalArgumentException("Email provided is invalid.");
+            
+            account.setEduEmail(modifyAccount.getEduEmail());
+        }
+        
+        if(account.getFirstName() != null) {
+            if(account.getFirstName().length() == 0)
+                throw new IllegalArgumentException("First name provided is invalid.");
+            
+            account.setFirstName(modifyAccount.getFirstName());
+        }
+        
+        if(account.getLastName() != null) {
+            if(account.getLastName().length() == 0)
+                throw new IllegalArgumentException("Last name provided is invalid.");
+            
+            account.setLastName(modifyAccount.getLastName());
+        }
+        
+        if(account.getRole() != null)
+            account.setRole(modifyAccount.getRole());
+        
+        account = accountRepository.save(account);
+        
+        return account;
     }
 }

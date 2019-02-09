@@ -9,7 +9,6 @@
     <packaging>jar</packaging>
 
     <name>encourse</name>
-    <description></description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -29,6 +28,16 @@
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>5.2.1.201812262042-r</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>

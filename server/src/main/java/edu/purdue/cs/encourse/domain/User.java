@@ -1,14 +1,20 @@
 package edu.purdue.cs.encourse.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.purdue.cs.encourse.model.UserModel;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Represents an account's current state for the application.
@@ -22,14 +28,14 @@ import java.util.Collection;
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
-@SequenceGenerator(name = "user_id_gen", sequenceName = "user_id_gen",  initialValue = 10)
+@NoArgsConstructor
+@AllArgsConstructor
 public class User implements UserDetails, Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "user_id_gen")
-    @Column(name = "ID")
+    @NonNull
     private Long id;
-
+    
     @Column(name = "USER_NAME")
     private String username;
 
@@ -47,26 +53,50 @@ public class User implements UserDetails, Serializable {
 
     @Column(name = "ENABLED")
     private boolean enabled;
-
+    
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "USERS_AUTHORITIES", joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID"))
     @OrderBy
     @JsonIgnore
-    private Collection<Authority> authorities;
+    private List<Authority> authorities;
+    
+    public User(@NonNull UserModel model) {
+        this.id = model.getUserID();
+        this.username = model.getUsername();
+        this.password = model.getPassword();
+        this.accountExpired = model.getAccountExpired();
+        this.accountLocked = model.getAccountLocked();
+        this.credentialsExpired = model.getCredentialsExpired();
+        this.enabled = model.getEnabled();
+        
+        this.authorities = new ArrayList<>();
+    }
+    
+    public User(@NonNull Long id, @NonNull String username, @NonNull String password, @NonNull Boolean accountExpired, @NonNull Boolean accountLocked, @NonNull Boolean credentialsExpired, @NonNull Boolean enabled) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.accountExpired = accountExpired;
+        this.accountLocked = accountLocked;
+        this.credentialsExpired = credentialsExpired;
+        this.enabled = enabled;
+        
+        this.authorities = new ArrayList<>();
+    }
 
     @Override
     public boolean isAccountNonExpired() {
-        return !isAccountExpired();
+        return !this.accountExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return !isAccountLocked();
+        return !this.accountLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return !isCredentialsExpired();
+        return !this.credentialsExpired;
     }
 
     public String getIDString() { return Long.toString(id); }

@@ -1,13 +1,33 @@
 package edu.purdue.cs.encourse.domain.relations;
 
+import edu.purdue.cs.encourse.domain.Commit;
+import edu.purdue.cs.encourse.domain.Project;
+import edu.purdue.cs.encourse.domain.Student;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a relation between a student and the projects that they were assigned.
@@ -17,114 +37,74 @@ import java.io.Serializable;
  * @author reed226@purdue.edu
  */
 @Getter
+@Setter
 @Entity
 @Table(name = "STUDENT_PROJECT")
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"project", "dates"})
 public class StudentProject {
     /** Primary key for relation in database. Never used directly */
-    @EmbeddedId
-    private StudentProjectID id;
-
-    /** Best visible grade output by testall for the project */
-    @Setter
-    private double bestVisibleGrade;
-
-    /** Best hidden grade output by testall for the project */
-    @Setter
-    private double bestHiddenGrade;
-
-    /** Best visible point score for the project */
-    @Setter
-    private double bestVisiblePoints;
-
-    /** Best hidden point score for the project */
-    @Setter
-    private double bestHiddenPoints;
-
-    /** Maximum points possible for visible grade */
-    @Setter
-    private double visiblePointTotal;
-
-    /** Maximum points possible for hidden grade*/
-    @Setter
-    private double hiddenPointTotal;
-
-    /** Git commit count for the project */
-    @Setter
-    private int commitCount;
-
-    /** Total lines added in commits across all files */
-    @Setter
-    private int totalLinesAdded;
-
-    /** Total lines removed in commits across all files */
-    @Setter
-    private int totalLinesRemoved;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "STUDENT_PROJECT_ID")
+    private Long id;
+    
+    @NonNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "PROJECT_ID")
+    private Project project;
+    
+    @NonNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "COURSE_STUDENT_ID")
+    private CourseStudent student;
 
     /** Date that student made first commit for the project */
-    @Setter
-    private String firstCommitDate;
+    @Column(name = "FIRST_COMMIT")
+    private LocalDateTime firstCommit;
 
     /** Date that student most recently committed for the project */
-    @Setter
-    private String mostRecentCommitDate;
-
-    /** Time spend in hours on the project */
-    @Setter
-    private double totalTimeSpent;
-
-    public StudentProject(String userID, String projectID, String suite) {
-        this.id = new StudentProjectID(userID, projectID, suite);
-        this.bestVisibleGrade = 0.0;
-        this.bestHiddenGrade = 0.0;
-        this.bestVisiblePoints = 0.0;
-        this.bestHiddenPoints = 0.0;
-        this.visiblePointTotal = 0.0;
-        this.hiddenPointTotal = 0.0;
-        this.commitCount = 0;
-        this.totalLinesAdded = 0;
-        this.totalLinesRemoved = 0;
-        this.firstCommitDate = null;
-        this.mostRecentCommitDate = null;
-        this.mostRecentCommitDate = null;
-        this.totalTimeSpent = 0.0;
+    @Column(name = "MOST_RECENT_COMMIT")
+    private LocalDateTime mostRecentCommit;
+    
+    @Column(name = "LAST_UPDATED_COMMIT")
+    private String lastUpdatedCommit;
+    
+    @NonNull
+    @ElementCollection
+    @CollectionTable(name = "STUDENT_PROJECT_TESTS", joinColumns = @JoinColumn(name = "STUDENT_PROJECT_ID"))
+    private List<Long> testsPassing;
+    
+    @NonNull
+    @ElementCollection
+    @CollectionTable(name = "STUDENT_PROJECT_COMMITS", joinColumns = @JoinColumn(name = "STUDENT_PROJECT_ID"))
+    private List<Commit> commits;
+    
+    @NonNull
+    @OneToMany(mappedBy = "studentProject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<StudentProjectDate> dates;
+    
+    public StudentProject(@NonNull Project project, @NonNull CourseStudent student) {
+        this.project = project;
+        this.student = student;
+        
+        this.firstCommit = this.mostRecentCommit = LocalDateTime.of(LocalDate.ofYearDay(2000, 1), LocalTime.of(0, 0));
+        this.lastUpdatedCommit = "";
+        
+        this.testsPassing = new ArrayList<>();
+        this.dates = new ArrayList<>();
     }
-
-    public StudentProject() {
-
+    
+    @Override
+    public int hashCode() {
+        return Math.toIntExact(this.id);
     }
-
-    public String getStudentID() {
-        return id.getStudentID();
+    
+    @Override
+    public boolean equals(Object studentProject) {
+        return studentProject instanceof StudentProject && ((StudentProject) studentProject).id.equals(this.id);
     }
-
-    public String getProjectID() {
-        return id.getProjectID();
-    }
-
-    public String getSuite() {
-        return id.getSuite();
-    }
+    
 }
 
-@Getter
-@Embeddable
-class StudentProjectID implements Serializable {
-    /** Key used to identify the student */
-    private String studentID;
-
-    /** Key used to identify the project */
-    private String projectID;
-
-    /** Key used to identify the suite grade is for */
-    private String suite;
-
-    public StudentProjectID(String userID, String projectID, String suite) {
-        this.studentID = userID;
-        this.projectID = projectID;
-        this.suite = suite;
-    }
-
-    public StudentProjectID() {
-
-    }
-}

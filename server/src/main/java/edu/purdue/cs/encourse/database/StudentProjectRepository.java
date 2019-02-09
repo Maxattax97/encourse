@@ -1,16 +1,18 @@
 package edu.purdue.cs.encourse.database;
 
+import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
+import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
+import edu.purdue.cs.encourse.model.course.CourseStudentFilters;
+import edu.purdue.cs.encourse.model.course.CourseStudentSearch;
 import lombok.NonNull;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface StudentProjectRepository extends CrudRepository<StudentProject, String> {
-    List<StudentProject> findByIdStudentID(@NonNull String studentID);
-    List<StudentProject> findByIdProjectID(@NonNull String projectID);
-    List<StudentProject> findByIdProjectIDAndIdStudentID(@NonNull String projectID, @NonNull String studentID);
-    List<StudentProject> findByIdProjectIDAndIdSuite(@NonNull String projectID, @NonNull String suite);
-    List<StudentProject> findByIdStudentIDAndIdSuite(@NonNull String studentID, @NonNull String suite);
-    StudentProject findByIdProjectIDAndIdStudentIDAndIdSuite(@NonNull String projectID, @NonNull String studentID, @NonNull String suite);
+public interface StudentProjectRepository extends PagingAndSortingRepository<StudentProject, Long> {
+    Optional<StudentProject> findByProject_ProjectIDAndStudent_Id(@NonNull Long projectID, @NonNull Long studentID);
 }

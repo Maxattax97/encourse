@@ -5,5 +5,5 @@
 
 DIRECTORY="$(pwd)"
 cd "$1"
-git log --author="$2" --date=iso --pretty=format:"@UPDATE %h %ad" | grep "@UPDATE"
+git log --author="$2" --date=iso --pretty=format:"@UPDATE %h %aI" | grep "@UPDATE"
 cd "${DIRECTORY}"

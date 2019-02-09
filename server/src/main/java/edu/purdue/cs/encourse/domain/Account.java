@@ -1,10 +1,22 @@
 package edu.purdue.cs.encourse.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.purdue.cs.encourse.model.AccountModel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 /**
@@ -15,73 +27,58 @@ import javax.persistence.Table;
  * @author reed226@purdue.edu
  */
 @Getter
+@Setter
 @Entity
 @Table(name = "ACCOUNT")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Account {
+    
+    public enum Role {
+        STUDENT("STUDENT"), PROFESSOR("PROFESSOR"), ADMIN("ADMIN");
+        
+        final String name;
+        
+        Role(String name) {
+            this.name = name;
+        }
+    }
+    
     /** Primary key for all account types in the database */
     @Id
-    private String userID;
-
-    /** Identifier used by the frontend for an account */
-    private String userName;
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "USER_ID")
+    private Long userID;
+    
+    @NonNull
+    @Column(name = "USERNAME")
+    private String username;
+    
     /** Name for display purposes */
-    @Setter
+    @NonNull
+    @Column(name = "FIRST_NAME")
     private String firstName;
-    @Setter
-    private String middleInit;
-    @Setter
+    
+    @NonNull
+    @Column(name = "LAST_NAME")
     private String lastName;
 
     /** Email settings */
-    @Setter
+    @NonNull
+    @Column(name = "EDU_EMAIL")
     private String eduEmail;
 
     /** Indicates whether account is student, TA, professor, or college admin */
-    @Setter
-    private int role;
-
-    /** Integers representing all possible account roles */
-    public static class Roles {
-        public static final int STUDENT = 0;
-        public static final int TA = 1;
-        public static final int PROFESSOR = 2;
-        public static final int ADMIN = 3;
-    }
-
-    /** Strings representing all possible account roles */
-    public static class Role_Names {
-        public static final String STUDENT = "STUDENT";
-        public static final String TA = "TA";
-        public static final String PROFESSOR = "PROFESSOR";
-        public static final String ADMIN = "ADMIN";
-    }
-
-    public Account(String userID, String userName, String firstName, String lastName,
-                   int role, String middleInit, String eduEmail) {
-        this.userID = userID;
-        this.userName = userName;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.role = role;
-        this.middleInit = middleInit;
-        this.eduEmail = eduEmail;
-    }
-
-    public Account() {
-
-    }
-
-    /**
-     * Transfers information from one account to another that does not need to be a key.
-     * Primarily used to convert from a generic account to a role specific account.
-     *
-     * @param account Account that information is being copied from
-     */
-    public void copyAccount(Account account) {
-        setFirstName(account.getFirstName());
-        setLastName(account.getLastName());
-        setMiddleInit(account.getMiddleInit());
-        setEduEmail(account.getEduEmail());
+    @Enumerated
+    @Column(columnDefinition = "smallint", name = "ROLE")
+    @NonNull
+    private Role role;
+    
+    public Account(@NonNull AccountModel model) {
+        this.username = model.getUsername();
+        this.firstName = model.getFirstName();
+        this.lastName = model.getLastName();
+        this.eduEmail = model.getEduEmail();
+        this.role = model.getRole() == Role.STUDENT.ordinal() ? Role.STUDENT : model.getRole() == Role.PROFESSOR.ordinal() ? Role.PROFESSOR : Role.ADMIN;
     }
 }
