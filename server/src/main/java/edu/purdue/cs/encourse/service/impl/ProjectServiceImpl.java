@@ -645,7 +645,28 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			System.out.println("Running calculation for student : " + studentProject.getStudent().getStudent().getUsername());
 			
-			project.getAdditionHashes().addAll(additionHashMap.values());
+			for(AdditionHash additionHash : additionHashMap.values()) {
+				boolean flag = false;
+				
+				for(AdditionHash projectHash : project.getAdditionHashes()) {
+					if(projectHash.equals(additionHash)) {
+						flag = true;
+						
+						Map<Long, Integer> counts = additionHash.getStudentCounts();
+						Map<Long, Integer> projectCounts = projectHash.getStudentCounts();
+						
+						for(Long studentId : counts.keySet()) {
+							if(projectCounts.containsKey(studentId))
+								counts.put(studentId, counts.get(studentId) + projectCounts.get(studentId));
+							else
+								counts.put(studentId, projectCounts.get(studentId));
+						}
+					}
+				}
+				
+				if(!flag)
+					project.getAdditionHashes().add(additionHash);
+			}
 			
 			commitList.sort(Comparator.comparing(Commit::getDate));
 			
