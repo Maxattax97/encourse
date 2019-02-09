@@ -598,6 +598,26 @@ public class ProjectServiceImpl implements ProjectService {
 		return commitList;
 	}
 	
+	private void calculateSimilarity(Project project, Map<String, AdditionHash> additionHashMap) {
+		for(AdditionHash projectHash : project.getAdditionHashes()) {
+			if(additionHashMap.containsKey(projectHash.getId())) {
+				Map<Long, Integer> counts = additionHashMap.get(projectHash.getId()).getStudentCounts();
+				Map<Long, Integer> projectCounts = projectHash.getStudentCounts();
+				
+				for(Long studentId : counts.keySet()) {
+					if(projectCounts.containsKey(studentId))
+						counts.put(studentId, counts.get(studentId) + projectCounts.get(studentId));
+					else
+						counts.put(studentId, projectCounts.get(studentId));
+				}
+				
+				additionHashMap.remove(projectHash.getId());
+			}
+		}
+		
+		project.getAdditionHashes().addAll(additionHashMap.values());
+	}
+	
 	private void calculateStudentDiffs(Project project, List<ProjectDate> projectDateList, Map<StudentProject, List<StudentProjectDate>> studentProjectListMap) {
 		//Hashing algorithm for cheat detection
 		MessageDigest md5;
@@ -743,23 +763,7 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 		}
 		
-		for(AdditionHash projectHash : project.getAdditionHashes()) {
-			if(additionHashMap.containsKey(projectHash.getId())) {
-				Map<Long, Integer> counts = additionHashMap.get(projectHash.getId()).getStudentCounts();
-				Map<Long, Integer> projectCounts = projectHash.getStudentCounts();
-				
-				for(Long studentId : counts.keySet()) {
-					if(projectCounts.containsKey(studentId))
-						counts.put(studentId, counts.get(studentId) + projectCounts.get(studentId));
-					else
-						counts.put(studentId, projectCounts.get(studentId));
-				}
-				
-				additionHashMap.remove(projectHash.getId());
-			}
-		}
-		
-		project.getAdditionHashes().addAll(additionHashMap.values());
+		calculateSimilarity(project, additionHashMap);
 		
 		Map<LocalDate, List<StudentProjectDate>> dateToStudentDateMap = new HashMap<>(50);
 		

@@ -85,6 +85,14 @@ public class StudentProject {
     @OneToMany(mappedBy = "studentProject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StudentProjectDate> dates;
     
+    @NonNull
+    @OneToMany(mappedBy = "studentProject1", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<StudentComparison> firstComparisons;
+    
+    @NonNull
+    @OneToMany(mappedBy = "studentProject2", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<StudentComparison> secondComparisons;
+    
     public StudentProject(@NonNull Project project, @NonNull CourseStudent student) {
         this.project = project;
         this.student = student;
@@ -94,6 +102,9 @@ public class StudentProject {
         
         this.testsPassing = new ArrayList<>();
         this.dates = new ArrayList<>();
+        
+        this.firstComparisons = new ArrayList<>();
+        this.secondComparisons = new ArrayList<>();
     }
     
     @Override

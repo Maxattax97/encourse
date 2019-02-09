@@ -227,7 +227,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 				final List<CourseStudent> students = courseStudent.getStudents();
 				
 				if(filters.getStudents() == null) {
-					if(allowAnonymous) {
+					if(allowAnonymous && (filters.getSelectedAll() == null || !filters.getSelectedAll())) {
 						filters.setStudents(Collections.singletonList(-1L));
 						filters.setSelectedAll(true);
 					}
@@ -262,7 +262,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		
 		filters.getProgress().populate();
 		
-		if(filters.getStudents() == null || (filters.getStudents().size() == 0 && !filters.getSelectedAll())) {
+		if(filters.getStudents() == null || filters.getStudents().size() == 0) {
 			filters.setSelectedAll(true);
 			filters.setStudents(Collections.singletonList(-1L));
 		}
