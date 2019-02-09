@@ -82,7 +82,7 @@ public class StudentProject {
     private List<Commit> commits;
     
     @NonNull
-    @OneToMany(mappedBy = "studentProject", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "studentProject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StudentProjectDate> dates;
     
     public StudentProject(@NonNull Project project, @NonNull CourseStudent student) {

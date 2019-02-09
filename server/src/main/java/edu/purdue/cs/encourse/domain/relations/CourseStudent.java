@@ -59,7 +59,7 @@ public class CourseStudent {
 	@NonNull
 	private List<Section> sections;
 	
-	@OneToMany(mappedBy = "student", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<StudentProject> projects;
 	

@@ -72,15 +72,15 @@ public class Course {
 	@Column(name = "STUDENT_COUNT")
 	private Integer studentCount;
 	
-	@OneToMany(mappedBy = "course", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@NonNull
 	private List<Project> projects;
 	
-	@OneToMany(mappedBy = "course", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@NonNull
 	private List<Section> sections;
 	
-	@OneToMany(mappedBy = "course", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE }, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@NonNull
 	private List<CourseStudent> students;
 	
@@ -104,16 +104,6 @@ public class Course {
 	}
 	
 	public String toString() {
-		return "Course (id=" + this.courseID + ", name=" + this.name + ", semester=" + this.semester + ", remote=" + this.remotePath + ")";
-	}
-	
-	@Override
-	public boolean equals(Object course) {
-		return course instanceof Course && ((Course) course).courseID.equals(this.courseID);
-	}
-	
-	@Override
-	public int hashCode() {
-		return Math.toIntExact(this.courseID);
+		return "Course (id=" + this.courseID + ", remote=" + this.remotePath + ", name=" + this.name + ", semester=" + this.semester + ")";
 	}
 }

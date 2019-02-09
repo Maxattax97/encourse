@@ -86,11 +86,16 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	@Transactional
 	public void setCourseProfessor(@NonNull CourseProfessorModel model) throws InvalidRelationIdException {
 		Course course = courseService.getCourse(model.getCourseID());
+		Professor currentProfessor = course.getProfessor();
 		Professor professor = accountService.getProfessor(model.getProfessorID());
+		
+		currentProfessor.getCourses().remove(course);
+		professor.getCourses().add(course);
 		
 		course.setProfessor(professor);
 		
-		courseRepository.save(course);
+		professorRepository.save(professor);
+		professorRepository.save(currentProfessor);
 	}
 	
 	@Override
@@ -103,6 +108,8 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 		
 		if(courseStudent == null)
 			throw new RelationException("Could not create new course student object in database.");
+		
+		course.getStudents().add(courseStudent);
 		
 		courseRepository.save(course);
 		
@@ -147,6 +154,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 		if(courseStudent == null)
 			throw new RelationException("Could not create new course student object in database.");
 		
+		course.getStudents().add(courseStudent);
 		course.setStudentCount(course.getStudentCount() + 1);
 		
 		courseRepository.save(course);
@@ -190,6 +198,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 		ta.getStudents().add(student);
 		
 		courseStudentRepository.save(student);
+		courseStudentRepository.save(ta);
 	}
 	
 	@Override
@@ -203,6 +212,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 		ta.getStudents().remove(student);
 		
 		courseStudentRepository.save(student);
+		courseStudentRepository.save(ta);
 	}
 	
 }

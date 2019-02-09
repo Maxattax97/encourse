@@ -167,12 +167,12 @@ public class ProjectServiceImpl implements ProjectService {
 		List<CourseStudent> students = course.getStudents();
 		
 		for(CourseStudent student : students) {
-			if (student.getIsStudent()) {
+			if(student.getIsStudent()) {
 				StudentProject studentProject = studentProjectRepository.save(new StudentProject(project, student));
 				
-				//student.getProjects().add(studentProject);
+				student.getProjects().add(studentProject);
 				
-				//project.getStudentProjects().add(studentProject);
+				project.getStudentProjects().add(studentProject);
 			}
 		}
 		
@@ -184,20 +184,24 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			ProjectDate projectDate = projectDateRepository.save(new ProjectDate(project, iteratorDate));
 			
-			//project.getDates().add(projectDate);
+			project.getDates().add(projectDate);
 			
 			System.out.println("Added Project Date (" + project.getRepository() + ", " + iteratorDate + ")");
 			
 			for(StudentProject studentProject : studentProjects) {
 				StudentProjectDate studentProjectDate = studentProjectDateRepository.save(new StudentProjectDate(project, studentProject, iteratorDate));
 				
-				//studentProject.getDates().add(studentProjectDate);
+				studentProject.getDates().add(studentProjectDate);
 			}
 			
 			iteratorDate = iteratorDate.plusDays(1);
 		}
 		
+		course.getProjects().add(project);
+		
 		cloneProject(project);
+		
+		courseRepository.save(course);
 		
 		System.out.println("Added " + project);
 		
@@ -868,11 +872,9 @@ public class ProjectServiceImpl implements ProjectService {
 			//save the StudentProject objects
 			studentProjectRepository.saveAll(studentProjectListMap.keySet());
 			
-			System.out.println("Saving " + project);
-			
 			//stop analyzing the project and set the last time the project has been analyzed to today's date
 			//project.setAnalyzing(false);
-			projectRepository.saveAndFlush(project);
+			projectRepository.save(project);
 		}
 	}
 }
