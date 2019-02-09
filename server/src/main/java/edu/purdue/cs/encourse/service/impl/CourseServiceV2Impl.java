@@ -5,11 +5,14 @@ import edu.purdue.cs.encourse.database.ProjectDateRepository;
 import edu.purdue.cs.encourse.database.ProjectRepository;
 import edu.purdue.cs.encourse.database.SectionRepository;
 import edu.purdue.cs.encourse.database.StudentProjectDateRepository;
+import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.Course;
 import edu.purdue.cs.encourse.domain.Professor;
 import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.ProjectDate;
 import edu.purdue.cs.encourse.domain.Section;
+import edu.purdue.cs.encourse.domain.Student;
+import edu.purdue.cs.encourse.domain.relations.CourseStudent;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.BasicStatistics;
 import edu.purdue.cs.encourse.model.CourseModel;
@@ -19,8 +22,10 @@ import edu.purdue.cs.encourse.model.SectionModel;
 import edu.purdue.cs.encourse.model.CourseBarChartModel;
 import edu.purdue.cs.encourse.model.StudentInfoModel;
 import edu.purdue.cs.encourse.model.ProjectInfoModel;
+import edu.purdue.cs.encourse.model.course.CourseStudentFilters;
 import edu.purdue.cs.encourse.model.course.CourseStudentSearch;
 import edu.purdue.cs.encourse.service.AccountService;
+import edu.purdue.cs.encourse.service.AdminServiceV2;
 import edu.purdue.cs.encourse.service.CourseServiceV2;
 import edu.purdue.cs.encourse.service.StudentService;
 import edu.purdue.cs.encourse.service.helper.ChartHelper;
@@ -61,6 +66,9 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	
 	@Autowired
 	private AccountService accountService;
+	
+	@Autowired
+	private AdminServiceV2 adminService;
 	
 	@Autowired
 	public CourseServiceV2Impl(StudentProjectDateRepository StudentProjectDateRepository, ProjectRepository projectRepository, ProjectDateRepository projectDateRepository, CourseRepository courseRepository, SectionRepository sectionRepository) {
@@ -126,7 +134,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	public Section addSection(@NonNull CourseSectionModel model) throws InvalidRelationIdException, IllegalArgumentException {
 		Course course = getCourse(model.getCourseID());
 		
-		Section section = new Section(course, model);
+		Section section = sectionRepository.save(new Section(course, model));
 		
 		course.getSections().add(section);
 		
@@ -153,10 +161,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		
 		List<ProjectModel> projects = new ArrayList<>();
 		
-		System.out.println("GET PROJECTS");
-		
 		for(Project project : course.getProjects()) {
-			System.out.println("Found " + project);
 			ProjectModel model = new ProjectModel(project.getName(), project.getStartDate(), project.getDueDate(), project.getRepository(), project.getRunTestall());
 			
 			model.setProjectID(project.getProjectID());
@@ -173,7 +178,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	}
 	
 	@Override
-	public Project validateCourseStudentSearch(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, NullPointerException {
+	public Project validateCourseStudentSearch(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, NullPointerException, IllegalAccessException {
 		if(courseStudentSearch.getProjectID() == null)
 			throw new NullPointerException("Project ID was not provided.");
 		
@@ -186,13 +191,55 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		
 		if(!courseStudentSearch.hasDate())
 			courseStudentSearch.setDate(project.getAnalyzeDateTime().compareTo(project.getDueDate()) < 0 ? project.getAnalyzeDateTime().compareTo(project.getStartDate()) > 0 ? project.getAnalyzeDateTime() : project.getStartDate() : project.getDueDate());
+		else
+			courseStudentSearch.setDate(courseStudentSearch.getDate().compareTo(project.getDueDate()) < 0 ? courseStudentSearch.getDate().compareTo(project.getStartDate()) > 0 ? courseStudentSearch.getDate() : project.getStartDate() : project.getDueDate());
+		
+		Account account = accountService.getAccount(adminService.getUser().getId());
+		Course course = project.getCourse();
+		
+		if(account.getRole() == Account.Role.PROFESSOR) {
+			Professor professor = accountService.getProfessor(account.getUserID());
+			
+			if(!course.getProfessor().getUserID().equals(professor.getUserID()))
+				throw new IllegalAccessException("You are not the course professor.");
+		}
+		else if(account.getRole() == Account.Role.STUDENT) {
+			Student student = accountService.getStudent(account.getUserID());
+			
+			CourseStudent courseStudent = null;
+			
+			for(CourseStudent studentIter : student.getCourses()) {
+				if(studentIter.getCourse().getCourseID().equals(course.getCourseID())) {
+					courseStudent = studentIter;
+					break;
+				}
+			}
+			
+			if(courseStudent == null || courseStudent.getIsStudent())
+				throw new IllegalAccessException("You are not a teaching assistant for this course.");
+			else {
+				final CourseStudentFilters filters = courseStudentSearch.hasFilters() ? courseStudentSearch.getFilters() : new CourseStudentFilters();
+				final List<CourseStudent> students = courseStudent.getStudents();
+				
+				if(filters.getStudents() == null) {
+					filters.setStudents(students.stream().map(CourseStudent::getId).collect(Collectors.toList()));
+					courseStudentSearch.setFilters(filters);
+				}
+				else if(filters.getSelectedAll() != null && filters.getSelectedAll())
+					filters.setStudents(students.stream().filter(s -> !filters.getStudents().contains(s.getId())).map(CourseStudent::getId).collect(Collectors.toList()));
+				else
+					filters.setStudents(students.stream().filter(s -> filters.getStudents().contains(s.getId())).map(CourseStudent::getId).collect(Collectors.toList()));
+				
+				filters.setSelectedAll(false);
+			}
+		}
 		
 		return project;
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<StudentInfoModel> getCourseProjectStudentInfo(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, NullPointerException {
+	public List<StudentInfoModel> getCourseProjectStudentInfo(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, NullPointerException, IllegalAccessException {
 		Project project = validateCourseStudentSearch(courseStudentSearch);
 		
 		List<StudentProjectDate> studentProjectDates = studentProjectDateRepository.findAllByCourseStudentSearch(project, courseStudentSearch);
@@ -210,7 +257,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public ProjectInfoModel getCourseProjectInfoByDate(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, RelationNotFoundException {
+	public ProjectInfoModel getCourseProjectInfoByDate(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, RelationNotFoundException, IllegalAccessException {
 		ProjectInfoModel projectInfo = new ProjectInfoModel();
 		
 		boolean hasProgressStats = courseStudentSearch.getOption("progressStats");
