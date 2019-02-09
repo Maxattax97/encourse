@@ -855,6 +855,8 @@ public class ProjectServiceImpl implements ProjectService {
 				continue;
 			}
 			
+			LocalDate currentDate = LocalDate.now();
+			
 			System.out.println("Project Analyze Date : " + project.getAnalyzeDateTime());
 			
 			System.out.println("Actual Project Date List");
@@ -890,6 +892,7 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			//stop analyzing the project and set the last time the project has been analyzed to today's date
 			//project.setAnalyzing(false);
+			project.setAnalyzeDateTime(currentDate);
 			projectRepository.save(project);
 		}
 	}
