@@ -503,7 +503,7 @@ public class ProjectServiceImpl implements ProjectService {
 		ZoneId estZone = TimeZone.getTimeZone("EST").toZoneId();
 		
 		CourseStudent student = studentProject.getStudent();
-		Process process = executeScriptAndReturn("generateDiffsAfterDate.sh " + testingDirectory + " " + ZonedDateTime.of(studentProject.getMostRecentCommit(), estZone));
+		Process process = executeScriptAndReturn("generateDiffsAfterDate.sh " + testingDirectory + " " + ZonedDateTime.of(studentProject.getMostRecentCommit(), estZone).plusSeconds(1));
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		
 		String line;
@@ -540,7 +540,7 @@ public class ProjectServiceImpl implements ProjectService {
 				deletions = 0;
 				
 				try {
-					commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(estZone).toLocalDateTime(), Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL);
+					commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(estZone).toLocalDateTime(), 0.0, 0.0, 0.0, 0.0);
 					
 					if(commit.getDate().toLocalDate().compareTo(project.getDueDate()) > 0 || commit.getDate().toLocalDate().compareTo(project.getAnalyzeDateTime()) < 0)
 						commit = null;
@@ -666,7 +666,7 @@ public class ProjectServiceImpl implements ProjectService {
 				if(studentProject.getFirstCommit() == null || studentProject.getFirstCommit().compareTo(commit.getDate()) > 0)
 					studentProject.setFirstCommit(commit.getDate());
 				
-				if(commit.getAdditions() + commit.getDeletions() == 0)
+				if(commit.getAdditions() + commit.getDeletions() <= .5)
 					continue;
 				
 				//find the distance between the previous commit (earlier in time) and the current
@@ -674,8 +674,8 @@ public class ProjectServiceImpl implements ProjectService {
 				long time = Math.max(ChronoUnit.MINUTES.between(previousCommitTime, commit.getDate()), 0);
 				
 				//run the total time spent on the project between these two commits algorithm
-				if(time > Math.max(commit.getAdditions() * 3, 10))
-					time = Math.round(commit.getAdditions() * 2);
+				if(time > Math.max(commit.getAdditions() * 3 * Math.pow(Math.E, -commit.getAdditions() / 300.0), 10))
+					time = Math.round(commit.getAdditions() * 2 * Math.pow(Math.E, -commit.getAdditions() / 300.0));
 				
 				//add the commit additions/deletions and minutes
 				/*studentProject.setAdditions(studentProject.getAdditions() + commit.getAdditions());
