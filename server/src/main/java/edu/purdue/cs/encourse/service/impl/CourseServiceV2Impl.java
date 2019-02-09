@@ -179,7 +179,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	}
 	
 	@Override
-	public Project validateCourseStudentSearch(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, NullPointerException, IllegalAccessException {
+	public Project validateCourseStudentSearch(@NonNull CourseStudentSearch courseStudentSearch, boolean allowAnonymous) throws InvalidRelationIdException, NullPointerException, IllegalAccessException {
 		if(courseStudentSearch.getProjectID() == null)
 			throw new NullPointerException("Project ID was not provided.");
 		
@@ -199,6 +199,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		Course course = project.getCourse();
 		
 		final CourseStudentFilters filters = courseStudentSearch.hasFilters() ? courseStudentSearch.getFilters() : new CourseStudentFilters();
+		courseStudentSearch.setFilters(filters);
 		
 		if(account.getRole() == Account.Role.PROFESSOR) {
 			Professor professor = accountService.getProfessor(account.getUserID());
@@ -224,15 +225,23 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 				final List<CourseStudent> students = courseStudent.getStudents();
 				
 				if(filters.getStudents() == null) {
-					filters.setStudents(students.stream().map(CourseStudent::getId).collect(Collectors.toList()));
-					courseStudentSearch.setFilters(filters);
+					if(allowAnonymous) {
+						filters.setStudents(new ArrayList<>());
+						filters.setSelectedAll(true);
+					}
+					else {
+						filters.setStudents(students.stream().map(CourseStudent::getId).collect(Collectors.toList()));
+						filters.setSelectedAll(false);
+					}
 				}
-				else if(filters.getSelectedAll() != null && filters.getSelectedAll())
-					filters.setStudents(students.stream().filter(s -> !filters.getStudents().contains(s.getId())).map(CourseStudent::getId).collect(Collectors.toList()));
-				else
-					filters.setStudents(students.stream().filter(s -> filters.getStudents().contains(s.getId())).map(CourseStudent::getId).collect(Collectors.toList()));
-				
-				filters.setSelectedAll(false);
+				else {
+					if(filters.getSelectedAll() != null && filters.getSelectedAll())
+						filters.setStudents(students.stream().filter(s -> !filters.getStudents().contains(s.getId())).map(CourseStudent::getId).collect(Collectors.toList()));
+					else
+						filters.setStudents(students.stream().filter(s -> filters.getStudents().contains(s.getId())).map(CourseStudent::getId).collect(Collectors.toList()));
+						
+					filters.setSelectedAll(false);
+				}
 			}
 		}
 		
@@ -251,7 +260,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		
 		filters.getProgress().populate();
 		
-		if(filters.getStudents() == null) {
+		if(filters.getStudents() == null || (filters.getStudents().size() == 0 && !filters.getSelectedAll())) {
 			filters.setSelectedAll(true);
 			filters.setStudents(new ArrayList<>());
 		}
@@ -265,7 +274,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	@Override
 	@Transactional(readOnly = true)
 	public List<StudentInfoModel> getCourseProjectStudentInfo(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, NullPointerException, IllegalAccessException {
-		Project project = validateCourseStudentSearch(courseStudentSearch);
+		Project project = validateCourseStudentSearch(courseStudentSearch, false);
 		
 		List<StudentProjectDate> studentProjectDates = studentProjectDateRepository.findAllByCourseStudentSearch(project, courseStudentSearch);
 		
@@ -305,7 +314,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 			!hasChangesStats && !hasChangesChart && !hasSimilarityStats && !hasSimilarityChart && !hasTimeVelocityStats && !hasTimeVelocityChart && !hasCommitVelocityStats && !hasCommitVelocityChart)
 			return projectInfo;
 		
-		Project project = validateCourseStudentSearch(courseStudentSearch);
+		Project project = validateCourseStudentSearch(courseStudentSearch, true);
 		
 		ProjectDate projectDate = projectDateRepository.findFirstByProjectAndDate(project, courseStudentSearch.getDate());
 		
