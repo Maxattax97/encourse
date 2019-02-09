@@ -97,6 +97,9 @@ public class ReadControllerV2 {
 		catch (InvalidRelationIdException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
+		catch (IllegalAccessException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+		}
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
@@ -166,6 +169,9 @@ public class ReadControllerV2 {
 		}
 		catch (RelationNotFoundException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		catch (IllegalAccessException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
 		}
 	}
 	
