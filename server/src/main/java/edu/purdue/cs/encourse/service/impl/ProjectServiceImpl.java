@@ -645,29 +645,6 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			System.out.println("Running calculation for student : " + studentProject.getStudent().getStudent().getUsername());
 			
-			for(AdditionHash additionHash : additionHashMap.values()) {
-				boolean flag = false;
-				
-				for(AdditionHash projectHash : project.getAdditionHashes()) {
-					if(projectHash.equals(additionHash)) {
-						flag = true;
-						
-						Map<Long, Integer> counts = additionHash.getStudentCounts();
-						Map<Long, Integer> projectCounts = projectHash.getStudentCounts();
-						
-						for(Long studentId : counts.keySet()) {
-							if(projectCounts.containsKey(studentId))
-								counts.put(studentId, counts.get(studentId) + projectCounts.get(studentId));
-							else
-								counts.put(studentId, projectCounts.get(studentId));
-						}
-					}
-				}
-				
-				if(!flag)
-					project.getAdditionHashes().add(additionHash);
-			}
-			
 			commitList.sort(Comparator.comparing(Commit::getDate));
 			
 			LocalDateTime previousCommitTime = studentProject.getMostRecentCommit();
@@ -758,6 +735,24 @@ public class ProjectServiceImpl implements ProjectService {
 				previousStudentDate = studentProjectDate;
 			}
 		}
+		
+		for(AdditionHash projectHash : project.getAdditionHashes()) {
+			if(additionHashMap.containsKey(projectHash.getId())) {
+				Map<Long, Integer> counts = additionHashMap.get(projectHash.getId()).getStudentCounts();
+				Map<Long, Integer> projectCounts = projectHash.getStudentCounts();
+				
+				for(Long studentId : counts.keySet()) {
+					if(projectCounts.containsKey(studentId))
+						counts.put(studentId, counts.get(studentId) + projectCounts.get(studentId));
+					else
+						counts.put(studentId, projectCounts.get(studentId));
+				}
+				
+				additionHashMap.remove(projectHash.getId());
+			}
+		}
+		
+		project.getAdditionHashes().addAll(additionHashMap.values());
 		
 		Map<LocalDate, List<StudentProjectDate>> dateToStudentDateMap = new HashMap<>(50);
 		
