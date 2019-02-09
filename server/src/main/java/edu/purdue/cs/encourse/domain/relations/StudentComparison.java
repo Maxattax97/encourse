@@ -7,8 +7,12 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -26,6 +30,11 @@ import java.util.List;
 @AllArgsConstructor
 public class StudentComparison {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "STUDENT_COMPARISON_ID")
+	private Long id;
+	
 	@NonNull
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "FIRST_STUDENT_PROJECT_ID")
@@ -36,6 +45,7 @@ public class StudentComparison {
 	@JoinColumn(name = "SECOND_STUDENT_PROJECT_ID")
 	private StudentProject studentProject2;
 	
+	@Column(name = "SIMILARITY_COUNT")
 	private Integer count;
 	
 }
