@@ -803,8 +803,14 @@ public class ProjectServiceImpl implements ProjectService {
 				deletionStats.addValue(studentProjectDate.getTotalDeletions());
 				changesStats.addValue(studentProjectDate.getTotalAdditions() / studentProjectDate.getTotalDeletions());
 				//TODO Similarity
-				timeVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalMinutes());
-				commitVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalMinutes());
+				if(project.getRunTestall()) {
+					timeVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalMinutes());
+					commitVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalCommits());
+				}
+				else {
+					timeVelocityStats.addValue(100.0 / studentProjectDate.getTotalMinutes());
+					commitVelocityStats.addValue(100.0 / studentProjectDate.getTotalCommits());
+				}
 			}
 			
 			projectDate.setTotalPointStats(new BasicStatistics(totalPointStats));
