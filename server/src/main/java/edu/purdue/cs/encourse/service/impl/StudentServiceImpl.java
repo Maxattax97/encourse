@@ -183,15 +183,15 @@ public class StudentServiceImpl implements StudentService {
 			model.setTeachingAssistants(courseStudent.getTeachingAssistants().stream().map(CourseStudent::getId).collect(Collectors.toList()));
 		
 		if(hasProjectInfo) {
-			model.setAdditions(Math.round(studentProjectDate.getTotalAdditions()));
-			model.setDeletions(Math.round(studentProjectDate.getTotalDeletions()));
+			model.setAdditions(Math.round(studentProjectDate.getTotalAdditions() == null ? 0.0 : studentProjectDate.getTotalAdditions()));
+			model.setDeletions(Math.round(studentProjectDate.getTotalDeletions() == null ? 0.0 : studentProjectDate.getTotalDeletions()));
 			
-			model.setCommits(Math.round(studentProjectDate.getTotalCommits()));
+			model.setCommits(Math.round(studentProjectDate.getTotalCommits() == null ? 0.0 : studentProjectDate.getTotalCommits()));
 			
-			model.setMinutes(Math.round(studentProjectDate.getTotalMinutes()));
+			model.setMinutes(Math.round(studentProjectDate.getTotalMinutes() == null ? 0.0 : studentProjectDate.getTotalMinutes()));
 			
-			model.setVisiblePoints(Math.round(studentProjectDate.getVisiblePoints()));
-			model.setHiddenPoints(Math.round(studentProjectDate.getHiddenPoints()));
+			model.setVisiblePoints(Math.round(studentProjectDate.getVisiblePoints() == null ? 0.0 : studentProjectDate.getVisiblePoints()));
+			model.setHiddenPoints(Math.round(studentProjectDate.getHiddenPoints() == null ? 0.0 : studentProjectDate.getHiddenPoints()));
 		}
 
 		if(hasTestSuiteInfo) {

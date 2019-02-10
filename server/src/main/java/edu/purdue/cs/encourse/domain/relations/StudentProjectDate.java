@@ -33,7 +33,6 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "STUDENT_PROJECT_DATE")
-@NoArgsConstructor
 @AllArgsConstructor
 public class StudentProjectDate {
     
@@ -115,6 +114,27 @@ public class StudentProjectDate {
         
         this.testsPassing = new ArrayList<>();
         
+        this.totalCommits = 0.0;
+        this.currentCommits = 0.0;
+        this.totalMinutes = 0.0;
+        this.currentMinutes = 0.0;
+        this.totalAdditions = 0.0;
+        this.currentAdditions = 0.0;
+        this.totalDeletions = 0.0;
+        this.currentDeletions = 0.0;
+    }
+    
+    public StudentProjectDate() {
+        this.project = null;
+        this.studentProject = null;
+        
+        this.date = LocalDate.now();
+        
+        this.visiblePoints = 0.0;
+        this.hiddenPoints = 0.0;
+    
+        this.testsPassing = new ArrayList<>();
+    
         this.totalCommits = 0.0;
         this.currentCommits = 0.0;
         this.totalMinutes = 0.0;

@@ -350,49 +350,58 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		for(int i = 0; i < students.size(); i++) {
 			StudentProjectDate student = students.get(i);
 			
+			Double commits = student.getTotalCommits() == null ? 0.0 : student.getTotalCommits();
+			Double minutes = student.getTotalMinutes() == null ? 0.0 : student.getTotalMinutes();
+			Double additions = student.getTotalAdditions() == null ? 0.0 : student.getTotalAdditions();
+			Double deletions = student.getTotalDeletions() == null ? 0.0 : student.getTotalDeletions();
+			
+			Double visiblePoints = student.getVisiblePoints() == null ? 0.0 : student.getVisiblePoints();
+			Double hiddenPoints = student.getHiddenPoints() == null ? 0.0 : student.getHiddenPoints();
+			
+			
 			if(commitSamples != null)
-				commitSamples[i] = student.getTotalCommits();
+				commitSamples[i] = commits;
 			
 			if(timeSamples != null)
-				timeSamples[i] = student.getTotalMinutes();
+				timeSamples[i] = minutes;
 			
 			if(changesSamples != null) {
 				
-				if(student.getTotalDeletions() < .5)
-					changesSamples[i] = (student.getTotalAdditions());
+				if(deletions < .5)
+					changesSamples[i] = (additions);
 				else
-					changesSamples[i] = (student.getTotalAdditions() / student.getTotalDeletions());
+					changesSamples[i] = (additions / deletions);
 			}
 			
 			if(project.getRunTestall()) {
 				if(progressSamples != null)
-					progressSamples[i] = (includeVisibleTests ? student.getVisiblePoints() : 0) + (includeHiddenTests ? student.getHiddenPoints() : 0);
+					progressSamples[i] = (includeVisibleTests ? visiblePoints : 0) + (includeHiddenTests ? hiddenPoints : 0);
 				
 				if(timeVelocitySamples != null) {
-					if(student.getTotalMinutes() < .5)
-						timeVelocitySamples[i] = ((student.getVisiblePoints() + student.getHiddenPoints()));
+					if(minutes < .5)
+						timeVelocitySamples[i] = (visiblePoints + hiddenPoints);
 					else
-						timeVelocitySamples[i] = ((student.getVisiblePoints() + student.getHiddenPoints()) / student.getTotalMinutes());
+						timeVelocitySamples[i] = ((visiblePoints + hiddenPoints) / minutes);
 				}
 				
-				if(student.getTotalCommits() < .5)
-					commitVelocitySamples[i] = ((student.getVisiblePoints() + student.getHiddenPoints()));
+				if(commits < .5)
+					commitVelocitySamples[i] = (visiblePoints + hiddenPoints);
 				else
-					commitVelocitySamples[i] = ((student.getVisiblePoints() + student.getHiddenPoints()) / student.getTotalCommits());
+					commitVelocitySamples[i] = ((visiblePoints + hiddenPoints) / student.getTotalCommits());
 			}
 			else {
 				if(progressSamples != null)
 					progressSamples[i] = 0;
 				
-				if(student.getTotalMinutes() < .5)
+				if(minutes < .5)
 					timeVelocitySamples[i] = (0.0);
 				else
-					timeVelocitySamples[i]  = (100.0 / student.getTotalMinutes());
+					timeVelocitySamples[i]  = (100.0 / minutes);
 				
-				if(student.getTotalCommits() < .5)
+				if(commits < .5)
 					commitVelocitySamples[i] = (0.0);
 				else
-					commitVelocitySamples[i] = (100.0 / student.getTotalCommits());
+					commitVelocitySamples[i] = (100.0 / commits);
 			}
 			
 			//TODO Similarity
