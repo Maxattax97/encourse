@@ -138,17 +138,6 @@ public class ProjectDate {
 	@Setter
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "MAX_SIMILARITY")),
-			@AttributeOverride(name = "min", column = @Column(name = "MIN_SIMILARITY")),
-			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_SIMILARITY")),
-			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_SIMILARITY")),
-			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_SIMILARITY"))
-	})
-	private BasicStatistics similarityStats;
-	
-	@Setter
-	@Embedded
-	@AttributeOverrides({
 			@AttributeOverride(name = "max", column = @Column(name = "MAX_TIME_VELOCITY")),
 			@AttributeOverride(name = "min", column = @Column(name = "MIN_TIME_VELOCITY")),
 			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_TIME_VELOCITY")),

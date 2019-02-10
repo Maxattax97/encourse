@@ -350,27 +350,54 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		for(int i = 0; i < students.size(); i++) {
 			StudentProjectDate student = students.get(i);
 			
-			if(progressSamples != null)
-				progressSamples[i] = (includeVisibleTests ? student.getVisiblePoints() : 0) + (includeHiddenTests ? student.getHiddenPoints() : 0);
-			
 			if(commitSamples != null)
 				commitSamples[i] = student.getTotalCommits();
 			
 			if(timeSamples != null)
 				timeSamples[i] = student.getTotalMinutes();
 			
-			if(changesSamples != null)
-				changesSamples[i] = (student.getTotalAdditions() / student.getTotalDeletions());
+			if(changesSamples != null) {
+				
+				if(student.getTotalDeletions() < .5)
+					changesSamples[i] = (student.getTotalAdditions());
+				else
+					changesSamples[i] = (student.getTotalAdditions() / student.getTotalDeletions());
+			}
+			
+			if(project.getRunTestall()) {
+				if(progressSamples != null)
+					progressSamples[i] = (includeVisibleTests ? student.getVisiblePoints() : 0) + (includeHiddenTests ? student.getHiddenPoints() : 0);
+				
+				if(timeVelocitySamples != null) {
+					if(student.getTotalMinutes() < .5)
+						timeVelocitySamples[i] = ((student.getVisiblePoints() + student.getHiddenPoints()));
+					else
+						timeVelocitySamples[i] = ((student.getVisiblePoints() + student.getHiddenPoints()) / student.getTotalMinutes());
+				}
+				
+				if(student.getTotalCommits() < .5)
+					commitVelocitySamples[i] = ((student.getVisiblePoints() + student.getHiddenPoints()));
+				else
+					commitVelocitySamples[i] = ((student.getVisiblePoints() + student.getHiddenPoints()) / student.getTotalCommits());
+			}
+			else {
+				if(progressSamples != null)
+					progressSamples[i] = 0;
+				
+				if(student.getTotalMinutes() < .5)
+					timeVelocitySamples[i] = (0.0);
+				else
+					timeVelocitySamples[i]  = (100.0 / student.getTotalMinutes());
+				
+				if(student.getTotalCommits() < .5)
+					commitVelocitySamples[i] = (0.0);
+				else
+					commitVelocitySamples[i] = (100.0 / student.getTotalCommits());
+			}
 			
 			//TODO Similarity
 			//if(buildSimilarityStats != null)
 			//	buildSimilarityStats[i] = stud;
-			
-			if(timeVelocitySamples != null)
-				timeVelocitySamples[i] = (student.getVisiblePoints() + student.getHiddenPoints()) / student.getTotalMinutes();
-			
-			if(commitVelocitySamples != null)
-				commitVelocitySamples[i] = (student.getVisiblePoints() + student.getHiddenPoints()) / student.getTotalCommits();
 		}
 		
 		int studentCount = project.getCourse().getStudentCount();

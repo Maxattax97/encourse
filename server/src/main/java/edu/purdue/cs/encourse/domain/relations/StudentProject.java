@@ -27,7 +27,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a relation between a student and the projects that they were assigned.
@@ -87,11 +89,11 @@ public class StudentProject {
     
     @NonNull
     @OneToMany(mappedBy = "studentProject1", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<StudentComparison> firstComparisons;
+    private Set<StudentComparison> firstComparisons;
     
     @NonNull
     @OneToMany(mappedBy = "studentProject2", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<StudentComparison> secondComparisons;
+    private Set<StudentComparison> secondComparisons;
     
     public StudentProject(@NonNull Project project, @NonNull CourseStudent student) {
         this.project = project;
@@ -103,8 +105,8 @@ public class StudentProject {
         this.testsPassing = new ArrayList<>();
         this.dates = new ArrayList<>();
         
-        this.firstComparisons = new ArrayList<>();
-        this.secondComparisons = new ArrayList<>();
+        this.firstComparisons = new HashSet<>();
+        this.secondComparisons = new HashSet<>();
     }
     
     @Override

@@ -5,6 +5,7 @@ import edu.purdue.cs.encourse.database.CourseRepository;
 import edu.purdue.cs.encourse.database.CourseStudentRepository;
 import edu.purdue.cs.encourse.database.ProjectDateRepository;
 import edu.purdue.cs.encourse.database.ProjectRepository;
+import edu.purdue.cs.encourse.database.StudentComparisonRepository;
 import edu.purdue.cs.encourse.database.StudentProjectDateRepository;
 import edu.purdue.cs.encourse.database.StudentProjectRepository;
 import edu.purdue.cs.encourse.database.StudentRepository;
@@ -20,6 +21,7 @@ import edu.purdue.cs.encourse.domain.Student;
 import edu.purdue.cs.encourse.domain.TestScript;
 import edu.purdue.cs.encourse.domain.TestSuite;
 import edu.purdue.cs.encourse.domain.relations.CourseStudent;
+import edu.purdue.cs.encourse.domain.relations.StudentComparison;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.BasicStatistics;
@@ -66,6 +68,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -96,8 +99,10 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	private final CourseServiceV2 courseService;
 	
+	private final StudentComparisonRepository studentComparisonRepository;
+	
 	@Autowired
-	public ProjectServiceImpl(ProjectRepository projectRepository, ProjectDateRepository projectDateRepository, StudentProjectRepository studentProjectRepository, StudentProjectDateRepository studentProjectDateRepository, CourseRepository courseRepository, TestScriptRepository testScriptRepository, TestSuiteRepository testSuiteRepository, AdditionHashRepository additionHashRepository, CourseServiceV2 courseService) {
+	public ProjectServiceImpl(ProjectRepository projectRepository, ProjectDateRepository projectDateRepository, StudentProjectRepository studentProjectRepository, StudentProjectDateRepository studentProjectDateRepository, CourseRepository courseRepository, TestScriptRepository testScriptRepository, TestSuiteRepository testSuiteRepository, AdditionHashRepository additionHashRepository, CourseServiceV2 courseService, StudentComparisonRepository studentComparisonRepository) {
 		this.projectRepository = projectRepository;
 		this.projectDateRepository = projectDateRepository;
 		this.studentProjectRepository = studentProjectRepository;
@@ -107,6 +112,7 @@ public class ProjectServiceImpl implements ProjectService {
 		this.testSuiteRepository = testSuiteRepository;
 		this.additionHashRepository = additionHashRepository;
 		this.courseService = courseService;
+		this.studentComparisonRepository = studentComparisonRepository;
 	}
 	
 	@Override
@@ -195,6 +201,19 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 			
 			iteratorDate = iteratorDate.plusDays(1);
+		}
+		
+		for(int i = 0; i < studentProjects.size(); i++) {
+			for(int j = i + 1; j < studentProjects.size(); j++) {
+				StudentProject studentProject1 = studentProjects.get(i);
+				StudentProject studentProject2 = studentProjects.get(j);
+				StudentComparison comparison = studentComparisonRepository.save(new StudentComparison(project, studentProject1, studentProject2, 0));
+				
+				studentProject1.getFirstComparisons().add(comparison);
+				studentProject2.getSecondComparisons().add(comparison);
+				
+				project.getStudentComparisons().add(comparison);
+			}
 		}
 		
 		course.getProjects().add(project);
@@ -598,7 +617,10 @@ public class ProjectServiceImpl implements ProjectService {
 		return commitList;
 	}
 	
-	private void calculateSimilarity(Project project, Map<String, AdditionHash> additionHashMap) {
+	private void calculateSimilarity(Project project, Set<StudentProject> studentProjects, Map<String, AdditionHash> additionHashMap) {
+		
+		System.out.println("Found (" + additionHashMap.size() + ") hashes in the set of new additions");
+		
 		for(AdditionHash projectHash : project.getAdditionHashes()) {
 			if(additionHashMap.containsKey(projectHash.getId())) {
 				Map<Long, Integer> counts = additionHashMap.get(projectHash.getId()).getStudentCounts();
@@ -615,7 +637,45 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 		}
 		
+		System.out.println("Project had (" + project.getAdditionHashes().size() + ") hashes saved");
+		
 		project.getAdditionHashes().addAll(additionHashMap.values());
+		
+		System.out.println("Project now has (" + project.getAdditionHashes().size() + ") hashes saved");
+		
+		Map<Long, Map<Long, Integer>> comparisons = new HashMap<>();
+		
+		for(StudentProject studentProject1 : studentProjects) {
+			Map<Long, Integer> studentComparisons = new HashMap<>();
+			
+			for(StudentProject studentProject2 : studentProjects) {
+				if(studentProject1.getId().equals(studentProject2.getId()))
+					continue;
+				
+				studentComparisons.put(studentProject2.getId(), 0);
+			}
+			
+			comparisons.put(studentProject1.getId(), studentComparisons);
+		}
+		
+		System.out.println("Generating comparisons");
+		for(AdditionHash hash : project.getAdditionHashes()) {
+			Map<Long, Integer> counts = hash.getStudentCounts();
+			
+			for(Long studentID1 : counts.keySet()) {
+				Map<Long, Integer> studentComparisons = comparisons.get(studentID1);
+				
+				for(Long studentID2 : counts.keySet()) {
+					if(studentID1.equals(studentID2))
+						continue;
+					
+					studentComparisons.put(studentID2, studentComparisons.get(studentID2) + counts.get(studentID2));
+				}
+			}
+		}
+		
+		for(StudentComparison comparison : project.getStudentComparisons())
+			comparison.setCount(comparisons.get(comparison.getStudentProject1().getId()).get(comparison.getStudentProject2().getId()));
 	}
 	
 	private void calculateStudentDiffs(Project project, List<ProjectDate> projectDateList, Map<StudentProject, List<StudentProjectDate>> studentProjectListMap) {
@@ -686,8 +746,12 @@ public class ProjectServiceImpl implements ProjectService {
 				if(studentProject.getFirstCommit() == null || studentProject.getFirstCommit().compareTo(commit.getDate()) > 0)
 					studentProject.setFirstCommit(commit.getDate());
 				
-				if(commit.getAdditions() + commit.getDeletions() <= .5)
+				if(commit.getAdditions() + commit.getDeletions() <= .5) {
+					System.out.println("Commit (" + commit.getHash() + ") had no additions and deletions, skipping...");
+					//iteration with access to the previousCommitTime, important for time calculation and setting most recent commit
+					previousCommitTime = commit.getDate();
 					continue;
+				}
 				
 				//find the distance between the previous commit (earlier in time) and the current
 				//this distance is measured in minutes
@@ -713,7 +777,7 @@ public class ProjectServiceImpl implements ProjectService {
 				}
 				
 				if(studentProjectDate == null) {
-					System.out.println("Skipping Commit (" + commit.getHash() + ", " + commit.getDate() + ")");
+					System.out.println("Skipping Commit (" + commit.getHash() + ", " + commit.getDate() + ") as date was out of bounds");
 					continue;
 				}
 				
@@ -763,7 +827,7 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 		}
 		
-		calculateSimilarity(project, additionHashMap);
+		calculateSimilarity(project, studentProjectListMap.keySet(), additionHashMap);
 		
 		Map<LocalDate, List<StudentProjectDate>> dateToStudentDateMap = new HashMap<>(50);
 		
@@ -793,7 +857,6 @@ public class ProjectServiceImpl implements ProjectService {
 			DescriptiveStatistics additionStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics deletionStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics changesStats = new DescriptiveStatistics(studentProjectDateList.size());
-			//TODO Similarity
 			DescriptiveStatistics timeVelocityStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics commitVelocityStats = new DescriptiveStatistics(studentProjectDateList.size());
 			
@@ -811,7 +874,6 @@ public class ProjectServiceImpl implements ProjectService {
 				else
 					changesStats.addValue(studentProjectDate.getTotalAdditions() / studentProjectDate.getTotalDeletions());
 				
-				//TODO Similarity
 				if(project.getRunTestall()) {
 					if(studentProjectDate.getTotalMinutes() < .5)
 						timeVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()));
@@ -844,10 +906,16 @@ public class ProjectServiceImpl implements ProjectService {
 			projectDate.setAdditionStats(new BasicStatistics(additionStats));
 			projectDate.setDeletionStats(new BasicStatistics(deletionStats));
 			projectDate.setChangesStats(new BasicStatistics(changesStats));
-			//TODO Similarity
 			projectDate.setTimeVelocityStats(new BasicStatistics(timeVelocityStats));
 			projectDate.setCommitVelocityStats(new BasicStatistics(commitVelocityStats));
 		}
+		
+		DescriptiveStatistics similarityStats = new DescriptiveStatistics(project.getStudentComparisons().size());
+		
+		for(StudentComparison comparison : project.getStudentComparisons())
+			similarityStats.addValue(comparison.getCount());
+		
+		project.setSimilarityStats(new BasicStatistics(similarityStats));
 	}
 	
 	@Override

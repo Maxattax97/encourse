@@ -1,9 +1,11 @@
 package edu.purdue.cs.encourse.domain.relations;
 
+import edu.purdue.cs.encourse.domain.Project;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
@@ -27,6 +29,7 @@ import java.util.List;
 @Entity
 @Table(name = "STUDENT_COMPARISON")
 @NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
 public class StudentComparison {
 	
@@ -34,6 +37,11 @@ public class StudentComparison {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "STUDENT_COMPARISON_ID")
 	private Long id;
+	
+	@NonNull
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "PROJECT_ID")
+	private Project project;
 	
 	@NonNull
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -45,6 +53,7 @@ public class StudentComparison {
 	@JoinColumn(name = "SECOND_STUDENT_PROJECT_ID")
 	private StudentProject studentProject2;
 	
+	@NonNull
 	@Column(name = "SIMILARITY_COUNT")
 	private Integer count;
 	
