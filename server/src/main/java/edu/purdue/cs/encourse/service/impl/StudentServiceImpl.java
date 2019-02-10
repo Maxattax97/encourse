@@ -5,6 +5,7 @@ import edu.purdue.cs.encourse.database.StudentProjectDateRepository;
 import edu.purdue.cs.encourse.database.StudentProjectRepository;
 import edu.purdue.cs.encourse.domain.Commit;
 import edu.purdue.cs.encourse.domain.Project;
+import edu.purdue.cs.encourse.domain.ProjectDate;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.Student;
 import edu.purdue.cs.encourse.domain.TestScript;
@@ -239,6 +240,7 @@ public class StudentServiceImpl implements StudentService {
 	@Transactional(readOnly = true)
 	public StudentProjectDiffs getStudentProjectChanges(@NonNull ProjectStudentSearchModel model) throws InvalidRelationIdException {
 		StudentProject studentProject = getStudentProject(model.getProjectID(), model.getStudentID());
+		Project project = studentProject.getProject();
 		
 		List<Commit> commits = studentProject.getCommits();
 		
@@ -265,8 +267,15 @@ public class StudentServiceImpl implements StudentService {
 		
 		List<FrequencyDate> frequencies = new ArrayList<>();
 		
-		for(LocalDate date : frequencyMap.keySet())
-			frequencies.add(new FrequencyDate(date, frequencyMap.get(date)));
+		LocalDate date = project.getStartDate();
+		
+		while(date.compareTo(project.getDueDate()) <= 0) {
+			
+			if(frequencyMap.containsKey(date))
+				frequencies.add(new FrequencyDate(date, frequencyMap.get(date)));
+			
+			date = date.plusDays(1);
+		}
 		
 		studentProjectDiffs.setFrequencies(frequencies);
 		
