@@ -358,7 +358,6 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 			Double visiblePoints = student.getVisiblePoints() == null ? 0.0 : student.getVisiblePoints();
 			Double hiddenPoints = student.getHiddenPoints() == null ? 0.0 : student.getHiddenPoints();
 			
-			
 			if(commitSamples != null)
 				commitSamples[i] = commits;
 			
@@ -393,15 +392,19 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 				if(progressSamples != null)
 					progressSamples[i] = 0;
 				
-				if(minutes < .5)
-					timeVelocitySamples[i] = (0.0);
-				else
-					timeVelocitySamples[i]  = (100.0 / minutes);
+				if(timeVelocitySamples != null) {
+					if(minutes < .5)
+						timeVelocitySamples[i] = (0.0);
+					else
+						timeVelocitySamples[i]  = (100.0 / minutes);
+				}
 				
-				if(commits < .5)
-					commitVelocitySamples[i] = (0.0);
-				else
-					commitVelocitySamples[i] = (100.0 / commits);
+				if(commitVelocitySamples != null) {
+					if(commits < .5)
+						commitVelocitySamples[i] = (0.0);
+					else
+						commitVelocitySamples[i] = (100.0 / commits);
+				}
 			}
 			
 			//TODO Similarity
