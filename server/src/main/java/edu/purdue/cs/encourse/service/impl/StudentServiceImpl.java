@@ -271,8 +271,7 @@ public class StudentServiceImpl implements StudentService {
 		
 		while(date.compareTo(project.getDueDate()) <= 0) {
 			
-			if(frequencyMap.containsKey(date))
-				frequencies.add(new FrequencyDate(date, frequencyMap.get(date)));
+			frequencies.add(new FrequencyDate(date, frequencyMap.getOrDefault(date, 0)));
 			
 			date = date.plusDays(1);
 		}
