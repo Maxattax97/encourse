@@ -93,6 +93,13 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	}
 	
 	@Override
+	public CourseModel getCourseModel(@NonNull Long courseID) throws InvalidRelationIdException {
+		Course course = getCourse(courseID);
+		
+		return new CourseModel(course.getProfessor().getUserID(), course.getCRN(), course.getTitle(), course.getName(), course.getSemester(), course.getRemotePath());
+	}
+	
+	@Override
 	public Section getSection(@NonNull Long sectionID) throws InvalidRelationIdException {
 		Optional<Section> sectionOptional = sectionRepository.findById(sectionID);
 		

@@ -12,6 +12,7 @@ import edu.purdue.cs.encourse.domain.TestSuite;
 import edu.purdue.cs.encourse.domain.relations.CourseStudent;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
+import edu.purdue.cs.encourse.model.FrequencyDate;
 import edu.purdue.cs.encourse.model.ProjectStudentSearchModel;
 import edu.purdue.cs.encourse.model.StudentInfoModel;
 import edu.purdue.cs.encourse.model.SearchModel;
@@ -262,7 +263,12 @@ public class StudentServiceImpl implements StudentService {
 			frequencyMap.put(date, frequency);
 		}
 		
-		studentProjectDiffs.setFrequencies(frequencyMap);
+		List<FrequencyDate> frequencies = new ArrayList<>();
+		
+		for(LocalDate date : frequencyMap.keySet())
+			frequencies.add(new FrequencyDate(date, frequencyMap.get(date)));
+		
+		studentProjectDiffs.setFrequencies(frequencies);
 		
 		return studentProjectDiffs;
 	}

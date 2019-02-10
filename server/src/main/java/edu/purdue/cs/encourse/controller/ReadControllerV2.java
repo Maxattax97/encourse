@@ -64,6 +64,20 @@ public class ReadControllerV2 {
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
+	@RequestMapping(value = "/course",
+			produces = MediaType.APPLICATION_JSON_VALUE,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			method = RequestMethod.POST)
+	public @ResponseBody ResponseEntity<?> getCourse(@Valid @NonNull @RequestBody Long courseID) {
+		try {
+			return new ResponseEntity<>(courseService.getCourseModel(courseID), HttpStatus.OK);
+		}
+		catch (InvalidRelationIdException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
 	@RequestMapping(value = "/course/all",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)

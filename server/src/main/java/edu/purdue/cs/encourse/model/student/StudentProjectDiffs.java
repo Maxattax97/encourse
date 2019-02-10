@@ -2,6 +2,7 @@ package edu.purdue.cs.encourse.model.student;
 
 import edu.purdue.cs.encourse.domain.Commit;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
+import edu.purdue.cs.encourse.model.FrequencyDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,6 @@ public class StudentProjectDiffs {
 	
 	private List<Commit> commits;
 	
-	private Map<LocalDate, Integer> frequencies;
+	private List<FrequencyDate> frequencies;
 	
 }

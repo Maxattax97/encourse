@@ -805,15 +805,34 @@ public class ProjectServiceImpl implements ProjectService {
 				minuteStats.addValue(studentProjectDate.getTotalMinutes());
 				additionStats.addValue(studentProjectDate.getTotalAdditions());
 				deletionStats.addValue(studentProjectDate.getTotalDeletions());
-				changesStats.addValue(studentProjectDate.getTotalAdditions() / studentProjectDate.getTotalDeletions());
+				
+				if(studentProjectDate.getTotalDeletions() < .5)
+					changesStats.addValue(studentProjectDate.getTotalAdditions());
+				else
+					changesStats.addValue(studentProjectDate.getTotalAdditions() / studentProjectDate.getTotalDeletions());
+				
 				//TODO Similarity
 				if(project.getRunTestall()) {
-					timeVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalMinutes());
-					commitVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalCommits());
+					if(studentProjectDate.getTotalMinutes() < .5)
+						timeVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()));
+					else
+						timeVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalMinutes());
+					
+					if(studentProjectDate.getTotalCommits() < .5)
+						commitVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()));
+					else
+						commitVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalCommits());
 				}
 				else {
-					timeVelocityStats.addValue(100.0 / studentProjectDate.getTotalMinutes());
-					commitVelocityStats.addValue(100.0 / studentProjectDate.getTotalCommits());
+					if(studentProjectDate.getTotalMinutes() < .5)
+						timeVelocityStats.addValue(0.0);
+					else
+						timeVelocityStats.addValue(100.0 / studentProjectDate.getTotalMinutes());
+					
+					if(studentProjectDate.getTotalCommits() < .5)
+						commitVelocityStats.addValue(0.0);
+					else
+						commitVelocityStats.addValue(100.0 / studentProjectDate.getTotalCommits());
 				}
 			}
 			

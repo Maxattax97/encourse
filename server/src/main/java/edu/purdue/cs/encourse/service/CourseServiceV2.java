@@ -24,6 +24,8 @@ public interface CourseServiceV2 {
 	
 	Course getCourse(@NonNull Long courseID) throws InvalidRelationIdException;
 	
+	CourseModel getCourseModel(@NonNull Long courseID) throws InvalidRelationIdException;
+	
 	Section getSection(@NonNull Long sectionID) throws InvalidRelationIdException;
 	
 	Course addCourse(@NonNull CourseModel course) throws RelationException, IllegalArgumentException;
