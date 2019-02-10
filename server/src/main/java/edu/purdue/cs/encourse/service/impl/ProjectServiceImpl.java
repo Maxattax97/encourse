@@ -521,7 +521,6 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		ZoneId estZone = TimeZone.getTimeZone("EST").toZoneId();
 		
-		CourseStudent student = studentProject.getStudent();
 		Process process = executeScriptAndReturn("generateDiffsAfterDate.sh " + testingDirectory + " " + ZonedDateTime.of(studentProject.getMostRecentCommit(), estZone).plusSeconds(1));
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		
@@ -589,14 +588,14 @@ public class ProjectServiceImpl implements ProjectService {
 						
 						if(additionHash == null) {
 							additionHash = new AdditionHash(hash, project, new HashMap<>());
-							additionHash.getStudentCounts().put(student.getId(), 1);
+							additionHash.getStudentCounts().put(studentProject.getId(), 1);
 							
 							additionHashMap.put(hash, additionHash);
 						}
 						else {
-							count = additionHash.getStudentCounts().get(student.getId());
+							count = additionHash.getStudentCounts().get(studentProject.getId());
 							
-							additionHash.getStudentCounts().put(student.getId(), count == null ? 1 : count + 1);
+							additionHash.getStudentCounts().put(studentProject.getId(), count == null ? 1 : count + 1);
 						}
 					}
 					else if(line.charAt(0) == '-' && line.charAt(1) != '-')
