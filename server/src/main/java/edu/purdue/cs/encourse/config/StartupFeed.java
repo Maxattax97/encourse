@@ -125,7 +125,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 String[] info;
                 while (!(info = reader.readLine().split(" "))[0].equals("End")) {
                     Account ta = accountService.addAccount(new AccountModel(info[0] + "-lab" + lab[2], info[1], info[2], info[0] + "@purdue.edu", Account.Role.STUDENT.ordinal()));
-                    adminService.addUser(new UserModel(ta, lab[3]));
+                    adminService.addUser(new UserModel(ta, info[4]));
                     tas.add(adminService.addCourseTA(new CourseStudentModel(course.getCourseID(), ta.getUserID())));
                 }
                 
