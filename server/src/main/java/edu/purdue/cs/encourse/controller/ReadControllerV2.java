@@ -53,7 +53,7 @@ public class ReadControllerV2 {
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
-	@RequestMapping(value = "/course",
+	@RequestMapping(value = "/course/get",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
