@@ -548,14 +548,17 @@ public class ProjectServiceImpl implements ProjectService {
 				String[] split = line.split(",");
 				
 				if(commit != null) {
-					commit.setAdditions(commit.getAdditions() + additions);
-					commit.setDeletions(commit.getDeletions() + deletions);
-					
-					commitList.add(commit);
+					if(additions < 500) {
+						commit.setAdditions(commit.getAdditions() + additions);
+						commit.setDeletions(commit.getDeletions() + deletions);
+						commitList.add(commit);
+					}
+					else
+						commitList.add(commit);
 				}
-				
 				additions = 0;
 				deletions = 0;
+				
 				
 				try {
 					commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(estZone).toLocalDateTime(), 0.0, 0.0, 0.0, 0.0);
@@ -573,8 +576,10 @@ public class ProjectServiceImpl implements ProjectService {
 				if(line.startsWith("+++")) {
 					measureChanges = General.isSourceCodeExtension(line);
 					
-					commit.setAdditions(commit.getAdditions() + additions);
-					commit.setDeletions(commit.getDeletions() + deletions);
+					if(additions < 500) {
+						commit.setAdditions(commit.getAdditions() + additions);
+						commit.setDeletions(commit.getDeletions() + deletions);
+					}
 					
 					additions = deletions = 0;
 				}
@@ -605,8 +610,10 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 		
 		if(commit != null) {
-			commit.setAdditions(commit.getAdditions() + additions);
-			commit.setDeletions(commit.getDeletions() + deletions);
+			if(additions < 500) {
+				commit.setAdditions(commit.getAdditions() + additions);
+				commit.setDeletions(commit.getDeletions() + deletions);
+			}
 			
 			commitList.add(commit);
 		}
