@@ -516,6 +516,31 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 	}
 	
+	private void addFileDetailsToCommit(Project project, Long studentId, Commit commit, int additions, int deletions, Map<String, AdditionHash> additionHashMap, Map<String, Integer> commitAdditionHashes) {
+		if(additions < 500) {
+			commit.setAdditions(commit.getAdditions() + additions);
+			commit.setDeletions(commit.getDeletions() + deletions);
+			
+			AdditionHash additionHash;
+			
+			for(String hash : commitAdditionHashes.keySet()) {
+				additionHash = additionHashMap.get(hash);
+				
+				if(additionHash == null) {
+					additionHash = new AdditionHash(hash, project, new HashMap<>());
+					additionHash.getStudentCounts().put(studentId, commitAdditionHashes.get(hash));
+					
+					additionHashMap.put(hash, additionHash);
+				}
+				else {
+					Integer count = additionHash.getStudentCounts().get(studentId);
+					
+					additionHash.getStudentCounts().put(studentId, count == null ? 1 : count + commitAdditionHashes.get(hash));
+				}
+			}
+		}
+	}
+	
 	private List<Commit> createCommitObjects(Project project, StudentProject studentProject, Map<String, AdditionHash> additionHashMap, MessageDigest md5, String testingDirectory) throws IOException, InterruptedException {
 		List<Commit> commitList = new ArrayList<>(30);
 		
@@ -536,6 +561,8 @@ public class ProjectServiceImpl implements ProjectService {
 		AdditionHash additionHash;
 		Integer count;
 		
+		Map<String, Integer> commitAdditionHashes = new HashMap<>();
+		
 		//FORMAT
 		//@DIFF,<commit_hash>,<date in YYYY-MM-dd>
 		//+++<FILE_NAME.FILE_DESCRIPTOR>
@@ -548,13 +575,12 @@ public class ProjectServiceImpl implements ProjectService {
 				String[] split = line.split(",");
 				
 				if(commit != null) {
-					if(additions < 500) {
-						commit.setAdditions(commit.getAdditions() + additions);
-						commit.setDeletions(commit.getDeletions() + deletions);
-						commitList.add(commit);
-					}
-					else
-						commitList.add(commit);
+					
+					addFileDetailsToCommit(project, studentProject.getId(), commit, additions, deletions, additionHashMap, commitAdditionHashes);
+					
+					commitAdditionHashes.clear();
+					
+					commitList.add(commit);
 				}
 				additions = 0;
 				deletions = 0;
@@ -576,10 +602,9 @@ public class ProjectServiceImpl implements ProjectService {
 				if(line.startsWith("+++")) {
 					measureChanges = General.isSourceCodeExtension(line);
 					
-					if(additions < 500) {
-						commit.setAdditions(commit.getAdditions() + additions);
-						commit.setDeletions(commit.getDeletions() + deletions);
-					}
+					addFileDetailsToCommit(project, studentProject.getId(), commit, additions, deletions, additionHashMap, commitAdditionHashes);
+					
+					commitAdditionHashes.clear();
 					
 					additions = deletions = 0;
 				}
@@ -589,19 +614,7 @@ public class ProjectServiceImpl implements ProjectService {
 						
 						hash = new BigInteger(1, md5.digest(line.getBytes())).toString();
 						
-						additionHash = additionHashMap.get(hash);
-						
-						if(additionHash == null) {
-							additionHash = new AdditionHash(hash, project, new HashMap<>());
-							additionHash.getStudentCounts().put(studentProject.getId(), 1);
-							
-							additionHashMap.put(hash, additionHash);
-						}
-						else {
-							count = additionHash.getStudentCounts().get(studentProject.getId());
-							
-							additionHash.getStudentCounts().put(studentProject.getId(), count == null ? 1 : count + 1);
-						}
+						commitAdditionHashes.put(hash, commitAdditionHashes.getOrDefault(hash, 1));
 					}
 					else if(line.charAt(0) == '-' && line.charAt(1) != '-')
 						deletions++;
@@ -610,10 +623,8 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 		
 		if(commit != null) {
-			if(additions < 500) {
-				commit.setAdditions(commit.getAdditions() + additions);
-				commit.setDeletions(commit.getDeletions() + deletions);
-			}
+			
+			addFileDetailsToCommit(project, studentProject.getId(), commit, additions, deletions, additionHashMap, commitAdditionHashes);
 			
 			commitList.add(commit);
 		}
