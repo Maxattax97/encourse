@@ -614,7 +614,7 @@ public class ProjectServiceImpl implements ProjectService {
 						
 						hash = new BigInteger(1, md5.digest(line.getBytes())).toString();
 						
-						commitAdditionHashes.put(hash, commitAdditionHashes.getOrDefault(hash, 1));
+						commitAdditionHashes.put(hash, commitAdditionHashes.getOrDefault(hash, 0) + 1);
 					}
 					else if(line.charAt(0) == '-' && line.charAt(1) != '-')
 						deletions++;
