@@ -10,17 +10,6 @@ import {Chart} from '../../../Helpers'
 
 class StudentProgress extends Component {
 
-    componentDidMount() {
-        if(this.props.student && this.props.project)
-            retrieveStudentProgress(this.props.student, this.props.project)
-    }
-
-    componentDidUpdate(prevProps) {
-        if(this.props.project && this.props.student && (!(prevProps.project) || prevProps.project.index !== this.props.project.index)) {
-            retrieveStudentProgress(this.props.student, this.props.project)
-        }
-    }
-
     dateFormatter = (dateUnix) => {
         return moment(dateUnix).format('M-D')
     }

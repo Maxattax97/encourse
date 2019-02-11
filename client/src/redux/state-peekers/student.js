@@ -11,6 +11,8 @@ export function getCurrentCommit(state) {
 
 export const getStudentStatistics = createPeeker('stats')
 
+export const getStudentCharts = createPeeker('studentCharts')
+
 export const getStudentCommitFrequency = createPeeker('commitFrequency')
 
 export const getStudentCodeChanges = createPeeker('codeChanges')

@@ -22,13 +22,14 @@ import {Summary} from '../Helpers'
 import StudentSuiteInfo from './student/StudentSuiteInfo'
 import StudentCommitFilter from './student/StudentCommitFilter'
 import {retrieveStudent} from '../../redux/retrievals/student'
+import {retrieveCourse} from '../../redux/retrievals/course'
 
 
 class StudentPanel extends Component {
 
     componentDidMount = () => {
-        if(!this.props.currentStudent)
-            retrieveStudent({id: this.props.match.params.id}, this.props.currentCourseId, this.props.currentSemesterId)
+        retrieveCourse(this.props.currentCourseId)
+        retrieveStudent(this.props.student.studentID)
     }
 
 	componentWillUnmount() {
@@ -42,7 +43,7 @@ class StudentPanel extends Component {
             'Academic Dishonesty Report'
         ]
 
-        let studentDishonestyRedirect = () => { history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/student-dishonesty/${this.props.student.id}`)}
+        let studentDishonestyRedirect = () => { history.push(`/${this.props.currentCourseId}/student-dishonesty/${this.props.student.studentID}`)}
 
         const actions = [
             () => {
@@ -57,7 +58,7 @@ class StudentPanel extends Component {
                 <div className='panel-left-nav'>
                     <BackNavigation/>
                     <ProjectNavigation/>
-                    <ActionNavigation actions={ actions } action_names={ action_names }/>
+                    {/*<ActionNavigation actions={ actions } action_names={ action_names }/>*/}
                 </div>
 
                 <ProgressModal id={2} />
@@ -66,21 +67,13 @@ class StudentPanel extends Component {
                     <div className='panel-student-content'>
                         <h1 className='header'>
                             {
-                                 this.props.student ? `${this.props.student.first_name} ${this.props.student.last_name}` : ''
+                                 this.props.student ? `${this.props.student.firstName} ${this.props.student.lastName}` : ''
                             }
                         </h1>
                         <div className="h1 break-line header" />
 
                         <h3 className='header'>Charts</h3>
-                        <StudentChartSlider/>
                         <StudentCharts />
-
-                        <div className="h1 break-line" />
-                        <h3 className='header'>Statistics</h3>
-                        <Summary columns={2}>
-                            <StudentProjectInfo />
-                            <StudentSuiteInfo/>
-                        </Summary>
 
                         <div className='h1 break-line' />
                         <StudentCommitFilter/>
@@ -97,7 +90,6 @@ const mapStateToProps = (state) => {
         student: getCurrentStudent(state),
         project: getCurrentProject(state),
         currentCourseId: getCurrentCourseId(state),
-        currentSemesterId: getCurrentSemesterId(state),
     }
 }
 

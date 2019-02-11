@@ -6,29 +6,16 @@ import {getCurrentProject} from "../../../redux/state-peekers/projects"
 import {getCurrentCourseId, getCurrentSemesterId} from "../../../redux/state-peekers/course"
 import SelectableCardSummary from "../common/SelectableCardSummary"
 import {retrieveStudentCommitHistory} from '../../../redux/retrievals/student'
-import {getCurrentStudent, getStudentCommitHistory} from '../../../redux/state-peekers/student'
+import {getCurrentStudent, getStudentCharts, getStudentCommitHistory} from '../../../redux/state-peekers/student'
 import {Title} from '../../Helpers'
 import {setCurrentCommit} from '../../../redux/actions/student'
+import moment from 'moment'
 
 class StudentCommitSummary extends Component {
 
-    componentDidMount() {
-        if(this.props.student && this.props.project) {
-            this.props.resetCommitsPage()
-            retrieveStudentCommitHistory(this.props.student, this.props.project, 1, 215)
-        }
-    }
-
-    componentDidUpdate(prevProps) {
-        if(this.props.student && this.props.project && (!(prevProps.project) || !(prevProps.student) || prevProps.project.index !== this.props.project.index)) {
-            this.props.resetCommitsPage()
-            retrieveStudentCommitHistory(this.props.student, this.props.project, 1, 215)
-        }
-    }
-
     clickCommitCard = (commit) => {
         this.props.setCurrentCommit(commit)
-        history.push(`/${this.props.course}/${this.props.semester}/student/${this.props.student.id}/commit/${commit.hash}`)
+        history.push(`/${this.props.course}/student/${this.props.student.studentID}/commit/${commit.hash}`)
     }
 
     renderPreview = (commit) => {
@@ -36,8 +23,8 @@ class StudentCommitSummary extends Component {
         return (
             <div>
                 <Title>
-                    <h4>{ commit.hash }</h4>
-                    <h4>{ commit.date }</h4>
+                    <h4>{ commit.hash.substring(0, 7) }</h4>
+                    <h4>{ moment(commit.date).format("M-D HH:mm:ss") }</h4>
                 </Title>
                 <div className="h4 break-line header" />
                 <div className="preview-content">
@@ -51,7 +38,7 @@ class StudentCommitSummary extends Component {
     render() {
         return (
             <SelectableCardSummary type='students'
-                                   values={this.props.history.data}
+                                   values={(this.props.charts.data || {}).commits}
                                    render={this.renderPreview}
                                    onClick={this.clickCommitCard}
                                    noCheckmark />
@@ -64,9 +51,8 @@ const mapStateToProps = (state) => {
     return {
         student: getCurrentStudent(state),
         project: getCurrentProject(state),
-        history: getStudentCommitHistory(state),
         course: getCurrentCourseId(state),
-        semester: getCurrentSemesterId(state),
+        charts: getStudentCharts(state)
     }
 }
 

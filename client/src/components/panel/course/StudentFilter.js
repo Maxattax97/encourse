@@ -5,6 +5,7 @@ import CourseStudentSummary from './StudentSummary'
 import {toggleSelectAllCards, resetFilterState, setFilterState} from "../../../redux/actions"
 import {getAllSelected, getFilters} from "../../../redux/state-peekers/control"
 import {getStudents} from "../../../redux/state-peekers/course"
+import {getCurrentProject} from '../../../redux/state-peekers/projects'
 
 class StudentFilter extends Component {
 
@@ -17,8 +18,8 @@ class StudentFilter extends Component {
     }
 
     getFilterCommitValues = () => {
-        let values = ['Any']
-        if(this.props.students && this.props.students.page && 
+        let values = ['Any', '0-25%', '25-50%', '50-75%', '75-100%']
+        /*if(this.props.students && this.props.students.page &&
             this.props.students.page.filters && this.props.students.page.filters.commitCounts) {
                 const commitCounts = this.props.students.page.filters.commitCounts
                 for(let i = 0; i < commitCounts.length - 1; i++) {
@@ -29,14 +30,14 @@ class StudentFilter extends Component {
                     } 
                 }
 
-        }
+        }*/
 
         return values
     }
 
     getFilterTimeValues = () => {
-        let values = ['Any']
-        if(this.props.students && this.props.students.page && 
+        let values = ['Any', '0-25%', '25-50%', '50-75%', '75-100%']
+        /*if(this.props.students && this.props.students.page &&
             this.props.students.page.filters && this.props.students.page.filters.timeSpent) {
                 const timeSpent = this.props.students.page.filters.timeSpent
                 for(let i = 0; i < timeSpent.length - 1; i++) {
@@ -46,14 +47,14 @@ class StudentFilter extends Component {
                         values.push(`${timeSpent[i]} - ${timeSpent[i+1]}`)
                     } 
                 }
-        }
+        }*/
 
         return values
     }
 
     getFilterProgressValues = () => {
-        let values = ['Any']
-        if(this.props.students && this.props.students.page && 
+        let values = ['Any', '0-25%', '25-50%', '50-75%', '75-100%']
+        /*if(this.props.students && this.props.students.page &&
             this.props.students.page.filters && this.props.students.page.filters.grades) {
                 const grades = this.props.students.page.filters.grades
                 for(let i = 0; i < grades.length - 1; i++) {
@@ -63,7 +64,7 @@ class StudentFilter extends Component {
                         values.push(`${grades[i]}% - ${grades[i+1]}%`)
                     } 
                 }
-        }
+        }*/
 
         return values
     }
@@ -71,9 +72,9 @@ class StudentFilter extends Component {
 	render() {
         return (
             <div className='course-students'>
-                <h3 className='header'>Students { this.props.students.page ? '(' + this.props.students.page.totalSize + ')' : '' }</h3>
+                <h3 className='header'>Students { this.props.students.data.length ? '(' + this.props.students.data.length + ')' : '' }</h3>
                 {
-                    this.props.students.data.length ?
+                    !this.props.students.loading && !this.props.students.error ?
                         <Filter>
 	                        <Checkbox onClick={() => this.props.toggleSelectAllCards()}>
                                 {
@@ -116,11 +117,16 @@ class StudentFilter extends Component {
                                       addCustom
                                       right />
 
-	                        <Dropdown header='h5'
-	                                  text='View'
-	                                  values={this.view_values}
-                                      filter='view_filter'
-	                                  left/>
+                            {
+                                this.props.project && this.props.project.runTestall ?
+                                    <Dropdown header='h5'
+                                              text='View'
+                                              values={this.view_values}
+                                              filter='view_filter'
+                                              left/>
+                                    : null
+                            }
+
                         </Filter>
                         :
                         null
@@ -136,6 +142,7 @@ const mapStateToProps = (state) => {
         students: getStudents(state),
         selectedAllStudents: getAllSelected(state, 'students'),
         filters: getFilters(state),
+        project: getCurrentProject(state)
     }
 }
 

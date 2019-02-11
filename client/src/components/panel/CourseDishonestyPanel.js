@@ -3,16 +3,14 @@ import ActionNavigation from '../navigation/ActionNavigation'
 import {Title} from '../Helpers'
 import {getStudentPreviews, setCurrentStudent, setModalState, getDishonestyReport, updateCourseDishonestyPage, resetCourseDishonestyPage} from '../../redux/actions'
 import {getCurrentCourseId, getStudents} from '../../redux/state-peekers/course'
-import url from '../../server'
 import { connect } from 'react-redux'
-import StudentReportFilter from './course-dishonesty/StudentReportFilter'
 import CourseDishonestyCharts from './course-dishonesty/CourseDishonestyCharts'
 import ShareReportModal from './common/ShareReportModal'
 import TaskModal from './common/TaskModal'
 import ProjectNavigation from '../navigation/ProjectNavigation'
 import {getCurrentProject} from '../../redux/state-peekers/projects'
 import BackNavigation from '../navigation/BackNavigation'
-import {retrieveTestScripts} from '../../redux/retrievals/projects'
+import {retrieveCourse} from '../../redux/retrievals/course'
 
 class CourseDishonestyPanel extends Component {
 
@@ -29,6 +27,10 @@ class CourseDishonestyPanel extends Component {
 
     share = () => {
         this.props.setModalState(2)
+    }
+
+    componentDidMount = () => {
+        retrieveCourse(this.props.currentCourseId)
     }
 
     render() {
@@ -49,7 +51,7 @@ class CourseDishonestyPanel extends Component {
                 <div className='panel-left-nav'>
                     <BackNavigation/>
                     <ProjectNavigation/>
-                    <ActionNavigation actions={ actions } action_names={ action_names }/>
+                    {/*<ActionNavigation actions={ actions } action_names={ action_names }/>*/}
                 </div>
 
                 <TaskModal id={1} />
@@ -65,10 +67,6 @@ class CourseDishonestyPanel extends Component {
 
                         <h3 className='header'>Charts</h3>
                         <CourseDishonestyCharts/>
-
-                        <div className='h1 break-line' />
-
-                        <StudentReportFilter/>
                     </div>
                 </div>
             </div>
@@ -81,8 +79,6 @@ const mapStateToProps = (state) => {
         students: getStudents(state),
         currentCourseId: getCurrentCourseId(state),
         project: getCurrentProject(state),
-        page: state.course && state.course.dishonestyPage ? state.course.dishonestyPage : 1,
-        last: state.course && state.course.getDishonestyReportData ? state.course.getDishonestyReportData.last : true,
     }
 }
 
@@ -92,8 +88,6 @@ const mapDispatchToProps = (dispatch) => {
         setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
         getDishonestyReport: (url, headers, body) => dispatch(getDishonestyReport(url, headers, body)),
         setModalState: (id) => dispatch(setModalState(id)),
-        updateCourseDishonestyPage: () => dispatch(updateCourseDishonestyPage()),
-        resetCourseDishonestyPage: () => dispatch(resetCourseDishonestyPage()),
     }
 }
 

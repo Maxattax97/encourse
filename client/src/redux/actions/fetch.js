@@ -22,7 +22,6 @@ export function genericDispatch(actionClass, type, method) {
 						if(response.type !== 'basic') return response.json()
 					})
 					.then((data) => {
-						if(type === 'GET_STUDENTS') console.log(data)
 						dispatch({
                             type,
                             class: actionClass,

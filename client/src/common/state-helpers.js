@@ -1,8 +1,9 @@
 
 export function isAccountNotTA(account) {
-    return account.loading === false && account.data[0].role !== 1;
+    return !account.loading && !account.error && account.data.role !== 0;
 }
 
 export function isAccountTA(account) {
-    return account.loading === false && account.data[0].role === 1;
+    console.log(account, !account.loading, !account.error, account.data.role === 0)
+    return !account.loading && !account.error && account.data.role === 0;
 }

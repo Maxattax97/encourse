@@ -2,14 +2,18 @@ import {Component} from 'react'
 import React from 'react'
 import {connect} from 'react-redux'
 import {history} from '../../redux/store'
-import {getCurrentCourseId, getCurrentSemesterId} from '../../redux/state-peekers/course'
+import {getCourse, getCurrentCourseId, getCurrentSemesterId} from '../../redux/state-peekers/course'
 
 class BackNavigation extends Component {
     render() {
         return (
-            <div className='top-nav back-nav svg-icon float-height action' onClick={ () => history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/course`)}>
+            <div className='top-nav back-nav svg-icon float-height action' onClick={ () => history.push(`/${this.props.currentCourseId}/course`)}>
                 <h1>
-                    { this.props.currentCourseId }
+                    {
+                        !this.props.course.loading && !this.props.course.error ?
+                            this.props.course.data.name :
+                            null
+                    }
                 </h1>
             </div>
         )
@@ -19,7 +23,7 @@ class BackNavigation extends Component {
 const mapStateToProps = (state) => {
     return {
         currentCourseId: getCurrentCourseId(state),
-        currentSemesterId: getCurrentSemesterId(state),
+        course: getCourse(state)
     }
 }
 

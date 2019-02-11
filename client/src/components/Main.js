@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Route, Redirect, Switch } from 'react-router'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { defaultCourse, defaultSemester } from '../defaults'
+import { defaultCourse } from '../defaults'
 import { history } from '../redux/store'
 import { setModalState, getAccount, setCurrentCourse, setCurrentSemester, clearCurrentCourse, clearCurrentSemester } from '../redux/actions'
 import { getCurrentCourseId, getCurrentSemesterId } from '../redux/state-peekers/course'
@@ -37,27 +37,19 @@ class Main extends Component {
         this.props.clearCurrentSemester()
 
         let course = this.props.match.params.courseID ? this.props.match.params.courseID : defaultCourse
-        let semester = this.props.match.params.semesterID ? this.props.match.params.semesterID : defaultSemester
         const page = this.props.path.substring(this.props.path.lastIndexOf('/') + 1)
 
-        if(!/^((Fall)|(Spring)|(Summer))2[0-9][0-9][0-9]$/.test(semester)) {
-           semester = defaultSemester
-        }
-
-        if(!/^[a-z]+[0-9]{3,}$/.test(course)) {
+        if(!/^[0-9]+$/.test(course)) {
             course = defaultCourse
         }
-            
-        this.props.setCurrentSemester(semester)
-        this.props.setCurrentCourse(course)
-        
-        if(page !== semester) {
-            history.push(`/${course}/${semester}/${page}`)
-        } else {
-            history.push(`/${course}/${semester}/course`)
-        }
 
-        this.props.getAccount(`${url}/api/account`)
+        this.props.setCurrentCourse(course)
+
+        history.push(`/${course}/course`)
+
+        this.props.getAccount(`${url}/api/account`, {
+            "Content-Type": "application/json"
+        })
     }
 
     componentDidUpdate(prevProps) {
@@ -86,34 +78,34 @@ class Main extends Component {
                             onClick={ this.props.closeModal }
                         />
                         <Switch>
-                            <Route path="/:courseID/:semesterID/course" render={(navProps) =>
+                            <Route path="/:courseID/course" render={(navProps) =>
                                 <CoursePanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route exact path="/:courseID/:semesterID/student/:id" render={(navProps) =>
+                            <Route exact path="/:courseID/student/:id" render={(navProps) =>
                                 <StudentPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path='/:courseID/:semesterID/student/:studentID/commit/:commitID' render={(navProps) =>
+                            <Route path='/:courseID/student/:studentID/commit/:commitID' render={(navProps) =>
                                 <StudentCommitDiffPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/:courseID/:semesterID/admin" render={(navProps) =>
+                            <Route path="/:courseID/admin" render={(navProps) =>
                                 <AdminPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/:courseID/:semesterID/projects" render={(navProps) =>
+                            <Route path="/:courseID/projects" render={(navProps) =>
                                 <ProjectPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/:courseID/:semesterID/manage-tas" render={(navProps) =>
+                            <Route path="/:courseID/manage-tas" render={(navProps) =>
                                 <ManageTAPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/:courseID/:semesterID/course-dishonesty" render={(navProps) =>
+                            <Route path="/:courseID/course-dishonesty" render={(navProps) =>
                                 <CourseDishonestyPanel ref={ this.setChild } {...navProps} />
                             }/>
-                            <Route path="/:courseID/:semesterID/student-dishonesty/:id" render={(navProps) =>
+                            <Route path="/:courseID/student-dishonesty/:id" render={(navProps) =>
                                 <StudentDishonestyPanel ref={ this.setChild } {...navProps}/>
                             }/>
-                            <Route path="/:courseID/:semesterID/settings" render={(/* navProps */) =>
+                            <Route path="/:courseID/settings" render={(/* navProps */) =>
                                 <PreferencePanel ref={ this.setChild } />
                             }/>
-                            <Route path='/' render={(/* navProps */) => <Redirect to={`/${defaultCourse}/${defaultSemester}/course`}/>}/>
+                            <Route path='/' render={(/* navProps */) => <Redirect to={`/${defaultCourse}/course`}/>}/>
                         </Switch>
                     </div>
                 </div>

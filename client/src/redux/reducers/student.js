@@ -45,6 +45,22 @@ function clearCommit(state, action) {
     }
 }
 
+function formatStudentCharts(udata) {
+    if(!udata)
+        return []
+
+    udata.frequencies = udata.frequencies.map(frequency => {
+        return {
+            date: moment(frequency.date).format('M-D'),
+            frequency: frequency.frequency
+        }
+    }).sort((a, b) => moment(a.date).diff(moment(b.date)))
+
+    udata.commits = udata.commits.sort((a, b) => moment(a.date).diff(moment(b.date)))
+
+    return udata
+}
+
 function formatCommitFrequency(udata) {
     if (!udata) {
         return []
@@ -198,6 +214,8 @@ export default function student(state = {}, action) {
             return clearCommit(state, action)
         case 'GET':
             return forwardData(state, action, 'student')
+        case 'GET_STUDENT_CHARTS':
+            return forwardData(state, action, 'studentCharts', formatStudentCharts)
         case 'GET_PROGRESS_LINE':
             return forwardData(state, action, 'studentProgress', formatStudentProgress)
         case 'GET_COMMIT_FREQUENCY':

@@ -223,7 +223,7 @@ export const Dropdown = connect(DropdownClass.mapStateToProps, DropdownClass.map
 
 export class Chart extends Component {
     render() {
-	    if(this.props.chart.loading)
+	    if(this.props.chart.loading || this.props.chart.error)
 		    return (
 			    <div className='chart-container loading' title={ this.props.title ? this.props.title : null}>
 				    <LoadingIcon/>

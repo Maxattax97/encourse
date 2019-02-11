@@ -52,7 +52,38 @@ function formatStudents(udata, extra, state) {
     }*/
 
 
-    return udata
+    return udata.sort((a, b) => {
+        if(a.lastName < b.lastName)
+            return -1
+        if(a.lastName > b.lastName)
+            return 1
+        return 0
+    })
+}
+
+function formatChart(udata) {
+    if(udata) {
+        const interval = (udata.courseStats.max - udata.courseStats.min) / udata.bars.length
+
+        udata.bars.forEach(bar => bar.index = bar.index * interval + interval / 2)
+    }
+}
+
+function formatCourseCharts(udata) {
+
+    formatChart(udata.commits)
+
+    formatChart(udata.time)
+
+    formatChart(udata.changes)
+
+    formatChart(udata.commitVelocity)
+
+    formatChart(udata.timeVelocity)
+
+    formatChart(udata.similarity)
+
+    return udata;
 }
 
 function formatDishonestyReport(udata, extra, state) {
@@ -261,8 +292,14 @@ export default function course(state = {}, action) {
             return clearCurrentCourse(state, action)
         case 'CLEAR_CURRENT_SEMESTER':
             return clearCurrentSemester(state, action)
+        case 'GET_COURSE':
+            return forwardData(state, action, 'course')
         case 'GET_STUDENTS':
-            return forwardData(state, action, 'students', formatStudents, true)
+            return forwardData(state, action, 'students', formatStudents)
+        case 'GET_COURSE_CHARTS':
+            return forwardData(state, action, 'courseCharts', formatCourseCharts)
+        case 'GET_COURSE_FILTER_CHARTS':
+            return forwardData(state, action, 'courseFilterCharts', formatCourseCharts)
         case 'GET_SECTIONS':
             return forwardData(state, action, 'sections')
         case 'GET_PROGRESS':

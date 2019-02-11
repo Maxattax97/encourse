@@ -1,2 +1,1 @@
-export const defaultCourse = 'cs252'
-export const defaultSemester = 'Spring2019'
+export const defaultCourse = '1'

@@ -68,8 +68,20 @@ export function setCurrentTA(ta, index) {
     }
 }
 
+export const getCourse = genericDispatch(
+    class_type, 'GET_COURSE', 'POST'
+)
+
 export const getStudentPreviews = genericDispatch(
     class_type, 'GET_STUDENTS', 'POST'
+)
+
+export const getCourseCharts = genericDispatch(
+    class_type, 'GET_COURSE_CHARTS', 'POST'
+)
+
+export const getCourseFilterCharts = genericDispatch(
+    class_type, 'GET_COURSE_FILTER_CHARTS', 'POST'
 )
 
 export const getSectionsData = genericDispatch(

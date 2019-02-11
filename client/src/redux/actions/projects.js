@@ -19,7 +19,7 @@ export function toggleHidden() {
 }
 
 export const getClassProjects = genericDispatch(
-    class_type, 'GET_ALL', 'GET'
+    class_type, 'GET_ALL', 'POST'
 )
 
 export const addProject = genericDispatch(

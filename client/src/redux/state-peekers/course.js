@@ -7,7 +7,13 @@ export const getCourseStats = createPeeker('stats')
 
 export const getStudentsStats = createPeeker('studentsStats')
 
+export const getCourse = createPeeker('course')
+
 export const getStudents = createPeeker('students')
+
+export const getCourseCharts = createPeeker('courseCharts')
+
+export const getCourseFilterCharts = createPeeker('courseFilterCharts')
 
 export const getSections = createPeeker('sections')
 
@@ -26,11 +32,11 @@ export const getTeachingAssistants = createPeeker('teachingAssistants')
 export const getDishonestyReport = createPeeker('dishonestyReport')
 
 export function getCurrentCourseId(state) {
-	return state.course && state.course.currentCourseId ? state.course.currentCourseId : defaultCourse
+	return 1//state.course && state.course.currentCourseId ? state.course.currentCourseId : defaultCourse
 }
 
 export function getCurrentSemesterId(state) {
-	return state.course && state.course.currentSemesterId ? state.course.currentSemesterId : defaultSemester
+	return state.course && state.course.currentSemesterId ? state.course.currentSemesterId : 0
 }
 
 export function getCurrentTAIndex(state) {

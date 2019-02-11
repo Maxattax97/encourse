@@ -11,16 +11,19 @@ import {retrieveAllStudents} from '../../../redux/retrievals/course'
 import {getCurrentProject} from '../../../redux/state-peekers/projects'
 import {getStudents, getCurrentCourseId, getCurrentSemesterId} from '../../../redux/state-peekers/course'
 import {getFilters, getFiltersHaveChanged} from '../../../redux/state-peekers/control'
+import {hourMinutesFromMinutes} from '../../../common/time-helpers'
 
 class StudentSummary extends Component {
 
     componentDidMount() {
         if(this.props.project)
-            retrieveAllStudents(this.props.project, this.props.course, this.props.semester)
+            retrieveAllStudents(this.props.project)
     }
 
     componentDidUpdate(prevProps) {
-        if(!this.props.project)
+        if(this.props.project !== prevProps.project)
+            retrieveAllStudents(this.props.project)
+        /*if(!this.props.project)
             return;
 
         if(!(prevProps.project) || prevProps.project.index !== this.props.project.index) {
@@ -70,7 +73,7 @@ class StudentSummary extends Component {
 
 			retrieveAllStudents(this.props.project, this.props.course, this.props.semester, body)
 			this.props.toggleFiltersHaveChanged()
-		}
+		}*/
 	}
 
 	getSortBy = (value) => {
@@ -92,29 +95,29 @@ class StudentSummary extends Component {
 
 	clickStudentCard = (student) => {
 	    this.props.setCurrentStudent(student)
-	    history.push(`/${this.props.course}/${this.props.semester}/student/${student.id}`)
+	    history.push(`/${this.props.course}/student/${student.studentID}`)
 	};
 
 	renderPreview = (student) => {
 	    const hasVisible = !this.props.filters.view_filter || this.props.filters.view_filter === 1
         const hasHidden = !this.props.filters.view_filter || this.props.filters.view_filter === 2
-	    const totalPoints = (hasVisible ? student.totals[this.props.project.id] : 0) + (hasHidden ? student.hiddenTotals[this.props.project.id] : 0)
-        const points = (hasVisible ? student.points[this.props.project.id] : 0) + (hasHidden ? student.hiddenPoints[this.props.project.id] : 0)
+	    const totalPoints = (hasVisible && this.props.project.runTestall ? this.props.project.totalVisiblePoints : 0) + (hasHidden && this.props.project.runTestall ? this.props.project.totalHiddenPoints : 0)
+        const points = (hasVisible ? student.visiblePoints : 0) + (hasHidden ? student.hiddenPoints : 0)
 
 	    return (
 	        <div>
 	            <Title>
-	                <h4>{ student.first_name }</h4>
-	                <h4>{ student.last_name }</h4>
+	                <h4>{ student.firstName }</h4>
+	                <h4>{ student.lastName }</h4>
 	            </Title>
 	            <div className="h4 break-line header" />
 	            <div className="preview-content">
-	                <h5>Time: { student.timeSpent[this.props.project.id] } hours</h5>
-	                <h5>Commits: { student.commitCounts[this.props.project.id] }</h5>
+	                <h5>Time: { hourMinutesFromMinutes(student.minutes) }</h5>
+	                <h5>Commits: { student.commits }</h5>
 	            </div>
 	            <div className="student-preview-progress">
 	                <div className="progress-bar">
-	                    <div style={{width: (totalPoints <= 0.01 ? 100 : points / totalPoints * 100.0) + '%'}} />
+	                    <div style={{width: (totalPoints <= 0.01 ? 100 : points / totalPoints * 100.0) + '%', background: this.runTestall ? "#4caf50" : "gray"}} />
 	                </div>
 	                <h6 className="progress-text">
                         {points}/{totalPoints}
@@ -142,7 +145,6 @@ const mapStateToProps = (state) => {
         students: getStudents(state),
         project: getCurrentProject(state),
         course: getCurrentCourseId(state),
-        semester: getCurrentSemesterId(state),
 		filters: getFilters(state),
 		filtersHaveChanged: getFiltersHaveChanged(state),
     }

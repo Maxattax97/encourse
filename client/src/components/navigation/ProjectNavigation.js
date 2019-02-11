@@ -13,17 +13,17 @@ import {isAccountNotTA} from '../../common/state-helpers'
 class ProjectNavigation extends Component {
 
     componentDidMount = () => {
-        if(!this.props.projects.length && this.props.currentCourseId && this.props.currentSemesterId)
-            retrieveAllProjects(this.props.currentCourseId, this.props.currentSemesterId)
+        if(!this.props.projects.length && this.props.currentCourseId)
+            retrieveAllProjects(this.props.currentCourseId)
     }
 
     componentDidUpdate = (prevProps) => {
-        if(this.props.currentCourseId !== prevProps.currentCourseId || this.props.currentSemesterId !== prevProps.currentSemesterId)
-            retrieveAllProjects(this.props.currentCourseId, this.props.currentSemesterId)
+        if(this.props.currentCourseId !== prevProps.currentCourseId)
+            retrieveAllProjects(this.props.currentCourseId)
     }
 
     openProjectOptions = () => {
-        history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/projects`)
+        history.push(`/${this.props.currentCourseId}/projects`)
     };
 
     render() {
@@ -34,29 +34,30 @@ class ProjectNavigation extends Component {
                 </div>
                 :
                 this.props.projects.map((project, index) =>
-                    <div key={ project.id }
-                         onClick={ () => this.props.setCurrentProject(project.id, index) }
+                    <div key={ project.projectID }
+                         onClick={ () => this.props.setCurrentProject(project.projectID, index) }
                          className={ `action${this.props.project === project ? ' list-highlight' : ''}` }>
                         <h4>
-                            { project.project_name }
+                            { project.name }
                         </h4>
                     </div>
                 )
-
-        console.log(this.props.account);
 
         return (
             <div className="list-nav side-nav-left">
                 <Card>
                     <div className="list-container">
-                        <Title onClick={ this.openProjectOptions }>
-                            <h3 className='header'>Projects</h3>
-                            {
-                                isAccountNotTA(this.props.account) ?
+                        {
+                            false ?
+                                <Title onClick={ this.openProjectOptions }>
+                                    <h3 className='header'>Projects</h3>
                                     <SettingsIcon/>
-                                    : null
-                            }
-                        </Title>
+                                </Title>
+                                :
+                                <Title>
+                                    <h3 className='header'>Projects</h3>
+                                </Title>
+                        }
 
                         <div className="h3 break-line header"/>
                         <div className='text-list'>
@@ -75,7 +76,6 @@ const mapStateToProps = (state) => {
     return {
         projects: getProjects(state),
         currentCourseId: getCurrentCourseId(state),
-        currentSemesterId: getCurrentSemesterId(state),
         project: getCurrentProject(state),
         isLoading: state.projects ? state.projects.getClassProjectsIsLoading : false,
         account: getAccount(state),

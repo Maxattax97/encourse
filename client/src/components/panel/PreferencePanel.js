@@ -33,14 +33,14 @@ class PreferencePanel extends Component {
         }
     }
 
-    componentDidMount = () => {
+    /*componentDidMount = () => {
         if(this.props.courses.length === 0) {
             this.props.getCourses(`${url}/api/sections`)
         }
         if(this.props.accounts.length === 0) {
             this.props.getAccounts(`${url}/api/accounts`)
         }
-    }
+    }*/
 
     resetOptions = () => {
         this.setState(

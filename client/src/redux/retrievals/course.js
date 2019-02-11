@@ -7,11 +7,111 @@ import {
     getStudentPreviews, getTestBarGraph,
     getTestBarGraphAnon
 } from '../actions'
-import {api_v1, projectID_v1, semester_v1, courseID_v1, size_v1, anon_v1, userList_v1, page_v1} from './retrieval-utils'
-import {getTeachingAssistants} from '../actions/course'
+import {
+    api_v1,
+    projectID_v1,
+    semester_v1,
+    courseID_v1,
+    size_v1,
+    anon_v1,
+    userList_v1,
+    page_v1,
+    course_v2
+} from './retrieval-utils'
+import {getCourse, getCourseCharts, getCourseFilterCharts, getTeachingAssistants} from '../actions/course'
 
-export function retrieveAllStudents(project, courseID, semester, body = { size: 307 }) {
-	store.dispatch(getStudentPreviews(`${api_v1}studentsData?${courseID_v1(courseID)}&${semester_v1(semester)}&${projectID_v1(project)}`, null, JSON.stringify(body)))
+export function retrieveCourse(courseID) {
+    store.dispatch(getCourse(`${course_v2}/get`, {
+        "Content-Type": "application/json"
+    }, JSON.stringify(courseID)))
+}
+
+export function retrieveAllStudents(project) {
+	store.dispatch(getStudentPreviews(`${course_v2}/students`, {
+        "Content-Type": "application/json"
+    }, JSON.stringify({
+	    "projectID": project.projectID,
+        "options": {
+            "student": true,
+            "projectInfo": true
+        }
+    })))
+}
+
+export function retrieveCourseCharts(project) {
+    store.dispatch(getCourseCharts(`${course_v2}/project/date`, {
+        "Content-Type": "application/json"
+    }, JSON.stringify({
+        "projectID": project.projectID,
+        "options": project.runTestall ? {
+            "progressChart": true,
+            "commitChart": true,
+            "timeChart": true
+        } : {
+            "commitChart": true,
+            "timeChart": true
+        }
+    })))
+}
+
+export function retrieveCourseDishonestyCharts(project) {
+    store.dispatch(getCourseCharts(`${course_v2}/project/date`, {
+        "Content-Type": "application/json"
+    }, JSON.stringify({
+        "projectID": project.projectID,
+        "options": {
+            "changesChart": true,
+            "similarityChart": true,
+            "timeVelocityChart": true,
+            "commitVelocityChart": true
+        }
+    })))
+}
+
+export function retrieveCourseFilterCharts(project, commits, time, progress, view, students, selectedAll) {
+    store.dispatch(getCourseFilterCharts(`${course_v2}/project/date`, {
+        "Content-Type": "application/json"
+    }, JSON.stringify({
+        "projectID": project.projectID,
+        "options": project.runTestall ? {
+            "progressChart": true,
+            "commitChart": true,
+            "timeChart": true
+        } : {
+            "commitChart": true,
+            "timeChart": true
+        },
+        "filters" : {
+            "commits": commits,
+            "time": time,
+            "progress": progress,
+            "view": view,
+            "students": students,
+            "selectedAll": selectedAll
+        }
+    })))
+}
+
+export function retrieveCourseDishonestyFilterCharts(project, commits, time, progress, view, students, selectedAll) {
+    store.dispatch(getCourseFilterCharts(`${course_v2}/project/date`, {
+        "Content-Type": "application/json"
+    }, JSON.stringify({
+        "projectID": project.projectID,
+        "options": {
+            "changesChart": true,
+            "similarityChart": true,
+            "timeVelocityChart": true,
+            "commitVelocityChart": true
+        },
+        "filters" : {
+            "commits": commits,
+            "time": time,
+            "progress": progress,
+            "view": view,
+            "students": students,
+            "selectedAll": selectedAll
+        }
+    })))
 }
 
 export function retrieveCourseStats(project) {
