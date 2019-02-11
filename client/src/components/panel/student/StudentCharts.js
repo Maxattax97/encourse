@@ -26,10 +26,10 @@ class StudentCharts extends Component {
             <ChartList>
                 <CommitFrequencyHistogram />
                 <CodeChanges />
-                {
+                {/*
                     this.props.project && this.props.project.runTestall ?
                         <StudentProgress/>
-                        : null
+                        : null*/
                 }
             </ChartList>
         )

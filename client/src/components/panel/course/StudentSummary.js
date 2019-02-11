@@ -135,7 +135,7 @@ class StudentSummary extends Component {
 	        <SelectableCardSummary type='students'
 			                       values={this.props.students.data}
 			                       render={this.renderPreview}
-			                       onClick={this.clickStudentCard} />
+			                       onClick={this.clickStudentCard} noCheckmark={true} />
 	    )
 	}
 }

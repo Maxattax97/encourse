@@ -15,7 +15,7 @@ class StudentCommitSummary extends Component {
 
     clickCommitCard = (commit) => {
         this.props.setCurrentCommit(commit)
-        history.push(`/${this.props.course}/student/${this.props.student.studentID}/commit/${commit.hash}`)
+        //history.push(`/${this.props.course}/student/${this.props.student.studentID}/commit/${commit.hash}`)
     }
 
     renderPreview = (commit) => {

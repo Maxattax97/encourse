@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import {getAllSelected, getFilters} from "../../../redux/state-peekers/control"
 import {resetFilterState, setFilterState, toggleSelectAllCards} from "../../../redux/actions"
 import StudentCommitSummary from './StudentCommitSummary'
+import {getStudentCharts} from "../../../redux/state-peekers/student"
 
 class StudentCommitFilter extends Component {
 
@@ -21,9 +22,9 @@ class StudentCommitFilter extends Component {
     render() {
         return (
             <div className='project-tests'>
-                <h3 className='header'>Commits</h3>
+                <h3 className='header'>Commits { ((this.props.charts.data || {}).commits|| {}).length ? '(' + (this.props.charts.data || {}).commits.length + ')' : '' }</h3>
                 <Filter>
-                    <Checkbox onClick={() => this.props.toggleSelectAllCards()}>
+                    {/*<Checkbox onClick={() => this.props.toggleSelectAllCards()}>
                         {
                             this.props.selectedAllTests ?
                                 <CheckmarkIcon/>
@@ -61,7 +62,7 @@ class StudentCommitFilter extends Component {
                               text='Deletions'
                               values={this.deletion_values}
                               filter='deletion_filter'
-                              addCustom />
+                              addCustom />*/}
                 </Filter>
                 <StudentCommitSummary/>
             </div>
@@ -73,7 +74,8 @@ class StudentCommitFilter extends Component {
 const mapStateToProps = (state) => {
     return {
         selectedAllTests: getAllSelected(state, 'commits'),
-        filters: getFilters(state)
+        filters: getFilters(state),
+	    charts: getStudentCharts(state)
     }
 }
 
