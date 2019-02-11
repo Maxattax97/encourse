@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.User;
 import edu.purdue.cs.encourse.model.AccountModel;
+import edu.purdue.cs.encourse.model.ChangePasswordModel;
 import edu.purdue.cs.encourse.service.AccountService;
 import edu.purdue.cs.encourse.service.AdminServiceV2;
 import edu.purdue.cs.encourse.service.EmailService;
@@ -43,12 +44,15 @@ public class AuthController {
 
     private final SessionRegistry sessionRegistry;
     
+    private final UserDetailsServiceImpl userDetailsService;
+    
     @Autowired
-    public AuthController(AccountService accountService, TokenStore tokenStore, SessionRegistry sessionRegistry, AdminServiceV2 adminService) {
+    public AuthController(AccountService accountService, TokenStore tokenStore, SessionRegistry sessionRegistry, AdminServiceV2 adminService, UserDetailsServiceImpl userDetailsService) {
         this.accountService = accountService;
         this.tokenStore = tokenStore;
         this.sessionRegistry = sessionRegistry;
         this.adminService = adminService;
+        this.userDetailsService = userDetailsService;
     }
     
     /**
@@ -68,6 +72,23 @@ public class AuthController {
         catch (InvalidRelationIdException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+    }
+    
+    /**
+     * Changes the password in Account
+     *
+     */
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/modify/password",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> modifyPassword(@Valid @NonNull @RequestBody ChangePasswordModel model) {
+        int result = userDetailsService.updatePassword(adminService.getUser(), model);
+        if (result == -1) {
+            return new ResponseEntity<>("{}", HttpStatus.NOT_MODIFIED);
+        }
+        return new ResponseEntity<>("{}", HttpStatus.OK);
     }
 
     /**

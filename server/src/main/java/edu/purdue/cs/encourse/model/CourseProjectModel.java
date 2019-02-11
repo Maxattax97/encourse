@@ -16,8 +16,14 @@ public class CourseProjectModel extends ProjectModel {
 	@NonNull
 	private Long courseID;
 	
-	public CourseProjectModel(@NonNull Long courseID, @NonNull Long projectID, @NonNull String name, @NonNull LocalDate startDate, @NonNull LocalDate dueDate, @NonNull String repository) {
-		super(name, startDate, dueDate, repository);
+	public CourseProjectModel(@NonNull Long courseID, @NonNull String name, @NonNull LocalDate startDate, @NonNull LocalDate dueDate, @NonNull String repository, @NonNull Boolean runTestall) {
+		super(name, startDate, dueDate, repository, runTestall);
+		
+		this.courseID = courseID;
+	}
+	
+	public CourseProjectModel(@NonNull Long courseID, @NonNull Long projectID, @NonNull String name, @NonNull LocalDate startDate, @NonNull LocalDate dueDate, @NonNull String repository, @NonNull Boolean runTestall) {
+		super(name, startDate, dueDate, repository, runTestall);
 		
 		this.setProjectID(projectID);
 		

@@ -4,39 +4,50 @@ import edu.purdue.cs.encourse.database.CourseRepository;
 import edu.purdue.cs.encourse.database.ProjectDateRepository;
 import edu.purdue.cs.encourse.database.ProjectRepository;
 import edu.purdue.cs.encourse.database.SectionRepository;
+import edu.purdue.cs.encourse.database.StudentComparisonRepository;
 import edu.purdue.cs.encourse.database.StudentProjectDateRepository;
+import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.Course;
 import edu.purdue.cs.encourse.domain.Professor;
 import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.ProjectDate;
 import edu.purdue.cs.encourse.domain.Section;
-import edu.purdue.cs.encourse.domain.User;
+import edu.purdue.cs.encourse.domain.Student;
+import edu.purdue.cs.encourse.domain.relations.CourseStudent;
+import edu.purdue.cs.encourse.domain.relations.StudentComparison;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.BasicStatistics;
 import edu.purdue.cs.encourse.model.CourseModel;
+import edu.purdue.cs.encourse.model.CourseSectionModel;
+import edu.purdue.cs.encourse.model.DoubleRange;
 import edu.purdue.cs.encourse.model.ProjectModel;
 import edu.purdue.cs.encourse.model.SectionModel;
 import edu.purdue.cs.encourse.model.CourseBarChartModel;
 import edu.purdue.cs.encourse.model.StudentInfoModel;
 import edu.purdue.cs.encourse.model.ProjectInfoModel;
+import edu.purdue.cs.encourse.model.course.CourseStudentFilters;
 import edu.purdue.cs.encourse.model.course.CourseStudentSearch;
 import edu.purdue.cs.encourse.service.AccountService;
+import edu.purdue.cs.encourse.service.AdminServiceV2;
 import edu.purdue.cs.encourse.service.CourseServiceV2;
 import edu.purdue.cs.encourse.service.StudentService;
 import edu.purdue.cs.encourse.service.helper.ChartHelper;
 import lombok.NonNull;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.InvalidRelationIdException;
 import javax.management.relation.RelationException;
 import javax.management.relation.RelationNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by Killian Le Clainche on 1/15/2019.
@@ -57,10 +68,16 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	private final SectionRepository sectionRepository;
 	
 	@Autowired
+	private StudentComparisonRepository studentComparisonRepository;
+	
+	@Autowired
 	private StudentService studentService;
 	
 	@Autowired
 	private AccountService accountService;
+	
+	@Autowired
+	private AdminServiceV2 adminService;
 	
 	@Autowired
 	public CourseServiceV2Impl(StudentProjectDateRepository StudentProjectDateRepository, ProjectRepository projectRepository, ProjectDateRepository projectDateRepository, CourseRepository courseRepository, SectionRepository sectionRepository) {
@@ -79,6 +96,13 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 			throw new InvalidRelationIdException("Course ID (" + courseID + ") does not exist in the database.");
 		
 		return courseOptional.get();
+	}
+	
+	@Override
+	public CourseModel getCourseModel(@NonNull Long courseID) throws InvalidRelationIdException {
+		Course course = getCourse(courseID);
+		
+		return new CourseModel(course.getProfessor().getUserID(), course.getCRN(), course.getTitle(), course.getName(), course.getSemester(), course.getRemotePath());
 	}
 	
 	@Override
@@ -108,12 +132,8 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		return null;
 	}
 	
-	private User getUserFromAuth() {
-		SecurityContext securityContext = SecurityContextHolder.getContext();
-		return ((User)securityContext.getAuthentication().getPrincipal());
-	}
-	
 	@Override
+	@Transactional
 	public Course addCourse(@NonNull CourseModel model) throws RelationException, IllegalArgumentException {
 		Professor professor = accountService.getProfessor(model.getProfessorID());
 		
@@ -126,10 +146,11 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	}
 	
 	@Override
-	public Section addSection(@NonNull SectionModel model) throws InvalidRelationIdException, IllegalArgumentException {
+	@Transactional
+	public Section addSection(@NonNull CourseSectionModel model) throws InvalidRelationIdException, IllegalArgumentException {
 		Course course = getCourse(model.getCourseID());
 		
-		Section section = new Section(course, model);
+		Section section = sectionRepository.save(new Section(course, model));
 		
 		course.getSections().add(section);
 		
@@ -144,30 +165,36 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	}
 	
 	@Override
-	public List<Section> getCourseSections(@NonNull Long courseID) throws InvalidRelationIdException {
-		return getCourse(courseID).getSections();
+	@Transactional(readOnly = true)
+	public List<SectionModel> getCourseSections(@NonNull Long courseID) throws InvalidRelationIdException {
+		return getCourse(courseID).getSections().stream().map(section -> new SectionModel(section.getSectionID(), section.getType(), section.getTime())).collect(Collectors.toList());
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public List<ProjectModel> getCourseProjects(@NonNull Long courseID) throws InvalidRelationIdException {
 		Course course = getCourse(courseID);
 		
 		List<ProjectModel> projects = new ArrayList<>();
 		
 		for(Project project : course.getProjects()) {
-			ProjectModel model = new ProjectModel(project.getName(), project.getStartDate(), project.getDueDate(), project.getRepository());
+			ProjectModel model = new ProjectModel(project.getName(), project.getStartDate(), project.getDueDate(), project.getRepository(), project.getRunTestall());
 			
 			model.setProjectID(project.getProjectID());
 			
-			model.setTotalVisiblePoints(project.getTotalVisiblePoints());
-			model.setTotalHiddenPoints(project.getTotalHiddenPoints());
+			if(project.getRunTestall()) {
+				model.setTotalVisiblePoints(project.getTotalVisiblePoints());
+				model.setTotalHiddenPoints(project.getTotalHiddenPoints());
+			}
+			
+			projects.add(model);
 		}
 		
 		return projects;
 	}
 	
 	@Override
-	public Project validateCourseStudentSearch(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, NullPointerException {
+	public Project validateCourseStudentSearch(@NonNull CourseStudentSearch courseStudentSearch, boolean allowAnonymous) throws InvalidRelationIdException, NullPointerException, IllegalAccessException {
 		if(courseStudentSearch.getProjectID() == null)
 			throw new NullPointerException("Project ID was not provided.");
 		
@@ -179,14 +206,90 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		Project project = projectOptional.get();
 		
 		if(!courseStudentSearch.hasDate())
-			courseStudentSearch.setDate(project.getAnalyzeDateTime().compareTo(project.getDueDate()) < 0 ? project.getAnalyzeDateTime() : project.getDueDate());
+			courseStudentSearch.setDate(project.getAnalyzeDateTime().compareTo(project.getDueDate()) < 0 ? project.getAnalyzeDateTime().compareTo(project.getStartDate()) > 0 ? project.getAnalyzeDateTime() : project.getStartDate() : project.getDueDate());
+		else
+			courseStudentSearch.setDate(courseStudentSearch.getDate().compareTo(project.getDueDate()) < 0 ? courseStudentSearch.getDate().compareTo(project.getStartDate()) > 0 ? courseStudentSearch.getDate() : project.getStartDate() : project.getDueDate());
+		
+		Account account = accountService.getAccount(adminService.getUser().getId());
+		Course course = project.getCourse();
+		
+		final CourseStudentFilters filters = courseStudentSearch.hasFilters() ? courseStudentSearch.getFilters() : new CourseStudentFilters();
+		courseStudentSearch.setFilters(filters);
+		
+		if(account.getRole() == Account.Role.PROFESSOR) {
+			Professor professor = accountService.getProfessor(account.getUserID());
+			
+			if(!course.getProfessor().getUserID().equals(professor.getUserID()))
+				throw new IllegalAccessException("You are not the course professor.");
+		}
+		else if(account.getRole() == Account.Role.STUDENT) {
+			Student student = accountService.getStudent(account.getUserID());
+			
+			CourseStudent courseStudent = null;
+			
+			for(CourseStudent studentIter : student.getCourses()) {
+				if(studentIter.getCourse().getCourseID().equals(course.getCourseID())) {
+					courseStudent = studentIter;
+					break;
+				}
+			}
+			
+			if(courseStudent == null || courseStudent.getIsStudent())
+				throw new IllegalAccessException("You are not a teaching assistant for this course.");
+			else {
+				final List<CourseStudent> students = courseStudent.getStudents();
+				
+				if(filters.getStudents() == null) {
+					if(allowAnonymous && (filters.getSelectedAll() == null || !filters.getSelectedAll())) {
+						filters.setStudents(Collections.singletonList(-1L));
+						filters.setSelectedAll(true);
+					}
+					else {
+						filters.setStudents(students.stream().map(CourseStudent::getId).collect(Collectors.toList()));
+						filters.setSelectedAll(false);
+					}
+				}
+				else {
+					if(filters.getSelectedAll() != null && filters.getSelectedAll())
+						filters.setStudents(students.stream().filter(s -> !filters.getStudents().contains(s.getId())).map(CourseStudent::getId).collect(Collectors.toList()));
+					else
+						filters.setStudents(students.stream().filter(s -> filters.getStudents().contains(s.getId())).map(CourseStudent::getId).collect(Collectors.toList()));
+						
+					filters.setSelectedAll(false);
+				}
+			}
+		}
+		
+		if(filters.getCommits() == null)
+			filters.setCommits(new DoubleRange(-1.0, 10000000.0));
+		
+		filters.getCommits().populate();
+		
+		if(filters.getTime() == null)
+			filters.setTime(new DoubleRange(-1.0, 10000000.0));
+		
+		filters.getTime().populate();
+		
+		if(filters.getProgress() == null)
+			filters.setProgress(new DoubleRange(-1.0, 10000000.0));
+		
+		filters.getProgress().populate();
+		
+		if(filters.getStudents() == null || filters.getStudents().size() == 0) {
+			filters.setSelectedAll(true);
+			filters.setStudents(Collections.singletonList(-1L));
+		}
+		
+		if(filters.getSelectedAll() == null)
+			filters.setSelectedAll(false);
 		
 		return project;
 	}
 	
 	@Override
-	public List<StudentInfoModel> getCourseProjectStudentInfo(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, NullPointerException {
-		Project project = validateCourseStudentSearch(courseStudentSearch);
+	@Transactional(readOnly = true)
+	public List<StudentInfoModel> getCourseProjectStudentInfo(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, NullPointerException, IllegalAccessException {
+		Project project = validateCourseStudentSearch(courseStudentSearch, false);
 		
 		List<StudentProjectDate> studentProjectDates = studentProjectDateRepository.findAllByCourseStudentSearch(project, courseStudentSearch);
 		
@@ -202,7 +305,8 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	}
 	
 	@Override
-	public ProjectInfoModel getCourseProjectInfoByDate(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, RelationNotFoundException {
+	@Transactional(readOnly = true)
+	public ProjectInfoModel getCourseProjectInfoByDate(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, RelationNotFoundException, IllegalAccessException {
 		ProjectInfoModel projectInfo = new ProjectInfoModel();
 		
 		boolean hasProgressStats = courseStudentSearch.getOption("progressStats");
@@ -225,7 +329,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 			!hasChangesStats && !hasChangesChart && !hasSimilarityStats && !hasSimilarityChart && !hasTimeVelocityStats && !hasTimeVelocityChart && !hasCommitVelocityStats && !hasCommitVelocityChart)
 			return projectInfo;
 		
-		Project project = validateCourseStudentSearch(courseStudentSearch);
+		Project project = validateCourseStudentSearch(courseStudentSearch, true);
 		
 		ProjectDate projectDate = projectDateRepository.findFirstByProjectAndDate(project, courseStudentSearch.getDate());
 		
@@ -245,37 +349,90 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		double[] timeSamples = hasTimeStats || hasTimeChart ? new double[students.size()] : null;
 		
 		double[] changesSamples = hasChangesStats || hasChangesChart ? new double[students.size()] : null;
-		double[] similaritySamples = hasSimilarityStats || hasSimilarityChart ? new double[students.size()] : null;
 		double[] timeVelocitySamples = hasTimeVelocityStats || hasTimeVelocityChart ? new double[students.size()] : null;
 		double[] commitVelocitySamples = hasCommitVelocityStats || hasCommitVelocityChart ? new double[students.size()] : null;
 		
 		for(int i = 0; i < students.size(); i++) {
 			StudentProjectDate student = students.get(i);
 			
-			if(progressSamples != null)
-				progressSamples[i] = (includeVisibleTests ? student.getVisiblePoints() : 0) + (includeHiddenTests ? student.getHiddenPoints() : 0);
+			Double commits = student.getTotalCommits() == null ? 0.0 : student.getTotalCommits();
+			Double minutes = student.getTotalMinutes() == null ? 0.0 : student.getTotalMinutes();
+			Double additions = student.getTotalAdditions() == null ? 0.0 : student.getTotalAdditions();
+			Double deletions = student.getTotalDeletions() == null ? 0.0 : student.getTotalDeletions();
+			
+			Double visiblePoints = student.getVisiblePoints() == null ? 0.0 : student.getVisiblePoints();
+			Double hiddenPoints = student.getHiddenPoints() == null ? 0.0 : student.getHiddenPoints();
 			
 			if(commitSamples != null)
-				commitSamples[i] = student.getTotalCommits();
+				commitSamples[i] = commits;
 			
 			if(timeSamples != null)
-				timeSamples[i] = student.getTotalMinutes();
+				timeSamples[i] = minutes;
 			
-			if(changesSamples != null)
-				changesSamples[i] = (student.getTotalAdditions() / student.getTotalDeletions());
+			if(changesSamples != null) {
+				
+				if(deletions < .5)
+					changesSamples[i] = (additions);
+				else
+					changesSamples[i] = (additions / deletions);
+			}
+			
+			if(project.getRunTestall()) {
+				if(progressSamples != null)
+					progressSamples[i] = (includeVisibleTests ? visiblePoints : 0) + (includeHiddenTests ? hiddenPoints : 0);
+				
+				if(timeVelocitySamples != null) {
+					if(minutes < .5)
+						timeVelocitySamples[i] = (visiblePoints + hiddenPoints);
+					else
+						timeVelocitySamples[i] = ((visiblePoints + hiddenPoints) / minutes);
+				}
+				
+				if(commits < .5)
+					commitVelocitySamples[i] = (visiblePoints + hiddenPoints);
+				else
+					commitVelocitySamples[i] = ((visiblePoints + hiddenPoints) / student.getTotalCommits());
+			}
+			else {
+				if(progressSamples != null)
+					progressSamples[i] = 0;
+				
+				if(timeVelocitySamples != null) {
+					if(minutes < .5)
+						timeVelocitySamples[i] = (0.0);
+					else
+						timeVelocitySamples[i]  = (100.0 / minutes);
+				}
+				
+				if(commitVelocitySamples != null) {
+					if(commits < .5)
+						commitVelocitySamples[i] = (0.0);
+					else
+						commitVelocitySamples[i] = (100.0 / commits);
+				}
+			}
 			
 			//TODO Similarity
 			//if(buildSimilarityStats != null)
 			//	buildSimilarityStats[i] = stud;
-			
-			if(timeVelocitySamples != null)
-				timeVelocitySamples[i] = (student.getVisiblePoints() + student.getHiddenPoints()) / student.getTotalMinutes();
-			
-			if(commitVelocitySamples != null)
-				commitVelocitySamples[i] = (student.getVisiblePoints() + student.getHiddenPoints()) / student.getTotalCommits();
 		}
 		
 		int studentCount = project.getCourse().getStudentCount();
+		
+		if(hasSimilarityStats || hasSimilarityChart) {
+			List<Long> studentIds = students.stream().map(student -> student.getStudentProject().getId()).collect(Collectors.toList());
+			List<StudentComparison> comparisons = studentComparisonRepository.findAllByStudentProject1_IdInOrStudentProject2_IdIn(studentIds, studentIds);
+			double[] similaritySamples = new double[comparisons.size()];
+			
+			int i = 0;
+			
+			for(StudentComparison comparison : comparisons) {
+				similaritySamples[i] = comparison.getCount();
+				i++;
+			}
+			
+			projectInfo.setSimilarity(getCourseHistogram((studentCount * (studentCount - 1)) / 2, hasSimilarityStats, hasSimilarityChart, similaritySamples, project.getSimilarityStats()));
+		}
 		
 		projectInfo.setProgress(getCourseHistogram(studentCount, hasProgressStats, hasProgressChart, progressSamples, !includeHiddenTests ? projectDate.getHiddenPointStats() : !includeVisibleTests ? projectDate.getVisiblePointStats() : projectDate.getTotalPointStats()));
 		projectInfo.setCommits(getCourseHistogram(studentCount, hasCommitStats, hasCommitChart, commitSamples, projectDate.getCommitStats()));

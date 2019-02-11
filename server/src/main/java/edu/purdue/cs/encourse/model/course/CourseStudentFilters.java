@@ -1,13 +1,11 @@
 package edu.purdue.cs.encourse.model.course;
 
-import antlr.collections.impl.IntRange;
-import edu.purdue.cs.encourse.model.IntegerRange;
+import edu.purdue.cs.encourse.model.DoubleRange;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -19,9 +17,9 @@ import java.util.List;
 @Setter
 public class CourseStudentFilters {
 	
-	private IntegerRange commits;
-	private IntegerRange time;
-	private IntegerRange progress;
+	private DoubleRange commits;
+	private DoubleRange time;
+	private DoubleRange progress;
 	private String view;
 	private List<Long> students;
 	private Boolean selectedAll;

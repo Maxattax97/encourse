@@ -1,10 +1,7 @@
 package edu.purdue.cs.encourse.database;
 
 import edu.purdue.cs.encourse.domain.Account;
-import lombok.NonNull;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-public interface AccountRepository extends CrudRepository<Account, Long> {
+public interface AccountRepository extends JpaRepository<Account, Long> {
 }

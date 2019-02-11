@@ -1,17 +1,11 @@
 package edu.purdue.cs.encourse.model.course;
 
-import edu.purdue.cs.encourse.model.IntegerRange;
 import edu.purdue.cs.encourse.model.SearchModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-
-import javax.persistence.Entity;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Killian Le Clainche on 1/15/2019.

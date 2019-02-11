@@ -2,6 +2,7 @@ package edu.purdue.cs.encourse.service.impl;
 
 import edu.purdue.cs.encourse.database.UserRepository;
 import edu.purdue.cs.encourse.domain.User;
+import edu.purdue.cs.encourse.model.ChangePasswordModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -37,9 +38,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public int updatePassword(User user, String oldPassword, String newPassword) {
-        if (userPasswordEncoder.matches(oldPassword, user.getPassword())) {
-            user.setPassword(userPasswordEncoder.encode(newPassword));
+    public int updatePassword(User user, ChangePasswordModel model) {
+        if (userPasswordEncoder.matches(model.getPassword(), user.getPassword())) {
+            user.setPassword(userPasswordEncoder.encode(model.getNewPassword()));
             userRepository.save(user);
             return 0;
         }

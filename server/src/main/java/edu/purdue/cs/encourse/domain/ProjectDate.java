@@ -36,138 +36,129 @@ public class ProjectDate {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "PROJECT_DATE_ID")
 	private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "projectID")
+	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
 	
 	@Setter
+	@Column(name = "DATE")
 	private LocalDate date;
 	
 	@Setter
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "max1")),
-			@AttributeOverride(name = "min", column = @Column(name = "min1")),
-			@AttributeOverride(name = "mean", column = @Column(name = "mean1")),
-			@AttributeOverride(name = "median", column = @Column(name = "median1")),
-			@AttributeOverride(name = "variance", column = @Column(name = "variance1"))
+			@AttributeOverride(name = "max", column = @Column(name = "MAX_TOTAL_POINTS")),
+			@AttributeOverride(name = "min", column = @Column(name = "MIN_TOTAL_POINTS")),
+			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_TOTAL_POINTS")),
+			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_TOTAL_POINTS")),
+			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_TOTAL_POINTS"))
 	})
 	private BasicStatistics totalPointStats;
 	
 	@Setter
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "max2")),
-			@AttributeOverride(name = "min", column = @Column(name = "min2")),
-			@AttributeOverride(name = "mean", column = @Column(name = "mean2")),
-			@AttributeOverride(name = "median", column = @Column(name = "median2")),
-			@AttributeOverride(name = "variance", column = @Column(name = "variance2"))
+			@AttributeOverride(name = "max", column = @Column(name = "MAX_VISIBLE_POINTS")),
+			@AttributeOverride(name = "min", column = @Column(name = "MIN_VISIBLE_POINTS")),
+			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_VISIBLE_POINTS")),
+			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_VISIBLE_POINTS")),
+			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_VISIBLE_POINTS"))
 	})
 	private BasicStatistics visiblePointStats;
 	
 	@Setter
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "max3")),
-			@AttributeOverride(name = "min", column = @Column(name = "min3")),
-			@AttributeOverride(name = "mean", column = @Column(name = "mean3")),
-			@AttributeOverride(name = "median", column = @Column(name = "median3")),
-			@AttributeOverride(name = "variance", column = @Column(name = "variance3"))
+			@AttributeOverride(name = "max", column = @Column(name = "MAX_HIDDEN_POINTS")),
+			@AttributeOverride(name = "min", column = @Column(name = "MIN_HIDDEN_POINTS")),
+			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_HIDDEN_POINTS")),
+			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_HIDDEN_POINTS")),
+			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_HIDDEN_POINTS"))
 	})
 	private BasicStatistics hiddenPointStats;
 	
 	@Setter
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "max4")),
-			@AttributeOverride(name = "min", column = @Column(name = "min4")),
-			@AttributeOverride(name = "mean", column = @Column(name = "mean4")),
-			@AttributeOverride(name = "median", column = @Column(name = "median4")),
-			@AttributeOverride(name = "variance", column = @Column(name = "variance4"))
+			@AttributeOverride(name = "max", column = @Column(name = "MAX_COMMITS")),
+			@AttributeOverride(name = "min", column = @Column(name = "MIN_COMMITS")),
+			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_COMMITS")),
+			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_COMMITS")),
+			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_COMMITS"))
 	})
 	private BasicStatistics commitStats;
 	
 	@Setter
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "max5")),
-			@AttributeOverride(name = "min", column = @Column(name = "min5")),
-			@AttributeOverride(name = "mean", column = @Column(name = "mean5")),
-			@AttributeOverride(name = "median", column = @Column(name = "median5")),
-			@AttributeOverride(name = "variance", column = @Column(name = "variance5"))
+			@AttributeOverride(name = "max", column = @Column(name = "MAX_MINUTES")),
+			@AttributeOverride(name = "min", column = @Column(name = "MIN_MINUTES")),
+			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_MINUTES")),
+			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_MINUTES")),
+			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_MINUTES"))
 	})
 	private BasicStatistics minuteStats;
 	
 	@Setter
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "max6")),
-			@AttributeOverride(name = "min", column = @Column(name = "min6")),
-			@AttributeOverride(name = "mean", column = @Column(name = "mean6")),
-			@AttributeOverride(name = "median", column = @Column(name = "median6")),
-			@AttributeOverride(name = "variance", column = @Column(name = "variance6"))
+			@AttributeOverride(name = "max", column = @Column(name = "MAX_ADDITIONS")),
+			@AttributeOverride(name = "min", column = @Column(name = "MIN_ADDITIONS")),
+			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_ADDITIONS")),
+			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_ADDITIONS")),
+			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_ADDITIONS"))
 	})
 	private BasicStatistics additionStats;
 	
 	@Setter
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "max7")),
-			@AttributeOverride(name = "min", column = @Column(name = "min7")),
-			@AttributeOverride(name = "mean", column = @Column(name = "mean7")),
-			@AttributeOverride(name = "median", column = @Column(name = "median7")),
-			@AttributeOverride(name = "variance", column = @Column(name = "variance7"))
+			@AttributeOverride(name = "max", column = @Column(name = "MAX_DELETIONS")),
+			@AttributeOverride(name = "min", column = @Column(name = "MIN_DELETIONS")),
+			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_DELETIONS")),
+			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_DELETIONS")),
+			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_DELETIONS"))
 	})
 	private BasicStatistics deletionStats;
 	
 	@Setter
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "max8")),
-			@AttributeOverride(name = "min", column = @Column(name = "min8")),
-			@AttributeOverride(name = "mean", column = @Column(name = "mean8")),
-			@AttributeOverride(name = "median", column = @Column(name = "median8")),
-			@AttributeOverride(name = "variance", column = @Column(name = "variance8"))
+			@AttributeOverride(name = "max", column = @Column(name = "MAX_CHANGES")),
+			@AttributeOverride(name = "min", column = @Column(name = "MIN_CHANGES")),
+			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_CHANGES")),
+			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_CHANGES")),
+			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_CHANGES"))
 	})
 	private BasicStatistics changesStats;
 	
 	@Setter
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "max9")),
-			@AttributeOverride(name = "min", column = @Column(name = "min9")),
-			@AttributeOverride(name = "mean", column = @Column(name = "mean9")),
-			@AttributeOverride(name = "median", column = @Column(name = "median9")),
-			@AttributeOverride(name = "variance", column = @Column(name = "variance9"))
-	})
-	private BasicStatistics similarityStats;
-	
-	@Setter
-	@Embedded
-	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "max10")),
-			@AttributeOverride(name = "min", column = @Column(name = "min10")),
-			@AttributeOverride(name = "mean", column = @Column(name = "mean10")),
-			@AttributeOverride(name = "median", column = @Column(name = "median10")),
-			@AttributeOverride(name = "variance", column = @Column(name = "variance10"))
+			@AttributeOverride(name = "max", column = @Column(name = "MAX_TIME_VELOCITY")),
+			@AttributeOverride(name = "min", column = @Column(name = "MIN_TIME_VELOCITY")),
+			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_TIME_VELOCITY")),
+			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_TIME_VELOCITY")),
+			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_TIME_VELOCITY"))
 	})
 	private BasicStatistics timeVelocityStats;
 	
 	@Setter
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "max11")),
-			@AttributeOverride(name = "min", column = @Column(name = "min11")),
-			@AttributeOverride(name = "mean", column = @Column(name = "mean11")),
-			@AttributeOverride(name = "median", column = @Column(name = "median11")),
-			@AttributeOverride(name = "variance", column = @Column(name = "variance11"))
+			@AttributeOverride(name = "max", column = @Column(name = "MAX_COMMIT_VELOCITY")),
+			@AttributeOverride(name = "min", column = @Column(name = "MIN_COMMIT_VELOCITY")),
+			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_COMMIT_VELOCITY")),
+			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_COMMIT_VELOCITY")),
+			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_COMMIT_VELOCITY"))
 	})
 	private BasicStatistics commitVelocityStats;
 	
 	@ElementCollection
-	@CollectionTable(name = "PROJECT_DATE_TESTS", joinColumns = @JoinColumn(name = "projectID"))
+	@CollectionTable(name = "PROJECT_DATE_TESTS", joinColumns = @JoinColumn(name = "PROJECT_DATE_ID"))
 	private Map<String, Integer> testsTotal;
 	
 	public ProjectDate(Project project, LocalDate date) {

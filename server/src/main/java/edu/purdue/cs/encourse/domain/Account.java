@@ -15,6 +15,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 /**
@@ -30,7 +32,6 @@ import javax.persistence.Table;
 @Table(name = "ACCOUNT")
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class Account {
     
     public enum Role {
@@ -46,36 +47,38 @@ public class Account {
     /** Primary key for all account types in the database */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "USER_ID")
     private Long userID;
     
     @NonNull
+    @Column(name = "USERNAME")
     private String username;
     
     /** Name for display purposes */
     @NonNull
+    @Column(name = "FIRST_NAME")
     private String firstName;
     
     @NonNull
+    @Column(name = "LAST_NAME")
     private String lastName;
 
     /** Email settings */
     @NonNull
+    @Column(name = "EDU_EMAIL")
     private String eduEmail;
 
     /** Indicates whether account is student, TA, professor, or college admin */
     @Enumerated
-    @Column(columnDefinition = "smallint")
+    @Column(columnDefinition = "smallint", name = "ROLE")
     @NonNull
     private Role role;
     
     public Account(@NonNull AccountModel model) {
-        if(model.getUserID() != null)
-            this.userID = model.getUserID();
-        
         this.username = model.getUsername();
         this.firstName = model.getFirstName();
         this.lastName = model.getLastName();
         this.eduEmail = model.getEduEmail();
-        this.role = model.getRole() == 0 ? Role.STUDENT : model.getRole() == 1 ? Role.PROFESSOR : Role.ADMIN;
+        this.role = model.getRole() == Role.STUDENT.ordinal() ? Role.STUDENT : model.getRole() == Role.PROFESSOR.ordinal() ? Role.PROFESSOR : Role.ADMIN;
     }
 }

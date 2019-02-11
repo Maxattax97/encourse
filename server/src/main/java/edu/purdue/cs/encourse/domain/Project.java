@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import edu.purdue.cs.encourse.domain.relations.StudentComparison;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
+import edu.purdue.cs.encourse.model.BasicStatistics;
 import edu.purdue.cs.encourse.model.CourseProjectModel;
 import edu.purdue.cs.encourse.model.ProjectModel;
 import lombok.AllArgsConstructor;
@@ -14,9 +16,13 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.domain.Persistable;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -44,42 +50,39 @@ import java.util.Set;
 @Entity
 @Table(name = "PROJECT")
 @NoArgsConstructor
-@ToString
 @AllArgsConstructor
 public class Project {
     
     /** courseID + semester + projectName, forms the primary key */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name  = "projectID")
+    @Column(name  = "PROJECT_ID")
     private Long projectID;
 
     @ManyToOne
-    @JoinColumn(name = "courseID")
+    @JoinColumn(name = "COURSE_ID")
     @NonNull
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "courseID")
-    @JsonIdentityReference(alwaysAsId=true)
     private Course course;
     
     @NonNull
-    @Column(name  = "projectName")
+    @Column(name  = "PROJECT_NAME")
     private String name;
     
     @NonNull
-    @Column(name  = "startDate")
+    @Column(name  = "START_DATE")
     private LocalDate startDate;
     
     @NonNull
-    @Column(name  = "dueDate")
+    @Column(name  = "DUE_DATE")
     private LocalDate dueDate;
 
     /** The name of the directory that will store the project. Remove .git if this is included */
     @NonNull
-    @Column(name  = "repository")
+    @Column(name  = "REPOSITORY")
     private String repository;
 
     /** Rate in which projects will be pulled and tested, in hourse */
-    @Column(name  = "testRate")
+    @Column(name  = "TEST_RATE")
     private int testRate;
     
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -97,14 +100,31 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<AdditionHash> additionHashes;
     
-    @Column(name  = "analyzeDateTime")
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<StudentComparison> studentComparisons;
+    
+    @Column(name  = "ANALYZE_DATE_TIME")
     private LocalDate analyzeDateTime;
     
-    @Column(name  = "totalVisiblePoints")
+    @Column(name  = "TOTAL_VISIBLE_POINTS")
     private Double totalVisiblePoints;
     
-    @Column(name = "totalHiddenPoints")
+    @Column(name = "TOTAL_HIDDEN_POINTS")
     private Double totalHiddenPoints;
+    
+    @Column(name = "RUN_TESTALL")
+    private Boolean runTestall;
+    
+    @Setter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "max", column = @Column(name = "MAX_SIMILARITY")),
+            @AttributeOverride(name = "min", column = @Column(name = "MIN_SIMILARITY")),
+            @AttributeOverride(name = "mean", column = @Column(name = "MEAN_SIMILARITY")),
+            @AttributeOverride(name = "median", column = @Column(name = "MEDIAN_SIMILARITY")),
+            @AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_SIMILARITY"))
+    })
+    private BasicStatistics similarityStats;
 
     public Project(@NonNull Course course, @NonNull ProjectModel projectModel) {
         this.course = course;
@@ -123,10 +143,15 @@ public class Project {
         this.dates = new ArrayList<>();
         this.studentProjects = new ArrayList<>();
         this.additionHashes = new HashSet<>();
+        this.studentComparisons = new HashSet<>();
         
         this.analyzeDateTime = LocalDate.ofYearDay(2000, 1);
         this.totalVisiblePoints = 0.0;
         this.totalHiddenPoints = 0.0;
+        
+        this.runTestall = projectModel.getRunTestall();
+        
+        this.similarityStats = new BasicStatistics();
     }
 
     /**
@@ -144,4 +169,8 @@ public class Project {
     public Long getCourseID() { return course.getCourseID(); }
     
     public String getCourseName() { return course.getName(); }
+    
+    public String toString() {
+        return "Project (id=" + this.projectID + ", start=" + this.startDate + ", due=" + this.dueDate + ", repo=" + this.repository + ")";
+    }
 }

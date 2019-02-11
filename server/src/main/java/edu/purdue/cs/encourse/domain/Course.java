@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,39 +31,45 @@ import java.util.List;
 @Table(name = "COURSE")
 @Setter
 @Getter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Course {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "COURSE_ID")
 	private Long courseID;
 	
 	@ManyToOne
-	@JoinColumn(name = "professorID")
+	@JoinColumn(name = "USER_ID")
 	@NonNull
 	private Professor professor;
 	
 	/** The path to the remote repositories on data.cs **/
 	@NonNull
+	@Column(name = "REMOTE_PATH")
 	private String remotePath;
 	
 	/** May be useful to track for registration purposes */
 	@NonNull
+	@Column(name = "CRN")
 	private String CRN;
 	
 	/** Use courseID or courseTitle to group together sections of the same course */
 	@NonNull
+	@Column(name = "TITLE")
 	private String title;
 	
 	@NonNull
+	@Column(name = "NAME")
 	private String name;
 	
 	@NonNull
+	@Column(name = "SEMESTER")
 	private String semester;
 	
 	@NonNull
+	@Column(name = "STUDENT_COUNT")
 	private Integer studentCount;
 	
 	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -77,10 +84,6 @@ public class Course {
 	@NonNull
 	private List<CourseStudent> students;
 	
-	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@NonNull
-	private List<CourseStudent> teachingAssistants;
-	
 	public Course(@NonNull Professor professor, @NonNull CourseModel courseModel) {
 		this.professor = professor;
 		this.remotePath = courseModel.getRemotePath();
@@ -94,20 +97,13 @@ public class Course {
 		this.projects = new ArrayList<>();
 		this.sections = new ArrayList<>();
 		this.students = new ArrayList<>();
-		this.teachingAssistants = new ArrayList<>();
 	}
 	
 	public String getCourseHub() {
 		return "/sourcecontrol/" + name + "/" + semester;
 	}
 	
-	@Override
-	public boolean equals(Object course) {
-		return course instanceof Course && ((Course) course).courseID.equals(this.courseID);
-	}
-	
-	@Override
-	public int hashCode() {
-		return Math.toIntExact(this.courseID);
+	public String toString() {
+		return "Course (id=" + this.courseID + ", remote=" + this.remotePath + ", name=" + this.name + ", semester=" + this.semester + ")";
 	}
 }

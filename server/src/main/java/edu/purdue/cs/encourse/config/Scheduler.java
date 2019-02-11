@@ -16,7 +16,7 @@ public class Scheduler {
     private ProjectService projectService;
 
     /** Pulls and tests all projects ready to be synchronized with 1 minute delays **/
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 60000 * 30, initialDelay = 0)
     public void pullAndTestAllProjects() {
         System.out.println("Scheduled Task Running");
         //professorService.pullAndTestAllProjects();

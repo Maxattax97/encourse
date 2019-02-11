@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -42,13 +43,12 @@ public class TestSuite {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "TEST_SUITE_ID")
 	private Long id;
 	
 	@ManyToOne
 	@NonNull
-	@JoinColumn(name = "projectID")
-	@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "projectID")
-	@JsonIdentityReference(alwaysAsId=true)
+	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
 	
 	@NonNull
@@ -64,8 +64,8 @@ public class TestSuite {
 					CascadeType.MERGE
 			})
 	@JoinTable(name = "PROJECT_TEST_SUITES",
-			joinColumns = @JoinColumn(name = "testSuiteID"),
-			inverseJoinColumns = @JoinColumn(name = "testScriptID"))
+			joinColumns = @JoinColumn(name = "TEST_SUITE_ID"),
+			inverseJoinColumns = @JoinColumn(name = "TEST_SCRIPT_ID"))
 	private List<TestScript> testScripts;
 	
 	public TestSuite(@NonNull Project project, @NonNull TestSuiteModel model) {

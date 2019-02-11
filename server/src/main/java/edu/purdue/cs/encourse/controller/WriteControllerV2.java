@@ -22,15 +22,6 @@ import javax.validation.Valid;
 @RequestMapping(value="/api/v2")
 @Validated
 public class WriteControllerV2 {
-	
-	
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-	@RequestMapping(value = "/course/projects",
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> postProject(@Valid @NonNull @RequestBody String body) {
-		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
-	}
+
 	
 }

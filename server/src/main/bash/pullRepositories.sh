@@ -4,6 +4,6 @@
 
 DIRECTORY="$(pwd)"
 cd "$1"
-git reset --hard origin/master 2> /dev/null
+# git reset --hard origin/master 2> /dev/null
 git pull origin master 2> /dev/null
 cd "${DIRECTORY}"

@@ -7,6 +7,7 @@ import edu.purdue.cs.encourse.service.AccountService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.InvalidRelationIdException;
 import javax.management.relation.RelationException;
@@ -44,6 +45,7 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
+    @Transactional(readOnly = true)
     public Account getAccount(@NonNull Long userID) throws InvalidRelationIdException {
         Optional<Account> accountOptional = accountRepository.findById(userID);
         
@@ -54,6 +56,7 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
+    @Transactional(readOnly = true)
     public Student getStudent(@NonNull Long userID) throws InvalidRelationIdException {
         Optional<Student> studentOptional = studentRepository.findById(userID);
         
@@ -64,6 +67,7 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
+    @Transactional(readOnly = true)
     public Professor getProfessor(@NonNull Long userID) throws InvalidRelationIdException {
         Optional<Professor> professorOptional = professorRepository.findById(userID);
         
@@ -74,6 +78,7 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
+    @Transactional(readOnly = true)
     public CollegeAdmin getAdmin(@NonNull Long userID) throws InvalidRelationIdException {
         Optional<CollegeAdmin> adminOptional = adminRepository.findById(userID);
         
@@ -84,10 +89,8 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
+    @Transactional
     public Account addAccount(@NonNull AccountModel account) throws RelationException, IllegalArgumentException {
-        if(account.getUserID() != null && accountRepository.existsById(account.getUserID()))
-            throw new IllegalArgumentException("Account ID already present in the repository.");
-        
         if(!emailPattern.matcher(account.getEduEmail()).matches())
             throw new IllegalArgumentException("Email is invalid.");
         
@@ -102,12 +105,38 @@ public class AccountServiceImpl implements AccountService {
         if(savedAccount == null)
             throw new RelationException("Could not create new account object in database.");
         
-        account.setUserID(savedAccount.getUserID());
-    
+        
+        switch(savedAccount.getRole()) {
+            case STUDENT:
+                Student student = studentRepository.save(new Student(savedAccount.getUserID(), account));
+                
+                if(student == null)
+                    throw new RelationException("Could not create new student object in database.");
+                
+                break;
+            case PROFESSOR:
+                Professor professor = professorRepository.save(new Professor(savedAccount.getUserID(), account));
+                
+                if(professor == null)
+                    throw new RelationException("Could not create new professor object in database.");
+                
+                break;
+            case ADMIN:
+                CollegeAdmin admin = adminRepository.save(new CollegeAdmin(savedAccount.getUserID(), account));
+                
+                if(admin == null)
+                    throw new RelationException("Could not create new admin object in database.");
+                
+                break;
+        }
+        
+        System.out.println("Added Account (" + savedAccount.getUserID() + ", " + savedAccount.getUsername() + ", " + savedAccount.getRole() + ")");
+        
         return savedAccount;
     }
     
     @Override
+    @Transactional
     public void removeAccount(@NonNull Long userID) throws InvalidRelationIdException {
         Account account = getAccount(userID);
         
@@ -115,6 +144,7 @@ public class AccountServiceImpl implements AccountService {
     }
     
     @Override
+    @Transactional
     public Account modifyAccount(@NonNull Account modifyAccount) throws InvalidRelationIdException {
         Account account = getAccount(modifyAccount.getUserID());
         

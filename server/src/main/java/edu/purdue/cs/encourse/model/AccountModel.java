@@ -13,12 +13,9 @@ import lombok.Setter;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 @Getter
 @Setter
 public class AccountModel {
-	
-	private Long userID;
 	
 	@NonNull
 	private String username;
@@ -36,7 +33,6 @@ public class AccountModel {
 	private Integer role;
 	
 	public AccountModel(@NonNull Account account) {
-		this.userID = account.getUserID();
 		this.username = account.getUsername();
 		this.firstName = account.getFirstName();
 		this.lastName = account.getLastName();

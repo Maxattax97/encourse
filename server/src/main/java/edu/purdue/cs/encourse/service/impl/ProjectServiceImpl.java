@@ -5,6 +5,7 @@ import edu.purdue.cs.encourse.database.CourseRepository;
 import edu.purdue.cs.encourse.database.CourseStudentRepository;
 import edu.purdue.cs.encourse.database.ProjectDateRepository;
 import edu.purdue.cs.encourse.database.ProjectRepository;
+import edu.purdue.cs.encourse.database.StudentComparisonRepository;
 import edu.purdue.cs.encourse.database.StudentProjectDateRepository;
 import edu.purdue.cs.encourse.database.StudentProjectRepository;
 import edu.purdue.cs.encourse.database.StudentRepository;
@@ -20,6 +21,7 @@ import edu.purdue.cs.encourse.domain.Student;
 import edu.purdue.cs.encourse.domain.TestScript;
 import edu.purdue.cs.encourse.domain.TestSuite;
 import edu.purdue.cs.encourse.domain.relations.CourseStudent;
+import edu.purdue.cs.encourse.domain.relations.StudentComparison;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.BasicStatistics;
@@ -37,6 +39,7 @@ import lombok.NonNull;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.InvalidRelationIdException;
 import javax.management.relation.RelationException;
@@ -49,11 +52,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,6 +68,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -93,8 +99,10 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	private final CourseServiceV2 courseService;
 	
+	private final StudentComparisonRepository studentComparisonRepository;
+	
 	@Autowired
-	public ProjectServiceImpl(ProjectRepository projectRepository, ProjectDateRepository projectDateRepository, StudentProjectRepository studentProjectRepository, StudentProjectDateRepository studentProjectDateRepository, CourseRepository courseRepository, TestScriptRepository testScriptRepository, TestSuiteRepository testSuiteRepository, AdditionHashRepository additionHashRepository, CourseServiceV2 courseService) {
+	public ProjectServiceImpl(ProjectRepository projectRepository, ProjectDateRepository projectDateRepository, StudentProjectRepository studentProjectRepository, StudentProjectDateRepository studentProjectDateRepository, CourseRepository courseRepository, TestScriptRepository testScriptRepository, TestSuiteRepository testSuiteRepository, AdditionHashRepository additionHashRepository, CourseServiceV2 courseService, StudentComparisonRepository studentComparisonRepository) {
 		this.projectRepository = projectRepository;
 		this.projectDateRepository = projectDateRepository;
 		this.studentProjectRepository = studentProjectRepository;
@@ -104,9 +112,11 @@ public class ProjectServiceImpl implements ProjectService {
 		this.testSuiteRepository = testSuiteRepository;
 		this.additionHashRepository = additionHashRepository;
 		this.courseService = courseService;
+		this.studentComparisonRepository = studentComparisonRepository;
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Project getProject(@NonNull Long projectID) throws InvalidRelationIdException {
 		Optional<Project> projectOptional = projectRepository.findById(projectID);
 		
@@ -117,6 +127,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public TestScript getTestScript(@NonNull Long testScriptID) throws InvalidRelationIdException {
 		Optional<TestScript> testScriptOptional = testScriptRepository.findById(testScriptID);
 		
@@ -127,6 +138,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public TestSuite getTestSuite(@NonNull Long testSuiteID) throws InvalidRelationIdException {
 		Optional<TestSuite> testSuiteOptional = testSuiteRepository.findById(testSuiteID);
 		
@@ -137,49 +149,71 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestScript> getProjectTestScripts(@NonNull Long projectID) throws InvalidRelationIdException {
 		return getProject(projectID).getTestScripts();
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestSuite> getProjectTestSuites(@NonNull Long projectID) throws InvalidRelationIdException {
 		return getProject(projectID).getTestSuites();
 	}
 	
 	@Override
+	@Transactional
 	public Project addProject(@NonNull CourseProjectModel model) throws InvalidRelationIdException, IllegalArgumentException, IOException, InterruptedException {
 		if(model.getStartDate().compareTo(model.getDueDate()) >= 0)
 			throw new IllegalArgumentException("");
 		
 		Course course = courseService.getCourse(model.getCourseID());
 		
-		Project project = new Project(course, model);
+		Project project = projectRepository.save(new Project(course, model));
 		
 		List<CourseStudent> students = course.getStudents();
 		
 		for(CourseStudent student : students) {
-			StudentProject studentProject = new StudentProject(project, student);
-			
-			student.getProjects().add(studentProject);
-			
-			project.getStudentProjects().add(studentProject);
+			if(student.getIsStudent()) {
+				StudentProject studentProject = studentProjectRepository.save(new StudentProject(project, student));
+				
+				student.getProjects().add(studentProject);
+				
+				project.getStudentProjects().add(studentProject);
+			}
 		}
 		
 		List<StudentProject> studentProjects = project.getStudentProjects();
 		
 		LocalDate iteratorDate = project.getStartDate();
 		
-		while(iteratorDate.compareTo(project.getDueDate()) != 0) {
+		while(iteratorDate.compareTo(project.getDueDate()) <= 0) {
 			
-			project.getDates().add(new ProjectDate(project, iteratorDate));
+			ProjectDate projectDate = projectDateRepository.save(new ProjectDate(project, iteratorDate));
+			
+			project.getDates().add(projectDate);
+			
+			System.out.println("Added Project Date (" + project.getRepository() + ", " + iteratorDate + ")");
 			
 			for(StudentProject studentProject : studentProjects) {
-				StudentProjectDate studentProjectDate = new StudentProjectDate(project, studentProject, iteratorDate);
+				StudentProjectDate studentProjectDate = studentProjectDateRepository.save(new StudentProjectDate(project, studentProject, iteratorDate));
 				
 				studentProject.getDates().add(studentProjectDate);
 			}
 			
 			iteratorDate = iteratorDate.plusDays(1);
+		}
+		
+		for(int i = 0; i < studentProjects.size(); i++) {
+			for(int j = i + 1; j < studentProjects.size(); j++) {
+				StudentProject studentProject1 = studentProjects.get(i);
+				StudentProject studentProject2 = studentProjects.get(j);
+				StudentComparison comparison = studentComparisonRepository.save(new StudentComparison(project, studentProject1, studentProject2, 0));
+				
+				studentProject1.getFirstComparisons().add(comparison);
+				studentProject2.getSecondComparisons().add(comparison);
+				
+				project.getStudentComparisons().add(comparison);
+			}
 		}
 		
 		course.getProjects().add(project);
@@ -188,10 +222,13 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		courseRepository.save(course);
 		
+		System.out.println("Added " + project);
+		
 		return project;
 	}
 	
 	@Override
+	@Transactional
 	public void removeProject(@NonNull Long projectID) throws RelationException {
 		Project project = getProject(projectID);
 		Course course = project.getCourse();
@@ -210,6 +247,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public Project modifyProject(@NonNull ProjectModel model) throws RelationException, IllegalArgumentException {
 		if(model.getStartDate().compareTo(model.getDueDate()) >= 0)
 			throw new IllegalArgumentException("");
@@ -233,6 +271,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public TestScript addTestScript(@NonNull ProjectTestScriptModel model) throws RelationException {
 		Project project = getProject(model.getProjectID());
 		
@@ -254,6 +293,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public void removeTestScript(@NonNull Long testScriptID) throws RelationException {
 		TestScript testScript = getTestScript(testScriptID);
 		Project project = testScript.getProject();
@@ -267,6 +307,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public TestScript modifyTestScript(@NonNull TestScriptModel model) throws RelationException, IllegalArgumentException {
 		if(model.getTestScriptID() == null)
 			throw new IllegalArgumentException("");
@@ -286,6 +327,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public TestSuite addTestSuite(@NonNull ProjectTestSuiteModel model) throws RelationException {
 		Project project = getProject(model.getProjectID());
 		
@@ -302,6 +344,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public void removeTestSuite(Long testSuiteID) throws RelationException {
 		TestSuite testSuite = getTestSuite(testSuiteID);
 		Project project = testSuite.getProject();
@@ -315,6 +358,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
+	@Transactional
 	public TestSuite modifyTestSuite(@NonNull TestSuiteModel model) throws RelationException, IllegalArgumentException {
 		if(model.getTestSuiteID() == null)
 			throw new IllegalArgumentException("");
@@ -348,7 +392,7 @@ public class ProjectServiceImpl implements ProjectService {
 		for(StudentProject p : projects) {
 			Student s = p.getStudent().getStudent();
 			if(!(new File(course.getCourseHub() + "/" + s.getUsername() + "/" + project.getRepository()).exists())) {
-				String destPath = (course.getCourseHub() + "/" + p.getId());
+				String destPath = (course.getCourseHub() + "/" + s.getUsername() + "/" + project.getRepository());
 				String repoPath = (course.getRemotePath() + "/" + s.getUsername() + "/" + project.getRepository() + ".git");
 				executeScript("cloneRepositories.sh " + destPath + " " + repoPath);
 			}
@@ -363,8 +407,10 @@ public class ProjectServiceImpl implements ProjectService {
 		
 		String courseHub = course.getCourseHub();
 		
-		for(StudentProject p : projects)
-			executeScript("pullRepositories.sh " + courseHub + "/" + p.getId());
+		for(StudentProject p : projects) {
+			System.out.println("PULLING STUDENT PROJECT (" + p.getId() + ", "+ p.getStudent().getStudent().getUsername() + ")");
+			executeScript("pullRepositories.sh " + courseHub + "/" + p.getStudent().getStudent().getUsername() + "/" + project.getRepository());
+		}
 		
 		executeScript("setPermissions.sh " + course.getCourseID());
 	}
@@ -382,7 +428,7 @@ public class ProjectServiceImpl implements ProjectService {
 			return;
 		
 		//Parse the splitted line 3rd value, that being the local date or the yyyy-MM-dd
-		LocalDate date = ZonedDateTime.parse(commitInfo[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(TimeZone.getTimeZone("UTC").toZoneId()).toLocalDate();
+		LocalDate date = ZonedDateTime.parse(commitInfo[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(TimeZone.getTimeZone("EST").toZoneId()).toLocalDate();
 		
 		//checkout to previous commit based on the 2nd value of line, then run the makefile bash script
 		executeScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
@@ -440,17 +486,15 @@ public class ProjectServiceImpl implements ProjectService {
 		File hiddenTestCaseDirectory = new File(project.getCourse().getCourseHub() + "/hidden_testcases/" + project.getRepository());
 		File makefile = new File(project.getCourse().getCourseHub() + "/makefiles/" + project.getRepository() + "/Makefile");
 		
-		if(!testCaseDirectory.isDirectory() || testCaseDirectory.listFiles().length == 0)
-			return;
+		if (!testCaseDirectory.isDirectory() || testCaseDirectory.listFiles().length == 0) return;
 		
-		if(!makefile.exists())
-			return;
+		if (!makefile.exists()) return;
 		
 		String courseHub = project.getCourse().getCourseHub();
 		
-		for(StudentProject studentProject : studentProjects.keySet()) {
+		for (StudentProject studentProject : studentProjects.keySet()) {
 			
-			String testingDirectory = courseHub + "/" + studentProject.getId();
+			String testingDirectory = courseHub + "/" + studentProject.getStudent().getStudent().getUsername() + "/" + project.getRepository();
 			
 			try {
 				executeScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
@@ -466,8 +510,33 @@ public class ProjectServiceImpl implements ProjectService {
 				
 				executeScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
 			}
-			catch(Exception e) {
+			catch (Exception e) {
 				System.out.println("\nException at testall\n");
+			}
+		}
+	}
+	
+	private void addFileDetailsToCommit(Project project, Long studentId, Commit commit, int additions, int deletions, Map<String, AdditionHash> additionHashMap, Map<String, Integer> commitAdditionHashes) {
+		if(additions < 500) {
+			commit.setAdditions(commit.getAdditions() + additions);
+			commit.setDeletions(commit.getDeletions() + deletions);
+			
+			AdditionHash additionHash;
+			
+			for(String hash : commitAdditionHashes.keySet()) {
+				additionHash = additionHashMap.get(hash);
+				
+				if(additionHash == null) {
+					additionHash = new AdditionHash(hash, project, new HashMap<>());
+					additionHash.getStudentCounts().put(studentId, commitAdditionHashes.get(hash));
+					
+					additionHashMap.put(hash, additionHash);
+				}
+				else {
+					Integer count = additionHash.getStudentCounts().get(studentId);
+					
+					additionHash.getStudentCounts().put(studentId, count == null ? 1 : count + commitAdditionHashes.get(hash));
+				}
 			}
 		}
 	}
@@ -475,10 +544,9 @@ public class ProjectServiceImpl implements ProjectService {
 	private List<Commit> createCommitObjects(Project project, StudentProject studentProject, Map<String, AdditionHash> additionHashMap, MessageDigest md5, String testingDirectory) throws IOException, InterruptedException {
 		List<Commit> commitList = new ArrayList<>(30);
 		
-		ZoneId utcZone = TimeZone.getTimeZone("UTC").toZoneId();
+		ZoneId estZone = TimeZone.getTimeZone("EST").toZoneId();
 		
-		CourseStudent student = studentProject.getStudent();
-		Process process = executeScriptAndReturn("generateDiffsAfterDate.sh " + testingDirectory + " " + ZonedDateTime.of(studentProject.getMostRecentCommit(), utcZone));
+		Process process = executeScriptAndReturn("generateDiffsAfterDate.sh " + testingDirectory + " " + ZonedDateTime.of(studentProject.getMostRecentCommit(), estZone).plusSeconds(1));
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		
 		String line;
@@ -493,6 +561,8 @@ public class ProjectServiceImpl implements ProjectService {
 		AdditionHash additionHash;
 		Integer count;
 		
+		Map<String, Integer> commitAdditionHashes = new HashMap<>();
+		
 		//FORMAT
 		//@DIFF,<commit_hash>,<date in YYYY-MM-dd>
 		//+++<FILE_NAME.FILE_DESCRIPTOR>
@@ -505,24 +575,36 @@ public class ProjectServiceImpl implements ProjectService {
 				String[] split = line.split(",");
 				
 				if(commit != null) {
-					commit.setAdditions(commit.getAdditions() + additions);
-					commit.setDeletions(commit.getDeletions() + deletions);
 					
-					if(commit.getAdditions() != 0 || commit.getDeletions() != 0)
-						commitList.add(commit);
+					addFileDetailsToCommit(project, studentProject.getId(), commit, additions, deletions, additionHashMap, commitAdditionHashes);
+					
+					commitAdditionHashes.clear();
+					
+					commitList.add(commit);
 				}
-				
 				additions = 0;
 				deletions = 0;
 				
-				commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(utcZone).toLocalDateTime(), Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL, Double.MIN_NORMAL);
+				
+				try {
+					commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(estZone).toLocalDateTime(), 0.0, 0.0, 0.0, 0.0);
+					
+					if(commit.getDate().toLocalDate().compareTo(project.getDueDate()) > 0 || commit.getDate().toLocalDate().compareTo(project.getAnalyzeDateTime()) < 0)
+						commit = null;
+					else if(commit.getDate().toLocalDate().compareTo(project.getStartDate()) < 0)
+						commit.setDate(LocalDateTime.of(project.getStartDate(), LocalTime.of(0, 0)));
+				}
+				catch(DateTimeParseException e) {
+					System.out.println("Student " + studentProject.getStudent().getStudent().getUsername() + " had a problem parsing. " + line);
+				}
 			}
 			else if(commit != null) {
 				if(line.startsWith("+++")) {
 					measureChanges = General.isSourceCodeExtension(line);
 					
-					commit.setAdditions(commit.getAdditions() + additions);
-					commit.setDeletions(commit.getDeletions() + deletions);
+					addFileDetailsToCommit(project, studentProject.getId(), commit, additions, deletions, additionHashMap, commitAdditionHashes);
+					
+					commitAdditionHashes.clear();
 					
 					additions = deletions = 0;
 				}
@@ -532,19 +614,7 @@ public class ProjectServiceImpl implements ProjectService {
 						
 						hash = new BigInteger(1, md5.digest(line.getBytes())).toString();
 						
-						additionHash = additionHashMap.get(hash);
-						
-						if(additionHash == null) {
-							additionHash = new AdditionHash(hash, project, new HashMap<>());
-							additionHash.getStudentCounts().put(student.getId(), 1);
-							
-							additionHashMap.put(hash, additionHash);
-						}
-						else {
-							count = additionHash.getStudentCounts().get(student.getId());
-							
-							additionHash.getStudentCounts().put(student.getId(), count == null ? 1 : count + 1);
-						}
+						commitAdditionHashes.put(hash, commitAdditionHashes.getOrDefault(hash, 0) + 1);
 					}
 					else if(line.charAt(0) == '-' && line.charAt(1) != '-')
 						deletions++;
@@ -553,8 +623,8 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 		
 		if(commit != null) {
-			commit.setAdditions(commit.getAdditions() + additions);
-			commit.setDeletions(commit.getDeletions() + deletions);
+			
+			addFileDetailsToCommit(project, studentProject.getId(), commit, additions, deletions, additionHashMap, commitAdditionHashes);
 			
 			commitList.add(commit);
 		}
@@ -562,6 +632,67 @@ public class ProjectServiceImpl implements ProjectService {
 		process.waitFor();
 		
 		return commitList;
+	}
+	
+	private void calculateSimilarity(Project project, Set<StudentProject> studentProjects, Map<String, AdditionHash> additionHashMap) {
+		
+		System.out.println("Found (" + additionHashMap.size() + ") hashes in the set of new additions");
+		
+		for(AdditionHash projectHash : project.getAdditionHashes()) {
+			if(additionHashMap.containsKey(projectHash.getId())) {
+				Map<Long, Integer> counts = additionHashMap.get(projectHash.getId()).getStudentCounts();
+				Map<Long, Integer> projectCounts = projectHash.getStudentCounts();
+				
+				for(Long studentId : counts.keySet()) {
+					if(projectCounts.containsKey(studentId))
+						counts.put(studentId, counts.get(studentId) + projectCounts.get(studentId));
+					else
+						counts.put(studentId, projectCounts.get(studentId));
+				}
+				
+				additionHashMap.remove(projectHash.getId());
+			}
+		}
+		
+		System.out.println("Project had (" + project.getAdditionHashes().size() + ") hashes saved");
+		
+		project.getAdditionHashes().addAll(additionHashMap.values());
+		
+		System.out.println("Project now has (" + project.getAdditionHashes().size() + ") hashes saved");
+		
+		Map<Long, Map<Long, Integer>> comparisons = new HashMap<>();
+		
+		for(StudentProject studentProject1 : studentProjects) {
+			Map<Long, Integer> studentComparisons = new HashMap<>();
+			
+			for(StudentProject studentProject2 : studentProjects) {
+				if(studentProject1.getId().equals(studentProject2.getId()))
+					continue;
+				
+				studentComparisons.put(studentProject2.getId(), 0);
+			}
+			
+			comparisons.put(studentProject1.getId(), studentComparisons);
+		}
+		
+		System.out.println("Generating comparisons");
+		for(AdditionHash hash : project.getAdditionHashes()) {
+			Map<Long, Integer> counts = hash.getStudentCounts();
+			
+			for(Long studentID1 : counts.keySet()) {
+				Map<Long, Integer> studentComparisons = comparisons.get(studentID1);
+				
+				for(Long studentID2 : counts.keySet()) {
+					if(studentID1.equals(studentID2))
+						continue;
+					
+					studentComparisons.put(studentID2, studentComparisons.get(studentID2) + counts.get(studentID2));
+				}
+			}
+		}
+		
+		for(StudentComparison comparison : project.getStudentComparisons())
+			comparison.setCount(comparisons.get(comparison.getStudentProject1().getId()).get(comparison.getStudentProject2().getId()));
 	}
 	
 	private void calculateStudentDiffs(Project project, List<ProjectDate> projectDateList, Map<StudentProject, List<StudentProjectDate>> studentProjectListMap) {
@@ -581,13 +712,14 @@ public class ProjectServiceImpl implements ProjectService {
 		//iterate through all students in the project
 		for(StudentProject studentProject : studentProjectListMap.keySet()) {
 			
-			String testingDirectory = courseHub + "/" + studentProject.getId();
-			
-			//ensure that all keys are present inside the map
-			if(studentProjectListMap.containsKey(studentProject))
-				studentProjectListMap.put(studentProject, new ArrayList<>());
+			String testingDirectory = courseHub + "/" + studentProject.getStudent().getStudent().getUsername() + "/" + project.getRepository();
 			
 			List<StudentProjectDate> studentProjectDateList = studentProjectListMap.get(studentProject);
+			
+			if(studentProjectDateList.isEmpty()) {
+				System.out.println(studentProject.getStudent().getStudent().getUsername() + " is not being calculated, this may create problems!");
+				continue;
+			}
 			
 			//makes sure that the first element in the list is the earliest student project date
 			studentProjectDateList.sort(Comparator.comparing(StudentProjectDate::getDate));
@@ -602,10 +734,10 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			}
 			
-			if(commitList == null)
+			if(commitList == null || commitList.isEmpty())
 				continue;
 			
-			project.getAdditionHashes().addAll(additionHashMap.values());
+			System.out.println("Running calculation for student (" + studentProject.getStudent().getStudent().getUsername() + ", " + commitList.size() + ", " + commitList.get(0).getHash() + ")");
 			
 			commitList.sort(Comparator.comparing(Commit::getDate));
 			
@@ -627,17 +759,24 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			//iterate through every commit
 			for(Commit commit : commitList) {
+				//make sure that the studentProject first commit is the earliest and not null
+				if(studentProject.getFirstCommit() == null || studentProject.getFirstCommit().compareTo(commit.getDate()) > 0)
+					studentProject.setFirstCommit(commit.getDate());
+				
+				if(commit.getAdditions() + commit.getDeletions() <= .5) {
+					System.out.println("Commit (" + commit.getHash() + ") had no additions and deletions, skipping...");
+					//iteration with access to the previousCommitTime, important for time calculation and setting most recent commit
+					previousCommitTime = commit.getDate();
+					continue;
+				}
+				
 				//find the distance between the previous commit (earlier in time) and the current
 				//this distance is measured in minutes
 				long time = Math.max(ChronoUnit.MINUTES.between(previousCommitTime, commit.getDate()), 0);
 				
 				//run the total time spent on the project between these two commits algorithm
-				if(time > Math.max(commit.getAdditions() * 3, 10))
-					time = Math.round(commit.getAdditions() * 2);
-				
-				//make sure that the studentProject first commit is the earliest and not null
-				if(studentProject.getFirstCommit() == null || studentProject.getFirstCommit().compareTo(commit.getDate()) > 0)
-					studentProject.setFirstCommit(commit.getDate());
+				if(time > Math.max(commit.getAdditions() * 3 * Math.pow(Math.E, -commit.getAdditions() / 300.0), 10))
+					time = Math.round(commit.getAdditions() * 2 * Math.pow(Math.E, -commit.getAdditions() / 300.0));
 				
 				//add the commit additions/deletions and minutes
 				/*studentProject.setAdditions(studentProject.getAdditions() + commit.getAdditions());
@@ -648,10 +787,15 @@ public class ProjectServiceImpl implements ProjectService {
 				studentProjectDate = null;
 				
 				for(StudentProjectDate studentProjectDate1 : studentProjectDateList) {
-					if (studentProjectDate1.getDate() == commit.getDate().toLocalDate()) {
+					if (studentProjectDate1.getDate().compareTo(commit.getDate().toLocalDate()) == 0) {
 						studentProjectDate = studentProjectDate1;
 						break;
 					}
+				}
+				
+				if(studentProjectDate == null) {
+					System.out.println("Skipping Commit (" + commit.getHash() + ", " + commit.getDate() + ") as date was out of bounds");
+					continue;
 				}
 				
 				//update commit count, additions/deletions, and minutes for the specific date
@@ -664,6 +808,8 @@ public class ProjectServiceImpl implements ProjectService {
 				previousCommitTime = commit.getDate();
 			}
 			
+			previousCommitTime = commitList.get(commitList.size() - 1).getDate();
+			
 			//set most recent commit to latest commit
 			if(studentProject.getMostRecentCommit() == null || studentProject.getMostRecentCommit().compareTo(previousCommitTime) <= 0) {
 				studentProject.setMostRecentCommit(previousCommitTime);
@@ -674,7 +820,7 @@ public class ProjectServiceImpl implements ProjectService {
 			//studentProject.setCommitCount(studentProject.getCommitCount() + commitList.size());
 			
 			//add all found commits to student project
-			studentProject.getCommits().addAll(commitList);
+			studentProject.getCommits().addAll(commitList.stream().filter(commit -> commit.getAdditions() != 0 || commit.getDeletions() != 0).collect(Collectors.toList()));
 			//studentProject.setCommitCount((double) studentProject.getCommits().size());
 			
 			StudentProjectDate previousStudentDate = null;
@@ -698,14 +844,13 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 		}
 		
-		Map<LocalDate, List<StudentProjectDate>> dateToStudentDateMap = new HashMap<>(300);
+		calculateSimilarity(project, studentProjectListMap.keySet(), additionHashMap);
+		
+		Map<LocalDate, List<StudentProjectDate>> dateToStudentDateMap = new HashMap<>(50);
 		
 		for(List<StudentProjectDate> studentProjectDates : studentProjectListMap.values()) {
 			for(StudentProjectDate studentProjectDate : studentProjectDates) {
-				List<StudentProjectDate> studentDateMapList = dateToStudentDateMap.get(studentProjectDate.getDate());
-				
-				if(studentDateMapList == null)
-					dateToStudentDateMap.put(studentProjectDate.getDate(), Collections.singletonList(studentProjectDate));
+				List<StudentProjectDate> studentDateMapList = dateToStudentDateMap.computeIfAbsent(studentProjectDate.getDate(), k -> new ArrayList<>());
 				
 				studentDateMapList.add(studentProjectDate);
 			}
@@ -714,8 +859,12 @@ public class ProjectServiceImpl implements ProjectService {
 		for(ProjectDate projectDate : projectDateList) {
 			List<StudentProjectDate> studentProjectDateList = dateToStudentDateMap.get(projectDate.getDate());
 			
-			if(studentProjectDateList == null)
+			if(studentProjectDateList == null || studentProjectDateList.isEmpty()) {
+				System.out.println("Couldn't find any project dates at date : " + projectDate.getDate());
 				continue;
+			}
+			
+			System.out.println("Filling Project Date(" + projectDate.getDate() + ") with (" + studentProjectDateList.size() + ") entries");
 			
 			DescriptiveStatistics totalPointStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics visiblePointStats = new DescriptiveStatistics(studentProjectDateList.size());
@@ -725,7 +874,6 @@ public class ProjectServiceImpl implements ProjectService {
 			DescriptiveStatistics additionStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics deletionStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics changesStats = new DescriptiveStatistics(studentProjectDateList.size());
-			//TODO Similarity
 			DescriptiveStatistics timeVelocityStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics commitVelocityStats = new DescriptiveStatistics(studentProjectDateList.size());
 			
@@ -737,10 +885,34 @@ public class ProjectServiceImpl implements ProjectService {
 				minuteStats.addValue(studentProjectDate.getTotalMinutes());
 				additionStats.addValue(studentProjectDate.getTotalAdditions());
 				deletionStats.addValue(studentProjectDate.getTotalDeletions());
-				changesStats.addValue(studentProjectDate.getTotalAdditions() / studentProjectDate.getTotalDeletions());
-				//TODO Similarity
-				timeVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalMinutes());
-				commitVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalMinutes());
+				
+				if(studentProjectDate.getTotalDeletions() < .5)
+					changesStats.addValue(studentProjectDate.getTotalAdditions());
+				else
+					changesStats.addValue(studentProjectDate.getTotalAdditions() / studentProjectDate.getTotalDeletions());
+				
+				if(project.getRunTestall()) {
+					if(studentProjectDate.getTotalMinutes() < .5)
+						timeVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()));
+					else
+						timeVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalMinutes());
+					
+					if(studentProjectDate.getTotalCommits() < .5)
+						commitVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()));
+					else
+						commitVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalCommits());
+				}
+				else {
+					if(studentProjectDate.getTotalMinutes() < .5)
+						timeVelocityStats.addValue(0.0);
+					else
+						timeVelocityStats.addValue(100.0 / studentProjectDate.getTotalMinutes());
+					
+					if(studentProjectDate.getTotalCommits() < .5)
+						commitVelocityStats.addValue(0.0);
+					else
+						commitVelocityStats.addValue(100.0 / studentProjectDate.getTotalCommits());
+				}
 			}
 			
 			projectDate.setTotalPointStats(new BasicStatistics(totalPointStats));
@@ -751,16 +923,21 @@ public class ProjectServiceImpl implements ProjectService {
 			projectDate.setAdditionStats(new BasicStatistics(additionStats));
 			projectDate.setDeletionStats(new BasicStatistics(deletionStats));
 			projectDate.setChangesStats(new BasicStatistics(changesStats));
-			//TODO Similarity
 			projectDate.setTimeVelocityStats(new BasicStatistics(timeVelocityStats));
 			projectDate.setCommitVelocityStats(new BasicStatistics(commitVelocityStats));
 		}
+		
+		DescriptiveStatistics similarityStats = new DescriptiveStatistics(project.getStudentComparisons().size());
+		
+		for(StudentComparison comparison : project.getStudentComparisons())
+			similarityStats.addValue(comparison.getCount());
+		
+		project.setSimilarityStats(new BasicStatistics(similarityStats));
 	}
 	
 	@Override
+	@Transactional
 	public void analyzeProjects() {
-		LocalDate currentDate = LocalDate.now();
-		
 		//Find all projects in database that have an analyze date time that is less than the due date and less than or equal to today's date
 		List<Project> projects = projectRepository.findAllProjectsByAnalyzeDate();
 		
@@ -769,13 +946,19 @@ public class ProjectServiceImpl implements ProjectService {
 			if(project.getStartDate().compareTo(project.getDueDate()) == 0)
 				continue;
 			
+			System.out.println("RUNNING ANALYSIS ON PROJECT (" + project.getProjectID() + ", " + project.getName() + ")");
+			
 			//Get all student project dates >= the analyze date time (the last recorded analysis run)
 			List<StudentProjectDate> studentProjectDates = studentProjectDateRepository.findByProjectAndDateGreaterThanEqual(project, project.getAnalyzeDateTime());
+			
+			System.out.println("Obtained (" + studentProjectDates.size() + ") Student Project Dates");
 			
 			if(studentProjectDates.isEmpty())
 				continue;
 			
 			List<ProjectDate> projectDateList = projectDateRepository.findAllByProjectAndDateGreaterThanEqual(project, project.getAnalyzeDateTime());
+			
+			System.out.println("Obtained (" + projectDateList.size() + ") Project Dates");
 			
 			if(projectDateList.isEmpty())
 				continue;
@@ -793,13 +976,28 @@ public class ProjectServiceImpl implements ProjectService {
 				continue;
 			}
 			
+			LocalDate currentDate = LocalDate.now(TimeZone.getTimeZone("EST").toZoneId());
+			
+			System.out.println("Project Analyze Date : " + project.getAnalyzeDateTime());
+			
+			System.out.println("Actual Project Date List");
+			for(ProjectDate projectDate : project.getDates()) {
+				System.out.println(projectDate.getDate());
+			}
+			
+			System.out.println("Collected Project Date List");
+			for(ProjectDate projectDate : projectDateList) {
+				System.out.println(projectDate.getDate());
+			}
+			
 			//start processing the project
 			//project.setAnalyzing(true);
 			//project.setAnalyzeDateTime(currentDate);
 			//projectRepository.save(project);
 			
 			//TODO, make this obsolete (except that MyMalloc kind of broke this paradigm)
-			runAllStudentTestalls(project, testScripts, studentProjectListMap);
+			if(project.getRunTestall())
+				runAllStudentTestalls(project, testScripts, studentProjectListMap);
 			
 			//populate all information not associated with the testall into the appropriate locations
 			calculateStudentDiffs(project, projectDateList, studentProjectListMap);
@@ -815,6 +1013,7 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			//stop analyzing the project and set the last time the project has been analyzed to today's date
 			//project.setAnalyzing(false);
+			project.setAnalyzeDateTime(currentDate);
 			projectRepository.save(project);
 		}
 	}

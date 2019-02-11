@@ -52,27 +52,24 @@ public class ReadControllerV2 {
 		this.studentService = studentService;
 	}
 	
-	private User getUserFromAuth() {
-		SecurityContext securityContext = SecurityContextHolder.getContext();
-		return ((User)securityContext.getAuthentication().getPrincipal());
-	}
-	
-	private boolean hasAccessToAccounts(Boolean selectedAllStudents, List<Long> accounts) {
-		if(accounts == null)
-			return true;
-		
-		for(Long account : accounts) {
-			//if(!adminService.hasPermissionOverAccount(getUserFromAuth(), account))
-			//	return false;
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
+	@RequestMapping(value = "/course/get",
+			produces = MediaType.APPLICATION_JSON_VALUE,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			method = RequestMethod.POST)
+	public @ResponseBody ResponseEntity<?> getCourse(@Valid @NonNull @RequestBody Long courseID) {
+		try {
+			return new ResponseEntity<>(courseService.getCourseModel(courseID), HttpStatus.OK);
 		}
-		return true;
+		catch (InvalidRelationIdException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
-	@RequestMapping(value = "/courses",
+	@RequestMapping(value = "/course/all",
 			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourses() {
 		return new ResponseEntity<>(courseService.getCourses(), HttpStatus.OK);
 	}
@@ -81,7 +78,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/sections",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseSections(@Valid @NonNull @RequestBody Long courseID) {
 		try {
 			return new ResponseEntity<>(courseService.getCourseSections(courseID), HttpStatus.OK);
@@ -95,7 +92,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/students",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseStudents(@Valid @NonNull @RequestBody CourseStudentSearch courseStudentSearch) {
 		try {
 			return new ResponseEntity<>(courseService.getCourseProjectStudentInfo(courseStudentSearch), HttpStatus.OK);
@@ -103,13 +100,16 @@ public class ReadControllerV2 {
 		catch (InvalidRelationIdException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
+		catch (IllegalAccessException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+		}
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
 	@RequestMapping(value = "/course/tas",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseTAs(@Valid @NonNull @RequestBody Long courseID) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}
@@ -118,7 +118,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/projects",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseProjects(@Valid @NonNull @RequestBody Long courseID) {
 		try {
 			return new ResponseEntity<>(courseService.getCourseProjects(courseID), HttpStatus.OK);
@@ -132,7 +132,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/chart/tests",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseChartTests(@Valid @NonNull @RequestBody String body) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}
@@ -141,7 +141,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/chart/suites",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseChartSuites(@Valid @NonNull @RequestBody String body) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}
@@ -150,7 +150,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/chart/progress",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseChartProgress(@Valid @NonNull @RequestBody String body) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}*/
@@ -159,7 +159,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/project/date",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseProjectInfoByDate(@Valid @NonNull @RequestBody CourseStudentSearch courseStudentSearch) {
 		//if(courseStudentSearch.hasStudents() && !hasAccessToAccounts(courseStudentSearch.hasSelectedAllStudents(), courseStudentSearch.getStudents()))
 		//	return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -173,13 +173,16 @@ public class ReadControllerV2 {
 		catch (RelationNotFoundException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		catch (IllegalAccessException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+		}
 	}
 	
 	/*@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
 	@RequestMapping(value = "/course/chart/hours",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseChartHours(@Valid @NonNull @RequestBody String body) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}*/
@@ -188,7 +191,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/project/timecard",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseProjectTimecardInfo(@Valid @NonNull @RequestBody CourseStudentSearch courseStudentSearch) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}
@@ -197,7 +200,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/project/dishonesty",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseProjectSimiliarity(@Valid @NonNull @RequestBody String body) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}*/
@@ -206,7 +209,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/dishonesty/velocity",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseProjectVelocity(@Valid @NonNull @RequestBody String body) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}*/
@@ -215,16 +218,30 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/project/stats",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseStats(@Valid @NonNull @RequestBody CourseStudentSearch courseStudentSearch) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}*/
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
+	@RequestMapping(value = "/student",
+			produces = MediaType.APPLICATION_JSON_VALUE,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			method = RequestMethod.POST)
+	public @ResponseBody ResponseEntity<?> getStudent(@Valid @NonNull @RequestBody Long studentID) {
+		try {
+			return new ResponseEntity<>(studentService.getStudentModel(studentID), HttpStatus.OK);
+		}
+		catch (InvalidRelationIdException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
 	@RequestMapping(value = "/student/project/info",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getStudentProjectInfo(@Valid @NonNull @RequestBody ProjectStudentSearchModel projectStudentSearch) {
 		try {
 			return new ResponseEntity<>(studentService.getStudentProjectInfo(projectStudentSearch), HttpStatus.OK);
@@ -238,7 +255,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/student/project/diffs",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getStudentProjectChanges(@Valid @NonNull @RequestBody ProjectStudentSearchModel projectStudentSearch) {
 		try {
 			return new ResponseEntity<>(studentService.getStudentProjectChanges(projectStudentSearch), HttpStatus.OK);
@@ -252,7 +269,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/student/commits",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<Page<?>> getStudentCommits(@Valid @NonNull @RequestBody String body) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}
@@ -261,7 +278,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/student/chart/commits",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getStudentChartCommits(@Valid @NonNull @RequestBody String body) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}
@@ -270,7 +287,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/student/chart/changes",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getStudentChartChanges(@Valid @NonNull @RequestBody String body) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}
@@ -279,7 +296,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/student/chart/progress",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getStudentChartProgress(@Valid @NonNull @RequestBody String body) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}
@@ -288,7 +305,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/course/student/stats",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getStudentStats(@Valid @NonNull @RequestBody String body) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}*/
@@ -297,7 +314,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/project/tests",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getProjectTests(@Valid @NonNull @RequestBody Long projectID) {
 		try {
 			return new ResponseEntity<>(projectService.getProjectTestScripts(projectID), HttpStatus.OK);
@@ -311,7 +328,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/project/suites",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getProjectSuites(@Valid @NonNull @RequestBody Long projectID) {
 		try {
 			return new ResponseEntity<>(projectService.getProjectTestSuites(projectID), HttpStatus.OK);
@@ -325,7 +342,7 @@ public class ReadControllerV2 {
 	@RequestMapping(value = "/project/task",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.GET)
+			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCurrentTask(@Valid @NonNull @RequestBody Long projectID) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}

@@ -7,6 +7,7 @@ import edu.purdue.cs.encourse.domain.Student;
 import lombok.*;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -34,19 +35,21 @@ import java.util.List;
 public class CourseStudent {
 	/** Primary key for relation in database. Never used directly */
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "COURSE_STUDENT_ID")
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "courseID")
+	@JoinColumn(name = "COURSE_ID")
 	@NonNull
 	private Course course;
 	
 	@ManyToOne
-	@JoinColumn(name = "studentID")
+	@JoinColumn(name = "USER_ID")
 	@NonNull
 	private Student student;
 	
+	@Column(name = "IS_STUDENT")
 	private Boolean isStudent;
 	
 	@ManyToMany(cascade = {

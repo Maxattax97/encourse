@@ -5,7 +5,7 @@
 
 DIRECTORY="$(pwd)"
 cd "$1"
-git log --perl-regexp --author='^((?!CS252).*)$' --pretty=format:"%H" --reverse --after="$2" | while read p; do
-    git show -U0 "$p" --date=short --pretty=format:"@DIFF,%H,%ad" --ignore-all-space | awk '{gsub(" ", "", $0);gsub("\t", "", $0); print}'
+git log --perl-regexp --author='^((?!CS252).*)$' --pretty=format:"%H" --reverse --after="$2" | awk '{print $0}' | while read p; do
+    git show -U0 "$p" --date=short --pretty=format:"@DIFF,%H,%aI" --ignore-all-space | awk '{gsub(" ", "", $0);gsub("\t", "", $0); print}'
 done
 cd "${DIRECTORY}"

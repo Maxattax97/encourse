@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -41,10 +42,11 @@ public class TestScript {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "TEST_SCRIPT_ID")
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "projectID")
+	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
 	
 	@ManyToMany(fetch = FetchType.LAZY,
@@ -56,12 +58,15 @@ public class TestScript {
 	private List<TestSuite> testSuites;
 	
 	@NonNull
+	@Column(name = "NAME")
 	private String name;
 	
 	@NonNull
+	@Column(name = "HIDDEN")
 	private Boolean hidden;
 	
 	@NonNull
+	@Column(name = "VALUE")
 	private Double value;
 	
 	public TestScript(@NonNull Project project, @NonNull TestScriptModel model) {

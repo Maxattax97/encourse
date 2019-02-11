@@ -5,6 +5,7 @@ import edu.purdue.cs.encourse.database.StudentProjectDateRepository;
 import edu.purdue.cs.encourse.database.StudentProjectRepository;
 import edu.purdue.cs.encourse.domain.Commit;
 import edu.purdue.cs.encourse.domain.Project;
+import edu.purdue.cs.encourse.domain.ProjectDate;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.Student;
 import edu.purdue.cs.encourse.domain.TestScript;
@@ -12,6 +13,7 @@ import edu.purdue.cs.encourse.domain.TestSuite;
 import edu.purdue.cs.encourse.domain.relations.CourseStudent;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
+import edu.purdue.cs.encourse.model.FrequencyDate;
 import edu.purdue.cs.encourse.model.ProjectStudentSearchModel;
 import edu.purdue.cs.encourse.model.StudentInfoModel;
 import edu.purdue.cs.encourse.model.SearchModel;
@@ -22,6 +24,7 @@ import edu.purdue.cs.encourse.service.StudentService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.InvalidRelationIdException;
 import java.time.LocalDate;
@@ -54,6 +57,7 @@ public class StudentServiceImpl implements StudentService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public CourseStudent getStudent(@NonNull Long studentID) throws InvalidRelationIdException {
 		Optional<CourseStudent> studentOptional = courseStudentRepository.findById(studentID);
 		
@@ -64,6 +68,26 @@ public class StudentServiceImpl implements StudentService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
+	public StudentInfoModel getStudentModel(@NonNull Long studentID) throws InvalidRelationIdException {
+		CourseStudent courseStudent = getStudent(studentID);
+		Student student = courseStudent.getStudent();
+		
+		StudentInfoModel model = new StudentInfoModel();
+		
+		model.setStudentID(studentID);
+		model.setFirstName(student.getFirstName());
+		model.setLastName(student.getLastName());
+		
+		model.setSections(courseStudent.getSections().stream().map(Section::getSectionID).collect(Collectors.toList()));
+		
+		model.setTeachingAssistants(courseStudent.getTeachingAssistants().stream().map(CourseStudent::getId).collect(Collectors.toList()));
+		
+		return model;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
 	public StudentProject getStudentProject(@NonNull Long projectID, @NonNull Long studentID) throws InvalidRelationIdException {
 		Optional<StudentProject> studentProjectOptional = studentProjectRepository.findByProject_ProjectIDAndStudent_Id(projectID, studentID);
 		
@@ -74,6 +98,7 @@ public class StudentServiceImpl implements StudentService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public StudentProjectDate getStudentProjectDate(@NonNull StudentProject studentProject, LocalDate date) throws InvalidRelationIdException {
 		date = date == null ? studentProject.getMostRecentCommit().toLocalDate() : date;
 		
@@ -86,6 +111,7 @@ public class StudentServiceImpl implements StudentService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public StudentProjectDate getStudentProjectDate(@NonNull Long projectID, @NonNull Long studentID, LocalDate date) throws InvalidRelationIdException {
 		StudentProject studentProject = getStudentProject(projectID, studentID);
 		
@@ -148,6 +174,7 @@ public class StudentServiceImpl implements StudentService {
 	}*/
 	
 	@Override
+	@Transactional(readOnly = true)
 	public StudentInfoModel getStudentProjectInfo(@NonNull StudentProject studentProject, @NonNull StudentProjectDate studentProjectDate, SearchModel search) {
 		boolean hasStudent = search.getOption("student");
 		boolean hasSections = search.getOption("section");
@@ -175,15 +202,15 @@ public class StudentServiceImpl implements StudentService {
 			model.setTeachingAssistants(courseStudent.getTeachingAssistants().stream().map(CourseStudent::getId).collect(Collectors.toList()));
 		
 		if(hasProjectInfo) {
-			model.setAdditions(Math.round(studentProjectDate.getTotalAdditions()));
-			model.setDeletions(Math.round(studentProjectDate.getTotalDeletions()));
+			model.setAdditions(Math.round(studentProjectDate.getTotalAdditions() == null ? 0.0 : studentProjectDate.getTotalAdditions()));
+			model.setDeletions(Math.round(studentProjectDate.getTotalDeletions() == null ? 0.0 : studentProjectDate.getTotalDeletions()));
 			
-			model.setCommits(Math.round(studentProjectDate.getTotalCommits()));
+			model.setCommits(Math.round(studentProjectDate.getTotalCommits() == null ? 0.0 : studentProjectDate.getTotalCommits()));
 			
-			model.setMinutes(Math.round(studentProjectDate.getTotalMinutes()));
+			model.setMinutes(Math.round(studentProjectDate.getTotalMinutes() == null ? 0.0 : studentProjectDate.getTotalMinutes()));
 			
-			model.setVisiblePoints(Math.round(studentProjectDate.getVisiblePoints()));
-			model.setHiddenPoints(Math.round(studentProjectDate.getHiddenPoints()));
+			model.setVisiblePoints(Math.round(studentProjectDate.getVisiblePoints() == null ? 0.0 : studentProjectDate.getVisiblePoints()));
+			model.setHiddenPoints(Math.round(studentProjectDate.getHiddenPoints() == null ? 0.0 : studentProjectDate.getHiddenPoints()));
 		}
 
 		if(hasTestSuiteInfo) {
@@ -216,20 +243,23 @@ public class StudentServiceImpl implements StudentService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public StudentInfoModel getStudentProjectInfo(@NonNull ProjectStudentSearchModel model) throws InvalidRelationIdException {
 		StudentProject studentProject = getStudentProject(model.getProjectID(), model.getStudentID());
 
 		if(studentProject.getMostRecentCommit() == null || studentProject.getMostRecentCommit().compareTo(studentProject.getFirstCommit()) == 0)
 			return new StudentInfoModel();
 		
-		StudentProjectDate studentProjectDate = getStudentProjectDate(studentProject, studentProject.getMostRecentCommit().toLocalDate());
+		StudentProjectDate studentProjectDate = getStudentProjectDate(studentProject, model.getDate());
 		
 		return getStudentProjectInfo(studentProject, studentProjectDate, model);
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public StudentProjectDiffs getStudentProjectChanges(@NonNull ProjectStudentSearchModel model) throws InvalidRelationIdException {
 		StudentProject studentProject = getStudentProject(model.getProjectID(), model.getStudentID());
+		Project project = studentProject.getProject();
 		
 		List<Commit> commits = studentProject.getCommits();
 		
@@ -254,7 +284,18 @@ public class StudentServiceImpl implements StudentService {
 			frequencyMap.put(date, frequency);
 		}
 		
-		studentProjectDiffs.setFrequencies(frequencyMap);
+		List<FrequencyDate> frequencies = new ArrayList<>();
+		
+		LocalDate date = project.getStartDate();
+		
+		while(date.compareTo(project.getDueDate()) <= 0) {
+			
+			frequencies.add(new FrequencyDate(date, frequencyMap.getOrDefault(date, 0)));
+			
+			date = date.plusDays(1);
+		}
+		
+		studentProjectDiffs.setFrequencies(frequencies);
 		
 		return studentProjectDiffs;
 	}

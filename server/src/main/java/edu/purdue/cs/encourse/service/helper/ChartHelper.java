@@ -13,12 +13,12 @@ import java.util.List;
 public class ChartHelper {
 	
 	public static List<BarValue> toBarChart(int count, BasicStatistics bounds, double[] values) {
-		BarValue[] buckets = new BarValue[(int) Math.round(Math.sqrt(count))];
+		BarValue[] buckets = new BarValue[(int) Math.floor(Math.sqrt(count))];
 		
-		for(byte i = 0; i < buckets.length; i++)
+		for(int i = 0; i < buckets.length; i++)
 			buckets[i] = new BarValue(i, (short) 0);
 		
-		double interval = bounds.getMax() - bounds.getMin();
+		double interval = (bounds.getMax() - bounds.getMin()) / buckets.length;
 		
 		for(double value : values)
 			buckets[(int)Math.min(Math.max(Math.floor(((value - bounds.getMin()) / interval)), 0), buckets.length - 1)].size++;

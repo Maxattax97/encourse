@@ -12,6 +12,7 @@ import lombok.ToString;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,7 +27,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a relation between a student and the projects that they were assigned.
@@ -46,39 +49,51 @@ public class StudentProject {
     /** Primary key for relation in database. Never used directly */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "STUDENT_PROJECT_ID")
     private Long id;
     
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "projectID")
+    @JoinColumn(name = "PROJECT_ID")
     private Project project;
     
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "studentID")
+    @JoinColumn(name = "COURSE_STUDENT_ID")
     private CourseStudent student;
 
     /** Date that student made first commit for the project */
+    @Column(name = "FIRST_COMMIT")
     private LocalDateTime firstCommit;
 
     /** Date that student most recently committed for the project */
+    @Column(name = "MOST_RECENT_COMMIT")
     private LocalDateTime mostRecentCommit;
     
+    @Column(name = "LAST_UPDATED_COMMIT")
     private String lastUpdatedCommit;
     
     @NonNull
     @ElementCollection
-    @CollectionTable(name = "STUDENT_PROJECT_TESTS", joinColumns = @JoinColumn(name = "studentProjectID"))
+    @CollectionTable(name = "STUDENT_PROJECT_TESTS", joinColumns = @JoinColumn(name = "STUDENT_PROJECT_ID"))
     private List<Long> testsPassing;
     
     @NonNull
     @ElementCollection
-    @CollectionTable(name = "STUDENT_PROJECT_COMMITS", joinColumns = @JoinColumn(name = "studentProjectID"))
+    @CollectionTable(name = "STUDENT_PROJECT_COMMITS", joinColumns = @JoinColumn(name = "STUDENT_PROJECT_ID"))
     private List<Commit> commits;
     
     @NonNull
     @OneToMany(mappedBy = "studentProject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StudentProjectDate> dates;
+    
+    @NonNull
+    @OneToMany(mappedBy = "studentProject1", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<StudentComparison> firstComparisons;
+    
+    @NonNull
+    @OneToMany(mappedBy = "studentProject2", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<StudentComparison> secondComparisons;
     
     public StudentProject(@NonNull Project project, @NonNull CourseStudent student) {
         this.project = project;
@@ -89,6 +104,9 @@ public class StudentProject {
         
         this.testsPassing = new ArrayList<>();
         this.dates = new ArrayList<>();
+        
+        this.firstComparisons = new HashSet<>();
+        this.secondComparisons = new HashSet<>();
     }
     
     @Override

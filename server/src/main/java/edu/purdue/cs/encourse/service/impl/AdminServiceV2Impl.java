@@ -1,9 +1,9 @@
 package edu.purdue.cs.encourse.service.impl;
 
-import edu.purdue.cs.encourse.database.AccountRepository;
 import edu.purdue.cs.encourse.database.AuthorityRepository;
 import edu.purdue.cs.encourse.database.CourseRepository;
 import edu.purdue.cs.encourse.database.CourseStudentRepository;
+import edu.purdue.cs.encourse.database.ProfessorRepository;
 import edu.purdue.cs.encourse.database.UserRepository;
 import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.Course;
@@ -24,8 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.InvalidRelationIdException;
+import javax.management.relation.RelationException;
 import java.util.List;
 
 /**
@@ -52,7 +54,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	private CourseRepository courseRepository;
 	
 	@Autowired
-	private AccountRepository accountRepository;
+	private ProfessorRepository professorRepository;
 	
 	@Autowired
 	private StudentService studentService;
@@ -67,6 +69,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	}
 	
 	@Override
+	@Transactional
 	public User addUser(@NonNull UserModel model) throws InvalidRelationIdException {
 		Account account = accountService.getAccount(model.getUserID());
 		
@@ -76,12 +79,11 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 		
 		userRepository.save(user);
 		
-		user.setPassword(null);
-		
 		return user;
 	}
 	
 	@Override
+	@Transactional
 	public void setCourseProfessor(@NonNull CourseProfessorModel model) throws InvalidRelationIdException {
 		Course course = courseService.getCourse(model.getCourseID());
 		Professor currentProfessor = course.getProfessor();
@@ -92,27 +94,34 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 		
 		course.setProfessor(professor);
 		
-		accountRepository.save(professor);
-		accountRepository.save(currentProfessor);
+		professorRepository.save(professor);
+		professorRepository.save(currentProfessor);
 	}
 	
 	@Override
-	public void addCourseTA(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
+	@Transactional
+	public CourseStudent addCourseTA(@NonNull CourseStudentModel model) throws RelationException {
 		Course course = courseService.getCourse(model.getCourseID());
 		Student student = accountService.getStudent(model.getStudentID());
 		
-		CourseStudent courseStudent = new CourseStudent(course, student, false);
+		CourseStudent courseStudent = courseStudentRepository.save(new CourseStudent(course, student, false));
 		
-		course.getTeachingAssistants().add(courseStudent);
+		if(courseStudent == null)
+			throw new RelationException("Could not create new course student object in database.");
+		
+		course.getStudents().add(courseStudent);
 		
 		courseRepository.save(course);
+		
+		return courseStudent;
 	}
 	
 	@Override
+	@Transactional
 	public void removeCourseTA(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
 		Course course = courseService.getCourse(model.getCourseID());
 		
-		List<CourseStudent> tas = course.getTeachingAssistants();
+		List<CourseStudent> tas = course.getStudents();
 		
 		CourseStudent ta;
 		
@@ -135,19 +144,26 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	}
 	
 	@Override
-	public void addCourseStudent(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
+	@Transactional
+	public CourseStudent addCourseStudent(@NonNull CourseStudentModel model) throws RelationException {
 		Course course = courseService.getCourse(model.getCourseID());
 		Student student = accountService.getStudent(model.getStudentID());
 		
-		CourseStudent courseStudent = new CourseStudent(course, student, true);
+		CourseStudent courseStudent = courseStudentRepository.save(new CourseStudent(course, student, true));
+		
+		if(courseStudent == null)
+			throw new RelationException("Could not create new course student object in database.");
 		
 		course.getStudents().add(courseStudent);
 		course.setStudentCount(course.getStudentCount() + 1);
 		
 		courseRepository.save(course);
+		
+		return courseStudent;
 	}
 	
 	@Override
+	@Transactional
 	public void removeCourseStudent(@NonNull CourseStudentModel model) throws InvalidRelationIdException {
 		Course course = courseService.getCourse(model.getCourseID());
 		
@@ -172,6 +188,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	}
 	
 	@Override
+	@Transactional
 	public void addCourseStudentToTA(@NonNull StudentTAModel model) throws InvalidRelationIdException {
 		CourseStudent student = studentService.getStudent(model.getStudentID());
 		CourseStudent ta = studentService.getStudent(model.getTeachingAssistantID());
@@ -185,6 +202,7 @@ public class AdminServiceV2Impl implements AdminServiceV2 {
 	}
 	
 	@Override
+	@Transactional
 	public void removeCourseStudentToTA(@NonNull StudentTAModel model) throws InvalidRelationIdException {
 		CourseStudent student = studentService.getStudent(model.getStudentID());
 		CourseStudent ta = studentService.getStudent(model.getTeachingAssistantID());
