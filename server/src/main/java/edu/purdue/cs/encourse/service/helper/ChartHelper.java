@@ -15,7 +15,7 @@ public class ChartHelper {
 	public static List<BarValue> toBarChart(int count, BasicStatistics bounds, double[] values) {
 		BarValue[] buckets = new BarValue[(int) Math.floor(Math.sqrt(count))];
 		
-		for(byte i = 0; i < buckets.length; i++)
+		for(int i = 0; i < buckets.length; i++)
 			buckets[i] = new BarValue(i, (short) 0);
 		
 		double interval = (bounds.getMax() - bounds.getMin()) / buckets.length;
