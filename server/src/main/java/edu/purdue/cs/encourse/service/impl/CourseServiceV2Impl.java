@@ -4,6 +4,7 @@ import edu.purdue.cs.encourse.database.CourseRepository;
 import edu.purdue.cs.encourse.database.ProjectDateRepository;
 import edu.purdue.cs.encourse.database.ProjectRepository;
 import edu.purdue.cs.encourse.database.SectionRepository;
+import edu.purdue.cs.encourse.database.StudentComparisonRepository;
 import edu.purdue.cs.encourse.database.StudentProjectDateRepository;
 import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.Course;
@@ -13,6 +14,7 @@ import edu.purdue.cs.encourse.domain.ProjectDate;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.Student;
 import edu.purdue.cs.encourse.domain.relations.CourseStudent;
+import edu.purdue.cs.encourse.domain.relations.StudentComparison;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.BasicStatistics;
 import edu.purdue.cs.encourse.model.CourseModel;
@@ -44,6 +46,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -63,6 +66,9 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	private final ProjectDateRepository projectDateRepository;
 	
 	private final SectionRepository sectionRepository;
+	
+	@Autowired
+	private StudentComparisonRepository studentComparisonRepository;
 	
 	@Autowired
 	private StudentService studentService;
@@ -343,7 +349,6 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		double[] timeSamples = hasTimeStats || hasTimeChart ? new double[students.size()] : null;
 		
 		double[] changesSamples = hasChangesStats || hasChangesChart ? new double[students.size()] : null;
-		double[] similaritySamples = hasSimilarityStats || hasSimilarityChart ? new double[students.size()] : null;
 		double[] timeVelocitySamples = hasTimeVelocityStats || hasTimeVelocityChart ? new double[students.size()] : null;
 		double[] commitVelocitySamples = hasCommitVelocityStats || hasCommitVelocityChart ? new double[students.size()] : null;
 		
@@ -413,6 +418,21 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		}
 		
 		int studentCount = project.getCourse().getStudentCount();
+		
+		if(hasSimilarityStats || hasSimilarityChart) {
+			List<Long> studentIds = students.stream().map(student -> student.getStudentProject().getId()).collect(Collectors.toList());
+			List<StudentComparison> comparisons = studentComparisonRepository.findAllByStudentProject1_IdInOrStudentProject2_IdIn(studentIds, studentIds);
+			double[] similaritySamples = new double[comparisons.size()];
+			
+			int i = 0;
+			
+			for(StudentComparison comparison : comparisons) {
+				similaritySamples[i] = comparison.getCount();
+				i++;
+			}
+			
+			projectInfo.setSimilarity(getCourseHistogram((studentCount * (studentCount - 1)) / 2, hasSimilarityStats, hasSimilarityChart, similaritySamples, project.getSimilarityStats()));
+		}
 		
 		projectInfo.setProgress(getCourseHistogram(studentCount, hasProgressStats, hasProgressChart, progressSamples, !includeHiddenTests ? projectDate.getHiddenPointStats() : !includeVisibleTests ? projectDate.getVisiblePointStats() : projectDate.getTotalPointStats()));
 		projectInfo.setCommits(getCourseHistogram(studentCount, hasCommitStats, hasCommitChart, commitSamples, projectDate.getCommitStats()));

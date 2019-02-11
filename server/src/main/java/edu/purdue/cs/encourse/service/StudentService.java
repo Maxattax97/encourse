@@ -22,6 +22,9 @@ public interface StudentService {
 	CourseStudent getStudent(@NonNull Long studentID) throws InvalidRelationIdException;
 	
 	@Transactional(readOnly = true)
+	StudentInfoModel getStudentModel(@NonNull Long studentID) throws InvalidRelationIdException;
+	
+	@Transactional(readOnly = true)
 	StudentProject getStudentProject(@NonNull Long projectID, @NonNull Long studentID) throws InvalidRelationIdException;
 	
 	@Transactional(readOnly = true)

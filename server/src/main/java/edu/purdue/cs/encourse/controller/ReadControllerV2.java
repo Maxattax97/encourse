@@ -52,17 +52,6 @@ public class ReadControllerV2 {
 		this.studentService = studentService;
 	}
 	
-	private boolean hasAccessToAccounts(Boolean selectedAllStudents, List<Long> accounts) {
-		if(accounts == null)
-			return true;
-		
-		for(Long account : accounts) {
-			//if(!adminService.hasPermissionOverAccount(getUserFromAuth(), account))
-			//	return false;
-		}
-		return true;
-	}
-	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
 	@RequestMapping(value = "/course",
 			produces = MediaType.APPLICATION_JSON_VALUE,
@@ -233,6 +222,20 @@ public class ReadControllerV2 {
 	public @ResponseBody ResponseEntity<?> getCourseStats(@Valid @NonNull @RequestBody CourseStudentSearch courseStudentSearch) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}*/
+	
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
+	@RequestMapping(value = "/student",
+			produces = MediaType.APPLICATION_JSON_VALUE,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			method = RequestMethod.POST)
+	public @ResponseBody ResponseEntity<?> getStudent(@Valid @NonNull @RequestBody Long studentID) {
+		try {
+			return new ResponseEntity<>(studentService.getStudentModel(studentID), HttpStatus.OK);
+		}
+		catch (InvalidRelationIdException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
 	@RequestMapping(value = "/student/project/info",

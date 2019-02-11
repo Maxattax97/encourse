@@ -69,6 +69,25 @@ public class StudentServiceImpl implements StudentService {
 	
 	@Override
 	@Transactional(readOnly = true)
+	public StudentInfoModel getStudentModel(@NonNull Long studentID) throws InvalidRelationIdException {
+		CourseStudent courseStudent = getStudent(studentID);
+		Student student = courseStudent.getStudent();
+		
+		StudentInfoModel model = new StudentInfoModel();
+		
+		model.setStudentID(studentID);
+		model.setFirstName(student.getFirstName());
+		model.setLastName(student.getLastName());
+		
+		model.setSections(courseStudent.getSections().stream().map(Section::getSectionID).collect(Collectors.toList()));
+		
+		model.setTeachingAssistants(courseStudent.getTeachingAssistants().stream().map(CourseStudent::getId).collect(Collectors.toList()));
+		
+		return model;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
 	public StudentProject getStudentProject(@NonNull Long projectID, @NonNull Long studentID) throws InvalidRelationIdException {
 		Optional<StudentProject> studentProjectOptional = studentProjectRepository.findByProject_ProjectIDAndStudent_Id(projectID, studentID);
 		
