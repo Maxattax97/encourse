@@ -64,7 +64,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
     private void feedDatabase() {
         try {
             Course course = null;
-            if (accountRepository.findAll().iterator().hasNext()) {
+            if (!accountRepository.findAll().iterator().hasNext()) {
 
                 Account grr = accountService.addAccount(new AccountModel("grr", "Gustavo", "Rodriguez-Rivera", "grr@purdue.edu", Account.Role.PROFESSOR.ordinal()));
                 Account killian = accountService.addAccount(new AccountModel("kleclain-a", "Killian", "LeClainche", "kleclain@purdue.edu", Account.Role.ADMIN.ordinal()));
