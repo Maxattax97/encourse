@@ -14,6 +14,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     
     @Query("select p from Project p where p.dueDate >= p.analyzeDateTime")
     List<Project> findAllProjectsByAnalyzeDate();
+    
+    boolean existsByNameEqualsAndCourse_CourseID(@NonNull String name, @NonNull Long courseID);
 
     boolean existsByName(@NonNull String name);
 }

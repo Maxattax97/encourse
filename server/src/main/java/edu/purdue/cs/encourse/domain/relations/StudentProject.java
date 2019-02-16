@@ -73,6 +73,18 @@ public class StudentProject {
     @Column(name = "LAST_UPDATED_COMMIT")
     private String lastUpdatedCommit;
     
+    private Double minutes;
+    
+    private Double changes;
+    
+    private Double timeVelocity;
+    
+    private Double commitVelocity;
+    
+    private Double countSimilarity;
+    
+    private Double percentSimilarity;
+    
     @NonNull
     @ElementCollection
     @CollectionTable(name = "STUDENT_PROJECT_TESTS", joinColumns = @JoinColumn(name = "STUDENT_PROJECT_ID"))
@@ -101,6 +113,13 @@ public class StudentProject {
         
         this.firstCommit = this.mostRecentCommit = LocalDateTime.of(LocalDate.ofYearDay(2000, 1), LocalTime.of(0, 0));
         this.lastUpdatedCommit = "";
+        
+        this.minutes = 0.0;
+        this.changes = 0.0;
+        this.timeVelocity = 0.0;
+        this.commitVelocity = 0.0;
+        this.countSimilarity = 0.0;
+        this.percentSimilarity = 0.0;
         
         this.testsPassing = new ArrayList<>();
         this.dates = new ArrayList<>();

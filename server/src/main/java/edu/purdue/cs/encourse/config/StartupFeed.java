@@ -56,6 +56,9 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
     @Autowired
     private ProjectService projectService;
     
+    @Autowired
+    private ProjectAnalysisService projectAnalysisService;
+    
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
         feedDatabase();
@@ -157,6 +160,8 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
         catch(Exception e) {
             e.printStackTrace();
         }
+    
+        projectAnalysisService.analyzeProjects();
     }
 
     private void addMallocTestScripts(Project project) {

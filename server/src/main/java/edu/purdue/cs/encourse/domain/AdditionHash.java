@@ -42,7 +42,7 @@ public class AdditionHash {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "ADDITION_HASH_STUDENTS", joinColumns = @JoinColumn(name = "ADDITION_HASH_ID"))
 	private Map<Long, Integer> studentCounts;
-
+	
 	@Override
 	public boolean equals(Object object) {
 		return object instanceof AdditionHash && ((AdditionHash) object).id.equals(this.id);

@@ -34,4 +34,10 @@ public class StudentInfoModel {
 	
 	private List<StudentTestSuiteInfoModel> testSuites;
 	
+	private Double changes;
+	private Double timeVelocity;
+	private Double commitVelocity;
+	private Integer comparison;
+	private Double comparisonPercent;
+	
 }

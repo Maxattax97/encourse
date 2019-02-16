@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Killian Le Clainche on 2/9/2019.
@@ -56,5 +59,12 @@ public class StudentComparison {
 	@NonNull
 	@Column(name = "SIMILARITY_COUNT")
 	private Integer count;
+	
+	@NonNull
+	private Double percent;
+	
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(name = "STUDENT_COMPARISON_HASHES", joinColumns = @JoinColumn(name = "STUDENT_COMPARISON_ID"))
+	private List<Long> additionHashes;
 	
 }

@@ -65,7 +65,4 @@ public interface ProjectService {
 	@Transactional
 	TestSuite modifyTestSuite(@NonNull TestSuiteModel model) throws RelationException, IllegalArgumentException;
 	
-	@Transactional
-	void analyzeProjects();
-	
 }

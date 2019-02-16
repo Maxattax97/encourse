@@ -3,6 +3,7 @@ package edu.purdue.cs.encourse.service;
 import edu.purdue.cs.encourse.domain.relations.CourseStudent;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
+import edu.purdue.cs.encourse.model.ProjectStudentCommitModel;
 import edu.purdue.cs.encourse.model.StudentInfoModel;
 import edu.purdue.cs.encourse.model.ProjectStudentSearchModel;
 import edu.purdue.cs.encourse.model.SearchModel;
@@ -41,4 +42,7 @@ public interface StudentService {
 	
 	@Transactional(readOnly = true)
 	StudentProjectDiffs getStudentProjectChanges(@NonNull ProjectStudentSearchModel model) throws InvalidRelationIdException;
+	
+	@Transactional(readOnly = true)
+	Object getStudentProjectCommitDiff(@NonNull ProjectStudentCommitModel model) throws InvalidRelationIdException;
 }
