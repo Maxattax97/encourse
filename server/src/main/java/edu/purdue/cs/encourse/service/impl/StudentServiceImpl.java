@@ -5,21 +5,21 @@ import edu.purdue.cs.encourse.database.StudentProjectDateRepository;
 import edu.purdue.cs.encourse.database.StudentProjectRepository;
 import edu.purdue.cs.encourse.domain.Commit;
 import edu.purdue.cs.encourse.domain.Project;
-import edu.purdue.cs.encourse.domain.ProjectDate;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.Student;
 import edu.purdue.cs.encourse.domain.TestScript;
 import edu.purdue.cs.encourse.domain.TestSuite;
 import edu.purdue.cs.encourse.domain.relations.CourseStudent;
+import edu.purdue.cs.encourse.domain.relations.StudentComparison;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.FrequencyDate;
+import edu.purdue.cs.encourse.model.ProjectStudentCommitModel;
 import edu.purdue.cs.encourse.model.ProjectStudentSearchModel;
 import edu.purdue.cs.encourse.model.StudentInfoModel;
 import edu.purdue.cs.encourse.model.SearchModel;
 import edu.purdue.cs.encourse.model.StudentTestSuiteInfoModel;
 import edu.purdue.cs.encourse.model.student.StudentProjectDiffs;
-import edu.purdue.cs.encourse.model.student.StudentTestSuiteInfo;
 import edu.purdue.cs.encourse.service.StudentService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,6 +181,7 @@ public class StudentServiceImpl implements StudentService {
 		boolean hasTAs = search.getOption("teachingAssistants");
 		boolean hasProjectInfo = search.getOption("projectInfo");
 		boolean hasTestSuiteInfo = search.getOption("suiteInfo");
+		boolean hasReportInfo = search.getOption("reportInfo");
 		
 		CourseStudent courseStudent = studentProject.getStudent();
 		
@@ -237,6 +238,52 @@ public class StudentServiceImpl implements StudentService {
 			
 			if(!testSuiteInfos.isEmpty())
 				model.setTestSuites(testSuiteInfos);
+		}
+		
+		if(hasReportInfo) {
+			Project project = studentProject.getProject();
+			
+			if(studentProjectDate.getTotalDeletions() < .5)
+				model.setChanges(studentProjectDate.getTotalAdditions());
+			else
+				model.setChanges(studentProjectDate.getTotalAdditions() / studentProjectDate.getTotalDeletions());
+			
+			if(project.getRunTestall()) {
+				if(studentProjectDate.getTotalMinutes() < .5)
+					model.setTimeVelocity((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()));
+				else
+					model.setTimeVelocity((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalMinutes());
+				
+				if(studentProjectDate.getTotalCommits() < .5)
+					model.setCommitVelocity((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()));
+				else
+					model.setCommitVelocity((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalCommits());
+			}
+			else {
+				if(studentProjectDate.getTotalMinutes() < .5)
+					model.setTimeVelocity(0.0);
+				else
+					model.setTimeVelocity(100.0 / studentProjectDate.getTotalMinutes());
+				
+				if(studentProjectDate.getTotalCommits() < .5)
+					model.setCommitVelocity(0.0);
+				else
+					model.setCommitVelocity(100.0 / studentProjectDate.getTotalCommits());
+			}
+			
+			Integer largestComparison = 0;
+			
+			for(StudentComparison comparison : studentProject.getFirstComparisons()) {
+				if(largestComparison < comparison.getCount())
+					largestComparison = comparison.getCount();
+			}
+			
+			for(StudentComparison comparison : studentProject.getSecondComparisons()) {
+				if(largestComparison < comparison.getCount())
+					largestComparison = comparison.getCount();
+			}
+			
+			model.setComparison(largestComparison);
 		}
 		
 		return model;
@@ -298,5 +345,12 @@ public class StudentServiceImpl implements StudentService {
 		studentProjectDiffs.setFrequencies(frequencies);
 		
 		return studentProjectDiffs;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Object getStudentProjectCommitDiff(@NonNull ProjectStudentCommitModel model) throws InvalidRelationIdException {
+		CourseStudent student = getStudent(model.getStudentID());
+		return null;
 	}
 }

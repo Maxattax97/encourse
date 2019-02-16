@@ -73,6 +73,16 @@ public class StudentProject {
     @Column(name = "LAST_UPDATED_COMMIT")
     private String lastUpdatedCommit;
     
+    private Double changes;
+    
+    private Double timeVelocity;
+    
+    private Double commitVelocity;
+    
+    private Double countSimilarity;
+    
+    private Double percentSimilarity;
+    
     @NonNull
     @ElementCollection
     @CollectionTable(name = "STUDENT_PROJECT_TESTS", joinColumns = @JoinColumn(name = "STUDENT_PROJECT_ID"))
