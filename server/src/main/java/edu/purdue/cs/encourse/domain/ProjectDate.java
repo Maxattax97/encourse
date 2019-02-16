@@ -124,39 +124,6 @@ public class ProjectDate {
 	})
 	private BasicStatistics deletionStats;
 	
-	@Setter
-	@Embedded
-	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "MAX_CHANGES")),
-			@AttributeOverride(name = "min", column = @Column(name = "MIN_CHANGES")),
-			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_CHANGES")),
-			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_CHANGES")),
-			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_CHANGES"))
-	})
-	private BasicStatistics changesStats;
-	
-	@Setter
-	@Embedded
-	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "MAX_TIME_VELOCITY")),
-			@AttributeOverride(name = "min", column = @Column(name = "MIN_TIME_VELOCITY")),
-			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_TIME_VELOCITY")),
-			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_TIME_VELOCITY")),
-			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_TIME_VELOCITY"))
-	})
-	private BasicStatistics timeVelocityStats;
-	
-	@Setter
-	@Embedded
-	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "MAX_COMMIT_VELOCITY")),
-			@AttributeOverride(name = "min", column = @Column(name = "MIN_COMMIT_VELOCITY")),
-			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_COMMIT_VELOCITY")),
-			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_COMMIT_VELOCITY")),
-			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_COMMIT_VELOCITY"))
-	})
-	private BasicStatistics commitVelocityStats;
-	
 	@ElementCollection
 	@CollectionTable(name = "PROJECT_DATE_TESTS", joinColumns = @JoinColumn(name = "PROJECT_DATE_ID"))
 	private Map<String, Integer> testsTotal;

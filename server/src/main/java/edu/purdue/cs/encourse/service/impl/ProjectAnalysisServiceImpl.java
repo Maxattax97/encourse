@@ -97,7 +97,6 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		this.studentComparisonRepository = studentComparisonRepository;
 	}
 	
-	
 	private void executeScript(@NonNull String command) throws InterruptedException, IOException {
 		Process process = Runtime.getRuntime().exec("./src/main/bash/" + command + " 2> /dev/null");
 		process.waitFor();
@@ -163,8 +162,6 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		int deletions = 0;
 		
 		String hash;
-		AdditionHash additionHash;
-		Integer count;
 		
 		Map<String, Integer> commitAdditionHashes = new HashMap<>();
 		
@@ -192,7 +189,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				
 				
 				try {
-					commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(estZone).toLocalDateTime(), 0.0, 0.0, 0.0, 0.0);
+					commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(estZone).toLocalDateTime(), 0.0, 0.0, 0.0, 0.0, 0.0);
 					
 					if(commit.getDate().toLocalDate().compareTo(project.getDueDate()) > 0 || commit.getDate().toLocalDate().compareTo(project.getAnalyzeDateTime()) < 0)
 						commit = null;
@@ -352,7 +349,6 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			if(previousCommitTime == null)
 				previousCommitTime = LocalDateTime.MIN;
 			
-			ProjectDate projectDate;
 			StudentProjectDate studentProjectDate = studentProjectDateList.get(0);
 			
 			//reset the earliest student project date totals, the reason being that we will be altering the currents that impact the totals
@@ -385,8 +381,10 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				
 				//add the commit additions/deletions and minutes
 				/*studentProject.setAdditions(studentProject.getAdditions() + commit.getAdditions());
-				studentProject.setDeletions(studentProject.getDeletions() + commit.getDeletions());
-				studentProject.setMinutes(studentProject.getMinutes() + time);*/
+				studentProject.setDeletions(studentProject.getDeletions() + commit.getDeletions());*/
+				studentProject.setMinutes(studentProject.getMinutes() + time);
+				
+				commit.setMinutes(studentProject.getMinutes());
 				
 				//find the student project date
 				studentProjectDate = null;
@@ -527,9 +525,9 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			projectDate.setMinuteStats(new BasicStatistics(minuteStats));
 			projectDate.setAdditionStats(new BasicStatistics(additionStats));
 			projectDate.setDeletionStats(new BasicStatistics(deletionStats));
-			projectDate.setChangesStats(new BasicStatistics(changesStats));
-			projectDate.setTimeVelocityStats(new BasicStatistics(timeVelocityStats));
-			projectDate.setCommitVelocityStats(new BasicStatistics(commitVelocityStats));
+			//projectDate.setChangesStats(new BasicStatistics(changesStats));
+			//projectDate.setTimeVelocityStats(new BasicStatistics(timeVelocityStats));
+			//projectDate.setCommitVelocityStats(new BasicStatistics(commitVelocityStats));
 		}
 		
 		DescriptiveStatistics similarityStats = new DescriptiveStatistics(project.getStudentComparisons().size());
@@ -568,9 +566,6 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			if(projectDateList.isEmpty())
 				continue;
 			
-			//Collect the projects test scripts (which are lazily retrieved) and map them to the test name -> test script
-			Map<String, TestScript> testScripts = project.getTestScripts().stream().collect(Collectors.toMap(TestScript::getName, Function.identity()));
-			
 			//map StudentProjectDates to their parent student project
 			Map<StudentProject, List<StudentProjectDate>> studentProjectListMap = studentProjectDates.stream().collect(Collectors.groupingBy(StudentProjectDate::getStudentProject));
 			
@@ -595,15 +590,6 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				System.out.println(projectDate.getDate());
 			}
 			
-			//start processing the project
-			//project.setAnalyzing(true);
-			//project.setAnalyzeDateTime(currentDate);
-			//projectRepository.save(project);
-			
-			//TODO, make this obsolete (except that MyMalloc kind of broke this paradigm)
-			//if(project.getRunTestall())
-			//	runAllStudentTestalls(project, testScripts, studentProjectListMap);
-			
 			//populate all information not associated with the testall into the appropriate locations
 			calculateStudentDiffs(project, projectDateList, studentProjectListMap);
 			
@@ -622,107 +608,5 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			projectRepository.save(project);
 		}
 	}
-	
-	
-	/*
-	 * Runs a testall process on a specific commit provided through the String "line"
-	 */
-	/*private void runStudentTestall(Project project, List<StudentProjectDate> studentProjectDates, Map<String, TestScript> testScripts, String line, String testingDirectory, File testCaseDirectory, File hiddenTestCaseDirectory, File makefile) throws InterruptedException, IOException {
-		if(line == null)
-			return;
-		
-		String[] commitInfo = line.split(" ");
-		
-		if(commitInfo.length == 0)
-			return;
-		
-		//Parse the splitted line 3rd value, that being the local date or the yyyy-MM-dd
-		LocalDate date = ZonedDateTime.parse(commitInfo[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(TimeZone.getTimeZone("EST").toZoneId()).toLocalDate();
-		
-		//checkout to previous commit based on the 2nd value of line, then run the makefile bash script
-		executeScript("checkoutPreviousCommit.sh " + testingDirectory + " " + commitInfo[1]);
-		executeScript("runMakefile.sh " + testingDirectory + " " + makefile.getPath());
-		
-		//create the testing environment, run it, then return the values retrieved from the execution
-		TestExecuter tester = new TestExecuter(project.getCourseName(), testingDirectory + "/" + project.getProjectID(), testCaseDirectory.getPath(), hiddenTestCaseDirectory.getPath());
-		
-		tester.start();
-		Thread.sleep(5000);
-		tester.interrupt();
-		
-		//kill all processes produced during the testexecutor lifecycle
-		executeScript("killProcesses.sh " + project.getCourseID());
-		
-		//convert the test score from the testexecutor into real values used by the project
-		tester.parse(testScripts);
-		
-		//determine which test score was better, set the student project to contain that value
-		/*if(tester.getVisiblePoints() + tester.getHiddenPoints() >= studentProject.getVisiblePoints() + studentProject.getHiddenPoints()) {
-			studentProject.setTestsPassing(tester.getPassedTests());
-			
-			studentProject.setVisiblePoints(tester.getVisiblePoints());
-			studentProject.setHiddenPoints(tester.getHiddenPoints());
-		}*
-		
-		//find the student project date object for the given date retrieved inside the line string
-		StudentProjectDate studentProjectDate = null;
-		
-		for (StudentProjectDate dates : studentProjectDates) {
-			if (dates.getDate() == date) {
-				studentProjectDate = dates;
-				break;
-			}
-		}
-		
-		//if none is found, create it and add it to the list
-		if(studentProjectDate == null) {
-			//studentProjectDate = new StudentProjectDate(studentProject, date);
-			//studentProjectDates.add(studentProjectDate);
-		}
-		
-		//determine which test score was better, set the student project date to contain that value
-		if(tester.getVisiblePoints() + tester.getHiddenPoints() >= studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) {
-			studentProjectDate.setTestsPassing(tester.getPassedTests());
-			
-			studentProjectDate.setVisiblePoints(tester.getVisiblePoints());
-			studentProjectDate.setHiddenPoints(tester.getHiddenPoints());
-		}
-	}
-	
-	private void runAllStudentTestalls(@NonNull Project project, @NonNull Map<String, TestScript> testScripts, @NonNull Map<StudentProject, List<StudentProjectDate>> studentProjects) {
-		
-		File testCaseDirectory = new File(project.getCourse().getCourseHub() + "/testcases/" + project.getRepository());
-		File hiddenTestCaseDirectory = new File(project.getCourse().getCourseHub() + "/hidden_testcases/" + project.getRepository());
-		File makefile = new File(project.getCourse().getCourseHub() + "/makefiles/" + project.getRepository() + "/Makefile");
-		
-		if (!testCaseDirectory.isDirectory() || testCaseDirectory.listFiles().length == 0) return;
-		
-		if (!makefile.exists()) return;
-		
-		String courseHub = project.getCourse().getCourseHub();
-		
-		for (StudentProject studentProject : studentProjects.keySet()) {
-			
-			String testingDirectory = courseHub + "/" + studentProject.getStudent().getStudent().getUsername() + "/" + project.getRepository();
-			
-			try {
-				executeScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
-				
-				Process process = executeScriptAndReturn("listTestUpdateHistory.sh " + testingDirectory);
-				
-				String[] buildCommits = General.readFirst(process.getInputStream(), 2);
-				
-				process.waitFor();
-				
-				runStudentTestall(project, studentProjects.get(studentProject), testScripts, buildCommits[0], testingDirectory, testCaseDirectory, hiddenTestCaseDirectory, makefile);
-				runStudentTestall(project, studentProjects.get(studentProject), testScripts, buildCommits[1], testingDirectory, testCaseDirectory, hiddenTestCaseDirectory, makefile);
-				
-				executeScript("checkoutPreviousCommit.sh " + testingDirectory + " origin");
-			}
-			catch (Exception e) {
-				System.out.println("\nException at testall\n");
-			}
-		}
-	}*/
 	
 }

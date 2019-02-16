@@ -85,24 +85,6 @@ public class Project {
     @Column(name  = "TEST_RATE")
     private int testRate;
     
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<TestScript> testScripts;
-    
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<TestSuite> testSuites;
-    
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<ProjectDate> dates;
-    
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<StudentProject> studentProjects;
-    
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<AdditionHash> additionHashes;
-    
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<StudentComparison> studentComparisons;
-    
     @Column(name  = "ANALYZE_DATE_TIME")
     private LocalDate analyzeDateTime;
     
@@ -125,6 +107,57 @@ public class Project {
             @AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_SIMILARITY"))
     })
     private BasicStatistics similarityStats;
+    
+    @Setter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "max", column = @Column(name = "MAX_CHANGES")),
+            @AttributeOverride(name = "min", column = @Column(name = "MIN_CHANGES")),
+            @AttributeOverride(name = "mean", column = @Column(name = "MEAN_CHANGES")),
+            @AttributeOverride(name = "median", column = @Column(name = "MEDIAN_CHANGES")),
+            @AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_CHANGES"))
+    })
+    private BasicStatistics changesStats;
+    
+    @Setter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "max", column = @Column(name = "MAX_TIME_VELOCITY")),
+            @AttributeOverride(name = "min", column = @Column(name = "MIN_TIME_VELOCITY")),
+            @AttributeOverride(name = "mean", column = @Column(name = "MEAN_TIME_VELOCITY")),
+            @AttributeOverride(name = "median", column = @Column(name = "MEDIAN_TIME_VELOCITY")),
+            @AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_TIME_VELOCITY"))
+    })
+    private BasicStatistics timeVelocityStats;
+    
+    @Setter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "max", column = @Column(name = "MAX_COMMIT_VELOCITY")),
+            @AttributeOverride(name = "min", column = @Column(name = "MIN_COMMIT_VELOCITY")),
+            @AttributeOverride(name = "mean", column = @Column(name = "MEAN_COMMIT_VELOCITY")),
+            @AttributeOverride(name = "median", column = @Column(name = "MEDIAN_COMMIT_VELOCITY")),
+            @AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_COMMIT_VELOCITY"))
+    })
+    private BasicStatistics commitVelocityStats;
+    
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<TestScript> testScripts;
+    
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<TestSuite> testSuites;
+    
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<ProjectDate> dates;
+    
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<StudentProject> studentProjects;
+    
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<AdditionHash> additionHashes;
+    
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<StudentComparison> studentComparisons;
 
     public Project(@NonNull Course course, @NonNull ProjectModel projectModel) {
         this.course = course;
@@ -138,13 +171,6 @@ public class Project {
     
         this.testRate = 6;
         
-        this.testScripts = new ArrayList<>();
-        this.testSuites = new ArrayList<>();
-        this.dates = new ArrayList<>();
-        this.studentProjects = new ArrayList<>();
-        this.additionHashes = new HashSet<>();
-        this.studentComparisons = new HashSet<>();
-        
         this.analyzeDateTime = LocalDate.ofYearDay(2000, 1);
         this.totalVisiblePoints = 0.0;
         this.totalHiddenPoints = 0.0;
@@ -152,6 +178,16 @@ public class Project {
         this.runTestall = projectModel.getRunTestall();
         
         this.similarityStats = new BasicStatistics();
+        this.changesStats = new BasicStatistics();
+        this.timeVelocityStats = new BasicStatistics();
+        this.commitVelocityStats = new BasicStatistics();
+    
+        this.testScripts = new ArrayList<>();
+        this.testSuites = new ArrayList<>();
+        this.dates = new ArrayList<>();
+        this.studentProjects = new ArrayList<>();
+        this.additionHashes = new HashSet<>();
+        this.studentComparisons = new HashSet<>();
     }
 
     /**
