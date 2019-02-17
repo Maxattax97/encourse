@@ -276,6 +276,14 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	@Transactional
 	public TestScript addTestScript(@NonNull ProjectTestScriptModel model) throws RelationException, IllegalArgumentException {
+		if(model.getName().startsWith("-") || model.getName().startsWith("+"))
+			throw new IllegalArgumentException("");
+		
+		model.setName(model.getName().replace(' ', '_'));
+		
+		if(model.getName().startsWith("_"))
+			throw new IllegalArgumentException("");
+		
 		if(testScriptRepository.existsByNameEqualsAndProject_ProjectID(model.getName(), model.getProjectID()))
 			throw new IllegalArgumentException("");
 		

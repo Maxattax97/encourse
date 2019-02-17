@@ -231,9 +231,81 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			commitList.add(commit);
 		}
 		
+		reader.close();
+		
 		process.waitFor();
 		
 		return commitList;
+	}
+	
+	private void createCommitScores(Project project, StudentProject studentProject, List<Commit> commits, String testingDirectory) throws IOException, InterruptedException {
+		
+		ZoneId estZone = TimeZone.getTimeZone("EST").toZoneId();
+		
+		Process process = executeScriptAndReturn("generateDiffsAfterDate.sh " + testingDirectory + " " + ZonedDateTime.of(studentProject.getMostRecentCommit(), estZone).plusSeconds(1) + " test-shell/testall.out");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		
+		String line;
+		
+		String split[];
+		
+		Commit commit = null;
+		
+		boolean measureChanges = false;
+		boolean foundGrade = false;
+		
+		Map<String, Commit> commitMap = commits.stream().collect(Collectors.toMap(Commit::getHash, Function.identity()));
+		
+		Map<String, Double> testScriptMap = project.getTestScripts().stream().collect(Collectors.toMap(TestScript::getName, TestScript::getValue));
+		Map<String, Boolean> foundScriptsMap = new HashMap<>(testScriptMap.size() * 2);
+		
+		for(String name : testScriptMap.keySet())
+			foundScriptsMap.put(name, false);
+		
+		//FORMAT
+		//@DIFF,<commit_hash>,<date in YYYY-MM-dd>
+		//+++<FILE_NAME.FILE_DESCRIPTOR>
+		//+<source code line>
+		
+		//read all lines from the executed process above
+		while((line = reader.readLine()) != null) {
+			//first check if we have the @DIFF command to indicate we are discussing a new commit
+			if(line.startsWith("@DIFF")) {
+				split = line.split(",");
+				
+				commit = commitMap.get(split[1]);
+			}
+			else if(commit != null) {
+				if(line.startsWith("+++")) {
+					measureChanges = line.endsWith("testall.out");
+					foundGrade = false;
+					
+					for(String name : testScriptMap.keySet())
+						foundScriptsMap.put(name, false);
+				}
+				else if(measureChanges && line.length() > 1 && line.charAt(0) != '-') {
+					if(line.charAt(0) == '=')
+						line = line.substring(1);
+					
+					if(!foundGrade)
+						foundGrade = line.toLowerCase().contains("grade report");
+					else {
+						split = line.split(" ");
+						
+						if(split.length == 3 && foundScriptsMap.containsKey(split[0]) && foundScriptsMap.get(split[0])) {
+							foundScriptsMap.put(split[0], true);
+							
+							if(split[1].equalsIgnoreCase("passed"))
+								commit.setVisiblePoints(commit.getVisiblePoints() + testScriptMap.get(split[0]));
+						}
+					}
+				}
+			}
+		}
+		
+		reader.close();
+		
+		process.waitFor();
 	}
 	
 	private void calculateSimilarity(Project project, Set<StudentProject> studentProjects, Map<String, AdditionHash> additionHashMap) {
@@ -331,9 +403,10 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			try {
 				//collect all commits and sort
 				commitList = createCommitObjects(project, studentProject, additionHashMap, md5, testingDirectory);
+				createCommitScores(project, studentProject, commitList, testingDirectory);
 			}
 			catch(IOException | InterruptedException e) {
-			
+				//TODO error handling is needed here
 			}
 			
 			if(commitList == null || commitList.isEmpty())
