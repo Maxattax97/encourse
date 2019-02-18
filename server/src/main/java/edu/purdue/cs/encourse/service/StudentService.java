@@ -4,6 +4,7 @@ import edu.purdue.cs.encourse.domain.relations.CourseStudent;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.ProjectStudentCommitModel;
+import edu.purdue.cs.encourse.model.StudentComparisonModel;
 import edu.purdue.cs.encourse.model.StudentInfoModel;
 import edu.purdue.cs.encourse.model.ProjectStudentSearchModel;
 import edu.purdue.cs.encourse.model.SearchModel;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.InvalidRelationIdException;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Created by Killian Le Clainche on 1/15/2019.
@@ -42,6 +44,9 @@ public interface StudentService {
 	
 	@Transactional(readOnly = true)
 	StudentProjectDiffs getStudentProjectChanges(@NonNull ProjectStudentSearchModel model) throws InvalidRelationIdException;
+	
+	@Transactional(readOnly = true)
+	List<StudentComparisonModel> getStudentProjectComparisons(@NonNull ProjectStudentSearchModel model) throws InvalidRelationIdException;
 	
 	@Transactional(readOnly = true)
 	Object getStudentProjectCommitDiff(@NonNull ProjectStudentCommitModel model) throws InvalidRelationIdException;

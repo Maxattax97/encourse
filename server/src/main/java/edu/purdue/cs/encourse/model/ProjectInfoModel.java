@@ -23,6 +23,12 @@ public class ProjectInfoModel {
 	//Histogram of student time spent count
 	private CourseBarChartModel time;
 	
+	//Histogram of student addition count
+	private CourseBarChartModel additions;
+	
+	//Histogram of student deletion count
+	private CourseBarChartModel deletions;
+	
 	//Histogram of student total additions divided by total deletions
 	private CourseBarChartModel changes;
 	

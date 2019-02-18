@@ -71,30 +71,12 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 	
 	private final StudentProjectDateRepository studentProjectDateRepository;
 	
-	private final CourseRepository courseRepository;
-	
-	private final TestScriptRepository testScriptRepository;
-	
-	private final TestSuiteRepository testSuiteRepository;
-	
-	private final AdditionHashRepository additionHashRepository;
-	
-	private final CourseServiceV2 courseService;
-	
-	private final StudentComparisonRepository studentComparisonRepository;
-	
 	@Autowired
-	public ProjectAnalysisServiceImpl(ProjectRepository projectRepository, ProjectDateRepository projectDateRepository, StudentProjectRepository studentProjectRepository, StudentProjectDateRepository studentProjectDateRepository, CourseRepository courseRepository, TestScriptRepository testScriptRepository, TestSuiteRepository testSuiteRepository, AdditionHashRepository additionHashRepository, CourseServiceV2 courseService, StudentComparisonRepository studentComparisonRepository) {
+	public ProjectAnalysisServiceImpl(ProjectRepository projectRepository, ProjectDateRepository projectDateRepository, StudentProjectRepository studentProjectRepository, StudentProjectDateRepository studentProjectDateRepository) {
 		this.projectRepository = projectRepository;
 		this.projectDateRepository = projectDateRepository;
 		this.studentProjectRepository = studentProjectRepository;
 		this.studentProjectDateRepository = studentProjectDateRepository;
-		this.courseRepository = courseRepository;
-		this.testScriptRepository = testScriptRepository;
-		this.testSuiteRepository = testSuiteRepository;
-		this.additionHashRepository = additionHashRepository;
-		this.courseService = courseService;
-		this.studentComparisonRepository = studentComparisonRepository;
 	}
 	
 	private void executeScript(@NonNull String command) throws InterruptedException, IOException {
@@ -238,7 +220,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		return commitList;
 	}
 	
-	private void createCommitScores(Project project, StudentProject studentProject, List<Commit> commits, String testingDirectory) throws IOException, InterruptedException {
+	private void createCommitScores(Project project, StudentProject studentProject, List<StudentProjectDate> studentProjectDates, List<Commit> commits, String testingDirectory) throws IOException, InterruptedException {
 		
 		ZoneId estZone = TimeZone.getTimeZone("EST").toZoneId();
 		
@@ -256,11 +238,13 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		
 		Map<String, Commit> commitMap = commits.stream().collect(Collectors.toMap(Commit::getHash, Function.identity()));
 		
-		Map<String, Double> testScriptMap = project.getTestScripts().stream().collect(Collectors.toMap(TestScript::getName, TestScript::getValue));
+		Map<String, TestScript> testScriptMap = project.getTestScripts().stream().collect(Collectors.toMap(TestScript::getName, Function.identity()));
 		Map<String, Boolean> foundScriptsMap = new HashMap<>(testScriptMap.size() * 2);
 		
 		for(String name : testScriptMap.keySet())
 			foundScriptsMap.put(name, false);
+		
+		Map<LocalDate, StudentProjectDate> studentProjectDateMap = studentProjectDates.stream().collect(Collectors.toMap(StudentProjectDate::getDate, Function.identity()));
 		
 		//FORMAT
 		//@DIFF,<commit_hash>,<date in YYYY-MM-dd>
@@ -273,15 +257,44 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			if(line.startsWith("@DIFF")) {
 				split = line.split(",");
 				
+				if(commit != null && foundGrade) {
+					if(studentProjectDateMap.containsKey(commit.getDate().toLocalDate())) {
+						StudentProjectDate studentProjectDate = studentProjectDateMap.get(commit.getDate().toLocalDate());
+						
+						if(studentProjectDate.getVisiblePoints() < commit.getVisiblePoints() - .05) {
+							studentProjectDate.setVisiblePoints(commit.getVisiblePoints());
+							studentProjectDate.getTestsPassing().clear();
+							
+							for(String name : testScriptMap.keySet()) {
+								if(foundScriptsMap.containsKey(name) && foundScriptsMap.get(name))
+									studentProjectDate.getTestsPassing().add(testScriptMap.get(name).getId());
+							}
+						}
+						
+						if(studentProject.getVisiblePoints() + .05 < commit.getVisiblePoints()) {
+							studentProject.setVisiblePoints(commit.getVisiblePoints());
+							studentProject.getTestsPassing().clear();
+							
+							for(String name : testScriptMap.keySet()) {
+								if(foundScriptsMap.containsKey(name) && foundScriptsMap.get(name))
+									studentProject.getTestsPassing().add(testScriptMap.get(name).getId());
+							}
+						}
+					}
+					else
+						System.out.println("Commit (" + commit.getHash() + ", " + commit.getDate() + ") for Student (" + studentProject.getStudent().getStudent().getUsername() + ") was not found in list of dates");
+				}
+				
 				commit = commitMap.get(split[1]);
+				foundGrade = measureChanges = false;
+				
+				for(String name : testScriptMap.keySet())
+					foundScriptsMap.put(name, false);
 			}
 			else if(commit != null) {
 				if(line.startsWith("+++")) {
 					measureChanges = line.endsWith("testall.out");
 					foundGrade = false;
-					
-					for(String name : testScriptMap.keySet())
-						foundScriptsMap.put(name, false);
 				}
 				else if(measureChanges && line.length() > 1 && line.charAt(0) != '-') {
 					if(line.charAt(0) == '=')
@@ -292,12 +305,43 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					else {
 						split = line.split(" ");
 						
-						if(split.length == 3 && foundScriptsMap.containsKey(split[0]) && foundScriptsMap.get(split[0])) {
+						if(split.length == 3 && testScriptMap.containsKey(split[0]) && foundScriptsMap.containsKey(split[0]) && !foundScriptsMap.get(split[0])) {
 							foundScriptsMap.put(split[0], true);
 							
 							if(split[1].equalsIgnoreCase("passed"))
-								commit.setVisiblePoints(commit.getVisiblePoints() + testScriptMap.get(split[0]));
+								commit.setVisiblePoints(commit.getVisiblePoints() + testScriptMap.get(split[0]).getValue());
 						}
+						else {
+							System.out.println("Problem with line " + line);
+						}
+					}
+				}
+			}
+		}
+		
+		if(commit != null && foundGrade) {
+			if(!studentProjectDateMap.containsKey(commit.getDate().toLocalDate()))
+				System.out.println("Commit (" + commit.getHash() + ", " + commit.getDate() + ") for Student (" + studentProject.getStudent().getStudent().getUsername() + ") was not found in list of dates");
+			else {
+				StudentProjectDate studentProjectDate = studentProjectDateMap.get(commit.getDate().toLocalDate());
+				
+				if(commit.getVisiblePoints() > studentProjectDate.getVisiblePoints() + .05) {
+					studentProjectDate.setVisiblePoints(commit.getVisiblePoints());
+					studentProjectDate.getTestsPassing().clear();
+					
+					for(String name : testScriptMap.keySet()) {
+						if(foundScriptsMap.containsKey(name) && foundScriptsMap.get(name))
+							studentProjectDate.getTestsPassing().add(testScriptMap.get(name).getId());
+					}
+				}
+				
+				if(commit.getVisiblePoints() - .05 > studentProject.getVisiblePoints()) {
+					studentProject.setVisiblePoints(commit.getVisiblePoints());
+					studentProject.getTestsPassing().clear();
+					
+					for(String name : testScriptMap.keySet()) {
+						if(foundScriptsMap.containsKey(name) && foundScriptsMap.get(name))
+							studentProject.getTestsPassing().add(testScriptMap.get(name).getId());
 					}
 				}
 			}
@@ -309,7 +353,6 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 	}
 	
 	private void calculateSimilarity(Project project, Set<StudentProject> studentProjects, Map<String, AdditionHash> additionHashMap) {
-		
 		System.out.println("Found (" + additionHashMap.size() + ") hashes in the set of new additions");
 		
 		for(AdditionHash projectHash : project.getAdditionHashes()) {
@@ -334,19 +377,23 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		
 		System.out.println("Project now has (" + project.getAdditionHashes().size() + ") hashes saved");
 		
-		Map<Long, Map<Long, Integer>> comparisons = new HashMap<>();
+		Map<Long, Map<Long, Integer>> comparisonCount = new HashMap<>();
+		Map<Long, Map<Long, Integer>> comparisonPercent = new HashMap<>();
 		
 		for(StudentProject studentProject1 : studentProjects) {
-			Map<Long, Integer> studentComparisons = new HashMap<>();
+			Map<Long, Integer> studentComparisonsCount = new HashMap<>();
+			Map<Long, Integer> studentComparisonsPercent = new HashMap<>();
 			
 			for(StudentProject studentProject2 : studentProjects) {
 				if(studentProject1.getId().equals(studentProject2.getId()))
 					continue;
 				
-				studentComparisons.put(studentProject2.getId(), 0);
+				studentComparisonsCount.put(studentProject2.getId(), 0);
+				studentComparisonsPercent.put(studentProject2.getId(), 0);
 			}
 			
-			comparisons.put(studentProject1.getId(), studentComparisons);
+			comparisonCount.put(studentProject1.getId(), studentComparisonsCount);
+			comparisonPercent.put(studentProject1.getId(), studentComparisonsPercent);
 		}
 		
 		System.out.println("Generating comparisons");
@@ -354,19 +401,49 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			Map<Long, Integer> counts = hash.getStudentCounts();
 			
 			for(Long studentID1 : counts.keySet()) {
-				Map<Long, Integer> studentComparisons = comparisons.get(studentID1);
+				Map<Long, Integer> studentComparisons = comparisonCount.get(studentID1);
+				
+				Integer count = counts.get(studentID1);
 				
 				for(Long studentID2 : counts.keySet()) {
 					if(studentID1.equals(studentID2))
 						continue;
 					
-					studentComparisons.put(studentID2, studentComparisons.get(studentID2) + counts.get(studentID2));
+					studentComparisons.put(studentID2, count + studentComparisons.get(studentID2) + counts.get(studentID2));
+					studentComparisons.put(studentID2, count + studentComparisons.get(studentID2));
 				}
 			}
 		}
 		
-		for(StudentComparison comparison : project.getStudentComparisons())
-			comparison.setCount(comparisons.get(comparison.getStudentProject1().getId()).get(comparison.getStudentProject2().getId()));
+		for(StudentComparison comparison : project.getStudentComparisons()) {
+			Long studentID1 = comparison.getStudentProject1().getId();
+			Long studentID2 = comparison.getStudentProject2().getId();
+			
+			comparison.setCount(comparisonCount.get(studentID1).get(studentID2));
+			
+			double studentPercent1 = comparisonPercent.get(studentID1).get(studentID2).doubleValue() / (comparison.getStudentProject1().getAdditions() < .5 ? 1.0 : comparison.getStudentProject1().getAdditions());
+			double studentPercent2 = comparisonPercent.get(studentID2).get(studentID1).doubleValue() / (comparison.getStudentProject2().getAdditions() < .5 ? 1.0 : comparison.getStudentProject1().getAdditions());
+			
+			comparison.setPercent(Math.max(studentPercent1, studentPercent2));
+		}
+		
+		for(StudentProject studentProject : studentProjects) {
+			int largestCount = 0;
+			double largestPercent = 0.0;
+			
+			for(StudentComparison comparison : studentProject.getFirstComparisons()) {
+				largestCount = Math.max(largestCount, comparison.getCount());
+				largestPercent = Math.max(largestPercent, comparison.getPercent());
+			}
+			
+			for(StudentComparison comparison : studentProject.getSecondComparisons()) {
+				largestCount = Math.max(largestCount, comparison.getCount());
+				largestPercent = Math.max(largestPercent, comparison.getPercent());
+			}
+			
+			studentProject.setCountSimilarity(largestCount);
+			studentProject.setPercentSimilarity(largestPercent);
+		}
 	}
 	
 	private void calculateStudentDiffs(Project project, List<ProjectDate> projectDateList, Map<StudentProject, List<StudentProjectDate>> studentProjectListMap) {
@@ -403,7 +480,8 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			try {
 				//collect all commits and sort
 				commitList = createCommitObjects(project, studentProject, additionHashMap, md5, testingDirectory);
-				createCommitScores(project, studentProject, commitList, testingDirectory);
+				if(project.getRunTestall())
+					createCommitScores(project, studentProject, studentProjectDateList, commitList, testingDirectory);
 			}
 			catch(IOException | InterruptedException e) {
 				//TODO error handling is needed here
@@ -518,6 +596,40 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				
 				previousStudentDate = studentProjectDate;
 			}
+			
+			if(previousStudentDate != null) {
+				studentProject.setAdditions(previousStudentDate.getTotalAdditions());
+				studentProject.setDeletions(previousStudentDate.getTotalDeletions());
+				studentProject.setMinutes(previousStudentDate.getTotalMinutes());
+				
+				if(previousStudentDate.getTotalDeletions() < .05)
+					studentProject.setChanges(previousStudentDate.getTotalAdditions());
+				else
+					studentProject.setChanges(previousStudentDate.getTotalAdditions() / previousStudentDate.getTotalDeletions());
+				
+				if(project.getRunTestall()) {
+					if(studentProject.getMinutes() < .05)
+						studentProject.setTimeVelocity((studentProject.getVisiblePoints() + studentProject.getHiddenPoints()));
+					else
+						studentProject.setTimeVelocity((studentProject.getVisiblePoints() + studentProject.getHiddenPoints()) / studentProject.getMinutes());
+					
+					if(previousStudentDate.getTotalCommits() < .05)
+						studentProject.setCommitVelocity((studentProject.getVisiblePoints() + studentProject.getHiddenPoints()));
+					else
+						studentProject.setCommitVelocity((studentProject.getVisiblePoints() + studentProject.getHiddenPoints()) / previousStudentDate.getTotalCommits());
+				}
+				else {
+					if(studentProject.getMinutes() < .05)
+						studentProject.setTimeVelocity(0.0);
+					else
+						studentProject.setTimeVelocity(100.0 / studentProject.getMinutes());
+					
+					if(previousStudentDate.getTotalCommits() < .05)
+						studentProject.setCommitVelocity(0.0);
+					else
+						studentProject.setCommitVelocity(100.0 / previousStudentDate.getTotalCommits());
+				}
+			}
 		}
 		
 		calculateSimilarity(project, studentProjectListMap.keySet(), additionHashMap);
@@ -549,9 +661,6 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			DescriptiveStatistics minuteStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics additionStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics deletionStats = new DescriptiveStatistics(studentProjectDateList.size());
-			DescriptiveStatistics changesStats = new DescriptiveStatistics(studentProjectDateList.size());
-			DescriptiveStatistics timeVelocityStats = new DescriptiveStatistics(studentProjectDateList.size());
-			DescriptiveStatistics commitVelocityStats = new DescriptiveStatistics(studentProjectDateList.size());
 			
 			for(StudentProjectDate studentProjectDate : studentProjectDateList) {
 				totalPointStats.addValue(studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints());
@@ -561,34 +670,6 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				minuteStats.addValue(studentProjectDate.getTotalMinutes());
 				additionStats.addValue(studentProjectDate.getTotalAdditions());
 				deletionStats.addValue(studentProjectDate.getTotalDeletions());
-				
-				if(studentProjectDate.getTotalDeletions() < .5)
-					changesStats.addValue(studentProjectDate.getTotalAdditions());
-				else
-					changesStats.addValue(studentProjectDate.getTotalAdditions() / studentProjectDate.getTotalDeletions());
-				
-				if(project.getRunTestall()) {
-					if(studentProjectDate.getTotalMinutes() < .5)
-						timeVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()));
-					else
-						timeVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalMinutes());
-					
-					if(studentProjectDate.getTotalCommits() < .5)
-						commitVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()));
-					else
-						commitVelocityStats.addValue((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalCommits());
-				}
-				else {
-					if(studentProjectDate.getTotalMinutes() < .5)
-						timeVelocityStats.addValue(0.0);
-					else
-						timeVelocityStats.addValue(100.0 / studentProjectDate.getTotalMinutes());
-					
-					if(studentProjectDate.getTotalCommits() < .5)
-						commitVelocityStats.addValue(0.0);
-					else
-						commitVelocityStats.addValue(100.0 / studentProjectDate.getTotalCommits());
-				}
 			}
 			
 			projectDate.setTotalPointStats(new BasicStatistics(totalPointStats));
@@ -598,10 +679,21 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			projectDate.setMinuteStats(new BasicStatistics(minuteStats));
 			projectDate.setAdditionStats(new BasicStatistics(additionStats));
 			projectDate.setDeletionStats(new BasicStatistics(deletionStats));
-			//projectDate.setChangesStats(new BasicStatistics(changesStats));
-			//projectDate.setTimeVelocityStats(new BasicStatistics(timeVelocityStats));
-			//projectDate.setCommitVelocityStats(new BasicStatistics(commitVelocityStats));
 		}
+		
+		DescriptiveStatistics changesStats = new DescriptiveStatistics(studentProjectListMap.size());
+		DescriptiveStatistics timeVelocityStats = new DescriptiveStatistics(studentProjectListMap.size());
+		DescriptiveStatistics commitVelocityStats = new DescriptiveStatistics(studentProjectListMap.size());
+		
+		for(StudentProject studentProject : studentProjectListMap.keySet()) {
+			changesStats.addValue(studentProject.getChanges());
+			timeVelocityStats.addValue(studentProject.getTimeVelocity());
+			commitVelocityStats.addValue(studentProject.getCommitVelocity());
+		}
+		
+		project.setChangesStats(new BasicStatistics(changesStats));
+		project.setTimeVelocityStats(new BasicStatistics(timeVelocityStats));
+		project.setCommitVelocityStats(new BasicStatistics(commitVelocityStats));
 		
 		DescriptiveStatistics similarityStats = new DescriptiveStatistics(project.getStudentComparisons().size());
 		

@@ -15,6 +15,7 @@ import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.Student;
 import edu.purdue.cs.encourse.domain.relations.CourseStudent;
 import edu.purdue.cs.encourse.domain.relations.StudentComparison;
+import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.BasicStatistics;
 import edu.purdue.cs.encourse.model.CourseModel;
@@ -115,14 +116,13 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		return sectionOptional.get();
 	}
 	
-	private CourseBarChartModel getCourseHistogram(int count, boolean hasStats, boolean hasChart, double[] samples, BasicStatistics stats) {
+	private CourseBarChartModel getCourseHistogram(int count, boolean exists, double[] samples, BasicStatistics stats) {
 		CourseBarChartModel histogram = new CourseBarChartModel();
 		
-		if(hasStats)
+		if(exists) {
 			histogram.setStats(new DescriptiveStatistics(samples));
-		
-		if(hasChart)
 			histogram.setBars(ChartHelper.toBarChart(count, stats, samples));
+		}
 		
 		if(samples != null) {
 			histogram.setCourseStats(stats);
@@ -309,24 +309,18 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 	public ProjectInfoModel getCourseProjectInfoByDate(@NonNull CourseStudentSearch courseStudentSearch) throws InvalidRelationIdException, RelationNotFoundException, IllegalAccessException {
 		ProjectInfoModel projectInfo = new ProjectInfoModel();
 		
-		boolean hasProgressStats = courseStudentSearch.getOption("progressStats");
-		boolean hasProgressChart = courseStudentSearch.getOption("progressChart");
-		boolean hasCommitStats = courseStudentSearch.getOption("commitStats");
-		boolean hasCommitChart = courseStudentSearch.getOption("commitChart");
-		boolean hasTimeStats = courseStudentSearch.getOption("timeStats");
-		boolean hasTimeChart = courseStudentSearch.getOption("timeChart");
+		boolean hasProgress = courseStudentSearch.getOption("progress");
+		boolean hasCommit = courseStudentSearch.getOption("commit");
+		boolean hasTime = courseStudentSearch.getOption("time");
+		boolean hasAddition = courseStudentSearch.getOption("addition");
+		boolean hasDeletion = courseStudentSearch.getOption("deletion");
 		
-		boolean hasChangesStats = courseStudentSearch.getOption("changesStats");
-		boolean hasChangesChart = courseStudentSearch.getOption("changesChart");
-		boolean hasSimilarityStats = courseStudentSearch.getOption("similarityStats");
-		boolean hasSimilarityChart = courseStudentSearch.getOption("similarityChart");
-		boolean hasTimeVelocityStats = courseStudentSearch.getOption("timeVelocityStats");
-		boolean hasTimeVelocityChart = courseStudentSearch.getOption("timeVelocityChart");
-		boolean hasCommitVelocityStats = courseStudentSearch.getOption("commitVelocityStats");
-		boolean hasCommitVelocityChart = courseStudentSearch.getOption("commitVelocityChart");
+		boolean hasChanges = courseStudentSearch.getOption("changes");
+		boolean hasSimilarity = courseStudentSearch.getOption("similarity");
+		boolean hasTimeVelocity = courseStudentSearch.getOption("timeVelocity");
+		boolean hasCommitVelocity = courseStudentSearch.getOption("commitVelocity");
 		
-		if(!hasProgressStats && !hasProgressChart && !hasCommitStats && !hasCommitChart && !hasTimeStats && !hasTimeChart &&
-			!hasChangesStats && !hasChangesChart && !hasSimilarityStats && !hasSimilarityChart && !hasTimeVelocityStats && !hasTimeVelocityChart && !hasCommitVelocityStats && !hasCommitVelocityChart)
+		if(!hasProgress && !hasCommit && !hasTime && !hasAddition && !hasDeletion && !hasChanges && !hasSimilarity && !hasTimeVelocity && !hasCommitVelocity)
 			return projectInfo;
 		
 		Project project = validateCourseStudentSearch(courseStudentSearch, true);
@@ -344,24 +338,34 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		boolean includeVisibleTests = !courseStudentSearch.getView().equalsIgnoreCase("Hidden");
 		boolean includeHiddenTests = !courseStudentSearch.getView().equalsIgnoreCase("Visible");
 		
-		double[] progressSamples = hasProgressStats || hasProgressChart ? new double[students.size()] : null;
-		double[] commitSamples = hasCommitStats || hasCommitChart ? new double[students.size()] : null;
-		double[] timeSamples = hasTimeStats || hasTimeChart ? new double[students.size()] : null;
+		double[] progressSamples = hasProgress ? new double[students.size()] : null;
+		double[] commitSamples = hasCommit ? new double[students.size()] : null;
+		double[] timeSamples = hasTime ? new double[students.size()] : null;
+		double[] additionSamples = hasAddition ? new double[students.size()] : null;
+		double[] deletionSamples = hasDeletion ? new double[students.size()] : null;
 		
-		double[] changesSamples = hasChangesStats || hasChangesChart ? new double[students.size()] : null;
-		double[] timeVelocitySamples = hasTimeVelocityStats || hasTimeVelocityChart ? new double[students.size()] : null;
-		double[] commitVelocitySamples = hasCommitVelocityStats || hasCommitVelocityChart ? new double[students.size()] : null;
+		double[] changesSamples = hasChanges ? new double[students.size()] : null;
+		double[] timeVelocitySamples = hasTimeVelocity ? new double[students.size()] : null;
+		double[] commitVelocitySamples = hasCommitVelocity ? new double[students.size()] : null;
 		
 		for(int i = 0; i < students.size(); i++) {
-			StudentProjectDate student = students.get(i);
+			StudentProjectDate studentProjectDate = students.get(i);
+			StudentProject studentProject = studentProjectDate.getStudentProject();
 			
-			Double commits = student.getTotalCommits() == null ? 0.0 : student.getTotalCommits();
-			Double minutes = student.getTotalMinutes() == null ? 0.0 : student.getTotalMinutes();
-			Double additions = student.getTotalAdditions() == null ? 0.0 : student.getTotalAdditions();
-			Double deletions = student.getTotalDeletions() == null ? 0.0 : student.getTotalDeletions();
+			Double commits = studentProjectDate.getTotalCommits() == null ? 0.0 : studentProjectDate.getTotalCommits();
+			Double minutes = studentProjectDate.getTotalMinutes() == null ? 0.0 : studentProjectDate.getTotalMinutes();
+			Double additions = studentProjectDate.getTotalAdditions() == null ? 0.0 : studentProjectDate.getTotalAdditions();
+			Double deletions = studentProjectDate.getTotalDeletions() == null ? 0.0 : studentProjectDate.getTotalDeletions();
 			
-			Double visiblePoints = student.getVisiblePoints() == null ? 0.0 : student.getVisiblePoints();
-			Double hiddenPoints = student.getHiddenPoints() == null ? 0.0 : student.getHiddenPoints();
+			double visiblePoints = studentProjectDate.getVisiblePoints() == null ? 0.0 : studentProjectDate.getVisiblePoints();
+			double hiddenPoints = studentProjectDate.getHiddenPoints() == null ? 0.0 : studentProjectDate.getHiddenPoints();
+			
+			if(progressSamples != null) {
+				if(project.getRunTestall())
+					progressSamples[i] = (includeVisibleTests ? visiblePoints : 0) + (includeHiddenTests ? hiddenPoints : 0);
+				else
+					progressSamples[i] = 0;
+			}
 			
 			if(commitSamples != null)
 				commitSamples[i] = commits;
@@ -369,57 +373,25 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 			if(timeSamples != null)
 				timeSamples[i] = minutes;
 			
-			if(changesSamples != null) {
-				
-				if(deletions < .5)
-					changesSamples[i] = (additions);
-				else
-					changesSamples[i] = (additions / deletions);
-			}
+			if(additionSamples != null)
+				additionSamples[i] = additions;
 			
-			if(project.getRunTestall()) {
-				if(progressSamples != null)
-					progressSamples[i] = (includeVisibleTests ? visiblePoints : 0) + (includeHiddenTests ? hiddenPoints : 0);
-				
-				if(timeVelocitySamples != null) {
-					if(minutes < .5)
-						timeVelocitySamples[i] = (visiblePoints + hiddenPoints);
-					else
-						timeVelocitySamples[i] = ((visiblePoints + hiddenPoints) / minutes);
-				}
-				
-				if(commits < .5)
-					commitVelocitySamples[i] = (visiblePoints + hiddenPoints);
-				else
-					commitVelocitySamples[i] = ((visiblePoints + hiddenPoints) / student.getTotalCommits());
-			}
-			else {
-				if(progressSamples != null)
-					progressSamples[i] = 0;
-				
-				if(timeVelocitySamples != null) {
-					if(minutes < .5)
-						timeVelocitySamples[i] = (0.0);
-					else
-						timeVelocitySamples[i]  = (100.0 / minutes);
-				}
-				
-				if(commitVelocitySamples != null) {
-					if(commits < .5)
-						commitVelocitySamples[i] = (0.0);
-					else
-						commitVelocitySamples[i] = (100.0 / commits);
-				}
-			}
+			if(deletionSamples != null)
+				deletionSamples[i] = deletions;
 			
-			//TODO Similarity
-			//if(buildSimilarityStats != null)
-			//	buildSimilarityStats[i] = stud;
+			if(changesSamples != null)
+				changesSamples[i] = studentProject.getChanges();
+			
+			if(timeVelocitySamples != null)
+				timeVelocitySamples[i] = studentProject.getTimeVelocity();
+			
+			if(commitVelocitySamples != null)
+				commitVelocitySamples[i] = studentProject.getCommitVelocity();
 		}
 		
 		int studentCount = project.getCourse().getStudentCount();
 		
-		if(hasSimilarityStats || hasSimilarityChart) {
+		if(hasSimilarity) {
 			List<Long> studentIds = students.stream().map(student -> student.getStudentProject().getId()).collect(Collectors.toList());
 			List<StudentComparison> comparisons = studentComparisonRepository.findAllByStudentProject1_IdInOrStudentProject2_IdIn(studentIds, studentIds);
 			double[] similaritySamples = new double[comparisons.size()];
@@ -431,16 +403,16 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 				i++;
 			}
 			
-			projectInfo.setSimilarity(getCourseHistogram((studentCount * (studentCount - 1)) / 2, hasSimilarityStats, hasSimilarityChart, similaritySamples, project.getSimilarityStats()));
+			projectInfo.setSimilarity(getCourseHistogram((studentCount * (studentCount - 1)) / 2, hasSimilarity, similaritySamples, project.getSimilarityStats()));
 		}
 		
-		projectInfo.setProgress(getCourseHistogram(studentCount, hasProgressStats, hasProgressChart, progressSamples, !includeHiddenTests ? projectDate.getHiddenPointStats() : !includeVisibleTests ? projectDate.getVisiblePointStats() : projectDate.getTotalPointStats()));
-		projectInfo.setCommits(getCourseHistogram(studentCount, hasCommitStats, hasCommitChart, commitSamples, projectDate.getCommitStats()));
-		projectInfo.setTime(getCourseHistogram(studentCount, hasTimeStats, hasTimeChart, timeSamples, projectDate.getMinuteStats()));
+		projectInfo.setProgress(getCourseHistogram(studentCount, hasProgress, progressSamples, !includeHiddenTests ? projectDate.getHiddenPointStats() : !includeVisibleTests ? projectDate.getVisiblePointStats() : projectDate.getTotalPointStats()));
+		projectInfo.setCommits(getCourseHistogram(studentCount, hasCommit, commitSamples, projectDate.getCommitStats()));
+		projectInfo.setTime(getCourseHistogram(studentCount, hasTime, timeSamples, projectDate.getMinuteStats()));
 		
-		projectInfo.setChanges(getCourseHistogram(studentCount, hasChangesStats, hasChangesChart, changesSamples, projectDate.getChangesStats()));
-		projectInfo.setTimeVelocity(getCourseHistogram(studentCount, hasTimeVelocityStats, hasTimeVelocityChart, timeVelocitySamples, projectDate.getTimeVelocityStats()));
-		projectInfo.setCommitVelocity(getCourseHistogram(studentCount, hasCommitVelocityStats, hasCommitVelocityChart, commitVelocitySamples, projectDate.getCommitVelocityStats()));
+		projectInfo.setChanges(getCourseHistogram(studentCount, hasChanges, changesSamples, project.getChangesStats()));
+		projectInfo.setTimeVelocity(getCourseHistogram(studentCount, hasTimeVelocity, timeVelocitySamples, project.getTimeVelocityStats()));
+		projectInfo.setCommitVelocity(getCourseHistogram(studentCount, hasCommitVelocity, commitVelocitySamples, project.getCommitVelocityStats()));
 		
 		return projectInfo;
 	}

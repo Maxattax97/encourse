@@ -16,6 +16,7 @@ import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.FrequencyDate;
 import edu.purdue.cs.encourse.model.ProjectStudentCommitModel;
 import edu.purdue.cs.encourse.model.ProjectStudentSearchModel;
+import edu.purdue.cs.encourse.model.StudentComparisonModel;
 import edu.purdue.cs.encourse.model.StudentInfoModel;
 import edu.purdue.cs.encourse.model.SearchModel;
 import edu.purdue.cs.encourse.model.StudentTestSuiteInfoModel;
@@ -228,7 +229,7 @@ public class StudentServiceImpl implements StudentService {
 					
 					suiteModel.setTotalValue(suiteModel.getTotalValue() + value);
 					
-					if(studentProject.getTestsPassing().contains(testScript.getId()))
+					if(studentProjectDate.getTestsPassing().contains(testScript.getId()))
 						suiteModel.setCurrentValue(suiteModel.getCurrentValue() + value);
 				}
 				
@@ -241,49 +242,11 @@ public class StudentServiceImpl implements StudentService {
 		}
 		
 		if(hasReportInfo) {
-			Project project = studentProject.getProject();
-			
-			if(studentProjectDate.getTotalDeletions() < .5)
-				model.setChanges(studentProjectDate.getTotalAdditions());
-			else
-				model.setChanges(studentProjectDate.getTotalAdditions() / studentProjectDate.getTotalDeletions());
-			
-			if(project.getRunTestall()) {
-				if(studentProjectDate.getTotalMinutes() < .5)
-					model.setTimeVelocity((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()));
-				else
-					model.setTimeVelocity((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalMinutes());
-				
-				if(studentProjectDate.getTotalCommits() < .5)
-					model.setCommitVelocity((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()));
-				else
-					model.setCommitVelocity((studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints()) / studentProjectDate.getTotalCommits());
-			}
-			else {
-				if(studentProjectDate.getTotalMinutes() < .5)
-					model.setTimeVelocity(0.0);
-				else
-					model.setTimeVelocity(100.0 / studentProjectDate.getTotalMinutes());
-				
-				if(studentProjectDate.getTotalCommits() < .5)
-					model.setCommitVelocity(0.0);
-				else
-					model.setCommitVelocity(100.0 / studentProjectDate.getTotalCommits());
-			}
-			
-			Integer largestComparison = 0;
-			
-			for(StudentComparison comparison : studentProject.getFirstComparisons()) {
-				if(largestComparison < comparison.getCount())
-					largestComparison = comparison.getCount();
-			}
-			
-			for(StudentComparison comparison : studentProject.getSecondComparisons()) {
-				if(largestComparison < comparison.getCount())
-					largestComparison = comparison.getCount();
-			}
-			
-			model.setComparison(largestComparison);
+			model.setChanges(studentProject.getChanges());
+			model.setTimeVelocity(studentProject.getTimeVelocity());
+			model.setCommitVelocity(studentProject.getCommitVelocity());
+			model.setComparison(studentProject.getCountSimilarity());
+			model.setComparisonPercent(studentProject.getPercentSimilarity());
 		}
 		
 		return model;
@@ -345,6 +308,36 @@ public class StudentServiceImpl implements StudentService {
 		studentProjectDiffs.setFrequencies(frequencies);
 		
 		return studentProjectDiffs;
+	}
+	
+	private StudentComparisonModel getStudentProjectComparison(StudentComparison comparison, StudentProject studentProject) {
+		StudentComparisonModel model = new StudentComparisonModel();
+		
+		Student student = studentProject.getStudent().getStudent();
+		
+		model.setStudentID(studentProject.getStudent().getId());
+		model.setFirstName(student.getFirstName());
+		model.setLastName(student.getLastName());
+		model.setCount(comparison.getCount());
+		model.setPercent(comparison.getPercent());
+		
+		return model;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<StudentComparisonModel> getStudentProjectComparisons(@NonNull ProjectStudentSearchModel model) throws InvalidRelationIdException {
+		StudentProject studentProject = getStudentProject(model.getProjectID(), model.getStudentID());
+		
+		List<StudentComparisonModel> models = new ArrayList<>();
+		
+		for(StudentComparison comparison : studentProject.getFirstComparisons())
+			models.add(getStudentProjectComparison(comparison, comparison.getStudentProject2()));
+		
+		for(StudentComparison comparison : studentProject.getSecondComparisons())
+			models.add(getStudentProjectComparison(comparison, comparison.getStudentProject1()));
+		
+		return models;
 	}
 	
 	@Override
