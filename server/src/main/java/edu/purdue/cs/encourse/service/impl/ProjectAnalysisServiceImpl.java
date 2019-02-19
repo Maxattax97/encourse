@@ -166,7 +166,6 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				additions = 0;
 				deletions = 0;
 				
-				
 				try {
 					commit = new Commit(split[1], ZonedDateTime.parse(split[2], DateTimeFormatter.ISO_DATE_TIME).withZoneSameInstant(estZone).toLocalDateTime(), 0.0, 0.0, 0.0, 0.0, 0.0);
 					
@@ -426,7 +425,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			//count is the summation between the two students similarities
 			//percent is the max function between each students (similarity count / additions)
 			comparison.setCount(student1Count + student2Count);
-			comparison.setPercent(Math.max(student1Count / studentProject1.getAdditions(), student2Count / studentProject2.getAdditions()));
+			comparison.setPercent(Math.max((student1Count * 100.0) / studentProject1.getAdditions(), (student2Count * 100.0) / studentProject2.getAdditions()));
 		}
 		
 		//iterate over the student projects for the project
