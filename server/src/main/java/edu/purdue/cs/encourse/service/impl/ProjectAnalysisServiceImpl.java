@@ -119,7 +119,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					additionHashMap.put(hash, additionHash);
 				}
 				else
-					additionHash.getStudentCounts().put(studentId, additionHash.getStudentCounts().get(studentId) + commitAdditionHashes.get(hash));
+					additionHash.getStudentCounts().put(studentId, additionHash.getStudentCounts().getOrDefault(studentId, 0) + commitAdditionHashes.get(hash));
 			}
 		}
 	}
