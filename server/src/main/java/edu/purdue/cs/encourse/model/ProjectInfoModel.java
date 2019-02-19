@@ -35,6 +35,9 @@ public class ProjectInfoModel {
 	//Histogram of student similiarity count to any other student
 	private CourseBarChartModel similarity;
 	
+	//Histogram of student similarity percent to any other student
+	private CourseBarChartModel similarityPercent;
+	
 	//Histogram of student total progress to time spent
 	private CourseBarChartModel timeVelocity;
 	

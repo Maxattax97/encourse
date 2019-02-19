@@ -696,11 +696,15 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		project.setCommitVelocityStats(new BasicStatistics(commitVelocityStats));
 		
 		DescriptiveStatistics similarityStats = new DescriptiveStatistics(project.getStudentComparisons().size());
+		DescriptiveStatistics similarityPercentStats = new DescriptiveStatistics(project.getStudentComparisons().size());
 		
-		for(StudentComparison comparison : project.getStudentComparisons())
+		for(StudentComparison comparison : project.getStudentComparisons()) {
 			similarityStats.addValue(comparison.getCount());
+			similarityPercentStats.addValue(comparison.getPercent());
+		}
 		
 		project.setSimilarityStats(new BasicStatistics(similarityStats));
+		project.setSimilarityPercentStats(new BasicStatistics(similarityPercentStats));
 	}
 	
 	@Override

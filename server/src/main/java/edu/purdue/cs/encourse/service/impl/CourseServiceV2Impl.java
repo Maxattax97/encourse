@@ -317,10 +317,11 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		
 		boolean hasChanges = courseStudentSearch.getOption("changes");
 		boolean hasSimilarity = courseStudentSearch.getOption("similarity");
+		boolean hasSimilarityPercent = courseStudentSearch.getOption("similarityPercent");
 		boolean hasTimeVelocity = courseStudentSearch.getOption("timeVelocity");
 		boolean hasCommitVelocity = courseStudentSearch.getOption("commitVelocity");
 		
-		if(!hasProgress && !hasCommit && !hasTime && !hasAddition && !hasDeletion && !hasChanges && !hasSimilarity && !hasTimeVelocity && !hasCommitVelocity)
+		if(!hasProgress && !hasCommit && !hasTime && !hasAddition && !hasDeletion && !hasChanges && !hasSimilarity && !hasSimilarityPercent && !hasTimeVelocity && !hasCommitVelocity)
 			return projectInfo;
 		
 		Project project = validateCourseStudentSearch(courseStudentSearch, true);
@@ -391,19 +392,26 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		
 		int studentCount = project.getCourse().getStudentCount();
 		
-		if(hasSimilarity) {
+		if(hasSimilarity || hasSimilarityPercent) {
 			List<Long> studentIds = students.stream().map(student -> student.getStudentProject().getId()).collect(Collectors.toList());
 			List<StudentComparison> comparisons = studentComparisonRepository.findAllByStudentProject1_IdInOrStudentProject2_IdIn(studentIds, studentIds);
-			double[] similaritySamples = new double[comparisons.size()];
+			double[] similaritySamples = hasSimilarity ? new double[comparisons.size()] : null;
+			double[] similarityPercentSamples = hasSimilarityPercent ? new double[comparisons.size()] : null;
 			
 			int i = 0;
 			
 			for(StudentComparison comparison : comparisons) {
-				similaritySamples[i] = comparison.getCount();
+				if(similaritySamples != null)
+					similaritySamples[i] = comparison.getCount();
+				
+				if(similarityPercentSamples != null)
+					similarityPercentSamples[i] = comparison.getPercent();
+				
 				i++;
 			}
 			
 			projectInfo.setSimilarity(getCourseHistogram((studentCount * (studentCount - 1)) / 2, hasSimilarity, similaritySamples, project.getSimilarityStats()));
+			projectInfo.setSimilarityPercent(getCourseHistogram((studentCount * (studentCount - 1)) / 2, hasSimilarityPercent, similarityPercentSamples, project.getSimilarityPercentStats()));
 		}
 		
 		projectInfo.setProgress(getCourseHistogram(studentCount, hasProgress, progressSamples, !includeHiddenTests ? projectDate.getHiddenPointStats() : !includeVisibleTests ? projectDate.getVisiblePointStats() : projectDate.getTotalPointStats()));
