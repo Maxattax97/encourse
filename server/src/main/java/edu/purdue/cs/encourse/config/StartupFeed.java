@@ -160,8 +160,6 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
         catch(Exception e) {
             e.printStackTrace();
         }
-    
-        projectAnalysisService.analyzeProjects();
     }
 
     private void addMallocTestScripts(Project project) {
