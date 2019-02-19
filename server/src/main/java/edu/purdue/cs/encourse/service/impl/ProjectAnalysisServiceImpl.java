@@ -118,11 +118,8 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					
 					additionHashMap.put(hash, additionHash);
 				}
-				else {
-					Integer count = additionHash.getStudentCounts().get(studentId);
-					
-					additionHash.getStudentCounts().put(studentId, count == null ? 1 : count + commitAdditionHashes.get(hash));
-				}
+				else
+					additionHash.getStudentCounts().put(studentId, additionHash.getStudentCounts().get(studentId) + commitAdditionHashes.get(hash));
 			}
 		}
 	}
@@ -355,18 +352,21 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 	private void calculateSimilarity(Project project, Set<StudentProject> studentProjects, Map<String, AdditionHash> additionHashMap) {
 		System.out.println("Found (" + additionHashMap.size() + ") hashes in the set of new additions");
 		
+		//iterate over all old hashes found
 		for(AdditionHash projectHash : project.getAdditionHashes()) {
+			//check if new hashes contains old hash
 			if(additionHashMap.containsKey(projectHash.getId())) {
+				//get hash mapping (student -> count) from new and old hashes
 				Map<Long, Integer> counts = additionHashMap.get(projectHash.getId()).getStudentCounts();
 				Map<Long, Integer> projectCounts = projectHash.getStudentCounts();
 				
-				for(Long studentId : counts.keySet()) {
-					if(projectCounts.containsKey(studentId))
-						counts.put(studentId, counts.get(studentId) + projectCounts.get(studentId));
-					else
-						counts.put(studentId, projectCounts.get(studentId));
+				//iterate over all students in new hash mapping
+				for(Long studentID : counts.keySet()) {
+					//put into project hashes the sum of both, if project counts doesn't have that student, default to zero
+					projectCounts.put(studentID, counts.get(studentID) + projectCounts.getOrDefault(studentID, 0));
 				}
 				
+				//remove from new hashes so we don't readd
 				additionHashMap.remove(projectHash.getId());
 			}
 		}
@@ -377,60 +377,65 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		
 		System.out.println("Project now has (" + project.getAdditionHashes().size() + ") hashes saved");
 		
-		Map<Long, Map<Long, Integer>> comparisonCount = new HashMap<>();
-		Map<Long, Map<Long, Integer>> comparisonPercent = new HashMap<>();
+		//generate the comparisons mapping and set the values to be zeroed
+		Map<Long, Map<Long, Integer>> studentComparisons = new HashMap<>();
 		
 		for(StudentProject studentProject1 : studentProjects) {
 			Map<Long, Integer> studentComparisonsCount = new HashMap<>();
-			Map<Long, Integer> studentComparisonsPercent = new HashMap<>();
 			
 			for(StudentProject studentProject2 : studentProjects) {
 				if(studentProject1.getId().equals(studentProject2.getId()))
 					continue;
 				
 				studentComparisonsCount.put(studentProject2.getId(), 0);
-				studentComparisonsPercent.put(studentProject2.getId(), 0);
 			}
 			
-			comparisonCount.put(studentProject1.getId(), studentComparisonsCount);
-			comparisonPercent.put(studentProject1.getId(), studentComparisonsPercent);
+			studentComparisons.put(studentProject1.getId(), studentComparisonsCount);
 		}
 		
 		System.out.println("Generating comparisons");
+		//iterate over old + new hashes
 		for(AdditionHash hash : project.getAdditionHashes()) {
 			Map<Long, Integer> counts = hash.getStudentCounts();
 			
+			//iterate over the students who share the hash
 			for(Long studentID1 : counts.keySet()) {
-				Map<Long, Integer> studentComparisons = comparisonCount.get(studentID1);
+				//get studentID1's mapping towards all other students (comparisons)
+				Map<Long, Integer> comparisons = studentComparisons.get(studentID1);
 				
-				Integer count = counts.get(studentID1);
 				
+				//iterate over the students who share the hash, skip over the current student (studentID1)
 				for(Long studentID2 : counts.keySet()) {
 					if(studentID1.equals(studentID2))
 						continue;
 					
-					studentComparisons.put(studentID2, count + studentComparisons.get(studentID2) + counts.get(studentID2));
-					studentComparisons.put(studentID2, count + studentComparisons.get(studentID2));
+					//set studentID1's value for key studentID2 to be the summation of studentID2's counts for the specific hash
+					//as well as the current studentID2 value
+					comparisons.put(studentID2, counts.get(studentID2) + comparisons.get(studentID2));
 				}
 			}
 		}
 		
+		//iterate over all comparisons and generate values
 		for(StudentComparison comparison : project.getStudentComparisons()) {
-			Long studentID1 = comparison.getStudentProject1().getId();
-			Long studentID2 = comparison.getStudentProject2().getId();
+			StudentProject studentProject1 = comparison.getStudentProject1();
+			StudentProject studentProject2 = comparison.getStudentProject2();
+			Integer student1Count = studentComparisons.get(studentProject2.getId()).get(studentProject1.getId());
+			Integer student2Count = studentComparisons.get(studentProject1.getId()).get(studentProject2.getId());
 			
-			comparison.setCount(comparisonCount.get(studentID1).get(studentID2));
-			
-			double studentPercent1 = comparisonPercent.get(studentID1).get(studentID2).doubleValue() / (comparison.getStudentProject1().getAdditions() < .5 ? 1.0 : comparison.getStudentProject1().getAdditions());
-			double studentPercent2 = comparisonPercent.get(studentID2).get(studentID1).doubleValue() / (comparison.getStudentProject2().getAdditions() < .5 ? 1.0 : comparison.getStudentProject1().getAdditions());
-			
-			comparison.setPercent(Math.max(studentPercent1, studentPercent2));
+			//count is the summation between the two students similarities
+			//percent is the max function between each students (similarity count / additions)
+			comparison.setCount(student1Count + student2Count);
+			comparison.setPercent(Math.max(student1Count / studentProject1.getAdditions(), student2Count / studentProject2.getAdditions()));
 		}
 		
+		//iterate over the student projects for the project
 		for(StudentProject studentProject : studentProjects) {
 			int largestCount = 0;
 			double largestPercent = 0.0;
 			
+			//iterate over both set of comparisons (because it is pairwise and we optimize, we use (n - 1)^2 / 2 comparisons
+			//rather than  (n - 1)^2 as there are effectively duplicates in the unoptimized version.
 			for(StudentComparison comparison : studentProject.getFirstComparisons()) {
 				largestCount = Math.max(largestCount, comparison.getCount());
 				largestPercent = Math.max(largestPercent, comparison.getPercent());
