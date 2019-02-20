@@ -3,7 +3,6 @@ package edu.purdue.cs.encourse.domain.relations;
 import edu.purdue.cs.encourse.domain.Project;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 
@@ -80,12 +79,12 @@ public class StudentProjectDate {
     private Double currentCommits;
     
     @NonNull
-    @Column(name = "TOTAL_MINUTES")
-    private Double totalMinutes;
+    @Column(name = "TOTAL_SECONDS")
+    private Double totalSeconds;
     
     @NonNull
-    @Column(name = "CURRENT_MINUTES")
-    private Double currentMinutes;
+    @Column(name = "CURRENT_SECONDS")
+    private Double currentSeconds;
     
     @NonNull
     @Column(name = "TOTAL_ADDITIONS")
@@ -116,8 +115,8 @@ public class StudentProjectDate {
         
         this.totalCommits = 0.0;
         this.currentCommits = 0.0;
-        this.totalMinutes = 0.0;
-        this.currentMinutes = 0.0;
+        this.totalSeconds = 0.0;
+        this.currentSeconds = 0.0;
         this.totalAdditions = 0.0;
         this.currentAdditions = 0.0;
         this.totalDeletions = 0.0;
@@ -137,8 +136,8 @@ public class StudentProjectDate {
     
         this.totalCommits = 0.0;
         this.currentCommits = 0.0;
-        this.totalMinutes = 0.0;
-        this.currentMinutes = 0.0;
+        this.totalSeconds = 0.0;
+        this.currentSeconds = 0.0;
         this.totalAdditions = 0.0;
         this.currentAdditions = 0.0;
         this.totalDeletions = 0.0;

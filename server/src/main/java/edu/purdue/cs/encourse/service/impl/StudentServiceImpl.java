@@ -137,7 +137,7 @@ public class StudentServiceImpl implements StudentService {
 		
 		studentProjectInfo.setCommits(Math.round(studentProject.getCommitCount()));
 		
-		studentProjectInfo.setMinutes(Math.round(studentProject.getMinutes()));
+		studentProjectInfo.setSeconds(Math.round(studentProject.getSeconds()));
 		
 		studentProjectInfo.setVisiblePoints(Math.round(studentProject.getVisiblePoints()));
 		
@@ -209,7 +209,7 @@ public class StudentServiceImpl implements StudentService {
 			
 			model.setCommits(Math.round(studentProjectDate.getTotalCommits() == null ? 0.0 : studentProjectDate.getTotalCommits()));
 			
-			model.setMinutes(Math.round(studentProjectDate.getTotalMinutes() == null ? 0.0 : studentProjectDate.getTotalMinutes()));
+			model.setSeconds(Math.round(studentProjectDate.getTotalSeconds() == null ? 0.0 : studentProjectDate.getTotalSeconds()));
 			
 			model.setVisiblePoints(Math.round(studentProjectDate.getVisiblePoints() == null ? 0.0 : studentProjectDate.getVisiblePoints()));
 			model.setHiddenPoints(Math.round(studentProjectDate.getHiddenPoints() == null ? 0.0 : studentProjectDate.getHiddenPoints()));

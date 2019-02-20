@@ -27,7 +27,7 @@ public class StudentInfoModel {
 	
 	private Long commits;
 	
-	private Long minutes;
+	private Long seconds;
 	
 	private Long visiblePoints;
 	private Long hiddenPoints;

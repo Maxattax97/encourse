@@ -95,8 +95,8 @@ public class StudentProject {
     private Double deletions;
     
     @NonNull
-    @Column(name = "MINUTES")
-    private Double minutes;
+    @Column(name = "SECONDS")
+    private Double seconds;
     
     @NonNull
     @Column(name = "CHANGES")
@@ -152,7 +152,7 @@ public class StudentProject {
         this.commitCount = 0.0;
         this.additions = 0.0;
         this.deletions = 0.0;
-        this.minutes = 0.0;
+        this.seconds = 0.0;
         this.changes = 0.0;
         this.timeVelocity = 0.0;
         this.commitVelocity = 0.0;
@@ -178,7 +178,7 @@ public class StudentProject {
         this.commitCount = 0.0;
         this.additions = 0.0;
         this.deletions = 0.0;
-        this.minutes = 0.0;
+        this.seconds = 0.0;
         this.changes = 0.0;
         this.timeVelocity = 0.0;
         this.commitVelocity = 0.0;

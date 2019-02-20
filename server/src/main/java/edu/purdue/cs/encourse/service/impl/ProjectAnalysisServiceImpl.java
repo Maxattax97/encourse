@@ -1,14 +1,9 @@
 package edu.purdue.cs.encourse.service.impl;
 
-import edu.purdue.cs.encourse.database.AdditionHashRepository;
-import edu.purdue.cs.encourse.database.CourseRepository;
 import edu.purdue.cs.encourse.database.ProjectDateRepository;
 import edu.purdue.cs.encourse.database.ProjectRepository;
-import edu.purdue.cs.encourse.database.StudentComparisonRepository;
 import edu.purdue.cs.encourse.database.StudentProjectDateRepository;
 import edu.purdue.cs.encourse.database.StudentProjectRepository;
-import edu.purdue.cs.encourse.database.TestScriptRepository;
-import edu.purdue.cs.encourse.database.TestSuiteRepository;
 import edu.purdue.cs.encourse.domain.AdditionHash;
 import edu.purdue.cs.encourse.domain.Commit;
 import edu.purdue.cs.encourse.domain.Course;
@@ -19,11 +14,8 @@ import edu.purdue.cs.encourse.domain.relations.StudentComparison;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.BasicStatistics;
-import edu.purdue.cs.encourse.service.CourseServiceV2;
 import edu.purdue.cs.encourse.service.ProjectAnalysisService;
-import edu.purdue.cs.encourse.service.ProjectService;
 import edu.purdue.cs.encourse.service.helper.General;
-import edu.purdue.cs.encourse.service.helper.TestExecuter;
 import lombok.NonNull;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -407,6 +399,9 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		for(AdditionHash hash : project.getAdditionHashes()) {
 			Map<Long, Integer> counts = hash.getStudentCounts();
 			
+			if(counts.size() > Math.max(75, Math.floor(studentProjects.size() * .33)))
+				continue;
+			
 			//iterate over the students who share the hash
 			for(Long studentID1 : counts.keySet()) {
 				//get studentID1's mapping towards all other students (comparisons)
@@ -526,7 +521,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			studentProjectDate.setTotalCommits(studentProjectDate.getTotalCommits() - studentProjectDate.getCurrentCommits());
 			studentProjectDate.setTotalAdditions(studentProjectDate.getTotalAdditions() - studentProjectDate.getCurrentAdditions());
 			studentProjectDate.setTotalDeletions(studentProjectDate.getTotalDeletions() - studentProjectDate.getCurrentDeletions());
-			studentProjectDate.setTotalMinutes(studentProjectDate.getTotalMinutes() - studentProjectDate.getCurrentMinutes());
+			studentProjectDate.setTotalSeconds(studentProjectDate.getTotalSeconds() - studentProjectDate.getCurrentSeconds());
 			
 			//iterate through every commit
 			for(Commit commit : commitList) {
@@ -542,19 +537,19 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				}
 				
 				//find the distance between the previous commit (earlier in time) and the current
-				//this distance is measured in minutes
-				long time = Math.max(ChronoUnit.MINUTES.between(previousCommitTime, commit.getDate()), 0);
+				//this distance is measured in seconds
+				long time = Math.max(ChronoUnit.SECONDS.between(previousCommitTime, commit.getDate()), 0);
 				
 				//run the total time spent on the project between these two commits algorithm
-				if(time > Math.max(commit.getAdditions() * 3 * Math.pow(Math.E, -commit.getAdditions() / 300.0), 10))
-					time = Math.round(commit.getAdditions() * 2 * Math.pow(Math.E, -commit.getAdditions() / 300.0));
+				if(time > 60 * Math.max(commit.getAdditions() * 3 * Math.pow(Math.E, -commit.getAdditions() / 300.0), 10))
+					time = 60 * Math.round(commit.getAdditions() * 2 * Math.pow(Math.E, -commit.getAdditions() / 300.0));
 				
-				//add the commit additions/deletions and minutes
+				//add the commit additions/deletions and seconds
 				/*studentProject.setAdditions(studentProject.getAdditions() + commit.getAdditions());
 				studentProject.setDeletions(studentProject.getDeletions() + commit.getDeletions());*/
-				studentProject.setMinutes(studentProject.getMinutes() + time);
+				studentProject.setSeconds(studentProject.getSeconds() + time);
 				
-				commit.setMinutes(studentProject.getMinutes());
+				commit.setSeconds(studentProject.getSeconds());
 				
 				//find the student project date
 				studentProjectDate = null;
@@ -571,11 +566,11 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					continue;
 				}
 				
-				//update commit count, additions/deletions, and minutes for the specific date
+				//update commit count, additions/deletions, and seconds for the specific date
 				studentProjectDate.setCurrentCommits(studentProjectDate.getCurrentCommits() + 1);
 				studentProjectDate.setCurrentAdditions(studentProjectDate.getCurrentAdditions() + commit.getAdditions());
 				studentProjectDate.setCurrentDeletions(studentProjectDate.getCurrentDeletions() + commit.getDeletions());
-				studentProjectDate.setCurrentMinutes(studentProjectDate.getCurrentMinutes() + time);
+				studentProjectDate.setCurrentSeconds(studentProjectDate.getCurrentSeconds() + time);
 				
 				//iteration with access to the previousCommitTime, important for time calculation and setting most recent commit
 				previousCommitTime = commit.getDate();
@@ -609,7 +604,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					previousStudentDate = studentProjectDate;
 				
 				studentProjectDate.setTotalCommits(previousStudentDate.getTotalCommits() + studentProjectDate.getCurrentCommits());
-				studentProjectDate.setTotalMinutes(previousStudentDate.getTotalMinutes() + studentProjectDate.getCurrentMinutes());
+				studentProjectDate.setTotalSeconds(previousStudentDate.getTotalSeconds() + studentProjectDate.getCurrentSeconds());
 				studentProjectDate.setTotalAdditions(previousStudentDate.getTotalAdditions() + studentProjectDate.getCurrentAdditions());
 				studentProjectDate.setTotalDeletions(previousStudentDate.getTotalDeletions() + studentProjectDate.getCurrentDeletions());
 				
@@ -620,7 +615,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				studentProject.setCommitCount(previousStudentDate.getTotalCommits());
 				studentProject.setAdditions(previousStudentDate.getTotalAdditions());
 				studentProject.setDeletions(previousStudentDate.getTotalDeletions());
-				studentProject.setMinutes(previousStudentDate.getTotalMinutes());
+				studentProject.setSeconds(previousStudentDate.getTotalSeconds());
 				
 				if(previousStudentDate.getTotalDeletions() < .05)
 					studentProject.setChanges(previousStudentDate.getTotalAdditions());
@@ -628,10 +623,10 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					studentProject.setChanges(previousStudentDate.getTotalAdditions() / previousStudentDate.getTotalDeletions());
 				
 				if(project.getRunTestall()) {
-					if(studentProject.getMinutes() < .05)
+					if(studentProject.getSeconds() < .05)
 						studentProject.setTimeVelocity((studentProject.getVisiblePoints() + studentProject.getHiddenPoints()));
 					else
-						studentProject.setTimeVelocity((studentProject.getVisiblePoints() + studentProject.getHiddenPoints()) / studentProject.getMinutes());
+						studentProject.setTimeVelocity((studentProject.getVisiblePoints() + studentProject.getHiddenPoints()) / (studentProject.getSeconds() / 60.0));
 					
 					if(previousStudentDate.getTotalCommits() < .05)
 						studentProject.setCommitVelocity((studentProject.getVisiblePoints() + studentProject.getHiddenPoints()));
@@ -639,10 +634,10 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 						studentProject.setCommitVelocity((studentProject.getVisiblePoints() + studentProject.getHiddenPoints()) / previousStudentDate.getTotalCommits());
 				}
 				else {
-					if(studentProject.getMinutes() < .05)
+					if(studentProject.getSeconds() < .05)
 						studentProject.setTimeVelocity(0.0);
 					else
-						studentProject.setTimeVelocity(100.0 / studentProject.getMinutes());
+						studentProject.setTimeVelocity(6000.0 / studentProject.getSeconds());
 					
 					if(previousStudentDate.getTotalCommits() < .05)
 						studentProject.setCommitVelocity(0.0);
@@ -680,7 +675,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			DescriptiveStatistics visiblePointStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics hiddenPointStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics commitStats = new DescriptiveStatistics(studentProjectDateList.size());
-			DescriptiveStatistics minuteStats = new DescriptiveStatistics(studentProjectDateList.size());
+			DescriptiveStatistics secondStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics additionStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics deletionStats = new DescriptiveStatistics(studentProjectDateList.size());
 			
@@ -694,7 +689,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				visiblePointStats.addValue(studentProjectDate.getVisiblePoints());
 				hiddenPointStats.addValue(studentProjectDate.getHiddenPoints());
 				commitStats.addValue(studentProjectDate.getTotalCommits());
-				minuteStats.addValue(studentProjectDate.getTotalMinutes());
+				secondStats.addValue(studentProjectDate.getTotalSeconds());
 				additionStats.addValue(studentProjectDate.getTotalAdditions());
 				deletionStats.addValue(studentProjectDate.getTotalDeletions());
 				
@@ -707,7 +702,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			projectDate.setVisiblePointStats(new BasicStatistics(visiblePointStats));
 			projectDate.setHiddenPointStats(new BasicStatistics(hiddenPointStats));
 			projectDate.setCommitStats(new BasicStatistics(commitStats));
-			projectDate.setMinuteStats(new BasicStatistics(minuteStats));
+			projectDate.setSecondStats(new BasicStatistics(secondStats));
 			projectDate.setAdditionStats(new BasicStatistics(additionStats));
 			projectDate.setDeletionStats(new BasicStatistics(deletionStats));
 		}

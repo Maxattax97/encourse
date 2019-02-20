@@ -100,13 +100,13 @@ public class ProjectDate {
 	@Setter
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "MAX_MINUTES")),
-			@AttributeOverride(name = "min", column = @Column(name = "MIN_MINUTES")),
-			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_MINUTES")),
-			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_MINUTES")),
-			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_MINUTES"))
+			@AttributeOverride(name = "max", column = @Column(name = "MAX_SECONDS")),
+			@AttributeOverride(name = "min", column = @Column(name = "MIN_SECONDS")),
+			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_SECONDS")),
+			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_SECONDS")),
+			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_SECONDS"))
 	})
-	private BasicStatistics minuteStats;
+	private BasicStatistics secondStats;
 	
 	@Setter
 	@Embedded
@@ -144,7 +144,7 @@ public class ProjectDate {
 		this.visiblePointStats = new BasicStatistics();
 		this.hiddenPointStats = new BasicStatistics();
 		this.commitStats = new BasicStatistics();
-		this.minuteStats = new BasicStatistics();
+		this.secondStats = new BasicStatistics();
 		this.additionStats = new BasicStatistics();
 		this.deletionStats = new BasicStatistics();
 		

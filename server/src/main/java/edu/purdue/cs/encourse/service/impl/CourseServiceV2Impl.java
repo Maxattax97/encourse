@@ -43,11 +43,9 @@ import javax.management.relation.InvalidRelationIdException;
 import javax.management.relation.RelationException;
 import javax.management.relation.RelationNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -353,7 +351,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 			StudentProject studentProject = studentProjectDate.getStudentProject();
 			
 			double commits = studentProjectDate.getTotalCommits() == null ? 0.0 : studentProjectDate.getTotalCommits();
-			double minutes = studentProjectDate.getTotalMinutes() == null ? 0.0 : studentProjectDate.getTotalMinutes();
+			double seconds = studentProjectDate.getTotalSeconds() == null ? 0.0 : studentProjectDate.getTotalSeconds();
 			double additions = studentProjectDate.getTotalAdditions() == null ? 0.0 : studentProjectDate.getTotalAdditions();
 			double deletions = studentProjectDate.getTotalDeletions() == null ? 0.0 : studentProjectDate.getTotalDeletions();
 			
@@ -378,7 +376,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 			
 			if (commitSamples != null) commitSamples.addValue(commits);
 			
-			if (timeSamples != null) timeSamples.addValue(minutes);
+			if (timeSamples != null) timeSamples.addValue(seconds);
 			
 			if (additionSamples != null) additionSamples.addValue(additions);
 			
@@ -408,7 +406,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 		
 		projectInfo.setProgress(getCourseHistogram(projectDate.getValidCount(), hasProgress, progressSamples, !includeHiddenTests ? projectDate.getHiddenPointStats() : !includeVisibleTests ? projectDate.getVisiblePointStats() : projectDate.getTotalPointStats()));
 		projectInfo.setCommits(getCourseHistogram(projectDate.getValidCount(), hasCommit, commitSamples, projectDate.getCommitStats()));
-		projectInfo.setTime(getCourseHistogram(projectDate.getValidCount(), hasTime, timeSamples, projectDate.getMinuteStats()));
+		projectInfo.setTime(getCourseHistogram(projectDate.getValidCount(), hasTime, timeSamples, projectDate.getSecondStats()));
 		
 		projectInfo.setChanges(getCourseHistogram(project.getValidCount(), hasChanges, changesSamples, project.getChangesStats()));
 		projectInfo.setTimeVelocity(getCourseHistogram(project.getValidCount(), hasTimeVelocity, timeVelocitySamples, project.getTimeVelocityStats()));

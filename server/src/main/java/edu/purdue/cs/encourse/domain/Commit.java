@@ -27,6 +27,6 @@ public class Commit {
 	private Double visiblePoints;
 	private Double hiddenPoints;
 	
-	private Double minutes;
+	private Double seconds;
 	
 }
