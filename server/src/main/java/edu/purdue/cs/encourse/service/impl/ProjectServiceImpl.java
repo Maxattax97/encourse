@@ -26,6 +26,7 @@ import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.BasicStatistics;
 import edu.purdue.cs.encourse.model.CourseProjectModel;
+import edu.purdue.cs.encourse.model.ProjectIgnoreModel;
 import edu.purdue.cs.encourse.model.ProjectModel;
 import edu.purdue.cs.encourse.model.ProjectTestScriptModel;
 import edu.purdue.cs.encourse.model.ProjectTestSuiteModel;
@@ -388,6 +389,16 @@ public class ProjectServiceImpl implements ProjectService {
 			throw new RelationException("");
 		
 		return testSuite;
+	}
+	
+	@Override
+	@Transactional
+	public void addProjectIgnoreUser(@NonNull ProjectIgnoreModel model) throws RelationException {
+		Project project = getProject(model.getProjectID());
+		
+		project.getIgnoredUsers().add(model.getUser());
+		
+		projectRepository.save(project);
 	}
 	
 	private void executeScript(@NonNull String command) throws InterruptedException, IOException {

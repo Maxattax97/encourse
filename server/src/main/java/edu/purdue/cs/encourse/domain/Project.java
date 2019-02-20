@@ -1,27 +1,21 @@
 package edu.purdue.cs.encourse.domain;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import edu.purdue.cs.encourse.domain.relations.StudentComparison;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.model.BasicStatistics;
-import edu.purdue.cs.encourse.model.CourseProjectModel;
 import edu.purdue.cs.encourse.model.ProjectModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.ToString;
-import org.springframework.data.domain.Persistable;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -175,6 +169,10 @@ public class Project {
     
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<StudentComparison> studentComparisons;
+    
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "PROJECT_IGNORE_GIT_USERS", joinColumns = @JoinColumn(name = "PROJECT_ID"))
+    private List<String> ignoredUsers;
 
     public Project(@NonNull Course course, @NonNull ProjectModel projectModel) {
         this.course = course;
@@ -194,6 +192,9 @@ public class Project {
         
         this.runTestall = projectModel.getRunTestall();
         
+        this.validSimilarityCount = 0;
+        this.validCount = 0;
+        
         this.similarityStats = new BasicStatistics();
         this.similarityPercentStats = new BasicStatistics();
         this.changesStats = new BasicStatistics();
@@ -206,6 +207,7 @@ public class Project {
         this.studentProjects = new ArrayList<>();
         this.additionHashes = new HashSet<>();
         this.studentComparisons = new HashSet<>();
+        this.ignoredUsers = new ArrayList<>();
     }
 
     /**

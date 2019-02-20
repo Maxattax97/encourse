@@ -95,8 +95,12 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		String courseHub = course.getCourseHub();
 		
 		for(StudentProject p : projects) {
+			
+			if(!new File(courseHub + "/" + p.getStudent().getStudent().getUsername() + "/" + project.getRepository()).isDirectory())
+				continue;
+			
 			System.out.println("PULLING STUDENT PROJECT (" + p.getId() + ", "+ p.getStudent().getStudent().getUsername() + ")");
-			executeScript("pullRepositories.sh " + courseHub + "/" + p.getStudent().getStudent().getUsername() + "/" + project.getRepository());
+			executeScript("pullRepositories.sh " + courseHub + " " + p.getStudent().getStudent().getUsername() + "/" + project.getRepository());
 		}
 		
 		executeScript("setPermissions.sh " + course.getCourseID());
@@ -177,6 +181,9 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				catch(DateTimeParseException e) {
 					System.out.println("Student " + studentProject.getStudent().getStudent().getUsername() + " had a problem parsing. " + line);
 				}
+				
+				if(project.getIgnoredUsers().contains(split[3]))
+					commit = null;
 			}
 			else if(commit != null) {
 				if(line.startsWith("+++")) {
@@ -220,7 +227,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		
 		ZoneId estZone = TimeZone.getTimeZone("EST").toZoneId();
 		
-		Process process = executeScriptAndReturn("generateDiffsAfterDate.sh " + testingDirectory + " " + ZonedDateTime.of(studentProject.getMostRecentCommit(), estZone).plusSeconds(1) + " test-shell/testall.out");
+		Process process = executeScriptAndReturn("getTestallChanges.sh " + testingDirectory + " " + ZonedDateTime.of(studentProject.getMostRecentCommit(), estZone).plusSeconds(1) + " test-shell/testall.out");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		
 		String line;
@@ -286,6 +293,9 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				
 				for(String name : testScriptMap.keySet())
 					foundScriptsMap.put(name, false);
+				
+				if(project.getIgnoredUsers().contains(split[3]))
+					commit = null;
 			}
 			else if(commit != null) {
 				if(line.startsWith("+++")) {
@@ -470,6 +480,9 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			
 			String testingDirectory = courseHub + "/" + studentProject.getStudent().getStudent().getUsername() + "/" + project.getRepository();
 			
+			if(!new File(testingDirectory).isDirectory())
+				continue;
+			
 			List<StudentProjectDate> studentProjectDateList = studentProjectListMap.get(studentProject);
 			
 			if(studentProjectDateList.isEmpty()) {
@@ -490,6 +503,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			}
 			catch(IOException | InterruptedException e) {
 				//TODO error handling is needed here
+				e.printStackTrace();
 			}
 			
 			if(commitList == null || commitList.isEmpty())
