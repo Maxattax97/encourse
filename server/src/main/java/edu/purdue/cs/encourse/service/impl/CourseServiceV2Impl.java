@@ -360,7 +360,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 			double visiblePoints = studentProjectDate.getVisiblePoints() == null ? 0.0 : studentProjectDate.getVisiblePoints();
 			double hiddenPoints = studentProjectDate.getHiddenPoints() == null ? 0.0 : studentProjectDate.getHiddenPoints();
 			
-			if(studentProject.getCommitCount() < .5) continue;
+			if(studentProject.getCommitCount() < .05) continue;
 			
 			if (changesSamples != null) changesSamples.addValue(studentProject.getChanges());
 			
@@ -368,7 +368,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 			
 			if (commitVelocitySamples != null) commitVelocitySamples.addValue(studentProject.getCommitVelocity());
 			
-			if (commits < .5) continue;
+			if (commits < .05) continue;
 			
 			if (progressSamples != null) {
 				if (project.getRunTestall())
@@ -392,7 +392,7 @@ public class CourseServiceV2Impl implements CourseServiceV2 {
 			DescriptiveStatistics similarityPercentSamples = hasSimilarityPercent ? new DescriptiveStatistics() : null;
 			
 			for(StudentComparison comparison : comparisons) {
-				if(comparison.getStudentProject1().getCommitCount() < .5 || comparison.getStudentProject2().getCommitCount() < .5)
+				if(comparison.getStudentProject1().getCommitCount() < .05 || comparison.getStudentProject2().getCommitCount() < .05)
 					continue;
 				
 				if(similaritySamples != null)

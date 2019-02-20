@@ -426,8 +426,8 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			//percent is the max function between each students (similarity count / additions)
 			comparison.setCount(student1Count + student2Count);
 			
-			double percent1 = studentProject1.getAdditions() < .5 ? 0.0 : (student1Count * 100.0) / studentProject1.getAdditions();
-			double percent2 = studentProject2.getAdditions() < .5 ? 0.0 : (student2Count * 100.0) / studentProject2.getAdditions();
+			double percent1 = studentProject1.getAdditions() < .05 ? 0.0 : (student1Count * 100.0) / studentProject1.getAdditions();
+			double percent2 = studentProject2.getAdditions() < .05 ? 0.0 : (student2Count * 100.0) / studentProject2.getAdditions();
 			
 			comparison.setPercent(Math.max(percent1, percent2));
 		}
@@ -520,7 +520,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				if(studentProject.getFirstCommit() == null || studentProject.getFirstCommit().compareTo(commit.getDate()) > 0)
 					studentProject.setFirstCommit(commit.getDate());
 				
-				if(commit.getAdditions() + commit.getDeletions() <= .5) {
+				if(commit.getAdditions() + commit.getDeletions() <= .05) {
 					System.out.println("Commit (" + commit.getHash() + ") had no additions and deletions, skipping...");
 					//iteration with access to the previousCommitTime, important for time calculation and setting most recent commit
 					previousCommitTime = commit.getDate();
@@ -673,7 +673,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			validCount = 0;
 			
 			for(StudentProjectDate studentProjectDate : studentProjectDateList) {
-				if(studentProjectDate.getTotalCommits() < .5)
+				if(studentProjectDate.getTotalCommits() < .05)
 					continue;
 				
 				totalPointStats.addValue(studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints());
@@ -705,7 +705,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		validCount = 0;
 		
 		for(StudentProject studentProject : studentProjectListMap.keySet()) {
-			if(studentProject.getCommitCount() < .5)
+			if(studentProject.getCommitCount() < .05)
 				continue;
 			
 			changesStats.addValue(studentProject.getChanges());
@@ -727,7 +727,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		validCount = 0;
 		
 		for(StudentComparison comparison : project.getStudentComparisons()) {
-			if(comparison.getStudentProject1().getCommitCount() < .5 || comparison.getStudentProject2().getCommitCount() < .5)
+			if(comparison.getStudentProject1().getCommitCount() < .05 || comparison.getStudentProject2().getCommitCount() < .05)
 				continue;
 			
 			similarityStats.addValue(comparison.getCount());
