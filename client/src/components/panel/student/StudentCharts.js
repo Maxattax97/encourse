@@ -8,6 +8,7 @@ import {getCurrentStudent} from '../../../redux/state-peekers/student'
 import {retrieveStudentCharts} from '../../../redux/retrievals/student'
 import CodeChanges from './chart/CodeChanges'
 import StudentProgress from './chart/StudentProgress'
+import MinutesWorkedLine from './chart/MinutesWorkedLine'
 
 class StudentCharts extends Component {
 
@@ -22,15 +23,21 @@ class StudentCharts extends Component {
     }
 
     render() {
+        if(this.props.project && this.props.project.runTestall)
+            return (
+                <ChartList>
+                    <CommitFrequencyHistogram />
+                    <CodeChanges />
+                    <MinutesWorkedLine/>
+                    <StudentProgress/>
+                </ChartList>
+            )
+
         return (
             <ChartList>
                 <CommitFrequencyHistogram />
                 <CodeChanges />
-                {
-                    this.props.project && this.props.project.runTestall ?
-                        <StudentProgress/>
-                        : null
-                }
+                <MinutesWorkedLine/>
             </ChartList>
         )
     }

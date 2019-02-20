@@ -1,5 +1,9 @@
 
 export function hourMinutesFromMinutes(minutes) {
+    minutes /= 60;
+
+    minutes = minutes.toFixed(0);
+
     if(minutes % 60 === 0)
         return `${minutes / 60}h`
 

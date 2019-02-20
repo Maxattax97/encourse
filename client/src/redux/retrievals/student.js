@@ -18,16 +18,25 @@ import {
     semester_v1,
     student_v2
 } from './retrieval-utils'
-import {getStudentCharts} from '../actions/student'
+import {getStudentCharts, getStudentComparisons} from '../actions/student'
 
 export function retrieveStudent(studentID) {
-	store.dispatch(getStudent(`${student_v2}`), {
+	store.dispatch(getStudent(`${student_v2}`, {
         "Content-Type": "application/json"
-    }, JSON.stringify(studentID))
+    }, JSON.stringify(studentID)))
 }
 
 export function retrieveStudentCharts(project, student) {
     store.dispatch(getStudentCharts(`${student_v2}/project/diffs`, {
+        "Content-Type": "application/json"
+    }, JSON.stringify({
+        "projectID": project.projectID,
+        "studentID": student.studentID
+    })))
+}
+
+export function retrieveStudentComparisons(project, student) {
+    store.dispatch(getStudentComparisons(`${student_v2}/project/comparison`, {
         "Content-Type": "application/json"
     }, JSON.stringify({
         "projectID": project.projectID,

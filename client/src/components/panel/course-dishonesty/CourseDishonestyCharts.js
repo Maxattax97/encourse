@@ -33,7 +33,8 @@ class CourseDishonestyCharts extends Component {
                 <DistributionChart chart={ (this.props.charts.data || {}).changes } filterChart={ (this.props.filterCharts.data || {}).changes } x="Additions per Deletion" y="Student Count"/>
                 <DistributionChart chart={ (this.props.charts.data || {}).timeVelocity } filterChart={ (this.props.filterCharts.data || {}).timeVelocity } x="Progress per Minute" y="Student Count"/>
                 <DistributionChart chart={ (this.props.charts.data || {}).commitVelocity } filterChart={ (this.props.filterCharts.data || {}).commitVelocity } x="Progress per Commit" y="Student Count"/>
-                <DistributionChart chart={ (this.props.charts.data || {}).similarity } filterChart={ (this.props.filterCharts.data || {}).similarity } x="Lines of Code Similar" y="Student Count"/>
+                <DistributionChart chart={ (this.props.charts.data || {}).similarity } filterChart={ (this.props.filterCharts.data || {}).similarity } x="Lines of Code Similar" y="Student Comparison Count"/>
+                <DistributionChart chart={ (this.props.charts.data || {}).similarityPercent } filterChart={ (this.props.filterCharts.data || {}).similarityPercent } x="Percent of Code Similar" y="Student Count"/>
 			</ChartList>
 		)
 	}

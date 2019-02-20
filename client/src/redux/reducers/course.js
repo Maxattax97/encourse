@@ -75,6 +75,13 @@ function formatCourseCharts(udata) {
 
     formatChart(udata.time)
 
+    if(udata.time) {
+        udata.time.bars.forEach(bar => bar.index /= 60)
+
+        udata.time.courseStats.min /= 60;
+        udata.time.courseStats.max /= 60;
+    }
+
     formatChart(udata.changes)
 
     formatChart(udata.commitVelocity)
@@ -82,6 +89,8 @@ function formatCourseCharts(udata) {
     formatChart(udata.timeVelocity)
 
     formatChart(udata.similarity)
+
+    formatChart(udata.similarityPercent)
 
     return udata;
 }

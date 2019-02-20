@@ -54,6 +54,10 @@ export const getStudentCharts = genericDispatch(
     class_type, 'GET_STUDENT_CHARTS', 'POST'
 )
 
+export const getStudentComparisons = genericDispatch(
+    class_type, 'GET_STUDENT_COMPARISONS', 'POST'
+)
+
 export const getProgressLine = genericDispatch(
     class_type, 'GET_PROGRESS_LINE', 'GET'
 )

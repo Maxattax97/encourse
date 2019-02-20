@@ -1,5 +1,5 @@
 import {Component} from 'react'
-import {Bar, ComposedChart, Label, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts'
+import {Bar, ComposedChart, Label, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts'
 
 import connect from 'react-redux/es/connect/connect'
 import React from 'react'
@@ -39,7 +39,7 @@ class DistributionChart extends Component {
                     margin={{top: 5, right: 10, left: 5, bottom: 15}}
                     barCategoryGap={0}
                 >
-                    <XAxis type="number" domain={[chart.courseStats.min, chart.courseStats.max]} dataKey="index">
+                    <XAxis type="number" dataKey="index">
                         <Label offset={-10} position="insideBottom">
                             { this.props.x }
                         </Label>
@@ -49,7 +49,7 @@ class DistributionChart extends Component {
                             { this.props.y }
                         </Label>
                     </YAxis>
-                    <Tooltip animationDuration={100} labelFormatter={tick => Math.floor(tick) + " " + this.props.x}/>
+                    <Tooltip animationDuration={100} labelFormatter={tick => tick.toFixed(2) + " " + this.props.x}/>
                     {
                         !this.props.filterCharts.loading && !this.props.filterCharts.error ?
                             <Bar dataKey="size1" fill="#0057A7CC" stackId="a" isAnimationActive={false}/>
@@ -67,8 +67,6 @@ class DistributionChart extends Component {
     }
 
     render() {
-
-        console.log(this.props.charts)
 
         return (
             <Chart

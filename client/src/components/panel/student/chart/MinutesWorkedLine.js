@@ -1,5 +1,16 @@
 import React, { Component } from 'react'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Label, ResponsiveContainer } from 'recharts'
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Label,
+    ResponsiveContainer,
+    Line,
+    LineChart
+} from 'recharts'
 import moment from 'moment'
 import { connect } from 'react-redux'
 
@@ -11,48 +22,46 @@ import {
 } from '../../../../redux/state-peekers/student'
 import {getCurrentProject} from '../../../../redux/state-peekers/projects'
 
-class CodeChanges extends Component {
+class MinutesWorkedLine extends Component {
 
     formatData = (data) => {
         if(!data)
             return data
 
-        let additions = 0
-        let deletions = 0
+        let startDate = data[0].date;
+        let endDate = data[data.length - 1].date;
 
         return data.map(commit => {
-            additions += commit.additions
-            deletions += commit.deletions
-
             return {
                 date: commit.date,
-                additions: additions,
-                deletions: -deletions
+                time: (commit.seconds / 60),
+                timeExpected: commit.date === startDate ? 0 : commit.date === endDate ? (commit.seconds / 60) : null
             }
         })
     }
 
     render() {
+        console.log(this.formatData((this.props.charts.data || {}).commits))
         return (
             <Chart
                 chart={this.props.charts}
                 title='Cumulative number of lines added or deleted by day.'
             >
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={this.formatData(this.props.charts.data.commits)} margin={{top: 40, right: 35, left: 0, bottom: 25}}>
-                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Lines of Code Added/Deleted</text>
-                        <XAxis dataKey="date" domain={['dataMin', 'dataMax']} tickFormatter={tick => moment(tick).format('M-D')}>
+                    <LineChart data={this.formatData(this.props.charts.data.commits)} margin={{top: 40, right: 35, left: 0, bottom: 25}}>
+                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Amount of Time Spent on Project</text>
+                        <XAxis dataKey="date" tickFormatter={tick => moment(tick).format('M-D')}>
                             <Label position="insideBottom" offset={-15} value="Date"/>
                         </XAxis>
                         <YAxis type="number">
                             <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
-                                Changes
+                                Minutes Worked
                             </Label>
                         </YAxis>
                         <Tooltip labelFormatter={tick => moment(tick).format('M-D HH:mm:ss')}/>
-                        <Area name="deletions" type="monotone" dataKey="deletions" stroke="none" fill="red" isAnimationActive={false}/>
-                        <Area name="additions" type="monotone" dataKey="additions" stroke="none" fill="green" isAnimationActive={false}/>
-                    </AreaChart>
+                        <Line name="time" type="monotone" dataKey="time" stroke="black" dot={false} isAnimationActive={false}/>
+                        <Line connectNulls={true} type='monotone' dataKey='timeExpected' stroke='red' strokeDasharray="5 5" dot={false} isAnimationActive={false} />
+                    </LineChart>
                 </ResponsiveContainer>
             </Chart>
         )
@@ -67,4 +76,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(CodeChanges)
+export default connect(mapStateToProps)(MinutesWorkedLine)
