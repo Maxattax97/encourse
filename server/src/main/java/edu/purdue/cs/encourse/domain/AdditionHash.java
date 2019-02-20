@@ -39,6 +39,11 @@ public class AdditionHash {
 	@JoinColumn(name = "PROJECT_ID")
 	private Project project;
 	
+	@Setter
+	@Getter
+	@JoinColumn(name = "IS_STUDENT_CODE")
+	private Boolean isStudentCode;
+	
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "ADDITION_HASH_STUDENTS", joinColumns = @JoinColumn(name = "ADDITION_HASH_ID"))
 	private Map<Long, Integer> studentCounts;

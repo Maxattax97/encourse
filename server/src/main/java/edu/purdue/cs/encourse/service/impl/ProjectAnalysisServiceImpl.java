@@ -98,7 +98,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		executeScript("setPermissions.sh " + course.getCourseID());
 	}
 	
-	private void addFileDetailsToCommit(Project project, Long studentId, Commit commit, int additions, int deletions, Map<String, AdditionHash> additionHashMap, Map<String, Integer> commitAdditionHashes) {
+	private void addFileDetailsToCommit(Project project, Long studentId, Commit commit, boolean isStudentCode, int additions, int deletions, Map<String, AdditionHash> additionHashMap, Map<String, Integer> commitAdditionHashes) {
 		if(additions < 500) {
 			commit.setAdditions(commit.getAdditions() + additions);
 			commit.setDeletions(commit.getDeletions() + deletions);
@@ -109,13 +109,21 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				additionHash = additionHashMap.get(hash);
 				
 				if(additionHash == null) {
-					additionHash = new AdditionHash(hash, project, new HashMap<>());
-					additionHash.getStudentCounts().put(studentId, commitAdditionHashes.get(hash));
+					additionHash = new AdditionHash(hash, project, isStudentCode, new HashMap<>());
+					
+					if(additionHash.getIsStudentCode())
+						additionHash.getStudentCounts().put(studentId, commitAdditionHashes.get(hash));
 					
 					additionHashMap.put(hash, additionHash);
 				}
-				else
-					additionHash.getStudentCounts().put(studentId, additionHash.getStudentCounts().getOrDefault(studentId, 0) + commitAdditionHashes.get(hash));
+				else {
+					additionHash.setIsStudentCode(additionHash.getIsStudentCode() && isStudentCode);
+					
+					if(additionHash.getIsStudentCode())
+						additionHash.getStudentCounts().put(studentId, additionHash.getStudentCounts().getOrDefault(studentId, 0) + commitAdditionHashes.get(hash));
+					else
+						additionHash.getStudentCounts().clear();
+				}
 			}
 		}
 	}
@@ -132,6 +140,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		
 		Commit commit = null;
 		
+		boolean isStudentCode = true;
 		boolean measureChanges = false;
 		int additions = 0;
 		int deletions = 0;
@@ -153,11 +162,12 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				
 				if(commit != null) {
 					
-					addFileDetailsToCommit(project, studentProject.getId(), commit, additions, deletions, additionHashMap, commitAdditionHashes);
+					addFileDetailsToCommit(project, studentProject.getId(), commit, isStudentCode, additions, deletions, additionHashMap, commitAdditionHashes);
 					
 					commitAdditionHashes.clear();
 					
-					commitList.add(commit);
+					if(isStudentCode)
+						commitList.add(commit);
 				}
 				additions = 0;
 				deletions = 0;
@@ -174,14 +184,13 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					System.out.println("Student " + studentProject.getStudent().getStudent().getUsername() + " had a problem parsing. " + line);
 				}
 				
-				if(project.getIgnoredUsers().contains(split[3]))
-					commit = null;
+				isStudentCode = !project.getIgnoredUsers().contains(split[3]);
 			}
 			else if(commit != null) {
 				if(line.startsWith("+++")) {
 					measureChanges = General.isSourceCodeExtension(line);
 					
-					addFileDetailsToCommit(project, studentProject.getId(), commit, additions, deletions, additionHashMap, commitAdditionHashes);
+					addFileDetailsToCommit(project, studentProject.getId(), commit, isStudentCode, additions, deletions, additionHashMap, commitAdditionHashes);
 					
 					commitAdditionHashes.clear();
 					
@@ -203,9 +212,10 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		
 		if(commit != null) {
 			
-			addFileDetailsToCommit(project, studentProject.getId(), commit, additions, deletions, additionHashMap, commitAdditionHashes);
+			addFileDetailsToCommit(project, studentProject.getId(), commit, isStudentCode, additions, deletions, additionHashMap, commitAdditionHashes);
 			
-			commitList.add(commit);
+			if(isStudentCode)
+				commitList.add(commit);
 		}
 		
 		reader.close();
@@ -545,8 +555,6 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					time = 60 * Math.round(commit.getAdditions() * 2 * Math.pow(Math.E, -commit.getAdditions() / 300.0));
 				
 				//add the commit additions/deletions and seconds
-				/*studentProject.setAdditions(studentProject.getAdditions() + commit.getAdditions());
-				studentProject.setDeletions(studentProject.getDeletions() + commit.getDeletions());*/
 				studentProject.setSeconds(studentProject.getSeconds() + time);
 				
 				commit.setSeconds(studentProject.getSeconds());
@@ -634,12 +642,12 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 						studentProject.setCommitVelocity((studentProject.getVisiblePoints() + studentProject.getHiddenPoints()) / previousStudentDate.getTotalCommits());
 				}
 				else {
-					if(studentProject.getSeconds() < .05)
+					if(studentProject.getSeconds() < 10.05)
 						studentProject.setTimeVelocity(0.0);
 					else
 						studentProject.setTimeVelocity(6000.0 / studentProject.getSeconds());
 					
-					if(previousStudentDate.getTotalCommits() < .05)
+					if(previousStudentDate.getTotalCommits() < 10.05)
 						studentProject.setCommitVelocity(0.0);
 					else
 						studentProject.setCommitVelocity(100.0 / previousStudentDate.getTotalCommits());
