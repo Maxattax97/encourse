@@ -4,6 +4,7 @@ import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.BasicStatistics;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.AttributeOverride;
@@ -46,6 +47,11 @@ public class ProjectDate {
 	@Setter
 	@Column(name = "DATE")
 	private LocalDate date;
+	
+	@NonNull
+	@Setter
+	@Column(name = "VALID_STATS_COUNT")
+	private Integer validCount;
 	
 	@Setter
 	@Embedded
@@ -94,13 +100,13 @@ public class ProjectDate {
 	@Setter
 	@Embedded
 	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "MAX_MINUTES")),
-			@AttributeOverride(name = "min", column = @Column(name = "MIN_MINUTES")),
-			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_MINUTES")),
-			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_MINUTES")),
-			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_MINUTES"))
+			@AttributeOverride(name = "max", column = @Column(name = "MAX_SECONDS")),
+			@AttributeOverride(name = "min", column = @Column(name = "MIN_SECONDS")),
+			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_SECONDS")),
+			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_SECONDS")),
+			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_SECONDS"))
 	})
-	private BasicStatistics minuteStats;
+	private BasicStatistics secondStats;
 	
 	@Setter
 	@Embedded
@@ -124,39 +130,6 @@ public class ProjectDate {
 	})
 	private BasicStatistics deletionStats;
 	
-	@Setter
-	@Embedded
-	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "MAX_CHANGES")),
-			@AttributeOverride(name = "min", column = @Column(name = "MIN_CHANGES")),
-			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_CHANGES")),
-			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_CHANGES")),
-			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_CHANGES"))
-	})
-	private BasicStatistics changesStats;
-	
-	@Setter
-	@Embedded
-	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "MAX_TIME_VELOCITY")),
-			@AttributeOverride(name = "min", column = @Column(name = "MIN_TIME_VELOCITY")),
-			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_TIME_VELOCITY")),
-			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_TIME_VELOCITY")),
-			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_TIME_VELOCITY"))
-	})
-	private BasicStatistics timeVelocityStats;
-	
-	@Setter
-	@Embedded
-	@AttributeOverrides({
-			@AttributeOverride(name = "max", column = @Column(name = "MAX_COMMIT_VELOCITY")),
-			@AttributeOverride(name = "min", column = @Column(name = "MIN_COMMIT_VELOCITY")),
-			@AttributeOverride(name = "mean", column = @Column(name = "MEAN_COMMIT_VELOCITY")),
-			@AttributeOverride(name = "median", column = @Column(name = "MEDIAN_COMMIT_VELOCITY")),
-			@AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_COMMIT_VELOCITY"))
-	})
-	private BasicStatistics commitVelocityStats;
-	
 	@ElementCollection
 	@CollectionTable(name = "PROJECT_DATE_TESTS", joinColumns = @JoinColumn(name = "PROJECT_DATE_ID"))
 	private Map<String, Integer> testsTotal;
@@ -165,13 +138,16 @@ public class ProjectDate {
 		this.project = project;
 		this.date = date;
 		
+		this.validCount = 0;
+		
 		this.totalPointStats = new BasicStatistics();
 		this.visiblePointStats = new BasicStatistics();
 		this.hiddenPointStats = new BasicStatistics();
 		this.commitStats = new BasicStatistics();
-		this.minuteStats = new BasicStatistics();
+		this.secondStats = new BasicStatistics();
 		this.additionStats = new BasicStatistics();
 		this.deletionStats = new BasicStatistics();
+		
 		this.testsTotal = new HashMap<>();
 	}
 	

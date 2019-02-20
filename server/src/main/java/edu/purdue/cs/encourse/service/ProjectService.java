@@ -4,6 +4,7 @@ import edu.purdue.cs.encourse.domain.Project;
 import edu.purdue.cs.encourse.domain.TestScript;
 import edu.purdue.cs.encourse.domain.TestSuite;
 import edu.purdue.cs.encourse.model.CourseProjectModel;
+import edu.purdue.cs.encourse.model.ProjectIgnoreModel;
 import edu.purdue.cs.encourse.model.ProjectModel;
 import edu.purdue.cs.encourse.model.ProjectTestScriptModel;
 import edu.purdue.cs.encourse.model.ProjectTestSuiteModel;
@@ -66,6 +67,6 @@ public interface ProjectService {
 	TestSuite modifyTestSuite(@NonNull TestSuiteModel model) throws RelationException, IllegalArgumentException;
 	
 	@Transactional
-	void analyzeProjects();
+	void addProjectIgnoreUser(@NonNull ProjectIgnoreModel model) throws RelationException;
 	
 }

@@ -8,6 +8,7 @@ import edu.purdue.cs.encourse.model.CourseModel;
 import edu.purdue.cs.encourse.model.CourseProjectModel;
 import edu.purdue.cs.encourse.model.CourseSectionModel;
 import edu.purdue.cs.encourse.model.CourseStudentModel;
+import edu.purdue.cs.encourse.model.ProjectIgnoreModel;
 import edu.purdue.cs.encourse.model.SectionModel;
 import edu.purdue.cs.encourse.model.StudentTAModel;
 import edu.purdue.cs.encourse.model.UserModel;
@@ -34,33 +35,15 @@ import java.util.List;
 @Component
 @Conditional(value = {ProdProfileCondition.class})
 public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
-
-    /*@Autowired
-    private AdminService adminService;
-
-    @Autowired
-    private ProfessorService professorService;
-
-    @Autowired
-    private CourseService courseService;
-
-    @Autowired
-    private StudentProjectRepository studentProjectRepository;
-
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private TeachingAssistantRepository teachingAssistantRepository;
-
-    @Autowired
-    private ProjectRepository projectRepository;
-
-    @Autowired
-    private HelperService helperService;*/
     
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
     
     @Autowired
     private AccountService accountService;
@@ -74,6 +57,9 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
     @Autowired
     private ProjectService projectService;
     
+    @Autowired
+    private ProjectAnalysisService projectAnalysisService;
+    
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
         feedDatabase();
@@ -81,122 +67,107 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
     
     private void feedDatabase() {
         try {
-            if(accountRepository.findAll().iterator().hasNext())
-                return;
-            
-            Account grr = accountService.addAccount(new AccountModel("grr", "Gustavo", "Rodriguez-Rivera", "grr@purdue.edu", Account.Role.PROFESSOR.ordinal()));
-            Account killian = accountService.addAccount(new AccountModel("kleclain-a", "Killian", "LeClainche", "kleclain@purdue.edu", Account.Role.ADMIN.ordinal()));
-            Account jordan = accountService.addAccount(new AccountModel("reed226-a", "William", "Reed", "reed226@purdue.edu", Account.Role.ADMIN.ordinal()));
-            
-            adminService.addUser(new UserModel(grr, "$2a$04$/zamuN8nrPT0qZ4jbaTTp..kBjKUtMu.Jbj2DAHZ..KLDON4REPJu"));
-            adminService.addUser(new UserModel(killian, "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6"));
-            adminService.addUser(new UserModel(jordan, "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6"));
-            
-            Course course = courseService.addCourse(new CourseModel(grr.getUserID(), "1001", "Systems Programming", "cs252", "Spring2019", "/homes/cs252/sourcecontrol/work"));
-            
-            courseService.addSection(new CourseSectionModel(course.getCourseID(), "LE1/2", "N/A"));
-            
-            BufferedReader reader = new BufferedReader(new FileReader(course.getCourseHub() + "/students.txt"));
-            
-            String student;
-            int count = 1;
-            List<CourseStudent> students = new ArrayList<>();
-            
-            while((student = reader.readLine()) != null && count <= ConfigurationManager.getInstance().limit) {
-                Account studentAccount = accountService.addAccount(new AccountModel(student, "Student", student, student + "@purdue.edu", Account.Role.STUDENT.ordinal()));
-                
-                students.add(adminService.addCourseStudent(new CourseStudentModel(course.getCourseID(), studentAccount.getUserID())));
-                
-                count++;
-            }
-            
-            reader.close();
-            
-            reader = new BufferedReader(new FileReader("src/taconfig.txt"));
-            BufferedReader studentReader = new BufferedReader(new FileReader("src/stuconfig.txt"));
-            String input;
-            List<CourseStudent> tas = new ArrayList<>();
-            while((student = reader.readLine()) != null) {
-                String[] lab = student.split(" ");
-                if(!lab[0].equals("Start")) {
-                    continue;
+            Course course = null;
+            if (!accountRepository.findAll().iterator().hasNext()) {
+
+                Account grr = accountService.addAccount(new AccountModel("grr", "Gustavo", "Rodriguez-Rivera", "grr@purdue.edu", Account.Role.PROFESSOR.ordinal()));
+                Account killian = accountService.addAccount(new AccountModel("kleclain-a", "Killian", "LeClainche", "kleclain@purdue.edu", Account.Role.ADMIN.ordinal()));
+                Account jordan = accountService.addAccount(new AccountModel("reed226-a", "William", "Reed", "reed226@purdue.edu", Account.Role.ADMIN.ordinal()));
+
+                adminService.addUser(new UserModel(grr, "$2a$04$/zamuN8nrPT0qZ4jbaTTp..kBjKUtMu.Jbj2DAHZ..KLDON4REPJu"));
+                adminService.addUser(new UserModel(killian, "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6"));
+                adminService.addUser(new UserModel(jordan, "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6"));
+
+                course = courseService.addCourse(new CourseModel(grr.getUserID(), "1001", "Systems Programming", "cs252", "Spring2019", "/homes/cs252/sourcecontrol/work"));
+
+                courseService.addSection(new CourseSectionModel(course.getCourseID(), "LE1/2", "N/A"));
+
+                BufferedReader reader = new BufferedReader(new FileReader(course.getCourseHub() + "/students.txt"));
+
+                String student;
+                int count = 1;
+                List<CourseStudent> students = new ArrayList<>();
+
+                while ((student = reader.readLine()) != null && count <= ConfigurationManager.getInstance().limit) {
+                    Account studentAccount = accountService.addAccount(new AccountModel(student, "Student", student, student + "@purdue.edu", Account.Role.STUDENT.ordinal()));
+
+                    students.add(adminService.addCourseStudent(new CourseStudentModel(course.getCourseID(), studentAccount.getUserID())));
+
+                    count++;
                 }
-                tas.clear();
-                String[] info;
-                while (!(info = reader.readLine().split(" "))[0].equals("End")) {
-                    Account ta = accountService.addAccount(new AccountModel(info[0] + "-lab" + lab[2], info[1], info[2], info[0] + "@purdue.edu", Account.Role.STUDENT.ordinal()));
-                    adminService.addUser(new UserModel(ta, info[4]));
-                    tas.add(adminService.addCourseTA(new CourseStudentModel(course.getCourseID(), ta.getUserID())));
-                }
-                
-                while ((input = studentReader.readLine()) != null) {
-                    String[] roster = input.split(" ");
-                    if(!roster[0].equals("Start")) {
+
+                reader.close();
+
+                reader = new BufferedReader(new FileReader("src/taconfig.txt"));
+                BufferedReader studentReader = new BufferedReader(new FileReader("src/stuconfig.txt"));
+                String input;
+                List<CourseStudent> tas = new ArrayList<>();
+                while ((student = reader.readLine()) != null) {
+                    String[] lab = student.split(" ");
+                    if (!lab[0].equals("Start")) {
                         continue;
                     }
+                    tas.clear();
+                    String[] info;
+                    while (!(info = reader.readLine().split(" "))[0].equals("End")) {
+                        Account ta = accountService.addAccount(new AccountModel(info[0] + "-lab" + lab[2], info[1], info[2], info[0] + "@purdue.edu", Account.Role.STUDENT.ordinal()));
+                        adminService.addUser(new UserModel(ta, info[4]));
+                        tas.add(adminService.addCourseTA(new CourseStudentModel(course.getCourseID(), ta.getUserID())));
+                    }
+
                     while ((input = studentReader.readLine()) != null) {
-                        roster = input.split(" ");
-                        if(roster[0].equals("End")) {
-                            break;
+                        String[] roster = input.split(" ");
+                        if (!roster[0].equals("Start")) {
+                            continue;
                         }
-                        roster = input.split(",");
-                        CourseStudent studentAccount = null;
-                        for(CourseStudent studentIterator : students) {
-                            if(studentIterator.getStudent().getUsername().equals(roster[0])) {
-                                studentAccount = studentIterator;
+                        while ((input = studentReader.readLine()) != null) {
+                            roster = input.split(" ");
+                            if (roster[0].equals("End")) {
                                 break;
                             }
-                        }
-                        if(studentAccount != null) {
-                            for(CourseStudent ta : tas) {
-                                adminService.addCourseStudentToTA(new StudentTAModel(studentAccount.getId(), ta.getId()));
+                            roster = input.split(",");
+                            CourseStudent studentAccount = null;
+                            for (CourseStudent studentIterator : students) {
+                                if (studentIterator.getStudent().getUsername().equals(roster[0])) {
+                                    studentAccount = studentIterator;
+                                    break;
+                                }
+                            }
+                            if (studentAccount != null) {
+                                for (CourseStudent ta : tas) {
+                                    adminService.addCourseStudentToTA(new StudentTAModel(studentAccount.getId(), ta.getId()));
+                                }
                             }
                         }
+                        break;
                     }
-                    break;
                 }
             }
-            
-            Project mymalloc = projectService.addProject(new CourseProjectModel(course.getCourseID(), "MyMalloc", LocalDate.of(2019, 1, 8), LocalDate.of(2019, 1, 28), "lab1-src", false));
-            Project bash = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Shell Scripting", LocalDate.of(2019, 1, 29), LocalDate.of(2019, 2, 11), "lab2-src", false));
+            if (course == null) {
+                course = courseRepository.findByNameAndSemester("cs252", "Spring2019");
+            }
+
+            // TODO: @KILLIAN Integrate redundancy checks into addProject() method
+            if (!projectRepository.existsByName("MyMalloc")) {
+                Project mymalloc = projectService.addProject(new CourseProjectModel(course.getCourseID(), "MyMalloc", LocalDate.of(2019, 1, 8), LocalDate.of(2019, 1, 28), "lab1-src", false));
+                
+                projectService.addProjectIgnoreUser(new ProjectIgnoreModel(mymalloc.getProjectID(), "cs252@cs.purdue.edu"));
+            }
+            if (!projectRepository.existsByName("Shell Scripting")) {
+                Project bash = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Shell Scripting", LocalDate.of(2019, 1, 29), LocalDate.of(2019, 2, 11), "lab2-src", false));
+    
+                projectService.addProjectIgnoreUser(new ProjectIgnoreModel(bash.getProjectID(), "cs252@cs.purdue.edu"));
+            }
+            if (!projectRepository.existsByName("Implementing a Shell")) {
+                Project shell = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Implementing a Shell", LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 4), "lab3-src", false));
+    
+                projectService.addProjectIgnoreUser(new ProjectIgnoreModel(shell.getProjectID(), "cs252@cs.purdue.edu"));
+                projectService.addProjectIgnoreUser(new ProjectIgnoreModel(shell.getProjectID(), "ps@parthshel.com"));
+            }
         }
         catch(Exception e) {
             e.printStackTrace();
         }
-        /*System.out.println("CONDITIONAL RAN");
-        if (adminService.findAllUsers().isEmpty()) {
-            //Project shell = professorService.addProject("cs252", "Spring2019", "Shell", "lab3-src", "9/24/2018", "10/8/2018", 0);
-
-            //malloc.setMaximumRuntime(35000);
-            //malloc = projectRepository.save(malloc);
-            //addMallocTestScripts(malloc);
-            //professorService.runHistoricTestall(malloc.getProjectID());
-
-            professorService.assignProject(malloc.getProjectID());
-            professorService.assignProject(bash.getProjectID());
-            List<StudentProject> projects = studentProjectRepository.findByIdProjectID(malloc.getProjectID());
-            for (StudentProject p : projects) {
-                Student student = studentRepository.findByUserID(p.getStudentID());
-                helperService.updateStudentInformation(p.getProjectID(), student.getUserName());
-            }
-            projects = studentProjectRepository.findByIdProjectID(bash.getProjectID());
-            for (StudentProject p : projects) {
-                Student student = studentRepository.findByUserID(p.getStudentID());
-                helperService.updateStudentInformation(p.getProjectID(), student.getUserName());
-            }
-        }
-        else {
-            for(Project p : projectRepository.findAll()) {
-                p.setTestRate(ConfigurationManager.getInstance().rate);
-                p.setTestCount(0);
-                projectRepository.save(p);
-                List<StudentProject> studentProjects = studentProjectRepository.findByIdProjectID(p.getProjectID());
-                for(StudentProject s : studentProjects) {
-                    Student student = studentRepository.findByUserID(s.getStudentID());
-                    helperService.updateStudentInformation(s.getProjectID(), student.getUserName());
-                }
-            }
-        }*/
     }
 
     private void addMallocTestScripts(Project project) {

@@ -76,7 +76,7 @@ class StudentFilter extends Component {
                 {/* {
                     !this.props.students.loading && !this.props.students.error ?
                         <Filter>
-	                        <Checkbox onClick={() => this.props.toggleSelectAllCards()}>
+                            {/*<Checkbox onClick={() => this.props.toggleSelectAllCards()}>
                                 {
                                     this.props.selectedAllStudents ?
                                         <CheckmarkIcon/>
@@ -84,7 +84,7 @@ class StudentFilter extends Component {
                                 }
 	                        </Checkbox>
 
-	                        <Dropdown header='h5'
+                            <Dropdown header='h5'
 	                                  text='Sort by'
 	                                  values={this.sort_by_values}
                                       filter='sort_by'
@@ -115,7 +115,7 @@ class StudentFilter extends Component {
                                       values={this.getFilterProgressValues()}
                                       filter='progress_filter'
                                       addCustom
-                                      right />
+                                      right />*/}
 
                             {
                                 this.props.project && this.props.project.runTestall ?

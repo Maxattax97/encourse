@@ -5,21 +5,22 @@ import edu.purdue.cs.encourse.database.StudentProjectDateRepository;
 import edu.purdue.cs.encourse.database.StudentProjectRepository;
 import edu.purdue.cs.encourse.domain.Commit;
 import edu.purdue.cs.encourse.domain.Project;
-import edu.purdue.cs.encourse.domain.ProjectDate;
 import edu.purdue.cs.encourse.domain.Section;
 import edu.purdue.cs.encourse.domain.Student;
 import edu.purdue.cs.encourse.domain.TestScript;
 import edu.purdue.cs.encourse.domain.TestSuite;
 import edu.purdue.cs.encourse.domain.relations.CourseStudent;
+import edu.purdue.cs.encourse.domain.relations.StudentComparison;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.FrequencyDate;
+import edu.purdue.cs.encourse.model.ProjectStudentCommitModel;
 import edu.purdue.cs.encourse.model.ProjectStudentSearchModel;
+import edu.purdue.cs.encourse.model.StudentComparisonModel;
 import edu.purdue.cs.encourse.model.StudentInfoModel;
 import edu.purdue.cs.encourse.model.SearchModel;
 import edu.purdue.cs.encourse.model.StudentTestSuiteInfoModel;
 import edu.purdue.cs.encourse.model.student.StudentProjectDiffs;
-import edu.purdue.cs.encourse.model.student.StudentTestSuiteInfo;
 import edu.purdue.cs.encourse.service.StudentService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,7 +137,7 @@ public class StudentServiceImpl implements StudentService {
 		
 		studentProjectInfo.setCommits(Math.round(studentProject.getCommitCount()));
 		
-		studentProjectInfo.setMinutes(Math.round(studentProject.getMinutes()));
+		studentProjectInfo.setSeconds(Math.round(studentProject.getSeconds()));
 		
 		studentProjectInfo.setVisiblePoints(Math.round(studentProject.getVisiblePoints()));
 		
@@ -181,6 +182,7 @@ public class StudentServiceImpl implements StudentService {
 		boolean hasTAs = search.getOption("teachingAssistants");
 		boolean hasProjectInfo = search.getOption("projectInfo");
 		boolean hasTestSuiteInfo = search.getOption("suiteInfo");
+		boolean hasReportInfo = search.getOption("reportInfo");
 		
 		CourseStudent courseStudent = studentProject.getStudent();
 		
@@ -207,7 +209,7 @@ public class StudentServiceImpl implements StudentService {
 			
 			model.setCommits(Math.round(studentProjectDate.getTotalCommits() == null ? 0.0 : studentProjectDate.getTotalCommits()));
 			
-			model.setMinutes(Math.round(studentProjectDate.getTotalMinutes() == null ? 0.0 : studentProjectDate.getTotalMinutes()));
+			model.setSeconds(Math.round(studentProjectDate.getTotalSeconds() == null ? 0.0 : studentProjectDate.getTotalSeconds()));
 			
 			model.setVisiblePoints(Math.round(studentProjectDate.getVisiblePoints() == null ? 0.0 : studentProjectDate.getVisiblePoints()));
 			model.setHiddenPoints(Math.round(studentProjectDate.getHiddenPoints() == null ? 0.0 : studentProjectDate.getHiddenPoints()));
@@ -227,7 +229,7 @@ public class StudentServiceImpl implements StudentService {
 					
 					suiteModel.setTotalValue(suiteModel.getTotalValue() + value);
 					
-					if(studentProject.getTestsPassing().contains(testScript.getId()))
+					if(studentProjectDate.getTestsPassing().contains(testScript.getId()))
 						suiteModel.setCurrentValue(suiteModel.getCurrentValue() + value);
 				}
 				
@@ -237,6 +239,14 @@ public class StudentServiceImpl implements StudentService {
 			
 			if(!testSuiteInfos.isEmpty())
 				model.setTestSuites(testSuiteInfos);
+		}
+		
+		if(hasReportInfo) {
+			model.setChanges(studentProject.getChanges());
+			model.setTimeVelocity(studentProject.getTimeVelocity());
+			model.setCommitVelocity(studentProject.getCommitVelocity());
+			model.setComparison(studentProject.getCountSimilarity());
+			model.setComparisonPercent(studentProject.getPercentSimilarity());
 		}
 		
 		return model;
@@ -298,5 +308,42 @@ public class StudentServiceImpl implements StudentService {
 		studentProjectDiffs.setFrequencies(frequencies);
 		
 		return studentProjectDiffs;
+	}
+	
+	private StudentComparisonModel getStudentProjectComparison(StudentComparison comparison, StudentProject studentProject) {
+		StudentComparisonModel model = new StudentComparisonModel();
+		
+		Student student = studentProject.getStudent().getStudent();
+		
+		model.setStudentID(studentProject.getStudent().getId());
+		model.setFirstName(student.getFirstName());
+		model.setLastName(student.getLastName());
+		model.setCount(comparison.getCount());
+		model.setPercent(comparison.getPercent());
+		
+		return model;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<StudentComparisonModel> getStudentProjectComparisons(@NonNull ProjectStudentSearchModel model) throws InvalidRelationIdException {
+		StudentProject studentProject = getStudentProject(model.getProjectID(), model.getStudentID());
+		
+		List<StudentComparisonModel> models = new ArrayList<>();
+		
+		for(StudentComparison comparison : studentProject.getFirstComparisons())
+			models.add(getStudentProjectComparison(comparison, comparison.getStudentProject2()));
+		
+		for(StudentComparison comparison : studentProject.getSecondComparisons())
+			models.add(getStudentProjectComparison(comparison, comparison.getStudentProject1()));
+		
+		return models;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Object getStudentProjectCommitDiff(@NonNull ProjectStudentCommitModel model) throws InvalidRelationIdException {
+		CourseStudent student = getStudent(model.getStudentID());
+		return null;
 	}
 }

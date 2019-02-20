@@ -2,6 +2,7 @@ package edu.purdue.cs.encourse.service.helper;
 
 import edu.purdue.cs.encourse.model.BarValue;
 import edu.purdue.cs.encourse.model.BasicStatistics;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public class ChartHelper {
 	
-	public static List<BarValue> toBarChart(int count, BasicStatistics bounds, double[] values) {
+	public static List<BarValue> toBarChart(int count, BasicStatistics bounds, DescriptiveStatistics values) {
 		BarValue[] buckets = new BarValue[(int) Math.floor(Math.sqrt(count))];
 		
 		for(int i = 0; i < buckets.length; i++)
@@ -20,7 +21,7 @@ public class ChartHelper {
 		
 		double interval = (bounds.getMax() - bounds.getMin()) / buckets.length;
 		
-		for(double value : values)
+		for(double value : values.getValues())
 			buckets[(int)Math.min(Math.max(Math.floor(((value - bounds.getMin()) / interval)), 0), buckets.length - 1)].size++;
 		
 		List<BarValue> bucketList = new ArrayList<>(buckets.length);

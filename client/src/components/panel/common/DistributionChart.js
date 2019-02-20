@@ -71,7 +71,6 @@ class DistributionChart extends Component {
         return (
             <Chart
                 chart={this.props.charts}
-                title='Histogram of all students in the course grouped by their current visible test scores. Scores are calculated by summing the points given for each passing test case visible to the student.'
             >
                 {
                     this.renderChart()

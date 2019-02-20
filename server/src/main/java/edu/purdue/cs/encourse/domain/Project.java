@@ -1,27 +1,21 @@
 package edu.purdue.cs.encourse.domain;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import edu.purdue.cs.encourse.domain.relations.StudentComparison;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.model.BasicStatistics;
-import edu.purdue.cs.encourse.model.CourseProjectModel;
 import edu.purdue.cs.encourse.model.ProjectModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.ToString;
-import org.springframework.data.domain.Persistable;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -85,6 +79,79 @@ public class Project {
     @Column(name  = "TEST_RATE")
     private int testRate;
     
+    @Column(name  = "ANALYZE_DATE_TIME")
+    private LocalDate analyzeDateTime;
+    
+    @Column(name  = "TOTAL_VISIBLE_POINTS")
+    private Double totalVisiblePoints;
+    
+    @Column(name = "TOTAL_HIDDEN_POINTS")
+    private Double totalHiddenPoints;
+    
+    @Column(name = "RUN_TESTALL")
+    private Boolean runTestall;
+    
+    @Column(name = "VALID_SIMILARITY_STATS_COUNT")
+    private Integer validSimilarityCount;
+    
+    @Column(name = "VALID_STATS_COUNT")
+    private Integer validCount;
+    
+    @Setter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "max", column = @Column(name = "MAX_SIMILARITY")),
+            @AttributeOverride(name = "min", column = @Column(name = "MIN_SIMILARITY")),
+            @AttributeOverride(name = "mean", column = @Column(name = "MEAN_SIMILARITY")),
+            @AttributeOverride(name = "median", column = @Column(name = "MEDIAN_SIMILARITY")),
+            @AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_SIMILARITY"))
+    })
+    private BasicStatistics similarityStats;
+    
+    @Setter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "max", column = @Column(name = "MAX_SIMILARITY_PERCENT")),
+            @AttributeOverride(name = "min", column = @Column(name = "MIN_SIMILARITY_PERCENT")),
+            @AttributeOverride(name = "mean", column = @Column(name = "MEAN_SIMILARITY_PERCENT")),
+            @AttributeOverride(name = "median", column = @Column(name = "MEDIAN_SIMILARITY_PERCENT")),
+            @AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_SIMILARITY_PERCENT"))
+    })
+    private BasicStatistics similarityPercentStats;
+    
+    @Setter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "max", column = @Column(name = "MAX_CHANGES")),
+            @AttributeOverride(name = "min", column = @Column(name = "MIN_CHANGES")),
+            @AttributeOverride(name = "mean", column = @Column(name = "MEAN_CHANGES")),
+            @AttributeOverride(name = "median", column = @Column(name = "MEDIAN_CHANGES")),
+            @AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_CHANGES"))
+    })
+    private BasicStatistics changesStats;
+    
+    @Setter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "max", column = @Column(name = "MAX_TIME_VELOCITY")),
+            @AttributeOverride(name = "min", column = @Column(name = "MIN_TIME_VELOCITY")),
+            @AttributeOverride(name = "mean", column = @Column(name = "MEAN_TIME_VELOCITY")),
+            @AttributeOverride(name = "median", column = @Column(name = "MEDIAN_TIME_VELOCITY")),
+            @AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_TIME_VELOCITY"))
+    })
+    private BasicStatistics timeVelocityStats;
+    
+    @Setter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "max", column = @Column(name = "MAX_COMMIT_VELOCITY")),
+            @AttributeOverride(name = "min", column = @Column(name = "MIN_COMMIT_VELOCITY")),
+            @AttributeOverride(name = "mean", column = @Column(name = "MEAN_COMMIT_VELOCITY")),
+            @AttributeOverride(name = "median", column = @Column(name = "MEDIAN_COMMIT_VELOCITY")),
+            @AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_COMMIT_VELOCITY"))
+    })
+    private BasicStatistics commitVelocityStats;
+    
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<TestScript> testScripts;
     
@@ -103,28 +170,9 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<StudentComparison> studentComparisons;
     
-    @Column(name  = "ANALYZE_DATE_TIME")
-    private LocalDate analyzeDateTime;
-    
-    @Column(name  = "TOTAL_VISIBLE_POINTS")
-    private Double totalVisiblePoints;
-    
-    @Column(name = "TOTAL_HIDDEN_POINTS")
-    private Double totalHiddenPoints;
-    
-    @Column(name = "RUN_TESTALL")
-    private Boolean runTestall;
-    
-    @Setter
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "max", column = @Column(name = "MAX_SIMILARITY")),
-            @AttributeOverride(name = "min", column = @Column(name = "MIN_SIMILARITY")),
-            @AttributeOverride(name = "mean", column = @Column(name = "MEAN_SIMILARITY")),
-            @AttributeOverride(name = "median", column = @Column(name = "MEDIAN_SIMILARITY")),
-            @AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_SIMILARITY"))
-    })
-    private BasicStatistics similarityStats;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "PROJECT_IGNORE_GIT_USERS", joinColumns = @JoinColumn(name = "PROJECT_ID"))
+    private List<String> ignoredUsers;
 
     public Project(@NonNull Course course, @NonNull ProjectModel projectModel) {
         this.course = course;
@@ -138,20 +186,28 @@ public class Project {
     
         this.testRate = 6;
         
-        this.testScripts = new ArrayList<>();
-        this.testSuites = new ArrayList<>();
-        this.dates = new ArrayList<>();
-        this.studentProjects = new ArrayList<>();
-        this.additionHashes = new HashSet<>();
-        this.studentComparisons = new HashSet<>();
-        
         this.analyzeDateTime = LocalDate.ofYearDay(2000, 1);
         this.totalVisiblePoints = 0.0;
         this.totalHiddenPoints = 0.0;
         
         this.runTestall = projectModel.getRunTestall();
         
+        this.validSimilarityCount = 0;
+        this.validCount = 0;
+        
         this.similarityStats = new BasicStatistics();
+        this.similarityPercentStats = new BasicStatistics();
+        this.changesStats = new BasicStatistics();
+        this.timeVelocityStats = new BasicStatistics();
+        this.commitVelocityStats = new BasicStatistics();
+    
+        this.testScripts = new ArrayList<>();
+        this.testSuites = new ArrayList<>();
+        this.dates = new ArrayList<>();
+        this.studentProjects = new ArrayList<>();
+        this.additionHashes = new HashSet<>();
+        this.studentComparisons = new HashSet<>();
+        this.ignoredUsers = new ArrayList<>();
     }
 
     /**

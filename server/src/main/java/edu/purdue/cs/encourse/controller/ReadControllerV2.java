@@ -1,6 +1,7 @@
 package edu.purdue.cs.encourse.controller;
 
 import edu.purdue.cs.encourse.domain.User;
+import edu.purdue.cs.encourse.model.ProjectStudentCommitModel;
 import edu.purdue.cs.encourse.model.ProjectStudentSearchModel;
 import edu.purdue.cs.encourse.model.course.CourseStudentSearch;
 import edu.purdue.cs.encourse.service.CourseServiceV2;
@@ -53,7 +54,7 @@ public class ReadControllerV2 {
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
-	@RequestMapping(value = "/course/get",
+	@RequestMapping(value = "/course",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
@@ -89,7 +90,7 @@ public class ReadControllerV2 {
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
-	@RequestMapping(value = "/course/students",
+	@RequestMapping(value = "/course/project/students",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
@@ -128,42 +129,12 @@ public class ReadControllerV2 {
 		}
 	}
 	
-	/*@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-	@RequestMapping(value = "/course/chart/tests",
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> getCourseChartTests(@Valid @NonNull @RequestBody String body) {
-		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
-	}
-	
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-	@RequestMapping(value = "/course/chart/suites",
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> getCourseChartSuites(@Valid @NonNull @RequestBody String body) {
-		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
-	}
-	
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-	@RequestMapping(value = "/course/chart/progress",
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> getCourseChartProgress(@Valid @NonNull @RequestBody String body) {
-		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
-	}*/
-	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
 	@RequestMapping(value = "/course/project/date",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCourseProjectInfoByDate(@Valid @NonNull @RequestBody CourseStudentSearch courseStudentSearch) {
-		//if(courseStudentSearch.hasStudents() && !hasAccessToAccounts(courseStudentSearch.hasSelectedAllStudents(), courseStudentSearch.getStudents()))
-		//	return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-		
 		try {
 			return new ResponseEntity<>(courseService.getCourseProjectInfoByDate(courseStudentSearch), HttpStatus.OK);
 		}
@@ -178,15 +149,6 @@ public class ReadControllerV2 {
 		}
 	}
 	
-	/*@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-	@RequestMapping(value = "/course/chart/hours",
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> getCourseChartHours(@Valid @NonNull @RequestBody String body) {
-		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
-	}*/
-	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
 	@RequestMapping(value = "/course/project/timecard",
 			produces = MediaType.APPLICATION_JSON_VALUE,
@@ -195,33 +157,6 @@ public class ReadControllerV2 {
 	public @ResponseBody ResponseEntity<?> getCourseProjectTimecardInfo(@Valid @NonNull @RequestBody CourseStudentSearch courseStudentSearch) {
 		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
 	}
-	
-	/*@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-	@RequestMapping(value = "/course/project/dishonesty",
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> getCourseProjectSimiliarity(@Valid @NonNull @RequestBody String body) {
-		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
-	}*/
-	
-	/*@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-	@RequestMapping(value = "/course/dishonesty/velocity",
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> getCourseProjectVelocity(@Valid @NonNull @RequestBody String body) {
-		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
-	}*/
-	
-	/*@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-	@RequestMapping(value = "/course/project/stats",
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> getCourseStats(@Valid @NonNull @RequestBody CourseStudentSearch courseStudentSearch) {
-		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
-	}*/
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
 	@RequestMapping(value = "/student",
@@ -265,50 +200,33 @@ public class ReadControllerV2 {
 		}
 	}
 	
-	/*@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-	@RequestMapping(value = "/course/student/commits",
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
+	@RequestMapping(value = "/student/project/commit",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<Page<?>> getStudentCommits(@Valid @NonNull @RequestBody String body) {
-		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
+	public @ResponseBody ResponseEntity<?> getCommitDiff(@Valid @NonNull @RequestBody ProjectStudentCommitModel projectStudentCommit) {
+		try {
+			return new ResponseEntity<>(studentService.getStudentProjectCommitDiff(projectStudentCommit), HttpStatus.OK);
+		}
+		catch (InvalidRelationIdException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 	}
 	
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-	@RequestMapping(value = "/course/student/chart/commits",
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
+	@RequestMapping(value = "/student/project/comparison",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> getStudentChartCommits(@Valid @NonNull @RequestBody String body) {
-		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
+	public @ResponseBody ResponseEntity<?> getStudentComparisons(@Valid @NonNull @RequestBody ProjectStudentSearchModel projectStudentSearch) {
+		try {
+			return new ResponseEntity<>(studentService.getStudentProjectComparisons(projectStudentSearch), HttpStatus.OK);
+		}
+		catch (InvalidRelationIdException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 	}
-	
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-	@RequestMapping(value = "/course/student/chart/changes",
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> getStudentChartChanges(@Valid @NonNull @RequestBody String body) {
-		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
-	}
-	
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-	@RequestMapping(value = "/course/student/chart/progress",
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> getStudentChartProgress(@Valid @NonNull @RequestBody String body) {
-		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
-	}
-	
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'TA')")
-	@RequestMapping(value = "/course/student/stats",
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> getStudentStats(@Valid @NonNull @RequestBody String body) {
-		return new ResponseEntity<>(Page.empty(), HttpStatus.OK);
-	}*/
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
 	@RequestMapping(value = "/project/tests",

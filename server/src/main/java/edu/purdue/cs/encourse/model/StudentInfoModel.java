@@ -27,11 +27,17 @@ public class StudentInfoModel {
 	
 	private Long commits;
 	
-	private Long minutes;
+	private Long seconds;
 	
 	private Long visiblePoints;
 	private Long hiddenPoints;
 	
 	private List<StudentTestSuiteInfoModel> testSuites;
+	
+	private Double changes;
+	private Double timeVelocity;
+	private Double commitVelocity;
+	private Integer comparison;
+	private Double comparisonPercent;
 	
 }

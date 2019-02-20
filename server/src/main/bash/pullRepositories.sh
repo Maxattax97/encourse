@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# Argument 1 is path to student project to pull
+# Argument 1 is path to course directory
+# Argument 2 is path to student repository from course directory
 
 DIRECTORY="$(pwd)"
 cd "$1"
-# git reset --hard origin/master 2> /dev/null
-git pull origin master 2> /dev/null
+cd "$2"
+git reset --hard origin/master 2> /dev/null
+git pull -f origin master 2> /dev/null
 cd "${DIRECTORY}"
