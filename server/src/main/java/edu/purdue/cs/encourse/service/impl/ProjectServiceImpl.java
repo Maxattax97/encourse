@@ -95,14 +95,12 @@ public class ProjectServiceImpl implements ProjectService {
 	
 	private final TestSuiteRepository testSuiteRepository;
 	
-	private final AdditionHashRepository additionHashRepository;
-	
 	private final CourseServiceV2 courseService;
 	
 	private final StudentComparisonRepository studentComparisonRepository;
 	
 	@Autowired
-	public ProjectServiceImpl(ProjectRepository projectRepository, ProjectDateRepository projectDateRepository, StudentProjectRepository studentProjectRepository, StudentProjectDateRepository studentProjectDateRepository, CourseRepository courseRepository, TestScriptRepository testScriptRepository, TestSuiteRepository testSuiteRepository, AdditionHashRepository additionHashRepository, CourseServiceV2 courseService, StudentComparisonRepository studentComparisonRepository) {
+	public ProjectServiceImpl(ProjectRepository projectRepository, ProjectDateRepository projectDateRepository, StudentProjectRepository studentProjectRepository, StudentProjectDateRepository studentProjectDateRepository, CourseRepository courseRepository, TestScriptRepository testScriptRepository, TestSuiteRepository testSuiteRepository, CourseServiceV2 courseService, StudentComparisonRepository studentComparisonRepository) {
 		this.projectRepository = projectRepository;
 		this.projectDateRepository = projectDateRepository;
 		this.studentProjectRepository = studentProjectRepository;
@@ -110,7 +108,6 @@ public class ProjectServiceImpl implements ProjectService {
 		this.courseRepository = courseRepository;
 		this.testScriptRepository = testScriptRepository;
 		this.testSuiteRepository = testSuiteRepository;
-		this.additionHashRepository = additionHashRepository;
 		this.courseService = courseService;
 		this.studentComparisonRepository = studentComparisonRepository;
 	}
@@ -276,6 +273,14 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	@Transactional
 	public TestScript addTestScript(@NonNull ProjectTestScriptModel model) throws RelationException, IllegalArgumentException {
+		if(model.getName().startsWith("-") || model.getName().startsWith("+"))
+			throw new IllegalArgumentException("");
+		
+		model.setName(model.getName().replace(' ', '_'));
+		
+		if(model.getName().startsWith("_"))
+			throw new IllegalArgumentException("");
+		
 		if(testScriptRepository.existsByNameEqualsAndProject_ProjectID(model.getName(), model.getProjectID()))
 			throw new IllegalArgumentException("");
 		

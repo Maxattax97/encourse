@@ -61,6 +61,7 @@ public class StudentComparison {
 	private Integer count;
 	
 	@NonNull
+	@Column(name = "SIMILARITY_PERCENT")
 	private Double percent;
 	
 	@ElementCollection(fetch = FetchType.LAZY)

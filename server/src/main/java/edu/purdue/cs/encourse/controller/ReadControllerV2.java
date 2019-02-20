@@ -90,7 +90,7 @@ public class ReadControllerV2 {
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
-	@RequestMapping(value = "/course/students",
+	@RequestMapping(value = "/course/project/students",
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
@@ -208,6 +208,20 @@ public class ReadControllerV2 {
 	public @ResponseBody ResponseEntity<?> getCommitDiff(@Valid @NonNull @RequestBody ProjectStudentCommitModel projectStudentCommit) {
 		try {
 			return new ResponseEntity<>(studentService.getStudentProjectCommitDiff(projectStudentCommit), HttpStatus.OK);
+		}
+		catch (InvalidRelationIdException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
+	@RequestMapping(value = "/student/project/comparison",
+			produces = MediaType.APPLICATION_JSON_VALUE,
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			method = RequestMethod.POST)
+	public @ResponseBody ResponseEntity<?> getStudentComparisons(@Valid @NonNull @RequestBody ProjectStudentSearchModel projectStudentSearch) {
+		try {
+			return new ResponseEntity<>(studentService.getStudentProjectComparisons(projectStudentSearch), HttpStatus.OK);
 		}
 		catch (InvalidRelationIdException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -21,7 +21,7 @@ import java.util.Optional;
 public class General {
 	
 	private static final HashSet<String> extensions = new HashSet<>(Arrays.asList(
-			"c", "y", "l", "cpp", "java", "h", "hpp", "cxx", "hxx", "js", "html", "css", "scss", "ll", "s", "yxx", "yy", "sh"
+			"c", "y", "l", "cpp", "java", "h", "hpp", "cxx", "hxx", "js", "html", "css", "scss", "ll", "s", "yxx", "yy", "sh", "cc", "hh"
 	));
 	
 	public static <T> T findFirst(List<T> list) {
@@ -34,7 +34,7 @@ public class General {
 	public static boolean isSourceCodeExtension(String file) {
 		int last = file.lastIndexOf('.');
 		
-		if(last == -1)
+		if(last == -1 && file.indexOf('.') != last)
 			return false;
 		
 		return extensions.contains(file.substring(last + 1));

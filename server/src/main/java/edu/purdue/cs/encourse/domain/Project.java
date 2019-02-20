@@ -97,6 +97,12 @@ public class Project {
     @Column(name = "RUN_TESTALL")
     private Boolean runTestall;
     
+    @Column(name = "VALID_SIMILARITY_STATS_COUNT")
+    private Integer validSimilarityCount;
+    
+    @Column(name = "VALID_STATS_COUNT")
+    private Integer validCount;
+    
     @Setter
     @Embedded
     @AttributeOverrides({
@@ -107,6 +113,17 @@ public class Project {
             @AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_SIMILARITY"))
     })
     private BasicStatistics similarityStats;
+    
+    @Setter
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "max", column = @Column(name = "MAX_SIMILARITY_PERCENT")),
+            @AttributeOverride(name = "min", column = @Column(name = "MIN_SIMILARITY_PERCENT")),
+            @AttributeOverride(name = "mean", column = @Column(name = "MEAN_SIMILARITY_PERCENT")),
+            @AttributeOverride(name = "median", column = @Column(name = "MEDIAN_SIMILARITY_PERCENT")),
+            @AttributeOverride(name = "variance", column = @Column(name = "VARIANCE_SIMILARITY_PERCENT"))
+    })
+    private BasicStatistics similarityPercentStats;
     
     @Setter
     @Embedded
@@ -178,6 +195,7 @@ public class Project {
         this.runTestall = projectModel.getRunTestall();
         
         this.similarityStats = new BasicStatistics();
+        this.similarityPercentStats = new BasicStatistics();
         this.changesStats = new BasicStatistics();
         this.timeVelocityStats = new BasicStatistics();
         this.commitVelocityStats = new BasicStatistics();

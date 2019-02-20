@@ -42,7 +42,6 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "STUDENT_PROJECT")
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"project", "dates"})
 public class StudentProject {
@@ -73,22 +72,51 @@ public class StudentProject {
     @Column(name = "LAST_UPDATED_COMMIT")
     private String lastUpdatedCommit;
     
-    private Double minutes;
+    /** Best visible grade output by testall on the given date */
+    @NonNull
+    @Column(name = "VISIBLE_POINTS")
+    private Double visiblePoints;
     
-    private Double changes;
-    
-    private Double timeVelocity;
-    
-    private Double commitVelocity;
-    
-    private Double countSimilarity;
-    
-    private Double percentSimilarity;
+    /** Best hidden grade output by testall on the given date */
+    @NonNull
+    @Column(name = "HIDDEN_POINTS")
+    private Double hiddenPoints;
     
     @NonNull
-    @ElementCollection
-    @CollectionTable(name = "STUDENT_PROJECT_TESTS", joinColumns = @JoinColumn(name = "STUDENT_PROJECT_ID"))
-    private List<Long> testsPassing;
+    @Column(name = "COMMIT_COUNT")
+    private Double commitCount;
+    
+    @NonNull
+    @Column(name = "ADDITIONS")
+    private Double additions;
+    
+    @NonNull
+    @Column(name = "DELETIONS")
+    private Double deletions;
+    
+    @NonNull
+    @Column(name = "MINUTES")
+    private Double minutes;
+    
+    @NonNull
+    @Column(name = "CHANGES")
+    private Double changes;
+    
+    @NonNull
+    @Column(name = "TIME_VELOCITY")
+    private Double timeVelocity;
+    
+    @NonNull
+    @Column(name = "COMMIT_VELOCITY")
+    private Double commitVelocity;
+    
+    @NonNull
+    @Column(name = "COUNT_SIMILARITY")
+    private Integer countSimilarity;
+    
+    @NonNull
+    @Column(name = "PERCENT_SIMILARITY")
+    private Double percentSimilarity;
     
     @NonNull
     @ElementCollection
@@ -98,6 +126,11 @@ public class StudentProject {
     @NonNull
     @OneToMany(mappedBy = "studentProject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StudentProjectDate> dates;
+    
+    @NonNull
+    @ElementCollection
+    @CollectionTable(name = "STUDENT_PROJECT_TESTS", joinColumns = @JoinColumn(name = "STUDENT_PROJECT_ID"))
+    private List<Long> testsPassing;
     
     @NonNull
     @OneToMany(mappedBy = "studentProject1", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -114,15 +147,47 @@ public class StudentProject {
         this.firstCommit = this.mostRecentCommit = LocalDateTime.of(LocalDate.ofYearDay(2000, 1), LocalTime.of(0, 0));
         this.lastUpdatedCommit = "";
         
+        this.visiblePoints = 0.0;
+        this.hiddenPoints = 0.0;
+        this.commitCount = 0.0;
+        this.additions = 0.0;
+        this.deletions = 0.0;
         this.minutes = 0.0;
         this.changes = 0.0;
         this.timeVelocity = 0.0;
         this.commitVelocity = 0.0;
-        this.countSimilarity = 0.0;
+        this.countSimilarity = 0;
         this.percentSimilarity = 0.0;
         
-        this.testsPassing = new ArrayList<>();
+        this.commits = new ArrayList<>();
         this.dates = new ArrayList<>();
+        this.testsPassing = new ArrayList<>();
+        
+        this.firstComparisons = new HashSet<>();
+        this.secondComparisons = new HashSet<>();
+    }
+    
+    public StudentProject() {
+        this.project = null;
+        this.student = null;
+        
+        this.firstCommit = this.mostRecentCommit = LocalDateTime.of(LocalDate.ofYearDay(2000, 1), LocalTime.of(0, 0));
+    
+        this.visiblePoints = 0.0;
+        this.hiddenPoints = 0.0;
+        this.commitCount = 0.0;
+        this.additions = 0.0;
+        this.deletions = 0.0;
+        this.minutes = 0.0;
+        this.changes = 0.0;
+        this.timeVelocity = 0.0;
+        this.commitVelocity = 0.0;
+        this.countSimilarity = 0;
+        this.percentSimilarity = 0.0;
+        
+        this.commits = new ArrayList<>();
+        this.dates = new ArrayList<>();
+        this.testsPassing = new ArrayList<>();
         
         this.firstComparisons = new HashSet<>();
         this.secondComparisons = new HashSet<>();
