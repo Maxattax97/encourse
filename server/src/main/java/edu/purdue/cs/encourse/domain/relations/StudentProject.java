@@ -83,6 +83,10 @@ public class StudentProject {
     private Double hiddenPoints;
     
     @NonNull
+    @Column(name = "COMMIT_COUNT")
+    private Double commitCount;
+    
+    @NonNull
     @Column(name = "ADDITIONS")
     private Double additions;
     
@@ -145,6 +149,7 @@ public class StudentProject {
         
         this.visiblePoints = 0.0;
         this.hiddenPoints = 0.0;
+        this.commitCount = 0.0;
         this.additions = 0.0;
         this.deletions = 0.0;
         this.minutes = 0.0;
@@ -170,6 +175,7 @@ public class StudentProject {
     
         this.visiblePoints = 0.0;
         this.hiddenPoints = 0.0;
+        this.commitCount = 0.0;
         this.additions = 0.0;
         this.deletions = 0.0;
         this.minutes = 0.0;

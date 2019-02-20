@@ -425,28 +425,29 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			//count is the summation between the two students similarities
 			//percent is the max function between each students (similarity count / additions)
 			comparison.setCount(student1Count + student2Count);
-			comparison.setPercent(Math.max((student1Count * 100.0) / studentProject1.getAdditions(), (student2Count * 100.0) / studentProject2.getAdditions()));
+			
+			double percent1 = studentProject1.getAdditions() < .5 ? 0.0 : (student1Count * 100.0) / studentProject1.getAdditions();
+			double percent2 = studentProject2.getAdditions() < .5 ? 0.0 : (student2Count * 100.0) / studentProject2.getAdditions();
+			
+			comparison.setPercent(Math.max(percent1, percent2));
 		}
 		
 		//iterate over the student projects for the project
 		for(StudentProject studentProject : studentProjects) {
-			int largestCount = 0;
-			double largestPercent = 0.0;
+			studentProject.setCountSimilarity(0);
+			studentProject.setPercentSimilarity(0.0);
+		}
+		
+		for(StudentComparison comparison : project.getStudentComparisons()) {
+			StudentProject studentProject = comparison.getStudentProject1();
 			
-			//iterate over both set of comparisons (because it is pairwise and we optimize, we use (n - 1)^2 / 2 comparisons
-			//rather than  (n - 1)^2 as there are effectively duplicates in the unoptimized version.
-			for(StudentComparison comparison : studentProject.getFirstComparisons()) {
-				largestCount = Math.max(largestCount, comparison.getCount());
-				largestPercent = Math.max(largestPercent, comparison.getPercent());
-			}
+			studentProject.setCountSimilarity(Math.max(studentProject.getCountSimilarity(), comparison.getCount()));
+			studentProject.setPercentSimilarity(Math.max(studentProject.getPercentSimilarity(), comparison.getPercent()));
 			
-			for(StudentComparison comparison : studentProject.getSecondComparisons()) {
-				largestCount = Math.max(largestCount, comparison.getCount());
-				largestPercent = Math.max(largestPercent, comparison.getPercent());
-			}
+			studentProject = comparison.getStudentProject2();
 			
-			studentProject.setCountSimilarity(largestCount);
-			studentProject.setPercentSimilarity(largestPercent);
+			studentProject.setCountSimilarity(Math.max(studentProject.getCountSimilarity(), comparison.getCount()));
+			studentProject.setPercentSimilarity(Math.max(studentProject.getPercentSimilarity(), comparison.getPercent()));
 		}
 	}
 	
@@ -602,6 +603,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			}
 			
 			if(previousStudentDate != null) {
+				studentProject.setCommitCount(previousStudentDate.getTotalCommits());
 				studentProject.setAdditions(previousStudentDate.getTotalAdditions());
 				studentProject.setDeletions(previousStudentDate.getTotalDeletions());
 				studentProject.setMinutes(previousStudentDate.getTotalMinutes());
@@ -648,6 +650,8 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			}
 		}
 		
+		int validCount;
+		
 		for(ProjectDate projectDate : projectDateList) {
 			List<StudentProjectDate> studentProjectDateList = dateToStudentDateMap.get(projectDate.getDate());
 			
@@ -666,7 +670,12 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			DescriptiveStatistics additionStats = new DescriptiveStatistics(studentProjectDateList.size());
 			DescriptiveStatistics deletionStats = new DescriptiveStatistics(studentProjectDateList.size());
 			
+			validCount = 0;
+			
 			for(StudentProjectDate studentProjectDate : studentProjectDateList) {
+				if(studentProjectDate.getTotalCommits() < .5)
+					continue;
+				
 				totalPointStats.addValue(studentProjectDate.getVisiblePoints() + studentProjectDate.getHiddenPoints());
 				visiblePointStats.addValue(studentProjectDate.getVisiblePoints());
 				hiddenPointStats.addValue(studentProjectDate.getHiddenPoints());
@@ -674,7 +683,11 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				minuteStats.addValue(studentProjectDate.getTotalMinutes());
 				additionStats.addValue(studentProjectDate.getTotalAdditions());
 				deletionStats.addValue(studentProjectDate.getTotalDeletions());
+				
+				validCount++;
 			}
+			
+			projectDate.setValidCount(validCount);
 			
 			projectDate.setTotalPointStats(new BasicStatistics(totalPointStats));
 			projectDate.setVisiblePointStats(new BasicStatistics(visiblePointStats));
@@ -689,11 +702,20 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		DescriptiveStatistics timeVelocityStats = new DescriptiveStatistics(studentProjectListMap.size());
 		DescriptiveStatistics commitVelocityStats = new DescriptiveStatistics(studentProjectListMap.size());
 		
+		validCount = 0;
+		
 		for(StudentProject studentProject : studentProjectListMap.keySet()) {
+			if(studentProject.getCommitCount() < .5)
+				continue;
+			
 			changesStats.addValue(studentProject.getChanges());
 			timeVelocityStats.addValue(studentProject.getTimeVelocity());
 			commitVelocityStats.addValue(studentProject.getCommitVelocity());
+			
+			validCount++;
 		}
+		
+		project.setValidCount(validCount);
 		
 		project.setChangesStats(new BasicStatistics(changesStats));
 		project.setTimeVelocityStats(new BasicStatistics(timeVelocityStats));
@@ -702,10 +724,19 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		DescriptiveStatistics similarityStats = new DescriptiveStatistics(project.getStudentComparisons().size());
 		DescriptiveStatistics similarityPercentStats = new DescriptiveStatistics(project.getStudentComparisons().size());
 		
+		validCount = 0;
+		
 		for(StudentComparison comparison : project.getStudentComparisons()) {
+			if(comparison.getStudentProject1().getCommitCount() < .5 || comparison.getStudentProject2().getCommitCount() < .5)
+				continue;
+			
 			similarityStats.addValue(comparison.getCount());
 			similarityPercentStats.addValue(comparison.getPercent());
+			
+			validCount++;
 		}
+		
+		project.setValidSimilarityCount(validCount);
 		
 		project.setSimilarityStats(new BasicStatistics(similarityStats));
 		project.setSimilarityPercentStats(new BasicStatistics(similarityPercentStats));

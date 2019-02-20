@@ -4,6 +4,7 @@ import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.BasicStatistics;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.AttributeOverride;
@@ -46,6 +47,11 @@ public class ProjectDate {
 	@Setter
 	@Column(name = "DATE")
 	private LocalDate date;
+	
+	@NonNull
+	@Setter
+	@Column(name = "VALID_STATS_COUNT")
+	private Integer validCount;
 	
 	@Setter
 	@Embedded
@@ -132,6 +138,8 @@ public class ProjectDate {
 		this.project = project;
 		this.date = date;
 		
+		this.validCount = 0;
+		
 		this.totalPointStats = new BasicStatistics();
 		this.visiblePointStats = new BasicStatistics();
 		this.hiddenPointStats = new BasicStatistics();
@@ -139,6 +147,7 @@ public class ProjectDate {
 		this.minuteStats = new BasicStatistics();
 		this.additionStats = new BasicStatistics();
 		this.deletionStats = new BasicStatistics();
+		
 		this.testsTotal = new HashMap<>();
 	}
 	

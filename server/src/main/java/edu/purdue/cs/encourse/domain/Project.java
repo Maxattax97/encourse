@@ -97,6 +97,12 @@ public class Project {
     @Column(name = "RUN_TESTALL")
     private Boolean runTestall;
     
+    @Column(name = "VALID_SIMILARITY_STATS_COUNT")
+    private Integer validSimilarityCount;
+    
+    @Column(name = "VALID_STATS_COUNT")
+    private Integer validCount;
+    
     @Setter
     @Embedded
     @AttributeOverrides({
