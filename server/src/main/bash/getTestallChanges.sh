@@ -6,5 +6,5 @@
 
 DIRECTORY="$(pwd)"
 cd "$1"
-git log --perl-regexp --author='^((?!CS252).*)$' --pretty=format:"@DIFF,%H,%aI" --reverse --after="$2" -U1000 -p "$3"
+git log --pretty=format:"@DIFF,%H,%aI,%ce" --reverse --after="$2" -U1000 -p "$3"
 cd "${DIRECTORY}"
