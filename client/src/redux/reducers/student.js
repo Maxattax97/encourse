@@ -228,9 +228,9 @@ function formatStudents(udata, extra, state) {
 
 
     return udata.sort((a, b) => {
-        if(a.lastName < b.lastName)
+        if(a.percent > b.percent)
             return -1
-        if(a.lastName > b.lastName)
+        if(a.percent < b.percent)
             return 1
         return 0
     })
