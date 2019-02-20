@@ -115,7 +115,7 @@ class StudentFilter extends Component {
                                       values={this.getFilterProgressValues()}
                                       filter='progress_filter'
                                       addCustom
-                                      right />*/}
+                                      right />*}
 
                             {
                                 this.props.project && this.props.project.runTestall ?
