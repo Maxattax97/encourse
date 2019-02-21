@@ -441,7 +441,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					
 					//set studentID1's value for key studentID2 to be the summation of studentID2's counts for the specific hash
 					//as well as the current studentID2 value
-					comparisons.put(studentID2, 1 + comparisons.get(studentID2));
+					comparisons.put(studentID2, counts.get(studentID2) + comparisons.get(studentID2));
 				}
 			}
 		}
@@ -450,14 +450,15 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		for(StudentComparison comparison : project.getStudentComparisons()) {
 			StudentProject studentProject1 = comparison.getStudentProject1();
 			StudentProject studentProject2 = comparison.getStudentProject2();
-			Integer comparisonCount = studentComparisons.get(studentProject2.getId()).get(studentProject1.getId());
+			Integer comparisonCount1 = studentComparisons.get(studentProject1.getId()).get(studentProject2.getId());
+			Integer comparisonCount2 = studentComparisons.get(studentProject2.getId()).get(studentProject1.getId());
 			
 			//count is the summation between the two students similarities
 			//percent is the max function between each students (similarity count / additions)
-			comparison.setCount(comparisonCount);
+			comparison.setCount(comparisonCount1 + comparisonCount2);
 			
-			double percent1 = studentProject1.getAdditions() < .05 ? 0.0 : (comparisonCount * 100.0) / studentProject1.getAdditions();
-			double percent2 = studentProject2.getAdditions() < .05 ? 0.0 : (comparisonCount * 100.0) / studentProject2.getAdditions();
+			double percent1 = studentProject1.getAdditions() < .05 ? 0.0 : (comparisonCount2 * 100.0) / studentProject1.getAdditions();
+			double percent2 = studentProject2.getAdditions() < .05 ? 0.0 : (comparisonCount1 * 100.0) / studentProject2.getAdditions();
 			
 			comparison.setPercent(Math.max(percent1, percent2));
 		}
