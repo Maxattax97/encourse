@@ -473,30 +473,29 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		for(StudentComparison comparison : project.getStudentComparisons()) {
 			StudentProject studentProject = comparison.getStudentProject1();
 			
-			if(comparison.getStudentProject2().getAdditions() > 49.95) {
-				if(studentProject.getCountSimilarity() < comparison.getCount()) {
-					studentProject.setCountSimilarity(comparison.getCount());
-					studentProject.setCountPercentSimilarity(comparison.getPercent());
-				}
-				
-				if(studentProject.getPercentSimilarity() < comparison.getPercent()) {
-					studentProject.setPercentSimilarity(comparison.getPercent());
-					studentProject.setPercentCountSimilarity(comparison.getCount());
-				}
+			if(comparison.getStudentProject1().getAdditions() > 49.95 && comparison.getStudentProject2().getAdditions() > 49.95)
+				continue;
+			
+			if(studentProject.getCountSimilarity() < comparison.getCount()) {
+				studentProject.setCountSimilarity(comparison.getCount());
+				studentProject.setCountPercentSimilarity(comparison.getPercent());
+			}
+			
+			if(studentProject.getPercentSimilarity() < comparison.getPercent()) {
+				studentProject.setPercentSimilarity(comparison.getPercent());
+				studentProject.setPercentCountSimilarity(comparison.getCount());
 			}
 			
 			studentProject = comparison.getStudentProject2();
 			
-			if(comparison.getStudentProject1().getAdditions() > 49.95) {
-				if(studentProject.getCountSimilarity() < comparison.getCount()) {
-					studentProject.setCountSimilarity(comparison.getCount());
-					studentProject.setCountPercentSimilarity(comparison.getPercent());
-				}
-				
-				if(studentProject.getPercentSimilarity() < comparison.getPercent()) {
-					studentProject.setPercentSimilarity(comparison.getPercent());
-					studentProject.setPercentCountSimilarity(comparison.getCount());
-				}
+			if(studentProject.getCountSimilarity() < comparison.getCount()) {
+				studentProject.setCountSimilarity(comparison.getCount());
+				studentProject.setCountPercentSimilarity(comparison.getPercent());
+			}
+			
+			if(studentProject.getPercentSimilarity() < comparison.getPercent()) {
+				studentProject.setPercentSimilarity(comparison.getPercent());
+				studentProject.setPercentCountSimilarity(comparison.getCount());
 			}
 		}
 	}
