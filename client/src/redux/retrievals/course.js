@@ -21,13 +21,13 @@ import {
 import {getCourse, getCourseCharts, getCourseFilterCharts, getTeachingAssistants} from '../actions/course'
 
 export function retrieveCourse(courseID) {
-    store.dispatch(getCourse(`${course_v2}/get`, {
+    store.dispatch(getCourse(`${course_v2}`, {
         "Content-Type": "application/json"
     }, JSON.stringify(courseID)))
 }
 
 export function retrieveAllStudents(project) {
-	store.dispatch(getStudentPreviews(`${course_v2}/students`, {
+	store.dispatch(getStudentPreviews(`${course_v2}/project/students`, {
         "Content-Type": "application/json"
     }, JSON.stringify({
 	    "projectID": project.projectID,
@@ -38,18 +38,31 @@ export function retrieveAllStudents(project) {
     })))
 }
 
+export function retrieveAllStudentReports(project) {
+    store.dispatch(getStudentPreviews(`${course_v2}/project/students`, {
+        "Content-Type": "application/json"
+    }, JSON.stringify({
+        "projectID": project.projectID,
+        "options": {
+            "student": true,
+            "projectInfo": true,
+            "reportInfo": true
+        }
+    })))
+}
+
 export function retrieveCourseCharts(project) {
     store.dispatch(getCourseCharts(`${course_v2}/project/date`, {
         "Content-Type": "application/json"
     }, JSON.stringify({
         "projectID": project.projectID,
         "options": project.runTestall ? {
-            "progressChart": true,
-            "commitChart": true,
-            "timeChart": true
+            "progress": true,
+            "commit": true,
+            "time": true
         } : {
-            "commitChart": true,
-            "timeChart": true
+            "commit": true,
+            "time": true
         }
     })))
 }
@@ -60,10 +73,11 @@ export function retrieveCourseDishonestyCharts(project) {
     }, JSON.stringify({
         "projectID": project.projectID,
         "options": {
-            "changesChart": true,
-            "similarityChart": true,
-            "timeVelocityChart": true,
-            "commitVelocityChart": true
+            "changes": true,
+            "similarity": true,
+            "similarityPercent": true,
+            "timeVelocity": true,
+            "commitVelocity": true
         }
     })))
 }
@@ -74,12 +88,12 @@ export function retrieveCourseFilterCharts(project, commits, time, progress, vie
     }, JSON.stringify({
         "projectID": project.projectID,
         "options": project.runTestall ? {
-            "progressChart": true,
-            "commitChart": true,
-            "timeChart": true
+            "progress": true,
+            "commit": true,
+            "time": true
         } : {
-            "commitChart": true,
-            "timeChart": true
+            "commit": true,
+            "time": true
         },
         "filters" : {
             "commits": commits,
@@ -98,10 +112,11 @@ export function retrieveCourseDishonestyFilterCharts(project, commits, time, pro
     }, JSON.stringify({
         "projectID": project.projectID,
         "options": {
-            "changesChart": true,
-            "similarityChart": true,
-            "timeVelocityChart": true,
-            "commitVelocityChart": true
+            "changes": true,
+            "similarity": true,
+            "similarityPercent": true,
+            "timeVelocity": true,
+            "commitVelocity": true
         },
         "filters" : {
             "commits": commits,

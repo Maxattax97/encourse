@@ -31,7 +31,7 @@ class CommitHistoryHistogram extends Component {
                             </Label>
                         </YAxis>
                         <Tooltip animationDuration={500}/>
-                        <Bar dataKey="frequency" fill="#0057A7CC"/>
+                        <Bar dataKey="frequency" fill="#0057A7CC" isAnimationActive={false}/>
                     </BarChart>
                 </ResponsiveContainer>
             </Chart>

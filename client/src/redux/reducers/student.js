@@ -199,6 +199,43 @@ function resetCommitsPage(state, action) {
     })
 }
 
+function formatStudents(udata, extra, state) {
+    /*
+     * TODO Jordan Buckmaster: this should replace and resort. To be precise, replacing is such that any time a value
+     * is already present inside inside the getStudentPreviewsData variable, we replace with the newer copy.
+     * This shouldn't be a hard coded (first element of the new data check) approach because it could be such that
+     * the result is larger the getStudentPreviewsData contains. Resort is the idea that we aren't ensuring what we've
+     * retrieved is sorted. So, we should rerun the operation on the front-end as well to double check that things go
+     * as expected. I've already noticed problems on the front-end because of this (this is a two-fold problem with the
+     * back-end involved as well).
+    */
+
+    /*let content = state.students && state.students.data ? [...state.students.data] : []
+    if(udata.length < content.length) {
+        content = udata
+    } else {
+        let contains = false
+        for(let value of content) {
+            if(value.id === udata[0].id) {
+                contains = true
+                break
+            }
+        }
+        if(!contains) {
+            content = content.concat(udata)
+        }
+    }*/
+
+
+    return udata.sort((a, b) => {
+        if(a.percent > b.percent)
+            return -1
+        if(a.percent < b.percent)
+            return 1
+        return 0
+    })
+}
+
 export default function student(state = {}, action) {
     if(action.class !== 'STUDENT')
         return state
@@ -214,6 +251,8 @@ export default function student(state = {}, action) {
             return clearCommit(state, action)
         case 'GET':
             return forwardData(state, action, 'student')
+        case 'GET_STUDENT_COMPARISONS':
+            return forwardData(state, action, 'studentComparisons', formatStudents)
         case 'GET_STUDENT_CHARTS':
             return forwardData(state, action, 'studentCharts', formatStudentCharts)
         case 'GET_PROGRESS_LINE':

@@ -13,6 +13,8 @@ export const getStudentStatistics = createPeeker('stats')
 
 export const getStudentCharts = createPeeker('studentCharts')
 
+export const getStudentComparisons = createPeeker('studentComparisons')
+
 export const getStudentCommitFrequency = createPeeker('commitFrequency')
 
 export const getStudentCodeChanges = createPeeker('codeChanges')

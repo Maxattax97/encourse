@@ -112,7 +112,7 @@ class StudentSummary extends Component {
 	            </Title>
 	            <div className="h4 break-line header" />
 	            <div className="preview-content">
-	                <h5>Time: { hourMinutesFromMinutes(student.minutes) }</h5>
+	                <h5>Time: { hourMinutesFromMinutes(student.seconds) }</h5>
 	                <h5>Commits: { student.commits }</h5>
 	            </div>
 	            <div className="student-preview-progress">
@@ -135,7 +135,8 @@ class StudentSummary extends Component {
 	        <SelectableCardSummary type='students'
 			                       values={this.props.students.data}
 			                       render={this.renderPreview}
-			                       onClick={this.clickStudentCard} noCheckmark={true} />
+			                       onClick={this.clickStudentCard}
+                                    noCheckmark={true}/>
 	    )
 	}
 }

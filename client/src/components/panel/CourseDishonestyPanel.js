@@ -11,6 +11,7 @@ import ProjectNavigation from '../navigation/ProjectNavigation'
 import {getCurrentProject} from '../../redux/state-peekers/projects'
 import BackNavigation from '../navigation/BackNavigation'
 import {retrieveCourse} from '../../redux/retrievals/course'
+import StudentReportFilter from './course-dishonesty/StudentReportFilter'
 
 class CourseDishonestyPanel extends Component {
 
@@ -67,6 +68,8 @@ class CourseDishonestyPanel extends Component {
 
                         <h3 className='header'>Charts</h3>
                         <CourseDishonestyCharts/>
+
+                        <StudentReportFilter/>
                     </div>
                 </div>
             </div>

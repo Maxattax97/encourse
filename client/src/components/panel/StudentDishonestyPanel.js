@@ -10,6 +10,9 @@ import TaskModal from './common/TaskModal'
 import {getCurrentProject} from '../../redux/state-peekers/projects'
 import BackNavigation from '../navigation/BackNavigation'
 import ProjectNavigation from '../navigation/ProjectNavigation'
+import {retrieveCourse} from '../../redux/retrievals/course'
+import {retrieveStudent} from '../../redux/retrievals/student'
+import StudentComparisonFilter from './student-dishonesty/StudentComparisonFilter'
 
 class StudentDishonestyPanel extends Component {
 
@@ -17,16 +20,25 @@ class StudentDishonestyPanel extends Component {
         this.props.setModalState(1)
     }
 
+    componentDidMount = () => {
+        retrieveCourse(this.props.currentCourseId)
+        retrieveStudent(this.props.student.studentID)
+    }
+
+    componentWillUnmount() {
+        this.props.clearStudent()
+    }
+
     render() {
 
         const action_names = [
-            'Current Task',
-            'Share Results'
+            //'Current Task',
+            //'Share Results'
         ]
 
         const actions = [
-            () => { this.props.setModalState(2) },
-            this.share
+            //() => { this.props.setModalState(2) },
+            //this.share
         ]
         //TODO: update currentStudent correctly
         return (
@@ -34,7 +46,7 @@ class StudentDishonestyPanel extends Component {
                 <div className='panel-left-nav'>
                     <BackNavigation/>
                     <ProjectNavigation/>
-                    <ActionNavigation actions={ actions } action_names={ action_names }/>
+                    {/*<ActionNavigation actions={ actions } action_names={ action_names }/>*/}
                 </div>
 
                 <ShareReportModal id={1} link={null}/>
@@ -43,11 +55,12 @@ class StudentDishonestyPanel extends Component {
                 <div className='panel-center-content'>
 
                     <div className='panel-student-report'>
-                        <h1 className='header'>'{ this.props.student ? this.props.student.last_name : 'Student' }' Dishonesty Report</h1>
+                        <h1 className='header'>{ this.props.student ? `'${this.props.student.firstName} ${this.props.student.lastName}'` : '' } Dishonesty Report</h1>
                         <div className='h1 break-line header' />
 
-                        <h3 className='header'>Charts</h3>
-                        <StudentDishonestyCharts/>
+                        {/*<h3 className='header'>Charts</h3>
+                        <StudentDishonestyCharts/>*/}
+                        <StudentComparisonFilter/>
                     </div>
                 </div>
             </div>

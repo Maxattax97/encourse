@@ -73,7 +73,7 @@ class StudentFilter extends Component {
         return (
             <div className='course-students'>
                 <h3 className='header'>Students { this.props.students.data.length ? '(' + this.props.students.data.length + ')' : '' }</h3>
-                {
+                {/* {
                     !this.props.students.loading && !this.props.students.error ?
                         <Filter>
                             {/*<Checkbox onClick={() => this.props.toggleSelectAllCards()}>
@@ -115,7 +115,7 @@ class StudentFilter extends Component {
                                       values={this.getFilterProgressValues()}
                                       filter='progress_filter'
                                       addCustom
-                                      right />*/}
+                                      right />*}
 
                             {
                                 this.props.project && this.props.project.runTestall ?
@@ -130,7 +130,7 @@ class StudentFilter extends Component {
                         </Filter>
                         :
                         null
-                }
+                }*/}
                 <CourseStudentSummary />
             </div>
         )
