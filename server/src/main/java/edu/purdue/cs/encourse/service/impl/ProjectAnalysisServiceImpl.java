@@ -428,7 +428,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				//get studentID1's mapping towards all other students (comparisons)
 				Map<Long, Integer> comparisons = studentComparisons.get(studentID1);
 				
-				if(!studentProjectMap.containsKey(studentID1) || counts.get(studentID1) + .05 >= studentProjectMap.get(studentID1).getAdditions() * .02)
+				if(!studentProjectMap.containsKey(studentID1) || counts.get(studentID1) - .0005 >= studentProjectMap.get(studentID1).getAdditions() * .08)
 					continue;
 				
 				//iterate over the students who share the hash, skip over the current student (studentID1)
@@ -436,7 +436,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					if(studentID1.equals(studentID2))
 						continue;
 					
-					if(!studentProjectMap.containsKey(studentID2) || counts.get(studentID2) + .0005 >= studentProjectMap.get(studentID2).getAdditions() * .02)
+					if(!studentProjectMap.containsKey(studentID2) || counts.get(studentID2) - .0005 >= studentProjectMap.get(studentID2).getAdditions() * .08)
 						continue;
 					
 					//set studentID1's value for key studentID2 to be the summation of studentID2's counts for the specific hash
