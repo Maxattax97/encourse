@@ -390,6 +390,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		
 		//generate the comparisons mapping and set the values to be zeroed
 		Map<Long, Map<Long, Integer>> studentComparisons = new HashMap<>();
+		Map<Long, StudentProject> studentProjectMap = studentProjects.stream().collect(Collectors.toMap(StudentProject::getId, Function.identity()));
 		
 		for(StudentProject studentProject1 : studentProjects) {
 			Map<Long, Integer> studentComparisonsCount = new HashMap<>();
@@ -417,10 +418,15 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				//get studentID1's mapping towards all other students (comparisons)
 				Map<Long, Integer> comparisons = studentComparisons.get(studentID1);
 				
+				if(!studentProjectMap.containsKey(studentID1) || counts.get(studentID1) + .05 >= studentProjectMap.get(studentID1).getAdditions() * .02)
+					continue;
 				
 				//iterate over the students who share the hash, skip over the current student (studentID1)
 				for(Long studentID2 : counts.keySet()) {
 					if(studentID1.equals(studentID2))
+						continue;
+					
+					if(!studentProjectMap.containsKey(studentID2) || counts.get(studentID2) + .05 >= studentProjectMap.get(studentID2).getAdditions() * .02)
 						continue;
 					
 					//set studentID1's value for key studentID2 to be the summation of studentID2's counts for the specific hash
