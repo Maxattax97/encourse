@@ -115,8 +115,16 @@ public class StudentProject {
     private Integer countSimilarity;
     
     @NonNull
+    @Column(name = "COUNT_PERCENT_SIMILARITY")
+    private Double countPercentSimilarity;
+    
+    @NonNull
     @Column(name = "PERCENT_SIMILARITY")
     private Double percentSimilarity;
+    
+    @NonNull
+    @Column(name = "PERCENT_COUNT_SIMILARITY")
+    private Integer percentCountSimilarity;
     
     @NonNull
     @ElementCollection
@@ -157,7 +165,9 @@ public class StudentProject {
         this.timeVelocity = 0.0;
         this.commitVelocity = 0.0;
         this.countSimilarity = 0;
+        this.countPercentSimilarity = 0.0;
         this.percentSimilarity = 0.0;
+        this.percentCountSimilarity = 0;
         
         this.commits = new ArrayList<>();
         this.dates = new ArrayList<>();
@@ -183,7 +193,9 @@ public class StudentProject {
         this.timeVelocity = 0.0;
         this.commitVelocity = 0.0;
         this.countSimilarity = 0;
+        this.countPercentSimilarity = 0.0;
         this.percentSimilarity = 0.0;
+        this.percentCountSimilarity = 0;
         
         this.commits = new ArrayList<>();
         this.dates = new ArrayList<>();

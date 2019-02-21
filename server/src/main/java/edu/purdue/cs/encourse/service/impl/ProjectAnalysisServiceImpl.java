@@ -413,6 +413,16 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			if(counts.size() > Math.max(75, Math.floor(studentProjects.size() * .33)))
 				continue;
 			
+			if(counts.size() > Math.max(33, Math.floor(studentProjects.size() * .16))) {
+				int total = 0;
+				
+				for(Long studentID : counts.keySet())
+					total += counts.get(studentID);
+				
+				if(total / counts.size() >= 3)
+					continue;
+			}
+			
 			//iterate over the students who share the hash
 			for(Long studentID1 : counts.keySet()) {
 				//get studentID1's mapping towards all other students (comparisons)
@@ -426,12 +436,12 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					if(studentID1.equals(studentID2))
 						continue;
 					
-					if(!studentProjectMap.containsKey(studentID2) || counts.get(studentID2) + .05 >= studentProjectMap.get(studentID2).getAdditions() * .02)
+					if(!studentProjectMap.containsKey(studentID2) || counts.get(studentID2) + .0005 >= studentProjectMap.get(studentID2).getAdditions() * .02)
 						continue;
 					
 					//set studentID1's value for key studentID2 to be the summation of studentID2's counts for the specific hash
 					//as well as the current studentID2 value
-					comparisons.put(studentID2, counts.get(studentID2) + comparisons.get(studentID2));
+					comparisons.put(studentID2, 1 + comparisons.get(studentID2));
 				}
 			}
 		}
@@ -440,15 +450,14 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		for(StudentComparison comparison : project.getStudentComparisons()) {
 			StudentProject studentProject1 = comparison.getStudentProject1();
 			StudentProject studentProject2 = comparison.getStudentProject2();
-			Integer student1Count = studentComparisons.get(studentProject2.getId()).get(studentProject1.getId());
-			Integer student2Count = studentComparisons.get(studentProject1.getId()).get(studentProject2.getId());
+			Integer comparisonCount = studentComparisons.get(studentProject2.getId()).get(studentProject1.getId());
 			
 			//count is the summation between the two students similarities
 			//percent is the max function between each students (similarity count / additions)
-			comparison.setCount(student1Count + student2Count);
+			comparison.setCount(comparisonCount);
 			
-			double percent1 = studentProject1.getAdditions() < .05 ? 0.0 : (student1Count * 100.0) / studentProject1.getAdditions();
-			double percent2 = studentProject2.getAdditions() < .05 ? 0.0 : (student2Count * 100.0) / studentProject2.getAdditions();
+			double percent1 = studentProject1.getAdditions() < .05 ? 0.0 : (comparisonCount * 100.0) / studentProject1.getAdditions();
+			double percent2 = studentProject2.getAdditions() < .05 ? 0.0 : (comparisonCount * 100.0) / studentProject2.getAdditions();
 			
 			comparison.setPercent(Math.max(percent1, percent2));
 		}
@@ -456,19 +465,39 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		//iterate over the student projects for the project
 		for(StudentProject studentProject : studentProjects) {
 			studentProject.setCountSimilarity(0);
+			studentProject.setCountPercentSimilarity(0.0);
 			studentProject.setPercentSimilarity(0.0);
+			studentProject.setPercentCountSimilarity(0);
 		}
 		
 		for(StudentComparison comparison : project.getStudentComparisons()) {
 			StudentProject studentProject = comparison.getStudentProject1();
 			
-			studentProject.setCountSimilarity(Math.max(studentProject.getCountSimilarity(), comparison.getCount()));
-			studentProject.setPercentSimilarity(Math.max(studentProject.getPercentSimilarity(), comparison.getPercent()));
+			if(comparison.getStudentProject2().getAdditions() > 49.95) {
+				if(studentProject.getCountSimilarity() < comparison.getCount()) {
+					studentProject.setCountSimilarity(comparison.getCount());
+					studentProject.setCountPercentSimilarity(comparison.getPercent());
+				}
+				
+				if(studentProject.getPercentSimilarity() < comparison.getPercent()) {
+					studentProject.setPercentSimilarity(comparison.getPercent());
+					studentProject.setPercentCountSimilarity(comparison.getCount());
+				}
+			}
 			
 			studentProject = comparison.getStudentProject2();
 			
-			studentProject.setCountSimilarity(Math.max(studentProject.getCountSimilarity(), comparison.getCount()));
-			studentProject.setPercentSimilarity(Math.max(studentProject.getPercentSimilarity(), comparison.getPercent()));
+			if(comparison.getStudentProject1().getAdditions() > 49.95) {
+				if(studentProject.getCountSimilarity() < comparison.getCount()) {
+					studentProject.setCountSimilarity(comparison.getCount());
+					studentProject.setCountPercentSimilarity(comparison.getPercent());
+				}
+				
+				if(studentProject.getPercentSimilarity() < comparison.getPercent()) {
+					studentProject.setPercentSimilarity(comparison.getPercent());
+					studentProject.setPercentCountSimilarity(comparison.getCount());
+				}
+			}
 		}
 	}
 	
@@ -728,7 +757,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		validCount = 0;
 		
 		for(StudentProject studentProject : studentProjectListMap.keySet()) {
-			if(studentProject.getCommitCount() < .05)
+			if(studentProject.getCommitCount() < .05 || studentProject.getAdditions() < 49.95)
 				continue;
 			
 			changesStats.addValue(studentProject.getChanges());
@@ -751,6 +780,9 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 		
 		for(StudentComparison comparison : project.getStudentComparisons()) {
 			if(comparison.getStudentProject1().getCommitCount() < .05 || comparison.getStudentProject2().getCommitCount() < .05)
+				continue;
+			
+			if(comparison.getStudentProject1().getAdditions() < 49.95 || comparison.getStudentProject2().getAdditions() < 49.95)
 				continue;
 			
 			similarityStats.addValue(comparison.getCount());
