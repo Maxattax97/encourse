@@ -203,7 +203,7 @@ public class ReadControllerV2 {
 	
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
 	@RequestMapping(value = "/student/project/commit",
-			produces = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.TEXT_PLAIN_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> getCommitDiff(@Valid @NonNull @RequestBody ProjectStudentCommitModel projectStudentCommit) {
