@@ -7,11 +7,11 @@
 
 DIRECTORY="$(pwd)"
 cd "$1"
-if [[ $# -eq 2 ]]
-    then git show -U10000 "$2"
-fi
-if [[ $# -eq 3 ]]
-    then git diff -U10000 "$2" "$3"
-    else git diff -U10000 "$2" "$3" -p "$4"
-fi
+#if [[ $# -eq 2 ]]
+    git show -U10000 "$2"
+#fi
+#if [[ $# -eq 3 ]]
+#    then git diff -U10000 "$2" "$3"
+#    else git diff -U10000 "$2" "$3" -p "$4"
+#fi
 cd "${DIRECTORY}"

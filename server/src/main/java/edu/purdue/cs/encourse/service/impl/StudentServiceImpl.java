@@ -364,17 +364,23 @@ public class StudentServiceImpl implements StudentService {
 		
 		String testingDirectory = project.getCourse().getCourseHub() + "/" + student.getStudent().getUsername() + "/" + project.getRepository();
 		
-		Process process = executeScriptAndReturn("getSourceChanges.sh " + testingDirectory + " " + model.getCommit() + (model.getPreviousCommit() != null && model.getPreviousCommit().length() > 0 ? " " + model.getPreviousCommit() : ""));
+		Process process = executeScriptAndReturn("getSourceChanges.sh " + testingDirectory + " " + model.getCommit());
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		
-		String text = reader.lines().collect(Collectors.joining("\n"));
+		StringBuilder text = new StringBuilder();
 		
-		System.out.println(text);
+		String line;
+		
+		while((line = reader.readLine()) != null) {
+			text.append(line).append("\n");
+		}
+		
+		System.out.println(text.toString());
 		
 		reader.close();
 		
 		process.waitFor();
 		
-		return text;
+		return text.toString();
 	}
 }
