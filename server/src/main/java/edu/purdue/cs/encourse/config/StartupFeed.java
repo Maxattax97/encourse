@@ -9,6 +9,7 @@ import edu.purdue.cs.encourse.model.CourseProjectModel;
 import edu.purdue.cs.encourse.model.CourseSectionModel;
 import edu.purdue.cs.encourse.model.CourseStudentModel;
 import edu.purdue.cs.encourse.model.ProjectIgnoreModel;
+import edu.purdue.cs.encourse.model.ProjectTestScriptModel;
 import edu.purdue.cs.encourse.model.SectionModel;
 import edu.purdue.cs.encourse.model.StudentTAModel;
 import edu.purdue.cs.encourse.model.UserModel;
@@ -149,20 +150,64 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
 
             // TODO: @KILLIAN Integrate redundancy checks into addProject() method
             if (!projectRepository.existsByName("MyMalloc")) {
-                Project mymalloc = projectService.addProject(new CourseProjectModel(course.getCourseID(), "MyMalloc", LocalDate.of(2019, 1, 8), LocalDate.of(2019, 1, 28), "lab1-src", false));
+                Project mymalloc = projectService.addProject(new CourseProjectModel(course.getCourseID(), "MyMalloc", LocalDate.of(2019, 1, 8), LocalDate.of(2019, 2, 2), "lab1-src", false));
                 
                 projectService.addProjectIgnoreUser(new ProjectIgnoreModel(mymalloc.getProjectID(), "cs252@cs.purdue.edu"));
             }
             if (!projectRepository.existsByName("Shell Scripting")) {
-                Project bash = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Shell Scripting", LocalDate.of(2019, 1, 29), LocalDate.of(2019, 2, 11), "lab2-src", false));
+                Project bash = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Shell Scripting", LocalDate.of(2019, 1, 29), LocalDate.of(2019, 2, 16), "lab2-src", false));
     
                 projectService.addProjectIgnoreUser(new ProjectIgnoreModel(bash.getProjectID(), "cs252@cs.purdue.edu"));
             }
             if (!projectRepository.existsByName("Implementing a Shell")) {
-                Project shell = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Implementing a Shell", LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 4), "lab3-src", false));
+                Project shell = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Implementing a Shell", LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 9), "lab3-src", true));
     
                 projectService.addProjectIgnoreUser(new ProjectIgnoreModel(shell.getProjectID(), "cs252@cs.purdue.edu"));
                 projectService.addProjectIgnoreUser(new ProjectIgnoreModel(shell.getProjectID(), "ps@parthshel.com"));
+                
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_redirect_input", false, 2.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_redirect_output", false, 2.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_redirect_error", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_redirect_error2", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_redirect_out_err", false, 2.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_redirect_multiple", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_append_output", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_pipes1", false, 2.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_pipes2", false, 2.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_pipes_redirect_out", false, 2.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_pipes_redirect_err", false, 2.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_background", false, 2.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_zombie", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_printenv", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_setenv", false, .5));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_unsetenv", false, .5));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_source", false, 2.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_cd1", false, .5));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_cd2", false, .5));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_cd3", false, .5));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_cd4", false, .5));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_parsing1", false, .5));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_parsing2", false, .5));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_quotes1", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_quotes2", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_escape", false, 2.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_subshell", false, 10.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_env_expand1", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_env_expand2", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_env_var_shell", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_env_var_dollar", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_env_var_question", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_env_var_bang", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_env_var_uscore", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_wildcards1", false, 3.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_wildcards2", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_wildcards3", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_wildcards4", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_wildcards5", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_wildcards6", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_wildcards7", false, 1.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_tilde", false, 2.0));
+                projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_robustness", false, 10.0));
             }
         }
         catch(Exception e) {

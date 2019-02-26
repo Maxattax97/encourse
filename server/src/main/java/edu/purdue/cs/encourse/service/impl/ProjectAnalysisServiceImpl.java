@@ -305,7 +305,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					foundGrade = false;
 				}
 				else if(measureChanges && line.length() > 1 && line.charAt(0) != '-') {
-					if(line.charAt(0) == '=')
+					if(line.charAt(0) == '+' || line.charAt(0) == ' ')
 						line = line.substring(1);
 					
 					if(!foundGrade)
@@ -428,7 +428,14 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				//get studentID1's mapping towards all other students (comparisons)
 				Map<Long, Integer> comparisons = studentComparisons.get(studentID1);
 				
-				if(!studentProjectMap.containsKey(studentID1) || counts.get(studentID1) - .0005 >= studentProjectMap.get(studentID1).getAdditions() * .08)
+				StudentProject studentProject;
+				
+				if(!studentProjectMap.containsKey(studentID1))
+					continue;
+				
+				studentProject = studentProjectMap.get(studentID1);
+				
+				if(counts.get(studentID1) - .0005 >= studentProject.getAdditions() * .08 || studentProject.getAdditions() < 49.95)
 					continue;
 				
 				//iterate over the students who share the hash, skip over the current student (studentID1)
@@ -436,12 +443,17 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					if(studentID1.equals(studentID2))
 						continue;
 					
-					if(!studentProjectMap.containsKey(studentID2) || counts.get(studentID2) - .0005 >= studentProjectMap.get(studentID2).getAdditions() * .08)
+					if(!studentProjectMap.containsKey(studentID2))
+						continue;
+					
+					studentProject = studentProjectMap.get(studentID2);
+					
+					if(counts.get(studentID2) - .0005 >= studentProject.getAdditions() * .08 || studentProject.getAdditions() < 49.95)
 						continue;
 					
 					//set studentID1's value for key studentID2 to be the summation of studentID2's counts for the specific hash
 					//as well as the current studentID2 value
-					comparisons.put(studentID2, counts.get(studentID2) + comparisons.get(studentID2));
+					comparisons.put(studentID2, 1 + comparisons.get(studentID2));
 				}
 			}
 		}
@@ -457,8 +469,8 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 			//percent is the max function between each students (similarity count / additions)
 			comparison.setCount(comparisonCount1 + comparisonCount2);
 			
-			double percent1 = studentProject1.getAdditions() < .05 ? 0.0 : (comparisonCount2 * 100.0) / studentProject1.getAdditions();
-			double percent2 = studentProject2.getAdditions() < .05 ? 0.0 : (comparisonCount1 * 100.0) / studentProject2.getAdditions();
+			double percent1 = studentProject1.getAdditions() < 49.95 ? 0.0 : (comparisonCount2 * 100.0) / studentProject1.getAdditions();
+			double percent2 = studentProject2.getAdditions() < 49.95 ? 0.0 : (comparisonCount1 * 100.0) / studentProject2.getAdditions();
 			
 			comparison.setPercent(Math.max(percent1, percent2));
 		}
@@ -677,7 +689,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 						studentProject.setCommitVelocity((studentProject.getVisiblePoints() + studentProject.getHiddenPoints()) / previousStudentDate.getTotalCommits());
 				}
 				else {
-					if(studentProject.getSeconds() < 10.05)
+					if(studentProject.getSeconds() < 600.05)
 						studentProject.setTimeVelocity(0.0);
 					else
 						studentProject.setTimeVelocity(6000.0 / studentProject.getSeconds());
