@@ -149,7 +149,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             }
 
             // TODO: @KILLIAN Integrate redundancy checks into addProject() method
-            /*if (!projectRepository.existsByName("MyMalloc")) {
+            if (!projectRepository.existsByName("MyMalloc")) {
                 Project mymalloc = projectService.addProject(new CourseProjectModel(course.getCourseID(), "MyMalloc", LocalDate.of(2019, 1, 8), LocalDate.of(2019, 2, 2), "lab1-src", false));
                 
                 projectService.addProjectIgnoreUser(new ProjectIgnoreModel(mymalloc.getProjectID(), "cs252@cs.purdue.edu"));
@@ -158,7 +158,7 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 Project bash = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Shell Scripting", LocalDate.of(2019, 1, 29), LocalDate.of(2019, 2, 16), "lab2-src", false));
     
                 projectService.addProjectIgnoreUser(new ProjectIgnoreModel(bash.getProjectID(), "cs252@cs.purdue.edu"));
-            }*/
+            }
             if (!projectRepository.existsByName("Implementing a Shell")) {
                 Project shell = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Implementing a Shell", LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 9), "lab3-src", true));
     
