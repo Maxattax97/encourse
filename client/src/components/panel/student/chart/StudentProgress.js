@@ -64,13 +64,13 @@ class StudentProgress extends Component {
             >
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={this.formatData(this.props.charts.data.commits)} margin={{top: 40, right: 35, left: 0, bottom: 25}}>
-                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Amount of Time Spent on Project</text>
+                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Progress Made on Project</text>
                         <XAxis dataKey="date" tickFormatter={tick => moment(tick).format('M-D')}>
                             <Label position="insideBottom" offset={-15} value="Date"/>
                         </XAxis>
                         <YAxis type="number">
                             <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
-                                Minutes Worked
+                                Points Earned
                             </Label>
                         </YAxis>
                         <Tooltip labelFormatter={tick => moment(tick).format('M-D HH:mm:ss')}/>
