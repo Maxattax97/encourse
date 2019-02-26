@@ -69,6 +69,9 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	@Transactional(readOnly = true)
 	public CourseStudent getStudent(@NonNull Long studentID) throws InvalidRelationIdException {
+		if(studentID == null)
+			throw new InvalidRelationIdException("Student ID (" + studentID + ") does not exist in the database.");
+		
 		Optional<CourseStudent> studentOptional = courseStudentRepository.findById(studentID);
 		
 		if(!studentOptional.isPresent())
@@ -365,6 +368,8 @@ public class StudentServiceImpl implements StudentService {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 		
 		String text = reader.lines().collect(Collectors.joining("\n"));
+		
+		System.out.println(text);
 		
 		reader.close();
 		
