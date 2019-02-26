@@ -16,6 +16,7 @@ import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.FrequencyDate;
 import edu.purdue.cs.encourse.model.ProjectStudentCommitModel;
 import edu.purdue.cs.encourse.model.ProjectStudentSearchModel;
+import edu.purdue.cs.encourse.model.StringWrapperModel;
 import edu.purdue.cs.encourse.model.StudentComparisonModel;
 import edu.purdue.cs.encourse.model.StudentInfoModel;
 import edu.purdue.cs.encourse.model.SearchModel;
@@ -24,7 +25,6 @@ import edu.purdue.cs.encourse.model.student.StudentProjectDiffs;
 import edu.purdue.cs.encourse.service.ProjectService;
 import edu.purdue.cs.encourse.service.StudentService;
 import lombok.NonNull;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,6 @@ import javax.management.relation.InvalidRelationIdException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -358,7 +357,7 @@ public class StudentServiceImpl implements StudentService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public String getStudentProjectCommitDiff(@NonNull ProjectStudentCommitModel model) throws InvalidRelationIdException, IOException, InterruptedException {
+	public StringWrapperModel getStudentProjectCommitDiff(@NonNull ProjectStudentCommitModel model) throws InvalidRelationIdException, IOException, InterruptedException {
 		CourseStudent student = getStudent(model.getStudentID());
 		Project project = projectService.getProject(model.getProjectID());
 		
@@ -381,6 +380,6 @@ public class StudentServiceImpl implements StudentService {
 		
 		process.waitFor();
 		
-		return text.toString();
+		return new StringWrapperModel(text.toString());
 	}
 }

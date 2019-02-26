@@ -4,6 +4,7 @@ import edu.purdue.cs.encourse.domain.relations.CourseStudent;
 import edu.purdue.cs.encourse.domain.relations.StudentProject;
 import edu.purdue.cs.encourse.domain.relations.StudentProjectDate;
 import edu.purdue.cs.encourse.model.ProjectStudentCommitModel;
+import edu.purdue.cs.encourse.model.StringWrapperModel;
 import edu.purdue.cs.encourse.model.StudentComparisonModel;
 import edu.purdue.cs.encourse.model.StudentInfoModel;
 import edu.purdue.cs.encourse.model.ProjectStudentSearchModel;
@@ -50,5 +51,5 @@ public interface StudentService {
 	List<StudentComparisonModel> getStudentProjectComparisons(@NonNull ProjectStudentSearchModel model) throws InvalidRelationIdException;
 	
 	@Transactional(readOnly = true)
-	String getStudentProjectCommitDiff(@NonNull ProjectStudentCommitModel model) throws InvalidRelationIdException, IOException, InterruptedException;
+	StringWrapperModel getStudentProjectCommitDiff(@NonNull ProjectStudentCommitModel model) throws InvalidRelationIdException, IOException, InterruptedException;
 }
