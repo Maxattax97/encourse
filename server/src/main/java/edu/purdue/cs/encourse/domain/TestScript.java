@@ -79,4 +79,8 @@ public class TestScript {
 		this.value = model.getValue();
 	}
 	
+	public String toString() {
+		return "Test Script (id=" + this.id + ", name=" + this.name + ", hidden=" + this.hidden + ", value=" + this.value + ")";
+	}
+	
 }

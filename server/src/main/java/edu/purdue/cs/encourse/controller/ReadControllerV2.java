@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.management.relation.InvalidRelationIdException;
 import javax.management.relation.RelationNotFoundException;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -210,6 +211,12 @@ public class ReadControllerV2 {
 			return new ResponseEntity<>(studentService.getStudentProjectCommitDiff(projectStudentCommit), HttpStatus.OK);
 		}
 		catch (InvalidRelationIdException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		catch (InterruptedException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		catch (IOException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}

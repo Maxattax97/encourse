@@ -21,13 +21,19 @@ import edu.purdue.cs.encourse.model.StudentInfoModel;
 import edu.purdue.cs.encourse.model.SearchModel;
 import edu.purdue.cs.encourse.model.StudentTestSuiteInfoModel;
 import edu.purdue.cs.encourse.model.student.StudentProjectDiffs;
+import edu.purdue.cs.encourse.service.ProjectService;
 import edu.purdue.cs.encourse.service.StudentService;
 import lombok.NonNull;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.InvalidRelationIdException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +57,9 @@ public class StudentServiceImpl implements StudentService {
 	
 	@Autowired
 	private StudentProjectDateRepository studentProjectDateRepository;
+	
+	@Autowired
+	private ProjectService projectService;
 	
 	@Autowired
 	public StudentServiceImpl(StudentProjectRepository studentProjectRepository) {
@@ -340,10 +349,27 @@ public class StudentServiceImpl implements StudentService {
 		return models;
 	}
 	
+	private Process executeScriptAndReturn(@NonNull String command) throws IOException {
+		return Runtime.getRuntime().exec("./src/main/bash/" + command + " 2> /dev/null");
+	}
+	
 	@Override
 	@Transactional(readOnly = true)
-	public Object getStudentProjectCommitDiff(@NonNull ProjectStudentCommitModel model) throws InvalidRelationIdException {
+	public String getStudentProjectCommitDiff(@NonNull ProjectStudentCommitModel model) throws InvalidRelationIdException, IOException, InterruptedException {
 		CourseStudent student = getStudent(model.getStudentID());
-		return null;
+		Project project = projectService.getProject(model.getProjectID());
+		
+		String testingDirectory = project.getCourse().getCourseHub() + "/" + student.getStudent().getUsername() + "/" + project.getRepository();
+		
+		Process process = executeScriptAndReturn("getSourceChanges.sh " + testingDirectory + " " + model.getCommit() + (model.getPreviousCommit() != null && model.getPreviousCommit().length() > 0 ? " " + model.getPreviousCommit() : ""));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		
+		String text = reader.lines().collect(Collectors.joining("\n"));
+		
+		reader.close();
+		
+		process.waitFor();
+		
+		return text;
 	}
 }

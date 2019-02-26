@@ -298,6 +298,9 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				
 				if(project.getIgnoredUsers().contains(split[3]))
 					commit = null;
+				
+				if(commit != null)
+					commit.setVisiblePoints(0.0);
 			}
 			else if(commit != null) {
 				if(line.startsWith("+++")) {
@@ -320,7 +323,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 								commit.setVisiblePoints(commit.getVisiblePoints() + testScriptMap.get(split[0]).getValue());
 						}
 						else {
-							System.out.println("Problem with line " + line);
+							System.out.println("Read Testall Grade " + line);
 						}
 					}
 				}
@@ -419,7 +422,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				for(Long studentID : counts.keySet())
 					total += counts.get(studentID);
 				
-				if(total / counts.size() >= 3)
+				if(total / counts.size() >= 2)
 					continue;
 			}
 			
@@ -435,7 +438,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				
 				studentProject = studentProjectMap.get(studentID1);
 				
-				if(counts.get(studentID1) - .0005 >= studentProject.getAdditions() * .08 || studentProject.getAdditions() < 49.95)
+				if(counts.get(studentID1) - .0005 >= Math.min(5, studentProject.getAdditions() * .02) || studentProject.getAdditions() < 49.95)
 					continue;
 				
 				//iterate over the students who share the hash, skip over the current student (studentID1)
@@ -448,7 +451,7 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 					
 					studentProject = studentProjectMap.get(studentID2);
 					
-					if(counts.get(studentID2) - .0005 >= studentProject.getAdditions() * .08 || studentProject.getAdditions() < 49.95)
+					if(counts.get(studentID2) - .0005 >= Math.min(5, studentProject.getAdditions() * .02) || studentProject.getAdditions() < 49.95)
 						continue;
 					
 					//set studentID1's value for key studentID2 to be the summation of studentID2's counts for the specific hash
@@ -662,6 +665,14 @@ public class ProjectAnalysisServiceImpl implements ProjectAnalysisService {
 				studentProjectDate.setTotalSeconds(previousStudentDate.getTotalSeconds() + studentProjectDate.getCurrentSeconds());
 				studentProjectDate.setTotalAdditions(previousStudentDate.getTotalAdditions() + studentProjectDate.getCurrentAdditions());
 				studentProjectDate.setTotalDeletions(previousStudentDate.getTotalDeletions() + studentProjectDate.getCurrentDeletions());
+				
+				if(previousStudentDate.getVisiblePoints() - .05 > studentProjectDate.getVisiblePoints()) {
+					studentProjectDate.setVisiblePoints(previousStudentDate.getVisiblePoints());
+					studentProjectDate.getTestsPassing().clear();
+					
+					for(Long id : previousStudentDate.getTestsPassing())
+						studentProjectDate.getTestsPassing().add(id);
+				}
 				
 				previousStudentDate = studentProjectDate;
 			}

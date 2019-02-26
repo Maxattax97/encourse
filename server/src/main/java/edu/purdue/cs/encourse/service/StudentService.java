@@ -13,6 +13,7 @@ import lombok.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.InvalidRelationIdException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -49,5 +50,5 @@ public interface StudentService {
 	List<StudentComparisonModel> getStudentProjectComparisons(@NonNull ProjectStudentSearchModel model) throws InvalidRelationIdException;
 	
 	@Transactional(readOnly = true)
-	Object getStudentProjectCommitDiff(@NonNull ProjectStudentCommitModel model) throws InvalidRelationIdException;
+	String getStudentProjectCommitDiff(@NonNull ProjectStudentCommitModel model) throws InvalidRelationIdException, IOException, InterruptedException;
 }

@@ -301,6 +301,8 @@ public class ProjectServiceImpl implements ProjectService {
 		if(project == null)
 			throw new RelationException("");
 		
+		System.out.println("Added " + testScript);
+		
 		return testScript;
 	}
 	
