@@ -8,7 +8,7 @@
 DIRECTORY="$(pwd)"
 cd "$1"
 #if [[ $# -eq 2 ]]
-    git show -U10000 "$2"
+    git diff -U10000 "$2~" "$2"
 #fi
 #if [[ $# -eq 3 ]]
 #    then git diff -U10000 "$2" "$3"

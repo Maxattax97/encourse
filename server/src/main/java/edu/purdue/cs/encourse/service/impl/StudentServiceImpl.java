@@ -374,8 +374,6 @@ public class StudentServiceImpl implements StudentService {
 			text.append(line).append("\n");
 		}
 		
-		System.out.println(text.toString());
-		
 		reader.close();
 		
 		process.waitFor();
