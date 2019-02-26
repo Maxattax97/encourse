@@ -64,6 +64,12 @@ export function retrieveStudentCommitHistory(student, project, page, size) {
 	store.dispatch(getCommitHistory(`${api_v1}commitList?${projectID_v1(project)}&${studentID_v1(student)}&${page_v1(page)}&${size_v1(size)}`))
 }
 
-export function retrieveSource(student, project, startHash) {
-	store.dispatch(getSource(`${api_v1}source?${projectID_v1(project)}&${studentID_v1(student)}&endHash=${startHash}`))
+export function retrieveSource(project, student, startCommit) {
+    store.dispatch(getSource(`${student_v2}/project/commit`, {
+        "Content-Type": "application/json"
+    }, JSON.stringify({
+        "projectID": project.projectID,
+        "studentID": student.studentID,
+        "commit": startCommit.hash
+    })))
 }

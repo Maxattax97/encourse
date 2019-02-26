@@ -9,11 +9,16 @@ import {getStudentCharts} from "../../../redux/state-peekers/student"
 
 class StudentCommitFilter extends Component {
 
-    sort_by_values = ['Name', 'Additions', 'Deletions']
+    sort_by_values = ['Date', 'Additions', 'Deletions']
     bundle_by_values = ['Nothing', 'Day']
     order_values = ['Ascending', 'Descending']
     addition_values = ['Any', '1']
     deletion_values = ['Any', '2']
+
+    componentDidMount() {
+        this.props.setFilterState("sort_by", 0);
+        this.props.setFilterState("order_by", 0);
+    }
 
     componentWillUnmount() {
         this.props.resetFilterState()
@@ -30,7 +35,7 @@ class StudentCommitFilter extends Component {
                                 <CheckmarkIcon/>
                                 : null
                         }
-                    </Checkbox>
+                    </Checkbox>*/}
 
                     <Dropdown header='h5'
                               text='Sort by'
@@ -38,12 +43,12 @@ class StudentCommitFilter extends Component {
                               filter='sort_by'
                               left/>
 
-                    <Dropdown header='h5'
+                    {/*<Dropdown header='h5'
                               text='Bundle by'
                               values={this.bundle_by_values}
                               filter='bundle_by'
                               left
-                    />
+                    />*/}
 
                     <Dropdown header='h5'
                               text='Order'
@@ -51,7 +56,7 @@ class StudentCommitFilter extends Component {
                               filter='order_by'
                               right />
 
-                    <Dropdown header='h5'
+                    {/*<Dropdown header='h5'
                               text='Additions'
                               values={this.addition_values}
                               filter='addition_filter'
@@ -82,6 +87,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         toggleSelectAllCards: () => dispatch(toggleSelectAllCards('commits')),
+        setFilterState: (id, value) => dispatch(setFilterState(id, value)),
         resetFilterState: () => dispatch(resetFilterState())
     }
 }

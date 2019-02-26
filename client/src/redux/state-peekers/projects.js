@@ -10,7 +10,7 @@ export function getCurrentProjectIndex(state) {
 
 export function getCurrentProject(state) {
 	const projects = getProjects(state)
-	return projects.length ? projects[getCurrentProjectIndex(state)] : null
+	return projects.length ? projects[getCurrentProjectIndex(state)] || projects[0] : null
 }
 
 export const getTestScripts = createPeeker('getTestScripts')

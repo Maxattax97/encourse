@@ -28,6 +28,7 @@ class CourseDishonestyCharts extends Component {
     }
 
 	render() {
+        console.log((this.props.charts.data || {}).timeVelocity, (this.props.filterCharts.data || {}).timeVelocity)
 		return (
 			<ChartList>
                 <DistributionChart chart={ (this.props.charts.data || {}).changes } filterChart={ (this.props.filterCharts.data || {}).changes } x="Additions per Deletion" y="Student Count"/>

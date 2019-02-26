@@ -5,7 +5,6 @@ export function getCurrentStudent(state) {
 }
 
 export function getCurrentCommit(state) {
-	console.log(state.student)
 	return state.student && state.student.currentCommit ? state.student.currentCommit.data : null
 }
 

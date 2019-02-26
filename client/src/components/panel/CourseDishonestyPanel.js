@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import ActionNavigation from '../navigation/ActionNavigation'
 import {Title} from '../Helpers'
 import {getStudentPreviews, setCurrentStudent, setModalState, getDishonestyReport, updateCourseDishonestyPage, resetCourseDishonestyPage} from '../../redux/actions'
 import {getCurrentCourseId, getStudents} from '../../redux/state-peekers/course'
@@ -12,18 +11,13 @@ import {getCurrentProject} from '../../redux/state-peekers/projects'
 import BackNavigation from '../navigation/BackNavigation'
 import {retrieveCourse} from '../../redux/retrievals/course'
 import StudentReportFilter from './course-dishonesty/StudentReportFilter'
+import {history} from '../../redux/store'
+import ActionNavigation from '../navigation/ActionNavigation'
 
 class CourseDishonestyPanel extends Component {
 
     constructor(props) {
         super(props)
-
-        this.state = {
-            filters : {
-                sort_by: 0,
-                order_by: 0
-            }
-        }
     }
 
     share = () => {
@@ -31,19 +25,17 @@ class CourseDishonestyPanel extends Component {
     }
 
     componentDidMount = () => {
-        retrieveCourse(this.props.currentCourseId)
+        retrieveCourse(this.props.course)
     }
 
     render() {
 
         const action_names = [
-            'Current Task',
-            'Share Results'
+            'Course Page'
         ]
 
         const actions = [
-            () => { this.props.setModalState(1) },
-            this.share
+            () => { history.push(`/${this.props.course}/course`) },
         ]
 
         return (
@@ -52,7 +44,7 @@ class CourseDishonestyPanel extends Component {
                 <div className='panel-left-nav'>
                     <BackNavigation/>
                     <ProjectNavigation/>
-                    {/*<ActionNavigation actions={ actions } action_names={ action_names }/>*/}
+                    <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
 
                 <TaskModal id={1} />
@@ -80,7 +72,7 @@ class CourseDishonestyPanel extends Component {
 const mapStateToProps = (state) => {
     return {
         students: getStudents(state),
-        currentCourseId: getCurrentCourseId(state),
+        course: getCurrentCourseId(state),
         project: getCurrentProject(state),
     }
 }

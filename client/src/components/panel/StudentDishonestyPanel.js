@@ -1,7 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import ActionNavigation from '../navigation/ActionNavigation'
-import {clearStudent, getStudent, syncStudentRepository, runStudentTests, setModalState} from '../../redux/actions'
+import {
+    clearStudent,
+    getStudent,
+    syncStudentRepository,
+    runStudentTests,
+    setModalState,
+    setCurrentStudent
+} from '../../redux/actions'
 import {getCurrentCourseId, getCurrentSemesterId} from '../../redux/state-peekers/course'
 import StudentDishonestyCharts from "./student-dishonesty/StudentDishonestyCharts"
 import ShareReportModal from "./common/ShareReportModal"
@@ -13,32 +20,55 @@ import ProjectNavigation from '../navigation/ProjectNavigation'
 import {retrieveCourse} from '../../redux/retrievals/course'
 import {retrieveStudent} from '../../redux/retrievals/student'
 import StudentComparisonFilter from './student-dishonesty/StudentComparisonFilter'
+import {history} from '../../redux/store'
 
 class StudentDishonestyPanel extends Component {
+
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            clear: true
+        }
+    }
 
     share = () => {
         this.props.setModalState(1)
     }
 
     componentDidMount = () => {
-        retrieveCourse(this.props.currentCourseId)
+        retrieveCourse(this.props.course)
         retrieveStudent(this.props.student.studentID)
     }
 
     componentWillUnmount() {
-        this.props.clearStudent()
+        if(this.state.clear)
+            this.props.clearStudent()
     }
 
     render() {
 
         const action_names = [
-            //'Current Task',
-            //'Share Results'
+            'Student Page',
+            'Course Dishonesty Page',
+            'Course Page'
         ]
 
+
         const actions = [
-            //() => { this.props.setModalState(2) },
-            //this.share
+            () => {
+                this.setState({
+                    clear: false
+                })
+                this.props.setCurrentStudent(this.props.student)
+                history.push(`/${this.props.course}/student/${this.props.student.studentID}`)
+            },
+            () => {
+                history.push(`/${this.props.course}/course-dishonesty`)
+            },
+            () => {
+                history.push(`/${this.props.course}/course`)
+            }
         ]
         //TODO: update currentStudent correctly
         return (
@@ -46,7 +76,7 @@ class StudentDishonestyPanel extends Component {
                 <div className='panel-left-nav'>
                     <BackNavigation/>
                     <ProjectNavigation/>
-                    {/*<ActionNavigation actions={ actions } action_names={ action_names }/>*/}
+                    <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
 
                 <ShareReportModal id={1} link={null}/>
@@ -72,8 +102,7 @@ const mapStateToProps = (state) => {
     return {
         student: getCurrentStudent(state),
         project: getCurrentProject(state),
-        currentCourseId: getCurrentCourseId(state),
-        currentSemesterId: getCurrentSemesterId(state),
+        course: getCurrentCourseId(state),
     }
 }
 
@@ -83,6 +112,7 @@ const mapDispatchToProps = (dispatch) => {
         syncStudentRepository: (url, headers, body) => dispatch(syncStudentRepository(url, headers, body)),
         runStudentTests: (url, headers, body) => dispatch(runStudentTests(url, headers, body)),
         clearStudent: () => dispatch(clearStudent),
+        setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
 	    setModalState: (id) => dispatch(setModalState(id)),
     }
 }

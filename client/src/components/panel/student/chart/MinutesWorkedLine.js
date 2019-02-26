@@ -21,6 +21,7 @@ import {
     getStudentCodeChanges
 } from '../../../../redux/state-peekers/student'
 import {getCurrentProject} from '../../../../redux/state-peekers/projects'
+import {hourMinutesFromMinutes} from '../../../../common/time-helpers'
 
 class MinutesWorkedLine extends Component {
 
@@ -35,17 +36,15 @@ class MinutesWorkedLine extends Component {
             return {
                 date: commit.date,
                 time: (commit.seconds / 60),
-                timeExpected: commit.date === startDate ? 0 : commit.date === endDate ? (commit.seconds / 60) : null
+                timeExpected: commit.date === startDate ? (commit.seconds / 60) : commit.date === endDate ? (commit.seconds / 60) : null
             }
         })
     }
 
     render() {
-        console.log(this.formatData((this.props.charts.data || {}).commits))
         return (
             <Chart
                 chart={this.props.charts}
-                title='Cumulative number of lines added or deleted by day.'
             >
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={this.formatData(this.props.charts.data.commits)} margin={{top: 40, right: 35, left: 0, bottom: 25}}>
@@ -58,7 +57,7 @@ class MinutesWorkedLine extends Component {
                                 Minutes Worked
                             </Label>
                         </YAxis>
-                        <Tooltip labelFormatter={tick => moment(tick).format('M-D HH:mm:ss')}/>
+                        <Tooltip labelFormatter={tick => moment(tick).format('M-D HH:mm:ss')} formatter={(value, name, props) => hourMinutesFromMinutes(value * 60) }/>
                         <Line name="time" type="monotone" dataKey="time" stroke="black" dot={false} isAnimationActive={false}/>
                         <Line connectNulls={true} type='monotone' dataKey='timeExpected' stroke='red' strokeDasharray="5 5" dot={false} isAnimationActive={false} />
                     </LineChart>

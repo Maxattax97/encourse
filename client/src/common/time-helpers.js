@@ -1,6 +1,6 @@
 
 export function hourMinutesFromMinutes(minutes) {
-    minutes /= 60;
+    minutes /= 60.0;
 
     minutes = minutes.toFixed(0);
 

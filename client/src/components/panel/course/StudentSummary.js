@@ -117,7 +117,7 @@ class StudentSummary extends Component {
 	            </div>
 	            <div className="student-preview-progress">
 	                <div className="progress-bar">
-	                    <div style={{width: (totalPoints <= 0.01 ? 100 : points / totalPoints * 100.0) + '%', background: this.runTestall ? "#4caf50" : "gray"}} />
+	                    <div style={{width: (totalPoints <= 0.01 ? 100 : points / totalPoints * 100.0) + '%', background: this.props.project.runTestall ? "#4caf50" : "gray"}} />
 	                </div>
 	                <h6 className="progress-text">
                         {points}/{totalPoints}
@@ -127,13 +127,49 @@ class StudentSummary extends Component {
 	    )
 	}
 
+	collect = () => {
+        if(this.props.students.isLoading || this.props.students.error || !this.props.students.data || !this.props.students.data.map)
+            return [];
+
+        return this.props.students.data.sort((a, b) => {
+            const order = this.props.filters.order_by === 0 ? 1 : -1;
+
+            let compA;
+            let compB;
+
+            switch(this.props.filters.sort_by) {
+                case 1:
+                    compA = a.seconds;
+                    compB = b.seconds;
+                    break;
+                case 2:
+                    compA = a.commits;
+                    compB = b.commits;
+                    break;
+                case 3:
+                    compA = a.visiblePoints;
+                    compB = b.visiblePoints
+                    break;
+                default:
+                    compA = a.lastName;
+                    compB = b.lastName;
+            }
+            if(compA > compB)
+                return order;
+            if(compA < compB)
+                return -order;
+
+            return 0;
+        });
+    }
+
 	render() {
 	    if(!this.props.project || !this.props.students.data)
 	        return null
 
 	    return (
 	        <SelectableCardSummary type='students'
-			                       values={this.props.students.data}
+			                       values={ this.collect() }
 			                       render={this.renderPreview}
 			                       onClick={this.clickStudentCard}
                                     noCheckmark={true}/>

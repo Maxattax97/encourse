@@ -95,5 +95,5 @@ export const runStudentTests = genericDispatch(
 )
 
 export const getSource = genericDispatch(
-    class_type, 'GET_SOURCE', 'GET'
+    class_type, 'GET_SOURCE', 'POST'
 )

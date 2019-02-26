@@ -33,7 +33,7 @@ class CoursePanel extends Component {
             'Academic Dishonesty Report'
         ] : */[
             /*'View Current Task',*/
-            'Academic Dishonesty Report'
+            'Course Dishonesty Page'
         ]
 
         const actions = /*isAccountNotTA(this.props.account) ? [

@@ -10,12 +10,13 @@ import {getCurrentStudent, getStudentCharts, getStudentCommitHistory} from '../.
 import {Title} from '../../Helpers'
 import {setCurrentCommit} from '../../../redux/actions/student'
 import moment from 'moment'
+import {getFilters, getFiltersHaveChanged} from '../../../redux/state-peekers/control'
 
 class StudentCommitSummary extends Component {
 
     clickCommitCard = (commit) => {
         this.props.setCurrentCommit(commit)
-        //history.push(`/${this.props.course}/student/${this.props.student.studentID}/commit/${commit.hash}`)
+        history.push(`/${this.props.course}/student/${this.props.student.studentID}/commit/${commit.hash}`)
     }
 
     renderPreview = (commit) => {
@@ -35,10 +36,46 @@ class StudentCommitSummary extends Component {
         )
     }
 
+    collect = () => {
+        if(this.props.charts.isLoading || this.props.charts.error || !this.props.charts.data || !this.props.charts.data.commits || !this.props.charts.data.commits.map)
+            return [];
+
+        return this.props.charts.data.commits.sort((a, b) => {
+            const order = this.props.filters.order_by === 0 ? 1 : -1;
+
+            let compA;
+            let compB;
+
+            switch(this.props.filters.sort_by) {
+                case 0:
+                    return moment(a.date).diff(b.date) * order;
+                case 1:
+                    compA = a.additions;
+                    compB = b.additions;
+                    break;
+                case 2:
+                    compA = a.deletions;
+                    compB = b.deletions;
+                    break;
+                default:
+                    return moment(a.date).diff(b.date);
+            }
+            if(compA > compB)
+                return order;
+            if(compA < compB)
+                return -order;
+
+            return 0;
+        });
+    }
+
     render() {
+        if(!this.props.project)
+            return null
+
         return (
             <SelectableCardSummary type='students'
-                                   values={(this.props.charts.data || {}).commits}
+                                   values={this.collect()}
                                    render={this.renderPreview}
                                    onClick={this.clickCommitCard}
                                    noCheckmark />
@@ -52,7 +89,9 @@ const mapStateToProps = (state) => {
         student: getCurrentStudent(state),
         project: getCurrentProject(state),
         course: getCurrentCourseId(state),
-        charts: getStudentCharts(state)
+        charts: getStudentCharts(state),
+        filtersHaveChanged: getFiltersHaveChanged(state),
+        filters: getFilters(state)
     }
 }
 

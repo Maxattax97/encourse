@@ -16,13 +16,13 @@ class DistributionChart extends Component {
 
         const chart = JSON.parse(JSON.stringify(this.props.chart));
 
-        if(!chart.bars || !chart.bars.length || (Math.abs(chart.courseStats.min - chart.courseStats.max) <= .005))
+        if(!chart.bars || !chart.bars.length || (Math.abs(chart.courseStats.min - chart.courseStats.max) <= .000005))
             return null;
 
         if(!this.props.filterCharts.loading && !this.props.filterCharts.error)
             this.props.filterChart.bars.forEach(bar => {
                 chart.bars.forEach(bar1 => {
-                    if(Math.abs(bar.index - bar1.index) <= .05) {
+                    if(Math.abs(bar.index - bar1.index) <= .000005) {
                         bar1["size1"] = bar.size
                         bar1["size"] -= bar.size
                     }

@@ -4,7 +4,7 @@ import { LineChart, XAxis, YAxis,
 import moment from 'moment'
 import { connect } from 'react-redux'
 import {retrieveStudentProgress} from '../../../../redux/retrievals/student'
-import {getCurrentStudent, getStudentProgress} from '../../../../redux/state-peekers/student'
+import {getCurrentStudent, getStudentCharts, getStudentProgress} from '../../../../redux/state-peekers/student'
 import {getCurrentProject} from '../../../../redux/state-peekers/projects'
 import {Chart} from '../../../Helpers'
 
@@ -14,7 +14,7 @@ class StudentProgress extends Component {
         return moment(dateUnix).format('M-D')
     }
 
-    render() {
+    /*render() {
         return (
             <Chart
                 chart={this.props.chart}
@@ -39,6 +39,46 @@ class StudentProgress extends Component {
                 </ResponsiveContainer>
             </Chart>
         )
+    }*/
+
+    formatData = (data) => {
+        if(!data)
+            return data
+
+        let previousProgress = 0;
+
+        return data.map(commit => {
+            if(commit.visiblePoints || commit.hiddenPoints)
+                previousProgress = commit.visiblePoints + commit.hiddenPoints;
+            return {
+                date: commit.date,
+                progress: previousProgress
+            }
+        })
+    }
+
+    render() {
+        return (
+            <Chart
+                chart={this.props.charts}
+            >
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={this.formatData(this.props.charts.data.commits)} margin={{top: 40, right: 35, left: 0, bottom: 25}}>
+                        <text className="chart-title" x="50%" y="15px" textAnchor="middle" dominantBaseline="middle">Amount of Time Spent on Project</text>
+                        <XAxis dataKey="date" tickFormatter={tick => moment(tick).format('M-D')}>
+                            <Label position="insideBottom" offset={-15} value="Date"/>
+                        </XAxis>
+                        <YAxis type="number">
+                            <Label angle={-90} position='insideLeft' style={{ textAnchor: 'middle' }}>
+                                Minutes Worked
+                            </Label>
+                        </YAxis>
+                        <Tooltip labelFormatter={tick => moment(tick).format('M-D HH:mm:ss')}/>
+                        <Line name="progress" type="monotone" dataKey="progress" stroke="black" dot={false} isAnimationActive={false}/>
+                    </LineChart>
+                </ResponsiveContainer>
+            </Chart>
+        )
     }
 }
 
@@ -46,7 +86,7 @@ const mapStateToProps = (state) => {
     return {
         student: getCurrentStudent(state),
         project: getCurrentProject(state),
-        chart: getStudentProgress(state)
+        charts: getStudentCharts(state)
     }
 }
 

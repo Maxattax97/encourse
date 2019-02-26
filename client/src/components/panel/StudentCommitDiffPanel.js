@@ -17,32 +17,35 @@ import StudentCommitDiff from "./student-commit-diff/StudentCommitDiff"
 class StudentCommitDiffPanel extends Component {
 
     componentDidMount = () => {
-        if(!this.props.currentStudent)
-            retrieveStudent({id: this.props.match.params.studentID}, this.props.currentCourseId, this.props.currentSemesterId)
+        if(!this.props.commit)
+            history.push(`/${this.props.currentCourseId}/course`)
+        retrieveStudent(this.props.student.studentID)
     }
-
 
 	componentWillUnmount() {
 		this.props.clearCommit()
 	}
 
     render() {
-        const action_names = [
-            'View Current Task',
-            'Student Page',
-            'Academic Dishonesty Report'
-        ]
+        if(!this.props.commit)
+            return null;
 
-        let studentDishonestyRedirect = () => { history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/student-dishonesty/${this.props.student.id}`)}
+        const action_names = [
+            'Student Page',
+            'Student Dishonesty Page',
+            'Course Page'
+        ]
 
         const actions = [
             () => {
-                this.props.setModalState(2)
+                history.push(`/${this.props.course}/student/${this.props.student.studentID}`)
             },
             () => {
-                history.push(`/${this.props.currentCourseId}/${this.props.currentSemesterId}/student/${this.props.student.id}`)
+                history.push(`/${this.props.course}/student-dishonesty/${this.props.student.id}`)
             },
-            studentDishonestyRedirect
+            () => {
+                history.push(`/${this.props.course}/course`)
+            }
         ]
 
         return (
@@ -57,7 +60,7 @@ class StudentCommitDiffPanel extends Component {
                     <div className='panel-commit-content'>
                         <h1 className='header'>
                             {
-                                this.props.student ? `${this.props.student.first_name} ${this.props.student.last_name}, commit: ${this.props.commit.hash}` : ''
+                                this.props.student ? `${this.props.student.firstName} ${this.props.student.lastName}, ${this.props.commit.hash}` : ''
                             }
                         </h1>
                         <div className="h1 break-line header" />
@@ -75,8 +78,7 @@ const mapStateToProps = (state) => {
     return {
         student: getCurrentStudent(state),
         commit: getCurrentCommit(state),
-        currentCourseId: getCurrentCourseId(state),
-        currentSemesterId: getCurrentSemesterId(state),
+        course: getCurrentCourseId(state),
     }
 }
 

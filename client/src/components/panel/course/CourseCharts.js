@@ -17,6 +17,7 @@ class CourseCharts extends Component {
 
     componentDidMount() {
         if(this.props.project) {
+            console.log(this.props.project)
             retrieveCourseCharts(this.props.project)
 
             retrieveCourseFilterCharts(this.props.project, null, null, null, null, null, true)
@@ -36,8 +37,9 @@ class CourseCharts extends Component {
         if(this.props.project && this.props.project.runTestall)
             return (
                 <ChartList>
-                    <CompletionProgress/>
-                    <TestCaseProgress/>
+                    <DistributionChart chart={ (this.props.charts.data || {}).progress } filterChart={ (this.props.filterCharts.data || {}).progress } x="Points" y="Student Count"/>
+                    <DistributionChart chart={ (this.props.charts.data || {}).commits } filterChart={ (this.props.filterCharts.data || {}).commits } x="Commits" y="Student Count"/>
+                    <DistributionChart chart={ (this.props.charts.data || {}).time } filterChart={ (this.props.filterCharts.data || {}).time } x="Minutes" y="Student Count"/>
                 </ChartList>
             )
 

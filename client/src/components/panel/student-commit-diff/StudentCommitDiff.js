@@ -9,19 +9,20 @@ import {
 } from "../../../redux/state-peekers/student"
 import {getCurrentProject} from "../../../redux/state-peekers/projects"
 import {retrieveSource} from "../../../redux/retrievals/student"
+import 'react-diff-view/index.css'
 
 class StudentCommitDiff extends Component {
 
 	componentDidMount() {
 		if(this.props.student && this.props.project && this.props.commit)
-			retrieveSource(this.props.student, this.props.project, this.props.commit.hash)
+			retrieveSource(this.props.project, this.props.student, this.props.commit)
 	}
 
 	render() {
-		if(!this.props.source.data.contents)
+		if(!this.props.source.data.response)
 			return null
 
-		const files = parseDiff(this.props.source.data.contents);
+		const files = parseDiff(this.props.source.data.response);
 		return (
 			<div>
 				{files.map(({hunks}, i) => <Diff key={i} hunks={hunks} viewType="split" />)}

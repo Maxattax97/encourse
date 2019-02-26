@@ -12,6 +12,7 @@ import SelectableCardSummary from "../common/SelectableCardSummary"
 import {
     retrieveAllStudentReports,
 } from '../../../redux/retrievals/course'
+import {getFilters, getFiltersHaveChanged} from '../../../redux/state-peekers/control'
 
 class StudentReportSummary extends Component {
 
@@ -50,13 +51,57 @@ class StudentReportSummary extends Component {
 		)
 	}
 
+	collect = () => {
+        if(this.props.students.isLoading || this.props.students.error || !this.props.students.data || !this.props.students.data.map)
+            return [];
+
+        return this.props.students.data.sort((a, b) => {
+            const order = this.props.filters.order_by === 0 ? 1 : -1;
+
+            let compA;
+            let compB;
+
+            switch(this.props.filters.sort_by) {
+                case 0:
+                    compA = a.lastName;
+                    compB = b.lastName;
+                    break;
+                case 1:
+                    compA = a.changes;
+                    compB = b.changes;
+                    break;
+                case 2:
+                    compA = a.timeVelocity;
+                    compB = b.timeVelocity;
+                    break;
+                case 3:
+                    compA = a.commitVelocity;
+                    compB = b.commitVelocity;
+                    break;
+                case 4:
+                    compA = a.comparison;
+                    compB = b.comparison;
+                    break;
+                default:
+                    compA = a.comparisonPercent;
+                    compB = b.comparisonPercent;
+            }
+            if(compA > compB)
+                return order;
+            if(compA < compB)
+                return -order;
+
+            return 0;
+        });
+    }
+
     render() {
 	    if(!this.props.project)
 	        return null
 
         return (
 	        <SelectableCardSummary type='students'
-	                               values={this.props.students.data}
+	                               values={ this.collect() }
 	                               render={this.renderPreview}
 	                               onClick={this.clickStudentCard}
                                    noCheckmark />
@@ -70,6 +115,8 @@ const mapStateToProps = (state) => {
         students: getStudents(state),
         project: getCurrentProject(state),
         course: getCurrentCourseId(state),
+        filtersHaveChanged: getFiltersHaveChanged(state),
+        filters: getFilters(state)
     }
 }
 

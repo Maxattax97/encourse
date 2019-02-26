@@ -8,7 +8,7 @@ import {
     clearStudent,
     runStudentTests,
     syncStudentRepository,
-    setModalState
+    setModalState, setCurrentStudent
 } from '../../redux/actions/index'
 import ActionNavigation from '../navigation/ActionNavigation'
 import {StudentCharts, StudentProjectInfo} from './student'
@@ -27,29 +27,42 @@ import {retrieveCourse} from '../../redux/retrievals/course'
 
 class StudentPanel extends Component {
 
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            clear: true
+        }
+    }
+
     componentDidMount = () => {
-        retrieveCourse(this.props.currentCourseId)
+        retrieveCourse(this.props.course)
         retrieveStudent(this.props.student.studentID)
     }
 
 	componentWillUnmount() {
-		this.props.clearStudent()
+        if(this.state.clear)
+		    this.props.clearStudent()
 	}
 
     render() {
 
         const action_names = [
-            'View Current Task',
-            'Academic Dishonesty Report'
+            'Student Dishonesty Page',
+            'Course Page'
         ]
-
-        let studentDishonestyRedirect = () => { history.push(`/${this.props.currentCourseId}/student-dishonesty/${this.props.student.studentID}`)}
 
         const actions = [
             () => {
-                this.props.setModalState(2)
+                this.setState({
+                    clear: false
+                })
+                this.props.setCurrentStudent(this.props.student)
+                history.push(`/${this.props.course}/student-dishonesty/${this.props.student.studentID}`)
             },
-            studentDishonestyRedirect
+            () => {
+                history.push(`/${this.props.course}/course`)
+            }
         ]
 
         return (
@@ -58,7 +71,7 @@ class StudentPanel extends Component {
                 <div className='panel-left-nav'>
                     <BackNavigation/>
                     <ProjectNavigation/>
-                    {/*<ActionNavigation actions={ actions } action_names={ action_names }/>*/}
+                    <ActionNavigation actions={ actions } action_names={ action_names }/>
                 </div>
 
                 <ProgressModal id={2} />
@@ -89,7 +102,7 @@ const mapStateToProps = (state) => {
     return {
         student: getCurrentStudent(state),
         project: getCurrentProject(state),
-        currentCourseId: getCurrentCourseId(state),
+        course: getCurrentCourseId(state),
     }
 }
 
@@ -100,6 +113,7 @@ const mapDispatchToProps = (dispatch) => {
         syncStudentRepository: (url, headers, body) => dispatch(syncStudentRepository(url, headers, body)),
         runStudentTests: (url, headers, body) => dispatch(runStudentTests(url, headers, body)),
         clearStudent: () => dispatch(clearStudent),
+        setCurrentStudent: (student) => dispatch(setCurrentStudent(student)),
     }
 }
 

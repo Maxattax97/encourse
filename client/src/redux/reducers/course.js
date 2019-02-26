@@ -71,6 +71,8 @@ function formatChart(udata) {
 
 function formatCourseCharts(udata) {
 
+    formatChart(udata.progress)
+
     formatChart(udata.commits)
 
     formatChart(udata.time)
