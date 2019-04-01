@@ -209,6 +209,11 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_tilde", false, 2.0));
                 projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_robustness", false, 10.0));
             }
+            if (!projectRepository.existsByName("Building a HTTP Server")) {
+                Project server = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Building a HTTP Server", LocalDate.of(2019, 3, 25), LocalDate.of(2019, 4, 8), "lab5-src", false));
+
+                projectService.addProjectIgnoreUser(new ProjectIgnoreModel(server.getProjectID(), "cs252@cs.purdue.edu"));
+            }
         }
         catch(Exception e) {
             e.printStackTrace();
