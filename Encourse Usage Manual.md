@@ -258,7 +258,7 @@ sudo -u postgres createuser --interactive
 Then enter the user’s name and make the user a superuser for the database. Once this is done, type `\q` to close the terminal. Replace `cs252` with your new superuser's name in the file `init.sql` and run the script to set up the authentication tables:
 
 ```bash
-sudo -u postgres psql < init.sql
+sudo -u postgres psql encourse_prod < init.sql
 ```
 
 The database will continue to run in the background so that the backend server can access it.
