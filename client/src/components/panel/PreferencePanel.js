@@ -271,6 +271,7 @@ class PreferencePanel extends Component {
                                 <select className="h3-size" value={this.state.semester} onChange={this.onChange} name="semester" ref="semester">
                                     <option value="Fall2018">Fall 2018</option>
                                     <option value="Spring2019">Spring 2019</option>
+                                    <option value="Summer2019">Summer 2019</option>
                                 </select>
                                 <div className="modal-buttons float-height">
                                     <div onClick={ this.deleteCourse }>
