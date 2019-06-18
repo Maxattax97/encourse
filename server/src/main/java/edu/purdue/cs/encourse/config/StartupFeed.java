@@ -97,6 +97,8 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
 
                 reader.close();
 
+                /*
+
                 reader = new BufferedReader(new FileReader("src/taconfig.txt"));
                 BufferedReader studentReader = new BufferedReader(new FileReader("src/stuconfig.txt"));
                 String input;
@@ -141,6 +143,8 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                         break;
                     }
                 }
+                
+                */
             }
             if (course == null) {
                 course = courseRepository.findByNameAndSemester("cs252", "Summer2019");
