@@ -72,16 +72,14 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
             if (!accountRepository.findAll().iterator().hasNext()) {
 
                 Account grr = accountService.addAccount(new AccountModel("grr", "Gustavo", "Rodriguez-Rivera", "grr@purdue.edu", Account.Role.PROFESSOR.ordinal()));
-                Account killian = accountService.addAccount(new AccountModel("kleclain-a", "Killian", "LeClainche", "kleclain@purdue.edu", Account.Role.ADMIN.ordinal()));
                 Account jordan = accountService.addAccount(new AccountModel("reed226-a", "William", "Reed", "reed226@purdue.edu", Account.Role.ADMIN.ordinal()));
 
                 adminService.addUser(new UserModel(grr, "$2a$04$/zamuN8nrPT0qZ4jbaTTp..kBjKUtMu.Jbj2DAHZ..KLDON4REPJu"));
-                adminService.addUser(new UserModel(killian, "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6"));
                 adminService.addUser(new UserModel(jordan, "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6"));
 
-                course = courseService.addCourse(new CourseModel(grr.getUserID(), "1001", "Systems Programming", "cs252", "Spring2019", "/homes/cs252/sourcecontrol/work"));
+                course = courseService.addCourse(new CourseModel(grr.getUserID(), "1001", "Systems Programming", "cs252", "Summer2019", "/homes/cs252/sourcecontrol/work"));
 
-                courseService.addSection(new CourseSectionModel(course.getCourseID(), "LE1/2", "N/A"));
+                courseService.addSection(new CourseSectionModel(course.getCourseID(), "LE1", "N/A"));
 
                 BufferedReader reader = new BufferedReader(new FileReader(course.getCourseHub() + "/students.txt"));
 
@@ -145,20 +143,20 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 }
             }
             if (course == null) {
-                course = courseRepository.findByNameAndSemester("cs252", "Spring2019");
+                course = courseRepository.findByNameAndSemester("cs252", "Summer2019");
             }
-
-            // TODO: @KILLIAN Integrate redundancy checks into addProject() method
             if (!projectRepository.existsByName("MyMalloc")) {
                 Project mymalloc = projectService.addProject(new CourseProjectModel(course.getCourseID(), "MyMalloc", LocalDate.of(2019, 1, 8), LocalDate.of(2019, 2, 2), "lab1-src", false));
-                
                 projectService.addProjectIgnoreUser(new ProjectIgnoreModel(mymalloc.getProjectID(), "cs252@cs.purdue.edu"));
             }
+
+            /*
+
             if (!projectRepository.existsByName("Shell Scripting")) {
                 Project bash = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Shell Scripting", LocalDate.of(2019, 1, 29), LocalDate.of(2019, 2, 16), "lab2-src", false));
-    
                 projectService.addProjectIgnoreUser(new ProjectIgnoreModel(bash.getProjectID(), "cs252@cs.purdue.edu"));
             }
+
             if (!projectRepository.existsByName("Implementing a Shell")) {
                 Project shell = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Implementing a Shell", LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 9), "lab3-src", true));
     
@@ -209,220 +207,17 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_tilde", false, 2.0));
                 projectService.addTestScript(new ProjectTestScriptModel(shell.getProjectID(), "test_robustness", false, 10.0));
             }
+
             if (!projectRepository.existsByName("Building a HTTP Server")) {
                 Project server = projectService.addProject(new CourseProjectModel(course.getCourseID(), "Building a HTTP Server", LocalDate.of(2019, 3, 25), LocalDate.of(2019, 4, 8), "lab5-src", false));
-
                 projectService.addProjectIgnoreUser(new ProjectIgnoreModel(server.getProjectID(), "cs252@cs.purdue.edu"));
             }
+
+            */
         }
         catch(Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void addMallocTestScripts(Project project) {
-        /*professorService.addTestScript(project.getProjectID(), "test_simple0", false, 2);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple0", "Simple Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple0", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_simple1", false, 3);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple1", "Simple Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple1", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_simple2", false, 3);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple2", "Simple Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple2", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_simple3", false, 3);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple3", "Simple Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple3", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_simple4", false, 3);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple4", "Simple Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple4", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_simple5", false, 3);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple5", "Simple Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple5", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_simple6", false, 3);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple6", "Simple Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_simple6", "Part 1");
-
-        professorService.addTestScript(project.getProjectID(), "test_exact", false, 5);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_exact", "Malloc Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_exact", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_split", false, 5);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_split", "Malloc Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_split", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_multi_malloc", false, 5);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_multi_malloc", "Malloc Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_multi_malloc", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_insert_chunk", false, 3);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_insert_chunk", "Malloc Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_insert_chunk", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_coalesce_chunk_insert", false, 3);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_coalesce_chunk_insert", "Malloc Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_coalesce_chunk_insert", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_coalesce_chunk_coalesce", false, 4);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_coalesce_chunk_coalesce", "Malloc Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_coalesce_chunk_coalesce", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_malloc_large", false, 5);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_malloc_large", "Malloc Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_malloc_large", "Part 2");
-
-        professorService.addTestScript(project.getProjectID(), "test_free_insert", false, 3);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_insert", "Free Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_insert", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_free_left", false, 4);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_left", "Free Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_left", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_free_right", false, 4);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_right", "Free Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_right", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_free_both", false, 3);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_both", "Free Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_both", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_free_even", false, 5);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_even", "Free Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_even", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_free_odd", false, 5);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_odd", "Free Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_odd", "Part 2");
-
-        professorService.addTestScript(project.getProjectID(), "test_large", false, 10);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_large", "Robustness Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_large", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_all_lists", false, 5);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_all_lists", "Robustness Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_all_lists", "Part 2");
-
-        professorService.addTestScript(project.getProjectID(), "test_locks", false, 3);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_locks", "Other Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_locks", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_malloc_zero", false, 2);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_malloc_zero", "Other Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_malloc_zero", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_free_null", false, 2);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_null", "Other Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_free_null", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_double_free", false, 2);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_double_free", "Other Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_double_free", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_out_of_ram", false, 2);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_out_of_ram", "Other Tests");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_out_of_ram", "Part 2");*/
-    }
-
-    private void addShellTestScripts(Project project) {
-        //professorService.addTestScript(project.getProjectID(), "test_redirect_input", false, 2);
-        /*professorService.addTestScript(project.getProjectID(), "test_redirect_output", false, 2);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_redirect_output", "IO Redirection");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_redirect_output", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_redirect_error", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_redirect_error", "IO Redirection");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_redirect_error", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_redirect_error2", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_redirect_error2", "IO Redirection");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_redirect_error2", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_redirect_out_err", false, 2);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_redirect_out_err", "IO Redirection");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_redirect_out_err", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_redirect_multiple", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_redirect_multiple", "IO Redirection");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_redirect_multiple", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_append_output", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_append_output", "IO Redirection");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_append_output", "Part 1");
-
-        professorService.addTestScript(project.getProjectID(), "test_pipes1", false, 2);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_pipes1", "Pipes");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_pipes1", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_pipes2", false, 2);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_pipes2", "Pipes");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_pipes2", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_pipes_redirect_out", false, 2);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_pipes_redirect_out", "Pipes");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_pipes_redirect_out", "Part 1");
-        professorService.addTestScript(project.getProjectID(), "test_pipes_redirect_err", false, 2);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_pipes_redirect_err", "Pipes");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_pipes_redirect_err", "Part 1");
-
-        professorService.addTestScript(project.getProjectID(), "test_background", false, 2);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_background", "Background Processes");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_background", "Part 1");
-        //professorService.addTestScript(project.getProjectID(), "test_zombie", false, 1);
-
-        professorService.addTestScript(project.getProjectID(), "test_printenv", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_printenv", "Builtin Functions");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_printenv", "Part 2");
-        //professorService.addTestScript(project.getProjectID(), "test_setenv", false, 0.5);
-        professorService.addTestScript(project.getProjectID(), "test_unsetenv", false, 0.5);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_unsetenv", "Builtin Functions");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_unsetenv", "Part 2");
-        //professorService.addTestScript(project.getProjectID(), "test_source", false, 2);
-
-        professorService.addTestScript(project.getProjectID(), "test_cd1", false, 0.5);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_cd1", "cd");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_cd1", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_cd2", false, 0.5);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_cd2", "cd");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_cd2", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_cd3", false, 0.5);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_cd3", "cd");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_cd3", "Part 2");
-        //professorService.addTestScript(project.getProjectID(), "test_cd4", false, 0.5);
-
-        professorService.addTestScript(project.getProjectID(), "test_parsing1", false, 0.5);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_parsing1", "Parsing");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_parsing1", "Part 2");
-        professorService.addTestScript(project.getProjectID(), "test_parsing2", false, 0.5);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_parsing2", "Parsing");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_parsing2", "Part 2");
-        //professorService.addTestScript(project.getProjectID(), "test_quotes1", false, 1);
-        //professorService.addTestScript(project.getProjectID(), "test_quotes2", false, 1);
-        professorService.addTestScript(project.getProjectID(), "test_escape", false, 2);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_escape", "Parsing");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_escape", "Part 2");
-        //professorService.addTestScript(project.getProjectID(), "test_subshell", false, 10);
-
-        professorService.addTestScript(project.getProjectID(), "test_env_expand1", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_env_expand1", "Environment Variable Expansion");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_env_expand1", "Part 3");
-        professorService.addTestScript(project.getProjectID(), "test_env_expand2", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_env_expand2", "Environment Variable Expansion");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_env_expand2", "Part 3");
-        professorService.addTestScript(project.getProjectID(), "test_env_var_shell", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_env_var_shell", "Environment Variable Expansion");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_env_var_shell", "Part 3");
-        professorService.addTestScript(project.getProjectID(), "test_env_var_dollar", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_env_var_dollar", "Environment Variable Expansion");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_env_var_dollar", "Part 3");
-        professorService.addTestScript(project.getProjectID(), "test_env_var_question", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_env_var_question", "Environment Variable Expansion");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_env_var_question", "Part 3");
-        professorService.addTestScript(project.getProjectID(), "test_env_var_bang", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_env_var_bang", "Environment Variable Expansion");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_env_var_bang", "Part 3");
-        //professorService.addTestScript(project.getProjectID(), "test_env_var_uscore", false, 1);
-
-        professorService.addTestScript(project.getProjectID(), "test_wildcards1", false, 3);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards1", "Wildcarding");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards1", "Part 3");
-        professorService.addTestScript(project.getProjectID(), "test_wildcards2", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards2", "Wildcarding");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards2", "Part 3");
-        professorService.addTestScript(project.getProjectID(), "test_wildcards3", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards3", "Wildcarding");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards3", "Part 3");
-        professorService.addTestScript(project.getProjectID(), "test_wildcards4", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards4", "Wildcarding");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards4", "Part 3");
-        professorService.addTestScript(project.getProjectID(), "test_wildcards5", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards5", "Wildcarding");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards5", "Part 3");
-        professorService.addTestScript(project.getProjectID(), "test_wildcards6", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards6", "Wildcarding");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards6", "Part 3");
-        professorService.addTestScript(project.getProjectID(), "test_wildcards7", false, 1);
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards7", "Wildcarding");
-        professorService.addTestScriptToSuite(project.getProjectID(), "test_wildcards7", "Part 3");
-        //professorService.addTestScript(project.getProjectID(), "test_tilde", false, 2);
-        //professorService.addTestScript(project.getProjectID(), "test_robustness", false, 10);*/
     }
 }
 
