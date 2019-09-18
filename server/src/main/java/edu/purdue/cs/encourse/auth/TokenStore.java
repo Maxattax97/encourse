@@ -20,7 +20,7 @@ public interface TokenStore {
     String create (String userId);
 
     /**
-     * Reurns the temporary token associated with the
+     * Reruns the temporary token associated with the
      * given user id if one exists. Otherwise, returns
      * null.
      *
