@@ -51,7 +51,8 @@ public class AuthController {
     private final UserDetailsServiceImpl userDetailsService;
     
     @Autowired
-    public AuthController(AccountService accountService, TokenStore tokenStore, SessionRegistry sessionRegistry, AdminServiceV2 adminService, UserDetailsServiceImpl userDetailsService) {
+    public AuthController(AccountService accountService, TokenStore tokenStore, SessionRegistry sessionRegistry, AdminServiceV2 adminService, UserDetailsServiceImpl userDetailsService, Sender sender, Authenticator authenticator) {
+        // TODO: Test this, sender and authenticator were added to parameter list without testing.
         this.accountService = accountService;
         this.tokenStore = tokenStore;
         this.sender = sender;
@@ -105,8 +106,9 @@ public class AuthController {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null) {
             String tokenValue = authHeader.substring(authHeader.indexOf(' ')).trim();
-            OAuth2AccessToken accessToken = tokenStore.remove(tokenValue);
-            tokenStore.removeAccessToken(accessToken);
+            // TODO: Uncomment - commented out for testing
+            //OAuth2AccessToken accessToken = tokenStore.remove(tokenValue);
+            //tokenStore.removeAccessToken(accessToken);
         }
         User user = adminService.getUser();
         int result = logout(user);
