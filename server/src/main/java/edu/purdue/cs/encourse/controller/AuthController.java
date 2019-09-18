@@ -1,5 +1,6 @@
 package edu.purdue.cs.encourse.controller;
 
+import edu.purdue.cs.encourse.auth.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.purdue.cs.encourse.domain.Account;
 import edu.purdue.cs.encourse.domain.User;
@@ -22,8 +23,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.relation.InvalidRelationIdException;
@@ -42,6 +41,10 @@ public class AuthController {
 
     private final TokenStore tokenStore;
 
+    private final Sender sender;
+
+    private final Authenticator authenticator;
+
     private final SessionRegistry sessionRegistry;
     
     private final UserDetailsServiceImpl userDetailsService;
@@ -50,11 +53,27 @@ public class AuthController {
     public AuthController(AccountService accountService, TokenStore tokenStore, SessionRegistry sessionRegistry, AdminServiceV2 adminService, UserDetailsServiceImpl userDetailsService) {
         this.accountService = accountService;
         this.tokenStore = tokenStore;
+        this.sender = sender;
+        this.authenticator = authenticator;
         this.sessionRegistry = sessionRegistry;
         this.adminService = adminService;
         this.userDetailsService = userDetailsService;
     }
-    
+
+    @RequestMapping(value = "/login",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<?> logIn(@RequestParam("email") String email) {
+        // TODO: verify that the user is in the database
+
+        // send sign-in email
+        String token = tokenStore.create(email);
+        sender.send(email, token);
+
+        return new ResponseEntity<>("{}", HttpStatus.OK);
+    }
+
     /**
      * Retrieves Account of current logged in User
      *
@@ -73,23 +92,7 @@ public class AuthController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
-    
-    /**
-     * Changes the password in Account
-     *
-     */
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/modify/password",
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> modifyPassword(@Valid @NonNull @RequestBody ChangePasswordModel model) {
-        int result = userDetailsService.updatePassword(adminService.getUser(), model);
-        if (result == -1) {
-            return new ResponseEntity<>("{}", HttpStatus.NOT_MODIFIED);
-        }
-        return new ResponseEntity<>("{}", HttpStatus.OK);
-    }
+
 
     /**
      * Logs the current logged in User out
@@ -101,7 +104,7 @@ public class AuthController {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null) {
             String tokenValue = authHeader.substring(authHeader.indexOf(' ')).trim();
-            OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenValue);
+            OAuth2AccessToken accessToken = tokenStore.remove(tokenValue);
             tokenStore.removeAccessToken(accessToken);
         }
         User user = adminService.getUser();
