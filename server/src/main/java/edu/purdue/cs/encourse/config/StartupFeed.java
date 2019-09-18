@@ -27,6 +27,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -81,21 +82,25 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
 
                 courseService.addSection(new CourseSectionModel(course.getCourseID(), "LE1", "N/A"));
 
-                BufferedReader reader = new BufferedReader(new FileReader(course.getCourseHub() + "/students.txt"));
+                try {
+                    BufferedReader reader = new BufferedReader(new FileReader(course.getCourseHub() + "/students.txt"));
 
-                String student;
-                int count = 1;
-                List<CourseStudent> students = new ArrayList<>();
+                    String student;
+                    int count = 1;
+                    List<CourseStudent> students = new ArrayList<>();
 
-                while ((student = reader.readLine()) != null && count <= ConfigurationManager.getInstance().limit) {
-                    Account studentAccount = accountService.addAccount(new AccountModel(student, "Student", student, student + "@purdue.edu", Account.Role.STUDENT.ordinal()));
+                    while ((student = reader.readLine()) != null && count <= ConfigurationManager.getInstance().limit) {
+                        Account studentAccount = accountService.addAccount(new AccountModel(student, "Student", student, student + "@purdue.edu", Account.Role.STUDENT.ordinal()));
 
-                    students.add(adminService.addCourseStudent(new CourseStudentModel(course.getCourseID(), studentAccount.getUserID())));
+                        students.add(adminService.addCourseStudent(new CourseStudentModel(course.getCourseID(), studentAccount.getUserID())));
 
-                    count++;
+                        count++;
+                    }
+
+                    reader.close();
+                } catch (FileNotFoundException f) {
+                    f.printStackTrace();
                 }
-
-                reader.close();
 
                 /*
 
