@@ -12,17 +12,8 @@ class Login extends Component {
         ev.preventDefault()
 
         let username = ev.target.username.value
-        let password = ev.target.password.value
 
-        let form = new FormData()
-        form.append('grant_type', 'password')
-        form.append('username', username)
-        form.append('password', password)
-        form.append('client_id', 'encourse-client')
-
-        this.props.logIn(`${url}/oauth/token`, {
-            'Authorization': `Basic ${btoa('encourse-client:encourse-password')}`,
-        }, form)
+        this.props.logIn(`${url}/signin?username=${username}`)
     }
 
     componentDidMount = () => {

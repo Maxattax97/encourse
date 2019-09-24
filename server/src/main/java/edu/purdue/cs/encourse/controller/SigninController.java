@@ -32,14 +32,14 @@ public class SigninController {
   }
   
   @PostMapping("/signin")
-  public String signin (@RequestParam("email") String aEmail) {
+  public String signin (@RequestParam("username") String aUsername) {
     
     // verify that the user is in the database.
     // ...
     
     // send sign-in email
-    String token = tokenStore.create(aEmail);
-    sender.send(aEmail, token);
+    String token = tokenStore.create(aUsername);
+    sender.send(""/*aEmail*/, token);
     
     return "login_link_sent";
   }
