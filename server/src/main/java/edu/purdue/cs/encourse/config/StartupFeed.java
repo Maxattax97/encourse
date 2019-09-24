@@ -75,10 +75,12 @@ public class StartupFeed implements ApplicationListener<ApplicationReadyEvent> {
                 Account grr = accountService.addAccount(new AccountModel("grr", "Gustavo", "Rodriguez-Rivera", "grr@purdue.edu", Account.Role.PROFESSOR.ordinal()));
                 Account jordan = accountService.addAccount(new AccountModel("reed226-a", "William", "Reed", "reed226@purdue.edu", Account.Role.ADMIN.ordinal()));
                 Account jordanOG = accountService.addAccount(new AccountModel("jordan", "Jordan", "Buckmaster", "buckmast@purdue.edu", Account.Role.ADMIN.ordinal()));
+                Account ryan = accountService.addAccount(new AccountModel("ryan", "Ryan", "Sullivan", "sulli196@purdue.edu", Account.Role.ADMIN.ordinal()));
 
                 adminService.addUser(new UserModel(grr, "$2a$04$/zamuN8nrPT0qZ4jbaTTp..kBjKUtMu.Jbj2DAHZ..KLDON4REPJu"));
                 adminService.addUser(new UserModel(jordan, "$2a$04$KDYkLNaDhiKvMqJhRQ58iumiMAd8Rxf4az3COnKsPKNlHcK7PMjs6"));
                 adminService.addUser(new UserModel(jordanOG, "$2a$04$VN1/mgDvNA.xqw7xf9eAcOZsB2PYVQiVBsVf/MlJgYjzEkZ7sRAcS"));
+                adminService.addUser(new UserModel(ryan, "$2y$04$5jekxjLg0P.F4J75bJ8hB.T5QItZVX3pSN5CfVwoXWij5zWeDrK8S"));
 
                 course = courseService.addCourse(new CourseModel(grr.getUserID(), "1001", "Systems Programming", "cs252", "Summer2019", "/homes/cs252/sourcecontrol/work"));
 

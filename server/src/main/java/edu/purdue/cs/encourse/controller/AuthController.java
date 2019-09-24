@@ -68,6 +68,7 @@ public class AuthController {
             method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> logIn(@RequestParam("email") String email) {
         // TODO: verify that the user is in the database
+        System.out.println("auth");
 
         // send sign-in email
         String token = tokenStore.create(email);
@@ -87,6 +88,7 @@ public class AuthController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<?> getAccount() {
+        System.out.println("auth2");
         try {
             return new ResponseEntity<>(new AccountModel(accountService.getAccount(adminService.getUser().getId())), HttpStatus.OK);
         }

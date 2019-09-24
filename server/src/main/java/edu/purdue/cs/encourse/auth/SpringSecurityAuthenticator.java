@@ -28,7 +28,7 @@ public class SpringSecurityAuthenticator implements Authenticator {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             return authentication;
         }
-        throw new BadCredentialsException("Invalud auth token for user: " + userId);
+        throw new BadCredentialsException("Invalid auth token for user: " + userId);
     }
 
 }
