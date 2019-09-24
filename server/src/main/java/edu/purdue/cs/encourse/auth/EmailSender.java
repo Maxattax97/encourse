@@ -28,9 +28,6 @@ public class EmailSender implements Sender {
     public void send (String aUserId, String aToken) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
-        System.out.println("from: " + from);
-        System.out.println("userId: " + aUserId);
-        System.out.println("Token: " + aToken);
         mailMessage.setFrom(from);
         mailMessage.setTo(aUserId);
         mailMessage.setSubject("Your signin link");
