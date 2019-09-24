@@ -1,23 +1,27 @@
 package edu.purdue.cs.encourse.auth;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+import java.util.Properties;
 
 /**
  * @author Arik Cohen, Jordan Buckmaster
  * @since Jan 30, 2018
  */
-public class EmailSender implements Sender {
 
-    //TODO: update to dedicated email using application-secret.properties
-    private final String from;
+
+public class EmailSender implements Sender {
+    @Value("${spring.mail.username}")
+    private String from;
 
     private final JavaMailSender mailSender;
 
     public EmailSender(JavaMailSender aMailSender) {
         mailSender = aMailSender;
-        from = "buckmast@purdue.edu";
     }
 
     @Override

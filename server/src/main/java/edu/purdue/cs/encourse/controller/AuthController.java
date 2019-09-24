@@ -26,6 +26,13 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import javax.management.relation.InvalidRelationIdException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -130,3 +137,4 @@ public class AuthController {
         return -1;
     }
 }
+
