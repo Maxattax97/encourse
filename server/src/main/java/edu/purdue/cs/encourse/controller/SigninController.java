@@ -41,7 +41,7 @@ public class SigninController {
   public String signin (@RequestParam("username") String aUsername) {
     
     // verify that the user is in the database.
-    String email = verifyUser(aUsername)
+    String email = verifyUser(aUsername);
 
     // send sign-in email
     String token = tokenStore.create(aUsername);
@@ -64,7 +64,7 @@ public class SigninController {
   private String verifyUser(String username) {
     List<Account> accounts = accountRepository.findAll();
     for(Account account : accounts) {
-      System.out.println("Account Username: " + account.getUsername())
+      System.out.println("Account Username: " + account.getUsername());
       if(account.getUsername().equals(username)) {
         return account.getEduEmail();
       }
