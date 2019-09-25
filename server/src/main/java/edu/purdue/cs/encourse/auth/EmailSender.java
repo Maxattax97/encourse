@@ -31,7 +31,7 @@ public class EmailSender implements Sender {
         mailMessage.setFrom(from);
         mailMessage.setTo(aUserId);
         mailMessage.setSubject("Your signin link");
-        mailMessage.setText(String.format("Hello!\nAccess your account here: http://localhost:8080/signin/%s?uid=%s",aToken,aUserId));
+        mailMessage.setText(String.format("Hello!\nAccess your account here: http://localhost:40797/signin/%s?uid=%s",aToken,aUserId));
 
         mailSender.send(mailMessage);
     }
