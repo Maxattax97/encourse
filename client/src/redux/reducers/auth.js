@@ -3,7 +3,7 @@ import {forwardData, getData} from './reducer-utils'
 function setTokens(state, action) {
 	//const expires_at = Date.now() + (action.data.expires_in) * 1000
 	return Object.assign({}, state, {
-		authenticateTokenData: action.data,
+		authenticateTokenData: action.token,
 		authenticateTokenIsLoading: false,
 	})
 }
@@ -34,10 +34,12 @@ function authenticateToken(state, action) {
 		authenticateTokenHasError: action.hasError,
 		authenticateTokenIsLoading: false,
 	})
+
+	/*
 	if(action.data) {
 		console.log(action.data)	
 		return setTokens(state, action)
-	}
+	}*/
 		
 
 	return Object.assign({}, state, {

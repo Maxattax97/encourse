@@ -14,7 +14,7 @@ export {
 } from './projects'
 
 export {
-    logIn, logOut, authenticateToken, changePassword, getAccount, setLocation
+    logIn, logOut, authenticateToken, changePassword, getAccount, setLocation, setTokens
 } from './auth'
 
 export {

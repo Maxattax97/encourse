@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import logo from '../resources/encourse-logo-large.png'
-import { logIn, setLocation, authenticateToken } from '../redux/actions'
+import { logIn, setLocation, authenticateToken, setTokens } from '../redux/actions'
 
 import url from '../server'
 
@@ -20,6 +20,7 @@ class Login extends Component {
         this.props.setLocation(this.props.location.state ? this.props.location.prevRoute : null)
         if(this.props.match.params.uid && this.props.match.params.token) {
             this.props.authenticateToken(`${url}/signin/${this.props.match.params.token}?uid=${this.props.match.params.uid}`)
+            this.props.setTokens({uid: this.props.match.params.uid, token: this.props.match.params.token})
         }
     }
 
@@ -45,6 +46,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         authenticateToken: (url) => dispatch(authenticateToken(url)),
         logIn: (url) => dispatch(logIn(url)),
+        setTokens: (token) => dispatch(setTokens(token)),
         setLocation: (location) => dispatch(setLocation(location)),
     }
 }
