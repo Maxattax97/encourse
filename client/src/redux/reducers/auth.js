@@ -1,10 +1,9 @@
 import {forwardData, getData} from './reducer-utils'
-import { authenticateToken } from '../actions'
 
 function setTokens(state, action) {
 	//const expires_at = Date.now() + (action.data.expires_in) * 1000
 	return Object.assign({}, state, {
-		authenticateTokenData: {...action.data, expires_at},
+		authenticateTokenData: action.data,
 		authenticateTokenIsLoading: false,
 	})
 }
