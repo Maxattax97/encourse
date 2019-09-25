@@ -64,7 +64,6 @@ public class SigninController {
   private String verifyUser(String username) {
     List<Account> accounts = accountRepository.findAll();
     for(Account account : accounts) {
-      System.out.println("Account Username: " + account.getUsername());
       if(account.getUsername().equals(username)) {
         return account.getEduEmail();
       }
