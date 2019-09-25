@@ -45,7 +45,7 @@ public class SigninController {
 
     // send sign-in email
     String token = tokenStore.create(aUsername);
-    sender.send(email, token);
+    sender.send(aUsername, email, token);
     
     return "login_link_sent";
   }
@@ -70,6 +70,6 @@ public class SigninController {
       }
     }
 
-    return null;
+    return "";
   }
 }

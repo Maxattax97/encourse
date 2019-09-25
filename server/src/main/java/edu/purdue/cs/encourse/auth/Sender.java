@@ -8,6 +8,6 @@ package edu.purdue.cs.encourse.auth;
  */
 public interface Sender {
 
-    void send (String userId, String token);
+    void send (String userId, String email, String token);
 
 }
