@@ -6,6 +6,11 @@ export const logIn = genericDispatch(
     class_type, 'LOG_IN', 'POST'
 )
 
+export const authenticateToken = genericDispatch(
+    class_type, 'AUTHENTICATE_TOKEN', 'GET'
+)
+
+
 export const logOut = genericDispatch(
     class_type, 'LOG_OUT', 'GET'
 )
@@ -23,5 +28,13 @@ export function setLocation(location) {
         class: class_type,
         type: 'SET_LOCATION',
         location
+    }
+}
+
+export function setTokens(token) {
+    return {
+        class: class_type,
+        type: 'SET_TOKENS',
+        token
     }
 }

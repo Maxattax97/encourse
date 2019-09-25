@@ -1,10 +1,10 @@
 import {forwardData, getData} from './reducer-utils'
 
 function setTokens(state, action) {
-	const expires_at = Date.now() + (action.data.expires_in) * 1000
+	//const expires_at = Date.now() + (action.data.expires_in) * 1000
 	return Object.assign({}, state, {
-		logInData: {...action.data, expires_at},
-		logInIsLoading: false,
+		authenticateTokenData: action.token,
+		authenticateTokenIsLoading: false,
 	})
 }
 
@@ -19,10 +19,31 @@ function logIn(state, action) {
 			logInIsLoading: false,
 		})
 	if(action.data)
-	    return setTokens(state, action)
+	    return Object.assign({}, state, {
+			logInIsLoading: false,
+		})
 
 	return Object.assign({}, state, {
 		logInIsLoading: true,
+	})
+}
+
+function authenticateToken(state, action) {
+	if(action.hasError)
+	return Object.assign({}, state, {
+		authenticateTokenHasError: action.hasError,
+		authenticateTokenIsLoading: false,
+	})
+
+	/*
+	if(action.data) {
+		console.log(action.data)	
+		return setTokens(state, action)
+	}*/
+		
+
+	return Object.assign({}, state, {
+		authenticateTokenIsLoading: true,
 	})
 }
 
@@ -57,6 +78,8 @@ export default function auth(state = {}, action) {
 	switch(action.type) {
 		case 'LOG_IN':
 			return logIn(state, action)
+		case 'AUTHENTICATE_TOKEN':
+			return authenticateToken(state, action)
 		case 'SET_TOKENS':
 		    return setTokens(state, action)
 		case 'LOG_OUT':

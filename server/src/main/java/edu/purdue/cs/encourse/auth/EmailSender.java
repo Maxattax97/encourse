@@ -25,13 +25,13 @@ public class EmailSender implements Sender {
     }
 
     @Override
-    public void send (String aUserId, String aToken) {
+    public void send (String aUserId, String aEmail, String aToken) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
         mailMessage.setFrom(from);
-        mailMessage.setTo(aUserId);
+        mailMessage.setTo(aEmail);
         mailMessage.setSubject("Your signin link");
-        mailMessage.setText(String.format("Hello!\nAccess your account here: http://localhost:40797/signin/%s?uid=%s",aToken,aUserId));
+        mailMessage.setText(String.format("Hello!\nAccess your account here: http://localhost:3000/signin/%s/%s",aUserId,aToken));
 
         mailSender.send(mailMessage);
     }

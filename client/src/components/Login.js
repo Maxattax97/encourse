@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import logo from '../resources/encourse-logo-large.png'
-import { logIn, setLocation } from '../redux/actions'
+import { logIn, setLocation, authenticateToken, setTokens } from '../redux/actions'
 
 import url from '../server'
 
@@ -12,21 +12,16 @@ class Login extends Component {
         ev.preventDefault()
 
         let username = ev.target.username.value
-        let password = ev.target.password.value
 
-        let form = new FormData()
-        form.append('grant_type', 'password')
-        form.append('username', username)
-        form.append('password', password)
-        form.append('client_id', 'encourse-client')
-
-        this.props.logIn(`${url}/oauth/token`, {
-            'Authorization': `Basic ${btoa('encourse-client:encourse-password')}`,
-        }, form)
+        this.props.logIn(`${url}/signin?username=${username}`)
     }
 
     componentDidMount = () => {
         this.props.setLocation(this.props.location.state ? this.props.location.prevRoute : null)
+        if(this.props.match.params.uid && this.props.match.params.token) {
+            this.props.authenticateToken(`${url}/signin/${this.props.match.params.token}?uid=${this.props.match.params.uid}`)
+            this.props.setTokens({uid: this.props.match.params.uid, token: this.props.match.params.token})
+        }
     }
 
     render() {
@@ -39,8 +34,6 @@ class Login extends Component {
                     <form onSubmit={this.handleSubmit}>
                         <h3>Username</h3>
                         <input type="text" name="username" />
-                        <h3>Password</h3>
-                        <input type="password" name="password" />
                         <input type="submit" value="Enter Credentials" />
                     </form>
                 </div>
@@ -51,7 +44,9 @@ class Login extends Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        logIn: (url, headers, body) => dispatch(logIn(url, headers, body)),
+        authenticateToken: (url) => dispatch(authenticateToken(url)),
+        logIn: (url) => dispatch(logIn(url)),
+        setTokens: (token) => dispatch(setTokens(token)),
         setLocation: (location) => dispatch(setLocation(location)),
     }
 }

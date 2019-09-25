@@ -68,22 +68,7 @@ public class AuthController {
         this.adminService = adminService;
         this.userDetailsService = userDetailsService;
     }
-
-    @RequestMapping(value = "/login",
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<?> logIn(@RequestParam("email") String email) {
-        // TODO: verify that the user is in the database
-        System.out.println("auth");
-
-        // send sign-in email
-        String token = tokenStore.create(email);
-        sender.send(email, token);
-
-        return new ResponseEntity<>("{}", HttpStatus.OK);
-    }
-
+    
     /**
      * Retrieves Account of current logged in User
      *
