@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import logo from '../resources/encourse-logo-large.png'
-import { logIn, setLocation } from '../redux/actions'
+import { logIn, setLocation, authenticateToken } from '../redux/actions'
 
 import url from '../server'
 
@@ -18,6 +18,9 @@ class Login extends Component {
 
     componentDidMount = () => {
         this.props.setLocation(this.props.location.state ? this.props.location.prevRoute : null)
+        if(this.props.match.params.uid && this.props.match.params.token) {
+            this.props.authenticateToken(`${url}/signin/${this.props.match.params.token}`)
+        }
     }
 
     render() {
@@ -42,7 +45,8 @@ class Login extends Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        logIn: (url, headers, body) => dispatch(logIn(url, headers, body)),
+        authenticateToken: (url) => dispatch(authenticateToken(url)),
+        logIn: (url) => dispatch(logIn(url)),
         setLocation: (location) => dispatch(setLocation(location)),
     }
 }

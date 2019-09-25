@@ -25,18 +25,24 @@ class App extends Component {
         return (
             <div className="App">
                 <Switch>
-                    <Route path="/login" render={(navProps) => {
+                    <Route exact path="/signin" render={(navProps) => {
                         return !this.loggedIn()
                             ? <Login {...navProps} />
                             : <Redirect to={`/${this.props.currentCourseId}/${this.props.currentSemesterId}/course`}/>
-                    }
-
-                    }/>
+                    }}
+                    />
+                    {/*TODO: Add custom logging in page*/}
+                    <Route path="/signin/:uid/:token" render={navProps => {
+                        return !this.loggedIn()
+                            ? <Login {...navProps} />
+                            : <Redirect to={`/${this.props.currentCourseId}/${this.props.currentSemesterId}/course`}/>
+                    }}
+                    />
                     <Route path="/:courseID/:semesterID" render={(navProps) => {
                         return this.loggedIn()
                             ? <Main {...navProps} />
                             : <Redirect to={{
-                                pathname: '/login',
+                                pathname: '/signin',
                                 state: { prevRoute: history.location.pathname }
                             }} />
                         }}
@@ -44,7 +50,7 @@ class App extends Component {
                     
                     <Route path="/" render={(navProps) => 
                         !this.loggedIn()
-                        ? <Redirect to="/login" />
+                        ? <Redirect to="/signin" />
                         : <Redirect to={`/${this.props.currentCourseId}/${this.props.currentSemesterId}/course`}/>
                     }
                      />
