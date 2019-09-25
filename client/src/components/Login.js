@@ -19,7 +19,7 @@ class Login extends Component {
     componentDidMount = () => {
         this.props.setLocation(this.props.location.state ? this.props.location.prevRoute : null)
         if(this.props.match.params.uid && this.props.match.params.token) {
-            this.props.authenticateToken(`${url}/signin/${this.props.match.params.token}`)
+            this.props.authenticateToken(`${url}/signin/${this.props.match.params.token}?uid=${this.props.match.params.uid}`)
         }
     }
 
