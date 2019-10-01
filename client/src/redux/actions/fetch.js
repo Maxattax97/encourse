@@ -19,7 +19,8 @@ export function genericDispatch(actionClass, type, method) {
 						return response
 					})
 					.then((response) => {
-						if(response.type !== 'basic') return response.json()
+                        console.log(response.type)
+                        if(response.type !== 'basic') return response.json()
 					})
 					.then((data) => {
 						dispatch({

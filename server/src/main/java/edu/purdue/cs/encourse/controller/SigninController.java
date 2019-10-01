@@ -4,12 +4,13 @@ import edu.purdue.cs.encourse.auth.Authenticator;
 import edu.purdue.cs.encourse.auth.Sender;
 import edu.purdue.cs.encourse.auth.TokenStore;
 import edu.purdue.cs.encourse.domain.Account;
+import org.json.simple.JSONObject;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,36 +34,50 @@ public class SigninController {
   }
 
   @GetMapping("/signin")
-  public String signin () {
-    return "signin";
+  public ResponseEntity<?> signin ()
+  {
+    JSONObject json = new JSONObject();
+    json.put("signin", 1);
+    return new ResponseEntity<JSONObject>(json, HttpStatus.OK);
   }
   
-  @PostMapping("/signin")
-  public String signin (@RequestParam("username") String aUsername) {
-    
+  @PostMapping(value = "/signin", produces = "application/json")
+  public ResponseEntity<?> signin (@RequestParam("username") String aUsername) {
+
     // verify that the user is in the database.
     String email = verifyUser(aUsername);
 
     if (email == null) {
+        // Verification failed
         System.out.println("Invalid User");
-        return "signin";
+
+        JSONObject json = new JSONObject();
+        json.put("signin", 0);
+        return new ResponseEntity<JSONObject>(json, HttpStatus.OK);
     }
 
     // send sign-in email
     String token = tokenStore.create(aUsername);
     sender.send(aUsername, email, token);
-    
-    return "login_link_sent";
+
+    JSONObject json = new JSONObject();
+    json.put("signin", 2);
+    return new ResponseEntity<JSONObject>(json, HttpStatus.OK);
   }
   
   @GetMapping("/signin/{token}")
-  public String signin (@RequestParam("uid") String aUid, @PathVariable("token") String aToken) {
+  public ResponseEntity<?> signin (@RequestParam("uid") String aUid, @PathVariable("token") String aToken) {
     try {
+      System.out.println(aUid + " " + aToken);
       authenticator.authenticate(aUid, aToken);
-      return "redirect:/";
+      JSONObject json = new JSONObject();
+      json.put("signin", 3);
+      return new ResponseEntity<JSONObject>(json, HttpStatus.OK);
     }
     catch (BadCredentialsException aBadCredentialsException) {
-      return "invalid_login_link";
+      JSONObject json = new JSONObject();
+      json.put("signin", 0);
+      return new ResponseEntity<JSONObject>(json, HttpStatus.OK);
     }
   }
 
