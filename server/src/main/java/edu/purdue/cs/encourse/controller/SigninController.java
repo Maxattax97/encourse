@@ -43,6 +43,11 @@ public class SigninController {
     // verify that the user is in the database.
     String email = verifyUser(aUsername);
 
+    if (email == null) {
+        System.out.println("Invalid User");
+        return "signin";
+    }
+
     // send sign-in email
     String token = tokenStore.create(aUsername);
     sender.send(aUsername, email, token);
@@ -69,6 +74,6 @@ public class SigninController {
       }
     }
 
-    return "";
+    return null;
   }
 }
