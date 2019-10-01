@@ -65,7 +65,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        token: state.auth && state.auth.authenticateTokenData ? state.auth.logInData.token : null,
+        token: state.auth && state.auth.authenticateTokenData ? state.auth.authenticateTokenData.token : null,
         prevRoute: state.auth ? state.auth.location : null,
         currentCourseId: getCurrentCourseId(state),
         currentSemesterId: getCurrentSemesterId(state),

@@ -20,6 +20,7 @@ function logIn(state, action) {
 		})
 	if(action.data)
 	    return Object.assign({}, state, {
+			logInData: action.data, 
 			logInIsLoading: false,
 		})
 
