@@ -1,0 +1,73 @@
+---
+version: "3.7"
+services:
+
+  encourse-java:
+    build:
+      context: ./docker/encourse-java
+    image: encourse-java
+    container_name: encourse-java
+    ports:
+      - "40797:40797"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Indianapolis
+    volumes:
+      - ./server:/encourse/server:Z
+    restart: unless-stopped
+
+  encourse-js:
+    build:
+      context: ./docker/encourse-js
+    image: encourse-js
+    container_name: encourse-js
+    ports:
+      - "5000:5000"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Indianapolis
+    volumes:
+      - ./client:/encourse/client:Z
+    restart: unless-stopped
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    env_file:
+      - secrets.env
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Indianapolis
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "postgres:5432"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+    volumes:
+      - encourse-postgres:/var/lib/postgresql/data:z
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    env_file:
+      - secrets.env
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Indianapolis
+      - PGADMIN_DEFAULT_EMAIL=postgres@encourse.edu
+    ports:
+      - "5480:80"
+    volumes:
+      - encourse-pgadmin:/var/lib/pgadmin:z
+    restart: unless-stopped
+
+volumes:
+  encourse-postgres:
+  encourse-pgadmin:
